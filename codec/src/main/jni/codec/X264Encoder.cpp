@@ -255,8 +255,8 @@ bool X264Encoder::encode(char *src, char *dest, int *s, int *type) {
     s[0] = size;
     type[0] = pic_out.i_type;
     gettimeofday(&end, NULL);
-    LOGI("Encode type: %d, Yuv convert time: %d, Encode time: %ld", pic_out.i_type, time,
-         (end.tv_usec - start.tv_usec));
+//    LOGI("Encode type: %d, Yuv convert time: %d, Encode time: %ld", pic_out.i_type, time,
+//         (end.tv_usec - start.tv_usec));
     return true;
 }
 
