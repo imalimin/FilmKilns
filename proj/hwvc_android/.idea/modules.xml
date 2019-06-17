@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/codec_native/codec_native.iml" filepath="$PROJECT_DIR$/codec_native/codec_native.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/hwvc_android.iml" filepath="$PROJECT_DIR$/.idea/hwvc_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/samplenative/samplenative.iml" filepath="$PROJECT_DIR$/samplenative/samplenative.iml" />
+    </modules>
+  </component>
+</project>
