@@ -216,13 +216,13 @@ bool DefaultAudioDecoder::openTrack(int track, AVCodecContext **context) {
         Logcat::e("HWVC", "Couldn't open codec.");
         return false;
     }
-    char *typeName = "unknown";
+    string typeName = "unknown";
     if (AVMEDIA_TYPE_VIDEO == codec->type) {
         typeName = "video";
     } else if (AVMEDIA_TYPE_AUDIO == codec->type) {
         typeName = "audio";
     }
-    Logcat::e("HWVC", "Open %s track with %s, fmt=%d, frameSize=%d", typeName, codec->name,
+    Logcat::e("HWVC", "Open %s track with %s, fmt=%d, frameSize=%d", typeName.c_str(), codec->name,
               avCodecParameters->format, avCodecParameters->frame_size);
     return true;
 }

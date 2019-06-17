@@ -50,6 +50,8 @@ public:
 
     virtual void pause();
 
+    void stop();
+
     int grab(HwAbsMediaFrame **frame);
 
     virtual int64_t getVideoDuration() override;
@@ -57,14 +59,6 @@ public:
     virtual int64_t getAudioDuration() override;
 
 private:
-    HwFrameAllocator *hwFrameAllocator = nullptr;
-    DefaultVideoDecoder *decoder = nullptr;
-    EventPipeline *pipeline = nullptr;
-    queue<HwAbsMediaFrame *> cache;
-    HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收
-    PlayState playState = STOP;
-    SimpleLock grabLock;
-
     void loop();
 
     /**
@@ -80,6 +74,16 @@ private:
     bool grab();
 
     bool grabAnVideoFrame();
+
+private:
+    HwFrameAllocator *hwFrameAllocator = nullptr;
+    DefaultVideoDecoder *decoder = nullptr;
+    EventPipeline *pipeline = nullptr;
+    queue<HwAbsMediaFrame *> cache;
+    HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收
+    PlayState playState = STOP;
+    SimpleLock grabLock;
+    SimpleLock releaseLock;
 };
 
 #ifdef __cplusplus

@@ -21,7 +21,7 @@ public:
 
     void setSource(char *path);
 
-    void prepare(HwWindow *win, int width, int height);
+    void prepare(HwWindow *win);
 
     void start();
 

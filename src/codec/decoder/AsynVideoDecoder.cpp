@@ -4,24 +4,22 @@
  * This source code is licensed under the GPL license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 #include "../include/AsynVideoDecoder.h"
 #include "TimeUtils.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-AsynVideoDecoder::AsynVideoDecoder() : AbsDecoder(), AbsAudioDecoder(), AbsVideoDecoder() {
+AsynVideoDecoder::AsynVideoDecoder() : AbsAudioDecoder(), AbsVideoDecoder() {
     hwFrameAllocator = new HwFrameAllocator();
     decoder = new DefaultVideoDecoder();
 }
 
 AsynVideoDecoder::~AsynVideoDecoder() {
-    playState = STOP;
+    stop();
     if (pipeline) {
         delete pipeline;
         pipeline = nullptr;
     }
+    releaseLock.lock();
     if (decoder) {
         delete decoder;
         decoder = nullptr;
@@ -30,45 +28,45 @@ AsynVideoDecoder::~AsynVideoDecoder() {
         delete hwFrameAllocator;
         hwFrameAllocator = nullptr;
     }
+    releaseLock.unlock();
 }
 
 bool AsynVideoDecoder::prepare(string path) {
     playState = PAUSE;
-    if (decoder) {
-        if (!decoder->prepare(path)) {
-            return false;
-        }
-    }
     if (!pipeline) {
         pipeline = new EventPipeline("AsynVideoDecoder");
     }
-    start();
+    if (decoder) {
+        if (!decoder->prepare(path)) {
+            Logcat::e("HWVC", "AsynVideoDecoder::prepare failed");
+            return false;
+        }
+    }
     return true;
 }
 
 bool AsynVideoDecoder::grab() {
-    if (cache.size() >= 10) {
+    if (cache.size() >= 20) {
         grabLock.wait();
         return true;
     }
-    Logcat::i("HWVC", "HwFrameAllocator::info: cache %d", cache.size());
-    int64_t time = getCurrentTimeUS();
+//    Logcat::i("HWVC", "HwFrameAllocator::info: cache %d", cache.size());
     HwAbsMediaFrame *frame = nullptr;
-    int ret = decoder->grab(&frame);
-    frame = hwFrameAllocator->ref(frame);
-    if (frame) {
+    int ret = MEDIA_TYPE_UNKNOWN;
+    releaseLock.lock();
+    if (decoder) {
+        ret = decoder->grab(&frame);
+    }
+    if (hwFrameAllocator && frame) {
+        frame = hwFrameAllocator->ref(frame);
         cache.push(frame);
     }
-//    LOGI("Grab frame(fmt:%d,type:%d) cost %lld, cache left %d, ret=%d",
-//         cacheFrame->format,
-//         cacheFrame->key_frame,
-//         (getCurrentTimeUS() - time),
-//         vRecycler->getCacheSize(), ret);
+    releaseLock.unlock();
     return MEDIA_TYPE_EOF != ret;
 }
 
 int AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
-    if (STOP == playState || cache.empty()) {
+    if (PLAYING != playState || cache.empty()) {
         return MEDIA_TYPE_UNKNOWN;
     }
     if (outputFrame) {
@@ -82,59 +80,8 @@ int AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
     if ((*frame)->isAudio()) {
         return MEDIA_TYPE_AUDIO;
     }
-//    if (!f) {
-//        return MEDIA_TYPE_UNKNOWN;
-//    }
-//    frame->pts = f->pts;
-//    if (AV_SAMPLE_FMT_S32 == f->format || AV_SAMPLE_FMT_FLT == f->format) {
-//        int size = 0;
-//        //对于音频，只有linesize[0]被使用，因为音频中，每一个声道的大小应该相等
-//        memcpy(frame->data + size, f->data[0], f->linesize[0]);
-//        size += f->linesize[0];
-//        frame->offset = 0;
-//        frame->size = size;
-////        LOGI("AsynVideoDecoder::audio channels=%d, size=%d, nb_samples=%d, %d", f->channels, size, f->nb_samples,
-////             f->linesize[0]);
-//        av_frame_unref(f);
-//        vRecycler->recycle(f);
-//        return MEDIA_TYPE_AUDIO;
-//    } else {
-//
-//    }
-//    if (AV_PIX_FMT_NV12 == f->format) {
-//        copyNV12(frame, f);
-//    } else {
-//        copyYV12(frame, f);
-//    }
-//
-//    frame->width = f->width;
-//    frame->height = f->height;
-//    av_frame_unref(f);
-//    if (vRecycler) {
-//        vRecycler->recycle(f);
-//    }
-
     return MEDIA_TYPE_VIDEO;
 }
-
-//void AsynVideoDecoder::copyYV12(HwVideoFrame *dest, AVFrame *src) {
-//    int size = src->width * src->height;
-//    dest->offset = 0;
-//    dest->size = size * 3 / 2;
-//    memcpy(dest->data, src->data[0], size);
-//    memcpy(dest->data + size, src->data[1], size / 4);
-//    memcpy(dest->data + size + size / 4, src->data[2], size / 4);
-//}
-//
-//void AsynVideoDecoder::copyNV12(HwVideoFrame *dest, AVFrame *src) {
-//    int size = src->width * src->height;
-//    memcpy(dest->data, src->data[0], size);
-//    int uvSize = size / 4;
-//    for (int i = 0; i < uvSize; ++i) {
-//        *(dest->data + size + i) = src->data[1][i * 2];
-//        *(dest->data + size + uvSize + i) = src->data[1][i * 2 + 1];
-//    }
-//}
 
 int AsynVideoDecoder::width() {
     if (decoder) {
@@ -151,10 +98,14 @@ int AsynVideoDecoder::height() {
 }
 
 void AsynVideoDecoder::loop() {
-    if (PLAYING != playState)
+    if (PLAYING != playState || !pipeline) {
+        Logcat::i("HWVC", "AsynVideoDecoder::loop skip loop");
         return;
+    }
     pipeline->queueEvent([this] {
         if (!grab()) {
+            pause();
+            Logcat::i("HWVC", "AsynVideoDecoder::loop EOF");
             return;
         }
         loop();
@@ -162,7 +113,7 @@ void AsynVideoDecoder::loop() {
 }
 
 void AsynVideoDecoder::start() {
-    if (STOP == playState) {
+    if (STOP == playState || PLAYING == playState) {
         return;
     }
     playState = PLAYING;
@@ -173,6 +124,13 @@ void AsynVideoDecoder::pause() {
     if (STOP != playState) {
         playState = PAUSE;
     }
+}
+
+void AsynVideoDecoder::stop() {
+    if (STOP != playState) {
+        playState = STOP;
+    }
+    grabLock.notify();
 }
 
 bool AsynVideoDecoder::grabAnVideoFrame() {
@@ -240,7 +198,3 @@ int64_t AsynVideoDecoder::getAudioDuration() {
     }
     return 0;
 }
-
-#ifdef __cplusplus
-}
-#endif

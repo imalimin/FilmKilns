@@ -14,7 +14,6 @@
 #include "EventPipeline.h"
 #include "Egl.h"
 #include "HwAbsMediaFrame.h"
-#include "HwAudioPlayer.h"
 #include "SimpleLock.h"
 #include "NativeWindow.h"
 
@@ -45,27 +44,23 @@ public:
     bool invalidate(int tex, uint32_t width, uint32_t height);
 
 private:
-    Egl *egl = nullptr;
-    TextureAllocator *texAllocator = nullptr;
-    AsynVideoDecoder *decoder = nullptr;
-    YUV420PFilter *yuvFilter = nullptr;
-    GLuint yuv[3];
-    PlayState playState = STOP;
-    SimpleLock *lock;
-    char *path;
-    HwAudioPlayer *audioPlayer = nullptr;
-    int64_t lastPts = 0;
-    int64_t lastShowTime = 0;
 
-    void sendLoop();
+    void loop();
 
     void checkFilter();
 
     int grab();
 
-    void createAudioPlayer();
-
-    void initEGL(NativeWindow *nw);
+private:
+    TextureAllocator *texAllocator = nullptr;
+    AsynVideoDecoder *decoder = nullptr;
+    YUV420PFilter *yuvFilter = nullptr;
+    GLuint yuv[3];
+    PlayState playState = STOP;
+    SimpleLock simpleLock;
+    char *path;
+    int64_t lastPts = 0;
+    int64_t lastShowTime = 0;
 };
 
 

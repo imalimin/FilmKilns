@@ -42,9 +42,9 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setSourc
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface, jint width, jint height) {
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
-        getHandler(handler)->prepare(new HwAndroidWindow(env, surface), width, height);
+        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
     }
 }
 

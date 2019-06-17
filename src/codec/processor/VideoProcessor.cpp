@@ -12,12 +12,12 @@
 #include <string>
 
 VideoProcessor::VideoProcessor() : Object() {
-    unitHandler = new HandlerThread("VideoUnits");
-    screenHandler = new HandlerThread("ScreenUnit");
+//    unitHandler = new HandlerThread("VideoUnits");
+//    screenHandler = new HandlerThread("ScreenUnit");
     pipeline = new UnitPipeline("VideoProcessor");
-    pipeline->registerAnUnit(new Video(unitHandler));
-//    pipeline->registerAnUnit(new Render(unitHandler));
-//    pipeline->registerAnUnit(new Screen(screenHandler));
+    pipeline->registerAnUnit(new Video());
+    pipeline->registerAnUnit(new Render());
+    pipeline->registerAnUnit(new Screen());
 }
 
 VideoProcessor::~VideoProcessor() {
@@ -44,12 +44,10 @@ void VideoProcessor::setSource(char *path) {
     }
 }
 
-void VideoProcessor::prepare(HwWindow *win, int width, int height) {
+void VideoProcessor::prepare(HwWindow *win) {
     if (pipeline) {
         Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
         msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
-        msg->arg1 = width;
-        msg->arg2 = height;
         pipeline->postEvent(msg);
     }
 }

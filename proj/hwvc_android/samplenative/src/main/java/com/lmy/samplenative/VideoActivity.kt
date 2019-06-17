@@ -59,7 +59,9 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         processor?.setSource(path!!)
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
+            override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
+                processor?.prepare(holder.surface)
+                processor?.start()
             }
 
             override fun surfaceDestroyed(p0: SurfaceHolder?) {
@@ -69,8 +71,6 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {
-                processor?.prepare(holder.surface, surfaceView.width, surfaceView.height)
-                processor?.start()
             }
         })
 //        surfaceView.surfaceTextureListener = this
@@ -91,7 +91,7 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
         this.surface = Surface(surface)
-        processor?.prepare(this.surface!!, width, height)
+        processor?.prepare(this.surface!!)
     }
 
     override fun onDestroy() {
