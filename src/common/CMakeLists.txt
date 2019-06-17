@@ -7,11 +7,13 @@ if (HWDEBUG)
     message(HWDEBUG "Show debug logs。")
 endif ()
 
-set(PREBUILD_STATIC "${PROJECT_SOURCE_DIR}/prebuild/static/${ANDROID_ABI}")
+set(PREBUILD_STATIC ${PROJECT_SOURCE_DIR}/prebuild/static)
+set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
+set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 
 #include_directories(
-#        ${local_src}/include/libjpeg-turbo
-#        ${local_src}/include/libpng
+#        ${PREBUILD_STATIC}/libturbojpeg/include
+#        ${PREBUILD_STATIC}/libpng/include
 #)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
@@ -31,7 +33,7 @@ add_library(
 set_target_properties(
         libjpeg
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_STATIC}/libjpeg.a")
+        "${JPGE}/libjpeg.a")
 
 #libturbojpeg
 add_library(
@@ -41,7 +43,7 @@ add_library(
 set_target_properties(
         libturbojpeg
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_STATIC}/libturbojpeg.a")
+        "${JPGE}/libturbojpeg.a")
 
 #libpng16
 add_library(
@@ -51,7 +53,7 @@ add_library(
 set_target_properties(
         libpng
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_STATIC}/libpng.a")
+        "${PNG}/libpng.a")
 
 #------------------STATIC END----------------------
 
