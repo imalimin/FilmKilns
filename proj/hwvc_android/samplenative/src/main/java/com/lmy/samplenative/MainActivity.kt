@@ -15,7 +15,8 @@ class MainActivity : BaseActivity() {
             Item("AudioRecorderTest") { startActivity(Intent(this, TestAudioRecorderActivity::class.java)) },
             Item("AudioPlayer") { startActivity(Intent(this, AudioActivity::class.java)) },
             Item("TestMemFIFOActivity") { startActivity(Intent(this, TestMemFIFOActivity::class.java)) },
-                    Item("Test Echo") { startActivity(Intent(this, EchoActivity::class.java)) }
+            Item("Echo") { startActivity(Intent(this, EchoActivity::class.java)) },
+            Item("Image") { startActivity(Intent(this, ImageActivity::class.java)) }
     )
 
     override fun getLayoutResource(): Int = R.layout.activity_main
