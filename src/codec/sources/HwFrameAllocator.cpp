@@ -120,7 +120,15 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
                                  static_cast<uint32_t>(avFrame->width),
                                  static_cast<uint32_t>(avFrame->height));
     }
-    copyInfo(frame, avFrame);
+    frame->setPts(avFrame->pts);
+    if (avFrame->format == AV_PIX_FMT_YUV420P) {
+        int size = avFrame->width * avFrame->height;
+        memcpy(frame->getBuffer()->getData(), avFrame->data[0], size);
+        memcpy(frame->getBuffer()->getData() + size, avFrame->data[1], size / 4);
+        memcpy(frame->getBuffer()->getData() + size + size / 4, avFrame->data[2], size / 4);
+    } else {
+        copyInfo(frame, avFrame);
+    }
     refLock.lock();
     refQueue.push_front(frame);
     refLock.unlock();
