@@ -43,10 +43,6 @@ static void stop() {
         }
         recorderLock.unlock();
     }
-    if (pipeline) {
-        delete pipeline;
-        pipeline = nullptr;
-    }
 }
 
 static void loop() {
@@ -56,7 +52,6 @@ static void loop() {
             if (recorder) {
                 HwBuffer *buffer = recorder->read(8192);
                 if (pcmFile) {
-                    Logcat::i("HWVC", "TestHwAudioRecorder write %d", buffer->size());
                     fwrite(buffer->getData(), 1, buffer->size(), pcmFile);
                 }
             }
@@ -93,6 +88,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_TestHwAudioRecorder_start
     recorder = new HwAudioRecorder(2, 48000, SL_PCMSAMPLEFORMAT_FIXED_32, 1024);
     recorder->start();
     loop();
+    Logcat::i("HWVC", "TestHwAudioRecorder record");
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_TestHwAudioRecorder_play
@@ -105,11 +101,17 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_TestHwAudioRecorder_play
     player = new HwAudioPlayer(2, 48000, SL_PCMSAMPLEFORMAT_FIXED_32, 1024);
     player->start();
     loop();
+    Logcat::i("HWVC", "TestHwAudioRecorder play");
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_TestHwAudioRecorder_stop
         (JNIEnv *env, jobject thiz) {
     stop();
+    if (pipeline) {
+        delete pipeline;
+        pipeline = nullptr;
+    }
+    Logcat::i("HWVC", "TestHwAudioRecorder stop");
 }
 
 #ifdef __cplusplus
