@@ -22,6 +22,8 @@ public:
 
     bool eventPrepare(Message *msg);
 
+    bool eventUpdateWindow(Message *msg);
+
     bool eventDraw(Message *msg);
 
 private:

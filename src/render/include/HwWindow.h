@@ -20,8 +20,18 @@ public:
 
     void setANativeWindow(NativeWindowType win);
 
+    void setWidth(int width);
+
+    int getWidth();
+
+    void setHeight(int height);
+
+    int getHeight();
+
 private:
     NativeWindowType win = nullptr;
+    int width = 0;
+    int height = 0;
 };
 
 #endif //HARDWAREVIDEOCODEC_HWWINDOW_H

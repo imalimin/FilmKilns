@@ -50,6 +50,10 @@ public:
 
     int height();
 
+    bool updateWindow(HwWindow *win);
+
+    bool isAttachWindow();
+
 private:
     HwWindow *win = nullptr;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;

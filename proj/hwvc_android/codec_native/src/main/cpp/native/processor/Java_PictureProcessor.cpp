@@ -24,9 +24,16 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_PictureProcessor_creat
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_PictureProcessor_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface, jint width, jint height) {
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
-        getHandler(handler)->prepare(new HwAndroidWindow(env, surface), width, height);
+        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_PictureProcessor_updateWindow
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+    if (handler) {
+        getHandler(handler)->updateWindow(new HwAndroidWindow(env, surface));
     }
 }
 

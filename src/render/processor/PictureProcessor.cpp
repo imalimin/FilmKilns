@@ -24,12 +24,18 @@ PictureProcessor::~PictureProcessor() {
     }
 }
 
-void PictureProcessor::prepare(HwWindow *win, int width, int height) {
+void PictureProcessor::prepare(HwWindow *win) {
     if (pipeline) {
         Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
         msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
-        msg->arg1 = width;
-        msg->arg2 = height;
+        pipeline->postEvent(msg);
+    }
+}
+
+void PictureProcessor::updateWindow(HwWindow *win) {
+    if (pipeline) {
+        Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
+        msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
         pipeline->postEvent(msg);
     }
 }

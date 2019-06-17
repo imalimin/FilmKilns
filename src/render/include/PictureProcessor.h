@@ -17,7 +17,9 @@ public:
 
     virtual ~PictureProcessor();
 
-    void prepare(HwWindow *win, int width, int height);
+    void prepare(HwWindow *win);
+
+    void updateWindow(HwWindow *win);
 
     void show(char *file);
 

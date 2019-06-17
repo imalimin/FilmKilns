@@ -12,9 +12,14 @@ class PictureProcessor : CPPObject(), FilterSupport {
         handler = create()
     }
 
-    fun prepare(surface: Surface, width: Int, height: Int) {
+    fun prepare(surface: Surface) {
         if (0L == handler) return
-        prepare(handler, surface, width, height)
+        prepare(handler, surface)
+    }
+
+    fun updateWindow(surface: Surface) {
+        if (0L == handler) return
+        updateWindow(handler, surface)
     }
 
     fun show(file: String) {
@@ -43,7 +48,8 @@ class PictureProcessor : CPPObject(), FilterSupport {
     }
 
     private external fun create(): Long
-    private external fun prepare(handler: Long, surface: Surface, width: Int, height: Int)
+    private external fun prepare(handler: Long, surface: Surface)
+    private external fun updateWindow(handler: Long, surface: Surface)
     private external fun show(handler: Long, file: String)
     private external fun setFilter(handler: Long, filter: Long)
     private external fun invalidate(handler: Long)

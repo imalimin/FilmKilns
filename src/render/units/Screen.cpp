@@ -11,12 +11,16 @@ Screen::Screen() {
     name = __FUNCTION__;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Screen::eventPrepare));
     registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&Screen::eventDraw));
+    registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
+                  reinterpret_cast<EventFunc>(&Screen::eventUpdateWindow));
 }
 
 Screen::Screen(HandlerThread *handlerThread) : Unit(handlerThread) {
     name = __FUNCTION__;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Screen::eventPrepare));
     registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&Screen::eventDraw));
+    registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
+                  reinterpret_cast<EventFunc>(&Screen::eventUpdateWindow));
 }
 
 Screen::~Screen() {
@@ -42,11 +46,22 @@ bool Screen::eventRelease(Message *msg) {
 
 bool Screen::eventPrepare(Message *msg) {
     Logcat::i("HWVC", "Screen::eventPrepare");
-    width = msg->arg1;
-    height = msg->arg2;
     NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
+    this->width = nw->win->getWidth();
+    this->height = nw->win->getHeight();
     post([this, nw] {
         initWindow(nw);
+    });
+    return true;
+}
+
+bool Screen::eventUpdateWindow(Message *msg) {
+    Logcat::i("HWVC", "Screen::eventUpdateWindow");
+    NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
+    post([this, nw] {
+        if (egl) {
+            egl->updateWindow(nw->win);
+        }
     });
     return true;
 }
@@ -77,16 +92,20 @@ void Screen::initWindow(NativeWindow *nw) {
         egl->makeCurrent();
         drawer = new NormalDrawer();
         drawer->setRotation(ROTATION_VERTICAL);
+    } else {
+
     }
 }
 
 void Screen::draw(GLuint texture) {
 //    string glslVersion = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
 //    LOGE("version: %s", glslVersion.c_str());
-    glViewport(0, 0, egl->width(), egl->height());
-    glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    drawer->draw(texture);
+    if (egl->isAttachWindow()) {
+        glViewport(0, 0, egl->width(), egl->height());
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
+        drawer->draw(texture);
+    }
     egl->swapBuffers();
 }
 
