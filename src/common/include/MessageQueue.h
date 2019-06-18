@@ -38,6 +38,8 @@ public:
 
     void remove(function<bool(Message *e)> filter);
 
+    void printQueue();
+
 private:
     pthread_mutex_t mutex;
     pthread_cond_t cond;

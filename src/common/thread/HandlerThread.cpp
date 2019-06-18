@@ -14,6 +14,7 @@ void HandlerThread::run() {
             break;
         }
         pthread_mutex_unlock(&mutex);
+//        this->printQueue();
         Message *msg = this->take();
         int size = this->size();
         if (this->requestQuit && !this->requestQuitSafely) {
@@ -121,4 +122,8 @@ void HandlerThread::removeAllMessage(int what) {
     queue->remove([what](Message *msg) {
         return what == msg->what;
     });
+}
+
+void HandlerThread::printQueue() {
+    queue->printQueue();
 }

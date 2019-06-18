@@ -28,13 +28,6 @@ public:
     void quitSafely();
 
 private:
-    string name;
-    std::thread *mThread = nullptr;
-    pthread_mutex_t mutex;
-    MessageQueue *queue = nullptr;
-    bool requestQuitSafely = false;
-    bool requestQuit = false;
-
     void offer(Message *msg);
 
     Message *take();
@@ -46,6 +39,16 @@ private:
     bool shouldQuit();
 
     void run();
+
+    void printQueue();
+
+private:
+    string name;
+    std::thread *mThread = nullptr;
+    pthread_mutex_t mutex;
+    MessageQueue *queue = nullptr;
+    bool requestQuitSafely = false;
+    bool requestQuit = false;
 };
 
 

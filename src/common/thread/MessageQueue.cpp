@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 #include "../include/MessageQueue.h"
+#include <sstream>
 
 MessageQueue::MessageQueue() {
     pthread_mutex_init(&mutex, nullptr);
@@ -87,4 +88,17 @@ void MessageQueue::remove(function<bool(Message *e)> filter) {
         ++itr;
     }
     pthread_mutex_unlock(&mutex);
+}
+
+void MessageQueue::printQueue() {
+#if 1
+    std::ostringstream os;
+    list<Message *>::iterator itr = queue.begin();
+    while (itr != queue.end()) {
+        Message *e = *itr;
+        os << e->msg << "(" << e << "),";
+        ++itr;
+    }
+    Logcat::i("HWVC", "MessageQueue(%s)", os.str().c_str());
+#endif
 }
