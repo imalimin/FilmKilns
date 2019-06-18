@@ -120,9 +120,10 @@ int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
         if (0 == ret) {
             if (videoTrack == avPacket->stream_index) {
                 avcodec_send_packet(vCodecContext, avPacket);
-            } else if (audioTrack == avPacket->stream_index) {
-                avcodec_send_packet(aCodecContext, avPacket);
             }
+//            else if (audioTrack == avPacket->stream_index) {
+//                avcodec_send_packet(aCodecContext, avPacket);
+//            }
         }
         av_packet_unref(avPacket);//Or av_free_packet?
 //            switch (ret) {
@@ -163,17 +164,17 @@ int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
             return MEDIA_TYPE_VIDEO;
         }
         //如果没有视频帧，尝试去缓冲区中获取解码完成的音频帧
-        if (0 == avcodec_receive_frame(aCodecContext, audioFrame)) {
-            matchPts(audioFrame, audioTrack);
-            if (outHwFrame) {
-                outHwFrame->recycle();
-                outHwFrame = nullptr;
-            }
-            outHwFrame = resample(audioFrame);
-            *frame = outHwFrame;
-            av_frame_unref(audioFrame);
-            return MEDIA_TYPE_AUDIO;
-        }
+//        if (0 == avcodec_receive_frame(aCodecContext, audioFrame)) {
+//            matchPts(audioFrame, audioTrack);
+//            if (outHwFrame) {
+//                outHwFrame->recycle();
+//                outHwFrame = nullptr;
+//            }
+//            outHwFrame = resample(audioFrame);
+//            *frame = outHwFrame;
+//            av_frame_unref(audioFrame);
+//            return MEDIA_TYPE_AUDIO;
+//        }
         //如果缓冲区中既没有音频也没有视频，并且已经读取完文件，则播放完了
         if (eof) {
             Logcat::i("HWVC", "DefaultVideoDecoder::grab end");
