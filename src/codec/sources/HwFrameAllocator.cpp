@@ -160,9 +160,15 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
     unRefLock.unlock();
     if (frame) {
         memcpy(frame->getBuffer()->getData(), src->getBuffer()->getData(), frame->getBufferSize());
+        frame->setPts(src->getPts());
     } else {
         if (src->isVideo()) {
-            frame = static_cast<HwVideoFrame *>(src)->clone();
+            HwVideoFrame *videoFrame = static_cast<HwVideoFrame *>(src);
+
+            frame = new HwVideoFrame(this, videoFrame->getFormat(),
+                                     videoFrame->getWidth(),
+                                     videoFrame->getHeight());
+            videoFrame->clone(frame);
         } else if (src->isAudio()) {
             HwAudioFrame *audioFrame = static_cast<HwAudioFrame *>(src);
 
