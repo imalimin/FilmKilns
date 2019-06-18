@@ -16,7 +16,7 @@ class AudioActivity : BaseActivity() {
         if (uri == null)
             uri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
         if (uri == null) {
-            val testFile = File(Environment.getExternalStorageDirectory(), "001.mp4")
+            val testFile = File(Environment.getExternalStorageDirectory(), "hw_test.mp4")
             if (!testFile.exists()) {
                 Toast.makeText(this, "没有找到该文件", Toast.LENGTH_SHORT).show()
                 finish()
