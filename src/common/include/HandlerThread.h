@@ -19,6 +19,8 @@ public:
 
     void sendMessage(Message *msg);
 
+    void sendMessageAtFront(Message *msg);
+
     void removeAllMessage(int what);
 
     void quit();

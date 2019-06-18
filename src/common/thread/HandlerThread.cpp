@@ -29,7 +29,7 @@ void HandlerThread::run() {
         }
         msg->runnable(msg);
         int what = msg->what;
-        if (1129270529 == msg->what) {
+        if (1129270529 == msg->what) {//release
             LOGI("UnitPipeline(%s) release", this->name.c_str());
         }
         delete msg;
@@ -65,6 +65,14 @@ void HandlerThread::sendMessage(Message *msg) {
         return;
     }
     offer(msg);
+}
+
+void HandlerThread::sendMessageAtFront(Message *msg) {
+    if (requestQuitSafely || requestQuit) {
+        LOGE("HandlerThread had quited");
+        return;
+    }
+    queue->offerAtFront(msg);
 }
 
 void HandlerThread::offer(Message *msg) {

@@ -23,6 +23,8 @@ public:
 
     void postEvent(Message *msg);
 
+    void postEventAtFront(Message *msg);
+
     void removeAllMessage(int what);
 
     int registerAnUnit(Unit *unit);
@@ -30,14 +32,17 @@ public:
     void release();
 
 private:
-    HandlerThread *pipeline = nullptr;
-    SimpleLock simpleLock;
-    vector<Unit *> units;
-    bool available = true;
+    void postEvent(Message *msg, bool front);
 
     void dispatch(Message *msg);
 
     void clear();
+
+private:
+    HandlerThread *pipeline = nullptr;
+    SimpleLock simpleLock;
+    vector<Unit *> units;
+    bool available = true;
 };
 
 

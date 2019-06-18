@@ -37,7 +37,15 @@ void UnitPipeline::release() {
     }
 }
 
-void UnitPipeline::postEvent(Message *msg1) {
+void UnitPipeline::postEvent(Message *msg) {
+    postEvent(msg, false);
+}
+
+void UnitPipeline::postEventAtFront(Message *msg) {
+    postEvent(msg, true);
+}
+
+void UnitPipeline::postEvent(Message *msg1, bool front) {
     if (pipeline) {
         msg1->runnable = [this](Message *msg2) {
             /**
@@ -48,7 +56,11 @@ void UnitPipeline::postEvent(Message *msg1) {
         };
         simpleLock.lock();
         if (available) {
-            pipeline->sendMessage(msg1);
+            if (front) {
+                pipeline->sendMessage(msg1);
+            } else {
+                pipeline->sendMessageAtFront(msg1);
+            }
         } else {
             delete msg1;
         }
