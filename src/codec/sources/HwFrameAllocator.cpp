@@ -78,6 +78,7 @@ HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
                 && (*itr)->getBufferSize() == avFrame->linesize[0]) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
                 unRefQueue.remove(frame);
+                break;
             }
             ++itr;
         }
@@ -110,6 +111,7 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
                 && (*itr)->getBufferSize() == size) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
                 unRefQueue.remove(frame);
+                break;
             }
             ++itr;
         }
@@ -150,6 +152,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
                 && (*itr)->getBufferSize() == src->getBufferSize()) {
                 frame = *itr;
                 unRefQueue.remove(frame);
+                break;
             }
             ++itr;
         }
