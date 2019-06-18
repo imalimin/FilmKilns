@@ -65,8 +65,6 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
             }
 
             override fun surfaceDestroyed(p0: SurfaceHolder?) {
-                processor?.release()
-                processor = null
                 Log.i("HWVC", "surfaceDestroyed")
             }
 
@@ -96,6 +94,9 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.i("HWVC", "test123 VideoActivity onDestroy")
+        processor?.release()
+        processor = null
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, p2: Boolean) {
