@@ -178,11 +178,7 @@ void AsynVideoDecoder::seek(int64_t us) {
     if (!decoder) {
         return;
     }
-    pause();
-    pipeline->queueEvent([this, us] {
-        decoder->seek(us);
-        grabAnVideoFrame();
-    });
+    decoder->seek(us);
 }
 
 int64_t AsynVideoDecoder::getVideoDuration() {

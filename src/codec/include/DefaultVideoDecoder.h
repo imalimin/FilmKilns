@@ -65,6 +65,8 @@ private:
 
     void matchPts(AVFrame *frame, int track);
 
+    void handleAction();
+
 private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
     string path;
@@ -82,7 +84,8 @@ private:
     int64_t videoDurationUs = -1;
     int64_t audioDurationUs = -1;
     bool eof = false;
-    SimpleLock readPkgLock;
+    /** action */
+    int64_t actionSeekInUs = -1;
 };
 
 #ifdef __cplusplus

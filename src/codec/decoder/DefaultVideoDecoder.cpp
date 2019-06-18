@@ -108,15 +108,27 @@ bool DefaultVideoDecoder::prepare(string path) {
     return true;
 }
 
+void DefaultVideoDecoder::handleAction() {
+    if (actionSeekInUs >= 0) {
+        int64_t vPts = pFormatCtx->streams[videoTrack]->duration * actionSeekInUs / 100;
+        int64_t aPts = pFormatCtx->streams[audioTrack]->duration * actionSeekInUs / 100;
+        actionSeekInUs = -1;
+        av_seek_frame(pFormatCtx, videoTrack, vPts, AVSEEK_FLAG_BACKWARD);
+        av_seek_frame(pFormatCtx, audioTrack, aPts, AVSEEK_FLAG_BACKWARD);
+        LOGI("DefaultVideoDecoder::seek: %lld, %lld/%lld, %lld/%lld",
+             actionSeekInUs,
+             vPts, pFormatCtx->streams[videoTrack]->duration,
+             aPts, pFormatCtx->streams[audioTrack]->duration);
+    }
+}
 /**
  * Get an audio or a video frame.
  * @param frame 每次返回的地址可能都一样，所以获取一帧音视频后请立即使用，在下次grab之后可能会被释放
  */
 int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
     while (true) {
-        readPkgLock.lock();
+        handleAction();
         int ret = av_read_frame(pFormatCtx, avPacket);
-        readPkgLock.unlock();
         if (0 == ret) {
             if (videoTrack == avPacket->stream_index) {
                 avcodec_send_packet(vCodecContext, avPacket);
@@ -188,7 +200,7 @@ HwAbsMediaFrame *DefaultVideoDecoder::resample(AVFrame *avFrame) {
         return nullptr;
     }
     AVFrame *outFrame = nullptr;
-    if(translator->translate(&outFrame, &avFrame)){
+    if (translator->translate(&outFrame, &avFrame)) {
         return hwFrameAllocator->ref(outFrame);
     }
     return nullptr;
@@ -212,12 +224,12 @@ bool DefaultVideoDecoder::openTrack(int track, AVCodecContext **context) {
     }
     AVCodec *codec = NULL;
     if (AV_CODEC_ID_H264 == avCodecParameters->codec_id) {
-//        codec = avcodec_find_decoder(avCodecParameters->codec_id);
-        codec = avcodec_find_decoder_by_name("h264_mediacodec");
-        if (NULL == codec) {
-            LOGE("Selected AV_CODEC_ID_H264.");
-            codec = avcodec_find_decoder(avCodecParameters->codec_id);
-        }
+        codec = avcodec_find_decoder(avCodecParameters->codec_id);
+//        codec = avcodec_find_decoder_by_name("h264_mediacodec");
+//        if (NULL == codec) {
+//            LOGE("Selected AV_CODEC_ID_H264.");
+//            codec = avcodec_find_decoder(avCodecParameters->codec_id);
+//        }
     } else {
         codec = avcodec_find_decoder(avCodecParameters->codec_id);
     }
@@ -307,16 +319,7 @@ void DefaultVideoDecoder::matchPts(AVFrame *frame, int track) {
 }
 
 void DefaultVideoDecoder::seek(int64_t us) {
-    int64_t vPts = pFormatCtx->streams[videoTrack]->duration * us / 100;
-    av_seek_frame(pFormatCtx, videoTrack, vPts, AVSEEK_FLAG_BACKWARD);
-
-    int64_t aPts = pFormatCtx->streams[audioTrack]->duration * us / 100;
-    readPkgLock.lock();
-    av_seek_frame(pFormatCtx, audioTrack, aPts, AVSEEK_FLAG_BACKWARD);
-    readPkgLock.unlock();
-    LOGI("DefaultVideoDecoder::seek: %lld/%lld, %lld/%lld",
-         vPts, pFormatCtx->streams[videoTrack]->duration,
-         aPts, pFormatCtx->streams[audioTrack]->duration);
+    actionSeekInUs = us;
 }
 
 int64_t DefaultVideoDecoder::getVideoDuration() {
