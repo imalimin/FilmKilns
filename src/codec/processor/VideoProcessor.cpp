@@ -62,7 +62,13 @@ void VideoProcessor::start() {
 void VideoProcessor::pause() {
     if (pipeline) {
         Message *msg = new Message(EVENT_VIDEO_PAUSE, nullptr);
-        pipeline->postEvent(msg);
+        pipeline->postEventAtFront(msg);
+    }
+}
+void VideoProcessor::stop() {
+    if (pipeline) {
+        Message *msg = new Message(EVENT_VIDEO_STOP, nullptr);
+        pipeline->postEventAtFront(msg);
     }
 }
 

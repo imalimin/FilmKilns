@@ -80,6 +80,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         VideoProcessor *p = getHandler(handler);
+        p->stop();
         delete p;
     }
 }
