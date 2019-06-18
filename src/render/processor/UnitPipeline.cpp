@@ -57,9 +57,9 @@ void UnitPipeline::postEvent(Message *msg1, bool front) {
         simpleLock.lock();
         if (available) {
             if (front) {
-                pipeline->sendMessage(msg1);
-            } else {
                 pipeline->sendMessageAtFront(msg1);
+            } else {
+                pipeline->sendMessage(msg1);
             }
         } else {
             delete msg1;
