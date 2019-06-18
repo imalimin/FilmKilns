@@ -4,11 +4,17 @@
  * This source code is licensed under the GPL license found in the
  * LICENSE file in the root directory of this source tree.
  */
-#include "BlockQueue.h"
-#include "Message.h"
 
 #ifndef HARDWAREVIDEOCODEC_MESSAGEQUEUE_H
 #define HARDWAREVIDEOCODEC_MESSAGEQUEUE_H
+
+#include "Message.h"
+#include <string>
+#include <pthread.h>
+#include <list>
+#include "log.h"
+#include "functional"
+#include "BlockQueue.h"
 
 class MessageQueue : public Object {
 public:
@@ -18,6 +24,8 @@ public:
 
     void offer(Message *msg);
 
+    void offerAtFront(Message *msg);
+
     Message *take();
 
     int size();
@@ -26,12 +34,14 @@ public:
 
     virtual void notify() override;
 
-    void remove(function<bool(Message *e)> filter) {
-        queue->remove(filter);
-    }
+    void clear();
+
+    void remove(function<bool(Message *e)> filter);
 
 private:
-    BlockQueue<Message> *queue = nullptr;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+    list<Message *> queue;
 };
 
 #endif //HARDWAREVIDEOCODEC_MESSAGEQUEUE_H
