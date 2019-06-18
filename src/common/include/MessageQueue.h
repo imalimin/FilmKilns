@@ -36,7 +36,7 @@ public:
 
     void clear();
 
-    void remove(function<bool(Message *e)> filter);
+    void removeAllMessage(const int what);
 
     void printQueue();
 

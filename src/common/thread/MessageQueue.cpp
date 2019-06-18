@@ -76,12 +76,12 @@ void MessageQueue::clear() {
     pthread_mutex_unlock(&mutex);
 }
 
-void MessageQueue::remove(function<bool(Message *e)> filter) {
+void MessageQueue::removeAllMessage(const int what) {
     pthread_mutex_lock(&mutex);
     list<Message *>::iterator itr = queue.begin();
     while (itr != queue.end()) {
         Message *e = *itr;
-        if (filter(e)) {
+        if (what == e->what) {
             queue.remove(e);
             delete e;
         }
