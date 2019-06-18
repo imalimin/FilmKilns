@@ -63,6 +63,16 @@ public:
     static int getBytesPerSample(HwFrameFormat format);
 
     /**
+     * Convert to AVPixelFormat
+     */
+    static AVPixelFormat convertVideoFrameFormat(HwFrameFormat format);
+
+    /**
+     * Convert to HwFrameFormat
+     */
+    static HwFrameFormat convertToVideoFrameFormat(AVPixelFormat format);
+
+    /**
      * For video
      */
     static int getImageSize(HwFrameFormat format, int width, int height);

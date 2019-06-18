@@ -101,14 +101,17 @@ HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
 }
 
 HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
-    int size = avFrame->width * avFrame->height * 3 / 2;
     HwAbsMediaFrame *frame = nullptr;
     unRefLock.lock();
     if (unRefQueue.size() > 0) {
+        int byteCount = HwAbsMediaFrame::getImageSize(
+                HwAbsMediaFrame::convertToAudioFrameFormat(
+                        static_cast<AVSampleFormat>(avFrame->format)),
+                avFrame->width, avFrame->height);
         list<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->isVideo()
-                && (*itr)->getBufferSize() == size) {//帧类型相同，data大小相等，则可以复用
+                && (*itr)->getBufferSize() == byteCount) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
                 unRefQueue.remove(frame);
                 break;
@@ -118,18 +121,34 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
     }
     unRefLock.unlock();
     if (!frame) {
-        frame = new HwVideoFrame(this, HW_IMAGE_YV12,
+        frame = new HwVideoFrame(this,
+                                 HwAbsMediaFrame::convertToVideoFrameFormat(
+                                         static_cast<AVPixelFormat>(avFrame->format)),
                                  static_cast<uint32_t>(avFrame->width),
                                  static_cast<uint32_t>(avFrame->height));
     }
     frame->setPts(avFrame->pts);
-    if (avFrame->format == AV_PIX_FMT_YUV420P) {
-        int size = avFrame->width * avFrame->height;
-        memcpy(frame->getBuffer()->getData(), avFrame->data[0], size);
-        memcpy(frame->getBuffer()->getData() + size, avFrame->data[1], size / 4);
-        memcpy(frame->getBuffer()->getData() + size + size / 4, avFrame->data[2], size / 4);
-    } else {
-        copyInfo(frame, avFrame);
+    int pixelCount = avFrame->width * avFrame->height;
+    switch (frame->getFormat()) {
+        case HW_IMAGE_YV12: {
+            memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
+            memcpy(frame->getBuffer()->getData() + pixelCount, avFrame->data[1], pixelCount / 4);
+            memcpy(frame->getBuffer()->getData() + pixelCount + pixelCount / 4, avFrame->data[2],
+                   pixelCount / 4);
+            break;
+        }
+        case HW_IMAGE_NV12: {
+            memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
+            int uvSize = pixelCount / 4;
+            for (int i = 0; i < uvSize; ++i) {
+                *(frame->getBuffer()->getData() + pixelCount + i) = avFrame->data[1][i * 2];
+                *(frame->getBuffer()->getData() + pixelCount + uvSize + i) = avFrame->data[1][
+                        i * 2 + 1];
+            }
+            break;
+        }
+        default:
+            copyInfo(frame, avFrame);
     }
     refLock.lock();
     refQueue.push_front(frame);

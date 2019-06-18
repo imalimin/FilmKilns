@@ -25,6 +25,28 @@ int HwAbsMediaFrame::getBytesPerSample(HwFrameFormat format) {
     return av_get_bytes_per_sample(convertAudioFrameFormat(format));
 }
 
+AVPixelFormat HwAbsMediaFrame::convertVideoFrameFormat(HwFrameFormat format) {
+    switch (format) {
+        case HW_IMAGE_YV12:
+            return AV_PIX_FMT_YUV420P;
+        case HW_IMAGE_NV12:
+            return AV_PIX_FMT_NV12;
+        default:
+            return AV_PIX_FMT_NONE;
+    }
+}
+
+HwFrameFormat HwAbsMediaFrame::convertToVideoFrameFormat(AVPixelFormat format) {
+    switch (format) {
+        case AV_PIX_FMT_YUV420P:
+            return HW_IMAGE_YV12;
+        case AV_PIX_FMT_NV12:
+            return HW_IMAGE_NV12;
+        default:
+            return HW_FMT_NONE;
+    }
+}
+
 int HwAbsMediaFrame::getImageSize(HwFrameFormat format, int width, int height) {
     switch (format) {
         case HW_IMAGE_RGB:
