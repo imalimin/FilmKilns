@@ -70,7 +70,7 @@ void MessageQueue::clear() {
     while (queue.size() > 0) {
         Message *e = queue.front();
         queue.pop_front();
-        delete &e;
+        delete e;
     }
     queue.clear();
     pthread_mutex_unlock(&mutex);
