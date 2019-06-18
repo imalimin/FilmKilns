@@ -19,6 +19,7 @@ Video::Video() : HwStreamMedia() {
     registerEvent(EVENT_VIDEO_SEEK, reinterpret_cast<EventFunc>(&Video::eventSeek));
     registerEvent(EVENT_VIDEO_SET_SOURCE, reinterpret_cast<EventFunc>(&Video::eventSetSource));
     registerEvent(EVENT_VIDEO_LOOP, reinterpret_cast<EventFunc>(&Video::eventLoop));
+    registerEvent(EVENT_VIDEO_STOP, reinterpret_cast<EventFunc>(&Video::eventStop));
     decoder = new AsynVideoDecoder();
 }
 
@@ -30,6 +31,7 @@ Video::Video(HandlerThread *handlerThread) : HwStreamMedia(handlerThread) {
     registerEvent(EVENT_VIDEO_SEEK, reinterpret_cast<EventFunc>(&Video::eventSeek));
     registerEvent(EVENT_VIDEO_SET_SOURCE, reinterpret_cast<EventFunc>(&Video::eventSetSource));
     registerEvent(EVENT_VIDEO_LOOP, reinterpret_cast<EventFunc>(&Video::eventLoop));
+    registerEvent(EVENT_VIDEO_STOP, reinterpret_cast<EventFunc>(&Video::eventStop));
     decoder = new AsynVideoDecoder();
 }
 
@@ -99,6 +101,7 @@ bool Video::eventSeek(Message *msg) {
 
 bool Video::eventStop(Message *msg) {
     playState = STOP;
+    Logcat::i("HWVC", "Video::eventStop");
     return true;
 }
 
@@ -108,12 +111,14 @@ bool Video::eventSetSource(Message *msg) {
 }
 
 void Video::loop() {
-    postEvent(new Message(EVENT_VIDEO_LOOP, nullptr));
+    Message *msg = new Message(EVENT_VIDEO_LOOP, nullptr);
+    msg->msg = "GRAB";
+    postEvent(msg);
 }
 
 bool Video::eventLoop(Message *msg) {
     if (PLAYING != playState) {
-        return false;
+        return true;
     }
     simpleLock.lock();
     int ret = grab();
@@ -142,17 +147,19 @@ int Video::grab() {
     int ret = decoder->grab(&frame);
     Logcat::i("HWVC", "Video::grab cost: %lld, ret: %d", getCurrentTimeUS() - time, ret);
     if (!frame) {
+        Logcat::i("HWVC", "Video::grab wait");
+        waitLock.wait(300000);
         return ret;
     }
 
     if (frame->isVideo()) {
-        Logcat::i("HWVC", "Video::play picture");
+        Logcat::i("HWVC", "Video::play picture pts=%d", frame->getPts());
         HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
         lastShowTime = getCurrentTimeUS();
         int64_t curPts = frame->getPts();
         if (lastPts > 0) {
             int64_t t = (curPts - lastPts) - (getCurrentTimeUS() - lastShowTime);
-            simpleLock.wait(t);
+            waitLock.wait(t);
             LOGI("Video::grab %d x %d, delta time: %lld, wait time: %lld",
                  videoFrame->getWidth(),
                  videoFrame->getHeight(),
@@ -190,7 +197,8 @@ int Video::grab() {
         return MEDIA_TYPE_VIDEO;
     } else if (frame->isAudio()) {
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
-        Logcat::i("HWVC", "Video::play audio: %d, %lld, %lld",
+        Logcat::i("HWVC", "Video::play audio pts=%d, %d, %lld, %d",
+                  frame->getPts(),
                   audioFrame->getChannels(),
                   audioFrame->getSampleCount(),
                   audioFrame->getBufferSize());
@@ -202,6 +210,7 @@ int Video::grab() {
 bool Video::invalidate(int tex, uint32_t width, uint32_t height) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     msg->obj = new ObjectBox(new Size(width, height));
+    msg->msg = "RENDER";
     msg->arg1 = yuvFilter->getFrameBuffer()->getFrameTexture();
     postEvent(msg);
     return true;
