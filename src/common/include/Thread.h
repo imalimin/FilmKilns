@@ -4,17 +4,22 @@
  * This source code is licensed under the GPL license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
+#ifndef HARDWAREVIDEOCODEC_THREAD_H
+#define HARDWAREVIDEOCODEC_THREAD_H
+
 #include <pthread.h>
+#include <thread>
 #include <string>
 #include <functional>
 #include "Object.h"
 
 using namespace std;
-#ifndef HARDWAREVIDEOCODEC_THREAD_H
-#define HARDWAREVIDEOCODEC_THREAD_H
-
 
 class Thread : public Object {
+public:
+    static bool sleep(int64_t us);
+
 public:
     string name;
     function<void()> runnable;

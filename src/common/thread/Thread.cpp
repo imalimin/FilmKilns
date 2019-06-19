@@ -8,6 +8,11 @@
 #include <assert.h>
 #include "../include/log.h"
 
+bool Thread::sleep(int64_t us) {
+    this_thread::sleep_for(chrono::nanoseconds(us * 1000));
+    return true;
+}
+
 static void *run(void *arg) {
     Thread *thread = static_cast<Thread *>(arg);
     LOGI("Thread(%ld) start", pthread_self());
