@@ -10,6 +10,7 @@
 #include "TimeUtils.h"
 #include "../include/HwVideoFrame.h"
 #include "../include/HwAudioFrame.h"
+#include "Thread.h"
 
 Video::Video() : HwStreamMedia() {
     name = __FUNCTION__;
@@ -148,7 +149,7 @@ int Video::grab() {
     Logcat::i("HWVC", "Video::grab cost: %lld, ret: %d", getCurrentTimeUS() - time, ret);
     if (!frame) {
         Logcat::i("HWVC", "Video::grab wait");
-        waitLock.wait(300000);
+        Thread::sleep(300000);
         return ret;
     }
 
@@ -159,7 +160,7 @@ int Video::grab() {
         int64_t curPts = frame->getPts();
         if (lastPts > 0) {
             int64_t t = (curPts - lastPts) - (getCurrentTimeUS() - lastShowTime);
-            waitLock.wait(t);
+            Thread::sleep(t);
             LOGI("Video::grab %d x %d, delta time: %lld, wait time: %lld",
                  videoFrame->getWidth(),
                  videoFrame->getHeight(),
