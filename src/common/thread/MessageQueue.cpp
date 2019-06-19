@@ -29,9 +29,9 @@ void MessageQueue::offer(Message *msg) {
 }
 
 void MessageQueue::offerAtFront(Message *msg) {
-    queue.push_front(msg);
     pthread_mutex_lock(&mutex);
 
+    queue.push_front(msg);
     pthread_cond_broadcast(&cond);
     pthread_mutex_unlock(&mutex);
 }
