@@ -50,7 +50,7 @@ bool AsynVideoDecoder::grab() {
         grabLock.wait();
         return true;
     }
-//    Logcat::i("HWVC", "HwFrameAllocator::info: cache %d", cache.size());
+//    Logcat::i("HWVC", "HwFrameAllocator::grab  cache %d", cache.size());
     HwAbsMediaFrame *frame = nullptr;
     int ret = MEDIA_TYPE_UNKNOWN;
     releaseLock.lock();

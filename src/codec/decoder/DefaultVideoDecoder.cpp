@@ -111,14 +111,22 @@ bool DefaultVideoDecoder::prepare(string path) {
 void DefaultVideoDecoder::handleAction() {
     if (actionSeekInUs >= 0) {
         int64_t vPts = pFormatCtx->streams[videoTrack]->duration * actionSeekInUs / 100;
+        vPts = av_rescale_q_rnd(vPts, pFormatCtx->streams[videoTrack]->time_base,
+                                pFormatCtx->streams[videoTrack]->codec->time_base,
+                                AV_ROUND_NEAR_INF);
         int64_t aPts = pFormatCtx->streams[audioTrack]->duration * actionSeekInUs / 100;
-        actionSeekInUs = -1;
+        aPts = av_rescale_q_rnd(aPts, pFormatCtx->streams[audioTrack]->time_base,
+                                pFormatCtx->streams[audioTrack]->codec->time_base,
+                                AV_ROUND_NEAR_INF);
         av_seek_frame(pFormatCtx, videoTrack, vPts, AVSEEK_FLAG_BACKWARD);
         av_seek_frame(pFormatCtx, audioTrack, aPts, AVSEEK_FLAG_BACKWARD);
+//        avcodec_flush_buffers(pFormatCtx->streams[videoTrack]->codec);
+//        avcodec_flush_buffers(pFormatCtx->streams[audioTrack]->codec);
         LOGI("DefaultVideoDecoder::seek: %lld, %lld/%lld, %lld/%lld",
              actionSeekInUs,
              vPts, pFormatCtx->streams[videoTrack]->duration,
              aPts, pFormatCtx->streams[audioTrack]->duration);
+        actionSeekInUs = -1;
     }
 }
 /**
@@ -126,8 +134,8 @@ void DefaultVideoDecoder::handleAction() {
  * @param frame 每次返回的地址可能都一样，所以获取一帧音视频后请立即使用，在下次grab之后可能会被释放
  */
 int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
+    handleAction();
     while (true) {
-        handleAction();
         int ret = av_read_frame(pFormatCtx, avPacket);
         if (0 == ret) {
             if (videoTrack == avPacket->stream_index) {
