@@ -25,7 +25,7 @@ extern "C" {
 }
 #endif
 
-class HwFrameAllocator : virtual public HwSourcesAllocator {
+class HwFrameAllocator : public HwSourcesAllocator {
 public:
     HwFrameAllocator();
 

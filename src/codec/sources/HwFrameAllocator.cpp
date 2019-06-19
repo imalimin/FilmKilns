@@ -44,7 +44,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(AVFrame *avFrame) {
 
 bool HwFrameAllocator::recycle(HwSources **entity) {
     HwAbsMediaFrame *frame = reinterpret_cast<HwAbsMediaFrame *>(entity[0]);
-    entity[0] = nullptr;
+//    entity[0] = nullptr;
     if (!isRef(frame)) {
         return false;
     }
@@ -58,13 +58,16 @@ bool HwFrameAllocator::recycle(HwSources **entity) {
 }
 
 bool HwFrameAllocator::isRef(HwAbsMediaFrame *frame) {
+    refLock.lock();
     list<HwAbsMediaFrame *>::iterator itr = refQueue.begin();
     while (itr != refQueue.end()) {
         if (*itr == frame) {
+            refLock.unlock();
             return true;
         }
         ++itr;
     }
+    refLock.unlock();
     return false;
 }
 
