@@ -105,8 +105,8 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
     unRefLock.lock();
     if (unRefQueue.size() > 0) {
         int byteCount = HwAbsMediaFrame::getImageSize(
-                HwAbsMediaFrame::convertToAudioFrameFormat(
-                        static_cast<AVSampleFormat>(avFrame->format)),
+                HwAbsMediaFrame::convertToVideoFrameFormat(
+                        static_cast<AVPixelFormat>(avFrame->format)),
                 avFrame->width, avFrame->height);
         list<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
