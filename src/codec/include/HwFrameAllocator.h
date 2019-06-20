@@ -12,6 +12,7 @@
 #include "HwSourcesAllocator.h"
 #include "HwAbsMediaFrame.h"
 #include <set>
+#include <map>
 #include "Logcat.h"
 #include <SimpleLock.h>
 
@@ -60,6 +61,9 @@ private:
     SimpleLock unRefLock;
     set<HwAbsMediaFrame *> refQueue;
     set<HwAbsMediaFrame *> unRefQueue;
+    SimpleLock logMapLock;
+    map<HwAbsMediaFrame *, int> logMap;
+    int count = 0;
 };
 
 

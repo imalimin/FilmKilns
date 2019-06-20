@@ -8,6 +8,7 @@
 #include "../include/HwFrameAllocator.h"
 #include "../include/HwVideoFrame.h"
 #include "../include/HwAudioFrame.h"
+#include <sstream>
 
 HwFrameAllocator::HwFrameAllocator() : HwSourcesAllocator() {
 
@@ -32,6 +33,7 @@ HwFrameAllocator::~HwFrameAllocator() {
     }
     refQueue.clear();
     refLock.unlock();
+    logMap.clear();
 }
 
 HwAbsMediaFrame *HwFrameAllocator::ref(AVFrame *avFrame) {
@@ -44,16 +46,30 @@ HwAbsMediaFrame *HwFrameAllocator::ref(AVFrame *avFrame) {
 
 bool HwFrameAllocator::recycle(HwSources **entity) {
     HwAbsMediaFrame *frame = reinterpret_cast<HwAbsMediaFrame *>(entity[0]);
+    logMapLock.lock();
+    --logMap[frame];
+    ++count;
+    if (count >= 30) {
+        count = 0;
+        ostringstream oss;
+        map<HwAbsMediaFrame *, int>::iterator itr = logMap.begin();
+        while (itr != logMap.end()) {
+            oss << "[" << (*itr).first << "," << (*itr).second << "], ";
+            ++itr;
+        }
+        Logcat::i("HWVC", "HwFrameAllocator(%p):\n%s", oss.str().c_str());
+    }
+    logMapLock.unlock();
 //    entity[0] = nullptr;
     refLock.lock();
     set<HwAbsMediaFrame *>::iterator itr = refQueue.find(frame);
-    if(refQueue.end() == itr){
+    if (refQueue.end() == itr) {
         Logcat::i("HWVC", "HwSources(%p) recycle by allocator(%p) failed a", frame, this);
         refLock.unlock();
         return false;
     }
     set<HwAbsMediaFrame *>::iterator itr2 = refQueue.erase(itr);
-    if(refQueue.end() == itr2){
+    if (refQueue.end() == itr2) {
         Logcat::i("HWVC", "HwSources(%p) recycle by allocator(%p) failed b", frame, this);
         refLock.unlock();
         return false;
@@ -201,6 +217,13 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
     refLock.lock();
     refQueue.insert(frame);
     refLock.unlock();
+    logMapLock.lock();
+    if (logMap.end() == logMap.find(frame)) {
+        logMap[frame] = 0;
+    } else {
+        ++logMap[frame];
+    }
+    logMapLock.unlock();
     return frame;
 }
 
