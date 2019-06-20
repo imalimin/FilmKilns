@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "HwSourcesAllocator.h"
 #include "HwAbsMediaFrame.h"
-#include <list>
+#include <set>
 #include "Logcat.h"
 #include <SimpleLock.h>
 
@@ -58,8 +58,8 @@ private:
 private:
     SimpleLock refLock;
     SimpleLock unRefLock;
-    list<HwAbsMediaFrame *> refQueue;
-    list<HwAbsMediaFrame *> unRefQueue;
+    set<HwAbsMediaFrame *> refQueue;
+    set<HwAbsMediaFrame *> unRefQueue;
 };
 
 

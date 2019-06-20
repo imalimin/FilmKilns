@@ -15,7 +15,7 @@ HwFrameAllocator::HwFrameAllocator() : HwSourcesAllocator() {
 
 HwFrameAllocator::~HwFrameAllocator() {
     unRefLock.lock();
-    list<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
+    set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
     while (itr != unRefQueue.end()) {
         HwAbsMediaFrame *frame = *itr;
         delete frame;
@@ -45,42 +45,40 @@ HwAbsMediaFrame *HwFrameAllocator::ref(AVFrame *avFrame) {
 bool HwFrameAllocator::recycle(HwSources **entity) {
     HwAbsMediaFrame *frame = reinterpret_cast<HwAbsMediaFrame *>(entity[0]);
 //    entity[0] = nullptr;
-    if (!isRef(frame)) {
+    refLock.lock();
+    set<HwAbsMediaFrame *>::iterator itr = refQueue.find(frame);
+    if(refQueue.end() == itr){
+        Logcat::i("HWVC", "HwSources(%p) recycle by allocator(%p) failed a", frame, this);
+        refLock.unlock();
         return false;
     }
-    unRefLock.lock();
-    unRefQueue.push_front(frame);
-    unRefLock.unlock();
-    refLock.lock();
-    refQueue.remove(frame);
+    set<HwAbsMediaFrame *>::iterator itr2 = refQueue.erase(itr);
+    if(refQueue.end() == itr2){
+        Logcat::i("HWVC", "HwSources(%p) recycle by allocator(%p) failed b", frame, this);
+        refLock.unlock();
+        return false;
+    }
     refLock.unlock();
+    unRefLock.lock();
+    unRefQueue.insert(*itr);
+    unRefLock.unlock();
     return true;
 }
 
 bool HwFrameAllocator::isRef(HwAbsMediaFrame *frame) {
-    refLock.lock();
-    list<HwAbsMediaFrame *>::iterator itr = refQueue.begin();
-    while (itr != refQueue.end()) {
-        if (*itr == frame) {
-            refLock.unlock();
-            return true;
-        }
-        ++itr;
-    }
-    refLock.unlock();
-    return false;
+    return refQueue.end() != refQueue.find(frame);
 }
 
 HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
     HwAbsMediaFrame *frame = nullptr;
     unRefLock.lock();
     if (unRefQueue.size() > 0) {
-        list<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
+        set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->isAudio()
                 && (*itr)->getBufferSize() == avFrame->linesize[0]) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
-                unRefQueue.remove(frame);
+                unRefQueue.erase(itr);
                 break;
             }
             ++itr;
@@ -98,7 +96,7 @@ HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
     memset(frame->getBuffer()->getData(), 0, frame->getBufferSize());
     copyInfo(frame, avFrame);
     refLock.lock();
-    refQueue.push_front(frame);
+    refQueue.insert(frame);
     refLock.unlock();
     return frame;
 }
@@ -111,12 +109,12 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
                 HwAbsMediaFrame::convertToVideoFrameFormat(
                         static_cast<AVPixelFormat>(avFrame->format)),
                 avFrame->width, avFrame->height);
-        list<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
+        set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->isVideo()
                 && (*itr)->getBufferSize() == byteCount) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
-                unRefQueue.remove(frame);
+                unRefQueue.erase(itr);
                 break;
             }
             ++itr;
@@ -154,7 +152,7 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
             copyInfo(frame, avFrame);
     }
     refLock.lock();
-    refQueue.push_front(frame);
+    refQueue.insert(frame);
     refLock.unlock();
     return frame;
 }
@@ -168,12 +166,12 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
     HwAbsMediaFrame *frame = nullptr;
     unRefLock.lock();
     if (unRefQueue.size() > 0) {
-        list<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
+        set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->getFormat() == src->getFormat()
                 && (*itr)->getBufferSize() == src->getBufferSize()) {
                 frame = *itr;
-                unRefQueue.remove(frame);
+                set<HwAbsMediaFrame *>::iterator itr2 = unRefQueue.erase(itr);
                 break;
             }
             ++itr;
@@ -191,6 +189,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
                                      videoFrame->getWidth(),
                                      videoFrame->getHeight());
             videoFrame->clone(frame);
+            Logcat::i("HWVC", "HwSources(%p) alloc by allocator(%p)", frame, this);
         } else if (src->isAudio()) {
             HwAudioFrame *audioFrame = static_cast<HwAudioFrame *>(src);
 
@@ -200,7 +199,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
         }
     }
     refLock.lock();
-    refQueue.push_front(frame);
+    refQueue.insert(frame);
     refLock.unlock();
     return frame;
 }
