@@ -15,7 +15,7 @@
 #include "HwFrameAllocator.h"
 #include "SimpleLock.h"
 #include "PlayState.h"
-#include <queue>
+#include <list>
 
 using namespace std;
 
@@ -59,7 +59,7 @@ private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
     DefaultAudioDecoder *decoder = nullptr;
     EventPipeline *pipeline = nullptr;
-    queue<HwAbsMediaFrame *> cache;
+    list<HwAbsMediaFrame *> cache;
     HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收
     PlayState playState = STOP;
     SimpleLock grabLock;
