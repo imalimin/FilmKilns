@@ -61,8 +61,6 @@ private:
     SimpleLock unRefLock;
     set<HwAbsMediaFrame *> refQueue;
     set<HwAbsMediaFrame *> unRefQueue;
-    SimpleLock logMapLock;
-    map<HwAbsMediaFrame *, int> logMap;
     int count = 0;
 };
 

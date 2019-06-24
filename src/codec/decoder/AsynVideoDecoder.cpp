@@ -73,7 +73,7 @@ int AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
         outputFrame->recycle();
     }
     hwFrameAllocator->printInfo();
-    outputFrame = cache.back();
+    outputFrame = cache.front();
     cache.pop_front();
     grabLock.notify();
     *frame = outputFrame;

@@ -33,7 +33,6 @@ HwFrameAllocator::~HwFrameAllocator() {
     }
     refQueue.clear();
     refLock.unlock();
-    logMap.clear();
 }
 
 HwAbsMediaFrame *HwFrameAllocator::ref(AVFrame *avFrame) {
@@ -46,21 +45,6 @@ HwAbsMediaFrame *HwFrameAllocator::ref(AVFrame *avFrame) {
 
 bool HwFrameAllocator::recycle(HwSources **entity) {
     HwAbsMediaFrame *frame = reinterpret_cast<HwAbsMediaFrame *>(entity[0]);
-    logMapLock.lock();
-    --logMap[frame];
-    ++count;
-    if (count >= 30) {
-        count = 0;
-        ostringstream oss;
-        map<HwAbsMediaFrame *, int>::iterator itr = logMap.begin();
-        while (itr != logMap.end()) {
-            oss << "[" << itr->first << "," << itr->second << "], ";
-            ++itr;
-        }
-        Logcat::i("HWVC", "HwFrameAllocator(%p):size %d, %s",
-                  this, logMap.size(), oss.str().c_str());
-    }
-    logMapLock.unlock();
 //    entity[0] = nullptr;
     refLock.lock();
     set<HwAbsMediaFrame *>::iterator itr = refQueue.find(frame);
@@ -213,9 +197,6 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
     refLock.lock();
     refQueue.insert(frame);
     refLock.unlock();
-    logMapLock.lock();
-    ++logMap[frame];
-    logMapLock.unlock();
     return frame;
 }
 
