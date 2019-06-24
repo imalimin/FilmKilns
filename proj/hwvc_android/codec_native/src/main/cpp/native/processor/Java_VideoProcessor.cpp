@@ -6,7 +6,7 @@
 */
 #include <jni.h>
 #include <log.h>
-#include "VideoProcessor.h"
+#include "HwVideoProcessor.h"
 #include "../include/HwAndroidWindow.h"
 
 #ifdef __cplusplus
@@ -20,13 +20,13 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_VERSION_1_6;
 }
 
-static VideoProcessor *getHandler(jlong handler) {
-    return reinterpret_cast<VideoProcessor *>(handler);
+static HwVideoProcessor *getHandler(jlong handler) {
+    return reinterpret_cast<HwVideoProcessor *>(handler);
 }
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_create
         (JNIEnv *env, jobject thiz) {
-    return reinterpret_cast<jlong>(new VideoProcessor());
+    return reinterpret_cast<jlong>(new HwVideoProcessor());
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setSource
@@ -79,7 +79,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setFilte
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
-        VideoProcessor *p = getHandler(handler);
+        HwVideoProcessor *p = getHandler(handler);
         p->stop();
         delete p;
     }

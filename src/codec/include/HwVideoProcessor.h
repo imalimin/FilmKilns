@@ -13,11 +13,11 @@
 #include "Filter.h"
 #include "HwWindow.h"
 
-class VideoProcessor : public Object {
+class HwVideoProcessor : public Object {
 public:
-    VideoProcessor();
+    HwVideoProcessor();
 
-    virtual ~VideoProcessor();
+    virtual ~HwVideoProcessor();
 
     void setSource(char *path);
 

@@ -5,18 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/AudioProcessor.h"
+#include "../include/HwAudioProcessor.h"
 #include "../include/HwAudioInput.h"
 #include "../include/HwSpeaker.h"
 #include "ObjectBox.h"
 
-AudioProcessor::AudioProcessor() : Object() {
+HwAudioProcessor::HwAudioProcessor() : Object() {
     pipeline = new UnitPipeline("AudioProcessor");
     pipeline->registerAnUnit(new HwAudioInput());
     pipeline->registerAnUnit(new HwSpeaker());
 }
 
-AudioProcessor::~AudioProcessor() {
+HwAudioProcessor::~HwAudioProcessor() {
     if (pipeline) {
         pipeline->release();
         delete pipeline;
@@ -24,7 +24,7 @@ AudioProcessor::~AudioProcessor() {
     }
 }
 
-void AudioProcessor::setSource(const string *path) {
+void HwAudioProcessor::setSource(const string *path) {
     if (pipeline) {
         Message *msg = new Message(EVENT_AUDIO_SET_SOURCE, nullptr);
         msg->obj = new ObjectBox(new string(path->c_str()));
@@ -32,7 +32,7 @@ void AudioProcessor::setSource(const string *path) {
     }
 }
 
-void AudioProcessor::prepare() {
+void HwAudioProcessor::prepare() {
     if (pipeline) {
         Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
         msg->obj = new ObjectBox(nullptr);
@@ -40,28 +40,28 @@ void AudioProcessor::prepare() {
     }
 }
 
-void AudioProcessor::start() {
+void HwAudioProcessor::start() {
     if (pipeline) {
         Message *msg = new Message(EVENT_AUDIO_START, nullptr);
         pipeline->postEvent(msg);
     }
 }
 
-void AudioProcessor::pause() {
+void HwAudioProcessor::pause() {
     if (pipeline) {
         Message *msg = new Message(EVENT_AUDIO_PAUSE, nullptr);
         pipeline->postEvent(msg);
     }
 }
 
-void AudioProcessor::stop() {
+void HwAudioProcessor::stop() {
     if (pipeline) {
         Message *msg = new Message(EVENT_AUDIO_STOP, nullptr);
         pipeline->postEvent(msg);
     }
 }
 
-void AudioProcessor::seek(int64_t us) {
+void HwAudioProcessor::seek(int64_t us) {
     if (pipeline) {
         pipeline->removeAllMessage(EVENT_AUDIO_SEEK);
         Message *msg = new Message(EVENT_AUDIO_SEEK, nullptr);

@@ -14,11 +14,11 @@
 
 using namespace std;
 
-class AudioProcessor : public Object {
+class HwAudioProcessor : public Object {
 public:
-    AudioProcessor();
+    HwAudioProcessor();
 
-    virtual ~AudioProcessor();
+    virtual ~HwAudioProcessor();
 
     void setSource(const string *path);
 

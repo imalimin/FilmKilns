@@ -17,13 +17,13 @@
 #include "SimpleLock.h"
 #include "NativeWindow.h"
 
-class Video : public HwStreamMedia {
+class HwVideoInput : public HwStreamMedia {
 public:
-    Video();
+    HwVideoInput();
 
-    Video(HandlerThread *handlerThread);
+    HwVideoInput(HandlerThread *handlerThread);
 
-    virtual ~Video();
+    virtual ~HwVideoInput();
 
     bool eventRelease(Message *msg) override;
 

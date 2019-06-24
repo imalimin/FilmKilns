@@ -7,7 +7,7 @@
 #include <jni.h>
 #include <log.h>
 #include <string>
-#include "AudioProcessor.h"
+#include "HwAudioProcessor.h"
 
 using namespace std;
 
@@ -15,13 +15,13 @@ using namespace std;
 extern "C" {
 #endif
 
-static AudioProcessor *getHandler(jlong handler) {
-    return reinterpret_cast<AudioProcessor *>(handler);
+static HwAudioProcessor *getHandler(jlong handler) {
+    return reinterpret_cast<HwAudioProcessor *>(handler);
 }
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_create
         (JNIEnv *env, jobject thiz) {
-    return reinterpret_cast<jlong>(new AudioProcessor());
+    return reinterpret_cast<jlong>(new HwAudioProcessor());
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_setSource
@@ -73,7 +73,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_seek
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
-        AudioProcessor *p = getHandler(handler);
+        HwAudioProcessor *p = getHandler(handler);
         delete p;
     }
 }
