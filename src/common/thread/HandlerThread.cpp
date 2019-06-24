@@ -58,6 +58,10 @@ bool HandlerThread::shouldQuit() {
 
 HandlerThread::~HandlerThread() {
     quitSafely();
+    if (this->queue) {
+        delete this->queue;
+        this->queue = nullptr;
+    }
 }
 
 void HandlerThread::sendMessage(Message *msg) {
@@ -103,10 +107,6 @@ void HandlerThread::quit() {
         mThread->join();
         delete mThread;
         mThread = nullptr;
-    }
-    if (this->queue) {
-        delete this->queue;
-        this->queue = nullptr;
     }
     pthread_mutex_destroy(&mutex);
 }

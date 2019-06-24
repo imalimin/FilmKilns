@@ -14,7 +14,8 @@
 #include <list>
 #include "log.h"
 #include "functional"
-#include "BlockQueue.h"
+
+using namespace std;
 
 class MessageQueue : public Object {
 public:

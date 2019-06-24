@@ -67,11 +67,12 @@ void MessageQueue::notify() {
 void MessageQueue::clear() {
     notify();
     pthread_mutex_lock(&mutex);
-    list<Message *>::iterator itr = queue.begin();
-    while (itr != queue.end()) {
-        Message *e = *itr;
-        delete e;
-        ++itr;
+    while (!queue.empty()) {
+        Message *e = queue.front();
+        if (e) {
+            delete e;
+        }
+        queue.pop_front();
     }
     queue.clear();
     pthread_mutex_unlock(&mutex);
