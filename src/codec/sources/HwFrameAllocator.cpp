@@ -54,10 +54,11 @@ bool HwFrameAllocator::recycle(HwSources **entity) {
         ostringstream oss;
         map<HwAbsMediaFrame *, int>::iterator itr = logMap.begin();
         while (itr != logMap.end()) {
-            oss << "[" << (*itr).first << "," << (*itr).second << "], ";
+            oss << "[" << itr->first << "," << itr->second << "], ";
             ++itr;
         }
-        Logcat::i("HWVC", "HwFrameAllocator(%p):\n%s", oss.str().c_str());
+        Logcat::i("HWVC", "HwFrameAllocator(%p):size %d, %s",
+                  this, logMap.size(), oss.str().c_str());
     }
     logMapLock.unlock();
 //    entity[0] = nullptr;
@@ -68,12 +69,7 @@ bool HwFrameAllocator::recycle(HwSources **entity) {
         refLock.unlock();
         return false;
     }
-    set<HwAbsMediaFrame *>::iterator itr2 = refQueue.erase(itr);
-    if (refQueue.end() == itr2) {
-        Logcat::i("HWVC", "HwSources(%p) recycle by allocator(%p) failed b", frame, this);
-        refLock.unlock();
-        return false;
-    }
+    refQueue.erase(itr);
     refLock.unlock();
     unRefLock.lock();
     unRefQueue.insert(*itr);
@@ -187,7 +183,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
             if ((*itr)->getFormat() == src->getFormat()
                 && (*itr)->getBufferSize() == src->getBufferSize()) {
                 frame = *itr;
-                set<HwAbsMediaFrame *>::iterator itr2 = unRefQueue.erase(itr);
+                unRefQueue.erase(itr);
                 break;
             }
             ++itr;
@@ -218,11 +214,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
     refQueue.insert(frame);
     refLock.unlock();
     logMapLock.lock();
-    if (logMap.end() == logMap.find(frame)) {
-        logMap[frame] = 0;
-    } else {
-        ++logMap[frame];
-    }
+    ++logMap[frame];
     logMapLock.unlock();
     return frame;
 }

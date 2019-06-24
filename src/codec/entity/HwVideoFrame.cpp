@@ -35,7 +35,7 @@ uint64_t HwVideoFrame::duration() {
 }
 
 HwAbsMediaFrame *HwVideoFrame::clone() {
-    HwVideoFrame *destFrame = new HwVideoFrame(allocator, getFormat(), width, height);
+    HwVideoFrame *destFrame = new HwVideoFrame(nullptr, getFormat(), width, height);
     destFrame->setPts(getPts());
     destFrame->setFormat(getFormat());
     memcpy(destFrame->getBuffer()->getData(), getBuffer()->getData(),

@@ -112,9 +112,7 @@ bool Video::eventSetSource(Message *msg) {
 }
 
 void Video::loop() {
-    Message *msg = new Message(EVENT_VIDEO_LOOP, nullptr);
-    msg->msg = "GRAB";
-    postEvent(msg);
+    postEvent(new Message(EVENT_VIDEO_LOOP, nullptr));
 }
 
 bool Video::eventLoop(Message *msg) {

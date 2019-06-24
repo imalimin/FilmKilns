@@ -46,7 +46,7 @@ bool AsynVideoDecoder::prepare(string path) {
 }
 
 bool AsynVideoDecoder::grab() {
-    if (cache.size() >= 20) {
+    if (cache.size() >= 10) {
         grabLock.wait();
         return true;
     }
