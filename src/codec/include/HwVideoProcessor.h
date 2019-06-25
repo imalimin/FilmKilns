@@ -32,6 +32,8 @@ public:
 
     void setFilter(Filter *filter);
 
+    void updateWindow(HwWindow *win);
+
 private:
     UnitPipeline *pipeline = nullptr;
     HandlerThread *unitHandler = nullptr;

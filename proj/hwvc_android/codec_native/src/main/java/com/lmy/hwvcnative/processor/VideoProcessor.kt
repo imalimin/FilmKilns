@@ -41,6 +41,11 @@ class VideoProcessor : CPPObject(), FilterSupport {
         prepare(handler, surface)
     }
 
+    fun updateWindow(surface: Surface) {
+        if (0L == handler) return
+        updateWindow(handler, surface)
+    }
+
     fun start() {
         if (0L == handler) return
         start(handler)
@@ -64,6 +69,7 @@ class VideoProcessor : CPPObject(), FilterSupport {
     private external fun create(): Long
     private external fun setSource(handler: Long, path: String)
     private external fun prepare(handler: Long, surface: Surface)
+    private external fun updateWindow(handler: Long, surface: Surface)
     private external fun setFilter(handler: Long, filter: Long)
     private external fun start(handler: Long)
     private external fun pause(handler: Long)

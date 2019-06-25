@@ -90,3 +90,11 @@ void HwVideoProcessor::setFilter(Filter *filter) {
     msg->obj = new ObjectBox(filter);
     pipeline->postEvent(msg);
 }
+
+void HwVideoProcessor::updateWindow(HwWindow *win) {
+    if (pipeline) {
+        Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
+        msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+        pipeline->postEvent(msg);
+    }
+}

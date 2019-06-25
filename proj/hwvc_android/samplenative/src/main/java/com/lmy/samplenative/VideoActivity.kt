@@ -20,6 +20,7 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
 
     private lateinit var mFilterController: FilterController
     private var processor: VideoProcessor? = VideoProcessor()
+    private var prepared = false
     private var surface: Surface? = null
     private var playing: Boolean = true
 
@@ -60,8 +61,13 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-                processor?.prepare(holder.surface)
-                processor?.start()
+                if (!prepared) {
+                    prepared = true
+                    processor?.prepare(holder.surface)
+                    processor?.start()
+                } else {
+                    processor?.updateWindow(holder.surface)
+                }
             }
 
             override fun surfaceDestroyed(p0: SurfaceHolder?) {
