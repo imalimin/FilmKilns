@@ -87,7 +87,6 @@ void AsynAudioDecoder::loop() {
 }
 
 bool AsynAudioDecoder::grab() {
-    Logcat::i("HWVC", "HwFrameAllocator grab %d", cache.size());
     if (cache.size() >= 10) {
         grabLock.wait();
         return true;
@@ -101,7 +100,7 @@ bool AsynAudioDecoder::grab() {
     }
     if (hwFrameAllocator && frame) {
         frame = hwFrameAllocator->ref(frame);
-        cache.push_back(frame);
+        cache.push(frame);
     }
     releaseLock.unlock();
     return MEDIA_TYPE_EOF != ret;
@@ -117,7 +116,7 @@ int AsynAudioDecoder::grab(HwAbsMediaFrame **frame) {
     }
     hwFrameAllocator->printInfo();
     outputFrame = cache.front();
-    cache.pop_front();
+    cache.pop();
     grabLock.notify();
     *frame = outputFrame;
 //    memset(outputFrame->getData(), 1, outputFrame->getDataSize());

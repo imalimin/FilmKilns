@@ -59,7 +59,7 @@ bool AsynVideoDecoder::grab() {
     }
     if (hwFrameAllocator && frame) {
         frame = hwFrameAllocator->ref(frame);
-        cache.push_back(frame);
+        cache.push(frame);
     }
     releaseLock.unlock();
     return MEDIA_TYPE_EOF != ret;
@@ -74,7 +74,7 @@ int AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
     }
     hwFrameAllocator->printInfo();
     outputFrame = cache.front();
-    cache.pop_front();
+    cache.pop();
     grabLock.notify();
     *frame = outputFrame;
     if ((*frame)->isAudio()) {
