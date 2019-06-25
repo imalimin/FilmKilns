@@ -2,31 +2,31 @@
 // Created by mingyi.li on 2018/12/25.
 //
 
-#include "../include/Screen.h"
+#include "../include/HwScreen.h"
 #include "../include/NormalDrawer.h"
 #include "Size.h"
 #include "Logcat.h"
 
-Screen::Screen() {
+HwScreen::HwScreen() {
     name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Screen::eventPrepare));
-    registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&Screen::eventDraw));
+    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwScreen::eventPrepare));
+    registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
     registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
-                  reinterpret_cast<EventFunc>(&Screen::eventUpdateWindow));
+                  reinterpret_cast<EventFunc>(&HwScreen::eventUpdateWindow));
 }
 
-Screen::Screen(HandlerThread *handlerThread) : Unit(handlerThread) {
+HwScreen::HwScreen(HandlerThread *handlerThread) : Unit(handlerThread) {
     name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Screen::eventPrepare));
-    registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&Screen::eventDraw));
+    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwScreen::eventPrepare));
+    registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
     registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
-                  reinterpret_cast<EventFunc>(&Screen::eventUpdateWindow));
+                  reinterpret_cast<EventFunc>(&HwScreen::eventUpdateWindow));
 }
 
-Screen::~Screen() {
+HwScreen::~HwScreen() {
 }
 
-bool Screen::eventRelease(Message *msg) {
+bool HwScreen::eventRelease(Message *msg) {
     Logcat::i("HWVC", "Screen::eventRelease");
     post([this] {
         if (egl) {
@@ -44,7 +44,7 @@ bool Screen::eventRelease(Message *msg) {
     return true;
 }
 
-bool Screen::eventPrepare(Message *msg) {
+bool HwScreen::eventPrepare(Message *msg) {
     Logcat::i("HWVC", "Screen::eventPrepare");
     NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
     this->width = nw->win->getWidth();
@@ -55,7 +55,7 @@ bool Screen::eventPrepare(Message *msg) {
     return true;
 }
 
-bool Screen::eventUpdateWindow(Message *msg) {
+bool HwScreen::eventUpdateWindow(Message *msg) {
     Logcat::i("HWVC", "Screen::eventUpdateWindow");
     NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
     post([this, nw] {
@@ -66,7 +66,7 @@ bool Screen::eventUpdateWindow(Message *msg) {
     return true;
 }
 
-bool Screen::eventDraw(Message *msg) {
+bool HwScreen::eventDraw(Message *msg) {
     Logcat::i("HWVC", "Screen::eventDraw");
     Size *size = static_cast<Size *>(msg->tyrUnBox());
     GLuint tex = msg->arg1;
@@ -79,7 +79,7 @@ bool Screen::eventDraw(Message *msg) {
     return true;
 }
 
-void Screen::initWindow(NativeWindow *nw) {
+void HwScreen::initWindow(NativeWindow *nw) {
     if (!egl) {
         if (nw->egl) {
             egl = new Egl(nw->egl, nw->win);
@@ -97,7 +97,7 @@ void Screen::initWindow(NativeWindow *nw) {
     }
 }
 
-void Screen::draw(GLuint texture) {
+void HwScreen::draw(GLuint texture) {
 //    string glslVersion = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
 //    LOGE("version: %s", glslVersion.c_str());
     if (egl->isAttachWindow()) {
@@ -109,7 +109,7 @@ void Screen::draw(GLuint texture) {
     egl->swapBuffers();
 }
 
-void Screen::setScaleType(int dw, int dh) {
+void HwScreen::setScaleType(int dw, int dh) {
     int viewWidth = egl->width();
     int viewHeight = egl->height();
     float viewScale = viewWidth / (float) viewHeight;

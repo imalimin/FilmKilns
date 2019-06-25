@@ -7,7 +7,6 @@
 
 #include "Object.h"
 #include "UnitPipeline.h"
-#include "Screen.h"
 #include "Filter.h"
 #include "HwWindow.h"
 

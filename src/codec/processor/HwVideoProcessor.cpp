@@ -5,8 +5,9 @@
 * LICENSE file in the root directory of this source tree.
 */
 #include "../include/HwVideoProcessor.h"
-#include "Render.h"
+#include "HwRender.h"
 #include "../include/HwVideoInput.h"
+#include "HwScreen.h"
 #include "NativeWindow.h"
 #include "ObjectBox.h"
 #include <string>
@@ -16,8 +17,8 @@ HwVideoProcessor::HwVideoProcessor() : Object() {
 //    screenHandler = new HandlerThread("ScreenUnit");
     pipeline = new UnitPipeline("VideoProcessor");
     pipeline->registerAnUnit(new HwVideoInput());
-    pipeline->registerAnUnit(new Render());
-    pipeline->registerAnUnit(new Screen());
+    pipeline->registerAnUnit(new HwRender());
+    pipeline->registerAnUnit(new HwScreen());
 }
 
 HwVideoProcessor::~HwVideoProcessor() {
@@ -65,6 +66,7 @@ void HwVideoProcessor::pause() {
         pipeline->postEventAtFront(msg);
     }
 }
+
 void HwVideoProcessor::stop() {
     if (pipeline) {
         Message *msg = new Message(EVENT_VIDEO_STOP, nullptr);

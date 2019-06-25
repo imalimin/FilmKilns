@@ -10,13 +10,13 @@
 #include "BaseDrawer.h"
 #include "NativeWindow.h"
 
-class Screen : public Unit {
+class HwScreen : public Unit {
 public:
-    Screen();
+    HwScreen();
 
-    Screen(HandlerThread *handlerThread);
+    HwScreen(HandlerThread *handlerThread);
 
-    virtual ~Screen();
+    virtual ~HwScreen();
 
     bool eventRelease(Message *msg) override;
 

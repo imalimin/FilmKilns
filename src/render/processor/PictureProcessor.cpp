@@ -3,7 +3,8 @@
 //
 
 #include "../include/PictureProcessor.h"
-#include "../include/Render.h"
+#include "../include/HwRender.h"
+#include "../include/HwScreen.h"
 #include "../include/Image.h"
 #include "../include/NativeWindow.h"
 #include "ObjectBox.h"
@@ -11,9 +12,9 @@
 PictureProcessor::PictureProcessor() {
     pipeline = new UnitPipeline(__FUNCTION__);
     pipeline->registerAnUnit(new Image());
-    pipeline->registerAnUnit(new Render());
+    pipeline->registerAnUnit(new HwRender());
     //注意顺序问题，包含EGL环境的模块放到最后，因为要最后释放
-    pipeline->registerAnUnit(new Screen());
+    pipeline->registerAnUnit(new HwScreen());
 }
 
 PictureProcessor::~PictureProcessor() {

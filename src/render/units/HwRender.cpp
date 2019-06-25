@@ -5,30 +5,30 @@
  * LICENSE file in the root directory of this source tree.
  */
 #include "Logcat.h"
-#include "../include/Render.h"
+#include "../include/HwRender.h"
 #include "../include/NormalFilter.h"
 #include "../include/ObjectBox.h"
 
-Render::Render() {
+HwRender::HwRender() {
     name = __FUNCTION__;
     filter = new NormalFilter();
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Render::eventPrepare));
-    registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&Render::eventFilter));
-    registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&Render::eventSetFilter));
+    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
+    registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventFilter));
+    registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventSetFilter));
 }
 
-Render::Render(HandlerThread *handlerThread) : Unit(handlerThread) {
+HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {
     name = __FUNCTION__;
     filter = new NormalFilter();
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Render::eventPrepare));
-    registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&Render::eventFilter));
-    registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&Render::eventSetFilter));
+    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
+    registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventFilter));
+    registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventSetFilter));
 }
 
-Render::~Render() {
+HwRender::~HwRender() {
 }
 
-bool Render::eventRelease(Message *msg) {
+bool HwRender::eventRelease(Message *msg) {
     Logcat::i("HWVC", "Render::eventRelease");
     post([this] {
         if (filter) {
@@ -40,18 +40,18 @@ bool Render::eventRelease(Message *msg) {
     return true;
 }
 
-void Render::checkFilter(int width, int height) {
+void HwRender::checkFilter(int width, int height) {
     if (filter) {
         bool ret = filter->init(width, height);
     }
 }
 
-void Render::renderFilter(GLuint texture) {
+void HwRender::renderFilter(GLuint texture) {
     Logcat::i("HWVC", "Render::renderFilter");
     filter->draw(texture);
 }
 
-void Render::renderScreen() {
+void HwRender::renderScreen() {
     Logcat::i("HWVC", "Render::renderScreen");
     Message *msg = new Message(EVENT_SCREEN_DRAW, nullptr);
     msg->obj = new ObjectBox(new Size(filter->getFrameBuffer()->width(),
@@ -60,12 +60,12 @@ void Render::renderScreen() {
     postEvent(msg);
 }
 
-bool Render::eventPrepare(Message *msg) {
+bool HwRender::eventPrepare(Message *msg) {
     Logcat::i("HWVC", "Render::eventPrepare");
     return true;
 }
 
-bool Render::eventFilter(Message *msg) {
+bool HwRender::eventFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventFilter");
     Size *size = static_cast<Size *>(msg->tyrUnBox());
     GLuint tex = msg->arg1;
@@ -79,7 +79,7 @@ bool Render::eventFilter(Message *msg) {
     return true;
 }
 
-bool Render::eventSetFilter(Message *msg) {
+bool HwRender::eventSetFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventSetFilter");
     Filter *newFilter = static_cast<Filter *>(msg->tyrUnBox());
     post([this, newFilter] {

@@ -11,13 +11,13 @@
 #include "Unit.h"
 #include "Filter.h"
 
-class Render : public Unit {
+class HwRender : public Unit {
 public:
-    Render();
+    HwRender();
 
-    Render(HandlerThread *handlerThread);
+    HwRender(HandlerThread *handlerThread);
 
-    virtual ~Render();
+    virtual ~HwRender();
 
     bool eventRelease(Message *msg) override;
 
