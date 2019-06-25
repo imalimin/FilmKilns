@@ -18,7 +18,8 @@ HwVideoInput::HwVideoInput() : HwStreamMedia() {
     registerEvent(EVENT_VIDEO_START, reinterpret_cast<EventFunc>(&HwVideoInput::eventStart));
     registerEvent(EVENT_VIDEO_PAUSE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPause));
     registerEvent(EVENT_VIDEO_SEEK, reinterpret_cast<EventFunc>(&HwVideoInput::eventSeek));
-    registerEvent(EVENT_VIDEO_SET_SOURCE, reinterpret_cast<EventFunc>(&HwVideoInput::eventSetSource));
+    registerEvent(EVENT_VIDEO_SET_SOURCE,
+                  reinterpret_cast<EventFunc>(&HwVideoInput::eventSetSource));
     registerEvent(EVENT_VIDEO_LOOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventLoop));
     registerEvent(EVENT_VIDEO_STOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventStop));
     decoder = new AsynVideoDecoder();
@@ -30,7 +31,8 @@ HwVideoInput::HwVideoInput(HandlerThread *handlerThread) : HwStreamMedia(handler
     registerEvent(EVENT_VIDEO_START, reinterpret_cast<EventFunc>(&HwVideoInput::eventStart));
     registerEvent(EVENT_VIDEO_PAUSE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPause));
     registerEvent(EVENT_VIDEO_SEEK, reinterpret_cast<EventFunc>(&HwVideoInput::eventSeek));
-    registerEvent(EVENT_VIDEO_SET_SOURCE, reinterpret_cast<EventFunc>(&HwVideoInput::eventSetSource));
+    registerEvent(EVENT_VIDEO_SET_SOURCE,
+                  reinterpret_cast<EventFunc>(&HwVideoInput::eventSetSource));
     registerEvent(EVENT_VIDEO_LOOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventLoop));
     registerEvent(EVENT_VIDEO_STOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventStop));
     decoder = new AsynVideoDecoder();
@@ -158,7 +160,9 @@ int HwVideoInput::grab() {
         int64_t curPts = frame->getPts();
         if (lastPts > 0) {
             int64_t t = (curPts - lastPts) - (getCurrentTimeUS() - lastShowTime);
-            Thread::sleep(t);
+            if (t < 60000) { // @TODO To avoid waiting too long when seeking.
+                Thread::sleep(t);
+            }
             LOGI("HwVideoInput::grab %d x %d, delta time: %lld, wait time: %lld",
                  videoFrame->getWidth(),
                  videoFrame->getHeight(),

@@ -110,18 +110,26 @@ bool DefaultVideoDecoder::prepare(string path) {
 
 void DefaultVideoDecoder::handleAction() {
     if (actionSeekInUs >= 0) {
-        int64_t vPts = pFormatCtx->streams[videoTrack]->duration * actionSeekInUs / 100;
-        vPts = av_rescale_q_rnd(vPts, pFormatCtx->streams[videoTrack]->time_base,
-                                pFormatCtx->streams[videoTrack]->codec->time_base,
-                                AV_ROUND_NEAR_INF);
-        int64_t aPts = pFormatCtx->streams[audioTrack]->duration * actionSeekInUs / 100;
-        aPts = av_rescale_q_rnd(aPts, pFormatCtx->streams[audioTrack]->time_base,
-                                pFormatCtx->streams[audioTrack]->codec->time_base,
-                                AV_ROUND_NEAR_INF);
-        av_seek_frame(pFormatCtx, videoTrack, vPts, AVSEEK_FLAG_BACKWARD);
-        av_seek_frame(pFormatCtx, audioTrack, aPts, AVSEEK_FLAG_BACKWARD);
-//        avcodec_flush_buffers(pFormatCtx->streams[videoTrack]->codec);
-//        avcodec_flush_buffers(pFormatCtx->streams[audioTrack]->codec);
+        int64_t vPts = av_rescale_q(actionSeekInUs, outputRational,
+                                    pFormatCtx->streams[videoTrack]->time_base);
+        int64_t aPts = av_rescale_q(actionSeekInUs, outputRational,
+                                    pFormatCtx->streams[audioTrack]->time_base);
+        avcodec_flush_buffers(vCodecContext);
+        int ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[videoTrack]->index, INT64_MIN, vPts, INT64_MAX,
+                                     AVSEEK_FLAG_BACKWARD);
+        if (ret < 0) {
+            LOGI("DefaultVideoDecoder::seek video failed");
+            return;
+        }
+        avcodec_flush_buffers(vCodecContext);
+        avcodec_flush_buffers(aCodecContext);
+        ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[audioTrack]->index, INT64_MIN, aPts, INT64_MAX,
+                                 AVSEEK_FLAG_BACKWARD);
+        if (ret < 0) {
+            LOGI("DefaultVideoDecoder::seek audio failed");
+            return;
+        }
+        avcodec_flush_buffers(aCodecContext);
         LOGI("DefaultVideoDecoder::seek: %lld, %lld/%lld, %lld/%lld",
              actionSeekInUs,
              vPts, pFormatCtx->streams[videoTrack]->duration,
