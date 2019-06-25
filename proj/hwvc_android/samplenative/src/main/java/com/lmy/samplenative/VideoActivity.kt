@@ -100,7 +100,7 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, p2: Boolean) {
-        processor?.seek(progress.toLong())
+        processor?.seek(177710867 * progress.toLong() / 100)
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar) {
