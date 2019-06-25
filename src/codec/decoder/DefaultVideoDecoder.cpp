@@ -240,12 +240,12 @@ bool DefaultVideoDecoder::openTrack(int track, AVCodecContext **context) {
     }
     AVCodec *codec = NULL;
     if (AV_CODEC_ID_H264 == avCodecParameters->codec_id) {
-        codec = avcodec_find_decoder(avCodecParameters->codec_id);
-//        codec = avcodec_find_decoder_by_name("h264_mediacodec");
-//        if (NULL == codec) {
-//            LOGE("Selected AV_CODEC_ID_H264.");
-//            codec = avcodec_find_decoder(avCodecParameters->codec_id);
-//        }
+//        codec = avcodec_find_decoder(avCodecParameters->codec_id);
+        codec = avcodec_find_decoder_by_name("h264_mediacodec");
+        if (NULL == codec) {
+            LOGE("Selected AV_CODEC_ID_H264.");
+            codec = avcodec_find_decoder(avCodecParameters->codec_id);
+        }
     } else {
         codec = avcodec_find_decoder(avCodecParameters->codec_id);
     }
