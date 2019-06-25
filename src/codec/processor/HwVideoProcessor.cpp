@@ -5,8 +5,9 @@
 * LICENSE file in the root directory of this source tree.
 */
 #include "../include/HwVideoProcessor.h"
-#include "HwRender.h"
 #include "../include/HwVideoInput.h"
+#include "../include/HwSpeaker.h"
+#include "HwRender.h"
 #include "HwScreen.h"
 #include "NativeWindow.h"
 #include "ObjectBox.h"
@@ -19,6 +20,7 @@ HwVideoProcessor::HwVideoProcessor() : Object() {
     pipeline->registerAnUnit(new HwVideoInput());
     pipeline->registerAnUnit(new HwRender());
     pipeline->registerAnUnit(new HwScreen());
+    pipeline->registerAnUnit(new HwSpeaker());
 }
 
 HwVideoProcessor::~HwVideoProcessor() {

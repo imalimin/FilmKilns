@@ -9,7 +9,6 @@
 #include "Size.h"
 #include "TimeUtils.h"
 #include "../include/HwVideoFrame.h"
-#include "../include/HwAudioFrame.h"
 #include "Thread.h"
 
 HwVideoInput::HwVideoInput() : HwStreamMedia() {
@@ -200,6 +199,7 @@ int HwVideoInput::grab() {
         return MEDIA_TYPE_VIDEO;
     } else if (frame->isAudio()) {
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
+        playAudioFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
         Logcat::i("HWVC", "HwVideoInput::play audio pts=%d, %d, %lld, %d",
                   frame->getPts(),
                   audioFrame->getChannels(),
@@ -217,4 +217,10 @@ bool HwVideoInput::invalidate(int tex, uint32_t width, uint32_t height) {
     msg->arg1 = yuvFilter->getFrameBuffer()->getFrameTexture();
     postEvent(msg);
     return true;
+}
+
+void HwVideoInput::playAudioFrame(HwAudioFrame *frame) {
+    Message *msg = new Message(EVENT_SPEAKER_FEED, nullptr);
+    msg->obj = frame;
+    postEvent(msg);
 }

@@ -14,6 +14,7 @@
 #include "EventPipeline.h"
 #include "Egl.h"
 #include "HwAbsMediaFrame.h"
+#include "HwAudioFrame.h"
 #include "SimpleLock.h"
 #include "NativeWindow.h"
 
@@ -50,6 +51,8 @@ private:
     void checkFilter();
 
     int grab();
+
+    void playAudioFrame(HwAudioFrame *frame);
 
 private:
     TextureAllocator *texAllocator = nullptr;
