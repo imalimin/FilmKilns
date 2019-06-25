@@ -8,8 +8,7 @@ class EchoActivity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_echo
     override fun initView() {
         echo = HwEchoPlayer(applicationContext)
-        startBtn.setOnClickListener { echo?.start() }
-        stopBtn.setOnClickListener { echo?.stop() }
+        echo?.start()
     }
 
     override fun onDestroy() {
