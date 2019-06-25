@@ -148,7 +148,7 @@ int HwVideoInput::grab() {
     Logcat::i("HWVC", "HwVideoInput::grab cost: %lld, ret: %d", getCurrentTimeUS() - time, ret);
     if (!frame) {
         Logcat::i("HWVC", "HwVideoInput::grab wait");
-        Thread::sleep(300000);
+//        Thread::sleep(300000);
         return ret;
     }
 
@@ -159,9 +159,9 @@ int HwVideoInput::grab() {
         int64_t curPts = frame->getPts();
         if (lastPts > 0) {
             int64_t t = (curPts - lastPts) - (getCurrentTimeUS() - lastShowTime);
-            if (t < 60000) { // @TODO To avoid waiting too long when seeking.
-                Thread::sleep(t);
-            }
+//            if (t < 60000) { // @TODO To avoid waiting too long when seeking.
+//                Thread::sleep(t);
+//            }
             LOGI("HwVideoInput::grab %d x %d, delta time: %lld, wait time: %lld",
                  videoFrame->getWidth(),
                  videoFrame->getHeight(),
