@@ -134,8 +134,10 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         return super.onKeyDown(keyCode, event)
     }
 
-    override fun onProgressChanged(seekBar: SeekBar, progress: Int, p2: Boolean) {
-        processor?.seek(177710867 * progress.toLong() / 100)
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+        if (fromUser) {
+            processor?.seek(177710867 * progress.toLong() / 100)
+        }
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar) {
