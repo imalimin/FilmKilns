@@ -23,15 +23,22 @@ using namespace std;
 class HwAudioPlayer : public SLAudioDevice {
 public:
     HwAudioPlayer(uint16_t channels,
-                uint32_t sampleRate,
-                uint16_t format,
-                uint32_t samplesPerBuffer);
+                  uint32_t sampleRate,
+                  uint16_t format,
+                  uint32_t samplesPerBuffer);
+
+    HwAudioPlayer(HwAudioDeviceMode mode,
+                  uint16_t channels,
+                  uint32_t sampleRate,
+                  uint16_t format,
+                  uint32_t samplesPerBuffer);
 
     HwAudioPlayer(SLEngine *engine,
-                uint16_t channels,
-                uint32_t sampleRate,
-                uint16_t format,
-                uint32_t samplesPerBuffer);
+                  HwAudioDeviceMode mode,
+                  uint16_t channels,
+                  uint32_t sampleRate,
+                  uint16_t format,
+                  uint32_t samplesPerBuffer);
 
     virtual ~HwAudioPlayer();
 

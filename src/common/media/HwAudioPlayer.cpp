@@ -17,7 +17,20 @@ void bufferQueueCallback(SLAndroidSimpleBufferQueueItf slBufferQueueItf, void *c
 HwAudioPlayer::HwAudioPlayer(uint16_t channels,
                              uint32_t sampleRate,
                              uint16_t format,
-                             uint32_t samplesPerBuffer) : SLAudioDevice(channels,
+                             uint32_t samplesPerBuffer) : SLAudioDevice(HwAudioDeviceMode::Normal,
+                                                                        channels,
+                                                                        sampleRate,
+                                                                        format,
+                                                                        samplesPerBuffer) {
+    initialize(nullptr);
+}
+
+HwAudioPlayer::HwAudioPlayer(HwAudioDeviceMode mode,
+                             uint16_t channels,
+                             uint32_t sampleRate,
+                             uint16_t format,
+                             uint32_t samplesPerBuffer) : SLAudioDevice(mode,
+                                                                        channels,
                                                                         sampleRate,
                                                                         format,
                                                                         samplesPerBuffer) {
@@ -25,10 +38,12 @@ HwAudioPlayer::HwAudioPlayer(uint16_t channels,
 }
 
 HwAudioPlayer::HwAudioPlayer(SLEngine *engine,
+                             HwAudioDeviceMode mode,
                              uint16_t channels,
                              uint32_t sampleRate,
                              uint16_t format,
-                             uint32_t samplesPerBuffer) : SLAudioDevice(channels,
+                             uint32_t samplesPerBuffer) : SLAudioDevice(mode,
+                                                                        channels,
                                                                         sampleRate,
                                                                         format,
                                                                         samplesPerBuffer) {
@@ -38,6 +53,16 @@ HwAudioPlayer::HwAudioPlayer(SLEngine *engine,
 void HwAudioPlayer::initialize(SLEngine *engine) {
     this->engine = engine;
     uint32_t bufSize = getBufferByteSize() * 16;
+    switch (mode) {
+        case HwAudioDeviceMode::LowLatency:
+            bufSize = getBufferByteSize() * 3;
+            break;
+        case HwAudioDeviceMode::Normal:
+            bufSize = getBufferByteSize() * 16;
+            break;
+        case HwAudioDeviceMode::HighLatency:
+            bufSize = getBufferByteSize() * 32;
+    }
     this->fifo = new HwFIFOBuffer(bufSize);
     LOGI("Create HwAudioPlayer, channels=%d, sampleHz=%d, minBufferSize=%d, format=%d",
          this->channels,

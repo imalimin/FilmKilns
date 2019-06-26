@@ -24,7 +24,14 @@ public:
                     uint16_t format,
                     uint32_t samplesPerBuffer);
 
+    HwAudioRecorder(HwAudioDeviceMode mode,
+                    uint16_t channels,
+                    uint32_t sampleRate,
+                    uint16_t format,
+                    uint32_t samplesPerBuffer);
+
     HwAudioRecorder(SLEngine *engine,
+                    HwAudioDeviceMode mode,
                     uint16_t channels,
                     uint32_t sampleRate,
                     uint16_t format,

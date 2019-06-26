@@ -10,8 +10,18 @@ HwEchoPlayer::HwEchoPlayer(int channels, int sampleHz, int format, int samplesPe
     this->samplesPerBuffer = samplesPerBuffer;
     this->buffer = new uint8_t[minBufferSize];
     this->engine = new SLEngine();
-    recorder = new HwAudioRecorder(engine, channels, sampleHz, format, samplesPerBuffer);
-    player = new HwAudioPlayer(engine, channels, sampleHz, format, samplesPerBuffer);
+    recorder = new HwAudioRecorder(engine,
+                                   HwAudioDeviceMode::Normal,
+                                   channels,
+                                   sampleHz,
+                                   format,
+                                   samplesPerBuffer);
+    player = new HwAudioPlayer(engine,
+                               HwAudioDeviceMode::Normal,
+                               channels,
+                               sampleHz,
+                               format,
+                               samplesPerBuffer);
     this->minBufferSize = player->getBufferByteSize();
     this->pipeline = new EventPipeline("HwEchoPlayer");
 }

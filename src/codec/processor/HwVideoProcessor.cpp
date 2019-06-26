@@ -20,7 +20,7 @@ HwVideoProcessor::HwVideoProcessor() : Object() {
     pipeline->registerAnUnit(new HwVideoInput());
     pipeline->registerAnUnit(new HwRender());
     pipeline->registerAnUnit(new HwScreen());
-    pipeline->registerAnUnit(new HwSpeaker());
+    pipeline->registerAnUnit(new HwSpeaker(HwAudioDeviceMode::LowLatency));
 }
 
 HwVideoProcessor::~HwVideoProcessor() {
