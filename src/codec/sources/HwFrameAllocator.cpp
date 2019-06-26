@@ -127,14 +127,14 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
     frame->setPts(avFrame->pts);
     int pixelCount = avFrame->width * avFrame->height;
     switch (frame->getFormat()) {
-        case HW_IMAGE_YV12: {
+        case HwFrameFormat::HW_IMAGE_YV12: {
             memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
             memcpy(frame->getBuffer()->getData() + pixelCount, avFrame->data[1], pixelCount / 4);
             memcpy(frame->getBuffer()->getData() + pixelCount + pixelCount / 4, avFrame->data[2],
                    pixelCount / 4);
             break;
         }
-        case HW_IMAGE_NV12: {
+        case HwFrameFormat::HW_IMAGE_NV12: {
             memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
             int uvSize = pixelCount / 4;
             for (int i = 0; i < uvSize; ++i) {

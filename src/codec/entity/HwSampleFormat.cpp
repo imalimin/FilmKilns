@@ -14,7 +14,7 @@ HwSampleFormat::HwSampleFormat(HwFrameFormat format,
 }
 
 HwSampleFormat::~HwSampleFormat() {
-    this->format = HW_FMT_NONE;
+    this->format = HwFrameFormat::HW_FMT_NONE;
     this->channels = 0;
     this->sampleRate = 0;
 }

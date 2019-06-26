@@ -8,17 +8,19 @@
 #include "../include/HwAbsMediaFrame.h"
 
 AVSampleFormat HwAbsMediaFrame::convertAudioFrameFormat(HwFrameFormat format) {
-    if (format >= HW_SAMPLE_U8 && format < HW_SAMPLE_END) {
-        return static_cast<AVSampleFormat>(format - HW_SAMPLE_U8);
+    if (format >= HwFrameFormat::HW_SAMPLE_U8 && format < HwFrameFormat::HW_SAMPLE_END) {
+        return static_cast<AVSampleFormat>(static_cast<int>(format) -
+                                           static_cast<int>(HwFrameFormat::HW_SAMPLE_U8));
     }
     return AV_SAMPLE_FMT_NONE;
 }
 
 HwFrameFormat HwAbsMediaFrame::convertToAudioFrameFormat(AVSampleFormat format) {
     if (format >= AV_SAMPLE_FMT_U8 && format < AV_SAMPLE_FMT_NB) {
-        return static_cast<HwFrameFormat>(format + HW_SAMPLE_U8);
+        return static_cast<HwFrameFormat>(static_cast<int>(format) +
+                                          static_cast<int>(HwFrameFormat::HW_SAMPLE_U8));
     }
-    return HW_FMT_NONE;
+    return HwFrameFormat::HW_FMT_NONE;
 }
 
 int HwAbsMediaFrame::getBytesPerSample(HwFrameFormat format) {
@@ -27,9 +29,9 @@ int HwAbsMediaFrame::getBytesPerSample(HwFrameFormat format) {
 
 AVPixelFormat HwAbsMediaFrame::convertVideoFrameFormat(HwFrameFormat format) {
     switch (format) {
-        case HW_IMAGE_YV12:
+        case HwFrameFormat::HW_IMAGE_YV12:
             return AV_PIX_FMT_YUV420P;
-        case HW_IMAGE_NV12:
+        case HwFrameFormat::HW_IMAGE_NV12:
             return AV_PIX_FMT_NV12;
         default:
             return AV_PIX_FMT_NONE;
@@ -39,22 +41,22 @@ AVPixelFormat HwAbsMediaFrame::convertVideoFrameFormat(HwFrameFormat format) {
 HwFrameFormat HwAbsMediaFrame::convertToVideoFrameFormat(AVPixelFormat format) {
     switch (format) {
         case AV_PIX_FMT_YUV420P:
-            return HW_IMAGE_YV12;
+            return HwFrameFormat::HW_IMAGE_YV12;
         case AV_PIX_FMT_NV12:
-            return HW_IMAGE_NV12;
+            return HwFrameFormat::HW_IMAGE_NV12;
         default:
-            return HW_FMT_NONE;
+            return HwFrameFormat::HW_FMT_NONE;
     }
 }
 
 int HwAbsMediaFrame::getImageSize(HwFrameFormat format, int width, int height) {
     switch (format) {
-        case HW_IMAGE_RGB:
+        case HwFrameFormat::HW_IMAGE_RGB:
             return width * height * 3;
-        case HW_IMAGE_RGBA:
+        case HwFrameFormat::HW_IMAGE_RGBA:
             return width * height * 4;
-        case HW_IMAGE_YV12:
-        case HW_IMAGE_NV12:
+        case HwFrameFormat::HW_IMAGE_YV12:
+        case HwFrameFormat::HW_IMAGE_NV12:
             return width * height * 3 / 2;
         default:
             return 0;
@@ -80,9 +82,9 @@ void HwAbsMediaFrame::setPts(int64_t pts) { this->pts = pts; }
 int64_t HwAbsMediaFrame::getPts() { return pts; }
 
 bool HwAbsMediaFrame::isVideo() {
-    return getFormat() >= HW_IMAGE_RGB && getFormat() < HW_IMAGE_END;
+    return getFormat() >= HwFrameFormat::HW_IMAGE_RGB && getFormat() < HwFrameFormat::HW_IMAGE_END;
 }
 
 bool HwAbsMediaFrame::isAudio() {
-    return getFormat() >= HW_SAMPLE_U8 && getFormat() < HW_SAMPLE_END;
+    return getFormat() >= HwFrameFormat::HW_SAMPLE_U8 && getFormat() < HwFrameFormat::HW_SAMPLE_END;
 }
