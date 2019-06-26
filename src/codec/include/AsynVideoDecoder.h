@@ -76,6 +76,7 @@ private:
     bool grabAnVideoFrame();
 
 private:
+    const int MAX_FRAME_CACHE = 36;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     DefaultVideoDecoder *decoder = nullptr;
     EventPipeline *pipeline = nullptr;

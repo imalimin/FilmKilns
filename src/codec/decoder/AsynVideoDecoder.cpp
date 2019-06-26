@@ -46,7 +46,7 @@ bool AsynVideoDecoder::prepare(string path) {
 }
 
 bool AsynVideoDecoder::grab() {
-    if (cache.size() >= 20) {
+    if (cache.size() >= MAX_FRAME_CACHE) {
         grabLock.wait();
         return true;
     }
