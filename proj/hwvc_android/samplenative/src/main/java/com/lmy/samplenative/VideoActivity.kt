@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.TextureView
@@ -19,7 +20,7 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         SeekBar.OnSeekBarChangeListener {
 
     private lateinit var mFilterController: FilterController
-    private var processor: VideoProcessor? = VideoProcessor()
+    private var processor: VideoProcessor? = null
     private var prepared = false
     private var surface: Surface? = null
     private var playing: Boolean = true
@@ -36,13 +37,20 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
                 finish()
                 return
             }
-            uri= Uri.fromFile(testFile)
+            uri = Uri.fromFile(testFile)
         }
         val path = getRealFilePath(uri)
         if (TextUtils.isEmpty(path)) {
             Toast.makeText(this, "没有找到该文件", Toast.LENGTH_SHORT).show()
             finish()
             return
+        }
+        processor = lastCustomNonConfigurationInstance as VideoProcessor?
+        if (null != processor) {
+            prepared = true
+        } else {
+            processor = VideoProcessor()
+            processor?.setSource(path!!)
         }
         mFilterController = FilterController(processor!!, progressLayout)
         filterBtn.setOnClickListener {
@@ -57,7 +65,6 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
             }
             playing = !playing
         }
-        processor?.setSource(path!!)
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
@@ -80,6 +87,11 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
 //        surfaceView.surfaceTextureListener = this
     }
 
+    override fun onRetainCustomNonConfigurationInstance(): Any? {
+        Log.i("HWVC", "VideoActivity onRetainCustomNonConfigurationInstance")
+        return processor
+    }
+
     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
     }
 
@@ -98,11 +110,28 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         processor?.prepare(this.surface!!)
     }
 
+    override fun onResume() {
+        super.onResume()
+        processor?.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        processor?.pause()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        Log.i("HWVC", "test123 VideoActivity onDestroy")
-        processor?.release()
-        processor = null
+        Log.i("HWVC", "VideoActivity onDestroy.")
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.i("HWVC", "VideoActivity back key pressed.")
+            processor?.release()
+            processor = null
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, p2: Boolean) {
