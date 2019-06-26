@@ -39,6 +39,7 @@ HwVideoInput::~HwVideoInput() {
         path = nullptr;
     }
     simpleLock.unlock();
+    playListener = nullptr;
 }
 
 bool HwVideoInput::eventRelease(Message *msg) {
@@ -190,7 +191,8 @@ int HwVideoInput::grab() {
     } else if (frame->isAudio()) {
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
         playAudioFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
-        Logcat::i("HWVC", "HwVideoInput::play audio pts=%d, %d, %lld, %d",
+        processPlayListener(audioFrame->getPts());
+        Logcat::i("HWVC", "HwVideoInput::play audio pts=%lld, %d, %lld, %d",
                   frame->getPts(),
                   audioFrame->getChannels(),
                   audioFrame->getSampleCount(),
@@ -213,4 +215,17 @@ void HwVideoInput::playAudioFrame(HwAudioFrame *frame) {
     Message *msg = new Message(EVENT_SPEAKER_FEED, nullptr);
     msg->obj = frame;
     postEvent(msg);
+}
+
+void HwVideoInput::processPlayListener(int64_t us) {
+    if (playListener) {
+        if (llabs(lastPlayPts - us) >= INTERVAL_PROGRESS) {
+            playListener(us);
+            lastPlayPts = us;
+        }
+    }
+}
+
+void HwVideoInput::setPlayListener(function<void(int64_t)> listener) {
+    this->playListener = listener;
 }

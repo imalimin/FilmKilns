@@ -14,10 +14,12 @@
 #include <string>
 
 HwVideoProcessor::HwVideoProcessor() : Object() {
-//    unitHandler = new HandlerThread("VideoUnits");
-//    screenHandler = new HandlerThread("ScreenUnit");
     pipeline = new UnitPipeline("VideoProcessor");
-    pipeline->registerAnUnit(new HwVideoInput());
+    HwVideoInput *inputUnit = new HwVideoInput();
+    inputUnit->setPlayListener([this](int64_t us) {
+        this->playProgressListener(us);
+    });
+    pipeline->registerAnUnit(inputUnit);
     pipeline->registerAnUnit(new HwRender());
     pipeline->registerAnUnit(new HwScreen());
     pipeline->registerAnUnit(new HwSpeaker(HwAudioDeviceMode::LowLatency));
@@ -37,6 +39,7 @@ HwVideoProcessor::~HwVideoProcessor() {
         delete screenHandler;
         screenHandler = nullptr;
     }
+    playProgressListener = nullptr;
 }
 
 void HwVideoProcessor::setSource(char *path) {
@@ -97,4 +100,8 @@ void HwVideoProcessor::updateWindow(HwWindow *win) {
         msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
         pipeline->postEvent(msg);
     }
+}
+
+void HwVideoProcessor::setPlayProgressListener(function<void(int64_t)> listener) {
+    this->playProgressListener = listener;
 }

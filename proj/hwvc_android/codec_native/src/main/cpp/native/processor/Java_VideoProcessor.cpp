@@ -45,6 +45,9 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
         (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
         getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
+        getHandler(handler)->setPlayProgressListener([](int64_t us) {
+            Logcat::i("HWVC", "HwVideoProcessor::play progress %lld", us);
+        });
     }
 }
 

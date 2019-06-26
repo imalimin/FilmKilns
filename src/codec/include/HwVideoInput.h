@@ -28,7 +28,7 @@ public:
 
     bool eventRelease(Message *msg) override;
 
-    bool eventPrepare(Message *msg) ;
+    bool eventPrepare(Message *msg);
 
     bool eventStart(Message *msg) override;
 
@@ -44,6 +44,8 @@ public:
 
     bool invalidate(int tex, uint32_t width, uint32_t height);
 
+    void setPlayListener(function<void(int64_t)> listener);
+
 private:
 
     void loop();
@@ -54,7 +56,10 @@ private:
 
     void playAudioFrame(HwAudioFrame *frame);
 
+    void processPlayListener(int64_t us);
+
 private:
+    const int INTERVAL_PROGRESS = 1000000;
     TextureAllocator *texAllocator = nullptr;
     AsynVideoDecoder *decoder = nullptr;
     YUV420PFilter *yuvFilter = nullptr;
@@ -64,6 +69,12 @@ private:
     char *path;
     int64_t lastPts = 0;
     int64_t lastShowTime = 0;
+    int64_t lastPlayPts = INT64_MIN;
+
+    /**
+     * Listeners
+     */
+    function<void(int64_t)> playListener = nullptr;
 };
 
 
