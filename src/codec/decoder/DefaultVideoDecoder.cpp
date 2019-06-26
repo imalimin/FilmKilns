@@ -115,7 +115,8 @@ void DefaultVideoDecoder::handleAction() {
         int64_t aPts = av_rescale_q(actionSeekInUs, outputRational,
                                     pFormatCtx->streams[audioTrack]->time_base);
         avcodec_flush_buffers(vCodecContext);
-        int ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[videoTrack]->index, INT64_MIN, vPts, INT64_MAX,
+        int ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[videoTrack]->index, INT64_MIN,
+                                     vPts, INT64_MAX,
                                      AVSEEK_FLAG_BACKWARD);
         if (ret < 0) {
             LOGI("DefaultVideoDecoder::seek video failed");
@@ -123,7 +124,8 @@ void DefaultVideoDecoder::handleAction() {
         }
         avcodec_flush_buffers(vCodecContext);
         avcodec_flush_buffers(aCodecContext);
-        ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[audioTrack]->index, INT64_MIN, aPts, INT64_MAX,
+        ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[audioTrack]->index, INT64_MIN,
+                                 aPts, INT64_MAX,
                                  AVSEEK_FLAG_BACKWARD);
         if (ret < 0) {
             LOGI("DefaultVideoDecoder::seek audio failed");
@@ -135,6 +137,14 @@ void DefaultVideoDecoder::handleAction() {
              vPts, pFormatCtx->streams[videoTrack]->duration,
              aPts, pFormatCtx->streams[audioTrack]->duration);
         actionSeekInUs = -1;
+        while (true) {
+            ret = av_read_frame(pFormatCtx, avPacket);
+            if (0 == ret && audioTrack == avPacket->stream_index) {
+                av_packet_unref(avPacket);
+                break;
+            }
+            av_packet_unref(avPacket);
+        }
     }
 }
 /**
@@ -148,8 +158,7 @@ int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
         if (0 == ret) {
             if (videoTrack == avPacket->stream_index) {
                 avcodec_send_packet(vCodecContext, avPacket);
-            }
-            else if (audioTrack == avPacket->stream_index) {
+            } else if (audioTrack == avPacket->stream_index) {
                 avcodec_send_packet(aCodecContext, avPacket);
             }
         }
