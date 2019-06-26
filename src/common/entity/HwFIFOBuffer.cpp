@@ -9,6 +9,8 @@
 #include "../include/Logcat.h"
 #include "../include/TimeUtils.h"
 
+//#define LOG_HwFIFOBuffer
+
 /**
  * 规则
  * 1. writer不能等于reader
@@ -92,8 +94,10 @@ size_t HwFIFOBuffer::push(uint8_t *data, size_t size) {
         return 0;
     }
     while (!willWrite(size)) {
+#ifdef LOG_HwFIFOBuffer
         Logcat::e("HWVC", "HwFIFOBuffer::push Capacity is insufficient(left=%d). Wait",
                   leftCapacity());
+#endif
         if (!writeMode) {
             return 0;
         }
@@ -107,9 +111,11 @@ size_t HwFIFOBuffer::push(uint8_t *data, size_t size) {
     this->writer = move(this->writer, size);
     this->_size += size;
     notifyLock.notify();
+#ifdef LOG_HwFIFOBuffer
     Logcat::i("HWVC", "HwFIFOBuffer::push %d, %d",
               size,
               this->size());
+#endif
     printBufferState();
     return size;
 }
@@ -119,7 +125,9 @@ bool HwFIFOBuffer::willRead(size_t size) {
     /* ... r ... w ... */
     /*-----------------*/
     if (this->reader < this->writer && this->reader + size >= this->writer) {
+#ifdef LOG_HwFIFOBuffer
         Logcat::e("HWVC", "HwFIFOBuffer::take failed(cross a)");
+#endif
         return false;
     }
     /*-----------------*/
@@ -132,11 +140,15 @@ bool HwFIFOBuffer::willRead(size_t size) {
             /* w ... r ... */
             /*-------------*/
             if (this->writer == first()) {
-                Logcat::e("HWVC", "HwFIFOBuffer::take failed(First occupied)");
+#ifdef LOG_HwFIFOBuffer
+                Logcat::i("HWVC", "HwFIFOBuffer::take failed(First occupied)");
+#endif
                 return false;
             }
             if (left <= 0) {
-                Logcat::e("HWVC", "HwFIFOBuffer::take failed(error) %d", left);
+#ifdef LOG_HwFIFOBuffer
+                Logcat::i("HWVC", "HwFIFOBuffer::take failed(error) %d", left);
+#endif
                 return false;
             }
 //            if (left < size && left != 1) {
@@ -169,8 +181,10 @@ HwBuffer *HwFIFOBuffer::take(size_t size) {
         return nullptr;
     }
     while (!willRead(size)) {
-        Logcat::e("HWVC", "HwFIFOBuffer::take Capacity is insufficient(left=%d). Wait",
+#ifdef LOG_HwFIFOBuffer
+        Logcat::i("HWVC", "HwFIFOBuffer::take Capacity is insufficient(left=%d). Wait",
                   leftCapacity());
+#endif
         if (writeMode) {
             return nullptr;
         }
@@ -194,9 +208,11 @@ HwBuffer *HwFIFOBuffer::take(size_t size) {
             this->reader = first();
             this->_size -= left;
             notifyLock.notify();
+#ifdef LOG_HwFIFOBuffer
             Logcat::i("HWVC", "HwFIFOBuffer::take a %d, %d",
                       buf->size(),
                       this->size());
+#endif
             printBufferState();
             return buf;
         }
@@ -205,9 +221,11 @@ HwBuffer *HwFIFOBuffer::take(size_t size) {
     this->reader += size;
     this->_size -= size;
     notifyLock.notify();
+#ifdef LOG_HwFIFOBuffer
     Logcat::i("HWVC", "HwFIFOBuffer::take b %d, %d",
               buf->size(),
               this->size());
+#endif
     printBufferState();
     return buf;
 }
@@ -239,11 +257,13 @@ void HwFIFOBuffer::flush() {
     this->_size = 0;
     notifyLock.notify();
     requestFlush = true;
+#ifdef LOG_HwFIFOBuffer
     Logcat::i("HWVC", "HwFIFOBuffer::flush");
+#endif
 }
 
 void HwFIFOBuffer::printBufferState() {
-#if 1
+#ifdef LOG_HwFIFOBuffer
     std::lock_guard<std::mutex> lock_guard(mutex);
     const uint8_t *reader = this->reader;
     const uint8_t *writer = this->writer;
