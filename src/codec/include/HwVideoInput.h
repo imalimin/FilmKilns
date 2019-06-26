@@ -28,17 +28,17 @@ public:
 
     bool eventRelease(Message *msg) override;
 
-    bool eventPrepare(Message *msg);
+    bool eventPrepare(Message *msg) ;
 
-    bool eventStart(Message *msg);
+    bool eventStart(Message *msg) override;
 
-    bool eventPause(Message *msg);
+    bool eventPause(Message *msg) override;
 
-    bool eventSeek(Message *msg);
+    bool eventSeek(Message *msg) override;
 
-    bool eventStop(Message *msg);
+    bool eventStop(Message *msg) override;
 
-    bool eventSetSource(Message *msg);
+    bool eventSetSource(Message *msg) override;
 
     bool eventLoop(Message *msg);
 
