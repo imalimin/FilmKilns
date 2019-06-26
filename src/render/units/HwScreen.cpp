@@ -7,12 +7,7 @@
 #include "Size.h"
 #include "Logcat.h"
 
-HwScreen::HwScreen() {
-    name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwScreen::eventPrepare));
-    registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
-    registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
-                  reinterpret_cast<EventFunc>(&HwScreen::eventUpdateWindow));
+HwScreen::HwScreen() : HwScreen(nullptr) {
 }
 
 HwScreen::HwScreen(HandlerThread *handlerThread) : Unit(handlerThread) {

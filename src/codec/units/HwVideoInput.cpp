@@ -11,17 +11,7 @@
 #include "../include/HwVideoFrame.h"
 #include "Thread.h"
 
-HwVideoInput::HwVideoInput() : HwStreamMedia() {
-    name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPrepare));
-    registerEvent(EVENT_VIDEO_START, reinterpret_cast<EventFunc>(&HwVideoInput::eventStart));
-    registerEvent(EVENT_VIDEO_PAUSE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPause));
-    registerEvent(EVENT_VIDEO_SEEK, reinterpret_cast<EventFunc>(&HwVideoInput::eventSeek));
-    registerEvent(EVENT_VIDEO_SET_SOURCE,
-                  reinterpret_cast<EventFunc>(&HwVideoInput::eventSetSource));
-    registerEvent(EVENT_VIDEO_LOOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventLoop));
-    registerEvent(EVENT_VIDEO_STOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventStop));
-    decoder = new AsynVideoDecoder();
+HwVideoInput::HwVideoInput() : HwVideoInput(nullptr) {
 }
 
 HwVideoInput::HwVideoInput(HandlerThread *handlerThread) : HwStreamMedia(handlerThread) {
@@ -148,7 +138,7 @@ int HwVideoInput::grab() {
     Logcat::i("HWVC", "HwVideoInput::grab cost: %lld, ret: %d", getCurrentTimeUS() - time, ret);
     if (!frame) {
         Logcat::i("HWVC", "HwVideoInput::grab wait");
-//        Thread::sleep(300000);
+        Thread::sleep(5000);
         return ret;
     }
 

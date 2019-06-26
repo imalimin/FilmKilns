@@ -9,12 +9,7 @@
 #include "../include/NormalFilter.h"
 #include "../include/ObjectBox.h"
 
-HwRender::HwRender() {
-    name = __FUNCTION__;
-    filter = new NormalFilter();
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
-    registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventFilter));
-    registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventSetFilter));
+HwRender::HwRender() : HwRender(nullptr) {
 }
 
 HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {

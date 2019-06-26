@@ -8,17 +8,7 @@
 #include "../include/HwAudioInput.h"
 #include "TimeUtils.h"
 
-HwAudioInput::HwAudioInput() : HwStreamMedia() {
-    name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwAudioInput::eventPrepare));
-    registerEvent(EVENT_AUDIO_START, reinterpret_cast<EventFunc>(&HwAudioInput::eventStart));
-    registerEvent(EVENT_AUDIO_PAUSE, reinterpret_cast<EventFunc>(&HwAudioInput::eventPause));
-    registerEvent(EVENT_AUDIO_STOP, reinterpret_cast<EventFunc>(&HwAudioInput::eventStop));
-    registerEvent(EVENT_AUDIO_SEEK, reinterpret_cast<EventFunc>(&HwAudioInput::eventSeek));
-    registerEvent(EVENT_AUDIO_LOOP, reinterpret_cast<EventFunc>(&HwAudioInput::eventLoop));
-    registerEvent(EVENT_AUDIO_SET_SOURCE,
-                  reinterpret_cast<EventFunc>(&HwAudioInput::eventSetSource));
-    decoder = new AsynAudioDecoder();
+HwAudioInput::HwAudioInput() : HwAudioInput(nullptr) {
 }
 
 HwAudioInput::HwAudioInput(HandlerThread *handlerThread) : HwStreamMedia(handlerThread) {
