@@ -4,7 +4,7 @@ project(hwvcom)
 option(HWDEBUG "Whether show opengl logs." ON)
 if (HWDEBUG)
     add_definitions(-DHWDEBUG)
-    message(HWDEBUG "Show debug logs。")
+    message(STATUS "Show debug logs。")
 endif ()
 
 set(PREBUILD_STATIC ${PROJECT_SOURCE_DIR}/prebuild/static)
@@ -17,12 +17,13 @@ set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 #)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -ffast-math -funroll-loops")
 else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O0 -Wall -g -ggdb ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -g -ggdb ")
 endif ()
+message(STATUS "hwcommom CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #------------------STATIC START----------------------
 #libjpeg

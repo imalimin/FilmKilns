@@ -7,6 +7,15 @@ include_directories(
         ${HWVC_PATH}/render/include
 )
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -ffast-math -funroll-loops")
+else ()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O0 -Wall -g -ggdb ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -g -ggdb ")
+endif ()
+message(STATUS "hwnative CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+
 file(
         GLOB
         SOURCES
