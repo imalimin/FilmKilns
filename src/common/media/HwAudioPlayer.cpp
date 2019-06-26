@@ -15,23 +15,23 @@ void bufferQueueCallback(SLAndroidSimpleBufferQueueItf slBufferQueueItf, void *c
 }
 
 HwAudioPlayer::HwAudioPlayer(uint16_t channels,
-                         uint32_t sampleRate,
-                         uint16_t format,
-                         uint32_t samplesPerBuffer) : SLAudioDevice(channels,
-                                                                    sampleRate,
-                                                                    format,
-                                                                    samplesPerBuffer) {
+                             uint32_t sampleRate,
+                             uint16_t format,
+                             uint32_t samplesPerBuffer) : SLAudioDevice(channels,
+                                                                        sampleRate,
+                                                                        format,
+                                                                        samplesPerBuffer) {
     initialize(nullptr);
 }
 
 HwAudioPlayer::HwAudioPlayer(SLEngine *engine,
-                         uint16_t channels,
-                         uint32_t sampleRate,
-                         uint16_t format,
-                         uint32_t samplesPerBuffer) : SLAudioDevice(channels,
-                                                                    sampleRate,
-                                                                    format,
-                                                                    samplesPerBuffer) {
+                             uint16_t channels,
+                             uint32_t sampleRate,
+                             uint16_t format,
+                             uint32_t samplesPerBuffer) : SLAudioDevice(channels,
+                                                                        sampleRate,
+                                                                        format,
+                                                                        samplesPerBuffer) {
     initialize(engine);
 }
 
@@ -200,7 +200,7 @@ void HwAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf
     if (!fifo) {
         return;
     }
-    Logcat::i("HWVC", "HwAudioPlayer::bufferEnqueue cost %lld", getCurrentTimeUS() - ttime);
+//    Logcat::i("HWVC", "HwAudioPlayer::bufferEnqueue cost %lld", getCurrentTimeUS() - ttime);
     ttime = getCurrentTimeUS();
     HwBuffer *buf = fifo->take(getBufferByteSize());
     if (buf) {
@@ -241,15 +241,11 @@ void HwAudioPlayer::flush() {
 
 void HwAudioPlayer::stop() {
     Logcat::i("HWVC", "HwAudioPlayer::stop");
-    this->destroyEngine();
-    if (fifo) {
-        delete fifo;
-        fifo = nullptr;
-    }
-}
-
-void HwAudioPlayer::destroyEngine() {
-    if (nullptr != playObject) {
+    if (playObject) {
+        SLresult result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_STOPPED);
+        if (SL_RESULT_SUCCESS != result) {
+            LOGE("Player SetPlayState stop failed!");
+        }
         (*playObject)->Destroy(playObject);
         playObject = nullptr;
         bufferQueueItf = nullptr;
@@ -259,6 +255,14 @@ void HwAudioPlayer::destroyEngine() {
         (*mixObject)->Destroy(mixObject);
         mixObject = nullptr;
     }
+    destroyEngine();
+    if (fifo) {
+        delete fifo;
+        fifo = nullptr;
+    }
+}
+
+void HwAudioPlayer::destroyEngine() {
     if (ownEngine && engine) {
         delete engine;
         engine = nullptr;

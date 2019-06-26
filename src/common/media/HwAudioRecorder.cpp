@@ -14,7 +14,7 @@ void bufferDequeueCallback(SLAndroidSimpleBufferQueueItf slBufferQueueItf, void 
 
 void HwAudioRecorder::bufferDequeue(SLAndroidSimpleBufferQueueItf slBufferQueueItf) {
     if (this->buffer) {
-        Logcat::i("HWVC", "HwAudioRecorder...");
+//        Logcat::i("HWVC", "HwAudioRecorder...");
         (*slBufferQueueItf)->Enqueue(slBufferQueueItf, buffer->getData(), buffer->size());
         if (fifo) {
             fifo->push(buffer->getData(), buffer->size());
@@ -59,7 +59,7 @@ void HwAudioRecorder::initialize(SLEngine *engine) {
 }
 
 HwAudioRecorder::~HwAudioRecorder() {
-    LOGI("HwAudioRecorderer");
+    LOGI("HwAudioRecorder");
     stop();
 }
 
@@ -87,7 +87,10 @@ void HwAudioRecorder::stop() {
         if (Hw::SUCCESS != ret) {
             LOGE("Recorder SetRecordState stop failed!");
         }
+        delete recorder;
+        recorder = nullptr;
     }
+    destroyEngine();
     if (buffer) {
         delete buffer;
         buffer = nullptr;
@@ -107,7 +110,9 @@ HwBuffer *HwAudioRecorder::read(size_t size) {
 }
 
 void HwAudioRecorder::flush() {
-
+    if (fifo) {
+        fifo->flush();
+    }
 }
 
 HwResult HwAudioRecorder::createEngine() {
@@ -137,10 +142,6 @@ HwResult HwAudioRecorder::createBufferQueueObject() {
 }
 
 void HwAudioRecorder::destroyEngine() {
-    if (recorder) {
-        delete recorder;
-        recorder = nullptr;
-    }
     if (ownEngine && engine) {
         delete engine;
         engine = nullptr;

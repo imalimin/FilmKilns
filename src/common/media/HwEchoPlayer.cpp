@@ -39,15 +39,15 @@ void HwEchoPlayer::stop() {
         delete pipeline;
         pipeline = nullptr;
     }
-    if (player) {
-        player->stop();
-        delete player;
-        player = nullptr;
-    }
     if (recorder) {
         recorder->stop();
         delete recorder;
         recorder = nullptr;
+    }
+    if (player) {
+        player->stop();
+        delete player;
+        player = nullptr;
     }
     if (engine) {
         delete engine;

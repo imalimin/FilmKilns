@@ -69,7 +69,7 @@ HwResult SLRecorder::initialize(SLAudioDevice *device) {
     }
     result = (*recordObject)->Realize(recordObject, SL_BOOLEAN_FALSE);
     if (SL_RESULT_SUCCESS != result) {
-        LOGE("Recorder Realize failed!");
+        LOGE("Recorder Realize failed(%d)!", result);
         return Hw::FAILED;
     }
     result = (*recordObject)->GetInterface(recordObject, SL_IID_RECORD, &recordItf);
