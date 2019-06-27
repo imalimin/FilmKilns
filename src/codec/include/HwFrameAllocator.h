@@ -12,7 +12,6 @@
 #include "HwSourcesAllocator.h"
 #include "HwAbsMediaFrame.h"
 #include <set>
-#include <map>
 #include "Logcat.h"
 #include <SimpleLock.h>
 

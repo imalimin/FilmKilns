@@ -220,7 +220,10 @@ void HwVideoInput::playAudioFrame(HwAudioFrame *frame) {
 void HwVideoInput::processPlayListener(int64_t us) {
     if (playListener) {
         if (llabs(lastPlayPts - us) >= INTERVAL_PROGRESS) {
+            int64_t time = getCurrentTimeUS();
             playListener(us);
+            Logcat::i("HWVC", "HwVideoInput::play callback cost %lld",
+                      getCurrentTimeUS() - time);
             lastPlayPts = us;
         }
     }

@@ -51,6 +51,9 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         } else {
             processor = VideoProcessor()
             processor?.setSource(path!!)
+            processor?.setOnPlayProgressListener { us ->
+                seekBar.progress = (us * 100 / 177710867).toInt()
+            }
         }
         mFilterController = FilterController(processor!!, progressLayout)
         filterBtn.setOnClickListener {
