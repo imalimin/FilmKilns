@@ -20,7 +20,23 @@ public:
 
     virtual ~HwAbsProcessor();
 
+    void post(function<void()> runnable);
+
+protected:
+    void startPipeline();
+
+    void stopPipeline();
+
+    void registerAnUnit(Unit *unit);
+
+    void postEvent(Message *msg);
+
+    void postEventAtFront(Message *msg);
+
+    void removeAllMessage(int what);
+
 private:
+    string name;
     UnitPipeline *pipeline = nullptr;
 };
 

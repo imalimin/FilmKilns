@@ -47,13 +47,16 @@ void UnitPipeline::postEventAtFront(Message *msg) {
 
 void UnitPipeline::postEvent(Message *msg1, bool front) {
     if (pipeline) {
-        msg1->runnable = [this](Message *msg2) {
-            /**
-             * @NOTE 不置空的话会出现不可预料的崩溃
-             */
-            msg2->runnable = nullptr;
-            this->dispatch(msg2);
-        };
+        // If runnable is not null.Just run, not dispatch.
+        if (!(msg1->runnable)) {
+            msg1->runnable = [this](Message *msg2) {
+                /**
+                 * @NOTE 不置空的话会出现不可预料的崩溃
+                 */
+                msg2->runnable = nullptr;
+                this->dispatch(msg2);
+            };
+        }
         simpleLock.lock();
         if (available) {
             if (front) {

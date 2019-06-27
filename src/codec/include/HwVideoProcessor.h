@@ -8,11 +8,11 @@
 #define HARDWAREVIDEOCODEC_VIDEOPROCESSOR_H
 
 #include "Object.h"
-#include "UnitPipeline.h"
+#include "HwAbsProcessor.h"
 #include "Filter.h"
 #include "HwWindow.h"
 
-class HwVideoProcessor : public Object {
+class HwVideoProcessor : public HwAbsProcessor {
 public:
     HwVideoProcessor();
 
@@ -37,7 +37,6 @@ public:
     void setPlayProgressListener(function<void(int64_t)> listener);
 
 private:
-    UnitPipeline *pipeline = nullptr;
     HandlerThread *unitHandler = nullptr;
     HandlerThread *screenHandler = nullptr;
 
