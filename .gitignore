@@ -15,7 +15,7 @@
 *.class
 
 # Java lib files
-libs/
+# libs/
 
 # Android lib files
 aars/
