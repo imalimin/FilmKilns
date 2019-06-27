@@ -97,6 +97,10 @@ HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
     return frame;
 }
 
+HwAbsMediaFrame *HwFrameAllocator::ref(uint8_t *buf, int nbSample) {
+    return nullptr;
+}
+
 HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
     HwAbsMediaFrame *frame = nullptr;
     unRefLock.lock();

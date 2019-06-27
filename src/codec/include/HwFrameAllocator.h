@@ -42,6 +42,8 @@ public:
      */
     HwAbsMediaFrame *ref(HwAbsMediaFrame *src);
 
+    HwAbsMediaFrame *ref(uint8_t *buf, int nbSample);
+
     bool recycle(HwSources **entity);
 
     void printInfo();
