@@ -13,6 +13,7 @@
 #include <log.h>
 #include <map>
 #include <string>
+#include "SimpleLock.h"
 
 using namespace std;
 typedef struct {
@@ -30,9 +31,7 @@ typedef struct {
  */
 class HwJavaNativeHelper : public Object {
 public:
-    static HwJavaNativeHelper *create();
-
-    HwJavaNativeHelper();
+    static HwJavaNativeHelper *getInstance();
 
     virtual ~HwJavaNativeHelper();
 
@@ -57,6 +56,14 @@ public:
     bool callMethod(jlong handler, JMethodDescription method, ...);
 
 private:
+    HwJavaNativeHelper();
+
+    HwJavaNativeHelper(const HwJavaNativeHelper &object);
+
+    HwJavaNativeHelper &operator=(const HwJavaNativeHelper &object);
+
+private:
+    static HwJavaNativeHelper *instance;
     JavaVM *jvm = nullptr;
     map<jlong, jobject> objMap;
     map<long, JNIEnv *> envMap;

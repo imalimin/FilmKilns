@@ -12,20 +12,7 @@
 extern "C" {
 #endif
 
-#include "ff/libavcodec/jni.h"
-
-static HwJavaNativeHelper helper;
 static JMethodDescription playProgressDesc = {"onPlayProgress", "(J)V"};
-
-JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    helper.attach(vm);
-    av_jni_set_java_vm(vm, NULL);
-    return JNI_VERSION_1_6;
-}
-
-JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
-    helper.detach();
-}
 
 static HwVideoProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwVideoProcessor *>(handler);
@@ -35,10 +22,10 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_create
         (JNIEnv *env, jobject thiz) {
     HwVideoProcessor *p = new HwVideoProcessor();
     p->post([] {
-        helper.attachThread();
+        HwJavaNativeHelper::getInstance()->attachThread();
     });
     jlong handler = reinterpret_cast<jlong>(p);
-    helper.registerAnObject(env, handler, thiz);
+    HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
     return handler;
 }
 
@@ -62,9 +49,11 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
             jobject jObject;
             JNIEnv *pEnv = nullptr;
             jmethodID methodID = nullptr;
-            if (helper.findEnv(&pEnv) &&
-                helper.findJObject(handler, &jObject) &&
-                helper.findMethod(handler, playProgressDesc, &methodID)) {
+            if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+                HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+                HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                              playProgressDesc,
+                                                              &methodID)) {
                 pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us));
             }
         });
@@ -111,12 +100,12 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_release
     if (handler) {
         HwVideoProcessor *p = getHandler(handler);
         p->post([] {
-            helper.detachThread();
+            HwJavaNativeHelper::getInstance()->detachThread();
         });
         p->stop();
         delete p;
     }
-    helper.unregisterAnObject(env, handler);
+    HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
 #ifdef __cplusplus

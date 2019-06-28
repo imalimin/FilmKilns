@@ -7,17 +7,48 @@
 
 #include "../include/HwJavaNativeHelper.h"
 
-HwJavaNativeHelper *HwJavaNativeHelper::create() {
-    return new HwJavaNativeHelper();
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "ff/libavcodec/jni.h"
+
+JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    HwJavaNativeHelper::getInstance()->attach(vm);
+    av_jni_set_java_vm(vm, NULL);
+    return JNI_VERSION_1_6;
+}
+
+JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
+    HwJavaNativeHelper::getInstance()->detach();
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+HwJavaNativeHelper *HwJavaNativeHelper::instance = new HwJavaNativeHelper();
+
+HwJavaNativeHelper *HwJavaNativeHelper::getInstance() {
+    return instance;
 }
 
 HwJavaNativeHelper::HwJavaNativeHelper() : Object() {
 
 }
 
+HwJavaNativeHelper::HwJavaNativeHelper(const HwJavaNativeHelper &object) {
+
+}
+
 HwJavaNativeHelper::~HwJavaNativeHelper() {
 
 }
+
+HwJavaNativeHelper &HwJavaNativeHelper::operator=(const HwJavaNativeHelper &object) {
+
+}
+
 
 void HwJavaNativeHelper::attach(JavaVM *vm) {
     this->jvm = vm;
@@ -112,13 +143,13 @@ bool HwJavaNativeHelper::findJObject(jlong handler, jobject *jObject) {
 }
 
 bool HwJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jmethodID *methodID) {
-    jobject jObject;
+    jobject jObject = nullptr;
     JNIEnv *pEnv = nullptr;
     if (!findEnv(&pEnv)) {
-        return true;
+        return false;
     }
     if (!findJObject(handler, &jObject)) {
-        return true;
+        return false;
     }
     string key = method.name + method.sign;
     auto itr = methodMap.find(key);
