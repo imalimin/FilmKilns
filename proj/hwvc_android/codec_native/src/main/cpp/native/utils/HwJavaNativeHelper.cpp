@@ -132,18 +132,17 @@ bool HwJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jm
     return true;
 }
 
-bool HwJavaNativeHelper::callMethod(jlong handler, jmethodID methodID, ...) {
+bool HwJavaNativeHelper::callMethod(jlong handler, JMethodDescription method, ...) {
     va_list args;
-    va_start(args, methodID);
     jobject jObject;
     JNIEnv *pEnv = nullptr;
-    if (!findEnv(&pEnv)) {
-        return false;
+    jmethodID methodID = nullptr;
+    if (findEnv(&pEnv) &&
+        findJObject(handler, &jObject) &&
+        findMethod(handler, method, &methodID)) {
+        va_start(args, methodID);
+        pEnv->CallVoidMethod(jObject, methodID, args);
     }
-    if (!findJObject(handler, &jObject)) {
-        return false;
-    }
-    pEnv->CallVoidMethod(jObject, methodID, args);
     va_end(args);
     return true;
 }

@@ -54,7 +54,7 @@ public:
 
     bool findMethod(jlong handler, JMethodDescription method, jmethodID *methodID);
 
-    bool callMethod(jlong handler, jmethodID methodID, ...);
+    bool callMethod(jlong handler, JMethodDescription method, ...);
 
 private:
     JavaVM *jvm = nullptr;
