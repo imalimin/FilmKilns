@@ -8,13 +8,11 @@
 #ifndef HARDWAREVIDEOCODEC_AUDIOPROCESSOR_H
 #define HARDWAREVIDEOCODEC_AUDIOPROCESSOR_H
 
-#include "Object.h"
-#include <string>
-#include "UnitPipeline.h"
+#include "HwAbsProcessor.h"
 
 using namespace std;
 
-class HwAudioProcessor : public Object {
+class HwAudioProcessor : public HwAbsProcessor {
 public:
     HwAudioProcessor();
 
@@ -32,8 +30,10 @@ public:
 
     void seek(int64_t us);
 
+    void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
+
 private:
-    UnitPipeline *pipeline = nullptr;
+    function<void(int64_t, int64_t)> playProgressListener = nullptr;
 };
 
 

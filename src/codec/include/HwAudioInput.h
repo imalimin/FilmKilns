@@ -36,6 +36,8 @@ public:
 
     bool eventLoop(Message *msg);
 
+    void setPlayListener(function<void(int64_t, int64_t)> listener);
+
 private:
     void loop();
 
@@ -43,13 +45,23 @@ private:
 
     void playFrame(HwAudioFrame *frame);
 
+    void processPlayListener(int64_t us);
+
 private:
+    const int INTERVAL_PROGRESS = 500000;
     AsynAudioDecoder *decoder = nullptr;
     PlayState playState = STOP;
     SimpleLock simpleLock;
     SimpleLock playTimeLock;
     string path;
     HwAudioFrame *frame = nullptr;
+    int64_t lastPlayPts = INT64_MIN;
+
+    /** Listeners */
+    function<void(int64_t, int64_t)> playListener = nullptr;
+
+    /** setting */
+    bool enableLoop = true;
 };
 
 

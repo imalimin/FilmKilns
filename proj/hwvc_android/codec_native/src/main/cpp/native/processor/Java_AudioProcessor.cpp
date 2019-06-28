@@ -4,9 +4,8 @@
 * This source code is licensed under the GPL license found in the
 * LICENSE file in the root directory of this source tree.
 */
-#include <jni.h>
-#include <log.h>
-#include <string>
+
+#include "../include/HwJavaNativeHelper.h"
 #include "HwAudioProcessor.h"
 
 using namespace std;
@@ -15,19 +14,26 @@ using namespace std;
 extern "C" {
 #endif
 
+static JMethodDescription playProgressDesc = {"onPlayProgress", "(JJ)V"};
+
 static HwAudioProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwAudioProcessor *>(handler);
 }
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_create
         (JNIEnv *env, jobject thiz) {
-    return reinterpret_cast<jlong>(new HwAudioProcessor());
+    HwAudioProcessor *p = new HwAudioProcessor();
+    p->post([] {
+        HwJavaNativeHelper::getInstance()->attachThread();
+    });
+    jlong handler = reinterpret_cast<jlong>(p);
+    HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
+    return handler;
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_setSource
         (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
     if (handler) {
-        int len = env->GetStringUTFLength(path) + 1;
         const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
         std::string pathStr(pPath);
         getHandler(handler)->setSource(&pathStr);
@@ -39,6 +45,19 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_prepare
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         getHandler(handler)->prepare();
+        getHandler(handler)->setPlayProgressListener([handler](int64_t us, int64_t duration) {
+            jobject jObject;
+            JNIEnv *pEnv = nullptr;
+            jmethodID methodID = nullptr;
+            if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+                HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+                HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                              playProgressDesc,
+                                                              &methodID)) {
+                pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us),
+                                     static_cast<jlong>(duration));
+            }
+        });
     }
 }
 
@@ -74,8 +93,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         HwAudioProcessor *p = getHandler(handler);
+        p->post([] {
+            HwJavaNativeHelper::getInstance()->detachThread();
+        });
+        p->stop();
         delete p;
     }
+    HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
 #ifdef __cplusplus

@@ -120,6 +120,7 @@ HwResult HwAudioInput::grab() {
     }
     if (frame->isAudio()) {
         playFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
+        processPlayListener(frame->getPts());
     }
     return ret;
 }
@@ -128,4 +129,20 @@ void HwAudioInput::playFrame(HwAudioFrame *frame) {
     Message *msg = new Message(EVENT_SPEAKER_FEED, nullptr);
     msg->obj = frame;
     postEvent(msg);
+}
+
+void HwAudioInput::processPlayListener(int64_t us) {
+    if (playListener) {
+        if (llabs(lastPlayPts - us) >= INTERVAL_PROGRESS) {
+            int64_t time = getCurrentTimeUS();
+            playListener(us, decoder->getAudioDuration());
+            Logcat::i("HWVC", "HwVideoInput::play callback cost %lld",
+                      getCurrentTimeUS() - time);
+            lastPlayPts = us;
+        }
+    }
+}
+
+void HwAudioInput::setPlayListener(function<void(int64_t, int64_t)> listener) {
+    this->playListener = listener;
 }

@@ -160,7 +160,7 @@ int AsynAudioDecoder::getSamplesPerBuffer() {
 
 int64_t AsynAudioDecoder::getAudioDuration() {
     if (decoder) {
-        decoder->getAudioDuration();
+        return decoder->getAudioDuration();
     }
-    return 0;
+    return -1;
 }

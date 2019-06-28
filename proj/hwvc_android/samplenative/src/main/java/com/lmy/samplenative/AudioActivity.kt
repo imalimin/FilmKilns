@@ -9,12 +9,14 @@ import android.view.KeyEvent
 import android.widget.SeekBar
 import android.widget.Toast
 import com.lmy.hwvcnative.processor.AudioProcessor
-import com.lmy.hwvcnative.processor.VideoProcessor
 import kotlinx.android.synthetic.main.activity_audio.*
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AudioActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
     private var processor: AudioProcessor? = null
+    private val format = SimpleDateFormat("mm:ss")
     private var playing: Boolean = true
 
     override fun getLayoutResource(): Int = R.layout.activity_audio
@@ -45,6 +47,10 @@ class AudioActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
             processor?.start()
         }
         seekBar.setOnSeekBarChangeListener(this)
+        processor?.setOnPlayProgressListener { us, duration ->
+            timeView.text = format.format(Date(us / 1000))
+            seekBar.progress = (us * 100 / duration).toInt()
+        }
         playBtn.setOnClickListener {
             if (playing) {
                 playBtn.setImageResource(android.R.drawable.ic_media_play)
