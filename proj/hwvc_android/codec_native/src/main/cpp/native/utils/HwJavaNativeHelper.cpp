@@ -125,6 +125,7 @@ bool HwJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jm
     if (methodMap.end() == itr) {
         jclass clazz = pEnv->GetObjectClass(jObject);
         *methodID = pEnv->GetMethodID(clazz, method.name.c_str(), method.sign.c_str());
+        pEnv->DeleteLocalRef(clazz);
         methodMap.insert(pair<string, jmethodID>(key, *methodID));
     } else {
         *methodID = itr->second;
