@@ -51,7 +51,10 @@ bool AsynAudioDecoder::prepare(string path) {
 }
 
 void AsynAudioDecoder::seek(int64_t us) {
-
+    if (!decoder) {
+        return;
+    }
+    decoder->seek(us);
 }
 
 void AsynAudioDecoder::start() {

@@ -39,16 +39,6 @@ bool HwAudioInput::eventPrepare(Message *msg) {
     if (!decoder->prepare(path)) {
         LOGE("HwAudioInput::open %s failed", path.c_str());
     }
-    //Test DefaultAudioDecoder
-//    DefaultAudioDecoder *decoder = new DefaultAudioDecoder();
-//    decoder->prepare(path);
-//    while (true) {
-//        HwAbsMediaFrame *frame = nullptr;
-//        if (AVERROR_EOF == decoder->grab(&frame)) {
-//            break;
-//        }
-//    }
-//    delete decoder;
     return false;
 }
 
@@ -100,7 +90,7 @@ bool HwAudioInput::eventStop(Message *msg) {
 bool HwAudioInput::eventSeek(Message *msg) {
     int64_t us = msg->arg2;
     decoder->seek(us);
-    return false;
+    return true;
 }
 
 bool HwAudioInput::eventLoop(Message *msg) {

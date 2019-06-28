@@ -95,15 +95,43 @@ bool DefaultAudioDecoder::prepare(string path) {
     return true;
 }
 
+void DefaultAudioDecoder::handleAction() {
+    if (actionSeekInUs >= 0) {
+        int64_t aPts = av_rescale_q(actionSeekInUs, outputTimeBase,
+                                    pFormatCtx->streams[audioTrack]->time_base);
+        avcodec_flush_buffers(aCodecContext);
+        int ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[audioTrack]->index, INT64_MIN,
+                                     aPts, INT64_MAX,
+                                     AVSEEK_FLAG_BACKWARD);
+        if (ret < 0) {
+            Logcat::e("HWVC", "DefaultAudioDecoder::seek audio failed");
+            return;
+        }
+        avcodec_flush_buffers(aCodecContext);
+        Logcat::e("HWVC", "DefaultAudioDecoder::seek: %lld, %lld/%lld",
+                  actionSeekInUs,
+                  aPts, pFormatCtx->streams[audioTrack]->duration);
+        actionSeekInUs = -1;
+        while (true) {
+            ret = av_read_frame(pFormatCtx, avPacket);
+            if (0 == ret && audioTrack == avPacket->stream_index) {
+                av_packet_unref(avPacket);
+                break;
+            }
+            av_packet_unref(avPacket);
+        }
+    }
+}
+
+
 /**
  * Get an audio or a video frame.
  * @param frame 每次返回的地址可能都一样，所以获取一帧音视频后请立即使用，在下次grab之后可能会被释放
  */
 HwResult DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
+    handleAction();
     while (true) {
-        readPkgLock.lock();
         int ret = av_read_frame(pFormatCtx, avPacket);
-        readPkgLock.unlock();
         if (0 == ret && audioTrack == avPacket->stream_index) {
             avcodec_send_packet(aCodecContext, avPacket);
         }
@@ -151,12 +179,8 @@ HwResult DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
 }
 
 void DefaultAudioDecoder::seek(int64_t us) {
-    us = av_rescale_q_rnd(us, outputTimeBase,
-                          pFormatCtx->streams[audioTrack]->time_base,
-                          AV_ROUND_NEAR_INF);
-    readPkgLock.lock();
-    av_seek_frame(pFormatCtx, audioTrack, us, AVSEEK_FLAG_BACKWARD);
-    readPkgLock.unlock();
+    actionSeekInUs = us;
+    eof = false;
 }
 
 int DefaultAudioDecoder::getChannels() {
