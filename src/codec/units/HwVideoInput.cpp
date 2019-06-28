@@ -144,7 +144,7 @@ int HwVideoInput::grab() {
     }
 
     if (frame->isVideo()) {
-        Logcat::i("HWVC", "HwVideoInput::play picture pts=%d", frame->getPts());
+        Logcat::i("HWVC", "HwVideoInput::play picture pts=%lld", frame->getPts());
         HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
         lastShowTime = getCurrentTimeUS();
         int64_t curPts = frame->getPts();
@@ -192,11 +192,7 @@ int HwVideoInput::grab() {
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
         playAudioFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
         processPlayListener(audioFrame->getPts());
-        Logcat::i("HWVC", "HwVideoInput::play audio pts=%lld, %d, %lld, %d",
-                  frame->getPts(),
-                  audioFrame->getChannels(),
-                  audioFrame->getSampleCount(),
-                  audioFrame->getBufferSize());
+        Logcat::i("HWVC", "HwVideoInput::play audio pts=%lld", frame->getPts());
         return MEDIA_TYPE_AUDIO;
     }
     return ret;
