@@ -86,9 +86,6 @@ private:
     bool eof = false;
     /** action */
     int64_t actionSeekInUs = -1;
-
-    /** setting */
-    bool enableLoop = false;
 };
 
 #ifdef __cplusplus

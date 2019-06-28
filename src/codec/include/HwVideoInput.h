@@ -75,6 +75,9 @@ private:
      * Listeners
      */
     function<void(int64_t)> playListener = nullptr;
+
+    /** setting */
+    bool enableLoop = true;
 };
 
 

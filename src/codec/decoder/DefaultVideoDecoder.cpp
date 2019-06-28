@@ -215,13 +215,7 @@ HwResult DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
         //如果缓冲区中既没有音频也没有视频，并且已经读取完文件，则播放完了
         if (eof) {
             Logcat::i("HWVC", "DefaultVideoDecoder::grab end");
-            if (enableLoop) {
-                Logcat::i("HWVC", "DefaultVideoDecoder::grab play loop.");
-                eof = false;
-                seek(0);
-                return Hw::MEDIA_WAIT;
-            }
-            return Hw::MEDIA_SUCCESS;
+            return Hw::MEDIA_EOF;
         }
     }
 }

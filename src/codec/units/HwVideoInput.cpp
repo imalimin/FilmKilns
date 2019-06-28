@@ -80,9 +80,6 @@ bool HwVideoInput::eventPause(Message *msg) {
     if (STOP != playState) {
         playState = PAUSE;
     }
-    if (decoder) {
-        decoder->pause();
-    }
     return true;
 }
 
@@ -115,7 +112,15 @@ bool HwVideoInput::eventLoop(Message *msg) {
     HwResult ret = grab();
     simpleLock.unlock();
     if (Hw::MEDIA_EOF == ret) {
-        eventPause(nullptr);
+        Logcat::i("HWVC", "HwVideoInput::eventLoop EOF");
+        if (enableLoop) {
+            decoder->seek(0);
+            decoder->start();
+            Logcat::i("HWVC", "HwVideoInput::eventLoop play loop.");
+            loop();
+        } else {
+            eventPause(nullptr);
+        }
         return true;
     }
     loop();
@@ -136,7 +141,8 @@ HwResult HwVideoInput::grab() {
     int64_t time = getCurrentTimeUS();
     HwAbsMediaFrame *frame = nullptr;
     HwResult ret = decoder->grab(&frame);
-    Logcat::i("HWVC", "HwVideoInput::grab cost: %lld, ret: %d", getCurrentTimeUS() - time, ret.code);
+    Logcat::i("HWVC", "HwVideoInput::grab cost: %lld, ret: %d", getCurrentTimeUS() - time,
+              ret.code);
     if (!frame) {
         Logcat::i("HWVC", "HwVideoInput::grab wait");
         Thread::sleep(5000);

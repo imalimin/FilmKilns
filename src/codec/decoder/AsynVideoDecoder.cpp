@@ -9,6 +9,7 @@
 #include "TimeUtils.h"
 
 AsynVideoDecoder::AsynVideoDecoder() : AbsAudioDecoder(), AbsVideoDecoder() {
+    playing = false;
     hwFrameAllocator = new HwFrameAllocator();
     decoder = new DefaultVideoDecoder();
 }
@@ -32,7 +33,7 @@ AsynVideoDecoder::~AsynVideoDecoder() {
 }
 
 bool AsynVideoDecoder::prepare(string path) {
-    playState = PAUSE;
+    playing = false;
     if (!pipeline) {
         pipeline = new EventPipeline("AsynVideoDecoder");
     }
@@ -66,7 +67,14 @@ bool AsynVideoDecoder::grab() {
 }
 
 HwResult AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
-    if (PLAYING != playState || cache.empty()) {
+    if (cache.empty()) {
+        /*
+         * If none cache and playing is false, that mean decoder is eof.
+         * Value of playing will be false when decoder is eof.
+         */
+        if (!playing) {
+            return Hw::MEDIA_EOF;
+        }
         return Hw::MEDIA_WAIT;
     }
     if (outputFrame) {
@@ -95,13 +103,13 @@ int AsynVideoDecoder::height() {
 }
 
 void AsynVideoDecoder::loop() {
-    if (PLAYING != playState || !pipeline) {
+    if (!playing || !pipeline) {
         Logcat::i("HWVC", "AsynVideoDecoder::loop skip loop");
         return;
     }
     pipeline->queueEvent([this] {
         if (!grab()) {
-            pause();
+            stop();
             Logcat::i("HWVC", "AsynVideoDecoder::loop EOF");
             return;
         }
@@ -110,23 +118,21 @@ void AsynVideoDecoder::loop() {
 }
 
 void AsynVideoDecoder::start() {
-    if (STOP == playState || PLAYING == playState) {
+    if (playing) {
         return;
     }
-    playState = PLAYING;
+    playing = true;
     loop();
 }
 
 void AsynVideoDecoder::pause() {
-    if (STOP != playState) {
-        playState = PAUSE;
-    }
 }
 
 void AsynVideoDecoder::stop() {
-    if (STOP != playState) {
-        playState = STOP;
+    if (!playing) {
+        return;
     }
+    playing = false;
     grabLock.notify();
 }
 
