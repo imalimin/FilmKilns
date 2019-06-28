@@ -7,6 +7,7 @@
 
 #include "../include/HwAudioInput.h"
 #include "TimeUtils.h"
+#include "Thread.h"
 
 HwAudioInput::HwAudioInput() : HwAudioInput(nullptr) {
 }
@@ -101,11 +102,19 @@ bool HwAudioInput::eventLoop(Message *msg) {
     HwResult ret = grab();
     simpleLock.unlock();
     if (Hw::MEDIA_EOF == ret) {
-        eventStop(nullptr);
-        return false;
+        Logcat::i("HWVC", "HwAudioInput::eventLoop EOF");
+        if (enableLoop) {
+            decoder->seek(0);
+            decoder->start();
+            Logcat::i("HWVC", "HwAudioInput::eventLoop play loop.");
+            loop();
+        } else {
+            eventPause(nullptr);
+        }
+        return true;
     }
     loop();
-    return false;
+    return true;
 }
 
 void HwAudioInput::loop() {
@@ -115,6 +124,10 @@ void HwAudioInput::loop() {
 HwResult HwAudioInput::grab() {
     HwAbsMediaFrame *frame = nullptr;
     HwResult ret = decoder->grab(&frame);
+    if (Hw::MEDIA_WAIT == ret) {
+        Logcat::i("HWVC", "HwAudioInput::grab wait");
+        Thread::sleep(5000);
+    }
     if (!frame) {
         return ret;
     }

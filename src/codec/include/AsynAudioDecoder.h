@@ -17,6 +17,7 @@
 #include "SimpleLock.h"
 #include "PlayState.h"
 #include <queue>
+#include <atomic>
 
 using namespace std;
 
@@ -63,7 +64,7 @@ private:
     EventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;
     HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收
-    PlayState playState = STOP;
+    atomic_bool playing;
     SimpleLock grabLock;
     SimpleLock releaseLock;
 };

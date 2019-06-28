@@ -9,6 +9,7 @@
 #include "TimeUtils.h"
 
 AsynAudioDecoder::AsynAudioDecoder() : AbsAudioDecoder() {
+    playing = false;
     hwFrameAllocator = new HwFrameAllocator();
     decoder = new DefaultAudioDecoder();
 //    decoder = new HwAndroidAudioDecoder();
@@ -33,7 +34,7 @@ AsynAudioDecoder::~AsynAudioDecoder() {
 }
 
 bool AsynAudioDecoder::prepare(string path) {
-    playState = PAUSE;
+    playing = false;
     if (!pipeline) {
         pipeline = new EventPipeline("AsynAudioDecoder");
     }
@@ -58,34 +59,32 @@ void AsynAudioDecoder::seek(int64_t us) {
 }
 
 void AsynAudioDecoder::start() {
-    if (STOP == playState || PLAYING == playState) {
+    if (playing) {
         return;
     }
-    playState = PLAYING;
+    playing = true;
     loop();
 }
 
 void AsynAudioDecoder::pause() {
-    if (STOP != playState) {
-        playState = PAUSE;
-    }
 }
 
 void AsynAudioDecoder::stop() {
-    if (STOP != playState) {
-        playState = STOP;
+    if (!playing) {
+        return;
     }
+    playing = false;
     grabLock.notify();
 }
 
 void AsynAudioDecoder::loop() {
-    if (PLAYING != playState || !pipeline) {
+    if (!playing || !pipeline) {
         Logcat::i("HWVC", "AsynAudioDecoder::loop skip loop");
         return;
     }
     pipeline->queueEvent([this] {
         if (!grab()) {
-            pause();
+            stop();
             Logcat::i("HWVC", "AsynAudioDecoder::loop EOF");
             return;
         }
@@ -114,7 +113,14 @@ bool AsynAudioDecoder::grab() {
 }
 
 HwResult AsynAudioDecoder::grab(HwAbsMediaFrame **frame) {
-    if (STOP == playState || cache.empty()) {
+    if (cache.empty()) {
+        /*
+         * If none cache and playing is false, that mean decoder is eof.
+         * Value of playing will be false when decoder is eof.
+         */
+        if (!playing) {
+            return Hw::MEDIA_EOF;
+        }
         return Hw::MEDIA_WAIT;
     }
     if (outputFrame) {
