@@ -14,12 +14,16 @@ import android.widget.SeekBar
 import android.widget.Toast
 import com.lmy.hwvcnative.processor.VideoProcessor
 import kotlinx.android.synthetic.main.activity_video.*
+import kotlinx.android.synthetic.main.view_filter.*
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         SeekBar.OnSeekBarChangeListener {
 
     private lateinit var mFilterController: FilterController
+    private val formator = SimpleDateFormat("mm:ss")
     private var processor: VideoProcessor? = null
     private var prepared = false
     private var surface: Surface? = null
@@ -51,9 +55,10 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         } else {
             processor = VideoProcessor()
             processor?.setSource(path!!)
-            processor?.setOnPlayProgressListener { us ->
-                seekBar.progress = (us * 100 / 177710867).toInt()
-            }
+        }
+        processor?.setOnPlayProgressListener { us ->
+            timeView.text = formator.format(Date(us / 1000))
+            seekBar.progress = (us * 100 / 177710867).toInt()
         }
         mFilterController = FilterController(processor!!, progressLayout)
         filterBtn.setOnClickListener {
@@ -62,8 +67,10 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
         seekBar.setOnSeekBarChangeListener(this)
         playBtn.setOnClickListener {
             if (playing) {
+                playBtn.setImageResource(android.R.drawable.ic_media_play)
                 processor?.pause()
             } else {
+                playBtn.setImageResource(android.R.drawable.ic_media_pause)
                 processor?.start()
             }
             playing = !playing
