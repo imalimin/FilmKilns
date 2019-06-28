@@ -4,9 +4,7 @@
 * This source code is licensed under the GPL license found in the
 * LICENSE file in the root directory of this source tree.
 */
-#include <jni.h>
-#include <log.h>
-#include <map>
+#include "../include/HwJavaNativeHelper.h"
 #include "HwVideoProcessor.h"
 #include "../include/HwAndroidWindow.h"
 
@@ -16,15 +14,17 @@ extern "C" {
 
 #include "ff/libavcodec/jni.h"
 
-static JavaVM *mJavaVM;
-static jmethodID method = nullptr;
-static map<jlong, jobject> objMap;
-static map<jlong, JNIEnv *> envMap;
+static HwJavaNativeHelper helper;
+static JMethodDescription playProgressDesc = {"onPlayProgress", "(J)V"};
 
-jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    mJavaVM = vm;
+JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    helper.attach(vm);
     av_jni_set_java_vm(vm, NULL);
     return JNI_VERSION_1_6;
+}
+
+JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
+    helper.detach();
 }
 
 static HwVideoProcessor *getHandler(jlong handler) {
@@ -33,28 +33,12 @@ static HwVideoProcessor *getHandler(jlong handler) {
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_create
         (JNIEnv *env, jobject thiz) {
-    jclass clazz = env->GetObjectClass(thiz);
-    if (!method) {
-        method = env->GetMethodID(clazz, "onPlayProgress", "(J)V");
-    }
     HwVideoProcessor *p = new HwVideoProcessor();
-    jlong handler = reinterpret_cast<jlong>(p);
-    p->post([handler] {
-        if (!mJavaVM) {
-            Logcat::e("HWVC", "HwVideoProcessor::play attach current thread failed a.");
-            return;
-        }
-        JNIEnv *pEnv = nullptr;
-        int status = mJavaVM->AttachCurrentThread(&pEnv, NULL);
-        if (status < 0) {
-            Logcat::e("HWVC", "HwVideoProcessor::play attach current thread failed b.");
-            return;
-        }
-        envMap.insert(pair<jlong, JNIEnv *>(handler, pEnv));
+    p->post([] {
+        helper.attachThread();
     });
-    if (objMap.end() == objMap.find(handler)) {
-        objMap.insert(pair<jlong, jobject>(handler, env->NewGlobalRef(thiz)));
-    }
+    jlong handler = reinterpret_cast<jlong>(p);
+    helper.registerAnObject(env, handler, thiz);
     return handler;
 }
 
@@ -75,15 +59,14 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
     if (handler) {
         getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
         getHandler(handler)->setPlayProgressListener([handler](int64_t us) {
-            if (objMap.end() == objMap.find(handler)) {
-                Logcat::e("HWVC", "HwVideoProcessor::play thiz is null");
-                return;
+            jobject jObject;
+            JNIEnv *pEnv = nullptr;
+            jmethodID methodID = nullptr;
+            if (helper.findEnv(&pEnv) &&
+                helper.findJObject(handler, &jObject) &&
+                helper.findMethod(handler, playProgressDesc, &methodID)) {
+                pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us));
             }
-            if (envMap.end() == envMap.find(handler)) {
-                Logcat::e("HWVC", "HwVideoProcessor::play attach current thread failed.");
-                return;
-            }
-            envMap[handler]->CallVoidMethod(objMap[handler], method, static_cast<jlong>(us));
         });
     }
 }
@@ -128,17 +111,12 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_release
     if (handler) {
         HwVideoProcessor *p = getHandler(handler);
         p->post([] {
-            mJavaVM->DetachCurrentThread();
+            helper.detachThread();
         });
         p->stop();
         delete p;
     }
-    auto itr = objMap.find(handler);
-    if (objMap.end() != itr) {
-        env->DeleteGlobalRef(itr->second);
-        objMap.erase(itr);
-    }
-    envMap.erase(envMap.find(handler));
+    helper.unregisterAnObject(env, handler);
 }
 
 #ifdef __cplusplus
