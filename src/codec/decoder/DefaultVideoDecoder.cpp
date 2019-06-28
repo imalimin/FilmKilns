@@ -345,6 +345,7 @@ void DefaultVideoDecoder::matchPts(AVFrame *frame, int track) {
 
 void DefaultVideoDecoder::seek(int64_t us) {
     actionSeekInUs = us;
+    eof = false;
 }
 
 int64_t DefaultVideoDecoder::getVideoDuration() {

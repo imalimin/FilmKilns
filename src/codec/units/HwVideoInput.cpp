@@ -115,7 +115,7 @@ bool HwVideoInput::eventLoop(Message *msg) {
     int ret = grab();
     simpleLock.unlock();
     if (MEDIA_TYPE_EOF == ret) {
-        eventStop(nullptr);
+        eventPause(nullptr);
         return true;
     }
     loop();
