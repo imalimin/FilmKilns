@@ -135,7 +135,7 @@ int HwAndroidAudioDecoder::getProfile() {
     }
 }
 
-int HwAndroidAudioDecoder::grab(HwAbsMediaFrame **frame) {
+HwResult HwAndroidAudioDecoder::grab(HwAbsMediaFrame **frame) {
     while (true) {
         HwBuffer *buffer = HwBuffer::alloc(8192);
         size_t count = 0;
@@ -196,7 +196,7 @@ int HwAndroidAudioDecoder::grab(HwAbsMediaFrame **frame) {
                    min(bufSize, outHwFrame->getBuffer()->size()));
             AMediaCodec_releaseOutputBuffer(codec, status, info.size != 0);
             *frame = outHwFrame;
-            return MEDIA_TYPE_AUDIO;
+            return Hw::MEDIA_SUCCESS;
         } else if (status == AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED) {
             Logcat::i("HWVC", "HwAndroidAudioDecoder output buffers changed");
         } else if (status == AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED) {
@@ -206,16 +206,16 @@ int HwAndroidAudioDecoder::grab(HwAbsMediaFrame **frame) {
             AMediaFormat_delete(format);
         } else if (status == AMEDIACODEC_INFO_TRY_AGAIN_LATER) {
             Logcat::i("HWVC", "HwAndroidAudioDecoder no output buffer right now");
-            return MEDIA_TYPE_UNKNOWN;
+            return Hw::MEDIA_WAIT;
         } else {
             Logcat::i("HWVC", "HwAndroidAudioDecoder unexpected info code: %zd", status);
-            return MEDIA_TYPE_UNKNOWN;
+            return Hw::MEDIA_WAIT;
         }
 
         //如果缓冲区中既没有音频也没有视频，并且已经读取完文件，则播放完了
         if (eof) {
             Logcat::i("HWVC", "HwAndroidAudioDecoder::grab EOF");
-            return AVERROR_EOF;
+            return Hw::MEDIA_EOF;
         }
     }
 }

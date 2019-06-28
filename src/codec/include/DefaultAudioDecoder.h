@@ -39,7 +39,7 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    virtual int grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame);
 
     int getChannels();
 

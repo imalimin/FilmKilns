@@ -52,7 +52,7 @@ bool AsynVideoDecoder::grab() {
     }
 //    Logcat::i("HWVC", "HwFrameAllocator::grab  cache %d", cache.size());
     HwAbsMediaFrame *frame = nullptr;
-    int ret = MEDIA_TYPE_UNKNOWN;
+    HwResult ret = Hw::MEDIA_WAIT;
     releaseLock.lock();
     if (decoder) {
         ret = decoder->grab(&frame);
@@ -62,12 +62,12 @@ bool AsynVideoDecoder::grab() {
         cache.push(frame);
     }
     releaseLock.unlock();
-    return MEDIA_TYPE_EOF != ret;
+    return Hw::MEDIA_EOF != ret;
 }
 
-int AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
+HwResult AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
     if (PLAYING != playState || cache.empty()) {
-        return MEDIA_TYPE_UNKNOWN;
+        return Hw::MEDIA_WAIT;
     }
     if (outputFrame) {
         outputFrame->recycle();
@@ -77,10 +77,7 @@ int AsynVideoDecoder::grab(HwAbsMediaFrame **frame) {
     cache.pop();
     grabLock.notify();
     *frame = outputFrame;
-    if ((*frame)->isAudio()) {
-        return MEDIA_TYPE_AUDIO;
-    }
-    return MEDIA_TYPE_VIDEO;
+    return Hw::MEDIA_SUCCESS;
 }
 
 int AsynVideoDecoder::width() {

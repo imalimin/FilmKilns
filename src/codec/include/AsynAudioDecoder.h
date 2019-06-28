@@ -10,6 +10,7 @@
 
 #include "AbsVideoDecoder.h"
 #include "DefaultAudioDecoder.h"
+#include "HwAndroidAudioDecoder.h"
 #include "EventPipeline.h"
 #include "HwAbsMediaFrame.h"
 #include "HwFrameAllocator.h"
@@ -38,7 +39,7 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    int grab(HwAbsMediaFrame **frame);
+    HwResult grab(HwAbsMediaFrame **frame);
 
     int getChannels();
 
@@ -58,6 +59,7 @@ private:
 private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
     DefaultAudioDecoder *decoder = nullptr;
+//    HwAndroidAudioDecoder *decoder = nullptr;
     EventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;
     HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收

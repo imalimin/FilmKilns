@@ -112,9 +112,9 @@ bool HwVideoInput::eventLoop(Message *msg) {
         return true;
     }
     simpleLock.lock();
-    int ret = grab();
+    HwResult ret = grab();
     simpleLock.unlock();
-    if (MEDIA_TYPE_EOF == ret) {
+    if (Hw::MEDIA_EOF == ret) {
         eventPause(nullptr);
         return true;
     }
@@ -132,11 +132,11 @@ void HwVideoInput::checkFilter() {
     }
 }
 
-int HwVideoInput::grab() {
+HwResult HwVideoInput::grab() {
     int64_t time = getCurrentTimeUS();
     HwAbsMediaFrame *frame = nullptr;
-    int ret = decoder->grab(&frame);
-    Logcat::i("HWVC", "HwVideoInput::grab cost: %lld, ret: %d", getCurrentTimeUS() - time, ret);
+    HwResult ret = decoder->grab(&frame);
+    Logcat::i("HWVC", "HwVideoInput::grab cost: %lld, ret: %d", getCurrentTimeUS() - time, ret.code);
     if (!frame) {
         Logcat::i("HWVC", "HwVideoInput::grab wait");
         Thread::sleep(5000);
@@ -187,13 +187,11 @@ int HwVideoInput::grab() {
         yuvFilter->draw(yuv[0], yuv[1], yuv[2]);
         invalidate(yuvFilter->getFrameBuffer()->getFrameTexture(), videoFrame->getWidth(),
                    videoFrame->getHeight());
-        return MEDIA_TYPE_VIDEO;
     } else if (frame->isAudio()) {
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
         playAudioFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
         processPlayListener(audioFrame->getPts());
         Logcat::i("HWVC", "HwVideoInput::play audio pts=%lld", frame->getPts());
-        return MEDIA_TYPE_AUDIO;
     }
     return ret;
 }

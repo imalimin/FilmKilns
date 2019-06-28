@@ -151,7 +151,7 @@ void DefaultVideoDecoder::handleAction() {
  * Get an audio or a video frame.
  * @param frame 每次返回的地址可能都一样，所以获取一帧音视频后请立即使用，在下次grab之后可能会被释放
  */
-int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
+HwResult DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
     handleAction();
     while (true) {
         int ret = av_read_frame(pFormatCtx, avPacket);
@@ -198,7 +198,7 @@ int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
                       videoFrame->width,
                       videoFrame->height);
             av_frame_unref(videoFrame);
-            return MEDIA_TYPE_VIDEO;
+            return Hw::MEDIA_SUCCESS;
         }
         //如果没有视频帧，尝试去缓冲区中获取解码完成的音频帧
         if (0 == avcodec_receive_frame(aCodecContext, audioFrame)) {
@@ -210,12 +210,18 @@ int DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
             outHwFrame = resample(audioFrame);
             *frame = outHwFrame;
             av_frame_unref(audioFrame);
-            return MEDIA_TYPE_AUDIO;
+            return Hw::MEDIA_SUCCESS;
         }
         //如果缓冲区中既没有音频也没有视频，并且已经读取完文件，则播放完了
         if (eof) {
             Logcat::i("HWVC", "DefaultVideoDecoder::grab end");
-            return MEDIA_TYPE_EOF;
+            if (enableLoop) {
+                Logcat::i("HWVC", "DefaultVideoDecoder::grab play loop.");
+                eof = false;
+                seek(0);
+                return Hw::MEDIA_WAIT;
+            }
+            return Hw::MEDIA_SUCCESS;
         }
     }
 }

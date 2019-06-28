@@ -99,7 +99,7 @@ bool DefaultAudioDecoder::prepare(string path) {
  * Get an audio or a video frame.
  * @param frame 每次返回的地址可能都一样，所以获取一帧音视频后请立即使用，在下次grab之后可能会被释放
  */
-int DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
+HwResult DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
     while (true) {
         readPkgLock.lock();
         int ret = av_read_frame(pFormatCtx, avPacket);
@@ -140,12 +140,12 @@ int DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
             outHwFrame = resample(audioFrame);
             *frame = outHwFrame;
             av_frame_unref(audioFrame);
-            return MEDIA_TYPE_AUDIO;
+            return Hw::MEDIA_SUCCESS;
         }
         //如果缓冲区中既没有音频也没有视频，并且已经读取完文件，则播放完了
         if (eof) {
             Logcat::i("HWVC", "DefaultAudioDecoder::grab EOF");
-            return AVERROR_EOF;
+            return Hw::MEDIA_EOF;
         }
     }
 }
@@ -232,7 +232,7 @@ HwAbsMediaFrame *DefaultAudioDecoder::resample(AVFrame *avFrame) {
         return nullptr;
     }
     AVFrame *outFrame = nullptr;
-    if(translator->translate(&outFrame, &avFrame)){
+    if (translator->translate(&outFrame, &avFrame)) {
         return hwFrameAllocator->ref(outFrame);
     }
     return nullptr;

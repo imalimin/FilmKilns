@@ -108,9 +108,9 @@ bool HwAudioInput::eventLoop(Message *msg) {
         return false;
     }
     simpleLock.lock();
-    int ret = grab();
+    HwResult ret = grab();
     simpleLock.unlock();
-    if (MEDIA_TYPE_EOF == ret) {
+    if (Hw::MEDIA_EOF == ret) {
         eventStop(nullptr);
         return false;
     }
@@ -122,15 +122,14 @@ void HwAudioInput::loop() {
     postEvent(new Message(EVENT_AUDIO_LOOP, nullptr));
 }
 
-int HwAudioInput::grab() {
+HwResult HwAudioInput::grab() {
     HwAbsMediaFrame *frame = nullptr;
-    int ret = decoder->grab(&frame);
+    HwResult ret = decoder->grab(&frame);
     if (!frame) {
         return ret;
     }
     if (frame->isAudio()) {
         playFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
-        return MEDIA_TYPE_AUDIO;
     }
     return ret;
 }

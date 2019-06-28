@@ -52,7 +52,7 @@ public:
 
     void stop();
 
-    int grab(HwAbsMediaFrame **frame);
+    HwResult grab(HwAbsMediaFrame **frame);
 
     virtual int64_t getVideoDuration() override;
 

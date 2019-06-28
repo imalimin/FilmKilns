@@ -39,7 +39,7 @@ public:
 private:
     void loop();
 
-    int grab();
+    HwResult grab();
 
     void playFrame(HwAudioFrame *frame);
 

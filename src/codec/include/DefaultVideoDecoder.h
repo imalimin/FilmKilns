@@ -48,7 +48,7 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    virtual int grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame);
 
     virtual int64_t getVideoDuration() override;
 
@@ -86,6 +86,9 @@ private:
     bool eof = false;
     /** action */
     int64_t actionSeekInUs = -1;
+
+    /** setting */
+    bool enableLoop = false;
 };
 
 #ifdef __cplusplus

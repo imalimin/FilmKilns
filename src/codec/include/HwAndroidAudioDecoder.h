@@ -34,7 +34,7 @@ public:
 
     bool prepare(string path) override;
 
-    virtual int grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame);
 
     void seek(int64_t us) override;
 

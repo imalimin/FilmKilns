@@ -52,7 +52,7 @@ private:
 
     void checkFilter();
 
-    int grab();
+    HwResult grab();
 
     void playAudioFrame(HwAudioFrame *frame);
 
