@@ -214,6 +214,9 @@ int64_t DefaultAudioDecoder::getAudioDuration() {
                                        pFormatCtx->streams[audioTrack]->codec->time_base,
                                        outputTimeBase,
                                        AV_ROUND_NEAR_INF);
+    if (audioDurationUs < 0) {
+        audioDurationUs = pFormatCtx->duration;
+    }
     return audioDurationUs;
 }
 

@@ -356,12 +356,11 @@ int64_t DefaultVideoDecoder::getVideoDuration() {
     videoDurationUs = pFormatCtx->streams[videoTrack]->duration;
     videoDurationUs = av_rescale_q_rnd(videoDurationUs,
                                        pFormatCtx->streams[videoTrack]->time_base,
-                                       pFormatCtx->streams[videoTrack]->codec->time_base,
-                                       AV_ROUND_NEAR_INF);
-    videoDurationUs = av_rescale_q_rnd(videoDurationUs,
-                                       pFormatCtx->streams[videoTrack]->codec->time_base,
                                        outputRational,
                                        AV_ROUND_NEAR_INF);
+    if (audioDurationUs < 0) {
+        audioDurationUs = pFormatCtx->duration;
+    }
     return videoDurationUs;
 }
 
@@ -372,12 +371,11 @@ int64_t DefaultVideoDecoder::getAudioDuration() {
     audioDurationUs = pFormatCtx->streams[audioTrack]->duration;
     audioDurationUs = av_rescale_q_rnd(audioDurationUs,
                                        pFormatCtx->streams[audioTrack]->time_base,
-                                       pFormatCtx->streams[audioTrack]->codec->time_base,
-                                       AV_ROUND_NEAR_INF);
-    audioDurationUs = av_rescale_q_rnd(audioDurationUs,
-                                       pFormatCtx->streams[audioTrack]->codec->time_base,
                                        outputRational,
                                        AV_ROUND_NEAR_INF);
+    if (audioDurationUs < 0) {
+        audioDurationUs = pFormatCtx->duration;
+    }
     return audioDurationUs;
 }
 
