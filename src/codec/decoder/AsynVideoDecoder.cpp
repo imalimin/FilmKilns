@@ -186,14 +186,14 @@ void AsynVideoDecoder::seek(int64_t us) {
 
 int64_t AsynVideoDecoder::getVideoDuration() {
     if (decoder) {
-        decoder->getVideoDuration();
+        return decoder->getVideoDuration();
     }
-    return 0;
+    return -1;
 }
 
 int64_t AsynVideoDecoder::getAudioDuration() {
     if (decoder) {
-        decoder->getAudioDuration();
+        return decoder->getAudioDuration();
     }
-    return 0;
+    return -1;
 }

@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-static JMethodDescription playProgressDesc = {"onPlayProgress", "(J)V"};
+static JMethodDescription playProgressDesc = {"onPlayProgress", "(JJ)V"};
 
 static HwVideoProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwVideoProcessor *>(handler);
@@ -45,7 +45,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
         (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
         getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
-        getHandler(handler)->setPlayProgressListener([handler](int64_t us) {
+        getHandler(handler)->setPlayProgressListener([handler](int64_t us, int64_t duration) {
             jobject jObject;
             JNIEnv *pEnv = nullptr;
             jmethodID methodID = nullptr;
@@ -54,7 +54,8 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
                 HwJavaNativeHelper::getInstance()->findMethod(handler,
                                                               playProgressDesc,
                                                               &methodID)) {
-                pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us));
+                pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us),
+                                     static_cast<jlong>(duration));
             }
         });
     }

@@ -28,6 +28,7 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
     private var prepared = false
     private var surface: Surface? = null
     private var playing: Boolean = true
+    private var duration: Long = -1
 
     override fun getLayoutResource(): Int = R.layout.activity_video
     override fun initView() {
@@ -56,9 +57,12 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
             processor = VideoProcessor()
             processor?.setSource(path!!)
         }
-        processor?.setOnPlayProgressListener { us ->
+        processor?.setOnPlayProgressListener { us, duration ->
             timeView.text = formator.format(Date(us / 1000))
-            seekBar.progress = (us * 100 / 177710867).toInt()
+            seekBar.progress = (us * 100 / duration).toInt()
+            if (this.duration < 0) {
+                this.duration = duration
+            }
         }
         mFilterController = FilterController(processor!!, progressLayout)
         filterBtn.setOnClickListener {
@@ -146,7 +150,7 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         if (fromUser) {
-            processor?.seek(177710867 * progress.toLong() / 100)
+            processor?.seek(duration * progress.toLong() / 100)
         }
     }
 

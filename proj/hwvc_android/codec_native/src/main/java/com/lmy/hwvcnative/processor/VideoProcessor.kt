@@ -15,7 +15,7 @@ import com.lmy.hwvcnative.filter.Filter
 
 class VideoProcessor : CPPObject(), FilterSupport {
     private var filter: Filter? = null
-    private var onPlayProgressListener: ((Long) -> Unit)? = null
+    private var onPlayProgressListener: ((Long, Long) -> Unit)? = null
     private val mHandler = Handler(Looper.getMainLooper())
 
     init {
@@ -70,7 +70,7 @@ class VideoProcessor : CPPObject(), FilterSupport {
         handler = 0
     }
 
-    fun setOnPlayProgressListener(listener: (Long) -> Unit) {
+    fun setOnPlayProgressListener(listener: (Long, Long) -> Unit) {
         this.onPlayProgressListener = listener
     }
 
@@ -78,9 +78,9 @@ class VideoProcessor : CPPObject(), FilterSupport {
      * Call from jni.
      * @param us Timestamp for play progress.
      */
-    fun onPlayProgress(us: Long) {
+    fun onPlayProgress(us: Long, duration: Long) {
         mHandler.post {
-            onPlayProgressListener?.invoke(us)
+            onPlayProgressListener?.invoke(us, duration)
         }
     }
 

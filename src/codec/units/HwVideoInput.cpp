@@ -221,7 +221,7 @@ void HwVideoInput::processPlayListener(int64_t us) {
     if (playListener) {
         if (llabs(lastPlayPts - us) >= INTERVAL_PROGRESS) {
             int64_t time = getCurrentTimeUS();
-            playListener(us);
+            playListener(us, decoder->getAudioDuration());
             Logcat::i("HWVC", "HwVideoInput::play callback cost %lld",
                       getCurrentTimeUS() - time);
             lastPlayPts = us;
@@ -229,6 +229,6 @@ void HwVideoInput::processPlayListener(int64_t us) {
     }
 }
 
-void HwVideoInput::setPlayListener(function<void(int64_t)> listener) {
+void HwVideoInput::setPlayListener(function<void(int64_t, int64_t)> listener) {
     this->playListener = listener;
 }

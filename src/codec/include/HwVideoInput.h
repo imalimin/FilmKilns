@@ -44,7 +44,7 @@ public:
 
     bool invalidate(int tex, uint32_t width, uint32_t height);
 
-    void setPlayListener(function<void(int64_t)> listener);
+    void setPlayListener(function<void(int64_t, int64_t)> listener);
 
 private:
 
@@ -74,7 +74,7 @@ private:
     /**
      * Listeners
      */
-    function<void(int64_t)> playListener = nullptr;
+    function<void(int64_t, int64_t)> playListener = nullptr;
 
     /** setting */
     bool enableLoop = true;

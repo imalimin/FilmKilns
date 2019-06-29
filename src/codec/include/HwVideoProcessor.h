@@ -34,13 +34,13 @@ public:
 
     void updateWindow(HwWindow *win);
 
-    void setPlayProgressListener(function<void(int64_t)> listener);
+    void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 
 private:
     HandlerThread *unitHandler = nullptr;
     HandlerThread *screenHandler = nullptr;
 
-    function<void(int64_t)> playProgressListener = nullptr;
+    function<void(int64_t, int64_t)> playProgressListener = nullptr;
 };
 
 

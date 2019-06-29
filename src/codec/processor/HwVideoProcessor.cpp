@@ -16,8 +16,8 @@
 HwVideoProcessor::HwVideoProcessor() : HwAbsProcessor("VideoProcessor") {
     startPipeline();
     HwVideoInput *inputUnit = new HwVideoInput();
-    inputUnit->setPlayListener([this](int64_t us) {
-        this->playProgressListener(us);
+    inputUnit->setPlayListener([this](int64_t us, int64_t duration) {
+        this->playProgressListener(us, duration);
     });
     registerAnUnit(inputUnit);
     registerAnUnit(new HwRender());
@@ -84,6 +84,6 @@ void HwVideoProcessor::updateWindow(HwWindow *win) {
     postEvent(msg);
 }
 
-void HwVideoProcessor::setPlayProgressListener(function<void(int64_t)> listener) {
+void HwVideoProcessor::setPlayProgressListener(function<void(int64_t, int64_t)> listener) {
     this->playProgressListener = listener;
 }
