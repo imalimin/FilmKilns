@@ -194,9 +194,10 @@ HwResult DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
             }
             outHwFrame = hwFrameAllocator->ref(videoFrame);
             *frame = outHwFrame;
-            Logcat::i("HWVC", "DefaultVideoDecoder::grab video, %d x %d",
+            Logcat::i("HWVC", "DefaultVideoDecoder::grab video, %d x %d, %d",
                       videoFrame->width,
-                      videoFrame->height);
+                      videoFrame->height,
+                      videoFrame->format);
             av_frame_unref(videoFrame);
             return Hw::MEDIA_SUCCESS;
         }
