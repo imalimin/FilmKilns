@@ -17,6 +17,7 @@
 
 using namespace std;
 typedef struct {
+    string cls;
     string name;
     string sign;
 } JMethodDescription;
@@ -30,6 +31,9 @@ typedef struct {
  * 5. Finally, helper.unregisterAnObject.
  */
 class HwJavaNativeHelper : public Object {
+public:
+    static string getClassName(JNIEnv *env, jobject object);
+
 public:
     static HwJavaNativeHelper *getInstance();
 

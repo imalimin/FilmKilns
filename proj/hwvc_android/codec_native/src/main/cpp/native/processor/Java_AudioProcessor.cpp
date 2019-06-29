@@ -14,7 +14,8 @@ using namespace std;
 extern "C" {
 #endif
 
-static JMethodDescription playProgressDesc = {"onPlayProgress", "(JJ)V"};
+static JMethodDescription aPlayProgressDesc = {"Java_com_lmy_hwvcnative_processor_AudioProcessor",
+                                               "onPlayProgress", "(JJ)V"};
 
 static HwAudioProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwAudioProcessor *>(handler);
@@ -46,13 +47,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_prepare
     if (handler) {
         getHandler(handler)->prepare();
         getHandler(handler)->setPlayProgressListener([handler](int64_t us, int64_t duration) {
-            jobject jObject;
+            jobject jObject = nullptr;
             JNIEnv *pEnv = nullptr;
             jmethodID methodID = nullptr;
             if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
                 HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
                 HwJavaNativeHelper::getInstance()->findMethod(handler,
-                                                              playProgressDesc,
+                                                              aPlayProgressDesc,
                                                               &methodID)) {
                 pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us),
                                      static_cast<jlong>(duration));

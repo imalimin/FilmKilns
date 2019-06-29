@@ -7,6 +7,7 @@
 
 #include "../include/HwJavaNativeHelper.h"
 #include "Thread.h"
+#include "StringUtils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,6 +28,17 @@ JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
 #ifdef __cplusplus
 }
 #endif
+
+string HwJavaNativeHelper::getClassName(JNIEnv *env, jobject object) {
+    jclass cls = env->FindClass("java/lang/Class");
+    jmethodID mid_getName = env->GetMethodID(cls, "getName", "()Ljava/lang/String;");
+    jstring name = static_cast<jstring>(env->CallObjectMethod(object, mid_getName));
+    const char *pName = env->GetStringUTFChars(name, JNI_FALSE);
+    std::string nameStr(pName);
+    env->ReleaseStringUTFChars(name, pName);
+    env->DeleteLocalRef(cls);
+    return nameStr;
+}
 
 HwJavaNativeHelper *HwJavaNativeHelper::instance = new HwJavaNativeHelper();
 
@@ -96,13 +108,14 @@ bool HwJavaNativeHelper::attachThread() {
         Logcat::e("HWVC", "HwJavaNativeHelper::attachThread(%p) failed. Do not attach repeat.", id);
         return false;
     }
+//    int status = jvm->GetEnv(reinterpret_cast<void **>(&pEnv), JNI_VERSION_1_6);
     int status = jvm->AttachCurrentThread(&pEnv, NULL);
     if (status < 0) {
         Logcat::e("HWVC", "HwJavaNativeHelper::attachThread failed.");
         return false;
     }
     Logcat::i("HWVC", "HwJavaNativeHelper::attachThread(%p, %p)", id, pEnv);
-    envMap.insert(pair<jlong, JNIEnv *>(id, pEnv));
+    envMap.insert(pair<long, JNIEnv *>(id, pEnv));
     return true;
 }
 
@@ -115,7 +128,10 @@ void HwJavaNativeHelper::detachThread() {
     if (findEnv(&pEnv)) {
         long id = Thread::currentThreadId();
         Logcat::i("HWVC", "HwJavaNativeHelper::detachThread(%p)", id);
-        jvm->DetachCurrentThread();
+        int status = jvm->DetachCurrentThread();
+        if (status < 0) {
+            Logcat::e("HWVC", "HwJavaNativeHelper::detachThread failed.");
+        }
         envMap.erase(envMap.find(id));
     } else {
         long id = Thread::currentThreadId();
@@ -124,6 +140,10 @@ void HwJavaNativeHelper::detachThread() {
 }
 
 bool HwJavaNativeHelper::findEnv(JNIEnv **env) {
+//    int status = jvm->GetEnv(reinterpret_cast<void **>(env), JNI_VERSION_1_6);
+//    if (status >= 0) {
+//        return true;
+//    }
     auto itr = envMap.find(Thread::currentThreadId());
     if (envMap.end() == itr) {
         *env = nullptr;
@@ -152,7 +172,7 @@ bool HwJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jm
     if (!findJObject(handler, &jObject)) {
         return false;
     }
-    string key = method.name + method.sign;
+    string key = method.cls + method.name + method.sign;
     auto itr = methodMap.find(key);
     if (methodMap.end() == itr) {
         jclass clazz = pEnv->GetObjectClass(jObject);
