@@ -41,6 +41,8 @@ bool AsynAudioDecoder::prepare(string path) {
     if (decoder) {
         if (!decoder->prepare(path)) {
             Logcat::e("HWVC", "AsynAudioDecoder::prepare failed");
+            delete decoder;
+            decoder = nullptr;
             return false;
         }
     }
@@ -93,6 +95,9 @@ void AsynAudioDecoder::loop() {
 }
 
 bool AsynAudioDecoder::grab() {
+    if (!decoder) {
+        return false;
+    }
     if (cache.size() >= 10) {
         grabLock.wait();
         return true;

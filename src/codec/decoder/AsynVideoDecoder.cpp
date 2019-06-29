@@ -40,6 +40,8 @@ bool AsynVideoDecoder::prepare(string path) {
     if (decoder) {
         if (!decoder->prepare(path)) {
             Logcat::e("HWVC", "AsynVideoDecoder::prepare failed");
+            delete decoder;
+            decoder = nullptr;
             return false;
         }
     }

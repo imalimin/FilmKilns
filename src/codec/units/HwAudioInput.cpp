@@ -39,6 +39,7 @@ bool HwAudioInput::eventPrepare(Message *msg) {
     playState = PAUSE;
     if (!decoder->prepare(path)) {
         LOGE("HwAudioInput::open %s failed", path.c_str());
+        eventStop(nullptr);
     }
     return false;
 }

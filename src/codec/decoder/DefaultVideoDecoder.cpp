@@ -66,7 +66,7 @@ bool DefaultVideoDecoder::prepare(string path) {
     //获取视频文件信息
     if (avformat_find_stream_info(pFormatCtx, NULL) < 0) {
         LOGE("Couldn't find stream information.");
-        return -1;
+        return false;
     }
     for (int i = 0; i < pFormatCtx->nb_streams; i++) {
         if (-1 == videoTrack &&

@@ -56,6 +56,7 @@ bool HwVideoInput::eventPrepare(Message *msg) {
     playState = PAUSE;
     if (!decoder->prepare(path)) {
         LOGE("HwVideoInput::open %s failed", path);
+        eventStop(nullptr);
         return true;
     }
     if (!texAllocator) {
