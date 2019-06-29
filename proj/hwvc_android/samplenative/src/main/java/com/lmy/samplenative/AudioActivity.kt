@@ -18,6 +18,7 @@ class AudioActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
     private var processor: AudioProcessor? = null
     private val format = SimpleDateFormat("mm:ss")
     private var playing: Boolean = true
+    private var duration: Long = -1
 
     override fun getLayoutResource(): Int = R.layout.activity_audio
     override fun initView() {
@@ -50,6 +51,9 @@ class AudioActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
         processor?.setOnPlayProgressListener { us, duration ->
             timeView.text = format.format(Date(us / 1000))
             seekBar.progress = (us * 100 / duration).toInt()
+            if (this.duration < 0) {
+                this.duration = duration
+            }
         }
         playBtn.setOnClickListener {
             if (playing) {
@@ -85,7 +89,7 @@ class AudioActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         if (fromUser) {
-            processor?.seek(177710867 * progress.toLong() / 100)
+            processor?.seek(duration * progress.toLong() / 100)
         }
     }
 
