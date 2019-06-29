@@ -20,6 +20,8 @@ class Thread : public Object {
 public:
     static bool sleep(int64_t us);
 
+    static long currentThreadId();
+
 public:
     string name;
     function<void()> runnable;

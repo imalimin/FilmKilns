@@ -6,6 +6,7 @@
 */
 
 #include "../include/HwJavaNativeHelper.h"
+#include "Thread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,9 +90,10 @@ bool HwJavaNativeHelper::attachThread() {
         Logcat::e("HWVC", "HwJavaNativeHelper::attachThread failed. Please call attach before.");
         return false;
     }
+    long id = Thread::currentThreadId();
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::attachThread failed. Do not attach repeat.");
+        Logcat::e("HWVC", "HwJavaNativeHelper::attachThread(%p) failed. Do not attach repeat.", id);
         return false;
     }
     int status = jvm->AttachCurrentThread(&pEnv, NULL);
@@ -99,7 +101,6 @@ bool HwJavaNativeHelper::attachThread() {
         Logcat::e("HWVC", "HwJavaNativeHelper::attachThread failed.");
         return false;
     }
-    long id = pthread_self();
     Logcat::i("HWVC", "HwJavaNativeHelper::attachThread(%p, %p)", id, pEnv);
     envMap.insert(pair<jlong, JNIEnv *>(id, pEnv));
     return true;
@@ -112,18 +113,18 @@ void HwJavaNativeHelper::detachThread() {
     }
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
-        long id = pthread_self();
+        long id = Thread::currentThreadId();
         Logcat::i("HWVC", "HwJavaNativeHelper::detachThread(%p)", id);
         jvm->DetachCurrentThread();
         envMap.erase(envMap.find(id));
     } else {
-        long id = pthread_self();
+        long id = Thread::currentThreadId();
         Logcat::i("HWVC", "HwJavaNativeHelper::detachThread(%p) failed", id);
     }
 }
 
 bool HwJavaNativeHelper::findEnv(JNIEnv **env) {
-    auto itr = envMap.find(pthread_self());
+    auto itr = envMap.find(Thread::currentThreadId());
     if (envMap.end() == itr) {
         *env = nullptr;
         return false;
