@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.lmy.samplenative.ui.CameraActivity
 import com.lmy.samplenative.ui.TestAudioRecorderActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -15,6 +16,7 @@ class MainActivity : BaseActivity() {
             Item("Image") { startActivity(Intent(this, ImageActivity::class.java)) },
             Item("Audio") { startActivity(Intent(this, AudioActivity::class.java)) },
             Item("Video") { startActivity(Intent(this, VideoActivity::class.java)) },
+            Item("Video Recorder") { startActivity(Intent(this, CameraActivity::class.java)) },
             Item("Audio Player") { startActivity(Intent(this, AudioPlayerActivity::class.java)) },
             Item("Audio Recorder") { startActivity(Intent(this, TestAudioRecorderActivity::class.java)) },
             Item("TestMemFIFOActivity") { startActivity(Intent(this, TestMemFIFOActivity::class.java)) }
