@@ -52,13 +52,12 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     }
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
-        Log.i("CameraActivity", "onFrameAvailable")
         if (0L == handler) return
         postEvent(handler, 3)
     }
 
     fun onHandleMessage(what: Int) {
-        Log.i("CameraActivity", "onHandleMessage $what")
+//        Log.i("CameraActivity", "onHandleMessage $what")
         when (what) {
             1 -> camera = CameraWrapper(this)
             2 -> camera?.release()
