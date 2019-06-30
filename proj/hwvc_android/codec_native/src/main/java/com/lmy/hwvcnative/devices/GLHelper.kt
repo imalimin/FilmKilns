@@ -15,9 +15,9 @@ import android.util.Log
  * Created by lmyooyo@gmail.com on 2018/8/6.
  */
 object GLHelper {
-    init {
-        System.loadLibrary("glhelper")
-    }
+//    init {
+//        System.loadLibrary("glhelper")
+//    }
 
     private val PBO_SUPPORT_VERSION = 0x30000
 

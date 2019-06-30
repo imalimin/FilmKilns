@@ -15,11 +15,19 @@
  * 3. eglSwapInterval
  * 4. ANativeWindow_setBuffersGeometry
  */
+EGLContext Egl::currentContext() {
+    EGLContext context = eglGetCurrentContext();
+    if (EGL_NO_CONTEXT == context) {
+        LOGE("Egl: Current thread has non context.");
+    }
+    return context;
+}
+
 Egl::Egl() {
     init(nullptr, nullptr);
 }
 
-Egl::Egl(Egl *context) {
+Egl::Egl(EGLContext context) {
     init(context, nullptr);
 }
 
@@ -27,7 +35,7 @@ Egl::Egl(HwWindow *win) {
     init(nullptr, win);
 }
 
-Egl::Egl(Egl *context, HwWindow *win) {
+Egl::Egl(EGLContext context, HwWindow *win) {
     init(context, win);
 }
 
@@ -58,7 +66,7 @@ Egl::~Egl() {
     Logcat::i("HWVC", "Egl::~Egl");
 }
 
-void Egl::init(Egl *context, HwWindow *win) {
+void Egl::init(EGLContext context, HwWindow *win) {
     if (EGL_NO_DISPLAY != eglDisplay
         || EGL_NO_SURFACE != eglContext
         || EGL_NO_SURFACE != eglSurface) {
@@ -90,7 +98,7 @@ void Egl::init(Egl *context, HwWindow *win) {
         return;
     }
     if (context) {
-        createContext(context->eglContext);
+        createContext(context);
     } else {
         createContext(EGL_NO_CONTEXT);
     }
@@ -263,3 +271,7 @@ bool Egl::updateWindow(HwWindow *win) {
 }
 
 bool Egl::isAttachWindow() { return nullptr != win; }
+
+EGLContext Egl::getContext() {
+    return eglContext;
+}

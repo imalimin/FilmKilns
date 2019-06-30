@@ -32,13 +32,16 @@ const int CONFIG_BUFFER[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 
 class Egl : public Object {
 public:
+    static EGLContext currentContext();
+
+public:
     Egl();
 
-    Egl(Egl *context);
+    Egl(EGLContext context);
 
     Egl(HwWindow *win);
 
-    Egl(Egl *context, HwWindow *win);
+    Egl(EGLContext context, HwWindow *win);
 
     virtual ~Egl();
 
@@ -52,6 +55,8 @@ public:
 
     bool updateWindow(HwWindow *win);
 
+    EGLContext getContext();
+
     bool isAttachWindow();
 
 private:
@@ -61,7 +66,7 @@ private:
     EGLContext eglContext = EGL_NO_CONTEXT;
     EGLSurface eglSurface = EGL_NO_SURFACE;
 
-    void init(Egl *context, HwWindow *win);
+    void init(EGLContext context, HwWindow *win);
 
     EGLDisplay createDisplay(EGLNativeDisplayType display_id);
 

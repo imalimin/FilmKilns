@@ -31,6 +31,9 @@ class CameraHelper {
                     bestHeight = size.height
                 }
             }
+            if (0 == bestWidth || 0 == bestHeight) {
+                throw RuntimeException("Camera invalid size($bestWidth x $bestHeight)")
+            }
             cameraParam.setPreviewSize(bestWidth, bestHeight)
         }
 

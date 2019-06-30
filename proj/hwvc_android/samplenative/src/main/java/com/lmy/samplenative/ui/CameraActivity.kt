@@ -1,7 +1,6 @@
 package com.lmy.samplenative.ui
 
 import android.view.TextureView
-import android.widget.FrameLayout
 import com.lmy.hwvcnative.processor.HwCameraRecorder
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
@@ -17,8 +16,13 @@ class CameraActivity : BaseActivity() {
             keepScreenOn = true
 //            setOnTouchListener(this@CameraActivity)
         }
-        textureContainer.addView(mTextureView, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT))
-        recorder?.startPreview(mTextureView)
+        surfaceView.fitsSystemWindows = true
+        surfaceView.keepScreenOn = true
+        recorder?.startPreview(surfaceView)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        recorder?.release()
     }
 }

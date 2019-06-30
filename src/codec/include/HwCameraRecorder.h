@@ -19,6 +19,10 @@ public:
 
     void prepare(HwWindow *win);
 
+    void updateWindow(HwWindow *win);
+
+    void invalidate(int textureId);
+
 };
 
 

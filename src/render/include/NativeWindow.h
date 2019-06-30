@@ -13,9 +13,11 @@ class NativeWindow : public Object {
 public:
     HwWindow *win;
 
-    Egl *egl = nullptr;
+    EGLContext context = EGL_NO_CONTEXT;
 
-    NativeWindow(HwWindow *win, Egl *egl);
+    NativeWindow(HwWindow *win, EGLContext context);
+
+    bool hasContext();
 
     virtual ~NativeWindow();
 

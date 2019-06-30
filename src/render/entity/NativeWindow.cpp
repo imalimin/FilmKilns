@@ -4,12 +4,16 @@
 
 #include "../include/NativeWindow.h"
 
-NativeWindow::NativeWindow(HwWindow *win, Egl *egl) {
+NativeWindow::NativeWindow(HwWindow *win, EGLContext context) {
     this->win = win;
-    this->egl = egl;
+    this->context = context;
 }
 
 NativeWindow::~NativeWindow() {
     this->win = nullptr;
-    this->egl = nullptr;
+    this->context = EGL_NO_CONTEXT;
+}
+
+bool NativeWindow::hasContext() {
+    return EGL_NO_CONTEXT != context;
 }

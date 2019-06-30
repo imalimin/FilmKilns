@@ -62,7 +62,6 @@ bool HwScreen::eventUpdateWindow(Message *msg) {
 }
 
 bool HwScreen::eventDraw(Message *msg) {
-    Logcat::i("HWVC", "Screen::eventDraw");
     Size *size = static_cast<Size *>(msg->tyrUnBox());
     GLuint tex = msg->arg1;
     post([this, size, tex] {
@@ -76,12 +75,12 @@ bool HwScreen::eventDraw(Message *msg) {
 
 void HwScreen::initWindow(NativeWindow *nw) {
     if (!egl) {
-        if (nw->egl) {
-            egl = new Egl(nw->egl, nw->win);
+        if (nw->hasContext()) {
+            egl = new Egl(nw->context, nw->win);
             Logcat::i("HWVC", "Screen::init EGL with context %d x %d", egl->width(), egl->height());
         } else {
             egl = new Egl(nw->win);
-            nw->egl = egl;
+            nw->context = egl->getContext();
             Logcat::i("HWVC", "Screen::init EGL %d x %d", egl->width(), egl->height());
         }
         egl->makeCurrent();
@@ -96,6 +95,7 @@ void HwScreen::draw(GLuint texture) {
 //    string glslVersion = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
 //    LOGE("version: %s", glslVersion.c_str());
     if (egl->isAttachWindow()) {
+        Logcat::i("HWVC", "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
         glViewport(0, 0, egl->width(), egl->height());
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.0, 0.0, 0.0, 0.0);

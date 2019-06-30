@@ -39,7 +39,7 @@ class CameraEglSurface private constructor(private val width: Int,
         }
         if (null != textureId)
             surface = SurfaceTexture(textureId!![0])
-        Log.e(name, "camera textureId: ${textureId!![0]}")
+        Log.e(name, "CameraEglSurface camera textureId: ${textureId!![0]}")
     }
 
     override fun draw(transformMatrix: FloatArray?) {

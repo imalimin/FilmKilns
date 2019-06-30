@@ -14,7 +14,7 @@ extern "C" {
 
 static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
                                               "onHandleMessage", "(I)V"};
-static HwCameraRecorderWhat = 0;
+static int HwCameraRecorderWhat = 0;
 
 static HwCameraRecorder *getHandler(jlong handler) {
     return reinterpret_cast<HwCameraRecorder *>(handler);
@@ -35,7 +35,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
         (JNIEnv *env, jobject thiz, jlong handler, jint what) {
     if (handler) {
         HwCameraRecorderWhat = what;
-        getHandler(handler)->post([]() {
+        getHandler(handler)->post([handler]() {
             jobject jObject = nullptr;
             JNIEnv *pEnv = nullptr;
             jmethodID methodID = nullptr;
@@ -57,6 +57,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_prepar
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_updateWindow
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+    if (handler) {
+        getHandler(handler)->updateWindow(new HwAndroidWindow(env, surface));
+    }
+}
+
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
@@ -67,6 +74,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
         delete p;
     }
     HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invalidate
+        (JNIEnv *env, jobject thiz, jlong handler, jint textureId) {
+    if (handler) {
+        getHandler(handler)->invalidate(textureId);
+    }
 }
 
 #ifdef __cplusplus

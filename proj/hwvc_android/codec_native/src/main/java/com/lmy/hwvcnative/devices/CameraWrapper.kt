@@ -8,6 +8,7 @@ package com.lmy.hwvcnative.devices
 
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
+import android.opengl.GLES20
 import android.util.Log
 
 /**
@@ -18,8 +19,10 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
-        private const val WIDTH = 1280
-        private const val HEIGHT = 720
+        private const val WIDTH = 720
+        private const val HEIGHT = 1280
+        private const val VIDEO_WIDTH = 480
+        private const val VIDEO_HEIGHT = 720
         fun open(onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
             return CameraWrapper(onFrameAvailableListener)
@@ -30,11 +33,12 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     private var mCameras = 0
     private var mCameraIndex: CameraIndex? = null
     private val eglSurface: CameraEglSurface
+    private var transformMatrix: FloatArray = FloatArray(16)
 
     init {
         mCameras = CameraHelper.getNumberOfCameras()
-        eglSurface = CameraEglSurface.create(WIDTH, HEIGHT) as CameraEglSurface
-        openCamera(CameraIndex.BACK)
+        eglSurface = CameraEglSurface.create(VIDEO_WIDTH, VIDEO_HEIGHT) as CameraEglSurface
+        openCamera(CameraIndex.FRONT)
     }
 
     fun switchCamera(index: CameraIndex) {
@@ -51,11 +55,12 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
             return
         mCameraIndex = tmp
 //        GLEventPipeline.INSTANCE.queueEvent(Runnable {
-            stopPreview()
-            updateTexture()
-            prepare()
-            eglSurface.updateLocation(480, 720, WIDTH, HEIGHT)
+        stopPreview()
+        updateTexture()
+        if (prepare()) {
+            eglSurface.updateLocation(VIDEO_WIDTH, VIDEO_HEIGHT, WIDTH, HEIGHT)
             startPreview()
+        }
 //        })
     }
 
@@ -70,10 +75,10 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         return Camera.CameraInfo.CAMERA_FACING_BACK
     }
 
-    private fun prepare() {
+    private fun prepare(): Boolean {
         if (0 == mCameras) {
             Log.e(TAG, "Unavailable camera")
-            return
+            return false
         }
 
         val time = System.currentTimeMillis()
@@ -81,10 +86,10 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         Log.i(TAG, "open time: ${System.currentTimeMillis() - time}")
         if (null == mCamera) {
             Log.e(TAG, "mCamera is null!")
-            return
+            return false
         }
         val cameraParam = mCamera!!.parameters
-        CameraHelper.setPreviewSize(cameraParam, 1280, 720)
+        CameraHelper.setPreviewSize(cameraParam, WIDTH, HEIGHT)
         CameraHelper.setColorFormat(cameraParam)
         CameraHelper.setFocusMode(cameraParam)
         CameraHelper.setFps(cameraParam, 30)
@@ -95,7 +100,7 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         CameraHelper.setVideoStabilization(cameraParam, true)
         val fps = IntArray(2)
         cameraParam.getPreviewFpsRange(fps)
-        Log.i(TAG, "Config: Size(1280x$720)\n" +
+        Log.i(TAG, "Config: Size(${WIDTH}x$HEIGHT\n" +
                 "Format(${cameraParam.previewFormat})\n" +
                 "FocusMode(${cameraParam.focusMode})\n" +
                 "Fps(${fps[0]}-${fps[1]})\n" +
@@ -110,7 +115,10 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         } catch (e: Exception) {
             mCamera?.release()
             Log.i(TAG, "Camera $mCameraIndex open failed. Please check parameters")
+            e.printStackTrace()
+            return false
         }
+        return true
     }
 
     private fun openCamera(index: Int): Camera? {
@@ -132,8 +140,8 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     //Run on egl thread
     fun release() {
 //        GLEventPipeline.INSTANCE.queueEvent(Runnable {
-            stopPreview()
-            releaseTexture()
+        stopPreview()
+        releaseTexture()
 //        })
     }
 
@@ -169,5 +177,16 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     private fun releaseTexture() {
         eglSurface.release()
         Log.i(TAG, "releaseTexture")
+    }
+
+    fun draw(): IntArray {
+        eglSurface.makeCurrent()
+        eglSurface.updateTexImage()
+        eglSurface.getTransformMatrix(transformMatrix)
+        GLES20.glViewport(0,0, WIDTH, HEIGHT)
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        GLES20.glClearColor(0.3f, 0.3f, 0.3f, 0f)
+        eglSurface.draw(transformMatrix)
+        return eglSurface.getFrameBufferTexture()
     }
 }

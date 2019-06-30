@@ -42,7 +42,7 @@ void HwRender::checkFilter(int width, int height) {
 }
 
 void HwRender::renderFilter(GLuint texture) {
-    Logcat::i("HWVC", "Render::renderFilter");
+    Logcat::i("HWVC", "Render::renderFilter %d", texture);
     filter->draw(texture);
 }
 

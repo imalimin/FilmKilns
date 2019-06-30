@@ -6,6 +6,8 @@
 */
 
 #include "../include/HwCameraInput.h"
+#include "Egl.h"
+#include "NativeWindow.h"
 
 HwCameraInput::HwCameraInput() : Unit() {
     name = __FUNCTION__;
@@ -17,9 +19,13 @@ HwCameraInput::~HwCameraInput() {
 }
 
 bool HwCameraInput::eventPrepare(Message *msg) {
+    Logcat::i("HWVC", "HwCameraInput::eventPrepare");
+    NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
+    nw->context = Egl::currentContext();
     return true;
 }
 
 bool HwCameraInput::eventRelease(Message *msg) {
+    Logcat::i("HWVC", "HwCameraInput::eventRelease");
     return true;
 }
