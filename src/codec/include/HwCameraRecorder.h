@@ -21,7 +21,7 @@ public:
 
     void updateWindow(HwWindow *win);
 
-    void invalidate(int textureId);
+    void invalidate(int textureId, int w, int h);
 
 };
 

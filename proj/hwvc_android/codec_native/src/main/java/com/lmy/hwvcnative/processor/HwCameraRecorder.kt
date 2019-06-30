@@ -54,7 +54,7 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
         Log.i("CameraActivity", "onFrameAvailable")
         if (0L == handler) return
-            postEvent(handler, 3)
+        postEvent(handler, 3)
     }
 
     fun onHandleMessage(what: Int) {
@@ -65,7 +65,7 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
             3 -> {
                 val textures = camera?.draw()
                 if (0L != handler) {
-                    invalidate(handler, textures!![0])
+                    invalidate(handler, textures!![0], 720, 1280)
                 }
             }
         }
@@ -76,5 +76,5 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     private external fun updateWindow(handler: Long, surface: Surface)
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
-    private external fun invalidate(handler: Long, textureId: Int)
+    private external fun invalidate(handler: Long, textureId: Int, w: Int, h: Int)
 }

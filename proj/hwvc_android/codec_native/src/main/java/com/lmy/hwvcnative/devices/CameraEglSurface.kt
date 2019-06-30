@@ -58,7 +58,7 @@ class CameraEglSurface private constructor(private val width: Int,
         texture?.updateLocation(textureLocation, location)
     }
 
-    private fun isHorizontal(): Boolean = true
+    private fun isHorizontal(): Boolean = false
 
     private fun calculateBestLocation(vw: Int, vh: Int, ww: Int, wh: Int,
                                       location: FloatArray, textureLocation: FloatArray) {
@@ -90,10 +90,10 @@ class CameraEglSurface private constructor(private val width: Int,
                 1f, 1f//RIGHT,TOP
         ), 0, location, 0, 8)
         //顶点纹理坐标
-        System.arraycopy(floatArrayOf(left, bottom, //LEFT,BOTTOM
-                right, bottom, //RIGHT,BOTTOM
-                left, top, //LEFT,TOP
-                right, top//RIGHT,TOP
+        System.arraycopy(floatArrayOf(left, top, //LEFT,BOTTOM
+                right, top, //RIGHT,BOTTOM
+                left, bottom, //LEFT,TOP
+                right, bottom//RIGHT,TOP
         ), 0, textureLocation, 0, 8)
     }
 

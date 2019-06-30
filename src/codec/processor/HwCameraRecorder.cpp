@@ -16,7 +16,7 @@
 HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
     startPipeline();
     registerAnUnit(new HwCameraInput());
-//    registerAnUnit(new HwRender());
+    registerAnUnit(new HwRender());
     registerAnUnit(new HwScreen());
 }
 
@@ -36,9 +36,9 @@ void HwCameraRecorder::updateWindow(HwWindow *win) {
     postEvent(msg);
 }
 
-void HwCameraRecorder::invalidate(int textureId) {
-    Message *msg = new Message(EVENT_SCREEN_DRAW, nullptr);
-    msg->obj = new ObjectBox(new Size(480, 720));
+void HwCameraRecorder::invalidate(int textureId, int w, int h) {
+    Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
+    msg->obj = new ObjectBox(new Size(w, h));
     msg->msg = "RENDER";
     msg->arg1 = textureId;
     postEvent(msg);

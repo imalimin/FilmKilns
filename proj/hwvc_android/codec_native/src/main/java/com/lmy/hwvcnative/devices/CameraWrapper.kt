@@ -19,10 +19,10 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
-        private const val WIDTH = 720
-        private const val HEIGHT = 1280
-        private const val VIDEO_WIDTH = 480
-        private const val VIDEO_HEIGHT = 720
+        private const val WIDTH = 1280
+        private const val HEIGHT = 720
+        private const val VIDEO_WIDTH = 720
+        private const val VIDEO_HEIGHT = 1280
         fun open(onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
             return CameraWrapper(onFrameAvailableListener)
@@ -89,7 +89,7 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
             return false
         }
         val cameraParam = mCamera!!.parameters
-        CameraHelper.setPreviewSize(cameraParam, WIDTH, HEIGHT)
+        CameraHelper.setPreviewSize(cameraParam, VIDEO_WIDTH, VIDEO_HEIGHT)
         CameraHelper.setColorFormat(cameraParam)
         CameraHelper.setFocusMode(cameraParam)
         CameraHelper.setFps(cameraParam, 30)
@@ -183,7 +183,6 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         eglSurface.makeCurrent()
         eglSurface.updateTexImage()
         eglSurface.getTransformMatrix(transformMatrix)
-        GLES20.glViewport(0,0, WIDTH, HEIGHT)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         GLES20.glClearColor(0.3f, 0.3f, 0.3f, 0f)
         eglSurface.draw(transformMatrix)
