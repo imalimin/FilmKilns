@@ -19,6 +19,6 @@ class CameraActivity : BaseActivity() {
         }
         textureContainer.addView(mTextureView, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT))
-
+        recorder?.startPreview(mTextureView)
     }
 }

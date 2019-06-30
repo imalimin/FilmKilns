@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_HWCAMERARECORDER_H
 
 #include "HwAbsProcessor.h"
+#include "HwWindow.h"
 
 class HwCameraRecorder : public HwAbsProcessor {
 public:
@@ -16,7 +17,7 @@ public:
 
     virtual ~HwCameraRecorder();
 
-    void prepare();
+    void prepare(HwWindow *win);
 
 };
 

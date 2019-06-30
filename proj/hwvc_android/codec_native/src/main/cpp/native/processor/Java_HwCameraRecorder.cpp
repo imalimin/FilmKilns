@@ -6,10 +6,15 @@
 */
 #include "../include/HwJavaNativeHelper.h"
 #include "HwCameraRecorder.h"
+#include "../include/HwAndroidWindow.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
+                                              "onHandleMessage", "(I)V"};
+static HwCameraRecorderWhat = 0;
 
 static HwCameraRecorder *getHandler(jlong handler) {
     return reinterpret_cast<HwCameraRecorder *>(handler);
@@ -26,10 +31,29 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_creat
     return handler;
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_prepare
-        (JNIEnv *env, jobject thiz, jlong handler) {
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEvent
+        (JNIEnv *env, jobject thiz, jlong handler, jint what) {
     if (handler) {
-        getHandler(handler)->prepare();
+        HwCameraRecorderWhat = what;
+        getHandler(handler)->post([]() {
+            jobject jObject = nullptr;
+            JNIEnv *pEnv = nullptr;
+            jmethodID methodID = nullptr;
+            if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+                HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+                HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                              cOnHandleMessage,
+                                                              &methodID)) {
+                pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat);
+            }
+        });
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_prepare
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+    if (handler) {
+        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
     }
 }
 

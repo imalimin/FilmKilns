@@ -4,12 +4,11 @@
  * This source code is licensed under the GPL license found in the
  * LICENSE file in the root directory of this source tree.
  */
-package com.lmy.codec.media
+package com.lmy.hwvcnative.devices
 
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.util.Log
-import com.lmy.hwvcnative.devices.CameraHelper
 
 /**
  * Created by lmyooyo@gmail.com on 2018/3/21.
@@ -19,6 +18,8 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
+        private const val WIDTH = 1280
+        private const val HEIGHT = 720
         fun open(onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
             return CameraWrapper(onFrameAvailableListener)
@@ -28,9 +29,11 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     private var mCamera: Camera? = null
     private var mCameras = 0
     private var mCameraIndex: CameraIndex? = null
+    private val eglSurface: CameraEglSurface
 
     init {
         mCameras = CameraHelper.getNumberOfCameras()
+        eglSurface = CameraEglSurface.create(WIDTH, HEIGHT) as CameraEglSurface
         openCamera(CameraIndex.BACK)
     }
 
@@ -47,18 +50,18 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         if (null != mCameraIndex && mCameraIndex == tmp) //如果已经打开过摄像头，并且当前已经是index，则不做改变
             return
         mCameraIndex = tmp
-        GLEventPipeline.INSTANCE.queueEvent(Runnable {
+//        GLEventPipeline.INSTANCE.queueEvent(Runnable {
             stopPreview()
             updateTexture()
             prepare()
-            eglSurface.updateLocation(context)
+            eglSurface.updateLocation(480, 720, WIDTH, HEIGHT)
             startPreview()
-        })
+//        })
     }
 
     private fun updateTexture() {
-//        eglSurface.updateTexture()
-//        eglSurface.surface!!.setOnFrameAvailableListener(onFrameAvailableListener)
+        eglSurface.updateTexture()
+        eglSurface.surface!!.setOnFrameAvailableListener(onFrameAvailableListener)
     }
 
     private fun getCameraIndex(): Int {
@@ -126,11 +129,12 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         }
     }
 
+    //Run on egl thread
     fun release() {
-        GLEventPipeline.INSTANCE.queueEvent(Runnable {
+//        GLEventPipeline.INSTANCE.queueEvent(Runnable {
             stopPreview()
             releaseTexture()
-        })
+//        })
     }
 
     private fun startPreview() {
