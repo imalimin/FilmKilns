@@ -10,87 +10,35 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="false" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-
-        <Button
-            android:id="@+id/filterBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:background="?attr/selectableItemBackground"
-            android:text="FILTERS"
-            android:textColor="@color/colorAccent" />
-
-        <LinearLayout
-            android:id="@+id/progressLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="vertical">
-
-            <SeekBar
-                android:id="@+id/oneBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:progress="0"
-                android:visibility="gone" />
-
-            <SeekBar
-                android:id="@+id/twoBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:progress="0"
-                android:visibility="gone" />
-
-            <SeekBar
-                android:id="@+id/thBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:progress="0"
-                android:visibility="gone" />
-
-            <SeekBar
-                android:id="@+id/fBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
-                android:progress="0"
-                android:visibility="gone" />
-        </LinearLayout>
-    </FrameLayout>
+    <include layout="@layout/view_filter" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/playBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_media_pause" />
 
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:max="100" />
 
-        <Button
-            android:id="@+id/playBtn"
+        <TextView
+            android:id="@+id/timeView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PAUSE" />
+            android:text="00:00"
+            android:textColor="#ffffff" />
     </LinearLayout>
 </RelativeLayout>

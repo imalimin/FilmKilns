@@ -10,13 +10,14 @@ include_directories(
 )
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -ffast-math -funroll-loops")
 else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O0 -Wall -g -ggdb ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -g -ggdb ")
 endif ()
-#------------------STATIC START----------------------
+message(STATUS "hwcodec CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+#------------------SHARED START----------------------
 #add_library(
 #        libx264
 #        STATIC
@@ -27,51 +28,15 @@ endif ()
 #        "${PREBUILD_STATIC}/libx264.a")
 
 add_library(
-        libavcodec
+        libhwffmpeg
         SHARED
         IMPORTED)
 set_target_properties(
-        libavcodec
+        libhwffmpeg
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_SHARED}/libavcodec.so")
+        "${PREBUILD_SHARED}/libhwffmpeg.so")
 
-add_library(
-        libavformat
-        SHARED
-        IMPORTED)
-set_target_properties(
-        libavformat
-        PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_SHARED}/libavformat.so")
-
-add_library(
-        libavresample
-        SHARED
-        IMPORTED)
-set_target_properties(
-        libavresample
-        PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_SHARED}/libavresample.so")
-
-add_library(
-        libavutil
-        SHARED
-        IMPORTED)
-set_target_properties(
-        libavutil
-        PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_SHARED}/libavutil.so")
-
-add_library(
-        libswresample
-        SHARED
-        IMPORTED)
-set_target_properties(
-        libswresample
-        PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_SHARED}/libswresample.so")
-
-#------------------STATIC END----------------------
+#------------------SHARED END----------------------
 
 file(
         GLOB
@@ -104,14 +69,11 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
         hwvc_codec
-#        libx264
-        libavcodec
-        libavformat
-        libavresample
-        libavutil
-        libswresample
         hwvcom
         hwvc_render
+        libhwffmpeg
+        mediandk
+        OpenMAXAL
         # Links the target library to the log library
         # included in the NDK.
         ${log-lib})

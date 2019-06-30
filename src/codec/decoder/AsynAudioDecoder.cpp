@@ -9,8 +9,10 @@
 #include "TimeUtils.h"
 
 AsynAudioDecoder::AsynAudioDecoder() : AbsAudioDecoder() {
+    playing = false;
     hwFrameAllocator = new HwFrameAllocator();
     decoder = new DefaultAudioDecoder();
+//    decoder = new HwAndroidAudioDecoder();
 }
 
 AsynAudioDecoder::~AsynAudioDecoder() {
@@ -32,53 +34,59 @@ AsynAudioDecoder::~AsynAudioDecoder() {
 }
 
 bool AsynAudioDecoder::prepare(string path) {
-    playState = PAUSE;
+    playing = false;
     if (!pipeline) {
         pipeline = new EventPipeline("AsynAudioDecoder");
     }
     if (decoder) {
         if (!decoder->prepare(path)) {
             Logcat::e("HWVC", "AsynAudioDecoder::prepare failed");
+            delete decoder;
+            decoder = nullptr;
             return false;
         }
     }
+//    HwAndroidAudioDecoder *d = new HwAndroidAudioDecoder();
+//    d->prepare(path);
+//    delete d;
 //    start();
     return true;
 }
 
 void AsynAudioDecoder::seek(int64_t us) {
-
+    if (!decoder) {
+        return;
+    }
+    decoder->seek(us);
 }
 
 void AsynAudioDecoder::start() {
-    if (STOP == playState || PLAYING == playState) {
+    if (playing) {
         return;
     }
-    playState = PLAYING;
+    playing = true;
     loop();
 }
 
 void AsynAudioDecoder::pause() {
-    if (STOP != playState) {
-        playState = PAUSE;
-    }
 }
 
 void AsynAudioDecoder::stop() {
-    if (STOP != playState) {
-        playState = STOP;
+    if (!playing) {
+        return;
     }
+    playing = false;
     grabLock.notify();
 }
 
 void AsynAudioDecoder::loop() {
-    if (PLAYING != playState || !pipeline) {
+    if (!playing || !pipeline) {
         Logcat::i("HWVC", "AsynAudioDecoder::loop skip loop");
         return;
     }
     pipeline->queueEvent([this] {
         if (!grab()) {
-            pause();
+            stop();
             Logcat::i("HWVC", "AsynAudioDecoder::loop EOF");
             return;
         }
@@ -87,13 +95,16 @@ void AsynAudioDecoder::loop() {
 }
 
 bool AsynAudioDecoder::grab() {
+    if (!decoder) {
+        return false;
+    }
     if (cache.size() >= 10) {
         grabLock.wait();
         return true;
     }
 //    Logcat::i("HWVC", "HwFrameAllocator::info: cache %d", cache.size());
     HwAbsMediaFrame *frame = nullptr;
-    int ret = MEDIA_TYPE_UNKNOWN;
+    HwResult ret = Hw::MEDIA_WAIT;
     releaseLock.lock();
     if (decoder) {
         ret = decoder->grab(&frame);
@@ -103,26 +114,31 @@ bool AsynAudioDecoder::grab() {
         cache.push(frame);
     }
     releaseLock.unlock();
-    return MEDIA_TYPE_EOF != ret;
+    return Hw::MEDIA_EOF != ret;
 }
 
-int AsynAudioDecoder::grab(HwAbsMediaFrame **frame) {
-    if (STOP == playState || cache.empty()) {
-        return MEDIA_TYPE_UNKNOWN;
+HwResult AsynAudioDecoder::grab(HwAbsMediaFrame **frame) {
+    if (cache.empty()) {
+        /*
+         * If none cache and playing is false, that mean decoder is eof.
+         * Value of playing will be false when decoder is eof.
+         */
+        if (!playing) {
+            return Hw::MEDIA_EOF;
+        }
+        return Hw::MEDIA_WAIT;
     }
     if (outputFrame) {
         outputFrame->recycle();
+        outputFrame = nullptr;
     }
     hwFrameAllocator->printInfo();
-    outputFrame = cache.back();
+    outputFrame = cache.front();
     cache.pop();
     grabLock.notify();
     *frame = outputFrame;
 //    memset(outputFrame->getData(), 1, outputFrame->getDataSize());
-    if ((*frame)->isAudio()) {
-        return MEDIA_TYPE_AUDIO;
-    }
-    return MEDIA_TYPE_VIDEO;
+    return Hw::SUCCESS;
 }
 
 int AsynAudioDecoder::getChannels() {
@@ -155,7 +171,7 @@ int AsynAudioDecoder::getSamplesPerBuffer() {
 
 int64_t AsynAudioDecoder::getAudioDuration() {
     if (decoder) {
-        decoder->getAudioDuration();
+        return decoder->getAudioDuration();
     }
-    return 0;
+    return -1;
 }

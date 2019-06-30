@@ -243,3 +243,23 @@ bool Egl::checkError() {
     }
     return true;
 }
+
+bool Egl::updateWindow(HwWindow *win) {
+    if (!isAttachWindow()) {
+        return false;
+    }
+    if (this->win) {
+        delete this->win;
+        this->win = nullptr;
+    }
+    this->win = win;
+    if (EGL_NO_SURFACE != eglSurface) {
+        eglDestroySurface(eglDisplay, eglSurface);
+        eglSurface = EGL_NO_SURFACE;
+    }
+    createWindowSurface(this->win);
+    makeCurrent();
+    return true;
+}
+
+bool Egl::isAttachWindow() { return nullptr != win; }

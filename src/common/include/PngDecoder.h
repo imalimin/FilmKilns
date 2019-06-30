@@ -10,7 +10,7 @@
 #include <string>
 #include "Object.h"
 #include "FileUtils.h"
-#include "libpng/png.h"
+#include "../prebuild/static/libpng/include/png.h"
 
 typedef struct {
     uint8_t *data;

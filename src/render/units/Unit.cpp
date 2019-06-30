@@ -76,6 +76,7 @@ void Unit::post(function<void()> runnable) {
         simpleLock.lock();
         if (eventPipeline) {
             eventPipeline->queueEvent(runnable);
+            simpleLock.unlock();
             return;
         }
         simpleLock.unlock();

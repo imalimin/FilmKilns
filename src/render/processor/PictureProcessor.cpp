@@ -3,7 +3,8 @@
 //
 
 #include "../include/PictureProcessor.h"
-#include "../include/Render.h"
+#include "../include/HwRender.h"
+#include "../include/HwScreen.h"
 #include "../include/Image.h"
 #include "../include/NativeWindow.h"
 #include "ObjectBox.h"
@@ -11,9 +12,9 @@
 PictureProcessor::PictureProcessor() {
     pipeline = new UnitPipeline(__FUNCTION__);
     pipeline->registerAnUnit(new Image());
-    pipeline->registerAnUnit(new Render());
+    pipeline->registerAnUnit(new HwRender());
     //注意顺序问题，包含EGL环境的模块放到最后，因为要最后释放
-    pipeline->registerAnUnit(new Screen());
+    pipeline->registerAnUnit(new HwScreen());
 }
 
 PictureProcessor::~PictureProcessor() {
@@ -24,12 +25,18 @@ PictureProcessor::~PictureProcessor() {
     }
 }
 
-void PictureProcessor::prepare(HwWindow *win, int width, int height) {
+void PictureProcessor::prepare(HwWindow *win) {
     if (pipeline) {
         Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
         msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
-        msg->arg1 = width;
-        msg->arg2 = height;
+        pipeline->postEvent(msg);
+    }
+}
+
+void PictureProcessor::updateWindow(HwWindow *win) {
+    if (pipeline) {
+        Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
+        msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
         pipeline->postEvent(msg);
     }
 }

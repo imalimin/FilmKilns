@@ -42,7 +42,7 @@ uint64_t HwAudioFrame::duration() {
 }
 
 HwAbsMediaFrame *HwAudioFrame::clone() {
-    HwAudioFrame *destFrame = new HwAudioFrame(allocator, getFormat(),
+    HwAudioFrame *destFrame = new HwAudioFrame(nullptr, getFormat(),
                                                channels, sampleRate,
                                                sampleCount);
     destFrame->setPts(getPts());

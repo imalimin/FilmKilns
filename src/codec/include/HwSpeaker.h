@@ -16,7 +16,9 @@ class HwSpeaker : public Unit {
 public:
     HwSpeaker();
 
-    HwSpeaker(HandlerThread *handlerThread);
+    HwSpeaker(HwAudioDeviceMode mode);
+
+    HwSpeaker(HwAudioDeviceMode mode, HandlerThread *handlerThread);
 
     virtual ~HwSpeaker();
 
@@ -30,8 +32,8 @@ private:
     void createFromAudioFrame(HwAudioFrame *frame);
 
 private:
+    HwAudioDeviceMode mode = HwAudioDeviceMode::Normal;
     HwAudioPlayer *player = nullptr;
-
 };
 
 

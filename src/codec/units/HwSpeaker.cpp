@@ -8,13 +8,14 @@
 #include <libavutil/samplefmt.h>
 #include "../include/HwSpeaker.h"
 
-HwSpeaker::HwSpeaker() : Unit() {
-    name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwSpeaker::eventPrepare));
-    registerEvent(EVENT_SPEAKER_FEED, reinterpret_cast<EventFunc>(&HwSpeaker::eventFeed));
+HwSpeaker::HwSpeaker() : HwSpeaker(HwAudioDeviceMode::Normal) {
 }
 
-HwSpeaker::HwSpeaker(HandlerThread *handlerThread) : Unit(handlerThread) {
+HwSpeaker::HwSpeaker(HwAudioDeviceMode mode) : HwSpeaker(mode, nullptr) {
+}
+
+HwSpeaker::HwSpeaker(HwAudioDeviceMode mode, HandlerThread *handlerThread) : Unit(handlerThread),
+                                                                             mode(mode) {
     name = __FUNCTION__;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwSpeaker::eventPrepare));
     registerEvent(EVENT_SPEAKER_FEED, reinterpret_cast<EventFunc>(&HwSpeaker::eventFeed));
@@ -59,16 +60,17 @@ void HwSpeaker::createFromAudioFrame(HwAudioFrame *frame) {
     }
     int format;
     switch (frame->getFormat()) {
-        case HW_SAMPLE_U8:
+        case HwFrameFormat::HW_SAMPLE_U8:
             format = SL_PCMSAMPLEFORMAT_FIXED_8;
             break;
-        case HW_SAMPLE_S16:
+        case HwFrameFormat::HW_SAMPLE_S16:
             format = SL_PCMSAMPLEFORMAT_FIXED_16;
             break;
         default:
             format = SL_PCMSAMPLEFORMAT_FIXED_32;
     }
-    player = new HwAudioPlayer(frame->getChannels(),
+    player = new HwAudioPlayer(mode,
+                               frame->getChannels(),
                                frame->getSampleRate(),
                                static_cast<uint16_t>(format),
                                static_cast<uint32_t>(frame->getSampleCount()));

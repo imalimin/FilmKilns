@@ -7,6 +7,17 @@
 #include "../include/Thread.h"
 #include <assert.h>
 #include "../include/log.h"
+#include <sys/syscall.h>
+
+bool Thread::sleep(int64_t us) {
+    this_thread::sleep_for(chrono::nanoseconds(us * 1000));
+    return true;
+}
+
+long Thread::currentThreadId() {
+//    return syscall(SYS_gettid);
+    return pthread_self();
+}
 
 static void *run(void *arg) {
     Thread *thread = static_cast<Thread *>(arg);

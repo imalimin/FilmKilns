@@ -1,11 +1,15 @@
 package com.lmy.hwvcnative.media
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.util.Log
 import com.lmy.hwvcnative.CPPObject
 
 class HwEchoPlayer(context: Context) : CPPObject() {
     init {
+        val lowLatency = context.packageManager.hasSystemFeature(PackageManager.FEATURE_AUDIO_LOW_LATENCY)//45ms
+        val audioPro = context.packageManager.hasSystemFeature(PackageManager.FEATURE_AUDIO_PRO)//20ms
         val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val sampleRateStr: String? = am.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE)
         val sampleRate: Int = sampleRateStr?.let { str ->
@@ -16,6 +20,7 @@ class HwEchoPlayer(context: Context) : CPPObject() {
             Integer.parseInt(str).takeUnless { it == 0 }
         } ?: 256
         handler = create(2, sampleRate, 0x0010, samplesPerBuffer)
+        Log.i("HWVC", "HwEchoPlayer lowLatency=$lowLatency, audioPro=$audioPro, sampleRate=$sampleRate, samplesPerBuffer=$samplesPerBuffer")
     }
 
     fun start() {

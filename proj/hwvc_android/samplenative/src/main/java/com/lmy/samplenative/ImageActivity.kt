@@ -13,16 +13,21 @@ class ImageActivity : BaseActivity(), TextureView.SurfaceTextureListener {
     private lateinit var mFilterController: FilterController
     private var processor: PictureProcessor? = PictureProcessor()
     private var surface: Surface? = null
+    private var prepared = false
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
             Log.i("HWVC", "surfaceChanged: $p1, $p2, $p3 | ${surfaceView.width}, ${surfaceView.height}")
-            processor?.prepare(holder.surface, surfaceView.width, surfaceView.height)
-            processor?.show("${Environment.getExternalStorageDirectory().path}/1.jpg")
+            if (!prepared) {
+                prepared = true
+                processor?.prepare(holder.surface)
+                processor?.show("${Environment.getExternalStorageDirectory().path}/1.jpg")
+            } else {
+                processor?.updateWindow(holder.surface)
+                processor?.invalidate()
+            }
         }
 
         override fun surfaceDestroyed(p0: SurfaceHolder?) {
-            processor?.release()
-            processor = null
             Log.i("HWVC", "surfaceDestroyed")
         }
 
@@ -57,12 +62,13 @@ class ImageActivity : BaseActivity(), TextureView.SurfaceTextureListener {
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
         this.surface = Surface(surface)
-        processor?.prepare(this.surface!!, width, height)
-        processor?.show("${Environment.getExternalStorageDirectory().path}/1.jpg")
+        processor?.updateWindow(this.surface!!)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        processor?.release()
+        processor = null
         surfaceView.holder.removeCallback(surfaceCallback)
     }
 }

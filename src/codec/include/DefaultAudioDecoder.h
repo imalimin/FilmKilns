@@ -39,7 +39,7 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    virtual int grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame);
 
     int getChannels();
 
@@ -62,6 +62,8 @@ private:
 
     void printCodecInfo();
 
+    void handleAction();
+
 private:
     bool enableDebug = false;
     string path;
@@ -77,7 +79,8 @@ private:
     AVRational outputTimeBase = AVRational{1, 1000000};
     int64_t audioDurationUs = -1;
     bool eof = false;
-    SimpleLock readPkgLock;
+    /** action */
+    int64_t actionSeekInUs = -1;
 };
 
 

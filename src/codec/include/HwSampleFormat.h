@@ -23,7 +23,7 @@ public:
 private:
     uint16_t channels = 0;
     uint32_t sampleRate = 0;
-    HwFrameFormat format = HW_FMT_NONE;
+    HwFrameFormat format = HwFrameFormat::HW_FMT_NONE;
 };
 
 

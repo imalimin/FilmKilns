@@ -18,6 +18,8 @@ HwAndroidWindow::HwAndroidWindow(JNIEnv *env, jobject surface) {
         LOGE("ANativeWindow_fromSurface failed");
         return;
     }
+    setWidth(ANativeWindow_getWidth(getANativeWindow()));
+    setHeight(ANativeWindow_getHeight(getANativeWindow()));
 }
 
 HwAndroidWindow::~HwAndroidWindow() {

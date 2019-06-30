@@ -4,23 +4,26 @@ project(hwvcom)
 option(HWDEBUG "Whether show opengl logs." ON)
 if (HWDEBUG)
     add_definitions(-DHWDEBUG)
-    message(HWDEBUG "Show debug logs。")
+    message(STATUS "Show debug logs。")
 endif ()
 
-set(PREBUILD_STATIC "${PROJECT_SOURCE_DIR}/prebuild/static/${ANDROID_ABI}")
+set(PREBUILD_STATIC ${PROJECT_SOURCE_DIR}/prebuild/static)
+set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
+set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 
 #include_directories(
-#        ${local_src}/include/libjpeg-turbo
-#        ${local_src}/include/libpng
+#        ${PREBUILD_STATIC}/libturbojpeg/include
+#        ${PREBUILD_STATIC}/libpng/include
 #)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Os")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Os")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -ffast-math -funroll-loops")
 else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O0 -Wall -g -ggdb ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -g -ggdb ")
 endif ()
+message(STATUS "hwcommom CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #------------------STATIC START----------------------
 #libjpeg
@@ -31,7 +34,7 @@ add_library(
 set_target_properties(
         libjpeg
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_STATIC}/libjpeg.a")
+        "${JPGE}/libjpeg.a")
 
 #libturbojpeg
 add_library(
@@ -41,7 +44,7 @@ add_library(
 set_target_properties(
         libturbojpeg
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_STATIC}/libturbojpeg.a")
+        "${JPGE}/libturbojpeg.a")
 
 #libpng16
 add_library(
@@ -51,7 +54,7 @@ add_library(
 set_target_properties(
         libpng
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_STATIC}/libpng.a")
+        "${PNG}/libpng.a")
 
 #------------------STATIC END----------------------
 

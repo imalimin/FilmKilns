@@ -11,9 +11,18 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 
+enum class HwAudioDeviceMode : int {
+    LowLatency,
+    Normal,
+    HighLatency
+};
+
 class AudioDevice : public Object {
 public:
-    AudioDevice(uint16_t channels, uint32_t sampleRate, uint16_t format, uint32_t samplesPerBuffer);
+    AudioDevice(uint16_t channels,
+                uint32_t sampleRate,
+                uint16_t format,
+                uint32_t samplesPerBuffer);
 
     virtual uint16_t getChannels();
 
@@ -34,12 +43,18 @@ protected:
 
 class SLAudioDevice : public AudioDevice {
 public:
-    SLAudioDevice(uint16_t channels, uint32_t sampleRate, uint16_t format,
+    SLAudioDevice(HwAudioDeviceMode mode,
+                  uint16_t channels,
+                  uint32_t sampleRate,
+                  uint16_t format,
                   uint32_t samplesPerBuffer);
 
     SLuint32 getChannelMask();
 
     void getSampleFormat(SLDataFormat_PCM *pFormat);
+
+protected:
+    HwAudioDeviceMode mode = HwAudioDeviceMode::Normal;
 };
 
 

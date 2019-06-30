@@ -27,12 +27,14 @@ static constexpr int EVENT_RENDER_FILTER = KID('R', 'N', 'D', 0x01);// 绘制滤
 static constexpr int EVENT_RENDER_SET_FILTER = KID('R', 'N', 'D', 0x02);// 更新滤镜
 
 static constexpr int EVENT_SCREEN_DRAW = KID('S', 'C', 'R', 0x01);
+static constexpr int EVENT_SCREEN_UPDATE_WINDOW = KID('S', 'C', 'R', 0x02);
 
 static constexpr int EVENT_VIDEO_START = KID('V', 'D', 'O', 0x01);
 static constexpr int EVENT_VIDEO_PAUSE = KID('V', 'D', 'O', 0x02);
 static constexpr int EVENT_VIDEO_SEEK = KID('V', 'D', 'O', 0x03);
 static constexpr int EVENT_VIDEO_SET_SOURCE = KID('V', 'D', 'O', 0x04);
 static constexpr int EVENT_VIDEO_LOOP = KID('V', 'D', 'O', 0x05);
+static constexpr int EVENT_VIDEO_STOP = KID('V', 'D', 'O', 0x06);
 
 static constexpr int EVENT_AUDIO_START = KID('A', 'D', 'O', 0x01);
 static constexpr int EVENT_AUDIO_PAUSE = KID('A', 'D', 'O', 0x02);

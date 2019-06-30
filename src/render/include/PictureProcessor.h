@@ -7,7 +7,6 @@
 
 #include "Object.h"
 #include "UnitPipeline.h"
-#include "Screen.h"
 #include "Filter.h"
 #include "HwWindow.h"
 
@@ -17,7 +16,9 @@ public:
 
     virtual ~PictureProcessor();
 
-    void prepare(HwWindow *win, int width, int height);
+    void prepare(HwWindow *win);
+
+    void updateWindow(HwWindow *win);
 
     void show(char *file);
 

@@ -11,6 +11,7 @@
 #include "AbsAudioDecoder.h"
 #include "HwAbsMediaFrame.h"
 #include "HwFrameAllocator.h"
+#include "HwAudioTranslator.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,35 +48,13 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    virtual int grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame);
 
     virtual int64_t getVideoDuration() override;
 
     virtual int64_t getAudioDuration() override;
 
 private:
-    HwFrameAllocator *hwFrameAllocator = nullptr;
-    string path;
-    AVFormatContext *pFormatCtx = nullptr;
-    AVCodecContext *vCodecContext = nullptr;
-    AVCodecContext *aCodecContext = nullptr;
-    SwrContext *swrContext = nullptr;
-    int audioTrack = -1, videoTrack = -1, currentTrack = -1;
-    AVPacket *avPacket = nullptr;
-    AVFrame *resampleFrame = nullptr;
-    AVFrame *audioFrame = nullptr;
-    AVFrame *videoFrame = nullptr;
-    HwAbsMediaFrame *outputFrame;
-    AVSampleFormat outputSampleFormat = AV_SAMPLE_FMT_S16;
-    AVRational outputRational = AVRational{1, 1000000};
-    int64_t videoDurationUs = -1;
-    int64_t audioDurationUs = -1;
-    bool eof = false;
-
-    int initSwr();
-
-    int getMediaType(int track);
-
     bool openTrack(int track, AVCodecContext **context);
 
     void printCodecInfo();
@@ -85,6 +64,28 @@ private:
     AVSampleFormat getBestSampleFormat(AVSampleFormat in);
 
     void matchPts(AVFrame *frame, int track);
+
+    void handleAction();
+
+private:
+    HwFrameAllocator *hwFrameAllocator = nullptr;
+    string path;
+    AVFormatContext *pFormatCtx = nullptr;
+    AVCodecContext *vCodecContext = nullptr;
+    AVCodecContext *aCodecContext = nullptr;
+    HwAudioTranslator *translator = nullptr;
+    int audioTrack = -1, videoTrack = -1;
+    AVPacket *avPacket = nullptr;
+    AVFrame *videoFrame = nullptr;
+    AVFrame *audioFrame = nullptr;
+    HwAbsMediaFrame *outHwFrame = nullptr;
+    AVSampleFormat outSampleFormat = AV_SAMPLE_FMT_S16;
+    AVRational outputRational = AVRational{1, 1000000};
+    int64_t videoDurationUs = -1;
+    int64_t audioDurationUs = -1;
+    bool eof = false;
+    /** action */
+    int64_t actionSeekInUs = -1;
 };
 
 #ifdef __cplusplus

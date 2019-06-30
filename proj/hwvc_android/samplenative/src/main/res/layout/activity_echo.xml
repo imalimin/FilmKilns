@@ -5,15 +5,8 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/startBtn"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="START" />
-
-    <Button
-        android:id="@+id/stopBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="STOP" />
+        android:text="Echo playing" />
 </LinearLayout>

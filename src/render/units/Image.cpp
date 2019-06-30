@@ -9,7 +9,7 @@
 #include "Size.h"
 #include "Logcat.h"
 
-Image::Image() {
+Image::Image() : Unit() {
     name = __FUNCTION__;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Image::eventPrepare));
     registerEvent(EVENT_IMAGE_SHOW, reinterpret_cast<EventFunc>(&Image::eventShow));

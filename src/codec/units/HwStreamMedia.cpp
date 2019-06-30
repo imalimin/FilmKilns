@@ -6,7 +6,7 @@
  */
 #include "../include/HwStreamMedia.h"
 
-HwStreamMedia::HwStreamMedia() : Unit() {
+HwStreamMedia::HwStreamMedia() : HwStreamMedia(nullptr) {
 
 }
 

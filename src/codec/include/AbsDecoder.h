@@ -9,13 +9,9 @@
 
 #include "Object.h"
 #include <string>
+#include <HwResult.h>
 
 using namespace std;
-
-const int MEDIA_TYPE_UNKNOWN = -1;
-const int MEDIA_TYPE_EOF = -541478725;//AVERROR_EOF
-const int MEDIA_TYPE_VIDEO = 1;
-const int MEDIA_TYPE_AUDIO = 2;
 
 class AbsDecoder : public Object {
 public:
@@ -26,8 +22,12 @@ public:
     virtual bool prepare(string path)=0;
 
     virtual void seek(int64_t us)=0;
-
 };
+namespace Hw {
+    const HwResult MEDIA_WAIT = HwResult(-1);
+    const HwResult MEDIA_EOF = HwResult(-541478725);
+    const HwResult MEDIA_SUCCESS = Hw::SUCCESS;
+}
 
 
 #endif //HARDWAREVIDEOCODEC_ABSDECODER_H

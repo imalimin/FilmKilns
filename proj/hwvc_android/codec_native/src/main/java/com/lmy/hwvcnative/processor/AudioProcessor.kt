@@ -1,10 +1,12 @@
 package com.lmy.hwvcnative.processor
 
+import android.os.Handler
+import android.os.Looper
 import com.lmy.hwvcnative.CPPObject
-import com.lmy.hwvcnative.filter.Filter
 
 class AudioProcessor : CPPObject() {
-    private var filter: Filter? = null
+    private var onPlayProgressListener: ((Long, Long) -> Unit)? = null
+    private val mHandler = Handler(Looper.getMainLooper())
 
     init {
         handler = create()
@@ -43,6 +45,20 @@ class AudioProcessor : CPPObject() {
     fun release() {
         release(handler)
         handler = 0
+    }
+
+    fun setOnPlayProgressListener(listener: (Long, Long) -> Unit) {
+        this.onPlayProgressListener = listener
+    }
+
+    /**
+     * Call from jni.
+     * @param us Timestamp for play progress.
+     */
+    fun onPlayProgress(us: Long, duration: Long) {
+        mHandler.post {
+            onPlayProgressListener?.invoke(us, duration)
+        }
     }
 
     private external fun create(): Long

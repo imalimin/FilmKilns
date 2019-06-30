@@ -10,8 +10,8 @@
 #include <string>
 #include "Object.h"
 #include "FileUtils.h"
-#include "libjpeg-turbo/jpeglib.h"
-#include "libjpeg-turbo/turbojpeg.h"
+#include "../prebuild/static/libturbojpeg/include/jpeglib.h"
+#include "../prebuild/static/libturbojpeg/include/turbojpeg.h"
 
 using namespace std;
 

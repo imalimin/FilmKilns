@@ -14,6 +14,7 @@ void HandlerThread::run() {
             break;
         }
         pthread_mutex_unlock(&mutex);
+//        this->printQueue();
         Message *msg = this->take();
         int size = this->size();
         if (this->requestQuit && !this->requestQuitSafely) {
@@ -29,7 +30,7 @@ void HandlerThread::run() {
         }
         msg->runnable(msg);
         int what = msg->what;
-        if (1129270529 == msg->what) {
+        if (1129270529 == msg->what) {//release
             LOGI("UnitPipeline(%s) release", this->name.c_str());
         }
         delete msg;
@@ -57,6 +58,10 @@ bool HandlerThread::shouldQuit() {
 
 HandlerThread::~HandlerThread() {
     quitSafely();
+    if (this->queue) {
+        delete this->queue;
+        this->queue = nullptr;
+    }
 }
 
 void HandlerThread::sendMessage(Message *msg) {
@@ -65,6 +70,14 @@ void HandlerThread::sendMessage(Message *msg) {
         return;
     }
     offer(msg);
+}
+
+void HandlerThread::sendMessageAtFront(Message *msg) {
+    if (requestQuitSafely || requestQuit) {
+        LOGE("HandlerThread had quited");
+        return;
+    }
+    queue->offerAtFront(msg);
 }
 
 void HandlerThread::offer(Message *msg) {
@@ -95,10 +108,6 @@ void HandlerThread::quit() {
         delete mThread;
         mThread = nullptr;
     }
-    if (this->queue) {
-        delete this->queue;
-        this->queue = nullptr;
-    }
     pthread_mutex_destroy(&mutex);
 }
 
@@ -110,7 +119,9 @@ void HandlerThread::quitSafely() {
 }
 
 void HandlerThread::removeAllMessage(int what) {
-    queue->remove([what](Message *msg) {
-        return what == msg->what;
-    });
+    queue->removeAllMessage(what);
+}
+
+void HandlerThread::printQueue() {
+    queue->printQueue();
 }

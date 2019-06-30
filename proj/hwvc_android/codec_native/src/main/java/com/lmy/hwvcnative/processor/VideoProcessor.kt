@@ -6,6 +6,8 @@
 */
 package com.lmy.hwvcnative.processor
 
+import android.os.Handler
+import android.os.Looper
 import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.FilterSupport
@@ -13,6 +15,8 @@ import com.lmy.hwvcnative.filter.Filter
 
 class VideoProcessor : CPPObject(), FilterSupport {
     private var filter: Filter? = null
+    private var onPlayProgressListener: ((Long, Long) -> Unit)? = null
+    private val mHandler = Handler(Looper.getMainLooper())
 
     init {
         handler = create()
@@ -33,12 +37,17 @@ class VideoProcessor : CPPObject(), FilterSupport {
 
     fun setSource(path: String) {
         if (0L == handler) return
-        setSource(handler, path);
+        setSource(handler, path)
     }
 
-    fun prepare(surface: Surface, width: Int, height: Int) {
+    fun prepare(surface: Surface) {
         if (0L == handler) return
-        prepare(handler, surface, width, height)
+        prepare(handler, surface)
+    }
+
+    fun updateWindow(surface: Surface) {
+        if (0L == handler) return
+        updateWindow(handler, surface)
     }
 
     fun start() {
@@ -61,9 +70,24 @@ class VideoProcessor : CPPObject(), FilterSupport {
         handler = 0
     }
 
+    fun setOnPlayProgressListener(listener: (Long, Long) -> Unit) {
+        this.onPlayProgressListener = listener
+    }
+
+    /**
+     * Call from jni.
+     * @param us Timestamp for play progress.
+     */
+    fun onPlayProgress(us: Long, duration: Long) {
+        mHandler.post {
+            onPlayProgressListener?.invoke(us, duration)
+        }
+    }
+
     private external fun create(): Long
     private external fun setSource(handler: Long, path: String)
-    private external fun prepare(handler: Long, surface: Surface, width: Int, height: Int)
+    private external fun prepare(handler: Long, surface: Surface)
+    private external fun updateWindow(handler: Long, surface: Surface)
     private external fun setFilter(handler: Long, filter: Long)
     private external fun start(handler: Long)
     private external fun pause(handler: Long)

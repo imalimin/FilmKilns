@@ -4,29 +4,30 @@
 * This source code is licensed under the GPL license found in the
 * LICENSE file in the root directory of this source tree.
 */
-#include <jni.h>
-#include <log.h>
-#include "VideoProcessor.h"
+#include "../include/HwJavaNativeHelper.h"
+#include "HwVideoProcessor.h"
 #include "../include/HwAndroidWindow.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "ff/libavcodec/jni.h"
+static JMethodDescription vPlayProgressDesc = {"Java_com_lmy_hwvcnative_processor_VideoProcessor",
+                                               "onPlayProgress", "(JJ)V"};
 
-jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    av_jni_set_java_vm(vm, NULL);
-    return JNI_VERSION_1_6;
-}
-
-static VideoProcessor *getHandler(jlong handler) {
-    return reinterpret_cast<VideoProcessor *>(handler);
+static HwVideoProcessor *getHandler(jlong handler) {
+    return reinterpret_cast<HwVideoProcessor *>(handler);
 }
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_create
         (JNIEnv *env, jobject thiz) {
-    return reinterpret_cast<jlong>(new VideoProcessor());
+    HwVideoProcessor *p = new HwVideoProcessor();
+    p->post([] {
+        HwJavaNativeHelper::getInstance()->attachThread();
+    });
+    jlong handler = reinterpret_cast<jlong>(p);
+    HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
+    return handler;
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setSource
@@ -42,9 +43,29 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setSourc
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface, jint width, jint height) {
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
-        getHandler(handler)->prepare(new HwAndroidWindow(env, surface), width, height);
+        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
+        getHandler(handler)->setPlayProgressListener([handler](int64_t us, int64_t duration) {
+            jobject jObject = nullptr;
+            JNIEnv *pEnv = nullptr;
+            jmethodID methodID = nullptr;
+            if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+                HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+                HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                              vPlayProgressDesc,
+                                                              &methodID)) {
+                pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us),
+                                     static_cast<jlong>(duration));
+            }
+        });
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_updateWindow
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+    if (handler) {
+        getHandler(handler)->updateWindow(new HwAndroidWindow(env, surface));
     }
 }
 
@@ -79,9 +100,14 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setFilte
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
-        VideoProcessor *p = getHandler(handler);
+        HwVideoProcessor *p = getHandler(handler);
+        p->post([] {
+            HwJavaNativeHelper::getInstance()->detachThread();
+        });
+        p->stop();
         delete p;
     }
+    HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
 #ifdef __cplusplus

@@ -9,11 +9,10 @@
 AudioDevice::AudioDevice(uint16_t channels,
                          uint32_t sampleRate,
                          uint16_t format,
-                         uint32_t samplesPerBuffer) {
-    this->channels = channels;
-    this->sampleRate = sampleRate;
-    this->format = format;
-    this->samplesPerBuffer = samplesPerBuffer;
+                         uint32_t samplesPerBuffer) : channels(channels),
+                                                      sampleRate(sampleRate),
+                                                      format(format),
+                                                      samplesPerBuffer(samplesPerBuffer) {
 }
 
 uint16_t AudioDevice::getChannels() {
@@ -38,13 +37,15 @@ uint32_t AudioDevice::getBufferByteSize() {
     return bufSize;
 }
 
-SLAudioDevice::SLAudioDevice(uint16_t channels,
+SLAudioDevice::SLAudioDevice(HwAudioDeviceMode mode,
+                             uint16_t channels,
                              uint32_t sampleRate,
                              uint16_t format,
                              uint32_t samplesPerBuffer) : AudioDevice(channels,
                                                                       sampleRate,
                                                                       format,
-                                                                      samplesPerBuffer) {
+                                                                      samplesPerBuffer),
+                                                          mode(mode) {
 }
 
 SLuint32 SLAudioDevice::getChannelMask() {

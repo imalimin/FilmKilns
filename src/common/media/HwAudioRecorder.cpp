@@ -14,7 +14,7 @@ void bufferDequeueCallback(SLAndroidSimpleBufferQueueItf slBufferQueueItf, void 
 
 void HwAudioRecorder::bufferDequeue(SLAndroidSimpleBufferQueueItf slBufferQueueItf) {
     if (this->buffer) {
-        Logcat::i("HWVC", "HwAudioRecorder...");
+//        Logcat::i("HWVC", "HwAudioRecorder...");
         (*slBufferQueueItf)->Enqueue(slBufferQueueItf, buffer->getData(), buffer->size());
         if (fifo) {
             fifo->push(buffer->getData(), buffer->size());
@@ -25,7 +25,21 @@ void HwAudioRecorder::bufferDequeue(SLAndroidSimpleBufferQueueItf slBufferQueueI
 HwAudioRecorder::HwAudioRecorder(uint16_t channels,
                                  uint32_t sampleRate,
                                  uint16_t format,
-                                 uint32_t samplesPerBuffer) : SLAudioDevice(channels,
+                                 uint32_t samplesPerBuffer)
+        : SLAudioDevice(HwAudioDeviceMode::Normal,
+                        channels,
+                        sampleRate,
+                        format,
+                        samplesPerBuffer) {
+    initialize(nullptr);
+}
+
+HwAudioRecorder::HwAudioRecorder(HwAudioDeviceMode mode,
+                                 uint16_t channels,
+                                 uint32_t sampleRate,
+                                 uint16_t format,
+                                 uint32_t samplesPerBuffer) : SLAudioDevice(mode,
+                                                                            channels,
                                                                             sampleRate,
                                                                             format,
                                                                             samplesPerBuffer) {
@@ -33,10 +47,12 @@ HwAudioRecorder::HwAudioRecorder(uint16_t channels,
 }
 
 HwAudioRecorder::HwAudioRecorder(SLEngine *engine,
+                                 HwAudioDeviceMode mode,
                                  uint16_t channels,
                                  uint32_t sampleRate,
                                  uint16_t format,
-                                 uint32_t samplesPerBuffer) : SLAudioDevice(channels,
+                                 uint32_t samplesPerBuffer) : SLAudioDevice(mode,
+                                                                            channels,
                                                                             sampleRate,
                                                                             format,
                                                                             samplesPerBuffer) {
@@ -49,6 +65,16 @@ void HwAudioRecorder::initialize(SLEngine *engine) {
          this->channels,
          this->sampleRate);
     uint32_t bufSize = getBufferByteSize() * 16;
+    switch (mode) {
+        case HwAudioDeviceMode::LowLatency:
+            bufSize = getBufferByteSize() * 3;
+            break;
+        case HwAudioDeviceMode::Normal:
+            bufSize = getBufferByteSize() * 16;
+            break;
+        case HwAudioDeviceMode::HighLatency:
+            bufSize = getBufferByteSize() * 32;
+    }
     this->fifo = new HwFIFOBuffer(bufSize, false);
     this->buffer = HwBuffer::alloc(getBufferByteSize());
     HwResult ret = this->createEngine();
@@ -59,7 +85,7 @@ void HwAudioRecorder::initialize(SLEngine *engine) {
 }
 
 HwAudioRecorder::~HwAudioRecorder() {
-    LOGI("HwAudioRecorderer");
+    LOGI("HwAudioRecorder");
     stop();
 }
 
@@ -87,7 +113,10 @@ void HwAudioRecorder::stop() {
         if (Hw::SUCCESS != ret) {
             LOGE("Recorder SetRecordState stop failed!");
         }
+        delete recorder;
+        recorder = nullptr;
     }
+    destroyEngine();
     if (buffer) {
         delete buffer;
         buffer = nullptr;
@@ -107,7 +136,9 @@ HwBuffer *HwAudioRecorder::read(size_t size) {
 }
 
 void HwAudioRecorder::flush() {
-
+    if (fifo) {
+        fifo->flush();
+    }
 }
 
 HwResult HwAudioRecorder::createEngine() {
@@ -137,10 +168,6 @@ HwResult HwAudioRecorder::createBufferQueueObject() {
 }
 
 void HwAudioRecorder::destroyEngine() {
-    if (recorder) {
-        delete recorder;
-        recorder = nullptr;
-    }
     if (ownEngine && engine) {
         delete engine;
         engine = nullptr;

@@ -54,6 +54,9 @@ HwResult SLRecorder::initialize(SLAudioDevice *device) {
     SLAndroidConfigurationItf inputConfig;
     result = (*recordObject)->GetInterface(recordObject, SL_IID_ANDROIDCONFIGURATION,
                                            &inputConfig);
+    /**
+     * Configure the voice recognition preset which has no signal processing for lower latency.
+     */
     if (SL_RESULT_SUCCESS == result) {
         SLuint32 presetValue = SL_ANDROID_RECORDING_PRESET_VOICE_RECOGNITION;
         (*inputConfig)
@@ -66,7 +69,7 @@ HwResult SLRecorder::initialize(SLAudioDevice *device) {
     }
     result = (*recordObject)->Realize(recordObject, SL_BOOLEAN_FALSE);
     if (SL_RESULT_SUCCESS != result) {
-        LOGE("Recorder Realize failed!");
+        LOGE("Recorder Realize failed(%d)!", result);
         return Hw::FAILED;
     }
     result = (*recordObject)->GetInterface(recordObject, SL_IID_RECORD, &recordItf);

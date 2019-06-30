@@ -5,6 +5,7 @@ import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.*
 import android.widget.SeekBar
 import android.widget.TextView
@@ -12,6 +13,11 @@ import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.filter.*
 import com.lmy.samplenative.adapter.OnRecyclerItemClickListener
 import com.lmy.samplenative.adapter.RecyclerAdapter
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.lang.Exception
 import java.util.*
 
 /**
@@ -31,15 +37,18 @@ class FilterController(private val filterSupport: FilterSupport,
     private var thBar: SeekBar = progressLayout.getChildAt(2) as SeekBar
     private var fBar: SeekBar = progressLayout.getChildAt(3) as SeekBar
     private var dialog: AlertDialog? = null
+    private lateinit var hwfDir: String
 
     init {
         oneBar.setOnSeekBarChangeListener(this)
         twoBar.setOnSeekBarChangeListener(this)
         thBar.setOnSeekBarChangeListener(this)
         fBar.setOnSeekBarChangeListener(this)
+        initResources()
     }
 
     private fun createView(): View {
+        hwfDir = "${progressLayout.context.externalCacheDir.path}/hwf"
         val layout = LayoutInflater.from(progressLayout.context).inflate(R.layout.dialog_filter, null)
         val recyclerView = layout.findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context,
@@ -90,19 +99,19 @@ class FilterController(private val filterSupport: FilterSupport,
 //                oneBar.progress = 55
 //                twoBar.progress = 25
 //                thBar.progress = 15
-                filterSupport.setFilter(HwvcFilter("${Environment.getExternalStorageDirectory().path}/beauty_v4.hvf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/beauty_v4.hwf"))
                 show(0)
             }
             2 -> {
-                filterSupport.setFilter(HwvcFilter("${Environment.getExternalStorageDirectory().path}/beach.hvf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/beach.hwf"))
                 show(0)
             }
             3 -> {
-                filterSupport.setFilter(HwvcFilter("${Environment.getExternalStorageDirectory().path}/clean.hvf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/clean.hwf"))
                 show(0)
             }
             4 -> {
-                filterSupport.setFilter(HwvcFilter("${Environment.getExternalStorageDirectory().path}/pink.hvf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/pink.hwf"))
                 show(0)
             }
             else -> {
@@ -119,6 +128,42 @@ class FilterController(private val filterSupport: FilterSupport,
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
 
+    }
+
+    private fun initResources() {
+        val srcDir = "hwf"
+        Log.i("HWVC", "initResources")
+        val destDir = "${progressLayout.context.externalCacheDir.path}/$srcDir"
+        if (!File(destDir).exists()) {
+            File(destDir).mkdirs()
+        }
+        progressLayout.context.assets.list(srcDir).forEach {
+            val destFile = File("$destDir/$it")
+            if (!destFile.exists()) {
+                var ins: InputStream? = null
+                var fos: FileOutputStream? = null
+                try {
+                    ins = progressLayout.context.assets.open("$srcDir/$it")
+                    fos = FileOutputStream(destFile)
+                    val size = 1024 * 512
+                    val buf = ByteArray(size)
+                    var len: Int
+                    while (true) {
+                        len = ins.read(buf)
+                        if (len == -1) {
+                            break
+                        }
+                        fos.write(buf, 0, len)
+                    }
+                    fos.flush()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    ins?.close()
+                    fos?.close()
+                }
+            }
+        }
     }
 
     private class Adapter : RecyclerAdapter<FilterItem, ViewHolder>() {
