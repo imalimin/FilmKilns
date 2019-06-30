@@ -207,7 +207,7 @@ bool HwVideoInput::invalidate(int tex, uint32_t width, uint32_t height) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     msg->obj = new ObjectBox(new Size(width, height));
     msg->msg = "RENDER";
-    msg->arg1 = yuvFilter->getFrameBuffer()->getFrameTexture();
+    msg->arg1 = tex;
     postEvent(msg);
     return true;
 }
