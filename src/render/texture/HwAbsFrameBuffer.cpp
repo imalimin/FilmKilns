@@ -49,3 +49,13 @@ GLuint HwAbsFrameBuffer::getFrameTexture() {
 GLuint HwAbsFrameBuffer::getFrameBuffer() {
     return fbo;
 }
+
+bool HwAbsFrameBuffer::read(uint8_t *pixels) {
+    if (!pixels) {
+        return false;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glReadPixels(0, 0, width(), height(), fmt, GL_UNSIGNED_BYTE, pixels);
+    glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+    return true;
+}

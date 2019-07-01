@@ -26,6 +26,8 @@ public:
 
     GLuint getFrameBuffer();
 
+    virtual bool read(uint8_t *pixels);
+
 protected:
     virtual void createTexture() = 0;
 
@@ -33,7 +35,7 @@ protected:
     GLuint id = GL_NONE;
     GLuint fbo = GL_NONE;
     Size *size = nullptr;
-    GLint fmt = GL_RGBA;
+    GLenum fmt = GL_RGBA;
 };
 
 
