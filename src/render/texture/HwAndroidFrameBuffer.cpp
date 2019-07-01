@@ -38,6 +38,7 @@ bool HwAndroidFrameBuffer::read(uint8_t *pixels) {
     AHardwareBuffer_lock(buf, AHARDWAREBUFFER_USAGE_CPU_READ_OFTEN, fence, &rect,
                          reinterpret_cast<void **>(&pBuf));
     Logcat::i("HWVC", "HwAndroidFrameBuffer::read %p", pBuf);
+    memcpy(pixels, pBuf, width() * height() * 4);
     AHardwareBuffer_unlock(buf, &fence);
     return true;
 #else
