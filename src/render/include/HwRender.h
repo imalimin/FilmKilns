@@ -37,6 +37,8 @@ public:
 
 private:
     Filter *filter = nullptr;
+    uint8_t *pixels = nullptr;
+    int count = 0;
 };
 
 

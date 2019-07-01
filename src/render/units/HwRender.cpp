@@ -8,6 +8,7 @@
 #include "../include/HwRender.h"
 #include "../include/NormalFilter.h"
 #include "../include/ObjectBox.h"
+#include "TimeUtils.h"
 
 HwRender::HwRender() : HwRender(nullptr) {
 }
@@ -32,6 +33,10 @@ bool HwRender::eventRelease(Message *msg) {
             filter = nullptr;
         }
     });
+    if (pixels) {
+        delete[] pixels;
+        pixels = nullptr;
+    }
     return true;
 }
 
@@ -39,11 +44,29 @@ void HwRender::checkFilter(int width, int height) {
     if (filter) {
         bool ret = filter->init(width, height);
     }
+    if (!pixels) {
+        pixels = new uint8_t[width * height * 4];
+    }
 }
 
 void HwRender::renderFilter(GLuint texture) {
     Logcat::i("HWVC", "Render::renderFilter %d", texture);
     filter->draw(texture);
+    ++count;
+    if (count >= 150) {
+        count = 0;
+        filter->getFrameBuffer()->read(pixels);
+        FILE *file = fopen("/sdcard/pixels.bmp", "wb");
+        int64_t time = TimeUtils::getCurrentTimeUS();
+        size_t size = filter->getFrameBuffer()->width()
+                      * filter->getFrameBuffer()->height() * 4;
+        Logcat::i("HWVC", "HwAndroidFrameBuffer::read cost %lld, %dx%d",
+                  TimeUtils::getCurrentTimeUS() - time,
+                  filter->getFrameBuffer()->width(),
+                  filter->getFrameBuffer()->height());
+        fwrite(pixels, 1, size, file);
+        fclose(file);
+    }
 }
 
 void HwRender::renderScreen() {
