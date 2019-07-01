@@ -55,9 +55,9 @@ void HwRender::renderFilter(GLuint texture) {
     ++count;
     if (count >= 150) {
         count = 0;
+        int64_t time = TimeUtils::getCurrentTimeUS();
         filter->getFrameBuffer()->read(pixels);
         FILE *file = fopen("/sdcard/pixels.bmp", "wb");
-        int64_t time = TimeUtils::getCurrentTimeUS();
         size_t size = filter->getFrameBuffer()->width()
                       * filter->getFrameBuffer()->height() * 4;
         Logcat::i("HWVC", "HwAndroidFrameBuffer::read cost %lld, %dx%d",
