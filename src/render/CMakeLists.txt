@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(hwvc_render)
 include_directories(
         ${PROJECT_SOURCE_DIR}/../common/include
+        ${PROJECT_SOURCE_DIR}/platform/android
 )
 option(GL_DEBUG "Whether show opengl logs." ON)
 if (GL_DEBUG)
@@ -17,23 +18,34 @@ else ()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -g -ggdb ")
 endif ()
 #Enable EGL android ext.
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DEGL_EGLEXT_PROTOTYPES -DGL_GLEXT_PROTOTYPES")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEGL_EGLEXT_PROTOTYPES -DGL_GLEXT_PROTOTYPES")
+if (ANDROID)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DEGL_EGLEXT_PROTOTYPES -DGL_GLEXT_PROTOTYPES")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEGL_EGLEXT_PROTOTYPES -DGL_GLEXT_PROTOTYPES")
+endif ()
 message(STATUS "hwrender CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
-file(
-        GLOB
-        SOURCES
-        ${PROJECT_SOURCE_DIR}/*cpp
-        ${PROJECT_SOURCE_DIR}/entity/*cpp
-        ${PROJECT_SOURCE_DIR}/filter/*cpp
-        ${PROJECT_SOURCE_DIR}/drawer/*cpp
-        ${PROJECT_SOURCE_DIR}/texture/*cpp
-        ${PROJECT_SOURCE_DIR}/egl/*cpp
-        ${PROJECT_SOURCE_DIR}/units/*cpp
-        ${PROJECT_SOURCE_DIR}/processor/*cpp
-        ${PROJECT_SOURCE_DIR}/tinyxml/*cpp
-)
+if (ANDROID)
+    message(STATUS "hwrender android platform.")
+    file(
+            GLOB
+            SOURCES
+            ${PROJECT_SOURCE_DIR}/*.cpp
+            ${PROJECT_SOURCE_DIR}/entity/*.cpp
+            ${PROJECT_SOURCE_DIR}/filter/*.cpp
+            ${PROJECT_SOURCE_DIR}/drawer/*.cpp
+            ${PROJECT_SOURCE_DIR}/egl/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/processor/*.cpp
+            ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
+            # Android platform
+            ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
+            ${PROJECT_SOURCE_DIR}/texture/HwAbsFrameBuffer.cpp
+            ${PROJECT_SOURCE_DIR}/texture/HwFrameBuffer.cpp
+            ${PROJECT_SOURCE_DIR}/texture/HwAndroidFrameBuffer.cpp
+    )
+else ()
+    # TODO other platform
+endif ()
 message(STATUS "${SOURCES}")
 add_library( # Sets the name of the library.
         hwvc_render
@@ -45,21 +57,27 @@ add_library( # Sets the name of the library.
         ${SOURCES}
         )
 
-find_library( # Sets the name of the path variable.
-        log-lib
+if (ANDROID)
+    find_library( # Sets the name of the path variable.
+            log-lib
 
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
-        log)
-
-target_link_libraries( # Specifies the target library.
-        hwvc_render
-        hwvcom
-        # Links the target library to the log library
-        # included in the NDK.
-#        GLESv1_CM
-        GLESv2
-        EGL
-        android
-        jnigraphics
-        ${log-lib})
+            # Specifies the name of the NDK library that
+            # you want CMake to locate.
+            log)
+    target_link_libraries( # Specifies the target library.
+            hwvc_render
+            hwvcom
+            # Links the target library to the log library
+            # included in the NDK.
+            #        GLESv1_CM
+            GLESv2
+            EGL
+            android
+            jnigraphics
+            ${log-lib})
+else ()
+    # TODO other platform
+    target_link_libraries( # Specifies the target library.
+            hwvc_render
+            hwvcom)
+endif ()
