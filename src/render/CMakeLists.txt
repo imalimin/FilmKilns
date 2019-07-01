@@ -10,12 +10,15 @@ if (GL_DEBUG)
 endif ()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -ffast-math -funroll-loops")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -ffast-math -funroll-loops ")
 else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O0 -Wall -g -ggdb ")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -g -ggdb ")
 endif ()
+#Enable EGL android ext.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DEGL_EGLEXT_PROTOTYPES -DGL_GLEXT_PROTOTYPES")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEGL_EGLEXT_PROTOTYPES -DGL_GLEXT_PROTOTYPES")
 message(STATUS "hwrender CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 file(
@@ -54,7 +57,9 @@ target_link_libraries( # Specifies the target library.
         hwvcom
         # Links the target library to the log library
         # included in the NDK.
+#        GLESv1_CM
         GLESv2
         EGL
         android
+        jnigraphics
         ${log-lib})
