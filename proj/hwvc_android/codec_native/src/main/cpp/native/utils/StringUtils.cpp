@@ -6,6 +6,8 @@
  */
 #include "../include/StringUtils.h"
 #include "log.h"
+#include <cstring>
+#include <cstdlib>
 
 
 namespace StringUtils {

@@ -8,6 +8,8 @@
 #define HARDWAREVIDEOCODEC_OBJECT_H
 
 #include "pthread.h"
+#include <cstring>
+#include <cstdlib>
 //#include "semaphore.h"
 
 class Object {
