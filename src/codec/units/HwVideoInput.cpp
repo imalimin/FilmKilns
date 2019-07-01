@@ -45,6 +45,10 @@ HwVideoInput::~HwVideoInput() {
 bool HwVideoInput::eventRelease(Message *msg) {
     LOGI("HwVideoInput::eventRelease");
     eventStop(nullptr);
+    if (yuvFilter) {
+        delete yuvFilter;
+        yuvFilter = nullptr;
+    }
     if (texAllocator) {
         delete texAllocator;
         texAllocator = nullptr;
