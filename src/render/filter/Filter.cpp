@@ -4,6 +4,8 @@
 
 #include "../include/Filter.h"
 #include "log.h"
+#include "../include/HwFrameBuffer.h"
+#include "../include/HwAndroidFrameBuffer.h"
 
 Filter::Filter() {
     name = __func__;
@@ -23,7 +25,7 @@ Filter::~Filter() {
 bool Filter::init(int w, int h) {
     if (initted)
         return false;
-    fbo = new FrameBuffer(w, h);
+    fbo = new HwAndroidFrameBuffer(w, h);
     initted = true;
     return true;
 }
@@ -40,6 +42,10 @@ void Filter::draw(GLuint texture) {
 
 void Filter::bindResources() {
 
+}
+
+HwAbsFrameBuffer *Filter::getFrameBuffer() {
+    return fbo;
 }
 
 void Filter::setParams(int *params) {

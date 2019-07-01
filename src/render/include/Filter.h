@@ -7,7 +7,7 @@
 
 #include <string>
 #include "Object.h"
-#include "FrameBuffer.h"
+#include "HwAbsFrameBuffer.h"
 #include "BaseDrawer.h"
 
 using namespace std;
@@ -29,9 +29,7 @@ public:
 
     virtual void bindResources();
 
-    FrameBuffer *getFrameBuffer() {
-        return fbo;
-    }
+    HwAbsFrameBuffer *getFrameBuffer();
 
     virtual void setParams(int *params);
 
@@ -40,7 +38,7 @@ public:
 protected:
     BaseDrawer *drawer = nullptr;
 private:
-    FrameBuffer *fbo = nullptr;
+    HwAbsFrameBuffer *fbo = nullptr;
     bool initted = false;
 
 };
