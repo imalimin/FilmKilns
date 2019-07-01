@@ -15,7 +15,8 @@
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:lines="1" />
+            android:lines="1"
+            android:text="1920" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,7 +28,8 @@
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:lines="1" />
+            android:lines="1"
+            android:text="702" />
     </LinearLayout>
 
     <EditText
@@ -35,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lines="1"
-        android:text="/sdcard/" />
+        android:text="/sdcard/pixels.bmp" />
 
     <Button
         android:id="@+id/enterBtn"
