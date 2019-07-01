@@ -6,6 +6,7 @@
  */
 
 #include "../include/HwAndroidFrameBuffer.h"
+#include "Logcat.h"
 //#include <media/NdkImageReader.h>
 
 HwAndroidFrameBuffer::HwAndroidFrameBuffer(int w, int h) : HwAbsFrameBuffer(w, h) {
@@ -23,6 +24,24 @@ HwAndroidFrameBuffer::~HwAndroidFrameBuffer() {
         pImageKHR = nullptr;
     }
     dpy = EGL_NO_DISPLAY;
+#endif
+}
+
+bool HwAndroidFrameBuffer::read(uint8_t *pixels) {
+#if defined(ANDROID) && __ANDROID_API__ >= 26
+    if (!pixels) {
+        return false;
+    }
+    ARect rect = {0, 0, width(), height()};
+    int32_t fence = -1;
+    uint8_t *pBuf = nullptr;
+    AHardwareBuffer_lock(buf, AHARDWAREBUFFER_USAGE_CPU_READ_OFTEN, fence, &rect,
+                         reinterpret_cast<void **>(&pBuf));
+    Logcat::i("HWVC", "HwAndroidFrameBuffer::read %p", pBuf);
+    AHardwareBuffer_unlock(buf, &fence);
+    return true;
+#else
+    return HwAbsFrameBuffer::read(pixels);
 #endif
 }
 

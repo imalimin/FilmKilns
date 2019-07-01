@@ -28,6 +28,8 @@ public:
 
     virtual ~HwAndroidFrameBuffer();
 
+    virtual bool read(uint8_t *pixels) override;
+
 protected:
     virtual void createTexture() override;
 
