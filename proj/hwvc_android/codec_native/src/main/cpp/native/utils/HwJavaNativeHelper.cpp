@@ -8,6 +8,7 @@
 #include "../include/HwJavaNativeHelper.h"
 #include "Thread.h"
 #include "StringUtils.h"
+#include <sys/system_properties.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,6 +19,7 @@ extern "C" {
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     HwJavaNativeHelper::getInstance()->attach(vm);
     av_jni_set_java_vm(vm, NULL);
+    Logcat::i("HWVC", "HwJavaNativeHelper::getAndroidApi %d", HwJavaNativeHelper::getAndroidApi());;
     return JNI_VERSION_1_6;
 }
 
@@ -38,6 +40,17 @@ string HwJavaNativeHelper::getClassName(JNIEnv *env, jobject object) {
     env->ReleaseStringUTFChars(name, pName);
     env->DeleteLocalRef(cls);
     return nameStr;
+}
+
+int HwJavaNativeHelper::getAndroidApi() {
+    string key = "ro.build.version.sdk";
+    char value[128] = {0};
+    int ret = __system_property_get(key.c_str(), value);
+    if (ret <= 0) {
+        Logcat::e("HWVC", "HwJavaNativeHelper::getAndroidApi failed.");
+        return 0;
+    }
+    return atoi(value);
 }
 
 HwJavaNativeHelper *HwJavaNativeHelper::instance = new HwJavaNativeHelper();

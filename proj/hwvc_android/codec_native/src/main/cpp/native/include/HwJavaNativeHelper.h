@@ -34,6 +34,8 @@ class HwJavaNativeHelper : public Object {
 public:
     static string getClassName(JNIEnv *env, jobject object);
 
+    static int getAndroidApi();
+
 public:
     static HwJavaNativeHelper *getInstance();
 
