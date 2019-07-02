@@ -61,7 +61,7 @@ private:
     ~HwUILoader();
 
 private:
-    const string LIB_NAME = "libui.so";
+    const string LIB_NAME = "libhwui.so";
     void *pLibHandler = nullptr;
 
 };

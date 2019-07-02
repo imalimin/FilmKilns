@@ -32,7 +32,7 @@ protected:
 private:
     int sdk = 0;
     HwFrameBuffer *frameBuffer = nullptr;
-    Object *graphicBuffer;
+    Object *graphicBuffer = nullptr;
 };
 
 

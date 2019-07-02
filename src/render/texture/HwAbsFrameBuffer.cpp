@@ -22,9 +22,11 @@ HwAbsFrameBuffer::~HwAbsFrameBuffer() {
     }
     if (GL_NONE != fbo) {
         glDeleteFramebuffers(1, &fbo);
+        fbo = GL_NONE;
     }
     if (GL_NONE != id) {
         glDeleteTextures(1, &id);
+        id = GL_NONE;
     }
 }
 
