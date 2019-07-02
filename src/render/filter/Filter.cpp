@@ -25,7 +25,11 @@ Filter::~Filter() {
 bool Filter::init(int w, int h) {
     if (initted)
         return false;
+#ifdef ANDROID
     fbo = new HwAndroidFrameBuffer(w, h);
+#else
+    fbo = new HwFrameBuffer(w, h);
+#endif
     initted = true;
     return true;
 }
