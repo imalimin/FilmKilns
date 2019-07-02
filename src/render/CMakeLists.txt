@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(hwvc_render)
-include_directories(
-        ${PROJECT_SOURCE_DIR}/../common/include
-        ${PROJECT_SOURCE_DIR}/platform/android
-        ${PROJECT_SOURCE_DIR}/platform/android/buffer
-        ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader
-)
+if (ANDROID)
+    include_directories(
+            ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/platform/android
+            ${PROJECT_SOURCE_DIR}/platform/android/buffer
+            ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader
+    )
+else ()
+    include_directories(
+            ${PROJECT_SOURCE_DIR}/../common/include
+    )
+endif ()
 option(GL_DEBUG "Whether show opengl logs." ON)
 if (GL_DEBUG)
     add_definitions(-DGL_DEBUG)
