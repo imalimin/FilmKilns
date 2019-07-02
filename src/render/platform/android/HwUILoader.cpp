@@ -37,8 +37,20 @@ bool HwUILoader::open() {
 }
 
 void HwUILoader::load() {
-    void *ptr = load_func<void *>(pLibHandler,
-                                  "_ZN7android13GraphicBufferC1Ejjij");
+    fGraphicBufferCtor = load_func<pfnGraphicBufferCtor>(pLibHandler,
+                                                         "_ZN7android13GraphicBufferC1Ejjij");
+    fGraphicBufferDtor = load_func<pfnGraphicBufferDtor>(pLibHandler,
+                                                         "_ZN7android13GraphicBufferD1Ev");
+    fGraphicBufferLock = (pfnGraphicBufferLock) dlsym(pLibHandler,
+                                                      "_ZN7android13GraphicBuffer4lockEjPPv");
+    fGraphicBufferLockRect = (pfnGraphicBufferLockRect) dlsym(pLibHandler,
+                                                              "_ZN7android13GraphicBuffer4lockEjRKNS_4RectEPPv");
+    fGraphicBufferUnlock = (pfnGraphicBufferUnlock) dlsym(pLibHandler,
+                                                          "_ZN7android13GraphicBuffer6unlockEv");
+    fGraphicBufferGetNativeBuffer = (pfnGraphicBufferGetNativeBuffer) dlsym(pLibHandler,
+                                                                            "_ZNK7android13GraphicBuffer15getNativeBufferEv");
+    fGraphicBufferReallocate = (pfnGraphicBufferReallocate) dlsym(pLibHandler,
+                                                                  "_ZN7android13GraphicBuffer10reallocateEjjij");
 }
 
 bool HwUILoader::close() {

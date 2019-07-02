@@ -35,8 +35,10 @@ protected:
 
 private:
     bool createEGLImage(EGLDisplay dpy, EGLImageKHR *pImageKHR);
+    bool createEGLImage();
 
 private:
+    int sdk = 0;
     HwFrameBuffer *frameBuffer = nullptr;
     AHardwareBuffer *buf = nullptr;
     EGLDisplay dpy = EGL_NO_DISPLAY;

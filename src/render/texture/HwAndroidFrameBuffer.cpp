@@ -6,11 +6,19 @@
  */
 
 #include "../include/HwAndroidFrameBuffer.h"
+#include "HwUILoader.h"
 #include "Logcat.h"
 //#include <media/NdkImageReader.h>
 
 HwAndroidFrameBuffer::HwAndroidFrameBuffer(int w, int h) : HwAbsFrameBuffer(w, h) {
-    if (HwAndroidUtils::getAndroidApi() >= 26) {
+    sdk = HwAndroidUtils::getAndroidApi();
+    /**
+     * Support GraphicBuffer.
+     * sdk >= 26: AHardwareBuffer.
+     * sdk == 24 || sdk == 25: Normal.
+     * sdk <= 23: GraphicBuffer.
+     */
+    if (sdk >= 26 || sdk <= 23) {
         createTexture();
     } else {
         frameBuffer = new HwFrameBuffer(w, h);
@@ -70,12 +78,18 @@ bool HwAndroidFrameBuffer::read(uint8_t *pixels) {
 }
 
 void HwAndroidFrameBuffer::createTexture() {
-    dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    createEGLImage(dpy, &pImageKHR);
     glGenTextures(1, &id);
     glGenFramebuffers(1, &fbo);
     glBindTexture(GL_TEXTURE_2D, id);
-    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) pImageKHR);
+    if (sdk >= 26) {
+        dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        createEGLImage(dpy, &pImageKHR);
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) pImageKHR);
+    } else if (sdk <= 23) {
+        //TODO
+    } else {
+        return;
+    }
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D,
                     GL_TEXTURE_MIN_FILTER, GL_LINEAR);
