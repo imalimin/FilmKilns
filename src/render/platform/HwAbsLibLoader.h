@@ -9,6 +9,8 @@
 #include <string>
 #include <dlfcn.h>
 
+using namespace std;
+
 class HwAbsLibLoader : public Object {
 protected:
     HwAbsLibLoader();
