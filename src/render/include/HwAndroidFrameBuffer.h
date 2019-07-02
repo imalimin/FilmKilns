@@ -9,41 +9,38 @@
 #define HWVC_ANDROID_HWANDROIDFRAMEBUFFER_H
 
 #include "HwAbsFrameBuffer.h"
+#include "HwAHardwareBufferLoader.h"
+#include "HwEGLExtLoader.h"
+#include "HwFrameBuffer.h"
+#include "HwAndroidUtils.h"
+#include "GLES2/gl2ext.h"
 
 /**
  * Also, you must add -DEGL_EGLEXT_PROTOTYPES and -DGL_GLEXT_PROTOTYPES to you cmake flags.
  */
-#if defined(ANDROID) && __ANDROID_API__ >= 26
-
-#include <android/hardware_buffer.h>
-#include "GLES2/gl2ext.h"
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
-#endif
-
 class HwAndroidFrameBuffer : public HwAbsFrameBuffer {
 public:
     HwAndroidFrameBuffer(int w, int h);
 
     virtual ~HwAndroidFrameBuffer();
 
+    virtual GLuint getFrameTexture() override;
+
+    virtual GLuint getFrameBuffer() override;
+
     virtual bool read(uint8_t *pixels) override;
 
 protected:
     virtual void createTexture() override;
 
-#if defined(ANDROID) && __ANDROID_API__ >= 26
 private:
-
     bool createEGLImage(EGLDisplay dpy, EGLImageKHR *pImageKHR);
 
 private:
+    HwFrameBuffer *frameBuffer = nullptr;
     AHardwareBuffer *buf = nullptr;
     EGLDisplay dpy = EGL_NO_DISPLAY;
     EGLImageKHR pImageKHR = nullptr;
-
-#endif
 };
 
 

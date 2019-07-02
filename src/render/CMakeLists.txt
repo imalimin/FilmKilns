@@ -37,6 +37,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/units/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
+            ${PROJECT_SOURCE_DIR}/platform/*.cpp
             # Android platform
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwAbsFrameBuffer.cpp
@@ -45,6 +46,20 @@ if (ANDROID)
     )
 else ()
     # TODO other platform
+    message(STATUS "hwrender IOS platform.")
+    file(
+            GLOB
+            SOURCES
+            ${PROJECT_SOURCE_DIR}/*.cpp
+            ${PROJECT_SOURCE_DIR}/entity/*.cpp
+            ${PROJECT_SOURCE_DIR}/filter/*.cpp
+            ${PROJECT_SOURCE_DIR}/drawer/*.cpp
+            ${PROJECT_SOURCE_DIR}/egl/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/processor/*.cpp
+            ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
+            ${PROJECT_SOURCE_DIR}/platform/*.cpp
+    )
 endif ()
 message(STATUS "${SOURCES}")
 add_library( # Sets the name of the library.

@@ -22,9 +22,9 @@ public:
 
     int height();
 
-    GLuint getFrameTexture();
+    virtual GLuint getFrameTexture();
 
-    GLuint getFrameBuffer();
+    virtual GLuint getFrameBuffer();
 
     virtual bool read(uint8_t *pixels);
 
