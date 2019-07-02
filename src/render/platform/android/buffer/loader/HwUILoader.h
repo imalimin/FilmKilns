@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWUILOADER_H
 #define HWVC_ANDROID_HWUILOADER_H
 
-#include "../HwAbsLibLoader.h"
+#include "../../../HwAbsLibLoader.h"
 #include <android/hardware_buffer.h>
 
 class HwUILoader : public HwAbsLibLoader {

@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWEGLEXTLOADER_H
 #define HWVC_ANDROID_HWEGLEXTLOADER_H
 
-#include "../HwAbsLibLoader.h"
+#include "../../../HwAbsLibLoader.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <android/hardware_buffer.h>

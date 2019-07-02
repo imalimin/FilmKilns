@@ -3,6 +3,8 @@ project(hwvc_render)
 include_directories(
         ${PROJECT_SOURCE_DIR}/../common/include
         ${PROJECT_SOURCE_DIR}/platform/android
+        ${PROJECT_SOURCE_DIR}/platform/android/buffer
+        ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader
 )
 option(GL_DEBUG "Whether show opengl logs." ON)
 if (GL_DEBUG)
@@ -40,6 +42,8 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
             # Android platform
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
+            ${PROJECT_SOURCE_DIR}/platform/android/buffer/*.cpp
+            ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader/*.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwAbsFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwAndroidFrameBuffer.cpp

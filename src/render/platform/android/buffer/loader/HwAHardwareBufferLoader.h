@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWAHARDWAREBUFFERLOADER_H
 #define HWVC_ANDROID_HWAHARDWAREBUFFERLOADER_H
 
-#include "../HwAbsLibLoader.h"
+#include "../../../HwAbsLibLoader.h"
 #include <android/hardware_buffer.h>
 
 using namespace std;
