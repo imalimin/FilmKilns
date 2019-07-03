@@ -65,6 +65,7 @@ void UnitPipeline::postEvent(Message *msg1, bool front) {
                 pipeline->sendMessage(msg1);
             }
         } else {
+            Logcat::i("HWVC", "UnitPipeline skip message %p", msg1);
             delete msg1;
         }
         simpleLock.unlock();

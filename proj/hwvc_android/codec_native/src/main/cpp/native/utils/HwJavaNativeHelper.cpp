@@ -19,7 +19,7 @@ extern "C" {
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     HwJavaNativeHelper::getInstance()->attach(vm);
     av_jni_set_java_vm(vm, NULL);
-    Logcat::i("HWVC", "HwJavaNativeHelper::getAndroidApi %d", HwJavaNativeHelper::getAndroidApi());;
+    Logcat::i("HWVC", "HwJavaNativeHelper::getAndroidApi %d", HwJavaNativeHelper::getAndroidApi());
     return JNI_VERSION_1_6;
 }
 

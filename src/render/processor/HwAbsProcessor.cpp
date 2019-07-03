@@ -41,6 +41,7 @@ void HwAbsProcessor::postEvent(Message *msg) {
         pipeline->postEvent(msg);
     } else {
         Logcat::e("HWVC", "Please call startPipeline first.");
+        Logcat::i("HWVC", "HwAbsProcessor skip message %p", msg);
     }
 }
 
