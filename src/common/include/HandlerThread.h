@@ -43,7 +43,6 @@ private:
 private:
     string name;
     std::thread *mThread = nullptr;
-    pthread_mutex_t mutex;
     MessageQueue *queue = nullptr;
     bool requestQuitSafely = false;
     bool requestQuit = false;

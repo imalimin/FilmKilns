@@ -36,7 +36,6 @@ void HandlerThread::run() {
 
 HandlerThread::HandlerThread(string name) {
     this->name = name;
-    pthread_mutex_init(&mutex, nullptr);
     queue = new MessageQueue();
     mThread = new thread(&HandlerThread::run, this);
 }
@@ -83,9 +82,7 @@ void HandlerThread::pop() {
 }
 
 void HandlerThread::quit() {
-    pthread_mutex_lock(&mutex);
     this->requestQuit = true;
-    pthread_mutex_unlock(&mutex);
     if (nullptr != queue) {
         queue->notify();
     }
@@ -94,7 +91,6 @@ void HandlerThread::quit() {
         delete mThread;
         mThread = nullptr;
     }
-    pthread_mutex_destroy(&mutex);
 }
 
 void HandlerThread::quitSafely() {
