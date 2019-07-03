@@ -36,8 +36,6 @@ private:
 
     int size();
 
-    bool shouldQuit();
-
     void run();
 
     void printQueue();

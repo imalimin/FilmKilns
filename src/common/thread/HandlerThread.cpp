@@ -10,32 +10,22 @@
 
 void HandlerThread::run() {
     while (true) {
-        pthread_mutex_lock(&mutex);
-        if (shouldQuit()) {
-            break;
-        }
-        pthread_mutex_unlock(&mutex);
 //        this->printQueue();
         Message *msg = this->take();
-        if (this->requestQuit && !this->requestQuitSafely) {
-            if (msg) {
-                Logcat::i("HWVC", "HandlerThread(%s) requestQuit, %d, %ld",
-                          this->name.c_str(),
-                          msg->what,
-                          Thread::currentThreadId());
-            } else {
-                Logcat::i("HWVC", "HandlerThread(%s)  requestQuit", this->name.c_str());
+        if (msg) {
+            msg->runnable(msg);
+            delete msg;
+        }
+        if (this->requestQuit) {
+            /** Quit safely. */
+            if (this->requestQuitSafely) {
+                if (this->size() <= 0) {
+                    Logcat::i("HWVC", "HandlerThread(%s) requestQuitSafely", this->name.c_str());
+                    break;
+                }
+            } else {/** Quit now. */
+                break;
             }
-            break;
-        }
-        if (!msg) {
-            continue;
-        }
-        msg->runnable(msg);
-        delete msg;
-        if (this->requestQuitSafely && this->size() <= 0) {
-            Logcat::i("HWVC", "HandlerThread(%s) requestQuitSafely", this->name.c_str());
-            break;
         }
     }
     Logcat::i("HWVC", "HandlerThread(%s) quit, left message count %d",
@@ -49,13 +39,6 @@ HandlerThread::HandlerThread(string name) {
     pthread_mutex_init(&mutex, nullptr);
     queue = new MessageQueue();
     mThread = new thread(&HandlerThread::run, this);
-}
-
-bool HandlerThread::shouldQuit() {
-    if (this->requestQuit && !this->requestQuitSafely) {
-        return true;
-    }
-    return this->requestQuitSafely && size() <= 0;
 }
 
 HandlerThread::~HandlerThread() {
@@ -115,9 +98,7 @@ void HandlerThread::quit() {
 }
 
 void HandlerThread::quitSafely() {
-    if (0 != size()) {
-        this->requestQuitSafely = true;
-    }
+    this->requestQuitSafely = true;
     quit();
 }
 
