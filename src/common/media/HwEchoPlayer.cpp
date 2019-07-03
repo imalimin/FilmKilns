@@ -42,6 +42,9 @@ void HwEchoPlayer::start() {
 }
 
 void HwEchoPlayer::stop() {
+    if (!running) {
+        return;
+    }
     simpleLock.lock();
     running = false;
     simpleLock.unlock();

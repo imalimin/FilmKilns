@@ -35,6 +35,14 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_media_HwEchoPlayer_stop
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_media_HwEchoPlayer_release
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        HwEchoPlayer *p = getHandler(handler);
+        delete p;
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif

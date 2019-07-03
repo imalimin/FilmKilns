@@ -13,6 +13,6 @@ class EchoActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        echo?.stop()
+        echo?.release()
     }
 }

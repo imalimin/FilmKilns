@@ -24,14 +24,29 @@ class HwEchoPlayer(context: Context) : CPPObject() {
     }
 
     fun start() {
+        if (0L == handler) {
+            return
+        }
         start(handler)
     }
 
     fun stop() {
+        if (0L == handler) {
+            return
+        }
         stop(handler)
     }
 
+    fun release() {
+        if (0L == handler) {
+            return
+        }
+        release(handler)
+        handler = 0L
+    }
+
     private external fun create(channels: Int, sampleHz: Int, format: Int, minBufferSize: Int): Long
-    private external fun start(handler: Long): Long
-    private external fun stop(handler: Long): Long
+    private external fun start(handler: Long)
+    private external fun stop(handler: Long)
+    private external fun release(handler: Long)
 }
