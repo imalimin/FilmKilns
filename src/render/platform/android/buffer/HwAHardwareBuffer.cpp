@@ -49,7 +49,7 @@ HwAHardwareBuffer::~HwAHardwareBuffer() {
 }
 
 bool HwAHardwareBuffer::bind() {
-    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, (GLeglImageOES) pImageKHR);
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, pImageKHR);
     return true;
 }
 
