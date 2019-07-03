@@ -11,6 +11,12 @@ class NormalFilter : public Filter {
 public:
     NormalFilter();
 
+#ifdef ANDROID
+
+    NormalFilter(bool requestHwMode);
+
+#endif
+
     ~NormalFilter();
 
     bool init(int w, int h) override;

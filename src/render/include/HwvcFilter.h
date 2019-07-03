@@ -18,6 +18,12 @@ class HwvcFilter : public Filter {
 public:
     HwvcFilter(char *path);
 
+#ifdef ANDROID
+
+    HwvcFilter(char *path, bool requestHwMode);
+
+#endif
+
     virtual ~HwvcFilter();
 
     virtual bool init(int w, int h) override;

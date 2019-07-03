@@ -9,10 +9,19 @@
 #include "../entity/FilterEntity.h"
 #include "log.h"
 
-HwvcFilter::HwvcFilter(char *path) {
+HwvcFilter::HwvcFilter(char *path) : Filter() {
     reader = new FilterReader(path);
     decoder = new PngDecoder();
 }
+
+#ifdef ANDROID
+
+HwvcFilter::HwvcFilter(char *path, bool requestHwMode) : Filter(requestHwMode) {
+    reader = new FilterReader(path);
+    decoder = new PngDecoder();
+}
+
+#endif
 
 HwvcFilter::~HwvcFilter() {
     if (params) {

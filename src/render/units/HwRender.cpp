@@ -15,7 +15,11 @@ HwRender::HwRender() : HwRender(nullptr) {
 
 HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {
     name = __FUNCTION__;
+#ifdef ANDROID
+    filter = new NormalFilter(true);
+#else
     filter = new NormalFilter();
+#endif
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
     registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventFilter));
     registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventSetFilter));
@@ -52,22 +56,24 @@ void HwRender::checkFilter(int width, int height) {
 void HwRender::renderFilter(GLuint texture) {
     Logcat::i("HWVC", "Render::renderFilter %d", texture);
     filter->draw(texture);
+#if 0
     //Test fbo read.
-//    ++count;
-//    if (count >= 150) {
-//        count = 0;
-//        int64_t time = TimeUtils::getCurrentTimeUS();
-//        filter->getFrameBuffer()->read(pixels);
-//        FILE *file = fopen("/sdcard/pixels.bmp", "wb");
-//        size_t size = filter->getFrameBuffer()->width()
-//                      * filter->getFrameBuffer()->height() * 4;
-//        Logcat::i("HWVC", "HwAndroidFrameBuffer::read cost %lld, %dx%d",
-//                  TimeUtils::getCurrentTimeUS() - time,
-//                  filter->getFrameBuffer()->width(),
-//                  filter->getFrameBuffer()->height());
-//        fwrite(pixels, 1, size, file);
-//        fclose(file);
-//    }
+    ++count;
+    if (count >= 150) {
+        count = 0;
+        int64_t time = TimeUtils::getCurrentTimeUS();
+        filter->getFrameBuffer()->read(pixels);
+        FILE *file = fopen("/sdcard/pixels.bmp", "wb");
+        size_t size = filter->getFrameBuffer()->width()
+                      * filter->getFrameBuffer()->height() * 4;
+        Logcat::i("HWVC", "HwAndroidFrameBuffer::read cost %lld, %dx%d",
+                  TimeUtils::getCurrentTimeUS() - time,
+                  filter->getFrameBuffer()->width(),
+                  filter->getFrameBuffer()->height());
+        fwrite(pixels, 1, size, file);
+        fclose(file);
+    }
+#endif
 }
 
 void HwRender::renderScreen() {

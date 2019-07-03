@@ -1,9 +1,9 @@
 package com.lmy.hwvcnative.filter
 
-class HwvcFilter(path: String) : Filter() {
+class HwvcFilter(path: String, requestHwMode: Boolean = false) : Filter() {
 
     init {
-        handler = create(path)
+        handler = create(path, requestHwMode)
     }
 
     override fun setParams(params: IntArray) {
@@ -15,6 +15,6 @@ class HwvcFilter(path: String) : Filter() {
 
     }
 
-    private external fun create(path: String): Long
+    private external fun create(path: String, requestHwMode: Boolean): Long
     private external fun setParams(handler: Long, params: IntArray)
 }

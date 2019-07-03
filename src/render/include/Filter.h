@@ -21,6 +21,16 @@ public:
 
     Filter();
 
+#ifdef ANDROID
+
+    /**
+     * Enable direct texture for android, if device supports.
+     * Default disable.
+     */
+    Filter(bool requestHwMode);
+
+#endif
+
     virtual ~Filter();
 
     virtual bool init(int w, int h);
@@ -39,8 +49,12 @@ protected:
     BaseDrawer *drawer = nullptr;
 private:
     HwAbsFrameBuffer *fbo = nullptr;
-    bool initted = false;
+    bool initialized = false;
 
+#ifdef ANDROID
+private:
+    bool requestHwMode = false;
+#endif
 };
 
 

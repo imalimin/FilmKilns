@@ -119,19 +119,19 @@ class FilterController(private val filterSupport: FilterSupport,
 //                oneBar.progress = 55
 //                twoBar.progress = 25
 //                thBar.progress = 15
-                filterSupport.setFilter(HwvcFilter("$hwfDir/beauty_v4.hwf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/beauty_v4.hwf", true))
                 show(0)
             }
             2 -> {
-                filterSupport.setFilter(HwvcFilter("$hwfDir/beach.hwf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/beach.hwf", true))
                 show(0)
             }
             3 -> {
-                filterSupport.setFilter(HwvcFilter("$hwfDir/clean.hwf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/clean.hwf", true))
                 show(0)
             }
             4 -> {
-                filterSupport.setFilter(HwvcFilter("$hwfDir/pink.hwf"))
+                filterSupport.setFilter(HwvcFilter("$hwfDir/pink.hwf", true))
                 show(0)
             }
             else -> {

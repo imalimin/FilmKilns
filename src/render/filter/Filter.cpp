@@ -7,9 +7,17 @@
 #include "../include/HwFrameBuffer.h"
 #include "../include/HwAndroidFrameBuffer.h"
 
-Filter::Filter() {
+Filter::Filter() : Object() {
     name = __func__;
 }
+
+#ifdef ANDROID
+
+Filter::Filter(bool requestHwMode) : Object(), requestHwMode(requestHwMode) {
+    name = __func__;
+}
+
+#endif
 
 Filter::~Filter() {
     if (fbo) {
@@ -23,14 +31,18 @@ Filter::~Filter() {
 }
 
 bool Filter::init(int w, int h) {
-    if (initted)
+    if (initialized)
         return false;
 #ifdef ANDROID
-    fbo = new HwAndroidFrameBuffer(w, h);
+    if (requestHwMode) {
+        fbo = new HwAndroidFrameBuffer(w, h);
+    } else {
+        fbo = new HwFrameBuffer(w, h);
+    }
 #else
     fbo = new HwFrameBuffer(w, h);
 #endif
-    initted = true;
+    initialized = true;
     return true;
 }
 

@@ -5,9 +5,17 @@
 #include "../include/NormalFilter.h"
 #include "../include/NormalDrawer.h"
 
-NormalFilter::NormalFilter() {
+NormalFilter::NormalFilter() : Filter() {
     name = __func__;
 }
+
+#ifdef ANDROID
+
+NormalFilter::NormalFilter(bool requestHwMode) : Filter(requestHwMode) {
+    name = __func__;
+}
+
+#endif
 
 NormalFilter::~NormalFilter() {
 
