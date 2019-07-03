@@ -46,7 +46,7 @@ void HwAbsProcessor::postEvent(Message *msg) {
 
 void HwAbsProcessor::postEventAtFront(Message *msg) {
     if (pipeline) {
-        pipeline->postEvent(msg);
+        pipeline->postEventAtFront(msg);
     } else {
         Logcat::e("HWVC", "Please call startPipeline first.");
     }
