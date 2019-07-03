@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 #include "../include/HandlerThread.h"
+#include "../include/Thread.h"
 #include "../include/log.h"
 
 void HandlerThread::run() {
@@ -16,12 +17,14 @@ void HandlerThread::run() {
         pthread_mutex_unlock(&mutex);
 //        this->printQueue();
         Message *msg = this->take();
-        int size = this->size();
         if (this->requestQuit && !this->requestQuitSafely) {
             if (msg) {
-                LOGI("requestQuit(%s), %d, %ld", this->name.c_str(), msg->what, pthread_self());
+                Logcat::i("HWVC", "HandlerThread(%s) requestQuit, %d, %ld",
+                          this->name.c_str(),
+                          msg->what,
+                          Thread::currentThreadId());
             } else {
-                LOGI("requestQuit(%s)", this->name.c_str());
+                Logcat::i("HWVC", "HandlerThread(%s)  requestQuit", this->name.c_str());
             }
             break;
         }
@@ -29,17 +32,16 @@ void HandlerThread::run() {
             continue;
         }
         msg->runnable(msg);
-        int what = msg->what;
-        if (1129270529 == msg->what) {//release
-            LOGI("UnitPipeline(%s) release", this->name.c_str());
-        }
         delete msg;
-        if (this->requestQuitSafely && size <= 0) {
-            LOGI("requestQuitSafely(%s) what=%d", this->name.c_str(), what);
+        if (this->requestQuitSafely && this->size() <= 0) {
+            Logcat::i("HWVC", "HandlerThread(%s) requestQuitSafely", this->name.c_str());
             break;
         }
     }
-    LOGI("HandlerThread(%s) quit", this->name.c_str());
+    Logcat::i("HWVC", "HandlerThread(%s) quit, left message count %d",
+              this->name.c_str(),
+              queue->size());
+    this->printQueue();
 }
 
 HandlerThread::HandlerThread(string name) {
@@ -67,6 +69,7 @@ HandlerThread::~HandlerThread() {
 void HandlerThread::sendMessage(Message *msg) {
     if (requestQuitSafely || requestQuit) {
         LOGE("HandlerThread had quited");
+        Logcat::i("HWVC", "HandlerThread skip message %p", msg);
         return;
     }
     offer(msg);
