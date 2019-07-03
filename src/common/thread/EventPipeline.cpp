@@ -8,12 +8,12 @@
 
 EventPipeline::EventPipeline(string name) {
     this->handlerThread = new HandlerThread(name);
-    this->shouldQuitThread = false;
+    this->shouldQuitThread = true;
 }
 
 EventPipeline::EventPipeline(HandlerThread *handlerThread) {
     this->handlerThread = handlerThread;
-    this->shouldQuitThread = true;
+    this->shouldQuitThread = false;
 }
 
 EventPipeline::~EventPipeline() {
