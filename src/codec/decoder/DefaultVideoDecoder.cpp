@@ -110,41 +110,19 @@ bool DefaultVideoDecoder::prepare(string path) {
 
 void DefaultVideoDecoder::handleAction() {
     if (actionSeekInUs >= 0) {
-        int64_t vPts = av_rescale_q(actionSeekInUs, outputRational,
-                                    pFormatCtx->streams[videoTrack]->time_base);
-        int64_t aPts = av_rescale_q(actionSeekInUs, outputRational,
-                                    pFormatCtx->streams[audioTrack]->time_base);
         avcodec_flush_buffers(vCodecContext);
-        int ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[videoTrack]->index, INT64_MIN,
-                                     vPts, INT64_MAX,
+        avcodec_flush_buffers(aCodecContext);
+        int ret = avformat_seek_file(pFormatCtx, -1, INT64_MIN,
+                                     actionSeekInUs, INT64_MAX,
                                      AVSEEK_FLAG_BACKWARD);
         if (ret < 0) {
-            LOGI("DefaultVideoDecoder::seek video failed");
+            LOGI("DefaultVideoDecoder::seek failed");
             return;
         }
         avcodec_flush_buffers(vCodecContext);
         avcodec_flush_buffers(aCodecContext);
-        ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[audioTrack]->index, INT64_MIN,
-                                 aPts, INT64_MAX,
-                                 AVSEEK_FLAG_BACKWARD);
-        if (ret < 0) {
-            LOGI("DefaultVideoDecoder::seek audio failed");
-            return;
-        }
-        avcodec_flush_buffers(aCodecContext);
-        LOGI("DefaultVideoDecoder::seek: %lld, %lld/%lld, %lld/%lld",
-             actionSeekInUs,
-             vPts, pFormatCtx->streams[videoTrack]->duration,
-             aPts, pFormatCtx->streams[audioTrack]->duration);
+        LOGI("DefaultVideoDecoder::seek: %lld", actionSeekInUs);
         actionSeekInUs = -1;
-        while (true) {
-            ret = av_read_frame(pFormatCtx, avPacket);
-            if (0 == ret && audioTrack == avPacket->stream_index) {
-                av_packet_unref(avPacket);
-                break;
-            }
-            av_packet_unref(avPacket);
-        }
     }
 }
 /**

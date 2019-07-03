@@ -97,29 +97,17 @@ bool DefaultAudioDecoder::prepare(string path) {
 
 void DefaultAudioDecoder::handleAction() {
     if (actionSeekInUs >= 0) {
-        int64_t aPts = av_rescale_q(actionSeekInUs, outputTimeBase,
-                                    pFormatCtx->streams[audioTrack]->time_base);
         avcodec_flush_buffers(aCodecContext);
-        int ret = avformat_seek_file(pFormatCtx, pFormatCtx->streams[audioTrack]->index, INT64_MIN,
-                                     aPts, INT64_MAX,
+        int ret = avformat_seek_file(pFormatCtx, -1, INT64_MIN,
+                                     actionSeekInUs, INT64_MAX,
                                      AVSEEK_FLAG_BACKWARD);
         if (ret < 0) {
             Logcat::e("HWVC", "DefaultAudioDecoder::seek audio failed");
             return;
         }
         avcodec_flush_buffers(aCodecContext);
-        Logcat::e("HWVC", "DefaultAudioDecoder::seek: %lld, %lld/%lld",
-                  actionSeekInUs,
-                  aPts, pFormatCtx->streams[audioTrack]->duration);
+        Logcat::e("HWVC", "DefaultVideoDecoder::seek: %lld", actionSeekInUs);
         actionSeekInUs = -1;
-        while (true) {
-            ret = av_read_frame(pFormatCtx, avPacket);
-            if (0 == ret && audioTrack == avPacket->stream_index) {
-                av_packet_unref(avPacket);
-                break;
-            }
-            av_packet_unref(avPacket);
-        }
     }
 }
 
