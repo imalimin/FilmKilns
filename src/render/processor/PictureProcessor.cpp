@@ -41,10 +41,10 @@ void PictureProcessor::updateWindow(HwWindow *win) {
     }
 }
 
-void PictureProcessor::show(char *path) {
+void PictureProcessor::show(const string file) {
     if (!pipeline) return;
     Message *msg = new Message(EVENT_IMAGE_SHOW, nullptr);
-    msg->obj = new ObjectBox(path);
+    msg->obj = new ObjectBox(new string(file));
     pipeline->postEvent(msg);
 }
 

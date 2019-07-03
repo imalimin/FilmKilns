@@ -34,10 +34,6 @@ HwVideoInput::~HwVideoInput() {
         delete decoder;
         decoder = nullptr;
     }
-    if (path) {
-        delete[]path;
-        path = nullptr;
-    }
     simpleLock.unlock();
     playListener = nullptr;
 }
@@ -59,7 +55,7 @@ bool HwVideoInput::eventRelease(Message *msg) {
 bool HwVideoInput::eventPrepare(Message *msg) {
     playState = PAUSE;
     if (!decoder->prepare(path)) {
-        LOGE("HwVideoInput::open %s failed", path);
+        LOGE("HwVideoInput::open %s failed", path.c_str());
         eventStop(nullptr);
         return true;
     }
@@ -101,7 +97,9 @@ bool HwVideoInput::eventStop(Message *msg) {
 }
 
 bool HwVideoInput::eventSetSource(Message *msg) {
-    this->path = static_cast<char *>(msg->tyrUnBox());
+    string *str = static_cast<string *>(msg->tyrUnBox());
+    this->path = string(str->c_str());
+    delete str;
     return true;
 }
 

@@ -20,7 +20,7 @@ public:
 
     void updateWindow(HwWindow *win);
 
-    void show(char *file);
+    void show(const string file);
 
     void setFilter(Filter *filter);
 

@@ -53,7 +53,7 @@ bool HwAudioInput::eventRelease(Message *msg) {
 bool HwAudioInput::eventSetSource(Message *msg) {
     string *str = static_cast<string *>(msg->tyrUnBox());
     this->path = string(str->c_str());
-    delete msg->tyrUnBox();
+    delete str;
     return false;
 }
 

@@ -33,7 +33,7 @@ bool Image::eventRelease(Message *msg) {
 }
 
 void Image::show(string path) {
-    if (!decode(path) && !hwBitmap) {
+    if (!decode(path)) {
         return;
     }
     tex = texAllocator->alloc(hwBitmap->getPixels(), hwBitmap->getWidth(), hwBitmap->getHeight());
@@ -63,9 +63,9 @@ bool Image::eventPrepare(Message *msg) {
 }
 
 bool Image::eventShow(Message *msg) {
-    char *path = static_cast<char *>(msg->tyrUnBox());
-    show(path);
-    delete[]path;
+    string *path = static_cast<string *>(msg->tyrUnBox());
+    show(*path);
+    delete path;
     return true;
 }
 

@@ -18,7 +18,7 @@ public:
 
     virtual ~HwAudioProcessor();
 
-    void setSource(const string *path);
+    void setSource(const string path);
 
     void prepare();
 

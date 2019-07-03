@@ -33,12 +33,10 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_create
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setSource
         (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
     if (handler) {
-        int len = env->GetStringUTFLength(path) + 1;
         const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
-        char *str = new char[len];
-        memcpy(str, pPath, len);
-        getHandler(handler)->setSource(str);
+        std::string pathStr(pPath);
         env->ReleaseStringUTFChars(path, pPath);
+        getHandler(handler)->setSource(pathStr);
     }
 }
 

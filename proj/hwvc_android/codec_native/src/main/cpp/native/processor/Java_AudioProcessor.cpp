@@ -37,7 +37,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AudioProcessor_setSourc
     if (handler) {
         const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
         std::string pathStr(pPath);
-        getHandler(handler)->setSource(&pathStr);
+        getHandler(handler)->setSource(pathStr);
         env->ReleaseStringUTFChars(path, pPath);
     }
 }

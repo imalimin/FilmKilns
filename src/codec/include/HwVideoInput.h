@@ -66,7 +66,7 @@ private:
     GLuint yuv[3];
     PlayState playState = STOP;
     SimpleLock simpleLock;
-    char *path;
+    string path;
     int64_t lastPts = 0;
     int64_t lastShowTime = 0;
     int64_t lastPlayPts = INT64_MIN;

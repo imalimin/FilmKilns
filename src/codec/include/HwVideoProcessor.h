@@ -18,7 +18,7 @@ public:
 
     virtual ~HwVideoProcessor();
 
-    void setSource(char *path);
+    void setSource(const string path);
 
     void prepare(HwWindow *win);
 
