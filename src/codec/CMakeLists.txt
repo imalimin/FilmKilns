@@ -43,6 +43,7 @@ file(
         SOURCES
         ${PROJECT_SOURCE_DIR}/*cpp
         ${PROJECT_SOURCE_DIR}/decoder/*.cpp
+        ${PROJECT_SOURCE_DIR}/encoder/*.cpp
         ${PROJECT_SOURCE_DIR}/entity/*.cpp
         ${PROJECT_SOURCE_DIR}/utils/*.cpp
         ${PROJECT_SOURCE_DIR}/sources/*.cpp
