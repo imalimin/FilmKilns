@@ -1,6 +1,8 @@
 package com.lmy.samplenative
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.os.AsyncTask
 import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -37,6 +39,8 @@ class FilterController(private val filterSupport: FilterSupport,
     private var thBar: SeekBar = progressLayout.getChildAt(2) as SeekBar
     private var fBar: SeekBar = progressLayout.getChildAt(3) as SeekBar
     private var dialog: AlertDialog? = null
+    private var initDialog: AlertDialog? = null
+    private var task: AsyncTask<Void, Void, Void?>? = null
     private lateinit var hwfDir: String
 
     init {
@@ -44,7 +48,23 @@ class FilterController(private val filterSupport: FilterSupport,
         twoBar.setOnSeekBarChangeListener(this)
         thBar.setOnSeekBarChangeListener(this)
         fBar.setOnSeekBarChangeListener(this)
-        initResources()
+//        initDialog = AlertDialog.Builder(progressLayout.context)
+//                .setMessage("Initializing...")
+//                .setCancelable(false)
+//                .show()
+        @SuppressLint("CI_StaticFieldLeak")
+        task = object : AsyncTask<Void, Void, Void?>() {
+            override fun doInBackground(vararg params: Void?): Void? {
+                initResources()
+                return null
+            }
+
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                initDialog?.dismiss()
+            }
+        }
+        task?.execute()
     }
 
     private fun createView(): View {
@@ -131,19 +151,26 @@ class FilterController(private val filterSupport: FilterSupport,
     }
 
     private fun initResources() {
-        val srcDir = "hwf"
         Log.i("HWVC", "initResources")
-        val destDir = "${progressLayout.context.externalCacheDir.path}/$srcDir"
-        if (!File(destDir).exists()) {
-            File(destDir).mkdirs()
+        val srcHwfDir = "hwf"
+        val destHwfDir = "${progressLayout.context.externalCacheDir.path}/$srcHwfDir"
+        copyAssets(srcHwfDir, destHwfDir)
+        val srcImageDir = "image"
+        val destImageDir = "${progressLayout.context.externalCacheDir.path}/$srcImageDir"
+        copyAssets(srcImageDir, destImageDir)
+    }
+
+    private fun copyAssets(srcAsset: String, destCacheDir: String) {
+        if (!File(destCacheDir).exists()) {
+            File(destCacheDir).mkdirs()
         }
-        progressLayout.context.assets.list(srcDir).forEach {
-            val destFile = File("$destDir/$it")
+        progressLayout.context.assets.list(srcAsset).forEach {
+            val destFile = File("$destCacheDir/$it")
             if (!destFile.exists()) {
                 var ins: InputStream? = null
                 var fos: FileOutputStream? = null
                 try {
-                    ins = progressLayout.context.assets.open("$srcDir/$it")
+                    ins = progressLayout.context.assets.open("$srcAsset/$it")
                     fos = FileOutputStream(destFile)
                     val size = 1024 * 512
                     val buf = ByteArray(size)
@@ -164,6 +191,7 @@ class FilterController(private val filterSupport: FilterSupport,
                 }
             }
         }
+
     }
 
     private class Adapter : RecyclerAdapter<FilterItem, ViewHolder>() {

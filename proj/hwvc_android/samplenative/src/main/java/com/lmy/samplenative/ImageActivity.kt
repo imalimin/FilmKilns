@@ -20,7 +20,7 @@ class ImageActivity : BaseActivity(), TextureView.SurfaceTextureListener {
             if (!prepared) {
                 prepared = true
                 processor?.prepare(holder.surface)
-                processor?.show("${Environment.getExternalStorageDirectory().path}/1.jpg")
+                processor?.show("${progressLayout.context.externalCacheDir.path}/image/lena.png")
             } else {
                 processor?.updateWindow(holder.surface)
                 processor?.invalidate()
