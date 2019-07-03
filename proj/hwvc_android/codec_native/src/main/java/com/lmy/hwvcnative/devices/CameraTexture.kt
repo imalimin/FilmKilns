@@ -25,31 +25,42 @@ class CameraTexture(width: Int, height: Int,
 
     init {
         name = "CameraTexture"
-        init()
-        createProgram()
-        initFrameBuffer()
-    }
-
-    fun readFileString(path: String): String {
-        val reader = BufferedReader(InputStreamReader(FileInputStream(path), "UTF-8"))
-        val buffer = StringBuffer()
-        var str: String?
-        str = reader.readLine()
-        while (str != null) {
-            buffer.append(str)
-            buffer.append("\n")
-            str = reader.readLine()
+        if (createProgram()) {
+            init()
+            initFrameBuffer()
         }
-        return buffer.toString()
     }
 
-    private fun createProgram() {
-        shaderProgram = createProgram(readFileString("/sdcard/vertex_camera.glsl"),
-                readFileString("/sdcard/fragment_camera.glsl"))
+    private fun readFileString(path: String): String? {
+        try {
+            val reader = BufferedReader(InputStreamReader(FileInputStream(path), "UTF-8"))
+            val buffer = StringBuffer()
+            var str: String?
+            str = reader.readLine()
+            while (str != null) {
+                buffer.append(str)
+                buffer.append("\n")
+                str = reader.readLine()
+            }
+            return buffer.toString()
+        } catch (e: Exception) {
+            RuntimeException(e.toString())
+        }
+        return null
+    }
+
+    private fun createProgram(): Boolean {
+        val vertex = readFileString("/sdcard/vertex_camera.glsl")
+        val fragment = readFileString("/sdcard/fragment_camera.glsl")
+        if (null == vertex || null == fragment) {
+            return false
+        }
+        shaderProgram = createProgram(vertex!!, fragment!!)
         aPositionLocation = getAttribLocation("aPosition")
         uTextureLocation = getUniformLocation("uTexture")
         aTextureCoordinateLocation = getAttribLocation("aTextureCoord")
         uTextureMatrix = getUniformLocation("uTextureMatrix")
+        return true
     }
 
     override fun draw(transformMatrix: FloatArray?) {
