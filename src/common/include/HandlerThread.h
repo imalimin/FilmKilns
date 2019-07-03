@@ -7,6 +7,7 @@
 #include <thread>
 #include <pthread.h>
 #include "MessageQueue.h"
+#include "SimpleLock.h"
 
 #ifndef HARDWAREVIDEOCODEC_HANDLERTHREAD_H
 #define HARDWAREVIDEOCODEC_HANDLERTHREAD_H
@@ -28,8 +29,6 @@ public:
     void quitSafely();
 
 private:
-    void offer(Message *msg);
-
     Message *take();
 
     void pop();
@@ -44,6 +43,7 @@ private:
     string name;
     std::thread *mThread = nullptr;
     MessageQueue *queue = nullptr;
+    SimpleLock simpleLock;
     bool requestQuitSafely = false;
     bool requestQuit = false;
 };

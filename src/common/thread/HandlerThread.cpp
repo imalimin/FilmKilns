@@ -28,6 +28,7 @@ void HandlerThread::run() {
             }
         }
     }
+    /** Quit! */
     Logcat::i("HWVC", "HandlerThread(%s) quit, left message count %d",
               this->name.c_str(),
               queue->size());
@@ -49,24 +50,31 @@ HandlerThread::~HandlerThread() {
 }
 
 void HandlerThread::sendMessage(Message *msg) {
-    if (requestQuitSafely || requestQuit) {
-        LOGE("HandlerThread had quited");
-        Logcat::i("HWVC", "HandlerThread skip message %p", msg);
+    if (!msg) {
         return;
     }
-    offer(msg);
+    simpleLock.lock();
+    if (requestQuitSafely || requestQuit) {
+        Logcat::e("HWVC", "HandlerThread had quited, skip message %p", msg);
+        simpleLock.unlock();
+        return;
+    }
+    simpleLock.unlock();
+    queue->offer(msg);
 }
 
 void HandlerThread::sendMessageAtFront(Message *msg) {
-    if (requestQuitSafely || requestQuit) {
-        LOGE("HandlerThread had quited");
+    if (!msg) {
         return;
     }
+    simpleLock.lock();
+    if (requestQuitSafely || requestQuit) {
+        Logcat::e("HWVC", "HandlerThread had quited, skip message %p", msg);
+        simpleLock.unlock();
+        return;
+    }
+    simpleLock.unlock();
     queue->offerAtFront(msg);
-}
-
-void HandlerThread::offer(Message *msg) {
-    queue->offer(msg);
 }
 
 Message *HandlerThread::take() {
@@ -82,7 +90,9 @@ void HandlerThread::pop() {
 }
 
 void HandlerThread::quit() {
+    simpleLock.lock();
     this->requestQuit = true;
+    simpleLock.unlock();
     if (nullptr != queue) {
         queue->notify();
     }
@@ -94,7 +104,9 @@ void HandlerThread::quit() {
 }
 
 void HandlerThread::quitSafely() {
+    simpleLock.lock();
     this->requestQuitSafely = true;
+    simpleLock.unlock();
     quit();
 }
 
