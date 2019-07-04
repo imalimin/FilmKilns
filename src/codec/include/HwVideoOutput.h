@@ -35,12 +35,16 @@ public:
     bool eventPause(Message *msg);
 
 private:
-    void write(HwBuffer *buf);
+    void write(HwBuffer *buf, int64_t tsInNs);
 
 private:
     HwFFmpegEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
     std::atomic_bool recording;
+    // last timestamp in ns.
+    int64_t lastTsInNs = -1;
+    // frame timestamp in ns.
+    int64_t timestamp = -1;
     int count = 0;
 };
 

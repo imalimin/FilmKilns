@@ -74,7 +74,7 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
             3 -> {
                 val textures = camera?.draw()
                 if (0L != handler) {
-                    invalidate(handler, textures!![0], 720, 1280)
+                    invalidate(handler, textures!![0], camera!!.getTimestamp(), 720, 1280)
                 }
             }
         }
@@ -87,5 +87,5 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     private external fun pause(handler: Long)
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
-    private external fun invalidate(handler: Long, textureId: Int, w: Int, h: Int)
+    private external fun invalidate(handler: Long, textureId: Int, tsInNs: Long, w: Int, h: Int)
 }

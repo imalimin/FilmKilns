@@ -188,4 +188,6 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         eglSurface.draw(transformMatrix)
         return eglSurface.getFrameBufferTexture()
     }
+
+    fun getTimestamp(): Long = eglSurface.getTimestamp()
 }

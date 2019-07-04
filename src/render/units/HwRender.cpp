@@ -23,7 +23,7 @@ HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READ,
                   reinterpret_cast<EventFunc>(&HwRender::eventReadPixels));
-    registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventFilter));
+    registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventRenderFilter));
     registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventSetFilter));
 }
 
@@ -48,6 +48,10 @@ bool HwRender::eventRelease(Message *msg) {
         delete[] pixels;
         pixels = nullptr;
     }
+    if (buf) {
+        delete buf;
+        buf = nullptr;
+    }
     return true;
 }
 
@@ -60,15 +64,17 @@ bool HwRender::eventReadPixels(Message *msg) {
     if (filter->getFrameBuffer()->read(buf->getData())) {
         Message *msg = new Message(EVENT_COMMON_PIXELS, nullptr);
         msg->obj = buf;
+        msg->arg2 = tsInNs;
         postEvent(msg);
     }
     return true;
 }
 
-bool HwRender::eventFilter(Message *msg) {
+bool HwRender::eventRenderFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventFilter");
     Size *size = static_cast<Size *>(msg->tyrUnBox());
     GLuint tex = msg->arg1;
+    tsInNs = msg->arg2;
     post([this, size, tex] {
         checkFilter(size->width, size->height);
         glViewport(0, 0, size->width, size->height);

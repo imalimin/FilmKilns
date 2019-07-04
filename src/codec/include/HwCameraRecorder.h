@@ -47,7 +47,7 @@ public:
 
     void pause();
 
-    void invalidate(int textureId, int w, int h);
+    void invalidate(int textureId, int64_t tsInNs, int w, int h);
 
 };
 

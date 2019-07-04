@@ -46,10 +46,11 @@ void HwCameraRecorder::pause() {
     postEvent(new Message(EVENT_VIDEO_OUT_PAUSE, nullptr));
 }
 
-void HwCameraRecorder::invalidate(int textureId, int w, int h) {
+void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     msg->obj = new ObjectBox(new Size(w, h));
     msg->msg = "RENDER";
     msg->arg1 = textureId;
+    msg->arg2 = tsInNs;
     postEvent(msg);
 }

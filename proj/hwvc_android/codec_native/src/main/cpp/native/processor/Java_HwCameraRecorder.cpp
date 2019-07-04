@@ -91,9 +91,9 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invalidate
-        (JNIEnv *env, jobject thiz, jlong handler, jint textureId, jint w, jint h) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint textureId, jlong tsInNs, jint w, jint h) {
     if (handler) {
-        getHandler(handler)->invalidate(textureId, w, h);
+        getHandler(handler)->invalidate(textureId, static_cast<int64_t>(tsInNs), w, h);
     }
 }
 

@@ -16,4 +16,11 @@ abstract class EglOutputSurface : EglSurface<SurfaceTexture>() {
     fun getTransformMatrix(mtx: FloatArray) {
         surface?.getTransformMatrix(mtx)
     }
+
+    fun getTimestamp(): Long {
+        if (null != surface) {
+            return surface!!.timestamp
+        }
+        return 0
+    }
 }

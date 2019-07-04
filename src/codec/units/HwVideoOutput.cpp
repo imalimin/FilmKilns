@@ -59,7 +59,7 @@ bool HwVideoOutput::eventWrite(Message *msg) {
     }
     HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
     msg->obj = nullptr;
-    write(buf);
+    write(buf, msg->arg2);
     return true;
 }
 
@@ -70,10 +70,11 @@ bool HwVideoOutput::eventStart(Message *msg) {
 
 bool HwVideoOutput::eventPause(Message *msg) {
     recording = false;
+    lastTsInNs = -1;
     return true;
 }
 
-void HwVideoOutput::write(HwBuffer *buf) {
+void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
     if (!buf) {
         Logcat::e("HWVC", "HwVideoOutput::write failed. Buffer is null.");
         return;
@@ -89,7 +90,12 @@ void HwVideoOutput::write(HwBuffer *buf) {
                           videoFrame->getWidth(), videoFrame->getHeight(),
                           videoFrame->getWidth(), videoFrame->getHeight(),
                           libyuv::kRotate0, libyuv::FOURCC_ABGR);
-    videoFrame->setPts(count * 33000);
+    if (lastTsInNs < 0) {
+        lastTsInNs = tsInNs;
+    }
+    timestamp += (tsInNs - lastTsInNs);
+    lastTsInNs = tsInNs;
+    videoFrame->setPts(timestamp / 1000);
     ++count;
     if (encoder) {
         encoder->write(videoFrame);

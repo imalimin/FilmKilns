@@ -24,7 +24,7 @@ public:
 
     bool eventPrepare(Message *msg);
 
-    bool eventFilter(Message *msg);
+    bool eventRenderFilter(Message *msg);
 
     bool eventSetFilter(Message *msg);
 
@@ -46,6 +46,7 @@ private:
     uint8_t *pixels = nullptr;
     int count = 0;
     HwBuffer *buf = nullptr;
+    int64_t tsInNs = 0;
 };
 
 
