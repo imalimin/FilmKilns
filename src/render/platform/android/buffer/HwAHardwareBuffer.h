@@ -26,6 +26,7 @@ private:
     AHardwareBuffer *buf = nullptr;
     EGLDisplay dpy = EGL_NO_DISPLAY;
     EGLImageKHR pImageKHR = nullptr;
+    int stride = 16;
 };
 
 

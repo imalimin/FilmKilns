@@ -18,7 +18,7 @@ HwAHardwareBuffer::HwAHardwareBuffer(int w, int h) : HwAbsGraphicBuffer(w, h) {
     desc.layers = 1;
     desc.rfu0 = 0;
     desc.rfu1 = 0;
-    desc.stride = 10;
+    desc.stride = 16;
     desc.usage = AHARDWAREBUFFER_USAGE_CPU_READ_OFTEN | AHARDWAREBUFFER_USAGE_CPU_WRITE_NEVER |
                  AHARDWAREBUFFER_USAGE_GPU_COLOR_OUTPUT;
 //    AHardwareBuffer_allocate(&desc, &buf);
@@ -27,6 +27,8 @@ HwAHardwareBuffer::HwAHardwareBuffer(int w, int h) : HwAbsGraphicBuffer(w, h) {
     AHardwareBuffer_Desc desc1;
 //    AHardwareBuffer_describe(buf, &desc1);
     HwAHardwareBufferLoader::getInstance()->FAHardwareBuffer_describe(buf, &desc1);
+    stride = desc1.stride;
+    Logcat::i("HWVC", "HwAHardwareBuffer stride %d", stride);
     EGLClientBuffer clientBuf = HwEGLExtLoader::getInstance()->FeglGetNativeClientBufferANDROID(
             buf);
     dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -65,7 +67,13 @@ bool HwAHardwareBuffer::read(uint8_t *pixels) {
                                                                   fence, &rect,
                                                                   reinterpret_cast<void **>(&pBuf));
     Logcat::i("HWVC", "HwAHardwareBuffer::read egl image %p", pBuf);
-    memcpy(pixels, pBuf, width * height * 4);
+    if (0 == width * 4 / stride) {
+        memcpy(pixels, pBuf, width * height * 4);
+    } else {
+        for (int i = 0; i < height; ++i) {
+            memcpy(pixels + i * width * 4, pBuf + i * stride * 4, width * 4);
+        }
+    }
     HwAHardwareBufferLoader::getInstance()->FAHardwareBuffer_unlock(buf, &fence);
     return true;
 }
