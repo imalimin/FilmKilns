@@ -79,7 +79,7 @@ private:
     AVFrame *videoFrame = nullptr;
     AVFrame *audioFrame = nullptr;
     HwAbsMediaFrame *outHwFrame = nullptr;
-    AVSampleFormat outSampleFormat = AV_SAMPLE_FMT_S16;
+    AVSampleFormat outSampleFormat = AV_SAMPLE_FMT_NONE;
     AVRational outputRational = AVRational{1, 1000000};
     int64_t videoDurationUs = -1;
     int64_t audioDurationUs = -1;

@@ -83,27 +83,25 @@ bool DefaultVideoDecoder::prepare(string path) {
         return false;
     }
     if (-1 != audioTrack && !openTrack(audioTrack, &aCodecContext)) {
-        LOGE("******** Open audio track failed. *********");
-        return false;
-    }
-    if (-1 == videoTrack && -1 == audioTrack) {
-        LOGE("******** This file not contain video or audio track. *********");
-        return false;
+        Logcat::i("HWVC", "******** Open audio track failed. *********");
     }
     LOGI("DefaultVideoDecoder::prepare(%d x %d, du=%lld/%lld channels=%d, sampleHz=%d, frameSize=%d)",
          width(), height(), getVideoDuration(), getAudioDuration(),
-         getChannels(), getSampleHz(), aCodecContext->frame_size);
-    outSampleFormat = getBestSampleFormat(aCodecContext->sample_fmt);
-    translator = new HwAudioTranslator(
-            HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(outSampleFormat),
-                           getChannels(),
-                           getSampleHz()),
-            HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(aCodecContext->sample_fmt),
-                           getChannels(),
-                           getSampleHz()));
+         getChannels(), getSampleHz(), aCodecContext ? aCodecContext->frame_size : 0);
+    if (aCodecContext) {
+        outSampleFormat = getBestSampleFormat(aCodecContext->sample_fmt);
+        translator = new HwAudioTranslator(
+                HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(outSampleFormat),
+                               getChannels(),
+                               getSampleHz()),
+                HwSampleFormat(
+                        HwAbsMediaFrame::convertToAudioFrameFormat(aCodecContext->sample_fmt),
+                        getChannels(),
+                        getSampleHz()));
+        audioFrame = av_frame_alloc();
+    }
     //准备资源
     avPacket = av_packet_alloc();
-    audioFrame = av_frame_alloc();
     videoFrame = av_frame_alloc();
     return true;
 }
@@ -111,7 +109,9 @@ bool DefaultVideoDecoder::prepare(string path) {
 void DefaultVideoDecoder::handleAction() {
     if (actionSeekInUs >= 0) {
         avcodec_flush_buffers(vCodecContext);
-        avcodec_flush_buffers(aCodecContext);
+        if (aCodecContext) {
+            avcodec_flush_buffers(aCodecContext);
+        }
         int ret = avformat_seek_file(pFormatCtx, -1, INT64_MIN,
                                      actionSeekInUs, INT64_MAX,
                                      AVSEEK_FLAG_BACKWARD);
@@ -120,7 +120,9 @@ void DefaultVideoDecoder::handleAction() {
             return;
         }
         avcodec_flush_buffers(vCodecContext);
-        avcodec_flush_buffers(aCodecContext);
+        if (aCodecContext) {
+            avcodec_flush_buffers(aCodecContext);
+        }
         LOGI("DefaultVideoDecoder::seek: %lld", actionSeekInUs);
         actionSeekInUs = -1;
     }
@@ -180,7 +182,7 @@ HwResult DefaultVideoDecoder::grab(HwAbsMediaFrame **frame) {
             return Hw::MEDIA_SUCCESS;
         }
         //如果没有视频帧，尝试去缓冲区中获取解码完成的音频帧
-        if (0 == avcodec_receive_frame(aCodecContext, audioFrame)) {
+        if (aCodecContext && 0 == avcodec_receive_frame(aCodecContext, audioFrame)) {
             matchPts(audioFrame, audioTrack);
             if (outHwFrame) {
                 outHwFrame->recycle();
@@ -286,11 +288,11 @@ void DefaultVideoDecoder::printCodecInfo() {
 }
 
 int DefaultVideoDecoder::getChannels() {
-    return aCodecContext->channels;
+    return aCodecContext ? aCodecContext->channels : 0;
 }
 
 int DefaultVideoDecoder::getSampleHz() {
-    return aCodecContext->sample_rate;
+    return aCodecContext ? aCodecContext->sample_rate : 0;
 }
 
 AVSampleFormat DefaultVideoDecoder::getBestSampleFormat(AVSampleFormat in) {
@@ -302,13 +304,11 @@ AVSampleFormat DefaultVideoDecoder::getBestSampleFormat(AVSampleFormat in) {
 }
 
 int DefaultVideoDecoder::getSampleFormat() {
-    assert(aCodecContext);
     return outSampleFormat;
 }
 
 int DefaultVideoDecoder::getSamplesPerBuffer() {
-    assert(aCodecContext);
-    return aCodecContext->frame_size;
+    return aCodecContext ? aCodecContext->frame_size : 0;
 }
 
 void DefaultVideoDecoder::matchPts(AVFrame *frame, int track) {
