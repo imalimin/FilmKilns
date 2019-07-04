@@ -132,10 +132,31 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
     int pixelCount = avFrame->width * avFrame->height;
     switch (frame->getFormat()) {
         case HwFrameFormat::HW_IMAGE_YV12: {
-            memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
-            memcpy(frame->getBuffer()->getData() + pixelCount, avFrame->data[1], pixelCount / 4);
-            memcpy(frame->getBuffer()->getData() + pixelCount + pixelCount / 4, avFrame->data[2],
-                   pixelCount / 4);
+            if (avFrame->linesize[0] == avFrame->width) {
+                memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
+                memcpy(frame->getBuffer()->getData() + pixelCount, avFrame->data[1],
+                       pixelCount / 4);
+                memcpy(frame->getBuffer()->getData() + pixelCount + pixelCount / 4,
+                       avFrame->data[2],
+                       pixelCount / 4);
+            } else {
+                int position = 0;
+                for (int i = 0; i < avFrame->height; ++i) {
+                    memcpy(frame->getBuffer()->getData() + position,
+                           avFrame->data[0] + i * avFrame->linesize[0], avFrame->width);
+                    position += avFrame->width;
+                }
+                for (int i = 0; i < avFrame->height / 2; ++i) {
+                    memcpy(frame->getBuffer()->getData() + position,
+                           avFrame->data[1] + i * avFrame->linesize[1], avFrame->width / 2);
+                    position += avFrame->width / 2;
+                }
+                for (int i = 0; i < avFrame->height / 2; ++i) {
+                    memcpy(frame->getBuffer()->getData() + position,
+                           avFrame->data[2] + i * avFrame->linesize[2], avFrame->width / 2);
+                    position += avFrame->width / 2;
+                }
+            }
             break;
         }
         case HwFrameFormat::HW_IMAGE_NV12: {
