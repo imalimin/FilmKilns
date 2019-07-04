@@ -82,13 +82,14 @@ void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
     ctx->width = width;
     ctx->height = height;
     ctx->bit_rate = width * height * 3;
+    ctx->profile = FF_PROFILE_H264_HIGH;
     ctx->gop_size = 150;
 
     ctx->time_base = outTimeBase;
 
     ctx->thread_count = 0;
     ctx->qmin = 10;
-    ctx->qmax = 51;
+    ctx->qmax = 30;
     ctx->max_b_frames = 3;
 }
 
@@ -101,7 +102,7 @@ HwResult HwFFmpegEncoder::encode(HwAbsMediaFrame *frame) {
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     avFrame->data[0] = videoFrame->getBuffer()->getData();
     avFrame->data[1] = videoFrame->getBuffer()->getData() + pixelCount;
-    avFrame->data[2] = videoFrame->getBuffer()->getData() + pixelCount + pixelCount / 4;
+    avFrame->data[2] = videoFrame->getBuffer()->getData() + pixelCount * 5 / 4;
 
     avFrame->linesize[0] = videoFrame->getWidth();
     avFrame->linesize[1] = videoFrame->getWidth() / 2;
