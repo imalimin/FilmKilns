@@ -86,6 +86,8 @@ bool HwVideoInput::eventPause(Message *msg) {
 
 bool HwVideoInput::eventSeek(Message *msg) {
     int64_t us = msg->arg2;
+    lastPts = -1;
+    lastShowTime = -1;
     decoder->seek(us);
     return true;
 }
@@ -155,20 +157,20 @@ HwResult HwVideoInput::grab() {
     if (frame->isVideo()) {
         Logcat::i("HWVC", "HwVideoInput::play picture pts=%lld", frame->getPts());
         HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
-//        int64_t curPts = frame->getPts();
-//        int64_t curTimeInUs = getCurrentTimeUS();
-//        if (lastPts >= 0 || lastShowTime >= 0) {
-//            int64_t delta = (curPts - lastPts) - (curTimeInUs - lastShowTime);
-//            if (delta > 0 && delta < 40000) { // @TODO To avoid waiting too long when seeking.
-//                Thread::sleep(delta);
-//            }
-//            LOGI("HwVideoInput::grab %d x %d, delta time: %lld",
-//                 videoFrame->getWidth(),
-//                 videoFrame->getHeight(),
-//                 delta);
-//        }
-//        lastPts = curPts;
-//        lastShowTime = curTimeInUs;
+        int64_t curPts = frame->getPts();
+        int64_t curTimeInUs = getCurrentTimeUS();
+        if (lastPts >= 0 || lastShowTime >= 0) {
+            int64_t delta = (curPts - lastPts) - (curTimeInUs - lastShowTime);
+            if (delta > 0) { // @TODO To avoid waiting too long when seeking.
+                Thread::sleep(delta);
+            }
+            LOGI("HwVideoInput::grab sleep %d x %d, delta time: %lld",
+                 videoFrame->getWidth(),
+                 videoFrame->getHeight(),
+                 delta);
+        }
+        lastPts = curPts;
+        lastShowTime = curTimeInUs;
         checkFilter();
         int size = videoFrame->getWidth() * videoFrame->getHeight();
         glBindTexture(GL_TEXTURE_2D, yuv[0]);
@@ -198,11 +200,10 @@ HwResult HwVideoInput::grab() {
         invalidate(yuvFilter->getFrameBuffer()->getFrameTexture(), videoFrame->getWidth(),
                    videoFrame->getHeight());
     } else if (frame->isAudio()) {
-        HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
         playAudioFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
-        processPlayListener(audioFrame->getPts());
         Logcat::i("HWVC", "HwVideoInput::play audio pts=%lld", frame->getPts());
     }
+    processPlayListener(frame->getPts());
     return ret;
 }
 
