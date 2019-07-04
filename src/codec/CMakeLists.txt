@@ -28,13 +28,22 @@ message(STATUS "hwcodec CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 #        "${PREBUILD_STATIC}/libx264.a")
 
 add_library(
-        libhwffmpeg
+        hwffmpeg
         SHARED
         IMPORTED)
 set_target_properties(
-        libhwffmpeg
+        hwffmpeg
         PROPERTIES IMPORTED_LOCATION
         "${PREBUILD_SHARED}/libhwffmpeg.so")
+
+add_library(
+        yuv
+        SHARED
+        IMPORTED)
+set_target_properties(
+        yuv
+        PROPERTIES IMPORTED_LOCATION
+        "${PREBUILD_SHARED}/libyuv.so")
 
 #------------------SHARED END----------------------
 
@@ -72,7 +81,8 @@ target_link_libraries( # Specifies the target library.
         hwvc_codec
         hwvcom
         hwvc_render
-        libhwffmpeg
+        hwffmpeg
+        yuv
         mediandk
         OpenMAXAL
         # Links the target library to the log library
