@@ -11,6 +11,28 @@
 #include "HwAbsProcessor.h"
 #include "HwWindow.h"
 
+/**
+ *    Controller                Unit                  Unit               Unit                 Unit
+ *[HwCameraRecorder]       [HwCameraInput]          [HwRender]         [HwScreen]         [HwVideoOutput]
+ *        |                     |                      |                  |                    |
+ *        |>>>>>>>>>>>prepare > |>>>>>>>>>>>>prepare > |>>>>>>>>prepare > |>>>>>>>>>>prepare > |
+ *        |                     |                      |                  |                    |
+ *        |>>>>>>>>>>>>>>>>>>>>>>>>>>> render filter > |                  |                    |
+ *        |                     |                      |                  |                    |
+ *        |                     |                      |>>> show screen > |                    |
+ *        |                     |                      |                  |                    |
+ *        |                     |                      |>>>>>>>>>>>>>>>> notify ready pixels > |
+ *        |                     |                      |                  |                    |
+ *        |                     |                      | < response ready pixels <<<<<<<<<<<<<<|
+ *        |                     |                      |                  |                    |
+ *        |                     |                      |>>>>>>>>>>>>>>>>>>>>>>>> send pixels > |
+ *        |                     |                      |                  |                    |
+ *        |>>>> start >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start > |
+ *        |                     |                      |                  |                    |
+ *        |>>>> pause >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> pause > |
+ *        |                     |                      |                  |                    |
+ *
+ */
 class HwCameraRecorder : public HwAbsProcessor {
 public:
     HwCameraRecorder();
