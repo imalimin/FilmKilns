@@ -118,9 +118,7 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         Logcat::e("HWVC", "HwFFmpegEncoder::encode failed!");
         return Hw::FAILED;
     }
-    avPacket->pts = frame->getPts();
     avPacket->stream_index = pVideoStream->index;
-    avPacket->dts = avPacket->pts;
     avPacket->duration = 1;
     ret = av_write_frame(pFormatCtx, avPacket);
     if (0 == ret) {
