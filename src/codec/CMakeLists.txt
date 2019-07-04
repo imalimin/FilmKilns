@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.4.1)
 project(hwvc_codec)
 set(PREBUILD_STATIC "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/static/${ANDROID_ABI}")
 set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/${ANDROID_ABI}")
+set(YUV ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/yuv)
 include_directories(
         ${PROJECT_SOURCE_DIR}/../common/include
         ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
         ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
         ${PROJECT_SOURCE_DIR}/../render/include
+        ${YUV}/include
 )
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
@@ -43,7 +45,7 @@ add_library(
 set_target_properties(
         yuv
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_SHARED}/libyuv.so")
+        "${YUV}/libs/${ANDROID_ABI}/libyuv.so")
 
 #------------------SHARED END----------------------
 
