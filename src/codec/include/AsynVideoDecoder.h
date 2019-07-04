@@ -62,19 +62,9 @@ public:
 private:
     void loop();
 
-    /**
-     * YUV420P
-     */
-    void copyYV12(HwVideoFrame *dest, AVFrame *src);
-
-    /**
-     * YUV420SP
-     */
-    void copyNV12(HwVideoFrame *dest, AVFrame *src);
-
     bool grab();
 
-    bool grabAnVideoFrame();
+    void clear();
 
 private:
     const int MAX_FRAME_CACHE = 36;

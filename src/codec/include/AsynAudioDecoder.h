@@ -57,6 +57,8 @@ private:
 
     bool grab();
 
+    void clear();
+
 private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
     DefaultAudioDecoder *decoder = nullptr;

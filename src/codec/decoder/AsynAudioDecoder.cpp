@@ -57,6 +57,7 @@ void AsynAudioDecoder::seek(int64_t us) {
     if (!decoder) {
         return;
     }
+    clear();
     decoder->seek(us);
 }
 
@@ -92,6 +93,20 @@ void AsynAudioDecoder::loop() {
         }
         loop();
     });
+}
+
+void AsynAudioDecoder::clear() {
+    releaseLock.lock();
+    while (!cache.empty()) {
+        outputFrame = cache.front();
+        cache.pop();
+        if (outputFrame) {
+            outputFrame->recycle();
+            outputFrame = nullptr;
+        }
+    }
+    releaseLock.unlock();
+    grabLock.notify();
 }
 
 bool AsynAudioDecoder::grab() {

@@ -48,6 +48,20 @@ bool AsynVideoDecoder::prepare(string path) {
     return true;
 }
 
+void AsynVideoDecoder::clear() {
+    releaseLock.lock();
+    while (!cache.empty()) {
+        outputFrame = cache.front();
+        cache.pop();
+        if (outputFrame) {
+            outputFrame->recycle();
+            outputFrame = nullptr;
+        }
+    }
+    releaseLock.unlock();
+    grabLock.notify();
+}
+
 bool AsynVideoDecoder::grab() {
     if (cache.size() >= MAX_FRAME_CACHE) {
         grabLock.wait();
@@ -138,19 +152,6 @@ void AsynVideoDecoder::stop() {
     grabLock.notify();
 }
 
-bool AsynVideoDecoder::grabAnVideoFrame() {
-//    while (true) {
-//        int ret = decoder->grab(cacheFrame);
-//        if (MEDIA_TYPE_VIDEO == ret) {
-//            vRecycler->offer(cacheFrame);
-//            return true;
-//        } else {
-//            vRecycler->recycle(cacheFrame);
-//            return false;
-//        }
-//    }
-}
-
 int AsynVideoDecoder::getChannels() {
     if (decoder) {
         return decoder->getChannels();
@@ -183,6 +184,7 @@ void AsynVideoDecoder::seek(int64_t us) {
     if (!decoder) {
         return;
     }
+    clear();
     decoder->seek(us);
 }
 
