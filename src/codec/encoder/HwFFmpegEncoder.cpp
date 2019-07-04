@@ -59,8 +59,9 @@ bool HwFFmpegEncoder::initialize() {
     }
     AVDictionary *param = nullptr;
     if (AV_CODEC_ID_H264 == pCodecCtx->codec_id) {
-        av_dict_set(&param, "preset", "veryfast", 0);
+        av_dict_set(&param, "preset", "superfast", 0);
         av_dict_set(&param, "tune", "zerolatency", 0);
+        av_dict_set(&param, "crf", "15", 0);
         //av_dict_set(param, "profile", "main", 0)
     }
     if (avcodec_open2(pCodecCtx, pCodec, &param) < 0) {
