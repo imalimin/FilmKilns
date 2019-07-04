@@ -21,6 +21,10 @@ public:
 
     void updateWindow(HwWindow *win);
 
+    void start();
+
+    void pause();
+
     void invalidate(int textureId, int w, int h);
 
 };

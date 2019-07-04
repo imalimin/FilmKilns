@@ -64,6 +64,20 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_update
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_start
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        getHandler(handler)->start();
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_pause
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        getHandler(handler)->pause();
+    }
+}
+
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {

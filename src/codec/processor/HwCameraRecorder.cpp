@@ -38,6 +38,14 @@ void HwCameraRecorder::updateWindow(HwWindow *win) {
     postEvent(msg);
 }
 
+void HwCameraRecorder::start() {
+    postEvent(new Message(EVENT_VIDEO_OUT_START, nullptr));
+}
+
+void HwCameraRecorder::pause() {
+    postEvent(new Message(EVENT_VIDEO_OUT_PAUSE, nullptr));
+}
+
 void HwCameraRecorder::invalidate(int textureId, int w, int h) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     msg->obj = new ObjectBox(new Size(w, h));

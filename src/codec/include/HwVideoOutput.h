@@ -11,6 +11,7 @@
 #include "Unit.h"
 #include "../include/HwFFmpegEncoder.h"
 #include "../include/HwVideoFrame.h"
+#include <atomic>
 
 class HwVideoOutput : public Unit {
 public:
@@ -29,9 +30,17 @@ public:
 
     bool eventWrite(Message *msg);
 
+    bool eventStart(Message *msg);
+
+    bool eventPause(Message *msg);
+
+private:
+    void write(HwBuffer *buf);
+
 private:
     HwFFmpegEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
+    std::atomic_bool recording;
     int count = 0;
 };
 

@@ -14,6 +14,8 @@ HwVideoOutput::HwVideoOutput() : Unit() {
     registerEvent(EVENT_COMMON_PIXELS_READY,
                   reinterpret_cast<EventFunc>(&HwVideoOutput::eventResponsePixels));
     registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoOutput::eventWrite));
+    registerEvent(EVENT_VIDEO_OUT_START, reinterpret_cast<EventFunc>(&HwVideoOutput::eventStart));
+    registerEvent(EVENT_VIDEO_OUT_PAUSE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventPause));
 }
 
 HwVideoOutput::~HwVideoOutput() {
@@ -21,6 +23,7 @@ HwVideoOutput::~HwVideoOutput() {
 }
 
 bool HwVideoOutput::eventPrepare(Message *msg) {
+    recording = false;
     encoder = new HwFFmpegEncoder();
     if (!encoder->prepare("/sdcard/hw_encoder.mp4", 720, 1280)) {
         Logcat::e("HWVC", "HwVideoOutput::eventPrepare encoder open failed.");
@@ -44,16 +47,36 @@ bool HwVideoOutput::eventRelease(Message *msg) {
 }
 
 bool HwVideoOutput::eventResponsePixels(Message *msg) {
-    postEvent(new Message(EVENT_COMMON_PIXELS_READ, nullptr));
+    if (recording) {
+        postEvent(new Message(EVENT_COMMON_PIXELS_READ, nullptr));
+    }
     return true;
 }
 
 bool HwVideoOutput::eventWrite(Message *msg) {
+    if (!recording) {
+        return true;
+    }
     HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
     msg->obj = nullptr;
+    write(buf);
+    return true;
+}
+
+bool HwVideoOutput::eventStart(Message *msg) {
+    recording = true;
+    return true;
+}
+
+bool HwVideoOutput::eventPause(Message *msg) {
+    recording = false;
+    return true;
+}
+
+void HwVideoOutput::write(HwBuffer *buf) {
     if (!buf) {
-        Logcat::e("HWVC", "HwVideoOutput::eventWrite failed. Buffer is null.");
-        return true;
+        Logcat::e("HWVC", "HwVideoOutput::write failed. Buffer is null.");
+        return;
     }
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     libyuv::ConvertToI420(buf->getData(), pixelCount,
@@ -71,7 +94,6 @@ bool HwVideoOutput::eventWrite(Message *msg) {
     if (encoder) {
         encoder->write(videoFrame);
     } else {
-        Logcat::e("HWVC", "HwVideoOutput::eventWrite failed. Encoder has release.");
+        Logcat::e("HWVC", "HwVideoOutput::write failed. Encoder has release.");
     }
-    return true;
 }

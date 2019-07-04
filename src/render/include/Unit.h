@@ -59,6 +59,9 @@ static constexpr int EVENT_AUDIO_LOOP = KID('A', 'D', 'O', 0x06);
 
 static constexpr int EVENT_SPEAKER_FEED = KID('S', 'P', 'K', 0x01);
 
+static constexpr int EVENT_VIDEO_OUT_START = KID('V', 'O', 'P', 0x01);
+static constexpr int EVENT_VIDEO_OUT_PAUSE = KID('V', 'O', 'P', 0x02);
+
 typedef bool (Unit::*EventFunc)(Message *);
 
 class Event : public Object {

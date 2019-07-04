@@ -51,6 +51,16 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
         })
     }
 
+    fun start() {
+        if (0L == handler) return
+        start(handler)
+    }
+
+    fun pause() {
+        if (0L == handler) return
+        pause(handler)
+    }
+
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
         if (0L == handler) return
         postEvent(handler, 3)
@@ -73,6 +83,8 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     private external fun create(): Long
     private external fun prepare(handler: Long, surface: Surface)
     private external fun updateWindow(handler: Long, surface: Surface)
+    private external fun start(handler: Long)
+    private external fun pause(handler: Long)
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
     private external fun invalidate(handler: Long, textureId: Int, w: Int, h: Int)
