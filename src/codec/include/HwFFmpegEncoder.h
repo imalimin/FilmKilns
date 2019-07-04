@@ -46,6 +46,7 @@ private:
     int height = 0;
     AVFormatContext *pFormatCtx = nullptr;
     AVStream *pVideoStream = nullptr;
+    AVRational outTimeBase = AVRational{1, 1000000};
     AVFrame *avFrame = nullptr;
     AVPacket *avPacket = nullptr;
 };

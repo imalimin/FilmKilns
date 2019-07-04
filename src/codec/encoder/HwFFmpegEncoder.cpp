@@ -41,6 +41,7 @@ bool HwFFmpegEncoder::initialize() {
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to create video stream!");
         return false;
     }
+    pVideoStream->time_base = outTimeBase;
     AVCodecContext *pCodecCtx = pVideoStream->codec;
     configure(pCodecCtx);
     /**
@@ -83,8 +84,7 @@ void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
     ctx->bit_rate = width * height * 3;
     ctx->gop_size = 150;
 
-    ctx->time_base.num = 1;
-    ctx->time_base.den = 30;
+    ctx->time_base = outTimeBase;
 
     ctx->thread_count = 0;
     ctx->qmin = 10;
