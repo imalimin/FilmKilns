@@ -44,22 +44,27 @@ bool HwVideoOutput::eventRelease(Message *msg) {
 bool HwVideoOutput::eventWrite(Message *msg) {
     HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
     msg->obj = nullptr;
-    if (buf) {
-        int ySize = 720 * 1280;
-        libyuv::ABGRToI420(buf->getData(), 720 * 4,
-                           videoFrame->getBuffer()->getData(), 720,
-                           videoFrame->getBuffer()->getData() + ySize, 720 / 2,
-                           videoFrame->getBuffer()->getData() + ySize + ySize / 4, 720 / 2,
-                           720, 1280);
-        videoFrame->setPts(count * 33000);
-        ++count;
-        if (encoder) {
-            encoder->encode(videoFrame);
-        } else {
-            Logcat::e("HWVC", "HwVideoOutput::eventWrite failed. Encoder has release.");
-        }
-    } else {
+    if (!buf) {
         Logcat::e("HWVC", "HwVideoOutput::eventWrite failed. Buffer is null.");
+        return true;
+    }
+    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
+    libyuv::ConvertToI420(buf->getData(), pixelCount,
+                          videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
+                          videoFrame->getBuffer()->getData() + pixelCount,
+                          videoFrame->getWidth() / 2,
+                          videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
+                          videoFrame->getWidth() / 2,
+                          0, 0,
+                          videoFrame->getWidth(), videoFrame->getHeight(),
+                          videoFrame->getWidth(), videoFrame->getHeight(),
+                          libyuv::kRotate0, libyuv::FOURCC_ABGR);
+    videoFrame->setPts(count * 33000);
+    ++count;
+    if (encoder) {
+        encoder->encode(videoFrame);
+    } else {
+        Logcat::e("HWVC", "HwVideoOutput::eventWrite failed. Encoder has release.");
     }
     return true;
 }
