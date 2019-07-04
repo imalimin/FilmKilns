@@ -12,7 +12,7 @@ enum class HwFrameFormat : int {
     HW_FMT_NONE = -1,
     HW_IMAGE_RGB,
     HW_IMAGE_RGBA,
-    HW_IMAGE_YV12,     /** YUV420P */
+    HW_IMAGE_YV12,     /** YUV420P. Called I420 on android. */
     HW_IMAGE_NV12,     /** YUV420SP */
     HW_IMAGE_END,    /** End flag of image formats. DO NOT USE if linking dynamically */
 
