@@ -67,8 +67,8 @@ private:
     PlayState playState = STOP;
     SimpleLock simpleLock;
     string path;
-    int64_t lastPts = 0;
-    int64_t lastShowTime = 0;
+    int64_t lastPts = -1;
+    int64_t lastShowTime = -1;
     int64_t lastPlayPts = INT64_MIN;
 
     /**

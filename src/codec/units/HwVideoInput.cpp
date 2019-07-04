@@ -155,19 +155,20 @@ HwResult HwVideoInput::grab() {
     if (frame->isVideo()) {
         Logcat::i("HWVC", "HwVideoInput::play picture pts=%lld", frame->getPts());
         HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
-        lastShowTime = getCurrentTimeUS();
-        int64_t curPts = frame->getPts();
-        if (lastPts > 0) {
-            int64_t t = (curPts - lastPts) - (getCurrentTimeUS() - lastShowTime);
-//            if (t < 60000) { // @TODO To avoid waiting too long when seeking.
-//                Thread::sleep(t);
+//        int64_t curPts = frame->getPts();
+//        int64_t curTimeInUs = getCurrentTimeUS();
+//        if (lastPts >= 0 || lastShowTime >= 0) {
+//            int64_t delta = (curPts - lastPts) - (curTimeInUs - lastShowTime);
+//            if (delta > 0 && delta < 40000) { // @TODO To avoid waiting too long when seeking.
+//                Thread::sleep(delta);
 //            }
-            LOGI("HwVideoInput::grab %d x %d, delta time: %lld, wait time: %lld",
-                 videoFrame->getWidth(),
-                 videoFrame->getHeight(),
-                 (getCurrentTimeUS() - lastShowTime) / 1000, t);
-        }
-        lastPts = curPts;
+//            LOGI("HwVideoInput::grab %d x %d, delta time: %lld",
+//                 videoFrame->getWidth(),
+//                 videoFrame->getHeight(),
+//                 delta);
+//        }
+//        lastPts = curPts;
+//        lastShowTime = curTimeInUs;
         checkFilter();
         int size = videoFrame->getWidth() * videoFrame->getHeight();
         glBindTexture(GL_TEXTURE_2D, yuv[0]);
