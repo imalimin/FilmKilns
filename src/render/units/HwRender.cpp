@@ -21,11 +21,18 @@ HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {
     filter = new NormalFilter();
 #endif
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
+    registerEvent(EVENT_COMMON_PIXELS_READ,
+                  reinterpret_cast<EventFunc>(&HwRender::eventReadPixels));
     registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventFilter));
     registerEvent(EVENT_RENDER_SET_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventSetFilter));
 }
 
 HwRender::~HwRender() {
+}
+
+bool HwRender::eventPrepare(Message *msg) {
+    Logcat::i("HWVC", "Render::eventPrepare");
+    return true;
 }
 
 bool HwRender::eventRelease(Message *msg) {
@@ -42,6 +49,57 @@ bool HwRender::eventRelease(Message *msg) {
         pixels = nullptr;
     }
     return true;
+}
+
+bool HwRender::eventReadPixels(Message *msg) {
+    if (!buf) {
+        size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
+                                          * filter->getFrameBuffer()->height() * 4);
+        buf = HwBuffer::alloc(size);
+    }
+    if (filter->getFrameBuffer()->read(buf->getData())) {
+        Message *msg = new Message(EVENT_COMMON_PIXELS, nullptr);
+        msg->obj = buf;
+        postEvent(msg);
+    }
+    return true;
+}
+
+bool HwRender::eventFilter(Message *msg) {
+    Logcat::i("HWVC", "Render::eventFilter");
+    Size *size = static_cast<Size *>(msg->tyrUnBox());
+    GLuint tex = msg->arg1;
+    post([this, size, tex] {
+        checkFilter(size->width, size->height);
+        glViewport(0, 0, size->width, size->height);
+        renderFilter(tex);
+        notifyPixelsReady();
+        renderScreen();
+        delete size;
+    });
+    return true;
+}
+
+bool HwRender::eventSetFilter(Message *msg) {
+    Logcat::i("HWVC", "Render::eventSetFilter");
+    Filter *newFilter = static_cast<Filter *>(msg->tyrUnBox());
+    post([this, newFilter] {
+        if (filter) {
+            delete filter;
+            filter = nullptr;
+        }
+        filter = newFilter;
+    });
+    return true;
+}
+
+void HwRender::renderScreen() {
+    Logcat::i("HWVC", "Render::renderScreen");
+    Message *msg = new Message(EVENT_SCREEN_DRAW, nullptr);
+    msg->obj = new ObjectBox(new Size(filter->getFrameBuffer()->width(),
+                                      filter->getFrameBuffer()->height()));
+    msg->arg1 = filter->getFrameBuffer()->getFrameTexture();
+    postEvent(msg);
 }
 
 void HwRender::checkFilter(int width, int height) {
@@ -74,55 +132,8 @@ void HwRender::renderFilter(GLuint texture) {
         fclose(file);
     }
 #endif
-    if (!buf) {
-        size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
-                                          * filter->getFrameBuffer()->height() * 4);
-        buf = HwBuffer::alloc(size);
-    }
-    if (filter->getFrameBuffer()->read(buf->getData())) {
-        Message *msg = new Message(EVENT_VIDEO_OUT_WRITE, nullptr);
-        msg->obj = buf;
-        postEvent(msg);
-    }
 }
 
-void HwRender::renderScreen() {
-    Logcat::i("HWVC", "Render::renderScreen");
-    Message *msg = new Message(EVENT_SCREEN_DRAW, nullptr);
-    msg->obj = new ObjectBox(new Size(filter->getFrameBuffer()->width(),
-                                      filter->getFrameBuffer()->height()));
-    msg->arg1 = filter->getFrameBuffer()->getFrameTexture();
-    postEvent(msg);
-}
-
-bool HwRender::eventPrepare(Message *msg) {
-    Logcat::i("HWVC", "Render::eventPrepare");
-    return true;
-}
-
-bool HwRender::eventFilter(Message *msg) {
-    Logcat::i("HWVC", "Render::eventFilter");
-    Size *size = static_cast<Size *>(msg->tyrUnBox());
-    GLuint tex = msg->arg1;
-    post([this, size, tex] {
-        checkFilter(size->width, size->height);
-        glViewport(0, 0, size->width, size->height);
-        renderFilter(tex);
-        renderScreen();
-        delete size;
-    });
-    return true;
-}
-
-bool HwRender::eventSetFilter(Message *msg) {
-    Logcat::i("HWVC", "Render::eventSetFilter");
-    Filter *newFilter = static_cast<Filter *>(msg->tyrUnBox());
-    post([this, newFilter] {
-        if (filter) {
-            delete filter;
-            filter = nullptr;
-        }
-        filter = newFilter;
-    });
-    return true;
+void HwRender::notifyPixelsReady() {
+    postEvent(new Message(EVENT_COMMON_PIXELS_READY, nullptr));
 }

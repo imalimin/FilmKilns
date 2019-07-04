@@ -20,6 +20,20 @@ using namespace std;
 static constexpr int EVENT_COMMON_RELEASE = KID('C', 'O', 'M', 0x01);
 static constexpr int EVENT_COMMON_PREPARE = KID('C', 'O', 'M', 0x02);
 static constexpr int EVENT_COMMON_INVALIDATE = KID('C', 'O', 'M', 0x03);
+/**
+ * Notify pixels is ready to someone.
+ */
+static constexpr int EVENT_COMMON_PIXELS_READY = KID('C', 'O', 'M', 0x04);
+/**
+ * Response 'EVENT_COMMON_PIXELS_READY' event for notify Unit read pixels.
+ * If nobody response this event, read pixels action will be cancel.
+ */
+static constexpr int EVENT_COMMON_PIXELS_READ = KID('C', 'O', 'M', 0x05);
+/**
+ * If someone response 'EVENT_COMMON_PIXELS_READY' event, then send pixels to pipeline.
+ * You can handle this event.
+ */
+static constexpr int EVENT_COMMON_PIXELS = KID('C', 'O', 'M', 0x06);
 
 static constexpr int EVENT_IMAGE_SHOW = KID('I', 'M', 'G', 0x01);
 
@@ -44,8 +58,6 @@ static constexpr int EVENT_AUDIO_SET_SOURCE = KID('A', 'D', 'O', 0x05);
 static constexpr int EVENT_AUDIO_LOOP = KID('A', 'D', 'O', 0x06);
 
 static constexpr int EVENT_SPEAKER_FEED = KID('S', 'P', 'K', 0x01);
-
-static constexpr int EVENT_VIDEO_OUT_WRITE = KID('V', 'O', 'P', 0x01);
 
 typedef bool (Unit::*EventFunc)(Message *);
 

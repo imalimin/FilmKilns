@@ -22,6 +22,11 @@ public:
 
     bool eventRelease(Message *msg) override;
 
+    /**
+     * Response read pixels message.
+     */
+    bool eventResponsePixels(Message *msg);
+
     bool eventWrite(Message *msg);
 
 private:

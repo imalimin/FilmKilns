@@ -22,6 +22,15 @@ public:
 
     bool eventRelease(Message *msg) override;
 
+    bool eventPrepare(Message *msg);
+
+    bool eventFilter(Message *msg);
+
+    bool eventSetFilter(Message *msg);
+
+    bool eventReadPixels(Message *msg);
+
+private:
     void checkFilter(int width, int height);
 
     void renderFilter(GLuint texture);
@@ -30,11 +39,7 @@ public:
 
     void setFilterParams(int *params);
 
-    bool eventPrepare(Message *msg);
-
-    bool eventFilter(Message *msg);
-
-    bool eventSetFilter(Message *msg);
+    void notifyPixelsReady();
 
 private:
     Filter *filter = nullptr;

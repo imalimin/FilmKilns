@@ -11,7 +11,9 @@
 HwVideoOutput::HwVideoOutput() : Unit() {
     name = __FUNCTION__;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventPrepare));
-    registerEvent(EVENT_VIDEO_OUT_WRITE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventWrite));
+    registerEvent(EVENT_COMMON_PIXELS_READY,
+                  reinterpret_cast<EventFunc>(&HwVideoOutput::eventResponsePixels));
+    registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoOutput::eventWrite));
 }
 
 HwVideoOutput::~HwVideoOutput() {
@@ -38,6 +40,11 @@ bool HwVideoOutput::eventRelease(Message *msg) {
         delete videoFrame;
         videoFrame = nullptr;
     }
+    return true;
+}
+
+bool HwVideoOutput::eventResponsePixels(Message *msg) {
+    postEvent(new Message(EVENT_COMMON_PIXELS_READ, nullptr));
     return true;
 }
 
