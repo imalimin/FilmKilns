@@ -21,7 +21,8 @@ android {
         }
         sourceSets.main {
             jni.srcDirs = []
-            jniLibs.srcDir "../../../src/codec/prebuild/shared"
+            jniLibs.srcDir "../../../src/codec/prebuild/shared/ffmpeg/libs"
+            jniLibs.srcDir "../../../src/codec/prebuild/shared/yuv/libs"
         }
     }
 

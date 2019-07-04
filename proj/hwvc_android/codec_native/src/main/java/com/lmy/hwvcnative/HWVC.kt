@@ -7,6 +7,7 @@ class HWVC {
         @Synchronized
         fun init(context: Context) {
             System.loadLibrary("hwffmpeg")
+            System.loadLibrary("yuv")
             System.loadLibrary("hwvcom")
             System.loadLibrary("hwvc_codec")
             System.loadLibrary("hwvc_render")

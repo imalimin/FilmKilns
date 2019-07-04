@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(hwvc_codec)
-set(PREBUILD_STATIC "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/static/${ANDROID_ABI}")
-set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/${ANDROID_ABI}")
-set(YUV ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/yuv)
+set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared")
+set(FFMPEG ${PREBUILD_SHARED}/ffmpeg)
+set(YUV ${PREBUILD_SHARED}/yuv)
 include_directories(
         ${PROJECT_SOURCE_DIR}/../common/include
         ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
@@ -36,7 +36,7 @@ add_library(
 set_target_properties(
         hwffmpeg
         PROPERTIES IMPORTED_LOCATION
-        "${PREBUILD_SHARED}/libhwffmpeg.so")
+        "${FFMPEG}/libs/${ANDROID_ABI}/libhwffmpeg.so")
 
 add_library(
         yuv
