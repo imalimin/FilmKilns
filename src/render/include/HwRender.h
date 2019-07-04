@@ -10,6 +10,7 @@
 
 #include "Unit.h"
 #include "Filter.h"
+#include "HwBuffer.h"
 
 class HwRender : public Unit {
 public:
@@ -39,6 +40,7 @@ private:
     Filter *filter = nullptr;
     uint8_t *pixels = nullptr;
     int count = 0;
+    HwBuffer *buf = nullptr;
 };
 
 

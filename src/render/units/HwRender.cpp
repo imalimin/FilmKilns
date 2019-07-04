@@ -74,6 +74,16 @@ void HwRender::renderFilter(GLuint texture) {
         fclose(file);
     }
 #endif
+    if (!buf) {
+        size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
+                                          * filter->getFrameBuffer()->height() * 4);
+        buf = HwBuffer::alloc(size);
+    }
+    if (filter->getFrameBuffer()->read(buf->getData())) {
+        Message *msg = new Message(EVENT_VIDEO_OUT_WRITE, nullptr);
+        msg->obj = buf;
+        postEvent(msg);
+    }
 }
 
 void HwRender::renderScreen() {
