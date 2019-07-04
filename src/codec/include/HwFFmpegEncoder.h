@@ -38,14 +38,14 @@ public:
 private:
     bool initialize();
 
+    void configure(AVCodecContext *ctx);
+
 private:
     string path;
     int width = 0;
     int height = 0;
     AVFormatContext *pFormatCtx = nullptr;
     AVStream *pVideoStream = nullptr;
-    AVCodecContext *pCodecCtx = nullptr;
-    AVCodec *pCodec = nullptr;
     AVFrame *avFrame = nullptr;
     AVPacket *avPacket = nullptr;
 };

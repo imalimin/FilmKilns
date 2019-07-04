@@ -14,7 +14,7 @@ HwFFmpegEncoder::HwFFmpegEncoder() : HwAbsEncoder() {
 }
 
 HwFFmpegEncoder::~HwFFmpegEncoder() {
-
+    release();
 }
 
 bool HwFFmpegEncoder::prepare(string path, int width, int height) {
@@ -27,60 +27,69 @@ bool HwFFmpegEncoder::prepare(string path, int width, int height) {
 bool HwFFmpegEncoder::initialize() {
     av_register_all();
     avformat_alloc_output_context2(&pFormatCtx, NULL, "mp4", path.c_str());
-    if (avio_open(&pFormatCtx->pb, path.c_str(), AVIO_FLAG_READ_WRITE) < 0) {
+    pFormatCtx->oformat->video_codec = AV_CODEC_ID_H264;
+    if (avio_open2(&pFormatCtx->pb, path.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
         avformat_free_context(pFormatCtx);
         pFormatCtx = nullptr;
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to open output file!");
         return false;
     }
+    av_dict_set(&pFormatCtx->metadata, "comment", "hwvc", 0);
     pVideoStream = avformat_new_stream(pFormatCtx, 0);
     if (nullptr == pVideoStream) {
         release();
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to create video stream!");
         return false;
     }
-    pCodecCtx = pVideoStream->codec;
-    pCodecCtx->codec_id = AV_CODEC_ID_H264;
-    pCodecCtx->codec_type = AVMEDIA_TYPE_VIDEO;
-    pCodecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
-    pCodecCtx->width = width;
-    pCodecCtx->height = height;
-    pCodecCtx->bit_rate = 1024000;
-    pCodecCtx->gop_size = 150;
-
-    pCodecCtx->time_base.num = 1;
-    pCodecCtx->time_base.den = 24;
-
-    pCodecCtx->qmin = 10;
-    pCodecCtx->qmax = 51;
-    pCodecCtx->max_b_frames = 3;
+    AVCodecContext *pCodecCtx = pVideoStream->codec;
+    configure(pCodecCtx);
+    /**
+     * Important.If not set this, the output will be fail.
+     */
+    if (pFormatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
+        pVideoStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+    }
+    AVCodec *pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
+    if (!pCodec) {
+        release();
+        Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not find %d codec!",
+                  pCodecCtx->codec_id);
+        return false;
+    }
     AVDictionary *param = nullptr;
     if (AV_CODEC_ID_H264 == pCodecCtx->codec_id) {
         av_dict_set(&param, "preset", "veryfast", 0);
         av_dict_set(&param, "tune", "zerolatency", 0);
         //av_dict_set(param, "profile", "main", 0)
     }
-    pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
-    if (!pCodec) {
-        release();
-        Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not find %d codec!",
-                  pCodecCtx->codec_id);
-        return -1;
-    }
     if (avcodec_open2(pCodecCtx, pCodec, &param) < 0) {
         release();
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not open %d codec!",
                   pCodecCtx->codec_id);
-        return -1;
+        return false;
     }
-    avformat_write_header(pFormatCtx, NULL);
+    avformat_write_header(pFormatCtx, nullptr);
     avFrame = av_frame_alloc();
-    int size = avpicture_get_size(pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height);
-    uint8_t *buf = (uint8_t *) av_malloc(size);
-    avpicture_fill((AVPicture *) avFrame, buf, pCodecCtx->pix_fmt, pCodecCtx->width,
-                   pCodecCtx->height);
-    av_new_packet(avPacket, size);
+    avPacket = av_packet_alloc();
     return true;
+}
+
+void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
+    ctx->codec_id = pFormatCtx->oformat->video_codec;
+    ctx->codec_type = AVMEDIA_TYPE_VIDEO;
+    ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+    ctx->width = width;
+    ctx->height = height;
+    ctx->bit_rate = width * height * 3;
+    ctx->gop_size = 150;
+
+    ctx->time_base.num = 1;
+    ctx->time_base.den = 30;
+
+    ctx->thread_count = 0;
+    ctx->qmin = 10;
+    ctx->qmax = 51;
+    ctx->max_b_frames = 3;
 }
 
 HwResult HwFFmpegEncoder::encode(HwAbsMediaFrame *frame) {
@@ -88,27 +97,62 @@ HwResult HwFFmpegEncoder::encode(HwAbsMediaFrame *frame) {
         Logcat::e("HWVC", "HwFFmpegEncoder::encode failed!");
         return Hw::FAILED;
     }
-    int got_picture = 0;
-    int ret = avcodec_encode_video2(pCodecCtx, avPacket, avFrame, &got_picture);
+    HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
+    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
+    avFrame->data[0] = videoFrame->getBuffer()->getData();
+    avFrame->data[1] = videoFrame->getBuffer()->getData() + pixelCount;
+    avFrame->data[2] = videoFrame->getBuffer()->getData() + pixelCount + pixelCount / 4;
+
+    avFrame->linesize[0] = videoFrame->getWidth();
+    avFrame->linesize[1] = videoFrame->getWidth() / 2;
+    avFrame->linesize[2] = videoFrame->getWidth() / 2;
+    avFrame->width = videoFrame->getWidth();
+    avFrame->height = videoFrame->getHeight();
+    avFrame->pts = frame->getPts();
+    avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
+
+    avcodec_send_frame(pVideoStream->codec, avFrame);
+    int ret = avcodec_receive_packet(pVideoStream->codec, avPacket);
     if (ret < 0) {
         Logcat::e("HWVC", "HwFFmpegEncoder::encode failed!");
         return Hw::FAILED;
     }
-    if (got_picture == 1) {
-        avPacket->pts = frame->getPts();
-        avPacket->stream_index = pVideoStream->index;
-        avPacket->dts = avPacket->pts;
-        avPacket->duration = 1;
-        if (av_write_frame(pFormatCtx, avPacket)) {
-            return Hw::SUCCESS;
-        }
+    avPacket->pts = frame->getPts();
+    avPacket->stream_index = pVideoStream->index;
+    avPacket->dts = avPacket->pts;
+    avPacket->duration = 1;
+    ret = av_write_frame(pFormatCtx, avPacket);
+    if (0 == ret) {
         av_packet_unref(avPacket);
+        return Hw::SUCCESS;
     }
+    av_packet_unref(avPacket);
     return Hw::FAILED;
 }
 
 bool HwFFmpegEncoder::stop() {
-    return false;
+    int ret;
+    int got_picture;
+    if (!(pVideoStream->codec->codec->capabilities & AV_CODEC_CAP_DELAY)) {
+        return true;
+    }
+    while (1) {
+        avPacket->data = NULL;
+        avPacket->size = 0;
+        av_init_packet(avPacket);
+        ret = avcodec_encode_video2(pVideoStream->codec, avPacket,
+                                    NULL, &got_picture);
+        av_packet_unref(avPacket);
+        if (ret < 0)
+            break;
+        if (!got_picture) {
+            break;
+        }
+        ret = av_write_frame(pFormatCtx, avPacket);
+        if (ret < 0)
+            break;
+    }
+    return true;
 }
 
 void HwFFmpegEncoder::release() {
@@ -123,11 +167,11 @@ void HwFFmpegEncoder::release() {
         av_frame_free(&avFrame);
         avFrame = nullptr;
     }
-    if (pCodecCtx) {
-        avcodec_close(pCodecCtx);
-        pCodecCtx = nullptr;
+    if (pVideoStream && pVideoStream->codec) {
+        avcodec_close(pVideoStream->codec);
+        pVideoStream->codec = nullptr;
+        pVideoStream = nullptr;
     }
-    pVideoStream = nullptr;
     if (pFormatCtx) {
         avio_close(pFormatCtx->pb);
         avformat_free_context(pFormatCtx);
