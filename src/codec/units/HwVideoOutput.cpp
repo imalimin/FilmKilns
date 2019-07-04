@@ -62,7 +62,7 @@ bool HwVideoOutput::eventWrite(Message *msg) {
     videoFrame->setPts(count * 33000);
     ++count;
     if (encoder) {
-        encoder->encode(videoFrame);
+        encoder->write(videoFrame);
     } else {
         Logcat::e("HWVC", "HwVideoOutput::eventWrite failed. Encoder has release.");
     }

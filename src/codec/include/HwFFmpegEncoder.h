@@ -29,7 +29,7 @@ public:
 
     virtual bool prepare(string path, int width, int height);
 
-    virtual HwResult encode(HwAbsMediaFrame *frame);
+    virtual HwResult write(HwAbsMediaFrame *frame);
 
     virtual bool stop() override;
 

@@ -93,7 +93,7 @@ void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
     ctx->max_b_frames = 3;
 }
 
-HwResult HwFFmpegEncoder::encode(HwAbsMediaFrame *frame) {
+HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
     if (!frame->isVideo()) {
         Logcat::e("HWVC", "HwFFmpegEncoder::encode failed!");
         return Hw::FAILED;
