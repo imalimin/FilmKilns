@@ -10,14 +10,31 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="false" />
 
-    <Button
-        android:id="@+id/recordBtn"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
-        android:background="#33ffffff"
-        android:text="Record"
-        android:textColor="@color/colorAccent" />
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/recordBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="#33ffffff"
+            android:text="Record"
+            android:textColor="@color/colorAccent" />
+
+        <Button
+            android:id="@+id/nextBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:background="#33ffffff"
+            android:text="Done"
+            android:textColor="@color/colorAccent" />
+    </RelativeLayout>
 </RelativeLayout>
