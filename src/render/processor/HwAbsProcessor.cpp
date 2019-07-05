@@ -6,6 +6,7 @@
 */
 
 #include "../include/HwAbsProcessor.h"
+#include "../include/Unit.h"
 
 HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
 }
@@ -34,9 +35,14 @@ void HwAbsProcessor::stopPipeline() {
 
 void HwAbsProcessor::registerAnUnit(Unit *unit) {
     if (pipeline) {
+        if(!getModel()){
+            Logcat::e("HWVC", "HwAbsProcessor::registerAnUnit failed. You must create an pipeline model.");
+            return;
+        }
+        unit->setModel(getModel());
         pipeline->registerAnUnit(unit);
     } else {
-        Logcat::e("HWVC", "Please call startPipeline first.");
+        Logcat::e("HWVC", "HwAbsProcessor::registerAnUnit failed. You must call startPipeline first.");
     }
 }
 

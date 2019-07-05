@@ -83,3 +83,11 @@ void Unit::post(function<void()> runnable) {
         runnable();
     }
 }
+
+void Unit::setModel(HwAbsPipelineModel *model) {
+    this->model = model;
+}
+
+HwAbsPipelineModel *Unit::getModel() {
+    return model;
+}
