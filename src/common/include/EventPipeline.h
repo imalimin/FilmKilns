@@ -23,6 +23,8 @@ public:
 
     void queueEvent(function<void()> event);
 
+    void quit();
+
 private:
     HandlerThread *handlerThread = nullptr;
     SimpleLock simpleLock;

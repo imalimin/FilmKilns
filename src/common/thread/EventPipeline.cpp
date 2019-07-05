@@ -17,7 +17,6 @@ EventPipeline::EventPipeline(HandlerThread *handlerThread) {
 }
 
 EventPipeline::~EventPipeline() {
-    notify();
     simpleLock.lock();
     if (shouldQuitThread && handlerThread) {
         delete handlerThread;
@@ -33,5 +32,17 @@ void EventPipeline::queueEvent(function<void()> event) {
             event();
         }));
     }
+    simpleLock.unlock();
+}
+
+void EventPipeline::quit() {
+    simpleLock.lock();
+    if (handlerThread) {
+        handlerThread->removeAllMessage(0);
+        if (shouldQuitThread) {
+            delete handlerThread;
+        }
+    }
+    handlerThread = nullptr;
     simpleLock.unlock();
 }

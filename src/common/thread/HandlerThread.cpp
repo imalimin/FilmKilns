@@ -13,8 +13,10 @@ void HandlerThread::run() {
 //        this->printQueue();
         Message *msg = this->take();
         if (msg) {
-            if (msg->runnable) {
-                msg->runnable(msg);
+            const function<void(Message *msg)> run = msg->runnable;
+            msg->runnable = nullptr;
+            if (run) {
+                run(msg);
             }
             delete msg;
         }
