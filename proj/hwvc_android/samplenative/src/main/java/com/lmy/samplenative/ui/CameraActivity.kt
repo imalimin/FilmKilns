@@ -43,7 +43,7 @@ class CameraActivity : BaseActivity() {
                 override fun onPostExecute(result: Void?) {
                     super.onPostExecute(result)
                     startActivity(Intent(this@CameraActivity, VideoActivity::class.java).apply {
-                        data = Uri.fromFile(File("/sdcard/hw_encoder.mp4"))
+                        data = Uri.fromFile(File(path))
                     })
                     finish()
                 }

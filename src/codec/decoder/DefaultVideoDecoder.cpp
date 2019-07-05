@@ -78,7 +78,11 @@ bool DefaultVideoDecoder::prepare(string path) {
             audioTrack = i;
         }
     }
-    if (-1 != videoTrack && !openTrack(videoTrack, &vCodecContext)) {
+    if (videoTrack < 0) {
+        Logcat::e("HWVC", "DefaultVideoDecoder::prepare open video track failed.");
+        return false;
+    }
+    if (!openTrack(videoTrack, &vCodecContext)) {
         LOGE("******** Open video track failed. *********");
         return false;
     }
