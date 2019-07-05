@@ -10,15 +10,21 @@
 
 #include "../../../HwAbsLibLoader.h"
 #include <android/hardware_buffer.h>
+#include <string>
 
 class HwUILoader : public HwAbsLibLoader {
 public:
     static HwUILoader *getInstance();
 
     typedef void (*pfnGraphicBufferCtor)(void *, uint32_t w, uint32_t h, uint32_t format,
-                                       uint32_t usage);
+                                         uint32_t usage);
 
     pfnGraphicBufferCtor fGraphicBufferCtor;
+
+    typedef void (*pfGraphicBufferAndroid7Ctor)(void *, uint32_t w, uint32_t h, uint32_t format,
+                                                uint32_t usage, std::string *);
+
+    pfGraphicBufferAndroid7Ctor fGraphicBufferAndroid7Ctor;
 
     typedef void (*pfnGraphicBufferDtor)(void *);
 

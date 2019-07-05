@@ -61,31 +61,25 @@ void HwAndroidFrameBuffer::createTexture() {
      * sdk == 24 || sdk == 25: Normal.
      * sdk <= 23: GraphicBuffer.
      */
-    if (sdk >= 26 || sdk <= 23) {
-        glGenTextures(1, &id);
-        glGenFramebuffers(1, &fbo);
-        glBindTexture(GL_TEXTURE_2D, id);
-        if (sdk >= 26) {
-            graphicBuffer = new HwAHardwareBuffer(width(), height());
-        } else if (sdk <= 23) {
-            graphicBuffer = new HwAndroidGraphicBuffer(width(), height());
-        } else {
-            return;
-        }
-        static_cast<HwAbsGraphicBuffer *>(graphicBuffer)->bind();
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D,
-                        GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D,
-                        GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D,
-                        GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, id, 0);
-        glBindTexture(GL_TEXTURE_2D, GL_NONE);
-        glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+    glGenTextures(1, &id);
+    glGenFramebuffers(1, &fbo);
+    glBindTexture(GL_TEXTURE_2D, id);
+    if (sdk >= 26) {
+        graphicBuffer = new HwAHardwareBuffer(width(), height());
     } else {
-        frameBuffer = new HwFrameBuffer(width(), height());
+        graphicBuffer = new HwAndroidGraphicBuffer(width(), height());
     }
+    static_cast<HwAbsGraphicBuffer *>(graphicBuffer)->bind();
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D,
+                    GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D, id, 0);
+    glBindTexture(GL_TEXTURE_2D, GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }

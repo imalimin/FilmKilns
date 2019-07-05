@@ -13,6 +13,33 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
+namespace android {
+    // include/system/window.h
+    struct android_native_base_t {
+        uint32_t magic;
+        uint32_t version;
+        void *reserved[4];
+
+        void (*incRef)(struct android_native_base_t *base);
+
+        void (*decRef)(struct android_native_base_t *base);
+    };
+
+    // include/ui/android_native_buffer.h
+    struct android_native_buffer_t {
+        struct android_native_base_t common;
+        int32_t width;
+        int32_t height;
+        int32_t stride;
+        int32_t format;
+        int32_t usage;
+        // ...
+    };
+}
+
+/**
+ * Support sdk <= 25
+ */
 class HwAndroidGraphicBuffer : public HwAbsGraphicBuffer {
 public:
     HwAndroidGraphicBuffer(int w, int h);
@@ -23,8 +50,11 @@ public:
 
     bool read(uint8_t *pixels) override;
 
+    uint32_t getStride() const;
+
 private:
     // Really I have no idea, but this should be big enough
+    int sdk = 0;
     const int GRAPHIC_BUFFER_SIZE = 1024;
     uint8_t *handler = nullptr;
     EGLDisplay dpy = EGL_NO_DISPLAY;

@@ -39,6 +39,8 @@ bool HwUILoader::open() {
 void HwUILoader::load() {
     fGraphicBufferCtor = load_func<pfnGraphicBufferCtor>(pLibHandler,
                                                          "_ZN7android13GraphicBufferC1Ejjij");
+    fGraphicBufferAndroid7Ctor = load_func<pfGraphicBufferAndroid7Ctor>(pLibHandler,
+                                                                        "_ZN7android13GraphicBufferC1EjjijNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEE");
     fGraphicBufferDtor = load_func<pfnGraphicBufferDtor>(pLibHandler,
                                                          "_ZN7android13GraphicBufferD1Ev");
     fGraphicBufferLock = (pfnGraphicBufferLock) dlsym(pLibHandler,
