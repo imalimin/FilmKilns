@@ -38,6 +38,10 @@ HwVideoProcessor::~HwVideoProcessor() {
     playProgressListener = nullptr;
 }
 
+HwAbsSequence *HwVideoProcessor::createSequence() {
+    return new HwAbsSequence();
+}
+
 void HwVideoProcessor::setSource(const string path) {
     Message *msg = new Message(EVENT_VIDEO_SET_SOURCE, nullptr);
     msg->obj = new ObjectBox(new string(path));

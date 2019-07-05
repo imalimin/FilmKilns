@@ -26,6 +26,10 @@ HwCameraRecorder::~HwCameraRecorder() {
     stopPipeline();
 }
 
+HwAbsSequence *HwCameraRecorder::createSequence() {
+    return new HwAbsSequence();
+}
+
 void HwCameraRecorder::prepare(HwWindow *win) {
     Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
     msg->obj = new ObjectBox(new NativeWindow(win, nullptr));

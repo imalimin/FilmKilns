@@ -11,13 +11,17 @@ HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
 }
 
 HwAbsProcessor::~HwAbsProcessor() {
-
+    if (sequence) {
+        delete sequence;
+        sequence = nullptr;
+    }
 }
 
 void HwAbsProcessor::startPipeline() {
     if (!pipeline) {
         pipeline = new UnitPipeline(name);
     }
+    _createSequence();
 }
 
 void HwAbsProcessor::stopPipeline() {
@@ -69,4 +73,12 @@ void HwAbsProcessor::post(function<void()> runnable) {
         });
         postEvent(msg);
     }
+}
+
+HwAbsSequence *HwAbsProcessor::getSequence() {
+    return sequence;
+}
+
+void HwAbsProcessor::_createSequence() {
+    sequence = createSequence();
 }

@@ -25,6 +25,10 @@ HwAudioProcessor::~HwAudioProcessor() {
     playProgressListener = nullptr;
 }
 
+HwAbsSequence *HwAudioProcessor::createSequence() {
+    return new HwAbsSequence();
+}
+
 void HwAudioProcessor::setSource(const string path) {
     Message *msg = new Message(EVENT_AUDIO_SET_SOURCE, nullptr);
     msg->obj = new ObjectBox(new string(path));

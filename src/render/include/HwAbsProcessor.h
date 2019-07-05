@@ -11,6 +11,7 @@
 #include "Object.h"
 #include <string>
 #include "UnitPipeline.h"
+#include "HwAbsSequence.h"
 
 using namespace std;
 
@@ -21,6 +22,8 @@ public:
     virtual ~HwAbsProcessor();
 
     void post(function<void()> runnable);
+
+    HwAbsSequence *getSequence();
 
 protected:
     void startPipeline();
@@ -35,9 +38,15 @@ protected:
 
     void removeAllMessage(int what);
 
+    virtual HwAbsSequence *createSequence() = 0;
+
+private:
+    void _createSequence();
+
 private:
     string name;
     UnitPipeline *pipeline = nullptr;
+    HwAbsSequence *sequence = nullptr;
 };
 
 

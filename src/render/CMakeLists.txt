@@ -44,6 +44,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/egl/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
+            ${PROJECT_SOURCE_DIR}/processor/entity/*.cpp
             ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
             # Android platform
@@ -67,6 +68,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/egl/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
+            ${PROJECT_SOURCE_DIR}/processor/entity/*.cpp
             ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
     )
