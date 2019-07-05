@@ -17,6 +17,7 @@ AsynVideoDecoder::AsynVideoDecoder() : AbsAudioDecoder(), AbsVideoDecoder() {
 AsynVideoDecoder::~AsynVideoDecoder() {
     stop();
     if (pipeline) {
+        pipeline->quit();
         delete pipeline;
         pipeline = nullptr;
     }
