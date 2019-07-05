@@ -16,6 +16,16 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
         handler = create()
     }
 
+    fun setOutputFilePath(filePath: String) {
+        if (0L == handler) return
+        setOutputFilePath(handler, filePath)
+    }
+
+    fun setOutputSize(width: Int, height: Int) {
+        if (0L == handler) return
+        setOutputSize(handler, width, height)
+    }
+
     private fun prepare(surface: Surface) {
         if (0L == handler) return
         prepare(handler, surface)
@@ -28,7 +38,7 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
         handler = 0L
     }
 
-    fun startPreview(view: SurfaceView) {
+    fun prepare(view: SurfaceView) {
         view.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
                 if (!prepared) {
@@ -88,4 +98,6 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
     private external fun invalidate(handler: Long, textureId: Int, tsInNs: Long, w: Int, h: Int)
+    private external fun setOutputFilePath(handler: Long, filePath: String)
+    private external fun setOutputSize(handler: Long, width: Int, height: Int)
 }

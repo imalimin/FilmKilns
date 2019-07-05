@@ -49,6 +49,10 @@ public:
 
     void invalidate(int textureId, int64_t tsInNs, int w, int h);
 
+    void setOutputFilePath(string filePath);
+
+    void setOutputSize(int width, int height);
+
 protected:
     HwAbsPipelineModel *createModel() override;
 };

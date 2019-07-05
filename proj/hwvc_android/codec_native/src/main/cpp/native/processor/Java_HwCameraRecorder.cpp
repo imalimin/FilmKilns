@@ -50,8 +50,26 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setOutputFilePath
+        (JNIEnv *env, jobject thiz, jlong handler, jstring filePath) {
+    if (handler) {
+        const char *pPilePath = env->GetStringUTFChars(filePath, JNI_FALSE);
+        std::string pathStr(pPilePath);
+        env->ReleaseStringUTFChars(filePath, pPilePath);
+        getHandler(handler)->setOutputFilePath(pathStr);
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setOutputSize
+        (JNIEnv *env, jobject thiz, jlong handler, jint width, jint height) {
+    if (handler) {
+        getHandler(handler)->setOutputSize(width, height);
+    }
+}
+
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface, jstring path,
+         jint width, jint height) {
     if (handler) {
         getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
     }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
+import android.os.Environment
 import com.lmy.hwvcnative.processor.HwCameraRecorder
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
@@ -15,12 +16,16 @@ class CameraActivity : BaseActivity() {
     private var recorder: HwCameraRecorder? = HwCameraRecorder()
     private var recording = false
     private var requestPreview = false
+    private lateinit var path: String
 
     override fun getLayoutResource(): Int = R.layout.activity_camera
     override fun initView() {
         surfaceView.fitsSystemWindows = true
         surfaceView.keepScreenOn = true
-        recorder?.startPreview(surfaceView)
+        path = "${externalCacheDir.path}/camera.mp4"
+        recorder?.setOutputFilePath(path)
+        recorder?.setOutputSize(720, 1280)
+        recorder?.prepare(surfaceView)
         recordBtn.setOnClickListener {
             recording = !recording
             if (recording) {

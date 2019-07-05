@@ -12,13 +12,9 @@
 
 class HwConfig : public Object {
 public:
-    static HwConfig *build();
-
-public:
-    virtual ~HwConfig();
-
-private:
     HwConfig();
+
+    virtual ~HwConfig();
 
 private:
     int width = 0;

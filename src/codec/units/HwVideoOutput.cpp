@@ -6,6 +6,7 @@
 */
 
 #include "../include/HwVideoOutput.h"
+#include "../include/HwSequenceModel.h"
 #include "libyuv.h"
 
 HwVideoOutput::HwVideoOutput() : Unit() {
@@ -22,13 +23,22 @@ HwVideoOutput::~HwVideoOutput() {
 
 }
 
+int HwVideoOutput::getWidth() {
+    return static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width;
+}
+
+int HwVideoOutput::getHeight() {
+    return static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height;
+}
+
 bool HwVideoOutput::eventPrepare(Message *msg) {
     recording = false;
     encoder = new HwFFmpegEncoder();
-    if (!encoder->prepare("/sdcard/hw_encoder.mp4", 720, 1280)) {
+    if (!encoder->prepare(static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path,
+                          getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoOutput::eventPrepare encoder open failed.");
     }
-    videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, 720, 1280);
+    videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, getWidth(), getHeight());
     return true;
 }
 

@@ -7,10 +7,19 @@
 
 #include "../include/HwSequenceModel.h"
 
-HwSequenceModel::HwSequenceModel() : HwAbsPipelineModel() {
+HwSequenceModel *HwSequenceModel::build() {
+    return new HwSequenceModel();
+}
+
+HwSequenceModel::HwSequenceModel() : HwAbsPipelineModel(), pCodecConfig(HwCodecConfig::build()) {
 
 }
 
 HwSequenceModel::~HwSequenceModel() {
-
+    if (pCodecConfig) {
+        delete pCodecConfig;
+        pCodecConfig = nullptr;
+    }
 }
+
+HwCodecConfig *HwSequenceModel::getCodecConfig() { return pCodecConfig; }

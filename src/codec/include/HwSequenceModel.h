@@ -9,12 +9,22 @@
 #define HWVC_ANDROID_HWSEQUENCEMODEL_H
 
 #include "HwAbsPipelineModel.h"
+#include "HwCodecConfig.h"
 
 class HwSequenceModel : public HwAbsPipelineModel {
 public:
+    static HwSequenceModel *build();
+
+public:
+    virtual ~HwSequenceModel();
+
+    HwCodecConfig *getCodecConfig();
+
+private:
     HwSequenceModel();
 
-    virtual ~HwSequenceModel();
+private:
+    HwCodecConfig *pCodecConfig = nullptr;
 };
 
 

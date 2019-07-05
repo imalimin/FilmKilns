@@ -37,6 +37,10 @@ public:
 private:
     void write(HwBuffer *buf, int64_t tsInNs);
 
+    int getWidth();
+
+    int getHeight();
+
 private:
     HwFFmpegEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;

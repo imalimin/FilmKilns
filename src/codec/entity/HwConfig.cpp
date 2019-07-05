@@ -7,10 +7,6 @@
 
 #include "../include/HwConfig.h"
 
-HwConfig *HwConfig::build() {
-    return new HwConfig();
-}
-
 HwConfig::HwConfig() : Object() {
 
 }
