@@ -1,7 +1,9 @@
 package com.lmy.samplenative.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.AsyncTask
 import com.lmy.hwvcnative.processor.HwCameraRecorder
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
@@ -31,17 +33,29 @@ class CameraActivity : BaseActivity() {
         }
         nextBtn.setOnClickListener {
             requestPreview = true
-            finish()
+            @SuppressLint("CI_StaticFieldLeak")
+            val task = object : AsyncTask<Void, Void, Void?>() {
+                override fun onPostExecute(result: Void?) {
+                    super.onPostExecute(result)
+                    startActivity(Intent(this@CameraActivity, VideoActivity::class.java).apply {
+                        data = Uri.fromFile(File("/sdcard/hw_encoder.mp4"))
+                    })
+                    finish()
+                }
+
+                override fun doInBackground(vararg params: Void?): Void? {
+                    recorder?.release()
+                    return null
+                }
+            }
+            task.execute()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        recorder?.release()
-        if (requestPreview) {
-            startActivity(Intent(this, VideoActivity::class.java).apply {
-                data = Uri.fromFile(File("/sdcard/hw_encoder.mp4"))
-            })
+        if (!requestPreview) {
+            recorder?.release()
         }
     }
 }
