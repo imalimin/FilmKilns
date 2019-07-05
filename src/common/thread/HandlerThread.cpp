@@ -13,7 +13,9 @@ void HandlerThread::run() {
 //        this->printQueue();
         Message *msg = this->take();
         if (msg) {
-            msg->runnable(msg);
+            if (msg->runnable) {
+                msg->runnable(msg);
+            }
             delete msg;
         }
         if (this->requestQuit) {
