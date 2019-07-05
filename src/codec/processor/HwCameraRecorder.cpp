@@ -26,8 +26,8 @@ HwCameraRecorder::~HwCameraRecorder() {
     stopPipeline();
 }
 
-HwAbsSequence *HwCameraRecorder::createSequence() {
-    return new HwAbsSequence();
+HwAbsPipelineModel *HwCameraRecorder::createModel() {
+    return new HwAbsPipelineModel();
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {

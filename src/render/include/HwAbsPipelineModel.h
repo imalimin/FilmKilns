@@ -10,11 +10,11 @@
 
 #include "Object.h"
 
-class HwAbsSequence : public Object {
+class HwAbsPipelineModel : public Object {
 public:
-    HwAbsSequence();
+    HwAbsPipelineModel();
 
-    virtual ~HwAbsSequence();
+    virtual ~HwAbsPipelineModel();
 };
 
 

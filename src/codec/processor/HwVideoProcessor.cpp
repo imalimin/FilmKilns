@@ -38,8 +38,8 @@ HwVideoProcessor::~HwVideoProcessor() {
     playProgressListener = nullptr;
 }
 
-HwAbsSequence *HwVideoProcessor::createSequence() {
-    return new HwAbsSequence();
+HwAbsPipelineModel *HwVideoProcessor::createModel() {
+    return new HwAbsPipelineModel();
 }
 
 void HwVideoProcessor::setSource(const string path) {

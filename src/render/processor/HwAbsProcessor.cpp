@@ -11,9 +11,9 @@ HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
 }
 
 HwAbsProcessor::~HwAbsProcessor() {
-    if (sequence) {
-        delete sequence;
-        sequence = nullptr;
+    if (model) {
+        delete model;
+        model = nullptr;
     }
 }
 
@@ -21,7 +21,7 @@ void HwAbsProcessor::startPipeline() {
     if (!pipeline) {
         pipeline = new UnitPipeline(name);
     }
-    _createSequence();
+    _createModel();
 }
 
 void HwAbsProcessor::stopPipeline() {
@@ -75,10 +75,10 @@ void HwAbsProcessor::post(function<void()> runnable) {
     }
 }
 
-HwAbsSequence *HwAbsProcessor::getSequence() {
-    return sequence;
+HwAbsPipelineModel *HwAbsProcessor::getModel() {
+    return model;
 }
 
-void HwAbsProcessor::_createSequence() {
-    sequence = createSequence();
+void HwAbsProcessor::_createModel() {
+    model = createModel();
 }

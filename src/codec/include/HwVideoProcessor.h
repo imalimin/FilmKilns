@@ -37,7 +37,7 @@ public:
     void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 
 protected:
-    HwAbsSequence *createSequence() override;
+    HwAbsPipelineModel *createModel() override;
 
 private:
     HandlerThread *unitHandler = nullptr;

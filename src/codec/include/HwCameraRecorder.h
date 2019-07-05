@@ -50,7 +50,7 @@ public:
     void invalidate(int textureId, int64_t tsInNs, int w, int h);
 
 protected:
-    HwAbsSequence *createSequence() override;
+    HwAbsPipelineModel *createModel() override;
 };
 
 

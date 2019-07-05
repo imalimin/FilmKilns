@@ -25,8 +25,8 @@ HwAudioProcessor::~HwAudioProcessor() {
     playProgressListener = nullptr;
 }
 
-HwAbsSequence *HwAudioProcessor::createSequence() {
-    return new HwAbsSequence();
+HwAbsPipelineModel *HwAudioProcessor::createModel() {
+    return new HwAbsPipelineModel();
 }
 
 void HwAudioProcessor::setSource(const string path) {
