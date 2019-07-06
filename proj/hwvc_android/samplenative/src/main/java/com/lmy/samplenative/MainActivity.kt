@@ -26,6 +26,7 @@ class MainActivity : BaseActivity() {
 
     override fun getLayoutResource(): Int = R.layout.activity_main
     override fun initView() {
+        SourcesManager(this).initialize()
         listView.adapter = Adapter(this, R.layout.item_simple_text, ITEMS)
         listView.setOnItemClickListener { parent, view, position, id ->
             (listView.adapter as Adapter).getItem(position).action()
