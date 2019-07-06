@@ -68,7 +68,6 @@ bool HwVideoOutput::eventWrite(Message *msg) {
         return true;
     }
     HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
-    msg->obj = nullptr;
     write(buf, msg->arg2);
     return true;
 }

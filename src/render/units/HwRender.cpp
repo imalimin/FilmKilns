@@ -56,14 +56,9 @@ bool HwRender::eventRelease(Message *msg) {
 }
 
 bool HwRender::eventReadPixels(Message *msg) {
-    if (!buf) {
-        size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
-                                          * filter->getFrameBuffer()->height() * 4);
-        buf = HwBuffer::alloc(size);
-    }
     if (filter->getFrameBuffer()->read(buf->getData())) {
         Message *msg = new Message(EVENT_COMMON_PIXELS, nullptr);
-        msg->obj = buf;
+        msg->obj = HwBuffer::wrap(buf->getData(), buf->size());
         msg->arg2 = tsInNs;
         postEvent(msg);
     }
@@ -111,6 +106,11 @@ void HwRender::renderScreen() {
 void HwRender::checkFilter(int width, int height) {
     if (filter) {
         bool ret = filter->init(width, height);
+        if (ret) {
+            size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
+                                              * filter->getFrameBuffer()->height() * 4);
+            buf = HwBuffer::alloc(size);
+        }
     }
     if (!pixels) {
         pixels = new uint8_t[width * height * 4];
