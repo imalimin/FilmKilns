@@ -29,7 +29,7 @@ HwBuffer::HwBuffer(uint8_t *refBuf, size_t size) : Object() {
 
 HwBuffer::~HwBuffer() {
     _size = 0;
-    if (!isRef) {
+    if (!isRef && buf) {
         delete[] buf;
         buf = nullptr;
     }
