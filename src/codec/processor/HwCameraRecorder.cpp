@@ -54,6 +54,7 @@ void HwCameraRecorder::pause() {
 void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
     int width = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width;
     int height = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height;
+    removeAllMessage(EVENT_RENDER_FILTER);
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     msg->obj = new ObjectBox(new Size(width, height));
     msg->msg = "RENDER";
