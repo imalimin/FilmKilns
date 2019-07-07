@@ -45,6 +45,7 @@ private:
     pthread_mutex_t mutex;
     pthread_cond_t cond;
     list<Message *> queue;
+    bool invalid = false;
 };
 
 #endif //HARDWAREVIDEOCODEC_MESSAGEQUEUE_H

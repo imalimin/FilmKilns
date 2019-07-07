@@ -14,6 +14,9 @@ MessageQueue::MessageQueue() {
 
 MessageQueue::~MessageQueue() {
     LOGI("MessageQueue::~MessageQueue");
+    pthread_mutex_lock(&mutex);
+    invalid = true;
+    pthread_mutex_unlock(&mutex);
     clear();
     pthread_mutex_destroy(&mutex);
     pthread_cond_destroy(&cond);
@@ -21,7 +24,10 @@ MessageQueue::~MessageQueue() {
 
 void MessageQueue::offer(Message *msg) {
     pthread_mutex_lock(&mutex);
-
+    if (invalid) {
+        pthread_mutex_unlock(&mutex);
+        return;
+    }
     queue.push_back(msg);
 
     pthread_cond_broadcast(&cond);
@@ -30,6 +36,10 @@ void MessageQueue::offer(Message *msg) {
 
 void MessageQueue::offerAtFront(Message *msg) {
     pthread_mutex_lock(&mutex);
+    if (invalid) {
+        pthread_mutex_unlock(&mutex);
+        return;
+    }
 
     queue.push_front(msg);
     pthread_cond_broadcast(&cond);
@@ -39,12 +49,23 @@ void MessageQueue::offerAtFront(Message *msg) {
 
 Message *MessageQueue::take() {
     pthread_mutex_lock(&mutex);
+    if (invalid) {
+        pthread_mutex_unlock(&mutex);
+        return nullptr;
+    }
     if (size() <= 0) {
         if (0 != pthread_cond_wait(&cond, &mutex)) {
             pthread_mutex_unlock(&mutex);
             return nullptr;
         }
     }
+    if (queue.empty()) {
+        pthread_mutex_unlock(&mutex);
+        return nullptr;
+    }
+    /**
+     * Here maybe crash if queue is empty.
+     */
     Message *e = queue.front();
     queue.pop_front();
 
@@ -61,18 +82,23 @@ void MessageQueue::pop() {
 }
 
 void MessageQueue::notify() {
+    pthread_mutex_lock(&mutex);
     pthread_cond_broadcast(&cond);
+    pthread_mutex_unlock(&mutex);
 }
 
 void MessageQueue::clear() {
     notify();
+    if (queue.empty()) {
+        return;
+    }
     pthread_mutex_lock(&mutex);
     while (!queue.empty()) {
-        Message *e = queue.front();
+        auto *e = queue.front();
+        queue.pop_front();
         if (e) {
             delete e;
         }
-        queue.pop_front();
     }
     queue.clear();
     pthread_mutex_unlock(&mutex);
@@ -80,6 +106,10 @@ void MessageQueue::clear() {
 
 void MessageQueue::removeAllMessage(const int what) {
     pthread_mutex_lock(&mutex);
+    if (invalid) {
+        pthread_mutex_unlock(&mutex);
+        return;
+    }
     list<Message *>::iterator itr = queue.begin();
     while (itr != queue.end()) {
         Message *e = *itr;
