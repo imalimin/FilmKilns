@@ -9,6 +9,7 @@
 #include "../include/NormalFilter.h"
 #include "../include/ObjectBox.h"
 #include "TimeUtils.h"
+#include "../include/RGBA2YV12Filter.h"
 
 HwRender::HwRender() : HwRender(nullptr) {
 }
@@ -32,6 +33,11 @@ HwRender::~HwRender() {
 
 bool HwRender::eventPrepare(Message *msg) {
     Logcat::i("HWVC", "Render::eventPrepare");
+    if (yuvFilter) {
+        delete yuvFilter;
+        yuvFilter = nullptr;
+    }
+    yuvFilter = new RGBA2YV12Filter();
     return true;
 }
 
@@ -106,6 +112,9 @@ void HwRender::renderScreen() {
 void HwRender::checkFilter(int width, int height) {
     if (filter) {
         bool ret = filter->init(width, height);
+        if (yuvFilter) {
+            yuvFilter->init(width, height);
+        }
         if (ret) {
             size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
                                               * filter->getFrameBuffer()->height() * 4);
@@ -113,27 +122,30 @@ void HwRender::checkFilter(int width, int height) {
         }
     }
     if (!pixels) {
-        pixels = new uint8_t[width * height * 4];
+        pixels = new uint8_t[width * height * 3 / 2];
     }
 }
 
 void HwRender::renderFilter(GLuint texture) {
     Logcat::i("HWVC", "Render::renderFilter %d", texture);
     filter->draw(texture);
-#if 0
+    if (yuvFilter) {
+        yuvFilter->draw(texture);
+    }
+#if 1
     //Test fbo read.
     ++count;
     if (count >= 150) {
         count = 0;
         int64_t time = TimeUtils::getCurrentTimeUS();
-        filter->getFrameBuffer()->read(pixels);
-        FILE *file = fopen("/sdcard/pixels.bmp", "wb");
-        size_t size = filter->getFrameBuffer()->width()
-                      * filter->getFrameBuffer()->height() * 4;
+        yuvFilter->getFrameBuffer()->read(pixels);
+        FILE *file = fopen("/sdcard/pixels.yv12", "wb");
+        size_t size = yuvFilter->getFrameBuffer()->width()
+                      * yuvFilter->getFrameBuffer()->height() * 4;
         Logcat::i("HWVC", "HwAndroidFrameBuffer::read cost %lld, %dx%d",
                   TimeUtils::getCurrentTimeUS() - time,
-                  filter->getFrameBuffer()->width(),
-                  filter->getFrameBuffer()->height());
+                  yuvFilter->getFrameBuffer()->width(),
+                  yuvFilter->getFrameBuffer()->height());
         fwrite(pixels, 1, size, file);
         fclose(file);
     }
