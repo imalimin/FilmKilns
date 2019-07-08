@@ -22,7 +22,7 @@ static const string FRAGMENT = SHADER(
         precision mediump float;
         varying vec2 vTextureCoord;
         uniform sampler2D uTexture;
-        float offset = 0.0011574074;
+        const float offset = 0.0011574074;
 
         float y(vec4 c) {
             return c.r * 0.257 + c.g * 0.504 + c.b * 0.098 + 0.0625;
