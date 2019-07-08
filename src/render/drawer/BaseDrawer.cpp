@@ -74,6 +74,9 @@ GLuint BaseDrawer::createProgram(string vertex, string fragment) {
     }
     GLuint vertexShader = createShader(GL_VERTEX_SHADER, vertex);
     GLuint fragmentShader = createShader(GL_FRAGMENT_SHADER, fragment);
+    if (GL_NONE == vertexShader || GL_NONE == fragmentShader) {
+        return GL_NONE;
+    }
     //附着顶点和片段着色器
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
@@ -100,19 +103,23 @@ GLuint BaseDrawer::createShader(GLenum type, string shader) {
     glShaderSource(shaderId, 1, &str, 0);
     //编译Shader
     glCompileShader(shaderId);
-#ifdef GL_DEBUG
     GLint status;
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
-    if (1 != status) {
+    if (GL_TRUE != status) {
+#ifdef GL_DEBUG
         GLint len;
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &len);
         vector<char> log(static_cast<unsigned int>(len));
         glGetShaderInfoLog(shaderId, len, nullptr, log.data());
         string str(begin(log), end(log));
-        LOGE("Shader(%d) error:\n%s\nSource: %s", type, shader.c_str(), str.c_str());
-        glDeleteShader(shaderId);
-    }
+        Logcat::e("HWVC", "BaseDrawer::createShader(%d) error:%s >>>>>>>>> Source: %s",
+                  type,
+                  str.c_str(),
+                  shader.c_str());
 #endif
+        glDeleteShader(shaderId);
+        shaderId = GL_NONE;
+    }
     return shaderId;
 }
 

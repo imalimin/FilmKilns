@@ -23,6 +23,25 @@ static const string FRAGMENT = SHADER(
         varying vec2 vTextureCoord;
         uniform sampler2D uTexture;
         float offset = 0.0011574074;
+
+        float y(vec4 c) {
+            return c.r * 0.257 + c.g * 0.504 + c.b * 0.098 + 0.0625;
+        }
+
+        float u(vec4 c) {
+            return -0.148 * c.r - 0.291 * c.g + 0.439 * c.b + 0.5000;
+        }
+
+        float v(vec4 c) {
+            return 0.439 * c.r - 0.368 * c.g - 0.071 * c.b + 0.5000;
+        }
+
+        float divide(float num1, float num2) {
+            if (0.0 == num2) {
+                return 0.0;
+            }
+            return num1 / num2;
+        }
         void main(void) {
             if(vTextureCoord.y < 0.666667) {// Y
                 vec2 pos = vec2(vTextureCoord.x, divide(1.0, (vTextureCoord.y)));
@@ -49,25 +68,6 @@ static const string FRAGMENT = SHADER(
 
                 gl_FragColor = vec4(v(color0), v(color1), v(color2), v(color3));
             }
-        }
-
-        float y(vec4 c) {
-            return c.r * 0.257 + c.g * 0.504 + c.b * 0.098 + 0.0625;
-        }
-
-        float u(vec4 c) {
-            return -0.148 * c.r - 0.291 * c.g + 0.439 * c.b + 0.5000;
-        }
-
-        float v(vec4 c) {
-            return 0.439 * c.r - 0.368 * c.g - 0.071 * c.b + 0.5000;
-        }
-
-        float divide(float num1, float num2) {
-            if (0.0 == num2) {
-                return 0.0;
-            }
-            return num1 / num2;
         }
 );
 
