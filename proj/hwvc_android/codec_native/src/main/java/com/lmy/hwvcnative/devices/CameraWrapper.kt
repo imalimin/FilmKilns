@@ -183,6 +183,7 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         eglSurface.makeCurrent()
         eglSurface.updateTexImage()
         eglSurface.getTransformMatrix(transformMatrix)
+        GLES20.glViewport(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         GLES20.glClearColor(0.3f, 0.3f, 0.3f, 0f)
         eglSurface.draw(transformMatrix)
