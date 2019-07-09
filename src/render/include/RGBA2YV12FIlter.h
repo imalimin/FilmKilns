@@ -17,6 +17,8 @@ public:
     ~RGBA2YV12Filter();
 
     bool init(int w, int h) override;
+
+    virtual void draw(GLuint texture) override;
 };
 
 
