@@ -63,6 +63,14 @@ void Unit::postEvent(Message *msg) {
     }
 }
 
+void Unit::postEventAtFront(Message *msg) {
+    if (pipeline) {
+        pipeline->postEventAtFront(msg);
+    } else {
+        LOGE("%s`s pipeline is null", name.c_str());
+    }
+}
+
 bool Unit::dispatch(Message *msg) {
     auto itr = eventMap.find(msg->what);
     if (eventMap.end() != itr) {

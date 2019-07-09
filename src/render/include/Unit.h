@@ -109,6 +109,8 @@ protected:
 
     void postEvent(Message *msg);
 
+    void postEventAtFront(Message *msg);
+
 private:
     map<int, Event *> eventMap;
     UnitPipeline *pipeline = nullptr;
