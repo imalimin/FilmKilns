@@ -58,7 +58,7 @@ bool HwVideoOutput::eventRelease(Message *msg) {
 
 bool HwVideoOutput::eventResponsePixels(Message *msg) {
     if (recording) {
-        postEvent(new Message(EVENT_COMMON_PIXELS_READ, nullptr));
+        postEventAtFront(new Message(EVENT_COMMON_PIXELS_READ, nullptr));
     }
     return true;
 }

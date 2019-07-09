@@ -62,11 +62,21 @@ bool HwRender::eventRelease(Message *msg) {
 }
 
 bool HwRender::eventReadPixels(Message *msg) {
-    if (filter->getFrameBuffer()->read(buf->getData())) {
-        Message *msg = new Message(EVENT_COMMON_PIXELS, nullptr);
-        msg->obj = HwBuffer::wrap(buf->getData(), buf->size());
-        msg->arg2 = tsInNs;
-        postEvent(msg);
+    bool read = false;
+    if (yuvReadFilter) {
+        yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());
+        if (yuvReadFilter->getFrameBuffer()->read(buf->getData())) {
+            read = true;
+        }
+    }
+    if (!read && filter->getFrameBuffer()->read(buf->getData())) {
+        read = true;
+    }
+    if (read) {
+        Message *msg1 = new Message(EVENT_COMMON_PIXELS, nullptr);
+        msg1->obj = HwBuffer::wrap(buf->getData(), buf->size());
+        msg1->arg2 = tsInNs;
+        postEvent(msg1);
     }
     return true;
 }
@@ -117,7 +127,7 @@ void HwRender::checkFilter(int width, int height) {
         }
         if (ret) {
             size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
-                                              * filter->getFrameBuffer()->height() * 4);
+                                              * filter->getFrameBuffer()->height() * 3 / 2);
             buf = HwBuffer::alloc(size);
         }
     }
@@ -129,10 +139,10 @@ void HwRender::checkFilter(int width, int height) {
 void HwRender::renderFilter(GLuint texture) {
     Logcat::i("HWVC", "Render::renderFilter %d", texture);
     filter->draw(texture);
-    if (yuvReadFilter) {
-        yuvReadFilter->draw(texture);
-    }
 #if 1
+    if (yuvReadFilter) {
+        yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());
+    }
     //Test fbo read.
     ++count;
     if (count >= 150) {
@@ -153,5 +163,5 @@ void HwRender::renderFilter(GLuint texture) {
 }
 
 void HwRender::notifyPixelsReady() {
-    postEvent(new Message(EVENT_COMMON_PIXELS_READY, nullptr));
+    postEventAtFront(new Message(EVENT_COMMON_PIXELS_READY, nullptr));
 }
