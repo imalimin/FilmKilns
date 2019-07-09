@@ -88,17 +88,18 @@ void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
         Logcat::e("HWVC", "HwVideoOutput::write failed. Buffer is null.");
         return;
     }
-    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
-    libyuv::ConvertToI420(buf->getData(), pixelCount,
-                          videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
-                          videoFrame->getBuffer()->getData() + pixelCount,
-                          videoFrame->getWidth() / 2,
-                          videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
-                          videoFrame->getWidth() / 2,
-                          0, 0,
-                          videoFrame->getWidth(), videoFrame->getHeight(),
-                          videoFrame->getWidth(), videoFrame->getHeight(),
-                          libyuv::kRotate0, libyuv::FOURCC_ABGR);
+//    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
+//    libyuv::ConvertToI420(buf->getData(), pixelCount,
+//                          videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
+//                          videoFrame->getBuffer()->getData() + pixelCount,
+//                          videoFrame->getWidth() / 2,
+//                          videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
+//                          videoFrame->getWidth() / 2,
+//                          0, 0,
+//                          videoFrame->getWidth(), videoFrame->getHeight(),
+//                          videoFrame->getWidth(), videoFrame->getHeight(),
+//                          libyuv::kRotate0, libyuv::FOURCC_ABGR);
+    memcpy(videoFrame->getBuffer()->getData(), buf->getData(), buf->size());
     if (lastTsInNs < 0) {
         lastTsInNs = tsInNs;
     }

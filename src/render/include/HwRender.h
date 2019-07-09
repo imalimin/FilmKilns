@@ -43,7 +43,7 @@ private:
 
 private:
     Filter *filter = nullptr;
-    Filter *yuvFilter = nullptr;
+    Filter *yuvReadFilter = nullptr;
     uint8_t *pixels = nullptr;
     int count = 0;
     HwBuffer *buf = nullptr;

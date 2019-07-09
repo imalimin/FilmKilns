@@ -21,6 +21,7 @@ HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {
 #else
     filter = new NormalFilter();
 #endif
+    yuvReadFilter = new RGBA2YV12Filter();
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READ,
                   reinterpret_cast<EventFunc>(&HwRender::eventReadPixels));
@@ -33,17 +34,16 @@ HwRender::~HwRender() {
 
 bool HwRender::eventPrepare(Message *msg) {
     Logcat::i("HWVC", "Render::eventPrepare");
-    if (yuvFilter) {
-        delete yuvFilter;
-        yuvFilter = nullptr;
-    }
-    yuvFilter = new RGBA2YV12Filter();
     return true;
 }
 
 bool HwRender::eventRelease(Message *msg) {
     Logcat::i("HWVC", "Render::eventRelease");
     post([this] {
+        if (yuvReadFilter) {
+            delete yuvReadFilter;
+            yuvReadFilter = nullptr;
+        }
         if (filter) {
             delete filter;
             Logcat::i("HWVC", "Render::eventRelease filter");
@@ -112,8 +112,8 @@ void HwRender::renderScreen() {
 void HwRender::checkFilter(int width, int height) {
     if (filter) {
         bool ret = filter->init(width, height);
-        if (yuvFilter) {
-            yuvFilter->init(width, height);
+        if (yuvReadFilter) {
+            yuvReadFilter->init(width, height);
         }
         if (ret) {
             size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
@@ -129,8 +129,8 @@ void HwRender::checkFilter(int width, int height) {
 void HwRender::renderFilter(GLuint texture) {
     Logcat::i("HWVC", "Render::renderFilter %d", texture);
     filter->draw(texture);
-    if (yuvFilter) {
-        yuvFilter->draw(texture);
+    if (yuvReadFilter) {
+        yuvReadFilter->draw(texture);
     }
 #if 1
     //Test fbo read.
@@ -138,14 +138,14 @@ void HwRender::renderFilter(GLuint texture) {
     if (count >= 150) {
         count = 0;
         int64_t time = TimeUtils::getCurrentTimeUS();
-        yuvFilter->getFrameBuffer()->read(pixels);
+        yuvReadFilter->getFrameBuffer()->read(pixels);
         FILE *file = fopen("/sdcard/pixels.yv12", "wb");
-        size_t size = yuvFilter->getFrameBuffer()->width()
-                      * yuvFilter->getFrameBuffer()->height() * 4;
+        size_t size = yuvReadFilter->getFrameBuffer()->width()
+                      * yuvReadFilter->getFrameBuffer()->height() * 4;
         Logcat::i("HWVC", "HwAndroidFrameBuffer::read cost %lld, %dx%d",
                   TimeUtils::getCurrentTimeUS() - time,
-                  yuvFilter->getFrameBuffer()->width(),
-                  yuvFilter->getFrameBuffer()->height());
+                  yuvReadFilter->getFrameBuffer()->width(),
+                  yuvReadFilter->getFrameBuffer()->height());
         fwrite(pixels, 1, size, file);
         fclose(file);
     }
