@@ -9,7 +9,7 @@
 #include "../include/NormalFilter.h"
 #include "../include/ObjectBox.h"
 #include "TimeUtils.h"
-#include "../include/RGBA2YV12Filter.h"
+#include "../include/RGBA2NV12Filter.h"
 
 HwRender::HwRender() : HwRender(nullptr) {
 }
@@ -21,7 +21,7 @@ HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {
 #else
     filter = new NormalFilter();
 #endif
-    yuvReadFilter = new RGBA2YV12Filter();
+    yuvReadFilter = new RGBA2NV12Filter();
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READ,
                   reinterpret_cast<EventFunc>(&HwRender::eventReadPixels));
@@ -139,7 +139,7 @@ void HwRender::checkFilter(int width, int height) {
 void HwRender::renderFilter(GLuint texture) {
     Logcat::i("HWVC", "Render::renderFilter %d", texture);
     filter->draw(texture);
-#if 1
+#if 0
     if (yuvReadFilter) {
         yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());
     }

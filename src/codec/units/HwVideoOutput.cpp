@@ -8,6 +8,7 @@
 #include "../include/HwVideoOutput.h"
 #include "../include/HwSequenceModel.h"
 #include "libyuv.h"
+#include "TimeUtils.h"
 
 HwVideoOutput::HwVideoOutput() : Unit() {
     name = __FUNCTION__;
@@ -88,18 +89,20 @@ void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
         Logcat::e("HWVC", "HwVideoOutput::write failed. Buffer is null.");
         return;
     }
-//    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
-//    libyuv::ConvertToI420(buf->getData(), pixelCount,
-//                          videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
-//                          videoFrame->getBuffer()->getData() + pixelCount,
-//                          videoFrame->getWidth() / 2,
-//                          videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
-//                          videoFrame->getWidth() / 2,
-//                          0, 0,
-//                          videoFrame->getWidth(), videoFrame->getHeight(),
-//                          videoFrame->getWidth(), videoFrame->getHeight(),
-//                          libyuv::kRotate0, libyuv::FOURCC_ABGR);
-    memcpy(videoFrame->getBuffer()->getData(), buf->getData(), buf->size());
+    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
+    int64_t time = TimeUtils::getCurrentTimeUS();
+    libyuv::NV12ToI420(buf->getData(), videoFrame->getWidth(),
+                       buf->getData() + pixelCount, videoFrame->getWidth(),
+                       videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
+                       videoFrame->getBuffer()->getData() + pixelCount,
+                       videoFrame->getWidth() / 2,
+                       videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
+                       videoFrame->getWidth() / 2,
+                       videoFrame->getWidth(), videoFrame->getHeight());
+#if 0
+    Logcat::i("HWVC", "HwVideoOutput::write nv12 convert cost %lld",
+              TimeUtils::getCurrentTimeUS() - time);
+#endif
     if (lastTsInNs < 0) {
         lastTsInNs = tsInNs;
     }
