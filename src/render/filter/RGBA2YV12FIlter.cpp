@@ -23,6 +23,7 @@ static const string FRAGMENT = SHADER(
         varying vec2 vTextureCoord;
         uniform sampler2D uTexture;
         const vec2 offset = vec2(0.0011574074, 0.0);
+        const vec2 offsetY = vec2(0.0, 0.0013125);
 
         float y(vec4 c) {
             return c.r * 0.257 + c.g * 0.504 + c.b * 0.098 + 0.0625;
@@ -53,19 +54,27 @@ static const string FRAGMENT = SHADER(
 
                 gl_FragColor = vec4(y(color0), y(color1), y(color2), y(color3));
             } else if (vTextureCoord.y >= 0.666667 && vTextureCoord.y < 0.888883) {//U
-                vec2 pos = vec2(vTextureCoord.x, divide((vTextureCoord.y - 0.666667), 0.166667));
+                vec2 pos = vec2(vTextureCoord.x * 2.0,
+                                divide((vTextureCoord.y - 0.666667), 0.166667));
+                if (pos.x >= 1.0) {
+                    pos = pos - vec2(1.0, 0.0) + offsetY * 2.0;
+                }
                 vec4 color0 = vec4(texture2D(uTexture, pos).rgb, 1.0);
-                vec4 color1 = vec4(texture2D(uTexture, pos + offset).rgb, 1.0);
-                vec4 color2 = vec4(texture2D(uTexture, pos + offset * 2.0).rgb, 1.0);
-                vec4 color3 = vec4(texture2D(uTexture, pos + offset * 3.0).rgb, 1.0);
+                vec4 color1 = vec4(texture2D(uTexture, pos + offset * 2.0).rgb, 1.0);
+                vec4 color2 = vec4(texture2D(uTexture, pos + offset * 4.0).rgb, 1.0);
+                vec4 color3 = vec4(texture2D(uTexture, pos + offset * 6.0).rgb, 1.0);
 
                 gl_FragColor = vec4(u(color0), u(color1), u(color2), u(color3));
             } else {//V
-                vec2 pos = vec2(vTextureCoord.x, divide((vTextureCoord.y - 0.888883), 0.166667));
+                vec2 pos = vec2(vTextureCoord.x * 2.0,
+                                divide((vTextureCoord.y - 0.888883), 0.166667));
+                if (pos.x >= 1.0) {
+                    pos = pos - vec2(1.0, 0.0) + offsetY * 2.0;
+                }
                 vec4 color0 = vec4(texture2D(uTexture, pos).rgb, 1.0);
-                vec4 color1 = vec4(texture2D(uTexture, pos + offset).rgb, 1.0);
-                vec4 color2 = vec4(texture2D(uTexture, pos + offset * 2.0).rgb, 1.0);
-                vec4 color3 = vec4(texture2D(uTexture, pos + offset * 3.0).rgb, 1.0);
+                vec4 color1 = vec4(texture2D(uTexture, pos + offset * 2.0).rgb, 1.0);
+                vec4 color2 = vec4(texture2D(uTexture, pos + offset * 4.0).rgb, 1.0);
+                vec4 color3 = vec4(texture2D(uTexture, pos + offset * 6.0).rgb, 1.0);
 
                 gl_FragColor = vec4(v(color0), v(color1), v(color2), v(color3));
             }

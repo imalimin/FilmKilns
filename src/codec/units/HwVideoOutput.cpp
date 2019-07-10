@@ -89,20 +89,21 @@ void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
         Logcat::e("HWVC", "HwVideoOutput::write failed. Buffer is null.");
         return;
     }
-    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
-    int64_t time = TimeUtils::getCurrentTimeUS();
-    libyuv::NV12ToI420(buf->getData(), videoFrame->getWidth(),
-                       buf->getData() + pixelCount, videoFrame->getWidth(),
-                       videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
-                       videoFrame->getBuffer()->getData() + pixelCount,
-                       videoFrame->getWidth() / 2,
-                       videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
-                       videoFrame->getWidth() / 2,
-                       videoFrame->getWidth(), videoFrame->getHeight());
+//    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
+//    int64_t time = TimeUtils::getCurrentTimeUS();
+//    libyuv::NV12ToI420(buf->getData(), videoFrame->getWidth(),
+//                       buf->getData() + pixelCount, videoFrame->getWidth(),
+//                       videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
+//                       videoFrame->getBuffer()->getData() + pixelCount,
+//                       videoFrame->getWidth() / 2,
+//                       videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
+//                       videoFrame->getWidth() / 2,
+//                       videoFrame->getWidth(), videoFrame->getHeight());
 #if 0
     Logcat::i("HWVC", "HwVideoOutput::write nv12 convert cost %lld",
               TimeUtils::getCurrentTimeUS() - time);
 #endif
+    memcpy(videoFrame->getBuffer()->getData(), buf->getData(), buf->size());
     if (lastTsInNs < 0) {
         lastTsInNs = tsInNs;
     }
