@@ -22,7 +22,7 @@ static const string FRAGMENT = SHADER(
         precision mediump float;
         varying vec2 vTextureCoord;
         uniform sampler2D uTexture;
-        const vec2 offset = vec2(0.0011574074, 0.0);
+        uniform int width;
 
         float y(vec4 c) {
             return c.r * 0.257 + c.g * 0.504 + c.b * 0.098 + 0.0625;
@@ -44,6 +44,7 @@ static const string FRAGMENT = SHADER(
         }
 
         void main(void) {
+            vec2 offset = vec2(1.0 / float(width), 0.0);
             if (vTextureCoord.y < 0.666667) {// Y
                 vec2 pos = vec2(vTextureCoord.x, divide(vTextureCoord.y, 0.666667));
                 vec4 color0 = vec4(texture2D(uTexture, pos).rgb, 1.0);
@@ -76,7 +77,13 @@ bool RGBA2NV12Filter::init(int w, int h) {
     if (!Filter::init(w / 4, h * 3 / 2))
         return false;
     drawer = new NormalDrawer(VERTEX, FRAGMENT);
+    this->widthLocation = drawer->getUniformLocation("width");
     return true;
+}
+
+void RGBA2NV12Filter::bindResources() {
+    Filter::bindResources();
+    glUniform1i(this->widthLocation, getFrameBuffer()->width() * 4);
 }
 
 void RGBA2NV12Filter::draw(GLuint texture) {
