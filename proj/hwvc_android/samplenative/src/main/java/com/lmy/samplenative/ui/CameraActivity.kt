@@ -24,7 +24,7 @@ class CameraActivity : BaseActivity() {
         surfaceView.keepScreenOn = true
         path = "${externalCacheDir.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
-        recorder?.setOutputSize(720, 1280)
+        recorder?.setOutputSize(320, 480)
         recorder?.prepare(surfaceView)
         recordBtn.setOnClickListener {
             recording = !recording

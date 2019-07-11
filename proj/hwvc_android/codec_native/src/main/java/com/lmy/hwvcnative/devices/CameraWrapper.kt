@@ -19,10 +19,8 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
-        private const val WIDTH = 1280
-        private const val HEIGHT = 720
-        private const val VIDEO_WIDTH = 720
-        private const val VIDEO_HEIGHT = 1280
+        private const val VIDEO_WIDTH = 320
+        private const val VIDEO_HEIGHT = 480
         fun open(onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
             return CameraWrapper(onFrameAvailableListener)
@@ -34,6 +32,8 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     private var mCameraIndex: CameraIndex? = null
     private val eglSurface: CameraEglSurface
     private var transformMatrix: FloatArray = FloatArray(16)
+    private var cameraWidth = 0
+    private var cameraHeight = 0
 
     init {
         mCameras = CameraHelper.getNumberOfCameras()
@@ -58,7 +58,7 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         stopPreview()
         updateTexture()
         if (prepare()) {
-            eglSurface.updateLocation(VIDEO_WIDTH, VIDEO_HEIGHT, WIDTH, HEIGHT)
+            eglSurface.updateLocation(VIDEO_WIDTH, VIDEO_HEIGHT, cameraWidth, cameraHeight)
             startPreview()
         }
 //        })
@@ -98,9 +98,12 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         CameraHelper.setFlashMode(cameraParam, Camera.Parameters.FLASH_MODE_OFF)
         CameraHelper.setAntibanding(cameraParam, Camera.Parameters.ANTIBANDING_AUTO)
         CameraHelper.setVideoStabilization(cameraParam, true)
+        val size = cameraParam.previewSize
+        cameraWidth = size.width;
+        cameraHeight = size.height
         val fps = IntArray(2)
         cameraParam.getPreviewFpsRange(fps)
-        Log.i(TAG, "Config: Size(${WIDTH}x$HEIGHT\n" +
+        Log.i(TAG, "Camera config: Size(${cameraWidth}x$cameraHeight\n" +
                 "Format(${cameraParam.previewFormat})\n" +
                 "FocusMode(${cameraParam.focusMode})\n" +
                 "Fps(${fps[0]}-${fps[1]})\n" +
