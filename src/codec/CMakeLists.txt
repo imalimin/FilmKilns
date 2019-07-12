@@ -3,13 +3,26 @@ project(hwvc_codec)
 set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared")
 set(FFMPEG ${PREBUILD_SHARED}/ffmpeg)
 set(YUV ${PREBUILD_SHARED}/yuv)
-include_directories(
-        ${PROJECT_SOURCE_DIR}/../common/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
-        ${PROJECT_SOURCE_DIR}/../render/include
-        ${YUV}/include
-)
+if (ANDROID)
+    include_directories(
+            # common
+            ${PROJECT_SOURCE_DIR}/../common/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
+            ${PROJECT_SOURCE_DIR}/../render/include
+            ${YUV}/include
+            # android
+            ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/encoder
+    )
+else ()
+    include_directories(
+            ${PROJECT_SOURCE_DIR}/../common/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
+            ${PROJECT_SOURCE_DIR}/../render/include
+            ${YUV}/include
+    )
+endif ()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")
@@ -49,19 +62,39 @@ set_target_properties(
 
 #------------------SHARED END----------------------
 
-file(
-        GLOB
-        SOURCES
-        ${PROJECT_SOURCE_DIR}/*cpp
-        ${PROJECT_SOURCE_DIR}/decoder/*.cpp
-        ${PROJECT_SOURCE_DIR}/encoder/*.cpp
-        ${PROJECT_SOURCE_DIR}/entity/*.cpp
-        ${PROJECT_SOURCE_DIR}/utils/*.cpp
-        ${PROJECT_SOURCE_DIR}/sources/*.cpp
-        ${PROJECT_SOURCE_DIR}/processor/*.cpp
-        ${PROJECT_SOURCE_DIR}/units/*.cpp
-        ${PROJECT_SOURCE_DIR}/translator/*.cpp
-)
+if (ANDROID)
+    file(
+            GLOB
+            SOURCES
+            # common
+            ${PROJECT_SOURCE_DIR}/*cpp
+            ${PROJECT_SOURCE_DIR}/decoder/*.cpp
+            ${PROJECT_SOURCE_DIR}/encoder/*.cpp
+            ${PROJECT_SOURCE_DIR}/entity/*.cpp
+            ${PROJECT_SOURCE_DIR}/utils/*.cpp
+            ${PROJECT_SOURCE_DIR}/sources/*.cpp
+            ${PROJECT_SOURCE_DIR}/processor/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/translator/*.cpp
+            # android
+            ${PROJECT_SOURCE_DIR}/platform/android/encoder/*.cpp
+    )
+else ()
+    file(
+            GLOB
+            SOURCES
+            ${PROJECT_SOURCE_DIR}/*cpp
+            ${PROJECT_SOURCE_DIR}/decoder/*.cpp
+            ${PROJECT_SOURCE_DIR}/encoder/*.cpp
+            ${PROJECT_SOURCE_DIR}/entity/*.cpp
+            ${PROJECT_SOURCE_DIR}/utils/*.cpp
+            ${PROJECT_SOURCE_DIR}/sources/*.cpp
+            ${PROJECT_SOURCE_DIR}/processor/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/translator/*.cpp
+    )
+endif ()
+
 add_library( # Sets the name of the library.
         hwvc_codec
 
@@ -72,21 +105,30 @@ add_library( # Sets the name of the library.
         ${SOURCES}
         )
 
-find_library( # Sets the name of the path variable.
-        log-lib
+if (ANDROID)
+    find_library( # Sets the name of the path variable.
+            log-lib
 
-        # Specifies the name of the NDK library that
-        # you want CMake to locate.
-        log)
+            # Specifies the name of the NDK library that
+            # you want CMake to locate.
+            log)
 
-target_link_libraries( # Specifies the target library.
-        hwvc_codec
-        hwvcom
-        hwvc_render
-        hwffmpeg
-        yuv
-        mediandk
-        OpenMAXAL
-        # Links the target library to the log library
-        # included in the NDK.
-        ${log-lib})
+    target_link_libraries( # Specifies the target library.
+            hwvc_codec
+            hwvcom
+            hwvc_render
+            hwffmpeg
+            yuv
+            mediandk
+            OpenMAXAL
+            # Links the target library to the log library
+            # included in the NDK.
+            ${log-lib})
+else ()
+    target_link_libraries( # Specifies the target library.
+            hwvc_codec
+            hwvcom
+            hwvc_render
+            hwffmpeg
+            yuv)
+endif ()
