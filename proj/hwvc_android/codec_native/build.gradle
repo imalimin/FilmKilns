@@ -13,6 +13,8 @@ android {
             cmake {
 //                cppFlags "--std=c++11"
 //                arguments "-DANDROID_ALLOW_UNDEFINED_SYMBOLS=TRUE"
+                arguments "-DANDROID_ARM_NEON=TRUE",
+                        "-DANDROID_CPP_FEATURES=rtti exceptions"
             }
         }
         ndk {

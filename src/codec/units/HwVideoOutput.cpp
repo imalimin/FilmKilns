@@ -7,6 +7,8 @@
 
 #include "../include/HwVideoOutput.h"
 #include "../include/HwSequenceModel.h"
+#include "../include/HwFFmpegEncoder.h"
+#include "../platform/android/encoder/HwAndroidEncoder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
 
@@ -34,7 +36,7 @@ int HwVideoOutput::getHeight() {
 
 bool HwVideoOutput::eventPrepare(Message *msg) {
     recording = false;
-    encoder = new HwFFmpegEncoder();
+    encoder = new HwAndroidEncoder();
     if (!encoder->prepare(static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path,
                           getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoOutput::eventPrepare encoder open failed.");
@@ -90,7 +92,7 @@ void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
         return;
     }
     //Enable NV12 or YV12
-#if 1
+#if 0
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     int64_t time = TimeUtils::getCurrentTimeUS();
     libyuv::NV12ToI420(buf->getData(), videoFrame->getWidth(),

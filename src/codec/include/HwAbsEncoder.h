@@ -10,6 +10,8 @@
 
 #include "Object.h"
 #include <string>
+#include "HwResult.h"
+#include "HwAbsMediaFrame.h"
 
 using namespace std;
 
@@ -18,6 +20,10 @@ public:
     HwAbsEncoder();
 
     virtual ~HwAbsEncoder();
+
+    virtual bool prepare(string path, int width, int height) = 0;
+
+    virtual HwResult write(HwAbsMediaFrame *frame) = 0;
 
     virtual bool stop() = 0;
 

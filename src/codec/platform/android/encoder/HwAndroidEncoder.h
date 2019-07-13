@@ -9,9 +9,21 @@
 #define HWVC_ANDROID_HWANDROIDENCODER_H
 
 #include "../../../include/HwAbsEncoder.h"
-#include "../../../include/HwAbsMediaFrame.h"
-#include "HwResult.h"
 #include "media/NdkMediaCodec.h"
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "../../../include/ff/libavcodec/avcodec.h"
+#include "../../../include/ff/libavformat/avformat.h"
+#include "../../../include/ff/libavutil/avutil.h"
+#include "../../../include/ff/libswresample/swresample.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 class HwAndroidEncoder : public HwAbsEncoder {
 public:
@@ -19,9 +31,9 @@ public:
 
     virtual ~HwAndroidEncoder();
 
-    virtual bool prepare(string path, int width, int height);
+    virtual bool prepare(string path, int width, int height) override;
 
-    virtual HwResult write(HwAbsMediaFrame *frame);
+    virtual HwResult write(HwAbsMediaFrame *frame) override;
 
     virtual bool stop() override;
 
@@ -30,9 +42,31 @@ public:
 private:
     bool configure();
 
+    bool configureMuxer();
+
+    void configureCodec(AVCodecContext *ctx);
+
+    HwResult push(HwAbsMediaFrame *frame);
+
+    HwResult pop();
+
+    HwResult write();
+
+    void flush();
+
 private:
-    AMediaCodec *codec = nullptr;
+    const int COLOR_FormatYUV420Flexible = 0x7F420888;
+    const int BUFFER_FLAG_KEY_FRAME = 1;
+    const int BUFFER_FLAG_CODEC_CONFIG = 2;
+    string path;
     int width = 0, height = 0;
+    AMediaCodec *codec = nullptr;
+    HwBuffer *configBuf = nullptr;
+    HwBuffer *keyFrameBuf = nullptr;
+    AVRational outTimeBase = AVRational{1, 1000000};
+    AVFormatContext *pFormatCtx = nullptr;
+    AVStream *pVideoStream = nullptr;
+    AVPacket *avPacket = nullptr;
 };
 
 

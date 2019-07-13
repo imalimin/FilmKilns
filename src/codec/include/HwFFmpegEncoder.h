@@ -27,9 +27,9 @@ public:
 
     virtual ~HwFFmpegEncoder();
 
-    virtual bool prepare(string path, int width, int height);
+    virtual bool prepare(string path, int width, int height) override;
 
-    virtual HwResult write(HwAbsMediaFrame *frame);
+    virtual HwResult write(HwAbsMediaFrame *frame) override;
 
     virtual bool stop() override;
 

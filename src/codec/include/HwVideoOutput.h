@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWVIDEOOUTPUT_H
 
 #include "Unit.h"
-#include "../include/HwFFmpegEncoder.h"
+#include "../include/HwAbsEncoder.h"
 #include "../include/HwVideoFrame.h"
 #include <atomic>
 
@@ -42,7 +42,7 @@ private:
     int getHeight();
 
 private:
-    HwFFmpegEncoder *encoder = nullptr;
+    HwAbsEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
     std::atomic_bool recording;
     // last timestamp in ns.
