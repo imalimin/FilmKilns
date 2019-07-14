@@ -9,6 +9,8 @@
 #define HWVC_ANDROID_HWMICPHONE_H
 
 #include "Unit.h"
+#include "HwAudioRecorder.h"
+#include "../include/HwAudioFrame.h"
 
 class HwMicPhone : public Unit {
 public:
@@ -19,6 +21,17 @@ public:
     bool eventPrepare(Message *msg);
 
     bool eventRelease(Message *msg) override;
+
+    bool eventLoop(Message *msg);
+
+private:
+    void loop();
+
+    void send(HwBuffer *buf);
+
+private:
+    HwAudioRecorder *recorder = nullptr;
+    HwAudioFrame *frame = nullptr;
 };
 
 
