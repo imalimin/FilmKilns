@@ -109,7 +109,6 @@ bool HwAndroidEncoder::configure() {
 }
 
 bool HwAndroidEncoder::configureMuxer() {
-    av_register_all();
     avformat_alloc_output_context2(&pFormatCtx, NULL, "mp4", path.c_str());
     pFormatCtx->oformat->video_codec = AV_CODEC_ID_H264;
     if (avio_open2(&pFormatCtx->pb, path.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
@@ -126,35 +125,17 @@ bool HwAndroidEncoder::configureMuxer() {
         return false;
     }
     pVideoStream->time_base = outTimeBase;
-    AVCodecContext *pCodecCtx = pVideoStream->codec;
-    configureCodec(pCodecCtx);
+    configureCodec(pVideoStream->codec);
+//    pVideoStream->codec->extradata = configBuf->getData();
+//    pVideoStream->codec->extradata_size = configBuf->size();
     /**
      * Important.If not set this, the output will be fail.
      */
     if (pFormatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
         pVideoStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
-    AVCodec *pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
-    if (!pCodec) {
-        release();
-        Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not find %d codec!",
-                  pCodecCtx->codec_id);
-        return false;
-    }
-    AVDictionary *param = nullptr;
-    if (AV_CODEC_ID_H264 == pCodecCtx->codec_id) {
-        av_dict_set(&param, "preset", "superfast", 0);
-        av_dict_set(&param, "tune", "zerolatency", 0);
-        av_dict_set(&param, "crf", "15", 0);
-        //av_dict_set(param, "profile", "main", 0)
-    }
-    if (avcodec_open2(pCodecCtx, pCodec, &param) < 0) {
-        release();
-        Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not open %d codec!",
-                  pCodecCtx->codec_id);
-        return false;
-    }
-    avformat_write_header(pFormatCtx, nullptr);
+    av_dump_format(pFormatCtx, 0, path.c_str(), 1);
+    int ret = avformat_write_header(pFormatCtx, nullptr);
     avPacket = av_packet_alloc();
     return true;
 }
@@ -162,18 +143,18 @@ bool HwAndroidEncoder::configureMuxer() {
 void HwAndroidEncoder::configureCodec(AVCodecContext *ctx) {
     ctx->codec_id = pFormatCtx->oformat->video_codec;
     ctx->codec_type = AVMEDIA_TYPE_VIDEO;
-    ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+//    ctx->pix_fmt = AV_PIX_FMT_YUV420P;
     ctx->width = width;
     ctx->height = height;
-    ctx->bit_rate = width * height * 3;
-    ctx->profile = FF_PROFILE_H264_HIGH;
-    ctx->gop_size = 150;
-    ctx->time_base = outTimeBase;
+//    ctx->bit_rate = width * height * 3;
+//    ctx->profile = FF_PROFILE_H264_HIGH;
+//    ctx->gop_size = 150;
+//    ctx->time_base = outTimeBase;
 
-    ctx->thread_count = 0;
-    ctx->qmin = 10;
-    ctx->qmax = 30;
-    ctx->max_b_frames = 3;
+//    ctx->thread_count = 0;
+//    ctx->qmin = 10;
+//    ctx->qmax = 30;
+//    ctx->max_b_frames = 3;
 }
 
 HwResult HwAndroidEncoder::push(HwAbsMediaFrame *frame) {
@@ -187,11 +168,11 @@ HwResult HwAndroidEncoder::push(HwAbsMediaFrame *frame) {
             }
             return Hw::SUCCESS;
         }
-        size_t bufSize = frame->getBufferSize();
+        size_t bufSize = 0;
         int64_t pts = frame->getPts();
         auto buf = AMediaCodec_getInputBuffer(codec, bufIdx, &bufSize);
         if (bufSize > 0) {
-            memcpy(buf, frame->getBuffer()->getData(), bufSize);
+            memcpy(buf, frame->getBuffer()->getData(), frame->getBufferSize());
         }
         media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx,
                                                              0, bufSize,
