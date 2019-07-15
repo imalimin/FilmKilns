@@ -6,6 +6,7 @@
  */
 
 #include "../include/HwMicrophone.h"
+#include "TimeUtils.h"
 
 HwMicrophone::HwMicrophone() : Unit() {
     name = __FUNCTION__;
@@ -55,5 +56,9 @@ void HwMicrophone::loop() {
 void HwMicrophone::send(HwBuffer *buf) {
     if (buf && frame) {
         memcpy(frame->getBuffer()->getData(), buf->getData(), buf->size());
+        Message *msg = new Message(EVENT_MICROPHONE_OUT_SAMPLES, nullptr);
+        msg->arg2 = TimeUtils::getCurrentTimeUS();
+        msg->obj = HwBuffer::wrap(frame->getBuffer()->getData(), frame->getBuffer()->size());
+        postEvent(msg);
     }
 }

@@ -8,6 +8,7 @@
 #include "../include/HwFFmpegEncoder.h"
 #include "Logcat.h"
 #include "../include/HwVideoFrame.h"
+#include "../include/HwAudioFrame.h"
 
 HwFFmpegEncoder::HwFFmpegEncoder() : HwAbsEncoder() {
 
@@ -27,7 +28,6 @@ bool HwFFmpegEncoder::prepare(string path, int width, int height) {
 bool HwFFmpegEncoder::initialize() {
     av_register_all();
     avformat_alloc_output_context2(&pFormatCtx, NULL, "mp4", path.c_str());
-    pFormatCtx->oformat->video_codec = AV_CODEC_ID_H264;
     if (avio_open2(&pFormatCtx->pb, path.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
         avformat_free_context(pFormatCtx);
         pFormatCtx = nullptr;
@@ -35,6 +35,23 @@ bool HwFFmpegEncoder::initialize() {
         return false;
     }
     av_dict_set(&pFormatCtx->metadata, "comment", "hwvc", 0);
+    openVideoTrack();
+    openAudioTrack();
+    /**
+     * Important.If not set this, the output will be fail.
+     */
+    if (pFormatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
+        pVideoStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+        pAudioStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+    }
+    avformat_write_header(pFormatCtx, nullptr);
+    avFrame = av_frame_alloc();
+    avAudioFrame = av_frame_alloc();
+    avPacket = av_packet_alloc();
+    return true;
+}
+
+bool HwFFmpegEncoder::openVideoTrack() {
     pVideoStream = avformat_new_stream(pFormatCtx, 0);
     if (nullptr == pVideoStream) {
         release();
@@ -44,12 +61,6 @@ bool HwFFmpegEncoder::initialize() {
     pVideoStream->time_base = outTimeBase;
     AVCodecContext *pCodecCtx = pVideoStream->codec;
     configure(pCodecCtx);
-    /**
-     * Important.If not set this, the output will be fail.
-     */
-    if (pFormatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
-        pVideoStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-    }
     AVCodec *pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
     if (!pCodec) {
         release();
@@ -70,14 +81,49 @@ bool HwFFmpegEncoder::initialize() {
                   pCodecCtx->codec_id);
         return false;
     }
-    avformat_write_header(pFormatCtx, nullptr);
-    avFrame = av_frame_alloc();
-    avPacket = av_packet_alloc();
+    return true;
+}
+
+bool HwFFmpegEncoder::openAudioTrack() {
+    pAudioStream = avformat_new_stream(pFormatCtx, 0);
+    if (nullptr == pAudioStream) {
+        release();
+        Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to create audio stream!");
+        return false;
+    }
+    pAudioStream->time_base = {1, 44100};
+    AVCodecContext *pCodecCtx = pAudioStream->codec;
+    pCodecCtx->codec_id = AV_CODEC_ID_AAC_LATM;
+    pCodecCtx->codec_type = AVMEDIA_TYPE_AUDIO;
+    pCodecCtx->sample_fmt = AV_SAMPLE_FMT_S32;
+    pCodecCtx->sample_rate = 44100;
+    pCodecCtx->channels = 2;
+    pCodecCtx->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(2));
+    AVCodec *pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
+    if (!pCodec) {
+        release();
+        Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not find %d codec!",
+                  pCodecCtx->codec_id);
+        return false;
+    }
+    AVDictionary *param = nullptr;
+    if (AV_CODEC_ID_H264 == pCodecCtx->codec_id) {
+        av_dict_set(&param, "preset", "superfast", 0);
+        av_dict_set(&param, "tune", "zerolatency", 0);
+        av_dict_set(&param, "crf", "15", 0);
+        //av_dict_set(param, "profile", "main", 0)
+    }
+    if (avcodec_open2(pCodecCtx, pCodec, &param) < 0) {
+        release();
+        Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not open %d codec!",
+                  pCodecCtx->codec_id);
+        return false;
+    }
     return true;
 }
 
 void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
-    ctx->codec_id = pFormatCtx->oformat->video_codec;
+    ctx->codec_id = AV_CODEC_ID_H264;
     ctx->codec_type = AVMEDIA_TYPE_VIDEO;
     ctx->pix_fmt = AV_PIX_FMT_YUV420P;
     ctx->width = width;
@@ -95,32 +141,48 @@ void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
 }
 
 HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
-    if (!frame->isVideo()) {
-        Logcat::e("HWVC", "HwFFmpegEncoder::encode failed!");
-        return Hw::FAILED;
+    AVStream *stream = nullptr;
+    int64_t duration = 1;
+    if (frame->isAudio()) {
+        stream = pAudioStream;
+        duration = static_cast<int64_t>(1.0 / stream->codec->sample_rate * frame->getBufferSize());
+        HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
+        avAudioFrame->data[0] = audioFrame->getBuffer()->getData();
+        avAudioFrame->linesize[0] = audioFrame->getBufferSize();
+        avAudioFrame->pts = frame->getPts();
+        avAudioFrame->format = HwAbsMediaFrame::convertAudioFrameFormat(frame->getFormat());
+        avAudioFrame->sample_rate = audioFrame->getSampleRate();
+        avAudioFrame->channels = audioFrame->getChannels();
+        avAudioFrame->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(
+                audioFrame->getChannels()));
+
+        avcodec_send_frame(stream->codec, avAudioFrame);
+    } else {
+        stream = pVideoStream;
+        duration = 1;
+        HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
+        int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
+        avFrame->data[0] = videoFrame->getBuffer()->getData();
+        avFrame->data[1] = videoFrame->getBuffer()->getData() + pixelCount;
+        avFrame->data[2] = videoFrame->getBuffer()->getData() + pixelCount * 5 / 4;
+
+        avFrame->linesize[0] = videoFrame->getWidth();
+        avFrame->linesize[1] = videoFrame->getWidth() / 2;
+        avFrame->linesize[2] = videoFrame->getWidth() / 2;
+        avFrame->width = videoFrame->getWidth();
+        avFrame->height = videoFrame->getHeight();
+        avFrame->pts = frame->getPts();
+        avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
+
+        avcodec_send_frame(stream->codec, avFrame);
     }
-    HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
-    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
-    avFrame->data[0] = videoFrame->getBuffer()->getData();
-    avFrame->data[1] = videoFrame->getBuffer()->getData() + pixelCount;
-    avFrame->data[2] = videoFrame->getBuffer()->getData() + pixelCount * 5 / 4;
-
-    avFrame->linesize[0] = videoFrame->getWidth();
-    avFrame->linesize[1] = videoFrame->getWidth() / 2;
-    avFrame->linesize[2] = videoFrame->getWidth() / 2;
-    avFrame->width = videoFrame->getWidth();
-    avFrame->height = videoFrame->getHeight();
-    avFrame->pts = frame->getPts();
-    avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
-
-    avcodec_send_frame(pVideoStream->codec, avFrame);
-    int ret = avcodec_receive_packet(pVideoStream->codec, avPacket);
+    int ret = avcodec_receive_packet(stream->codec, avPacket);
     if (ret < 0) {
-        Logcat::e("HWVC", "HwFFmpegEncoder::encode failed!");
+        Logcat::e("HWVC", "HwFFmpegEncoder::encode failed %d", stream->index);
         return Hw::FAILED;
     }
-    avPacket->stream_index = pVideoStream->index;
-    avPacket->duration = 1;
+    avPacket->stream_index = stream->index;
+    avPacket->duration = duration;
     ret = av_write_frame(pFormatCtx, avPacket);
     if (0 == ret) {
         av_packet_unref(avPacket);
@@ -163,9 +225,18 @@ void HwFFmpegEncoder::release() {
         av_packet_free(&avPacket);
         avPacket = nullptr;
     }
+    if (avAudioFrame) {
+        av_frame_free(&avAudioFrame);
+        avAudioFrame = nullptr;
+    }
     if (avFrame) {
         av_frame_free(&avFrame);
         avFrame = nullptr;
+    }
+    if (pAudioStream && pAudioStream->codec) {
+        avcodec_close(pAudioStream->codec);
+        pAudioStream->codec = nullptr;
+        pAudioStream = nullptr;
     }
     if (pVideoStream && pVideoStream->codec) {
         avcodec_close(pVideoStream->codec);

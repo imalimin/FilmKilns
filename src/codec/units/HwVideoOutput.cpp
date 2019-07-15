@@ -20,6 +20,8 @@ HwVideoOutput::HwVideoOutput() : Unit() {
     registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoOutput::eventWrite));
     registerEvent(EVENT_VIDEO_OUT_START, reinterpret_cast<EventFunc>(&HwVideoOutput::eventStart));
     registerEvent(EVENT_VIDEO_OUT_PAUSE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventPause));
+    registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
+                  reinterpret_cast<EventFunc>(&HwVideoOutput::eventSamples));
 }
 
 HwVideoOutput::~HwVideoOutput() {
@@ -42,6 +44,7 @@ bool HwVideoOutput::eventPrepare(Message *msg) {
         Logcat::e("HWVC", "HwVideoOutput::eventPrepare encoder open failed.");
     }
     videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, getWidth(), getHeight());
+    audioFrame = new HwAudioFrame(nullptr, HwFrameFormat::HW_SAMPLE_S32, 2, 44100, 1024);
     return true;
 }
 
@@ -51,6 +54,10 @@ bool HwVideoOutput::eventRelease(Message *msg) {
         encoder->release();
         delete encoder;
         encoder = nullptr;
+    }
+    if (audioFrame) {
+        delete audioFrame;
+        audioFrame = nullptr;
     }
     if (videoFrame) {
         delete videoFrame;
@@ -83,6 +90,7 @@ bool HwVideoOutput::eventStart(Message *msg) {
 bool HwVideoOutput::eventPause(Message *msg) {
     recording = false;
     lastTsInNs = -1;
+    lastATsInNs = -1;
     return true;
 }
 
@@ -122,4 +130,25 @@ void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
     } else {
         Logcat::e("HWVC", "HwVideoOutput::write failed. Encoder has release.");
     }
+}
+
+bool HwVideoOutput::eventSamples(Message *msg) {
+    if (!recording) {
+        return true;
+    }
+    HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
+    int64_t tsInNs = msg->arg2;
+    memcpy(audioFrame->getBuffer()->getData(), buf->getData(), buf->size());
+    if (lastATsInNs < 0) {
+        lastATsInNs = tsInNs;
+    }
+    aTimestamp += (tsInNs - lastATsInNs);
+    lastATsInNs = tsInNs;
+    audioFrame->setPts(aTimestamp / 1000);
+    if (encoder) {
+        encoder->write(audioFrame);
+    } else {
+        Logcat::e("HWVC", "HwVideoOutput::write audio failed. Encoder has release.");
+    }
+    return true;
 }

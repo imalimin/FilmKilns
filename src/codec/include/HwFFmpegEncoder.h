@@ -40,15 +40,21 @@ private:
 
     void configure(AVCodecContext *ctx);
 
+    bool openVideoTrack();
+
+    bool openAudioTrack();
+
 private:
     string path;
     int width = 0;
     int height = 0;
     AVFormatContext *pFormatCtx = nullptr;
     AVStream *pVideoStream = nullptr;
+    AVStream *pAudioStream = nullptr;
     AVRational outTimeBase = AVRational{1, 1000000};
     AVFrame *avFrame = nullptr;
     AVPacket *avPacket = nullptr;
+    AVFrame *avAudioFrame = nullptr;
 };
 
 #ifdef __cplusplus

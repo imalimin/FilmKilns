@@ -7,6 +7,7 @@
 
 #include <Size.h>
 #include "../include/HwCameraRecorder.h"
+#include "../include/HwMicrophone.h"
 #include "../include/HwCameraInput.h"
 #include "../include/HwVideoOutput.h"
 #include "HwRender.h"
@@ -17,6 +18,7 @@
 
 HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
     startPipeline();
+    registerAnUnit(new HwMicrophone());
     registerAnUnit(new HwCameraInput());
     registerAnUnit(new HwRender());
     registerAnUnit(new HwScreen());

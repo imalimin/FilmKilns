@@ -11,6 +11,7 @@
 #include "Unit.h"
 #include "../include/HwAbsEncoder.h"
 #include "../include/HwVideoFrame.h"
+#include "../include/HwAudioFrame.h"
 #include <atomic>
 
 class HwVideoOutput : public Unit {
@@ -28,6 +29,8 @@ public:
      */
     bool eventResponsePixels(Message *msg);
 
+    bool eventSamples(Message *msg);
+
     bool eventWrite(Message *msg);
 
     bool eventStart(Message *msg);
@@ -44,11 +47,12 @@ private:
 private:
     HwAbsEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
+    HwAudioFrame *audioFrame = nullptr;
     std::atomic_bool recording;
     // last timestamp in ns.
-    int64_t lastTsInNs = -1;
+    int64_t lastTsInNs = -1, lastATsInNs = -1;
     // frame timestamp in ns.
-    int64_t timestamp = -1;
+    int64_t timestamp = -1, aTimestamp = -1;
     int count = 0;
 };
 
