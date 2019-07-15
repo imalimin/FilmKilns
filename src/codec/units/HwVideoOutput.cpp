@@ -38,7 +38,7 @@ int HwVideoOutput::getHeight() {
 
 bool HwVideoOutput::eventPrepare(Message *msg) {
     recording = false;
-    encoder = new HwAndroidEncoder();
+    encoder = new HwFFmpegEncoder();
     if (!encoder->prepare(static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path,
                           getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoOutput::eventPrepare encoder open failed.");

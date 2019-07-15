@@ -42,7 +42,7 @@ bool HwFFmpegEncoder::initialize() {
      */
     if (pFormatCtx->oformat->flags & AVFMT_GLOBALHEADER) {
         pVideoStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
-        pAudioStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+//        pAudioStream->codec->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
     avformat_write_header(pFormatCtx, nullptr);
     avFrame = av_frame_alloc();
@@ -93,28 +93,29 @@ bool HwFFmpegEncoder::openAudioTrack() {
     }
     pAudioStream->time_base = {1, 44100};
     AVCodecContext *pCodecCtx = pAudioStream->codec;
-    pCodecCtx->codec_id = AV_CODEC_ID_AAC_LATM;
+    pCodecCtx->codec_id = pFormatCtx->oformat->audio_codec;
     pCodecCtx->codec_type = AVMEDIA_TYPE_AUDIO;
     pCodecCtx->sample_fmt = AV_SAMPLE_FMT_S32;
     pCodecCtx->sample_rate = 44100;
     pCodecCtx->channels = 2;
     pCodecCtx->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(2));
+    pCodecCtx->frame_size = 1024;
+    pCodecCtx->bits_per_raw_sample = 32;
+    pCodecCtx->bit_rate = 64000;
     AVCodec *pCodec = avcodec_find_encoder(pCodecCtx->codec_id);
     if (!pCodec) {
-        release();
+        pAudioStream = nullptr;
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not find %d codec!",
                   pCodecCtx->codec_id);
         return false;
     }
-    AVDictionary *param = nullptr;
-    if (AV_CODEC_ID_H264 == pCodecCtx->codec_id) {
-        av_dict_set(&param, "preset", "superfast", 0);
-        av_dict_set(&param, "tune", "zerolatency", 0);
-        av_dict_set(&param, "crf", "15", 0);
-        //av_dict_set(param, "profile", "main", 0)
-    }
-    if (avcodec_open2(pCodecCtx, pCodec, &param) < 0) {
-        release();
+    int ret = avcodec_open2(pCodecCtx, pCodec, nullptr);
+    if (ret < 0) {
+        if (pVideoStream && pVideoStream->codec) {
+            avcodec_close(pVideoStream->codec);
+            pVideoStream->codec = nullptr;
+            pVideoStream = nullptr;
+        }
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize could not open %d codec!",
                   pCodecCtx->codec_id);
         return false;
@@ -123,7 +124,7 @@ bool HwFFmpegEncoder::openAudioTrack() {
 }
 
 void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
-    ctx->codec_id = AV_CODEC_ID_H264;
+    ctx->codec_id = pFormatCtx->oformat->video_codec;
     ctx->codec_type = AVMEDIA_TYPE_VIDEO;
     ctx->pix_fmt = AV_PIX_FMT_YUV420P;
     ctx->width = width;
@@ -143,7 +144,7 @@ void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
 HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
     AVStream *stream = nullptr;
     int64_t duration = 1;
-    if (frame->isAudio()) {
+    if (frame->isAudio() && pAudioStream) {
         stream = pAudioStream;
         duration = static_cast<int64_t>(1.0 / stream->codec->sample_rate * frame->getBufferSize());
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
