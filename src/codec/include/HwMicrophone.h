@@ -12,11 +12,11 @@
 #include "HwAudioRecorder.h"
 #include "../include/HwAudioFrame.h"
 
-class HwMicPhone : public Unit {
+class HwMicrophone : public Unit {
 public:
-    HwMicPhone();
+    HwMicrophone();
 
-    virtual ~HwMicPhone();
+    virtual ~HwMicrophone();
 
     bool eventPrepare(Message *msg);
 

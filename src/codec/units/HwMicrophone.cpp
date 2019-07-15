@@ -5,20 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwMicPhone.h"
+#include "../include/HwMicrophone.h"
 
-HwMicPhone::HwMicPhone() : Unit() {
+HwMicrophone::HwMicrophone() : Unit() {
     name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwMicPhone::eventPrepare));
-    registerEvent(EVENT_MICROPHONE_LOOP, reinterpret_cast<EventFunc>(&HwMicPhone::eventLoop));
+    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwMicrophone::eventPrepare));
+    registerEvent(EVENT_MICROPHONE_LOOP, reinterpret_cast<EventFunc>(&HwMicrophone::eventLoop));
 
 }
 
-HwMicPhone::~HwMicPhone() {
+HwMicrophone::~HwMicrophone() {
 
 }
 
-bool HwMicPhone::eventPrepare(Message *msg) {
+bool HwMicrophone::eventPrepare(Message *msg) {
     frame = new HwAudioFrame(nullptr, HwFrameFormat::HW_SAMPLE_S32, 2, 44100, 1024);
     recorder = new HwAudioRecorder(2, 44100, 0x0010, 1024);
     recorder->start();
@@ -26,7 +26,7 @@ bool HwMicPhone::eventPrepare(Message *msg) {
     return true;
 }
 
-bool HwMicPhone::eventRelease(Message *msg) {
+bool HwMicrophone::eventRelease(Message *msg) {
     if (recorder) {
         recorder->stop();
         delete recorder;
@@ -39,7 +39,7 @@ bool HwMicPhone::eventRelease(Message *msg) {
     return true;
 }
 
-bool HwMicPhone::eventLoop(Message *msg) {
+bool HwMicrophone::eventLoop(Message *msg) {
     if (recorder) {
         HwBuffer *buf = recorder->read(1024);
         send(buf);
@@ -48,11 +48,11 @@ bool HwMicPhone::eventLoop(Message *msg) {
     return true;
 }
 
-void HwMicPhone::loop() {
+void HwMicrophone::loop() {
     postEvent(new Message(EVENT_MICROPHONE_LOOP, nullptr));
 }
 
-void HwMicPhone::send(HwBuffer *buf) {
+void HwMicrophone::send(HwBuffer *buf) {
     if (buf && frame) {
         memcpy(frame->getBuffer()->getData(), buf->getData(), buf->size());
     }
