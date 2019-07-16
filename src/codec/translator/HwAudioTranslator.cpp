@@ -66,14 +66,15 @@ bool HwAudioTranslator::translate(AVFrame **dest, AVFrame **src) {
         outFrame->pts = 0;
         int ret = av_frame_get_buffer(outFrame, 0);
         if (0 != ret) {
-            Logcat::e("HWVC", "HwAudioTranslator(%p) translate failed. avFrame alloc failed.",
-                      this);
+            Logcat::e("HWVC", "HwAudioTranslator(%p) translate failed. avFrame alloc failed: %s",
+                      this, strerror(AVUNERROR(ret)));
             return false;
         }
     }
     int ret = swr_convert_frame(swrContext, outFrame, src[0]);
     if (0 != ret) {
-        Logcat::e("HWVC", "HwAudioTranslator(%p) translate failed.", this);
+        Logcat::e("HWVC", "HwAudioTranslator(%p) translate failed: %s",
+                  this, strerror(AVUNERROR(ret)));
         return false;
     }
     outFrame->pts = (*src)->pts;
