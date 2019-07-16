@@ -11,6 +11,7 @@
 #include "HwAbsEncoder.h"
 #include "HwResult.h"
 #include "HwAbsMediaFrame.h"
+#include "HwAudioTranslator.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,6 +56,7 @@ private:
     AVFrame *avFrame = nullptr;
     AVPacket *avPacket = nullptr;
     AVFrame *avAudioFrame = nullptr;
+    HwAudioTranslator *translator = nullptr;
 };
 
 #ifdef __cplusplus
