@@ -7,6 +7,7 @@
 
 #include "../include/HwMicrophone.h"
 #include "TimeUtils.h"
+#include "Thread.h"
 
 HwMicrophone::HwMicrophone() : Unit() {
     name = __FUNCTION__;
@@ -43,7 +44,11 @@ bool HwMicrophone::eventRelease(Message *msg) {
 bool HwMicrophone::eventLoop(Message *msg) {
     if (recorder) {
         HwBuffer *buf = recorder->read(1024);
-        send(buf);
+        if (buf) {
+            send(buf);
+        } else {
+            Thread::sleep(2000);
+        }
         loop();
     }
     return true;

@@ -75,7 +75,7 @@ void HwAudioRecorder::initialize(SLEngine *engine) {
         case HwAudioDeviceMode::HighLatency:
             bufSize = getBufferByteSize() * 32;
     }
-    this->fifo = new HwFIFOBuffer(bufSize, false);
+    this->fifo = new HwFIFOBuffer(bufSize);
     this->buffer = HwBuffer::alloc(getBufferByteSize());
     HwResult ret = this->createEngine();
     if (Hw::SUCCESS != ret) {
@@ -132,7 +132,7 @@ HwBuffer *HwAudioRecorder::read(size_t size) {
         Logcat::e("HWVC", "FIFO invalid");
         return 0;
     }
-    return fifo->take(size);
+    return fifo->take(size, 60000);
 }
 
 void HwAudioRecorder::flush() {

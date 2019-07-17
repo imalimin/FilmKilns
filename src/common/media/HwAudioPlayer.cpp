@@ -251,7 +251,7 @@ HwResult HwAudioPlayer::write(uint8_t *buffer, size_t size) {
 //    memcpy(data, buffer, size);
 //    pcmList.push(new ObjectBox(data));
     //-----------------
-    size_t ret = fifo->push(buffer, size);
+    size_t ret = fifo->push(buffer, size, 60000);
     if (0 == ret) {
         return Hw::FAILED;
     }

@@ -35,7 +35,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_MemFIFOTest_push
               (char) data[4], (char) data[5],
               (char) data[6], (char) data[7],
               pushCount);
-    fifo->push(data, MemFIFOTest_FRAME_SIZE);
+    fifo->push(data, MemFIFOTest_FRAME_SIZE, 6000);
     ++index;
 }
 

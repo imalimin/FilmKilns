@@ -23,17 +23,6 @@ HwFIFOBuffer::HwFIFOBuffer(size_t capacity) : Object() {
     this->reader = first();
     this->writer = first();
     this->endFlag = end();
-    this->writeMode = true;
-}
-
-HwFIFOBuffer::HwFIFOBuffer(size_t capacity, bool writeMode) : Object() {
-    this->capacity = capacity;
-    this->buf = new uint8_t[capacity];
-    this->_size = 0;
-    this->reader = first();
-    this->writer = first();
-    this->endFlag = end();
-    this->writeMode = writeMode;
 }
 
 HwFIFOBuffer::~HwFIFOBuffer() {
@@ -90,19 +79,23 @@ uint8_t *HwFIFOBuffer::move(uint8_t *pointer, size_t size) {
 }
 
 size_t HwFIFOBuffer::push(uint8_t *data, size_t size) {
+    return push(data, size, 0);
+}
+
+size_t HwFIFOBuffer::push(uint8_t *data, size_t size, int32_t timeOut) {
     if (!buf) {
         return 0;
     }
-    while (!willWrite(size)) {
+    if (!willWrite(size)) {
 #ifdef LOG_HwFIFOBuffer
         Logcat::e("HWVC", "HwFIFOBuffer::push Capacity is insufficient(left=%d). Wait",
                   leftCapacity());
 #endif
-        if (!writeMode) {
+        if (timeOut <= 0) {
             return 0;
         }
-        notifyLock.wait();
-        if (requestFlush) {
+        pushLock.wait(timeOut);
+        if (requestFlush || !willWrite(size)) {//if time out or flush, return this.
             requestFlush = false;
             return 0;
         }
@@ -110,7 +103,7 @@ size_t HwFIFOBuffer::push(uint8_t *data, size_t size) {
     memcpy(this->writer, data, size);
     this->writer = move(this->writer, size);
     this->_size += size;
-    notifyLock.notify();
+    takeLock.notify();
 #ifdef LOG_HwFIFOBuffer
     Logcat::i("HWVC", "HwFIFOBuffer::push %d, %d",
               size,
@@ -176,20 +169,24 @@ bool HwFIFOBuffer::willRead(size_t size) {
 }
 
 HwBuffer *HwFIFOBuffer::take(size_t size) {
+    return take(size, 0);
+}
+
+HwBuffer *HwFIFOBuffer::take(size_t size, int32_t timeOut) {
     if (!buf || nullptr == this->reader) {
         Logcat::e("HWVC", "HwFIFOBuffer::take failed(unready)");
         return nullptr;
     }
-    while (!willRead(size)) {
+    if (!willRead(size)) {
 #ifdef LOG_HwFIFOBuffer
         Logcat::i("HWVC", "HwFIFOBuffer::take Capacity is insufficient(left=%d). Wait",
                   leftCapacity());
 #endif
-        if (writeMode) {
-            return nullptr;
+        if (timeOut <= 0) {
+            return 0;
         }
-        notifyLock.wait();
-        if (requestFlush) {
+        takeLock.wait(timeOut);
+        if (requestFlush || !willRead(size)) {//if time out or flush, return this.
             requestFlush = false;
             return nullptr;
         }
@@ -207,7 +204,7 @@ HwBuffer *HwFIFOBuffer::take(size_t size) {
             /*-------------*/
             this->reader = first();
             this->_size -= left;
-            notifyLock.notify();
+            pushLock.notify();
 #ifdef LOG_HwFIFOBuffer
             Logcat::i("HWVC", "HwFIFOBuffer::take a %d, %d",
                       buf->size(),
@@ -220,7 +217,7 @@ HwBuffer *HwFIFOBuffer::take(size_t size) {
     HwBuffer *buf = HwBuffer::wrap(this->reader, size);
     this->reader += size;
     this->_size -= size;
-    notifyLock.notify();
+    pushLock.notify();
 #ifdef LOG_HwFIFOBuffer
     Logcat::i("HWVC", "HwFIFOBuffer::take b %d, %d",
               buf->size(),
@@ -255,7 +252,8 @@ void HwFIFOBuffer::flush() {
     this->reader = first();
     this->writer = first();
     this->_size = 0;
-    notifyLock.notify();
+    pushLock.notify();
+    takeLock.notify();
     requestFlush = true;
 #ifdef LOG_HwFIFOBuffer
     Logcat::i("HWVC", "HwFIFOBuffer::flush");

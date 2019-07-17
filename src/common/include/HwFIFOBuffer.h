@@ -17,8 +17,6 @@ class HwFIFOBuffer : public Object {
 public:
     HwFIFOBuffer(size_t capacity);
 
-    HwFIFOBuffer(size_t capacity, bool writeMode);
-
     virtual ~HwFIFOBuffer();
 
     /**
@@ -29,12 +27,16 @@ public:
      */
     size_t push(uint8_t *data, size_t size);
 
+    size_t push(uint8_t *data, size_t size, int32_t timeOut);
+
     /**
      * 从fifo读取数据
      * @size 期望得到的size
      * @return 返回数据片段映射，大小小于或等于size，该内存片段由fifo维护，切勿进行写操作
      */
     HwBuffer *take(size_t size);
+
+    HwBuffer *take(size_t size, int32_t timeOut);
 
     size_t size();
 
@@ -56,11 +58,6 @@ private:
     void printBufferState();
 
 private:
-    /**
-     * true: push阻塞
-     * false: take阻塞
-     */
-    bool writeMode = true;
     uint8_t *buf = nullptr;
     size_t capacity = 0;
     size_t _size = 0;
@@ -68,7 +65,8 @@ private:
     uint8_t *writer = nullptr;
     uint8_t *endFlag = nullptr;
 
-    SimpleLock notifyLock;
+    SimpleLock pushLock;
+    SimpleLock takeLock;
     std::mutex mutex;
     bool requestFlush = false;
 };
