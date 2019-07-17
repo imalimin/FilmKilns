@@ -141,7 +141,7 @@ void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
     ctx->profile = FF_PROFILE_H264_HIGH;
     ctx->gop_size = 150;
 
-    ctx->time_base = outTimeBase;
+    ctx->time_base = {1, 30};
 
     ctx->thread_count = 0;
     ctx->qmin = 10;
@@ -158,13 +158,16 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
         avAudioFrame->data[0] = audioFrame->getBuffer()->getData();
         avAudioFrame->linesize[0] = audioFrame->getBufferSize();
-        avAudioFrame->pts = frame->getPts();
         avAudioFrame->format = HwAbsMediaFrame::convertAudioFrameFormat(frame->getFormat());
         avAudioFrame->sample_rate = audioFrame->getSampleRate();
         avAudioFrame->nb_samples = 1024;
         avAudioFrame->channels = audioFrame->getChannels();
         avAudioFrame->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(
                 audioFrame->getChannels()));
+        avFrame->pts = av_rescale_q_rnd(frame->getPts(),
+                                        {1, AV_TIME_BASE},
+                                        pAudioStream->time_base,
+                                        AV_ROUND_NEAR_INF);
 
         AVFrame *avFrame = nullptr;
         translator->translate(&avFrame, &avAudioFrame);
@@ -183,6 +186,10 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         avFrame->linesize[2] = videoFrame->getWidth() / 2;
         avFrame->width = videoFrame->getWidth();
         avFrame->height = videoFrame->getHeight();
+        avFrame->pts = av_rescale_q_rnd(frame->getPts(),
+                                        {1, AV_TIME_BASE},
+                                        pVideoStream->time_base,
+                                        AV_ROUND_NEAR_INF);
         avFrame->pts = frame->getPts();
         avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
 
