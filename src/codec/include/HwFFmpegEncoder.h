@@ -39,8 +39,6 @@ public:
 private:
     bool initialize();
 
-    void configure(AVCodecContext *ctx);
-
     bool openVideoTrack();
 
     bool openAudioTrack();

@@ -66,7 +66,23 @@ bool HwFFmpegEncoder::openVideoTrack() {
     pVideoStream->id = pFormatCtx->nb_streams - 1;
     pVideoStream->time_base = {1, 30};
     AVCodecContext *pCodecCtx = pVideoStream->codec;
-    configure(pCodecCtx);
+    // Configure
+    pCodecCtx->codec_id = pFormatCtx->oformat->video_codec;
+    pCodecCtx->codec_type = AVMEDIA_TYPE_VIDEO;
+    pCodecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
+    pCodecCtx->width = width;
+    pCodecCtx->height = height;
+    pCodecCtx->bit_rate = width * height * 3;
+    pCodecCtx->profile = FF_PROFILE_H264_HIGH;
+    pCodecCtx->gop_size = 15;
+
+    pCodecCtx->time_base = pVideoStream->time_base;
+
+    pCodecCtx->thread_count = 0;
+    pCodecCtx->qmin = 10;
+    pCodecCtx->qmax = 30;
+    pCodecCtx->max_b_frames = 2;
+
     AVDictionary *param = nullptr;
     if (AV_CODEC_ID_H264 == pCodecCtx->codec_id) {
         av_dict_set(&param, "preset", "superfast", 0);
@@ -104,7 +120,6 @@ bool HwFFmpegEncoder::openAudioTrack() {
         return false;
     }
     pVideoStream->id = pFormatCtx->nb_streams - 1;
-    pAudioStream->time_base = {1, 44100};
     AVCodecContext *pCodecCtx = pAudioStream->codec;
     pCodecCtx->codec_id = pFormatCtx->oformat->audio_codec;
     pCodecCtx->codec_type = AVMEDIA_TYPE_AUDIO;
@@ -113,6 +128,7 @@ bool HwFFmpegEncoder::openAudioTrack() {
     pCodecCtx->sample_rate = 44100;
     pCodecCtx->channels = 2;
     pCodecCtx->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(2));
+    pCodecCtx->time_base = {1, pCodecCtx->sample_rate};
     AVDictionary *opt = nullptr;
     int ret = avcodec_open2(pCodecCtx, pCodec, &opt);
     if (ret < 0) {
@@ -129,24 +145,6 @@ bool HwFFmpegEncoder::openAudioTrack() {
         pCodecCtx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
     return true;
-}
-
-void HwFFmpegEncoder::configure(AVCodecContext *ctx) {
-    ctx->codec_id = pFormatCtx->oformat->video_codec;
-    ctx->codec_type = AVMEDIA_TYPE_VIDEO;
-    ctx->pix_fmt = AV_PIX_FMT_YUV420P;
-    ctx->width = width;
-    ctx->height = height;
-    ctx->bit_rate = width * height * 3;
-    ctx->profile = FF_PROFILE_H264_HIGH;
-    ctx->gop_size = 150;
-
-    ctx->time_base = {1, 30};
-
-    ctx->thread_count = 0;
-    ctx->qmin = 10;
-    ctx->qmax = 30;
-    ctx->max_b_frames = 3;
 }
 
 HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
@@ -190,7 +188,6 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
                                         {1, AV_TIME_BASE},
                                         pVideoStream->time_base,
                                         AV_ROUND_NEAR_INF);
-        avFrame->pts = frame->getPts();
         avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
 
         avcodec_send_frame(stream->codec, avFrame);

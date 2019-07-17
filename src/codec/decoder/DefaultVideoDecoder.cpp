@@ -318,10 +318,6 @@ int DefaultVideoDecoder::getSamplesPerBuffer() {
 void DefaultVideoDecoder::matchPts(AVFrame *frame, int track) {
     frame->pts = av_rescale_q_rnd(frame->pts,
                                   pFormatCtx->streams[track]->time_base,
-                                  pFormatCtx->streams[track]->codec->time_base,
-                                  AV_ROUND_NEAR_INF);
-    frame->pts = av_rescale_q_rnd(frame->pts,
-                                  pFormatCtx->streams[track]->codec->time_base,
                                   outputRational,
                                   AV_ROUND_NEAR_INF);
 }
