@@ -13,6 +13,7 @@ Message::Message(int what, function<void(Message *msg)> runnable) {
     this->runnable = runnable;
     this->arg1 = 0;
     this->arg2 = 0;
+    this->msg = "Undef";
 }
 
 Message::Message(int what, Object *obj, function<void(Message *msg)> runnable) {
@@ -21,6 +22,7 @@ Message::Message(int what, Object *obj, function<void(Message *msg)> runnable) {
     this->runnable = runnable;
     this->arg1 = 0;
     this->arg2 = 0;
+    this->msg = "Undef";
 }
 
 Message::~Message() {

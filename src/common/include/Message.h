@@ -17,7 +17,7 @@ public:
     int what;
     int arg1;
     int64_t arg2;
-    std::string msg = "Undef";
+    std::string msg;
     Object *obj = nullptr;
 
     Message(int what, function<void(Message *msg)> runnable);
