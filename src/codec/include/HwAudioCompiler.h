@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_HWAUDIOCOMPILER_H
 
 #include "Unit.h"
+#include "HwFFAudioEncoder.h"
 
 class HwAudioCompiler : public Unit {
 public:
@@ -20,6 +21,8 @@ public:
 
     bool eventPrepare(Message *msg);
 
+private:
+    HwFFAudioEncoder *encoder = nullptr;
 };
 
 
