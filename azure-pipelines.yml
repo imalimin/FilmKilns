@@ -12,8 +12,8 @@ pool:
 steps:
 - task: Gradle@2
   inputs:
-    workingDirectory: ''
-    gradleWrapperFile: 'gradlew'
+    workingDirectory: 'proj/hwvc_android/'
+    gradleWrapperFile: 'proj/hwvc_android/gradlew'
     gradleOptions: '-Xmx3072m'
     publishJUnitResults: false
     testResultsFiles: '**/TEST-*.xml'
