@@ -4,7 +4,27 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 
 trigger:
-- master
+  batch: true
+  branches:
+    include:
+    - master
+    - develop
+    exclude:
+    - LICENSE
+    - README.md
+    - .gitattributes
+    - .gitignore
+
+pr:
+  branches:
+    include:
+    - master
+    - develop
+    exclude:
+    - LICENSE
+    - README.md
+    - .gitattributes
+    - .gitignore
 
 pool:
   vmImage: 'macos-latest'
