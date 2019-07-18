@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 #include <functional>
+#include <string>
 #include "Object.h"
 
 using namespace std;
@@ -17,7 +18,7 @@ public:
     int what;
     int arg1;
     int64_t arg2;
-    std::string msg;
+    string msg;
     Object *obj = nullptr;
 
     Message(int what, function<void(Message *msg)> runnable);
