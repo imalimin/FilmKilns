@@ -8,6 +8,7 @@
 #include "../include/HwMicrophoneProcessor.h"
 #include "../include/HwMicrophone.h"
 #include "../include/HwAudioCompiler.h"
+#include "../include/HwSequenceModel.h"
 #include "ObjectBox.h"
 
 HwMicrophoneProcessor::HwMicrophoneProcessor() : HwAbsProcessor("HwMicrophoneProcessor") {
@@ -33,4 +34,7 @@ void HwMicrophoneProcessor::start() {
 
 void HwMicrophoneProcessor::pause() {
 
+}
+HwAbsPipelineModel* HwMicrophoneProcessor::createModel() {
+    return HwSequenceModel::build();
 }

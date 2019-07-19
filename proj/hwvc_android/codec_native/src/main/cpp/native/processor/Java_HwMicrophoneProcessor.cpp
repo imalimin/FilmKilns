@@ -7,7 +7,11 @@
 
 #include "jni.h"
 #include "HwMicrophoneProcessor.h"
-#include "HwFrameFormat.h"
+#include "HwSampleFormat.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 static HwMicrophoneProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwMicrophoneProcessor *>(handler);
@@ -25,17 +29,24 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwMicrophoneProcessor_p
     const char *pPilePath = env->GetStringUTFChars(filePath, JNI_FALSE);
     std::string pathStr(pPilePath);
     env->ReleaseStringUTFChars(filePath, pPilePath);
-    getHandler(handler)->prepare(pathStr, {});
+    if (handler) {
+        getHandler(handler)->prepare(pathStr,
+                                     HwSampleFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100));
+    }
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwMicrophoneProcessor_start
         (JNIEnv *env, jobject thiz, jlong handler) {
-    getHandler(handler)->start();
+    if (handler) {
+        getHandler(handler)->start();
+    }
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwMicrophoneProcessor_pause
         (JNIEnv *env, jobject thiz, jlong handler) {
-    getHandler(handler)->pause();
+    if (handler) {
+        getHandler(handler)->pause();
+    }
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwMicrophoneProcessor_release
@@ -45,3 +56,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwMicrophoneProcessor_r
         delete p;
     }
 }
+
+#ifdef __cplusplus
+}
+#endif
