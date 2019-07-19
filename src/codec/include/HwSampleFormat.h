@@ -6,7 +6,7 @@
 #define HARDWAREVIDEOCODEC_HWSAMPLEFORMAT_H
 
 #include "Object.h"
-#include "../include/HwAbsMediaFrame.h"
+#include "HwFrameFormat.h"
 
 class HwSampleFormat : public Object {
 public:
