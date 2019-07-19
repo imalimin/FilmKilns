@@ -12,6 +12,8 @@ class HwSampleFormat : public Object {
 public:
     HwSampleFormat(HwFrameFormat format, uint16_t channels, uint32_t sampleRate);
 
+    HwSampleFormat(const HwSampleFormat &format);
+
     virtual ~HwSampleFormat();
 
     uint16_t getChannels();
@@ -24,6 +26,9 @@ private:
     uint16_t channels = 0;
     uint32_t sampleRate = 0;
     HwFrameFormat format = HwFrameFormat::HW_FMT_NONE;
+
+public:
+    const HwSampleFormat NONE = HwSampleFormat(HwFrameFormat::HW_FMT_NONE, 0, 0);
 };
 
 

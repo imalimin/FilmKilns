@@ -13,6 +13,12 @@ HwSampleFormat::HwSampleFormat(HwFrameFormat format,
     this->sampleRate = sampleRate;
 }
 
+HwSampleFormat::HwSampleFormat(const HwSampleFormat &format) {
+    this->format = format.format;
+    this->channels = format.channels;
+    this->sampleRate = format.sampleRate;
+}
+
 HwSampleFormat::~HwSampleFormat() {
     this->format = HwFrameFormat::HW_FMT_NONE;
     this->channels = 0;

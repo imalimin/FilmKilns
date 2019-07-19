@@ -20,7 +20,7 @@ HwMicrophoneProcessor::~HwMicrophoneProcessor() {
     stopPipeline();
 }
 
-void HwMicrophoneProcessor::prepare(string filePath, HwFrameFormat format) {
+void HwMicrophoneProcessor::prepare(string filePath, HwSampleFormat format) {
     this->format = format;
     Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
     msg->obj = new ObjectBox(&format);
