@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.lmy.samplenative.ui.AudioRecordAndMuxActivity
 import com.lmy.samplenative.ui.BitmapActivity
 import com.lmy.samplenative.ui.CameraActivity
 import com.lmy.samplenative.ui.TestAudioRecorderActivity
@@ -17,6 +18,7 @@ class MainActivity : BaseActivity() {
             Item("Image Editor") { startActivity(Intent(this, ImageActivity::class.java)) },
             Item("Audio Player") { startActivity(Intent(this, AudioActivity::class.java)) },
             Item("Video Player") { startActivity(Intent(this, VideoActivity::class.java)) },
+            Item("Audio Recorder & Mux") { startActivity(Intent(this, AudioRecordAndMuxActivity::class.java)) },
             Item("Video Recorder") { startActivity(Intent(this, CameraActivity::class.java)) },
             Item("Voice Player") { startActivity(Intent(this, AudioPlayerActivity::class.java)) },
             Item("Voice Recorder") { startActivity(Intent(this, TestAudioRecorderActivity::class.java)) },
