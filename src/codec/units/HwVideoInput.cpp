@@ -136,9 +136,55 @@ void HwVideoInput::checkFilter() {
     if (!yuvFilter) {
         yuvFilter = new YUV420PFilter();
         yuvFilter->init(decoder->width(), decoder->height());
+    }
+}
+
+void HwVideoInput::bindTex(HwVideoFrame *frame) {
+    if (GL_NONE == yuv[0] || GL_NONE == yuv[1] || GL_NONE == yuv[2]) {
         yuv[0] = texAllocator->alloc();
         yuv[1] = texAllocator->alloc();
         yuv[2] = texAllocator->alloc();
+        int size = frame->getWidth() * frame->getHeight();
+        glBindTexture(GL_TEXTURE_2D, yuv[0]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth(),
+                     frame->getHeight(), 0,
+                     GL_LUMINANCE,
+                     GL_UNSIGNED_BYTE,
+                     frame->getBuffer()->getData());
+        glBindTexture(GL_TEXTURE_2D, yuv[1]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth() / 2,
+                     frame->getHeight() / 2, 0,
+                     GL_LUMINANCE,
+                     GL_UNSIGNED_BYTE,
+                     frame->getBuffer()->getData() + size);
+        glBindTexture(GL_TEXTURE_2D, yuv[2]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth() / 2,
+                     frame->getHeight() / 2, 0,
+                     GL_LUMINANCE,
+                     GL_UNSIGNED_BYTE,
+                     frame->getBuffer()->getData() + size + size / 4);
+        glBindTexture(GL_TEXTURE_2D, GL_NONE);
+    } else {
+        int size = frame->getWidth() * frame->getHeight();
+        glBindTexture(GL_TEXTURE_2D, yuv[0]);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth(),
+                        frame->getHeight(),
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        frame->getBuffer()->getData());
+        glBindTexture(GL_TEXTURE_2D, yuv[1]);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
+                     frame->getHeight() / 2,
+                     GL_LUMINANCE,
+                     GL_UNSIGNED_BYTE,
+                     frame->getBuffer()->getData() + size);
+        glBindTexture(GL_TEXTURE_2D, yuv[2]);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
+                     frame->getHeight() / 2,
+                     GL_LUMINANCE,
+                     GL_UNSIGNED_BYTE,
+                     frame->getBuffer()->getData() + size + size / 4);
+        glBindTexture(GL_TEXTURE_2D, GL_NONE);
     }
 }
 
@@ -172,27 +218,7 @@ HwResult HwVideoInput::grab() {
         lastPts = curPts;
         lastShowTime = curTimeInUs;
         checkFilter();
-        int size = videoFrame->getWidth() * videoFrame->getHeight();
-        glBindTexture(GL_TEXTURE_2D, yuv[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, videoFrame->getWidth(),
-                     videoFrame->getHeight(), 0,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData());
-        glBindTexture(GL_TEXTURE_2D, yuv[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, videoFrame->getWidth() / 2,
-                     videoFrame->getHeight() / 2, 0,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData() + size);
-        glBindTexture(GL_TEXTURE_2D, yuv[2]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, videoFrame->getWidth() / 2,
-                     videoFrame->getHeight() / 2, 0,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData() + size + size / 4);
-        glBindTexture(GL_TEXTURE_2D, GL_NONE);
-
+        bindTex(videoFrame);
 //        lock->lock();
         glViewport(0, 0, videoFrame->getWidth(), videoFrame->getHeight());
 //        lock->unlock();

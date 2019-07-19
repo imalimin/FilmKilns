@@ -58,12 +58,14 @@ private:
 
     void processPlayListener(int64_t us);
 
+    void bindTex(HwVideoFrame *frame);
+
 private:
     const int INTERVAL_PROGRESS = 1000000;
     TextureAllocator *texAllocator = nullptr;
     AsynVideoDecoder *decoder = nullptr;
     YUV420PFilter *yuvFilter = nullptr;
-    GLuint yuv[3];
+    GLuint yuv[3] = {GL_NONE, GL_NONE, GL_NONE};
     PlayState playState = STOP;
     SimpleLock simpleLock;
     string path;
