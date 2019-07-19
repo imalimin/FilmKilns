@@ -128,11 +128,15 @@ void HwAudioRecorder::stop() {
 }
 
 HwBuffer *HwAudioRecorder::read(size_t size) {
+    return read(size, 0);
+}
+
+HwBuffer *HwAudioRecorder::read(size_t size, int timeOut) {
     if (!fifo) {
         Logcat::e("HWVC", "FIFO invalid");
         return 0;
     }
-    return fifo->take(size, 60000);
+    return fifo->take(size, timeOut);
 }
 
 void HwAudioRecorder::flush() {

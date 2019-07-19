@@ -48,6 +48,8 @@ public:
 
     virtual HwResult write(uint8_t *buffer, size_t size);
 
+    virtual HwResult write(uint8_t *buffer, size_t size, int timeOut);
+
     virtual void flush();
 
     void bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf);
