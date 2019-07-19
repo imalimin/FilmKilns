@@ -29,12 +29,13 @@ void HwMicrophoneProcessor::prepare(string filePath, HwSampleFormat format) {
 }
 
 void HwMicrophoneProcessor::start() {
-//    postEvent(new Message(EVENT_VIDEO_OUT_START, nullptr));
+    postEvent(new Message(EVENT_COMMON_START, nullptr));
 }
 
 void HwMicrophoneProcessor::pause() {
-
+    postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
 }
-HwAbsPipelineModel* HwMicrophoneProcessor::createModel() {
+
+HwAbsPipelineModel *HwMicrophoneProcessor::createModel() {
     return HwSequenceModel::build();
 }

@@ -21,6 +21,8 @@ using namespace std;
 static constexpr int EVENT_COMMON_RELEASE = KID('C', 'O', 'M', 0x01);
 static constexpr int EVENT_COMMON_PREPARE = KID('C', 'O', 'M', 0x02);
 static constexpr int EVENT_COMMON_INVALIDATE = KID('C', 'O', 'M', 0x03);
+static constexpr int EVENT_COMMON_START = KID('C', 'O', 'M', 0x04);
+static constexpr int EVENT_COMMON_PAUSE = KID('C', 'O', 'M', 0x05);
 /**
  * Notify pixels is ready to someone.
  */

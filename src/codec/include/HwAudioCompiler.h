@@ -21,8 +21,11 @@ public:
 
     bool eventPrepare(Message *msg);
 
+    bool eventReceiveData(Message *msg);
+
 private:
     HwFFAudioEncoder *encoder = nullptr;
+    FILE *file = nullptr;
 };
 
 

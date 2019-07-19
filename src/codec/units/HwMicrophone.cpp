@@ -12,6 +12,8 @@
 HwMicrophone::HwMicrophone() : Unit() {
     name = __FUNCTION__;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwMicrophone::eventPrepare));
+    registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&HwMicrophone::eventStart));
+    registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&HwMicrophone::eventPause));
     registerEvent(EVENT_MICROPHONE_LOOP, reinterpret_cast<EventFunc>(&HwMicrophone::eventLoop));
 
 }
@@ -22,7 +24,7 @@ HwMicrophone::~HwMicrophone() {
 
 bool HwMicrophone::eventPrepare(Message *msg) {
     frame = new HwAudioFrame(nullptr, HwFrameFormat::HW_SAMPLE_S32, 2, 44100, 1024);
-    recorder = new HwAudioRecorder(2, 44100, 0x0010, 1024);
+    recorder = new HwAudioRecorder(2, 44100, 0x0020, 1024);
     recorder->start();
     loop();
     return true;
@@ -41,9 +43,23 @@ bool HwMicrophone::eventRelease(Message *msg) {
     return true;
 }
 
+bool HwMicrophone::eventStart(Message *msg) {
+    looping = true;
+    loop();
+    return true;
+}
+
+bool HwMicrophone::eventPause(Message *msg) {
+    looping = false;
+    return true;
+}
+
 bool HwMicrophone::eventLoop(Message *msg) {
-    if (recorder) {
-        HwBuffer *buf = recorder->read(1024);
+    if (recorder && looping) {
+        int64_t time = TimeUtils::getCurrentTimeUS();
+        HwBuffer *buf = recorder->read(8192);
+        Logcat::i("HWVC", "HwMicrophone::eventLoop cost %lld",
+                  TimeUtils::getCurrentTimeUS() - time);
         if (buf) {
             send(buf);
         } else {
