@@ -4,6 +4,8 @@
 
 #include "../include/HwSampleFormat.h"
 
+const HwSampleFormat HwSampleFormat::NONE = HwSampleFormat(HwFrameFormat::HW_FMT_NONE, 0, 0);
+
 HwSampleFormat::HwSampleFormat(HwFrameFormat format,
                                uint16_t channels,
                                uint32_t sampleRate)

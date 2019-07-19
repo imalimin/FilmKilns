@@ -28,7 +28,7 @@ private:
     HwFrameFormat format = HwFrameFormat::HW_FMT_NONE;
 
 public:
-    const HwSampleFormat NONE = HwSampleFormat(HwFrameFormat::HW_FMT_NONE, 0, 0);
+    static const HwSampleFormat NONE;
 };
 
 
