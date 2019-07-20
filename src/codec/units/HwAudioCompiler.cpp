@@ -21,22 +21,23 @@ HwAudioCompiler::~HwAudioCompiler() {
 }
 
 bool HwAudioCompiler::eventRelease(Message *msg) {
-    if (file) {
-        fclose(file);
-        file = nullptr;
+    if (muxer) {
+        delete muxer;
+        muxer = nullptr;
     }
     return true;
 }
 
 bool HwAudioCompiler::eventPrepare(Message *msg) {
-    file = fopen("/sdcard/test.pcm", "wb+");
+    muxer = WAVRawMuxer::build("/sdcard/test.wav",
+                               HwSampleFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100));
     return true;
 }
 
 bool HwAudioCompiler::eventReceiveData(Message *msg) {
     HwBuffer *buf = dynamic_cast<HwBuffer *>(msg->obj);
-    if (buf) {
-        fwrite(buf->getData(), 1, buf->size(), file);
+    if (buf && muxer) {
+        muxer->write(buf);
     }
     return true;
 }

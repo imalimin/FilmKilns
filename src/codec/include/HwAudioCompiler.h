@@ -10,6 +10,7 @@
 
 #include "Unit.h"
 #include "HwFFAudioEncoder.h"
+#include "WAVRawMuxer.h"
 
 class HwAudioCompiler : public Unit {
 public:
@@ -25,7 +26,7 @@ public:
 
 private:
     HwFFAudioEncoder *encoder = nullptr;
-    FILE *file = nullptr;
+    WAVRawMuxer *muxer = nullptr;
 };
 
 
