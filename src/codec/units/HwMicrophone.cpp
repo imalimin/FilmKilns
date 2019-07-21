@@ -73,7 +73,8 @@ void HwMicrophone::send(HwBuffer *buf) {
     if (buf && frame) {
         memcpy(frame->getBuffer()->getData(), buf->getData(), buf->size());
         Message *msg = new Message(EVENT_MICROPHONE_OUT_SAMPLES, nullptr);
-        msg->arg2 = TimeUtils::getCurrentTimeUS();
+        msg->arg1 = 1;
+        msg->arg2 = TimeUtils::getCurrentTimeUS() * 1000;
         msg->obj = HwBuffer::wrap(frame->getBuffer()->getData(), frame->getBuffer()->size());
         postEvent(msg);
     }
