@@ -29,8 +29,8 @@ bool HwAudioCompiler::eventRelease(Message *msg) {
 }
 
 bool HwAudioCompiler::eventPrepare(Message *msg) {
-    muxer = WAVRawMuxer::build("/sdcard/test.wav",
-                               HwSampleFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100));
+    HwSampleFormat *format = dynamic_cast<HwSampleFormat *>(msg->obj);
+    muxer = WAVRawMuxer::build("/sdcard/test.wav", *format);
     return true;
 }
 
