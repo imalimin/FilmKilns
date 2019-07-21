@@ -9,7 +9,7 @@
 #include "../include/HwCameraRecorder.h"
 #include "../include/HwMicrophone.h"
 #include "../include/HwCameraInput.h"
-#include "../include/HwVideoOutput.h"
+#include "../include/HwVideoCompiler.h"
 #include "HwRender.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
@@ -22,7 +22,7 @@ HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwCameraInput());
     registerAnUnit(new HwRender());
     registerAnUnit(new HwScreen());
-    registerAnUnit(new HwVideoOutput());
+    registerAnUnit(new HwVideoCompiler());
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
