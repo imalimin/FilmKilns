@@ -64,21 +64,26 @@ void HandlerThread::sendMessage(Message *msg) {
         return;
     }
     simpleLock.unlock();
-    queue->offer(msg);
-}
-
-void HandlerThread::sendMessageAtFront(Message *msg) {
-    if (!msg) {
-        return;
+    switch (msg->queueMode) {
+        case Message::QUEUE_MODE_UNIQUE: {
+            queue->removeAllMessage(msg->what);
+            queue->offer(msg);
+            break;
+        }
+        case Message::QUEUE_MODE_FIRST_ALWAYS: {
+            queue->offerAtFront(msg);
+            break;
+        }
+        case Message::QUEUE_MODE_CLEAR: {
+            queue->removeAllMessage(msg->what);
+            delete msg;
+            break;
+        }
+        default: {
+            queue->offer(msg);
+            break;
+        }
     }
-    simpleLock.lock();
-    if (requestQuitSafely || requestQuit) {
-        Logcat::e("HWVC", "HandlerThread had quited, skip message %p", msg);
-        simpleLock.unlock();
-        return;
-    }
-    simpleLock.unlock();
-    queue->offerAtFront(msg);
 }
 
 Message *HandlerThread::take() {
@@ -112,10 +117,6 @@ void HandlerThread::quitSafely() {
     this->requestQuitSafely = true;
     simpleLock.unlock();
     quit();
-}
-
-void HandlerThread::removeAllMessage(int what) {
-    queue->removeAllMessage(what);
 }
 
 void HandlerThread::printQueue() {

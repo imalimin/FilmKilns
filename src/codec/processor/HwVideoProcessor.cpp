@@ -61,18 +61,20 @@ void HwVideoProcessor::start() {
 
 void HwVideoProcessor::pause() {
     Message *msg = new Message(EVENT_VIDEO_PAUSE, nullptr);
-    postEventAtFront(msg);
+    msg->queueMode = Message::QUEUE_MODE_FIRST_ALWAYS;
+    postEvent(msg);
 }
 
 void HwVideoProcessor::stop() {
     Message *msg = new Message(EVENT_VIDEO_STOP, nullptr);
-    postEventAtFront(msg);
+    msg->queueMode = Message::QUEUE_MODE_FIRST_ALWAYS;
+    postEvent(msg);
 }
 
 void HwVideoProcessor::seek(int64_t us) {
-    removeAllMessage(EVENT_VIDEO_SEEK);
     Message *msg = new Message(EVENT_VIDEO_SEEK, nullptr);
     msg->arg2 = us;
+    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 

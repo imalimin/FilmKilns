@@ -18,8 +18,8 @@ HwVideoOutput::HwVideoOutput() : Unit() {
     registerEvent(EVENT_COMMON_PIXELS_READY,
                   reinterpret_cast<EventFunc>(&HwVideoOutput::eventResponsePixels));
     registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoOutput::eventWrite));
-    registerEvent(EVENT_VIDEO_OUT_START, reinterpret_cast<EventFunc>(&HwVideoOutput::eventStart));
-    registerEvent(EVENT_VIDEO_OUT_PAUSE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventPause));
+    registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&HwVideoOutput::eventStart));
+    registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventPause));
     registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
                   reinterpret_cast<EventFunc>(&HwVideoOutput::eventSamples));
 }
@@ -68,7 +68,8 @@ bool HwVideoOutput::eventRelease(Message *msg) {
 
 bool HwVideoOutput::eventResponsePixels(Message *msg) {
     if (recording) {
-        postEventAtFront(new Message(EVENT_COMMON_PIXELS_READ, nullptr));
+        postEvent(new Message(EVENT_COMMON_PIXELS_READ, nullptr,
+                              Message::QUEUE_MODE_FIRST_ALWAYS, nullptr));
     }
     return true;
 }

@@ -34,10 +34,6 @@ protected:
 
     void postEvent(Message *msg);
 
-    void postEventAtFront(Message *msg);
-
-    void removeAllMessage(int what);
-
     virtual HwAbsPipelineModel *createModel() = 0;
 
 private:

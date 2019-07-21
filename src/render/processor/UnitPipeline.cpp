@@ -38,18 +38,10 @@ void UnitPipeline::release() {
 }
 
 void UnitPipeline::postEvent(Message *msg) {
-    postEvent(msg, false);
-}
-
-void UnitPipeline::postEventAtFront(Message *msg) {
-    postEvent(msg, true);
-}
-
-void UnitPipeline::postEvent(Message *msg1, bool front) {
     if (pipeline) {
         // If runnable is not null.Just run, not dispatch.
-        if (!(msg1->runnable)) {
-            msg1->runnable = [this](Message *msg2) {
+        if (!(msg->runnable)) {
+            msg->runnable = [this](Message *msg2) {
                 /**
                  * @NOTE 不置空的话会出现不可预料的崩溃
                  */
@@ -59,24 +51,14 @@ void UnitPipeline::postEvent(Message *msg1, bool front) {
         }
         simpleLock.lock();
         if (available) {
-            if (front) {
-                pipeline->sendMessageAtFront(msg1);
-            } else {
-                pipeline->sendMessage(msg1);
-            }
+            pipeline->sendMessage(msg);
         } else {
-            Logcat::i("HWVC", "UnitPipeline skip message %p", msg1);
-            delete msg1;
+            Logcat::i("HWVC", "UnitPipeline skip message %p", msg);
+            delete msg;
         }
         simpleLock.unlock();
     } else {
-        this->dispatch(msg1);
-    }
-}
-
-void UnitPipeline::removeAllMessage(int what) {
-    if (pipeline) {
-        pipeline->removeAllMessage(what);
+        this->dispatch(msg);
     }
 }
 

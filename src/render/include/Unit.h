@@ -26,17 +26,17 @@ static constexpr int EVENT_COMMON_PAUSE = KID('C', 'O', 'M', 0x05);
 /**
  * Notify pixels is ready to someone.
  */
-static constexpr int EVENT_COMMON_PIXELS_READY = KID('C', 'O', 'M', 0x04);
+static constexpr int EVENT_COMMON_PIXELS_READY = KID('C', 'O', 'M', 0x06);
 /**
  * Response 'EVENT_COMMON_PIXELS_READY' event for notify Unit read pixels.
  * If nobody response this event, read pixels action will be cancel.
  */
-static constexpr int EVENT_COMMON_PIXELS_READ = KID('C', 'O', 'M', 0x05);
+static constexpr int EVENT_COMMON_PIXELS_READ = KID('C', 'O', 'M', 0x07);
 /**
  * If someone response 'EVENT_COMMON_PIXELS_READY' event, then send pixels to pipeline.
  * You can handle this event.
  */
-static constexpr int EVENT_COMMON_PIXELS = KID('C', 'O', 'M', 0x06);
+static constexpr int EVENT_COMMON_PIXELS = KID('C', 'O', 'M', 0x08);
 
 static constexpr int EVENT_IMAGE_SHOW = KID('I', 'M', 'G', 0x01);
 
@@ -113,8 +113,6 @@ protected:
     string name;
 
     void postEvent(Message *msg);
-
-    void postEventAtFront(Message *msg);
 
 private:
     map<int, Event *> eventMap;

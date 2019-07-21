@@ -46,22 +46,22 @@ void HwCameraRecorder::updateWindow(HwWindow *win) {
 }
 
 void HwCameraRecorder::start() {
-    postEvent(new Message(EVENT_VIDEO_OUT_START, nullptr));
+    postEvent(new Message(EVENT_COMMON_START, nullptr));
 }
 
 void HwCameraRecorder::pause() {
-    postEvent(new Message(EVENT_VIDEO_OUT_PAUSE, nullptr));
+    postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
 }
 
 void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
     int width = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width;
     int height = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height;
-    removeAllMessage(EVENT_RENDER_FILTER);
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     msg->obj = new ObjectBox(new Size(width, height));
     msg->msg = "RENDER";
     msg->arg1 = textureId;
     msg->arg2 = tsInNs;
+    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 

@@ -57,9 +57,9 @@ void HwAudioProcessor::stop() {
 }
 
 void HwAudioProcessor::seek(int64_t us) {
-    removeAllMessage(EVENT_AUDIO_SEEK);
     Message *msg = new Message(EVENT_AUDIO_SEEK, nullptr);
     msg->arg2 = us;
+    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 

@@ -163,5 +163,5 @@ void HwRender::renderFilter(GLuint texture) {
 }
 
 void HwRender::notifyPixelsReady() {
-    postEventAtFront(new Message(EVENT_COMMON_PIXELS_READY, nullptr));
+    postEvent(new Message(EVENT_COMMON_PIXELS_READY, nullptr, Message::QUEUE_MODE_FIRST_ALWAYS, nullptr));
 }
