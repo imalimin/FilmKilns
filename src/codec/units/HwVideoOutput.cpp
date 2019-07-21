@@ -7,7 +7,7 @@
 
 #include "../include/HwVideoOutput.h"
 #include "../include/HwSequenceModel.h"
-#include "../include/HwFFmpegEncoder.h"
+#include "../include/HwAsyncEncoder.h"
 #include "../platform/android/encoder/HwAndroidEncoder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
@@ -38,7 +38,7 @@ int HwVideoOutput::getHeight() {
 
 bool HwVideoOutput::eventPrepare(Message *msg) {
     recording = false;
-    encoder = new HwFFmpegEncoder();
+    encoder = new HwAsyncEncoder();
     if (!encoder->prepare(static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path,
                           getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoOutput::eventPrepare encoder open failed.");

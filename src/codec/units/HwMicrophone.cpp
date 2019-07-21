@@ -56,14 +56,9 @@ bool HwMicrophone::eventPause(Message *msg) {
 
 bool HwMicrophone::eventLoop(Message *msg) {
     if (recorder && looping) {
-        int64_t time = TimeUtils::getCurrentTimeUS();
         HwBuffer *buf = recorder->read(8192);
-        Logcat::i("HWVC", "HwMicrophone::eventLoop cost %lld",
-                  TimeUtils::getCurrentTimeUS() - time);
         if (buf) {
             send(buf);
-        } else {
-            Thread::sleep(2000);
         }
         loop();
     }
@@ -71,7 +66,7 @@ bool HwMicrophone::eventLoop(Message *msg) {
 }
 
 void HwMicrophone::loop() {
-    postEvent(new Message(EVENT_MICROPHONE_LOOP, nullptr));
+    postEvent(new Message(EVENT_MICROPHONE_LOOP, nullptr, Message::QUEUE_MODE_UNIQUE, nullptr));
 }
 
 void HwMicrophone::send(HwBuffer *buf) {
