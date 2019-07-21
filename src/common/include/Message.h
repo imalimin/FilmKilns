@@ -15,9 +15,9 @@ using namespace std;
 class Message : public Object {
 public:
     function<void(Message *msg)> runnable = nullptr;
-    int what;
-    int arg1;
-    int64_t arg2;
+    int what = 0;
+    int arg1 = 0;
+    int64_t arg2 = 0;
     string msg;
     Object *obj = nullptr;
     int16_t queueMode = QUEUE_MODE_NORMAL;
