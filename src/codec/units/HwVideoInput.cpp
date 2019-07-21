@@ -106,7 +106,7 @@ bool HwVideoInput::eventSetSource(Message *msg) {
 }
 
 void HwVideoInput::loop() {
-    postEvent(new Message(EVENT_VIDEO_LOOP, nullptr));
+    postEvent(new Message(EVENT_VIDEO_LOOP, nullptr, Message::QUEUE_MODE_UNIQUE, nullptr));
 }
 
 bool HwVideoInput::eventLoop(Message *msg) {
