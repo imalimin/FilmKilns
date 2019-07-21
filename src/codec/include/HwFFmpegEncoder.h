@@ -55,6 +55,7 @@ private:
     AVPacket *avPacket = nullptr;
     AVFrame *avAudioFrame = nullptr;
     HwAudioTranslator *translator = nullptr;
+    bool firstVideoFrameWrite = false;
 };
 
 #ifdef __cplusplus
