@@ -47,6 +47,7 @@ HwResult HwAsyncEncoder::write(HwAbsMediaFrame *frame) {
     if (temp) {
         cache.push(temp);
         writeBlock.notify();
+        return Hw::SUCCESS;
     }
     return Hw::FAILED;
 }

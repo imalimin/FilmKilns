@@ -14,7 +14,8 @@
 
 HwVideoCompiler::HwVideoCompiler() : Unit() {
     name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoCompiler::eventPrepare));
+    registerEvent(EVENT_COMMON_PREPARE,
+                  reinterpret_cast<EventFunc>(&HwVideoCompiler::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READY,
                   reinterpret_cast<EventFunc>(&HwVideoCompiler::eventResponsePixels));
     registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoCompiler::eventWrite));
@@ -101,7 +102,7 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
         return;
     }
     //Enable NV12 or YV12
-#if 0
+#if 1
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     int64_t time = TimeUtils::getCurrentTimeUS();
     libyuv::NV12ToI420(buf->getData(), videoFrame->getWidth(),
@@ -124,7 +125,7 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
     }
     timestamp += (tsInNs - lastTsInNs);
     lastTsInNs = tsInNs;
-    videoFrame->setPts(timestamp / 1000);
+    videoFrame->setPts(aTimestamp / 1000);
     ++count;
     if (encoder) {
         encoder->write(videoFrame);
