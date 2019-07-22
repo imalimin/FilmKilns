@@ -6,9 +6,12 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.lmy.hwvcnative.CPPObject
+import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.devices.CameraWrapper
+import com.lmy.hwvcnative.filter.Filter
 
-class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
+class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvailableListener {
+    private var filter: Filter? = null
     private var camera: CameraWrapper? = null
     private var prepared = false
 
@@ -90,6 +93,19 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
         }
     }
 
+    override fun setFilter(filter: Filter) {
+        if (isNativeNull()) return
+        this.filter = filter
+        setFilter(handler, filter.handler)
+    }
+
+    override fun getFilter(): Filter? {
+        return this.filter
+    }
+
+    override fun invalidate() {
+    }
+
     private external fun create(): Long
     private external fun prepare(handler: Long, surface: Surface)
     private external fun updateWindow(handler: Long, surface: Surface)
@@ -100,4 +116,5 @@ class HwCameraRecorder : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     private external fun invalidate(handler: Long, textureId: Int, tsInNs: Long, w: Int, h: Int)
     private external fun setOutputFilePath(handler: Long, filePath: String)
     private external fun setOutputSize(handler: Long, width: Int, height: Int)
+    private external fun setFilter(handler: Long, filter: Long)
 }

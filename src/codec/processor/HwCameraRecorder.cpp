@@ -73,3 +73,9 @@ void HwCameraRecorder::setOutputSize(int width, int height) {
     static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width = width;
     static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height = height;
 }
+
+void HwCameraRecorder::setFilter(Filter *filter) {
+    Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
+    msg->obj = new ObjectBox(filter);
+    postEvent(msg);
+}

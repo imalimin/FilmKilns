@@ -115,6 +115,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invali
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setFilter
+        (JNIEnv *env, jobject thiz, jlong handler, jlong filter) {
+    if (handler && filter) {
+        getHandler(handler)->setFilter(reinterpret_cast<Filter *>(filter));
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif

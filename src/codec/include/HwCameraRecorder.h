@@ -10,6 +10,7 @@
 
 #include "HwAbsProcessor.h"
 #include "HwWindow.h"
+#include "Filter.h"
 
 /**
  *    Controller                Unit                  Unit               Unit                 Unit
@@ -52,6 +53,8 @@ public:
     void setOutputFilePath(string filePath);
 
     void setOutputSize(int width, int height);
+
+    void setFilter(Filter *filter);
 
 protected:
     HwAbsPipelineModel *createModel() override;

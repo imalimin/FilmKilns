@@ -10,6 +10,8 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="false" />
 
+    <include layout="@layout/view_filter" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

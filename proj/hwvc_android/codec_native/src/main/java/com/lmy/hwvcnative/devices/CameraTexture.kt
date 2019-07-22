@@ -50,8 +50,8 @@ class CameraTexture(width: Int, height: Int,
     }
 
     private fun createProgram(): Boolean {
-        val vertex = readFileString("/sdcard/vertex_camera.glsl")
-        val fragment = readFileString("/sdcard/fragment_camera.glsl")
+        val vertex = VERTEX
+        val fragment = FRAGMENT
         if (null == vertex || null == fragment) {
             return false
         }
@@ -82,5 +82,24 @@ class CameraTexture(width: Int, height: Int,
         GLES20.glUseProgram(GLES20.GL_NONE)
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_NONE)
         GLES20.glFlush()
+    }
+
+    companion object {
+        val FRAGMENT = "#extension GL_OES_EGL_image_external : require\n" +
+                "precision mediump float;\n" +
+                "varying mediump vec2 vTextureCoord;\n" +
+                "uniform samplerExternalOES uTexture;\n" +
+                "void main(){\n" +
+                "    vec4 color = vec4(texture2D(uTexture, vTextureCoord).rgb, 1.0);\n" +
+                "    gl_FragColor = color;\n" +
+                "}"
+        val VERTEX = "attribute vec4 aPosition;\n" +
+                "attribute vec4 aTextureCoord;\n" +
+                "uniform mat4 uTextureMatrix;\n" +
+                "varying vec2 vTextureCoord;\n" +
+                "void main(){\n" +
+                "    gl_Position= aPosition;\n" +
+                "    vTextureCoord = (uTextureMatrix * aTextureCoord).xy;\n" +
+                "}"
     }
 }
