@@ -7,27 +7,27 @@
 
 #include "../include/HwAbsProcessor.h"
 #include "../include/Unit.h"
-#include "HwString.h"
+#include "../include/HwModelProvider.h"
+#include "HwPair.h"
 
 HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
+    pipeline = new UnitPipeline(name);
+    provider = new HwModelProvider();
+    registerAnUnit(provider);
 }
 
 HwAbsProcessor::~HwAbsProcessor() {
-}
-
-void HwAbsProcessor::startPipeline() {
-    if (!pipeline) {
-        pipeline = new UnitPipeline(name);
-    }
-}
-
-void HwAbsProcessor::stopPipeline() {
     if (pipeline) {
         pipeline->release();
         delete pipeline;
         pipeline = nullptr;
     }
     provider = nullptr;
+    onDestroy();
+}
+
+void HwAbsProcessor::onDestroy() {
+
 }
 
 void HwAbsProcessor::registerAnUnit(Unit *unit) {
@@ -67,7 +67,7 @@ void HwAbsProcessor::putInt32(string unit, string key, int32_t value) {
     Message *msg = new Message(HwModelProvider::EVENT_PUT_INT32, nullptr,
                                Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
     msg->arg1 = value;
-    msg->obj = new HwString(unit + "_" + key);
+    msg->obj = new HwPair<string, int32_t>(unit + "_" + key, value);
     postEvent(msg);
 }
 
@@ -75,13 +75,13 @@ void HwAbsProcessor::putInt64(string unit, string key, int64_t value) {
     Message *msg = new Message(HwModelProvider::EVENT_PUT_INT64, nullptr,
                                Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
     msg->arg2 = value;
-    msg->obj = new HwString(unit + "_" + key);
+    msg->obj = new HwPair<string, int64_t>(unit + "_" + key, value);
     postEvent(msg);
 }
 
 void HwAbsProcessor::putString(string unit, string key, string value) {
     Message *msg = new Message(HwModelProvider::EVENT_PUT_STRING, nullptr,
                                Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
-    msg->obj = new HwString(unit + "_" + key);
+    msg->obj = new HwPair<string, string>(unit + "_" + key, value);
     postEvent(msg);
 }

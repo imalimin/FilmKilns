@@ -11,13 +11,11 @@
 #include "ObjectBox.h"
 
 HwMicrophoneProcessor::HwMicrophoneProcessor() : HwAbsProcessor("HwMicrophoneProcessor") {
-    startPipeline();
     registerAnUnit(new HwMicrophone());
     registerAnUnit(new HwAudioCompiler());
 }
 
 HwMicrophoneProcessor::~HwMicrophoneProcessor() {
-    stopPipeline();
 }
 
 void HwMicrophoneProcessor::prepare(string filePath, HwSampleFormat format) {

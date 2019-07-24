@@ -18,6 +18,8 @@ public:
 
     virtual ~HwAudioProcessor();
 
+    virtual void onDestroy() override;
+
     void setSource(const string path);
 
     void prepare();

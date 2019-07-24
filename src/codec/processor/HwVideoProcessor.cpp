@@ -14,7 +14,6 @@
 #include <string>
 
 HwVideoProcessor::HwVideoProcessor() : HwAbsProcessor("VideoProcessor") {
-    startPipeline();
     HwVideoInput *inputUnit = new HwVideoInput();
     inputUnit->setPlayListener([this](int64_t us, int64_t duration) {
         this->playProgressListener(us, duration);
@@ -26,7 +25,10 @@ HwVideoProcessor::HwVideoProcessor() : HwAbsProcessor("VideoProcessor") {
 }
 
 HwVideoProcessor::~HwVideoProcessor() {
-    stopPipeline();
+}
+
+void HwVideoProcessor::onDestroy() {
+    HwAbsProcessor::onDestroy();
     if (unitHandler) {
         delete unitHandler;
         unitHandler = nullptr;

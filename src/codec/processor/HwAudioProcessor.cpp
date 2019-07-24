@@ -11,7 +11,6 @@
 #include "ObjectBox.h"
 
 HwAudioProcessor::HwAudioProcessor() : HwAbsProcessor("AudioProcessor") {
-    startPipeline();
     HwAudioInput *inputUnit = new HwAudioInput();
     inputUnit->setPlayListener([this](int64_t us, int64_t duration) {
         this->playProgressListener(us, duration);
@@ -21,7 +20,9 @@ HwAudioProcessor::HwAudioProcessor() : HwAbsProcessor("AudioProcessor") {
 }
 
 HwAudioProcessor::~HwAudioProcessor() {
-    stopPipeline();
+}
+
+void HwAudioProcessor::onDestroy() {
     playProgressListener = nullptr;
 }
 

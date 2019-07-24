@@ -16,7 +16,6 @@
 #include "NativeWindow.h"
 
 HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
-    startPipeline();
     registerAnUnit(new HwMicrophone());
     registerAnUnit(new HwCameraInput());
     registerAnUnit(new HwRender());
@@ -25,7 +24,10 @@ HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
-    stopPipeline();
+}
+
+void HwCameraRecorder::onDestroy() {
+    HwAbsProcessor::onDestroy();
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {

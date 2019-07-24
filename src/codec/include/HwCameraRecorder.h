@@ -40,6 +40,8 @@ public:
 
     virtual ~HwCameraRecorder();
 
+    virtual void onDestroy() override;
+
     void prepare(HwWindow *win);
 
     void updateWindow(HwWindow *win);

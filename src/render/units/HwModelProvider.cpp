@@ -6,7 +6,7 @@
  */
 
 #include "../include/HwModelProvider.h"
-#include "HwString.h"
+#include "HwPair.h"
 
 const int HwModelProvider::EVENT_PUT_INT32 = KID('M', 'O', 'P', 0x01);
 const int HwModelProvider::EVENT_PUT_INT64 = KID('M', 'O', 'P', 0x02);
@@ -28,25 +28,25 @@ bool HwModelProvider::eventRelease(Message *msg) {
 }
 
 bool HwModelProvider::eventPutInt32(Message *msg) {
-    HwString *key = static_cast<HwString *>(msg->tyrUnBox());
-    if (key) {
-        bundle.putInt64(key->str(), msg->arg1);
+    HwPair<string, int32_t> *p = static_cast<HwPair<string, int32_t> *>(msg->obj);
+    if (p) {
+        bundle.putInt32(p->key(), p->value());
     }
     return true;
 }
 
 bool HwModelProvider::eventPutInt64(Message *msg) {
-    HwString *key = static_cast<HwString *>(msg->tyrUnBox());
-    if (key) {
-        bundle.putInt64(key->str(), msg->arg2);
+    HwPair<string, int64_t> *p = static_cast<HwPair<string, int64_t> *>(msg->obj);
+    if (p) {
+        bundle.putInt64(p->key(), p->value());
     }
     return true;
 }
 
 bool HwModelProvider::eventPutString(Message *msg) {
-    HwString *key = static_cast<HwString *>(msg->tyrUnBox());
-    if (key) {
-        bundle.putString(key->str(), "");
+    HwPair<string, string> *p = static_cast<HwPair<string, string> *>(msg->obj);
+    if (p) {
+        bundle.putString(p->key(), p->value());
     }
     return true;
 }

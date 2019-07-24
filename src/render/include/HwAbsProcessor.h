@@ -24,9 +24,10 @@ public:
     void post(function<void()> runnable);
 
 protected:
-    void startPipeline();
-
-    void stopPipeline();
+    /**
+     * Be call after release pipeline.
+     */
+    virtual void onDestroy();
 
     void registerAnUnit(Unit *unit);
 
