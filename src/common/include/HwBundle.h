@@ -23,13 +23,18 @@ public:
 
     void putInt64(string key, int64_t value);
 
+    void putString(string key, string value);
+
     int32_t getInt32(string key);
 
     int64_t getInt64(string key);
 
+    string getString(string key);
+
 private:
     map<string, int32_t> int32Map;
     map<string, int64_t> int64Map;
+    map<string, string> stringMap;
 };
 
 

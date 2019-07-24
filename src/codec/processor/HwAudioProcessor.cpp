@@ -25,10 +25,6 @@ HwAudioProcessor::~HwAudioProcessor() {
     playProgressListener = nullptr;
 }
 
-HwAbsPipelineModel *HwAudioProcessor::createModel() {
-    return new HwAbsPipelineModel();
-}
-
 void HwAudioProcessor::setSource(const string path) {
     Message *msg = new Message(EVENT_AUDIO_SET_SOURCE, nullptr);
     msg->obj = new ObjectBox(new string(path));

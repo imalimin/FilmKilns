@@ -14,7 +14,6 @@
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "NativeWindow.h"
-#include "../include/HwSequenceModel.h"
 
 HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
     startPipeline();
@@ -27,10 +26,6 @@ HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
 
 HwCameraRecorder::~HwCameraRecorder() {
     stopPipeline();
-}
-
-HwAbsPipelineModel *HwCameraRecorder::createModel() {
-    return HwSequenceModel::build();
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {
@@ -54,8 +49,8 @@ void HwCameraRecorder::pause() {
 }
 
 void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
-    int width = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width;
-    int height = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height;
+    int width = 320;
+    int height = 480;
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     msg->obj = new ObjectBox(new Size(width, height));
     msg->msg = "RENDER";
@@ -66,12 +61,12 @@ void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
 }
 
 void HwCameraRecorder::setOutputFilePath(string filePath) {
-    static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path = filePath;
+    putString("", "path", filePath);
 }
 
 void HwCameraRecorder::setOutputSize(int width, int height) {
-    static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width = width;
-    static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height = height;
+    putInt32("", "width", width);
+    putInt32("", "height", height);
 }
 
 void HwCameraRecorder::setFilter(Filter *filter) {

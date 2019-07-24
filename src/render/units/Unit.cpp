@@ -4,6 +4,7 @@
 
 #include "../include/Unit.h"
 #include "log.h"
+#include "../include/HwModelProvider.h"
 
 Event::Event(int what, EventFunc handler) {
     this->what = what;
@@ -84,10 +85,10 @@ void Unit::post(function<void()> runnable) {
     }
 }
 
-void Unit::setModel(HwAbsPipelineModel *model) {
-    this->model = model;
+void Unit::setModelProvider(void *provider) {
+    this->provider = provider;
 }
 
-HwAbsPipelineModel *Unit::getModel() {
-    return model;
+void *Unit::getModelProvider() {
+    return this->provider;
 }

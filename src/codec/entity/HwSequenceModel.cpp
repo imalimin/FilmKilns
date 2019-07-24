@@ -11,7 +11,7 @@ HwSequenceModel *HwSequenceModel::build() {
     return new HwSequenceModel();
 }
 
-HwSequenceModel::HwSequenceModel() : HwAbsPipelineModel(), pCodecConfig(HwCodecConfig::build()) {
+HwSequenceModel::HwSequenceModel() : Object(), pCodecConfig(HwCodecConfig::build()) {
 
 }
 

@@ -6,11 +6,11 @@
 */
 
 #include "../include/HwVideoCompiler.h"
-#include "../include/HwSequenceModel.h"
 #include "../include/HwAsyncEncoder.h"
 #include "../platform/android/encoder/HwAndroidEncoder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
+#include "HwModelProvider.h"
 
 HwVideoCompiler::HwVideoCompiler() : Unit() {
     name = __FUNCTION__;
@@ -30,18 +30,18 @@ HwVideoCompiler::~HwVideoCompiler() {
 }
 
 int HwVideoCompiler::getWidth() {
-    return static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width;
+    return static_cast<HwModelProvider *>(getModelProvider())->getInt32("width");
 }
 
 int HwVideoCompiler::getHeight() {
-    return static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height;
+    return static_cast<HwModelProvider *>(getModelProvider())->getInt32("height");
 }
 
 bool HwVideoCompiler::eventPrepare(Message *msg) {
     recording = false;
     encoder = new HwAsyncEncoder();
-    if (!encoder->prepare(static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path,
-                          getWidth(), getHeight())) {
+    string path = static_cast<HwModelProvider *>(getModelProvider())->getString("path");
+    if (!encoder->prepare(path, getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }
     videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, getWidth(), getHeight());

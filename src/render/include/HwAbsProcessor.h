@@ -11,7 +11,7 @@
 #include "Object.h"
 #include <string>
 #include "UnitPipeline.h"
-#include "HwAbsPipelineModel.h"
+#include "HwModelProvider.h"
 
 using namespace std;
 
@@ -23,8 +23,6 @@ public:
 
     void post(function<void()> runnable);
 
-    HwAbsPipelineModel *getModel();
-
 protected:
     void startPipeline();
 
@@ -34,15 +32,16 @@ protected:
 
     void postEvent(Message *msg);
 
-    virtual HwAbsPipelineModel *createModel() = 0;
+    void putInt32(string unit, string key, int32_t value);
 
-private:
-    void _createModel();
+    void putInt64(string unit, string key, int64_t value);
+
+    void putString(string unit, string key, string value);
 
 private:
     string name;
     UnitPipeline *pipeline = nullptr;
-    HwAbsPipelineModel *model = nullptr;
+    HwModelProvider *provider = nullptr;
 };
 
 

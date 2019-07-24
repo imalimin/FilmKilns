@@ -55,9 +55,6 @@ public:
     void setOutputSize(int width, int height);
 
     void setFilter(Filter *filter);
-
-protected:
-    HwAbsPipelineModel *createModel() override;
 };
 
 

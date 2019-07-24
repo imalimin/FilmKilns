@@ -12,7 +12,7 @@
 #include "EventPipeline.h"
 #include "Message.h"
 #include <map>
-#include "../include/HwAbsPipelineModel.h"
+//#include "HwModelProvider.h"
 
 #define KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
 
@@ -105,9 +105,9 @@ public:
 
     void post(function<void()> runnable);
 
-    void setModel(HwAbsPipelineModel *model);
+    void setModelProvider(void *provider);
 
-    HwAbsPipelineModel *getModel();
+    void *getModelProvider();
 
 protected:
     string name;
@@ -118,7 +118,7 @@ private:
     map<int, Event *> eventMap;
     UnitPipeline *pipeline = nullptr;
     EventPipeline *eventPipeline = nullptr;
-    HwAbsPipelineModel *model = nullptr;
+    void *provider = nullptr;
     SimpleLock simpleLock;
 };
 

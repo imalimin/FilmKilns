@@ -23,9 +23,6 @@ public:
 
     void pause();
 
-protected:
-    HwAbsPipelineModel *createModel() override;
-
 private:
     HwSampleFormat format = HwSampleFormat::NONE;
 };

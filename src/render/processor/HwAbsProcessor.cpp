@@ -7,22 +7,18 @@
 
 #include "../include/HwAbsProcessor.h"
 #include "../include/Unit.h"
+#include "HwString.h"
 
 HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
 }
 
 HwAbsProcessor::~HwAbsProcessor() {
-    if (model) {
-        delete model;
-        model = nullptr;
-    }
 }
 
 void HwAbsProcessor::startPipeline() {
     if (!pipeline) {
         pipeline = new UnitPipeline(name);
     }
-    _createModel();
 }
 
 void HwAbsProcessor::stopPipeline() {
@@ -31,18 +27,20 @@ void HwAbsProcessor::stopPipeline() {
         delete pipeline;
         pipeline = nullptr;
     }
+    provider = nullptr;
 }
 
 void HwAbsProcessor::registerAnUnit(Unit *unit) {
     if (pipeline) {
-        if(!getModel()){
-            Logcat::e("HWVC", "HwAbsProcessor::registerAnUnit failed. You must create an pipeline model.");
-            return;
-        }
-        unit->setModel(getModel());
+//        if(!provider){
+//            Logcat::e("HWVC", "HwAbsProcessor::registerAnUnit failed. You must create an pipeline model.");
+//            return;
+//        }
+        unit->setModelProvider(provider);
         pipeline->registerAnUnit(unit);
     } else {
-        Logcat::e("HWVC", "HwAbsProcessor::registerAnUnit failed. You must call startPipeline first.");
+        Logcat::e("HWVC",
+                  "HwAbsProcessor::registerAnUnit failed. You must call startPipeline first.");
     }
 }
 
@@ -65,10 +63,25 @@ void HwAbsProcessor::post(function<void()> runnable) {
     }
 }
 
-HwAbsPipelineModel *HwAbsProcessor::getModel() {
-    return model;
+void HwAbsProcessor::putInt32(string unit, string key, int32_t value) {
+    Message *msg = new Message(HwModelProvider::EVENT_PUT_INT32, nullptr,
+                               Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
+    msg->arg1 = value;
+    msg->obj = new HwString(unit + "_" + key);
+    postEvent(msg);
 }
 
-void HwAbsProcessor::_createModel() {
-    model = createModel();
+void HwAbsProcessor::putInt64(string unit, string key, int64_t value) {
+    Message *msg = new Message(HwModelProvider::EVENT_PUT_INT64, nullptr,
+                               Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
+    msg->arg2 = value;
+    msg->obj = new HwString(unit + "_" + key);
+    postEvent(msg);
+}
+
+void HwAbsProcessor::putString(string unit, string key, string value) {
+    Message *msg = new Message(HwModelProvider::EVENT_PUT_STRING, nullptr,
+                               Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
+    msg->obj = new HwString(unit + "_" + key);
+    postEvent(msg);
 }

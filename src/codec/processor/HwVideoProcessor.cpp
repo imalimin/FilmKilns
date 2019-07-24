@@ -38,10 +38,6 @@ HwVideoProcessor::~HwVideoProcessor() {
     playProgressListener = nullptr;
 }
 
-HwAbsPipelineModel *HwVideoProcessor::createModel() {
-    return new HwAbsPipelineModel();
-}
-
 void HwVideoProcessor::setSource(const string path) {
     Message *msg = new Message(EVENT_VIDEO_SET_SOURCE, nullptr);
     msg->obj = new ObjectBox(new string(path));
