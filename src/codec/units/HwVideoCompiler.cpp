@@ -11,8 +11,7 @@
 #include "libyuv.h"
 #include "TimeUtils.h"
 
-HwVideoCompiler::HwVideoCompiler() : Unit() {
-    name = __FUNCTION__;
+HwVideoCompiler::HwVideoCompiler(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE,
                   reinterpret_cast<EventFunc>(&HwVideoCompiler::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READY,

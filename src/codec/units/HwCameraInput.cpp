@@ -9,8 +9,7 @@
 #include "Egl.h"
 #include "NativeWindow.h"
 
-HwCameraInput::HwCameraInput() : Unit() {
-    name = __FUNCTION__;
+HwCameraInput::HwCameraInput(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwCameraInput::eventPrepare));
 }
 

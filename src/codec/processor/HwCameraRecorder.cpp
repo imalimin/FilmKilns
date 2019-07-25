@@ -16,11 +16,11 @@
 #include "NativeWindow.h"
 
 HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
-    registerAnUnit(new HwMicrophone());
-    registerAnUnit(new HwCameraInput());
-    registerAnUnit(new HwRender());
-    registerAnUnit(new HwScreen());
-    registerAnUnit(new HwVideoCompiler());
+    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
+    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
+    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
 }
 
 HwCameraRecorder::~HwCameraRecorder() {

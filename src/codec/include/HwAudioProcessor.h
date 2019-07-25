@@ -35,6 +35,8 @@ public:
     void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 
 private:
+    const string ALIAS_OF_AUDIO = "AUDIO";
+    const string ALIAS_OF_SPEAKER = "SPEAKER";
     function<void(int64_t, int64_t)> playProgressListener = nullptr;
 };
 

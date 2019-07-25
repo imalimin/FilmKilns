@@ -24,6 +24,8 @@ public:
     void pause();
 
 private:
+    const string ALIAS_OF_MIC = "MIC";
+    const string ALIAS_OF_COMPILER = "COMPILER";
     HwSampleFormat format = HwSampleFormat::NONE;
 };
 

@@ -12,9 +12,7 @@
 
 class HwScreen : public Unit {
 public:
-    HwScreen();
-
-    HwScreen(HandlerThread *handlerThread);
+    HwScreen(string alias);
 
     virtual ~HwScreen();
 

@@ -14,9 +14,7 @@
 
 class HwAudioInput : public HwStreamMedia {
 public:
-    HwAudioInput();
-
-    HwAudioInput(HandlerThread *handlerThread);
+    HwAudioInput(string alias);
 
     virtual ~HwAudioInput();
 

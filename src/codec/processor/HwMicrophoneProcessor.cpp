@@ -11,8 +11,8 @@
 #include "ObjectBox.h"
 
 HwMicrophoneProcessor::HwMicrophoneProcessor() : HwAbsProcessor("HwMicrophoneProcessor") {
-    registerAnUnit(new HwMicrophone());
-    registerAnUnit(new HwAudioCompiler());
+    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new HwAudioCompiler(ALIAS_OF_COMPILER));
 }
 
 HwMicrophoneProcessor::~HwMicrophoneProcessor() {

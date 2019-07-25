@@ -14,7 +14,7 @@
 
 class HwMicrophone : public Unit {
 public:
-    HwMicrophone();
+    HwMicrophone(string alias);
 
     virtual ~HwMicrophone();
 

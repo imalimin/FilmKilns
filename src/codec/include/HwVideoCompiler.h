@@ -16,7 +16,7 @@
 
 class HwVideoCompiler : public Unit {
 public:
-    HwVideoCompiler();
+    HwVideoCompiler(string alias);
 
     virtual ~HwVideoCompiler();
 

@@ -8,8 +8,7 @@
 #include "../include/HwAudioCompiler.h"
 #include "HwBuffer.h"
 
-HwAudioCompiler::HwAudioCompiler() : Unit() {
-    name = __FUNCTION__;
+HwAudioCompiler::HwAudioCompiler(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE,
                   reinterpret_cast<EventFunc>(&HwAudioCompiler::eventPrepare));
     registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,

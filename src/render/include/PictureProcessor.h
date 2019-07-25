@@ -27,6 +27,9 @@ public:
     void invalidate();
 
 private:
+    const string ALIAS_OF_IMAGE = "IMAGE";
+    const string ALIAS_OF_RENDER = "RENDER";
+    const string ALIAS_OF_SCREEN = "SCREEN";
     UnitPipeline *pipeline = nullptr;
 };
 

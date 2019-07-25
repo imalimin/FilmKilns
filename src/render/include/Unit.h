@@ -91,9 +91,10 @@ protected:
 
 class Unit : public Object {
 public:
-    Unit();
-
-    Unit(HandlerThread *handlerThread);
+    /**
+     * @param Alias is IMPORTANT for an unit. It is a tag of model provider.
+     */
+    Unit(string alias);
 
     virtual ~Unit();
 
@@ -109,28 +110,23 @@ public:
      */
     bool dispatch(Message *msg);
 
-    void post(function<void()> runnable);
-
     void setModelProvider(HwModelProvider *provider);
 
     HwModelProvider *getModelProvider();
 
 protected:
-    string name;
-
     void postEvent(Message *msg);
 
 private:
+    string alias;
     map<int, Event *> eventMap;
     UnitPipeline *pipeline = nullptr;
-    EventPipeline *eventPipeline = nullptr;
     HwModelProvider *provider = nullptr;
-    SimpleLock simpleLock;
 };
 
 class HwModelProvider : public Unit {
 public:
-    HwModelProvider();
+    HwModelProvider(string alias);
 
     virtual ~HwModelProvider();
 

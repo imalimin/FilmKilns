@@ -20,9 +20,7 @@
 
 class HwVideoInput : public HwStreamMedia {
 public:
-    HwVideoInput();
-
-    HwVideoInput(HandlerThread *handlerThread);
+    HwVideoInput(string alias);
 
     virtual ~HwVideoInput();
 

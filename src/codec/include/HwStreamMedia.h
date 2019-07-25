@@ -12,9 +12,7 @@
 
 class HwStreamMedia : public Unit {
 public:
-    HwStreamMedia();
-
-    HwStreamMedia(HandlerThread *handlerThread);
+    HwStreamMedia(string alias);
 
     virtual ~HwStreamMedia();
 

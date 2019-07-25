@@ -13,8 +13,7 @@ const int HwModelProvider::EVENT_PUT_INT64 = KID('M', 'O', 'P', 0x02);
 const int HwModelProvider::EVENT_PUT_STRING = KID('M', 'O', 'P', 0x03);
 const int HwModelProvider::EVENT_PUT_OBJECT = KID('M', 'O', 'P', 0x04);
 
-HwModelProvider::HwModelProvider() : Unit() {
-    name = __FUNCTION__;
+HwModelProvider::HwModelProvider(string alias) : Unit(alias) {
     registerEvent(EVENT_PUT_INT32, reinterpret_cast<EventFunc>(&HwModelProvider::eventPutInt32));
     registerEvent(EVENT_PUT_INT64, reinterpret_cast<EventFunc>(&HwModelProvider::eventPutInt64));
     registerEvent(EVENT_PUT_STRING, reinterpret_cast<EventFunc>(&HwModelProvider::eventPutString));

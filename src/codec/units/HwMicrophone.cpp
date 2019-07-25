@@ -9,8 +9,7 @@
 #include "TimeUtils.h"
 #include "Thread.h"
 
-HwMicrophone::HwMicrophone() : Unit() {
-    name = __FUNCTION__;
+HwMicrophone::HwMicrophone(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwMicrophone::eventPrepare));
     registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&HwMicrophone::eventStart));
     registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&HwMicrophone::eventPause));

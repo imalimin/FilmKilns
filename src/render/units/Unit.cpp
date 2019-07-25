@@ -20,30 +20,17 @@ bool Event::dispatch(Unit *unit, Message *msg) {
     return (unit->*handler)(msg);
 }
 
-Unit::Unit() : Unit(nullptr) {
-}
-
-Unit::Unit(HandlerThread *handlerThread) {
-    name = __FUNCTION__;
+Unit::Unit(string alias) : alias(alias) {
     registerEvent(EVENT_COMMON_RELEASE, reinterpret_cast<EventFunc>(&Unit::eventRelease));
-    if (handlerThread) {
-        eventPipeline = new EventPipeline(handlerThread);
-    }
 }
 
 Unit::~Unit() {
-    LOGI("~Unit(%s)", name.c_str());
+    LOGI("~Unit(%s)", alias.c_str());
     if (eventMap.empty()) return;
     for (auto itr = eventMap.rbegin(); itr != eventMap.rend(); itr++) {
 //        delete itr->second;
     }
     eventMap.clear();
-    simpleLock.lock();
-    if (eventPipeline) {
-        delete eventPipeline;
-        eventPipeline = nullptr;
-    }
-    simpleLock.unlock();
 }
 
 bool Unit::registerEvent(int what, EventFunc handler) {
@@ -59,7 +46,7 @@ void Unit::postEvent(Message *msg) {
     if (pipeline) {
         pipeline->postEvent(msg);
     } else {
-        LOGE("%s`s pipeline is null", name.c_str());
+        LOGE("%s`s pipeline is null", alias.c_str());
     }
 }
 
@@ -69,19 +56,6 @@ bool Unit::dispatch(Message *msg) {
         return itr->second->dispatch(this, msg);
     }
     return false;
-}
-
-void Unit::post(function<void()> runnable) {
-    if (runnable) {
-        simpleLock.lock();
-        if (eventPipeline) {
-            eventPipeline->queueEvent(runnable);
-            simpleLock.unlock();
-            return;
-        }
-        simpleLock.unlock();
-        runnable();
-    }
 }
 
 void Unit::setModelProvider(HwModelProvider *provider) {

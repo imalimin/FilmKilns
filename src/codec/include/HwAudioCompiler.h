@@ -14,7 +14,7 @@
 
 class HwAudioCompiler : public Unit {
 public:
-    HwAudioCompiler();
+    HwAudioCompiler(string alias);
 
     virtual ~HwAudioCompiler();
 

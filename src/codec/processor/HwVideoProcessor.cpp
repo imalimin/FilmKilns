@@ -14,14 +14,14 @@
 #include <string>
 
 HwVideoProcessor::HwVideoProcessor() : HwAbsProcessor("VideoProcessor") {
-    HwVideoInput *inputUnit = new HwVideoInput();
+    HwVideoInput *inputUnit = new HwVideoInput(ALIAS_OF_VIDEO);
     inputUnit->setPlayListener([this](int64_t us, int64_t duration) {
         this->playProgressListener(us, duration);
     });
     registerAnUnit(inputUnit);
-    registerAnUnit(new HwRender());
-    registerAnUnit(new HwScreen());
-    registerAnUnit(new HwSpeaker(HwAudioDeviceMode::LowLatency));
+    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
+    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new HwSpeaker(ALIAS_OF_SPEAKER, HwAudioDeviceMode::LowLatency));
 }
 
 HwVideoProcessor::~HwVideoProcessor() {

@@ -11,11 +11,7 @@
 #include "../include/HwVideoFrame.h"
 #include "Thread.h"
 
-HwVideoInput::HwVideoInput() : HwVideoInput(nullptr) {
-}
-
-HwVideoInput::HwVideoInput(HandlerThread *handlerThread) : HwStreamMedia(handlerThread) {
-    name = __FUNCTION__;
+HwVideoInput::HwVideoInput(string alias) : HwStreamMedia(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPrepare));
     registerEvent(EVENT_VIDEO_START, reinterpret_cast<EventFunc>(&HwVideoInput::eventStart));
     registerEvent(EVENT_VIDEO_PAUSE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPause));

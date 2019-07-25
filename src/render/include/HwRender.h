@@ -14,9 +14,7 @@
 
 class HwRender : public Unit {
 public:
-    HwRender();
-
-    HwRender(HandlerThread *handlerThread);
+    HwRender(string alias);
 
     virtual ~HwRender();
 

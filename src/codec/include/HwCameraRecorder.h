@@ -57,6 +57,13 @@ public:
     void setOutputSize(int width, int height);
 
     void setFilter(Filter *filter);
+
+private:
+    const string ALIAS_OF_MIC = "MIC";
+    const string ALIAS_OF_CAMERA = "CAMERA";
+    const string ALIAS_OF_RENDER = "RENDER";
+    const string ALIAS_OF_SCREEN = "SCREEN";
+    const string ALIAS_OF_COMPILER = "COMPILER";
 };
 
 

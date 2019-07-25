@@ -6,11 +6,7 @@
  */
 #include "../include/HwStreamMedia.h"
 
-HwStreamMedia::HwStreamMedia() : HwStreamMedia(nullptr) {
-
-}
-
-HwStreamMedia::HwStreamMedia(HandlerThread *handlerThread) : Unit(handlerThread) {
+HwStreamMedia::HwStreamMedia(string alias) : Unit(alias) {
 
 }
 

@@ -11,12 +11,12 @@
 #include "ObjectBox.h"
 
 HwAudioProcessor::HwAudioProcessor() : HwAbsProcessor("AudioProcessor") {
-    HwAudioInput *inputUnit = new HwAudioInput();
+    HwAudioInput *inputUnit = new HwAudioInput(ALIAS_OF_AUDIO);
     inputUnit->setPlayListener([this](int64_t us, int64_t duration) {
         this->playProgressListener(us, duration);
     });
     registerAnUnit(inputUnit);
-    registerAnUnit(new HwSpeaker());
+    registerAnUnit(new HwSpeaker(ALIAS_OF_SPEAKER));
 }
 
 HwAudioProcessor::~HwAudioProcessor() {

@@ -11,11 +11,7 @@
 #include "TimeUtils.h"
 #include "../include/RGBA2NV12Filter.h"
 
-HwRender::HwRender() : HwRender(nullptr) {
-}
-
-HwRender::HwRender(HandlerThread *handlerThread) : Unit(handlerThread) {
-    name = __FUNCTION__;
+HwRender::HwRender(string alias) : Unit(alias) {
 #ifdef ANDROID
     filter = new NormalFilter(true);
 #else
@@ -39,17 +35,15 @@ bool HwRender::eventPrepare(Message *msg) {
 
 bool HwRender::eventRelease(Message *msg) {
     Logcat::i("HWVC", "Render::eventRelease");
-    post([this] {
-        if (yuvReadFilter) {
-            delete yuvReadFilter;
-            yuvReadFilter = nullptr;
-        }
-        if (filter) {
-            delete filter;
-            Logcat::i("HWVC", "Render::eventRelease filter");
-            filter = nullptr;
-        }
-    });
+    if (yuvReadFilter) {
+        delete yuvReadFilter;
+        yuvReadFilter = nullptr;
+    }
+    if (filter) {
+        delete filter;
+        Logcat::i("HWVC", "Render::eventRelease filter");
+        filter = nullptr;
+    }
     if (pixels) {
         delete[] pixels;
         pixels = nullptr;
@@ -84,29 +78,25 @@ bool HwRender::eventReadPixels(Message *msg) {
 bool HwRender::eventRenderFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventFilter");
     Size *size = static_cast<Size *>(msg->tyrUnBox());
-    GLuint tex = msg->arg1;
+    GLuint tex = static_cast<GLuint>(msg->arg1);
     tsInNs = msg->arg2;
-    post([this, size, tex] {
-        checkFilter(size->width, size->height);
-        glViewport(0, 0, size->width, size->height);
-        renderFilter(tex);
-        notifyPixelsReady();
-        renderScreen();
-        delete size;
-    });
+    checkFilter(size->width, size->height);
+    glViewport(0, 0, size->width, size->height);
+    renderFilter(tex);
+    notifyPixelsReady();
+    renderScreen();
+    delete size;
     return true;
 }
 
 bool HwRender::eventSetFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventSetFilter");
     Filter *newFilter = static_cast<Filter *>(msg->tyrUnBox());
-    post([this, newFilter] {
-        if (filter) {
-            delete filter;
-            filter = nullptr;
-        }
-        filter = newFilter;
-    });
+    if (filter) {
+        delete filter;
+        filter = nullptr;
+    }
+    filter = newFilter;
     return true;
 }
 

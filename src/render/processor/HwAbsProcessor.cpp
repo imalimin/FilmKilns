@@ -10,7 +10,7 @@
 
 HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
     pipeline = new UnitPipeline(name);
-    provider = new HwModelProvider();
+    provider = new HwModelProvider(ALIAS_OF_MODEL_PROVIDER);
     registerAnUnit(provider);
 }
 

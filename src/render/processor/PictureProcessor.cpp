@@ -11,10 +11,10 @@
 
 PictureProcessor::PictureProcessor() {
     pipeline = new UnitPipeline(__FUNCTION__);
-    pipeline->registerAnUnit(new Image());
-    pipeline->registerAnUnit(new HwRender());
+    pipeline->registerAnUnit(new Image(ALIAS_OF_IMAGE));
+    pipeline->registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     //注意顺序问题，包含EGL环境的模块放到最后，因为要最后释放
-    pipeline->registerAnUnit(new HwScreen());
+    pipeline->registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
 }
 
 PictureProcessor::~PictureProcessor() {

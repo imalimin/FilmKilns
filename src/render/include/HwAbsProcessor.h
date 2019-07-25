@@ -42,6 +42,7 @@ protected:
     void putObject(string unit, string key, Object *value);
 
 private:
+    const string ALIAS_OF_MODEL_PROVIDER = "ModelProvider";
     string name;
     UnitPipeline *pipeline = nullptr;
     HwModelProvider *provider = nullptr;

@@ -12,7 +12,7 @@
 
 class HwCameraInput : public Unit {
 public:
-    HwCameraInput();
+    HwCameraInput(string alias);
 
     virtual ~HwCameraInput();
 

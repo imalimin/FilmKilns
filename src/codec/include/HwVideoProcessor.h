@@ -39,6 +39,10 @@ public:
     void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 
 private:
+    const string ALIAS_OF_VIDEO = "VIDEO";
+    const string ALIAS_OF_RENDER = "RENDER";
+    const string ALIAS_OF_SCREEN = "SCREEN";
+    const string ALIAS_OF_SPEAKER = "SPEAKER";
     HandlerThread *unitHandler = nullptr;
     HandlerThread *screenHandler = nullptr;
 
