@@ -10,7 +10,6 @@
 #include "../platform/android/encoder/HwAndroidEncoder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
-#include "HwModelProvider.h"
 
 HwVideoCompiler::HwVideoCompiler() : Unit() {
     name = __FUNCTION__;
@@ -30,17 +29,17 @@ HwVideoCompiler::~HwVideoCompiler() {
 }
 
 int HwVideoCompiler::getWidth() {
-    return static_cast<HwModelProvider *>(getModelProvider())->getInt32("_width");
+    return getModelProvider()->getInt32("_width");
 }
 
 int HwVideoCompiler::getHeight() {
-    return static_cast<HwModelProvider *>(getModelProvider())->getInt32("_height");
+    return getModelProvider()->getInt32("_height");
 }
 
 bool HwVideoCompiler::eventPrepare(Message *msg) {
     recording = false;
     encoder = new HwAsyncEncoder();
-    string path = static_cast<HwModelProvider *>(getModelProvider())->getString("_path");
+    string path = getModelProvider()->getString("_path");
     if (!encoder->prepare(path, getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }

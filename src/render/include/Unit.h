@@ -11,6 +11,7 @@
 #include "UnitPipeline.h"
 #include "EventPipeline.h"
 #include "Message.h"
+#include "HwBundle.h"
 #include <map>
 //#include "HwModelProvider.h"
 
@@ -68,6 +69,11 @@ static constexpr int EVENT_VIDEO_OUT_PAUSE = KID('V', 'O', 'P', 0x02);
 static constexpr int EVENT_MICROPHONE_LOOP = KID('M', 'I', 'C', 0x01);
 static constexpr int EVENT_MICROPHONE_OUT_SAMPLES = KID('M', 'I', 'C', 0x02);
 
+/**
+ * Define class HwModelProvider.
+ */
+class HwModelProvider;
+
 typedef bool (Unit::*EventFunc)(Message *);
 
 class Event : public Object {
@@ -105,9 +111,9 @@ public:
 
     void post(function<void()> runnable);
 
-    void setModelProvider(void *provider);
+    void setModelProvider(HwModelProvider *provider);
 
-    void *getModelProvider();
+    HwModelProvider *getModelProvider();
 
 protected:
     string name;
@@ -118,8 +124,42 @@ private:
     map<int, Event *> eventMap;
     UnitPipeline *pipeline = nullptr;
     EventPipeline *eventPipeline = nullptr;
-    void *provider = nullptr;
+    HwModelProvider *provider = nullptr;
     SimpleLock simpleLock;
+};
+
+class HwModelProvider : public Unit {
+public:
+    HwModelProvider();
+
+    virtual ~HwModelProvider();
+
+    bool eventRelease(Message *msg) override;
+
+    bool eventPutInt32(Message *msg);
+
+    bool eventPutInt64(Message *msg);
+
+    bool eventPutString(Message *msg);
+
+    bool eventPutObject(Message *msg);
+
+    int32_t getInt32(string key);
+
+    int64_t getInt64(string key);
+
+    string getString(string key);
+
+    Object *getObject(string key);
+
+public:
+    static const int EVENT_PUT_INT32;
+    static const int EVENT_PUT_INT64;
+    static const int EVENT_PUT_STRING;
+    static const int EVENT_PUT_OBJECT;
+
+private:
+    HwBundle bundle;
 };
 
 

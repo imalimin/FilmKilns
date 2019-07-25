@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwModelProvider.h"
+#include "../include/Unit.h"
 #include "HwPair.h"
 
 const int HwModelProvider::EVENT_PUT_INT32 = KID('M', 'O', 'P', 0x01);

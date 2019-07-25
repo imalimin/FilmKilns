@@ -6,8 +6,6 @@
 */
 
 #include "../include/HwAbsProcessor.h"
-#include "../include/Unit.h"
-#include "../include/HwModelProvider.h"
 #include "HwPair.h"
 
 HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
