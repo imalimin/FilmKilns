@@ -63,12 +63,12 @@ void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
 }
 
 void HwCameraRecorder::setOutputFilePath(string filePath) {
-    putString("", "path", filePath);
+    putString(ALIAS_OF_COMPILER, "path", filePath);
 }
 
 void HwCameraRecorder::setOutputSize(int width, int height) {
-    putInt32("", "width", width);
-    putInt32("", "height", height);
+    putInt32(ALIAS_OF_COMPILER, "width", width);
+    putInt32(ALIAS_OF_COMPILER, "height", height);
 }
 
 void HwCameraRecorder::setFilter(Filter *filter) {

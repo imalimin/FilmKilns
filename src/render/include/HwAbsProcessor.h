@@ -33,13 +33,13 @@ protected:
 
     void postEvent(Message *msg);
 
-    void putInt32(string unit, string key, int32_t value);
+    void putInt32(string unitAlias, string key, int32_t value);
 
-    void putInt64(string unit, string key, int64_t value);
+    void putInt64(string unitAlias, string key, int64_t value);
 
-    void putString(string unit, string key, string value);
+    void putString(string unitAlias, string key, string value);
 
-    void putObject(string unit, string key, Object *value);
+    void putObject(string unitAlias, string key, Object *value);
 
 private:
     const string ALIAS_OF_MODEL_PROVIDER = "ModelProvider";

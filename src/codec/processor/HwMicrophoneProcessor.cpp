@@ -20,8 +20,8 @@ HwMicrophoneProcessor::~HwMicrophoneProcessor() {
 
 void HwMicrophoneProcessor::prepare(string filePath, HwSampleFormat format) {
     this->format = format;
-    putString("", "path", filePath);
-    putObject("", "format", &this->format);
+    putString(ALIAS_OF_COMPILER, "path", filePath);
+    putObject(ALIAS_OF_COMPILER, "format", &this->format);
     postEvent(new Message(EVENT_COMMON_PREPARE, nullptr));
 }
 

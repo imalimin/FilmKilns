@@ -28,9 +28,9 @@ bool HwAudioCompiler::eventRelease(Message *msg) {
 }
 
 bool HwAudioCompiler::eventPrepare(Message *msg) {
-    Object *f = getModelProvider()->getObject("_format");
+    Object *f = getObject("format");
     HwSampleFormat *format = reinterpret_cast<HwSampleFormat *>(f);
-    string path = getModelProvider()->getString("_path");
+    string path = getString("path");
     muxer = WAVRawMuxer::build(path, *format);
     return true;
 }

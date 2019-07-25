@@ -65,3 +65,19 @@ void Unit::setModelProvider(HwModelProvider *provider) {
 HwModelProvider *Unit::getModelProvider() {
     return this->provider;
 }
+
+int32_t Unit::getInt32(string key) {
+    return getModelProvider()->getInt32(alias + "_" + key);
+}
+
+int64_t Unit::getInt64(string key) {
+    return getModelProvider()->getInt64(alias + "_" + key);
+}
+
+string Unit::getString(string key) {
+    return getModelProvider()->getString(alias + "_" + key);
+}
+
+Object *Unit::getObject(string key) {
+    return getModelProvider()->getObject(alias + "_" + key);
+}

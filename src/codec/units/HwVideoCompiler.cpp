@@ -28,17 +28,17 @@ HwVideoCompiler::~HwVideoCompiler() {
 }
 
 int HwVideoCompiler::getWidth() {
-    return getModelProvider()->getInt32("_width");
+    return getInt32("width");
 }
 
 int HwVideoCompiler::getHeight() {
-    return getModelProvider()->getInt32("_height");
+    return getInt32("height");
 }
 
 bool HwVideoCompiler::eventPrepare(Message *msg) {
     recording = false;
     encoder = new HwAsyncEncoder();
-    string path = getModelProvider()->getString("_path");
+    string path = getString("path");
     if (!encoder->prepare(path, getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }

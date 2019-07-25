@@ -110,9 +110,19 @@ public:
      */
     bool dispatch(Message *msg);
 
+    /** Model Provider START */
     void setModelProvider(HwModelProvider *provider);
 
     HwModelProvider *getModelProvider();
+
+    int32_t getInt32(string key);
+
+    int64_t getInt64(string key);
+
+    string getString(string key);
+
+    Object *getObject(string key);
+    /** Model Provider END */
 
 protected:
     void postEvent(Message *msg);

@@ -61,32 +61,30 @@ void HwAbsProcessor::post(function<void()> runnable) {
     }
 }
 
-void HwAbsProcessor::putInt32(string unit, string key, int32_t value) {
+void HwAbsProcessor::putInt32(string unitAlias, string key, int32_t value) {
     Message *msg = new Message(HwModelProvider::EVENT_PUT_INT32, nullptr,
                                Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
-    msg->arg1 = value;
-    msg->obj = new HwPair<string, int32_t>(unit + "_" + key, value);
+    msg->obj = new HwPair<string, int32_t>(unitAlias + "_" + key, value);
     postEvent(msg);
 }
 
-void HwAbsProcessor::putInt64(string unit, string key, int64_t value) {
+void HwAbsProcessor::putInt64(string unitAlias, string key, int64_t value) {
     Message *msg = new Message(HwModelProvider::EVENT_PUT_INT64, nullptr,
                                Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
-    msg->arg2 = value;
-    msg->obj = new HwPair<string, int64_t>(unit + "_" + key, value);
+    msg->obj = new HwPair<string, int64_t>(unitAlias + "_" + key, value);
     postEvent(msg);
 }
 
-void HwAbsProcessor::putString(string unit, string key, string value) {
+void HwAbsProcessor::putString(string unitAlias, string key, string value) {
     Message *msg = new Message(HwModelProvider::EVENT_PUT_STRING, nullptr,
                                Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
-    msg->obj = new HwPair<string, string>(unit + "_" + key, value);
+    msg->obj = new HwPair<string, string>(unitAlias + "_" + key, value);
     postEvent(msg);
 }
 
-void HwAbsProcessor::putObject(string unit, string key, Object *value) {
+void HwAbsProcessor::putObject(string unitAlias, string key, Object *value) {
     Message *msg = new Message(HwModelProvider::EVENT_PUT_OBJECT, nullptr,
                                Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
-    msg->obj = new HwPair<string, Object *>(unit + "_" + key, value);
+    msg->obj = new HwPair<string, Object *>(unitAlias + "_" + key, value);
     postEvent(msg);
 }
