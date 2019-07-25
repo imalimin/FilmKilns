@@ -20,9 +20,9 @@ HwMicrophoneProcessor::~HwMicrophoneProcessor() {
 
 void HwMicrophoneProcessor::prepare(string filePath, HwSampleFormat format) {
     this->format = format;
-    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
-    msg->obj = new ObjectBox(&this->format);
-    postEvent(msg);
+    putString("", "path", filePath);
+    putObject("", "format", &this->format);
+    postEvent(new Message(EVENT_COMMON_PREPARE, nullptr));
 }
 
 void HwMicrophoneProcessor::start() {

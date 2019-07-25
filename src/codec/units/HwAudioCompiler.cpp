@@ -7,6 +7,7 @@
 
 #include "../include/HwAudioCompiler.h"
 #include "HwBuffer.h"
+#include "HwModelProvider.h"
 
 HwAudioCompiler::HwAudioCompiler() : Unit() {
     name = __FUNCTION__;
@@ -29,8 +30,10 @@ bool HwAudioCompiler::eventRelease(Message *msg) {
 }
 
 bool HwAudioCompiler::eventPrepare(Message *msg) {
-    HwSampleFormat *format = dynamic_cast<HwSampleFormat *>(msg->obj);
-    muxer = WAVRawMuxer::build("/sdcard/test.wav", *format);
+    Object *f = static_cast<HwModelProvider *>(getModelProvider())->getObject("_format");
+    HwSampleFormat *format = reinterpret_cast<HwSampleFormat *>(f);
+    string path = static_cast<HwModelProvider *>(getModelProvider())->getString("_path");
+    muxer = WAVRawMuxer::build(path, *format);
     return true;
 }
 

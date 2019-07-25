@@ -25,16 +25,21 @@ public:
 
     bool eventPutString(Message *msg);
 
+    bool eventPutObject(Message *msg);
+
     int32_t getInt32(string key);
 
     int64_t getInt64(string key);
 
     string getString(string key);
 
+    Object *getObject(string key);
+
 public:
     static const int EVENT_PUT_INT32;
     static const int EVENT_PUT_INT64;
     static const int EVENT_PUT_STRING;
+    static const int EVENT_PUT_OBJECT;
 
 private:
     HwBundle bundle;

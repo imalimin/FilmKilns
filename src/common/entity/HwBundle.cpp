@@ -29,6 +29,10 @@ void HwBundle::putString(string key, string value) {
     stringMap.insert(pair<string, string>(key, value));
 }
 
+void HwBundle::putObject(string key, Object *value) {
+    objMap.insert(pair<string, Object *>(key, value));
+}
+
 int32_t HwBundle::getInt32(string key) {
     return int32Map[key];
 }
@@ -39,4 +43,8 @@ int64_t HwBundle::getInt64(string key) {
 
 string HwBundle::getString(string key) {
     return stringMap[key];
+}
+
+Object *HwBundle::getObject(string key) {
+    return objMap[key];
 }

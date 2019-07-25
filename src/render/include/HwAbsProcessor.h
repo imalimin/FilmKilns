@@ -39,6 +39,8 @@ protected:
 
     void putString(string unit, string key, string value);
 
+    void putObject(string unit, string key, Object *value);
+
 private:
     string name;
     UnitPipeline *pipeline = nullptr;

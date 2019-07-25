@@ -25,16 +25,21 @@ public:
 
     void putString(string key, string value);
 
+    void putObject(string key, Object *value);
+
     int32_t getInt32(string key);
 
     int64_t getInt64(string key);
 
     string getString(string key);
 
+    Object *getObject(string key);
+
 private:
     map<string, int32_t> int32Map;
     map<string, int64_t> int64Map;
     map<string, string> stringMap;
+    map<string, Object *> objMap;
 };
 
 

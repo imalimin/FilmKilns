@@ -85,3 +85,10 @@ void HwAbsProcessor::putString(string unit, string key, string value) {
     msg->obj = new HwPair<string, string>(unit + "_" + key, value);
     postEvent(msg);
 }
+
+void HwAbsProcessor::putObject(string unit, string key, Object *value) {
+    Message *msg = new Message(HwModelProvider::EVENT_PUT_OBJECT, nullptr,
+                               Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
+    msg->obj = new HwPair<string, Object *>(unit + "_" + key, value);
+    postEvent(msg);
+}
