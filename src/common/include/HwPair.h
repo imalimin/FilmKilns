@@ -25,19 +25,19 @@ public:
         p = pair<K, V>(key, value);
     }
 
-    HwPair(const HwPair &p) {
-        this->p = pair<K, V>(p.key, p.value);
+    HwPair(const HwPair &hwPair) {
+        this->p = pair<K, V>(hwPair.key(), hwPair.value());
     }
 
     virtual ~HwPair() {
 
     }
 
-    K key() {
+    K key() const {
         return p.first;
     }
 
-    V value() {
+    V value() const {
         return p.second;
     }
 };

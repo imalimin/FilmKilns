@@ -10,10 +10,45 @@
 
 #include "Object.h"
 #include <string>
+#include <initializer_list>
 #include "UnitPipeline.h"
 #include "Unit.h"
+#include "HwPair.h"
 
 using namespace std;
+
+template<typename V>
+class HwPairBuilder : public Object {
+public:
+//    typedef void (HwAbsProcessor::*Callback)(string, V);
+
+    HwPairBuilder(HwPair<string, V> hwPair, function<void(string, HwPair<string, V> *)> callback)
+            : Object(),
+              hwPair(hwPair),
+              callback(callback) {
+    }
+
+//    HwPairBuilder(const HwPairBuilder &builder) : Object(),
+//                                                  hwPair(builder.hwPair),
+//                                                  callback(builder.callback) {
+//    }
+
+    virtual ~HwPairBuilder() {
+        callback = nullptr;
+    }
+
+    void to(initializer_list<string> args) {
+        for (auto it = args.begin(); it != args.end(); ++it) {
+            if (callback) {
+                callback(*it, &hwPair);
+            }
+        }
+    }
+
+private:
+    HwPair<string, V> hwPair;
+    function<void(string, HwPair<string, V> *)> callback;
+};
 
 class HwAbsProcessor : public Object {
 public:
@@ -33,7 +68,7 @@ protected:
 
     void postEvent(Message *msg);
 
-    void putInt32(string unitAlias, string key, int32_t value);
+    HwPairBuilder<int32_t> *putInt32(string key, int32_t value);
 
     void putInt64(string unitAlias, string key, int64_t value);
 

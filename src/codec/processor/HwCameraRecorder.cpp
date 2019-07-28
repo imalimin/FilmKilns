@@ -67,8 +67,8 @@ void HwCameraRecorder::setOutputFilePath(string filePath) {
 }
 
 void HwCameraRecorder::setOutputSize(int width, int height) {
-    putInt32(ALIAS_OF_COMPILER, "width", width);
-    putInt32(ALIAS_OF_COMPILER, "height", height);
+    putInt32("width", width)->to({ALIAS_OF_COMPILER});
+    putInt32("height", height)->to({ALIAS_OF_COMPILER});
 }
 
 void HwCameraRecorder::setFilter(Filter *filter) {

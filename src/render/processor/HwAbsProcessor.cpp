@@ -61,11 +61,16 @@ void HwAbsProcessor::post(function<void()> runnable) {
     }
 }
 
-void HwAbsProcessor::putInt32(string unitAlias, string key, int32_t value) {
-    Message *msg = new Message(HwModelProvider::EVENT_PUT_INT32, nullptr,
-                               Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
-    msg->obj = new HwPair<string, int32_t>(unitAlias + "_" + key, value);
-    postEvent(msg);
+HwPairBuilder<int32_t> *HwAbsProcessor::putInt32(string key, int32_t value) {
+    return new HwPairBuilder<int32_t>(HwPair<string, int32_t>(key, value),
+                                      [this](string target, HwPair<string, int32_t> *hwPair) {
+                                          Message *msg = new Message(
+                                                  HwModelProvider::EVENT_PUT_INT32, nullptr,
+                                                  Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
+                                          msg->obj = new HwPair<string, int32_t>(
+                                                  target + "_" + hwPair->key(), hwPair->value());
+                                          this->postEvent(msg);
+                                      });
 }
 
 void HwAbsProcessor::putInt64(string unitAlias, string key, int64_t value) {
