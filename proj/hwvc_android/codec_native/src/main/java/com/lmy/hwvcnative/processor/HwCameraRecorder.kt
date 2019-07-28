@@ -87,7 +87,8 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
             3 -> {
                 val textures = camera?.draw()
                 if (0L != handler) {
-                    invalidate(handler, textures!![0], camera!!.getTimestamp(), 720, 1280)
+                    invalidate(handler, textures!![0], camera!!.getTimestamp(),
+                            CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT)
                 }
             }
         }

@@ -19,8 +19,8 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
-        private const val VIDEO_WIDTH = 320
-        private const val VIDEO_HEIGHT = 480
+        const val VIDEO_WIDTH = 320
+        const val VIDEO_HEIGHT = 480
         fun open(onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
             return CameraWrapper(onFrameAvailableListener)
