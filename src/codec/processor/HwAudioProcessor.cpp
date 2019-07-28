@@ -27,9 +27,7 @@ void HwAudioProcessor::onDestroy() {
 }
 
 void HwAudioProcessor::setSource(const string path) {
-    Message *msg = new Message(EVENT_AUDIO_SET_SOURCE, nullptr);
-    msg->obj = new ObjectBox(new string(path));
-    postEvent(msg);
+    putString("path", path).to({ALIAS_OF_AUDIO});
 }
 
 void HwAudioProcessor::prepare() {

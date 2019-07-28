@@ -16,8 +16,6 @@ HwAudioInput::HwAudioInput(string alias) : HwStreamMedia(alias) {
     registerEvent(EVENT_AUDIO_STOP, reinterpret_cast<EventFunc>(&HwAudioInput::eventStop));
     registerEvent(EVENT_AUDIO_SEEK, reinterpret_cast<EventFunc>(&HwAudioInput::eventSeek));
     registerEvent(EVENT_AUDIO_LOOP, reinterpret_cast<EventFunc>(&HwAudioInput::eventLoop));
-    registerEvent(EVENT_AUDIO_SET_SOURCE,
-                  reinterpret_cast<EventFunc>(&HwAudioInput::eventSetSource));
     decoder = new AsynAudioDecoder();
 }
 
@@ -33,8 +31,9 @@ HwAudioInput::~HwAudioInput() {
 
 bool HwAudioInput::eventPrepare(Message *msg) {
     playState = PAUSE;
+    string path = getPath();
     if (!decoder->prepare(path)) {
-        LOGE("HwAudioInput::open %s failed", path.c_str());
+        LOGE("HwAudioInput::open failed: %s", path.c_str());
         eventStop(nullptr);
     }
     return false;
@@ -47,10 +46,7 @@ bool HwAudioInput::eventRelease(Message *msg) {
 }
 
 bool HwAudioInput::eventSetSource(Message *msg) {
-    string *str = static_cast<string *>(msg->tyrUnBox());
-    this->path = string(str->c_str());
-    delete str;
-    return false;
+    return true;
 }
 
 bool HwAudioInput::eventStart(Message *msg) {
@@ -139,6 +135,10 @@ void HwAudioInput::playFrame(HwAudioFrame *frame) {
     Message *msg = new Message(EVENT_SPEAKER_FEED, nullptr);
     msg->obj = frame;
     postEvent(msg);
+}
+
+string HwAudioInput::getPath() {
+    return getString("path");
 }
 
 void HwAudioInput::processPlayListener(int64_t us) {

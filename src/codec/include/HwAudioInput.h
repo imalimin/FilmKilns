@@ -45,13 +45,14 @@ private:
 
     void processPlayListener(int64_t us);
 
+    string getPath();
+
 private:
     const int INTERVAL_PROGRESS = 500000;
     AsynAudioDecoder *decoder = nullptr;
     PlayState playState = STOP;
     SimpleLock simpleLock;
     SimpleLock playTimeLock;
-    string path;
     HwAudioFrame *frame = nullptr;
     int64_t lastPlayPts = INT64_MIN;
 
