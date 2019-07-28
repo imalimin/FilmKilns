@@ -6,7 +6,7 @@
  */
 #include "../include/Image.h"
 #include "ObjectBox.h"
-#include "Size.h"
+#include "../include/HwTexture.h"
 #include "Logcat.h"
 
 Image::Image(string alias) : Unit(alias) {
@@ -71,7 +71,7 @@ bool Image::eventShow(Message *msg) {
 bool Image::eventInvalidate(Message *m) {
     if (GL_NONE != tex) {
         Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-        msg->obj = new ObjectBox(new Size(hwBitmap->getWidth(), hwBitmap->getHeight()));
+        msg->obj = new HwTexture(tex, hwBitmap->getWidth(), hwBitmap->getHeight());
         msg->arg1 = tex;
         postEvent(msg);
     }

@@ -10,6 +10,7 @@
 #include "TimeUtils.h"
 #include "../include/HwVideoFrame.h"
 #include "Thread.h"
+#include "HwTexture.h"
 
 HwVideoInput::HwVideoInput(string alias) : HwStreamMedia(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPrepare));
@@ -205,7 +206,7 @@ HwResult HwVideoInput::grab() {
 
 bool HwVideoInput::invalidate(int tex, uint32_t width, uint32_t height) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-    msg->obj = new ObjectBox(new Size(width, height));
+    msg->obj = new HwTexture(tex, width, height);
     msg->desc = "RENDER";
     msg->arg1 = tex;
     postEvent(msg);

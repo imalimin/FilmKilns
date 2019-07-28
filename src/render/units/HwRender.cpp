@@ -10,6 +10,7 @@
 #include "../include/ObjectBox.h"
 #include "TimeUtils.h"
 #include "../include/RGBA2NV12Filter.h"
+#include "../include/HwTexture.h"
 
 HwRender::HwRender(string alias) : Unit(alias) {
 #ifdef ANDROID
@@ -77,15 +78,13 @@ bool HwRender::eventReadPixels(Message *msg) {
 
 bool HwRender::eventRenderFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventFilter");
-    Size *size = static_cast<Size *>(msg->tyrUnBox());
-    GLuint tex = static_cast<GLuint>(msg->arg1);
+    HwTexture *tex = static_cast<HwTexture *>(msg->obj);
     tsInNs = msg->arg2;
-    checkFilter(size->width, size->height);
-    glViewport(0, 0, size->width, size->height);
-    renderFilter(tex);
+    checkFilter(tex->getWidth(), tex->getHeight());
+    glViewport(0, 0, tex->getWidth(), tex->getHeight());
+    renderFilter(tex->texId());
     notifyPixelsReady();
     renderScreen();
-    delete size;
     return true;
 }
 
@@ -153,5 +152,6 @@ void HwRender::renderFilter(GLuint texture) {
 }
 
 void HwRender::notifyPixelsReady() {
-    postEvent(new Message(EVENT_COMMON_PIXELS_READY, nullptr, Message::QUEUE_MODE_FIRST_ALWAYS, nullptr));
+    postEvent(new Message(EVENT_COMMON_PIXELS_READY, nullptr, Message::QUEUE_MODE_FIRST_ALWAYS,
+                          nullptr));
 }

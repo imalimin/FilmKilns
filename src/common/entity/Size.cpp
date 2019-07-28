@@ -17,4 +17,6 @@ Size::Size(int w, int h) {
 };
 
 Size::~Size() {
+    this->width = 0;
+    this->height = 0;
 };
