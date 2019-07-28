@@ -10,10 +10,11 @@
 
 #include "Unit.h"
 #include "HwFFAudioEncoder.h"
+#include "WAVRawMuxer.h"
 
 class HwAudioCompiler : public Unit {
 public:
-    HwAudioCompiler();
+    HwAudioCompiler(string alias);
 
     virtual ~HwAudioCompiler();
 
@@ -21,8 +22,11 @@ public:
 
     bool eventPrepare(Message *msg);
 
+    bool eventReceiveData(Message *msg);
+
 private:
     HwFFAudioEncoder *encoder = nullptr;
+    WAVRawMuxer *muxer = nullptr;
 };
 
 

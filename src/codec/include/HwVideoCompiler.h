@@ -14,11 +14,11 @@
 #include "../include/HwAudioFrame.h"
 #include <atomic>
 
-class HwVideoOutput : public Unit {
+class HwVideoCompiler : public Unit {
 public:
-    HwVideoOutput();
+    HwVideoCompiler(string alias);
 
-    virtual ~HwVideoOutput();
+    virtual ~HwVideoCompiler();
 
     bool eventPrepare(Message *msg);
 

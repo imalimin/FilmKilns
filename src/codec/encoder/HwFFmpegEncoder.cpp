@@ -151,6 +151,10 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
     AVStream *stream = nullptr;
     int64_t duration = 1;
     if (frame->isAudio() && pAudioStream) {
+        // Ensure that the first frame is video.
+        if (!firstVideoFrameWrite) {
+            return Hw::FAILED;
+        }
         stream = pAudioStream;
         duration = static_cast<int64_t>(1.0 / stream->codec->sample_rate * frame->getBufferSize());
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
@@ -198,6 +202,7 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
                   stream->index, strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
+    firstVideoFrameWrite = true;
     avPacket->stream_index = stream->index;
     avPacket->duration = duration;
     ret = av_write_frame(pFormatCtx, avPacket);

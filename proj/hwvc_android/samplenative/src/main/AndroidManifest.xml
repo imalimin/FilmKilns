@@ -66,6 +66,7 @@
         <activity android:name=".ui.TestAudioRecorderActivity" />
         <activity android:name=".ui.CameraActivity" />
         <activity android:name=".ui.BitmapActivity" />
+        <activity android:name=".ui.AudioRecordAndMuxActivity" />
     </application>
 
 </manifest>

@@ -14,7 +14,7 @@
 
 class HwMicrophone : public Unit {
 public:
-    HwMicrophone();
+    HwMicrophone(string alias);
 
     virtual ~HwMicrophone();
 
@@ -24,6 +24,10 @@ public:
 
     bool eventLoop(Message *msg);
 
+    bool eventStart(Message *msg);
+
+    bool eventPause(Message *msg);
+
 private:
     void loop();
 
@@ -32,6 +36,7 @@ private:
 private:
     HwAudioRecorder *recorder = nullptr;
     HwAudioFrame *frame = nullptr;
+    bool looping = false;
 };
 
 

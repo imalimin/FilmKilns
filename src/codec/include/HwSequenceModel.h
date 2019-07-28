@@ -8,10 +8,10 @@
 #ifndef HWVC_ANDROID_HWSEQUENCEMODEL_H
 #define HWVC_ANDROID_HWSEQUENCEMODEL_H
 
-#include "HwAbsPipelineModel.h"
+#include "Object.h"
 #include "HwCodecConfig.h"
 
-class HwSequenceModel : public HwAbsPipelineModel {
+class HwSequenceModel : public Object {
 public:
     static HwSequenceModel *build();
 

@@ -10,12 +10,9 @@
 #include "TimeUtils.h"
 #include "../include/HwVideoFrame.h"
 #include "Thread.h"
+#include "HwTexture.h"
 
-HwVideoInput::HwVideoInput() : HwVideoInput(nullptr) {
-}
-
-HwVideoInput::HwVideoInput(HandlerThread *handlerThread) : HwStreamMedia(handlerThread) {
-    name = __FUNCTION__;
+HwVideoInput::HwVideoInput(string alias) : HwStreamMedia(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPrepare));
     registerEvent(EVENT_VIDEO_START, reinterpret_cast<EventFunc>(&HwVideoInput::eventStart));
     registerEvent(EVENT_VIDEO_PAUSE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPause));
@@ -106,7 +103,7 @@ bool HwVideoInput::eventSetSource(Message *msg) {
 }
 
 void HwVideoInput::loop() {
-    postEvent(new Message(EVENT_VIDEO_LOOP, nullptr));
+    postEvent(new Message(EVENT_VIDEO_LOOP, nullptr, Message::QUEUE_MODE_UNIQUE, nullptr));
 }
 
 bool HwVideoInput::eventLoop(Message *msg) {
@@ -235,8 +232,8 @@ HwResult HwVideoInput::grab() {
 
 bool HwVideoInput::invalidate(int tex, uint32_t width, uint32_t height) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-    msg->obj = new ObjectBox(new Size(width, height));
-    msg->msg = "RENDER";
+    msg->obj = new HwTexture(tex, width, height);
+    msg->desc = "RENDER";
     msg->arg1 = tex;
     postEvent(msg);
     return true;

@@ -7,11 +7,7 @@
 #include "Size.h"
 #include "Logcat.h"
 
-HwScreen::HwScreen() : HwScreen(nullptr) {
-}
-
-HwScreen::HwScreen(HandlerThread *handlerThread) : Unit(handlerThread) {
-    name = __FUNCTION__;
+HwScreen::HwScreen(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwScreen::eventPrepare));
     registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
     registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
@@ -23,19 +19,17 @@ HwScreen::~HwScreen() {
 
 bool HwScreen::eventRelease(Message *msg) {
     Logcat::i("HWVC", "Screen::eventRelease");
-    post([this] {
-        if (egl) {
-            egl->makeCurrent();
-        }
-        if (drawer) {
-            delete drawer;
-            drawer = nullptr;
-        }
-        if (egl) {
-            delete egl;
-            egl = nullptr;
-        }
-    });
+    if (egl) {
+        egl->makeCurrent();
+    }
+    if (drawer) {
+        delete drawer;
+        drawer = nullptr;
+    }
+    if (egl) {
+        delete egl;
+        egl = nullptr;
+    }
     return true;
 }
 
@@ -44,32 +38,26 @@ bool HwScreen::eventPrepare(Message *msg) {
     NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
     this->width = nw->win->getWidth();
     this->height = nw->win->getHeight();
-    post([this, nw] {
-        initWindow(nw);
-    });
+    initWindow(nw);
     return true;
 }
 
 bool HwScreen::eventUpdateWindow(Message *msg) {
     Logcat::i("HWVC", "Screen::eventUpdateWindow");
     NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
-    post([this, nw] {
-        if (egl) {
-            egl->updateWindow(nw->win);
-        }
-    });
+    if (egl) {
+        egl->updateWindow(nw->win);
+    }
     return true;
 }
 
 bool HwScreen::eventDraw(Message *msg) {
     Size *size = static_cast<Size *>(msg->tyrUnBox());
-    GLuint tex = msg->arg1;
-    post([this, size, tex] {
-        egl->makeCurrent();
-        setScaleType(size->width, size->height);
-        draw(tex);
-        delete size;
-    });
+    GLuint tex = static_cast<GLuint>(msg->arg1);
+    egl->makeCurrent();
+    setScaleType(size->width, size->height);
+    draw(tex);
+    delete size;
     return true;
 }
 

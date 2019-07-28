@@ -16,7 +16,7 @@
 
 class Image : public Unit {
 public:
-    Image();
+    Image(string alias);
 
     virtual ~Image();
 

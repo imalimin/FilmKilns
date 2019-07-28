@@ -7,12 +7,15 @@ import android.os.AsyncTask
 import android.os.Environment
 import com.lmy.hwvcnative.processor.HwCameraRecorder
 import com.lmy.samplenative.BaseActivity
+import com.lmy.samplenative.FilterController
 import com.lmy.samplenative.R
 import com.lmy.samplenative.VideoActivity
 import kotlinx.android.synthetic.main.activity_camera.*
+import kotlinx.android.synthetic.main.view_filter.*
 import java.io.File
 
 class CameraActivity : BaseActivity() {
+    private lateinit var mFilterController: FilterController
     private var recorder: HwCameraRecorder? = HwCameraRecorder()
     private var recording = false
     private var requestPreview = false
@@ -26,6 +29,10 @@ class CameraActivity : BaseActivity() {
         recorder?.setOutputFilePath(path)
         recorder?.setOutputSize(320, 480)
         recorder?.prepare(surfaceView)
+        mFilterController = FilterController(recorder!!, progressLayout)
+        filterBtn.setOnClickListener {
+            mFilterController.chooseFilter(this)
+        }
         recordBtn.setOnClickListener {
             recording = !recording
             if (recording) {

@@ -8,5 +8,11 @@ package com.lmy.hwvcnative
 
 abstract class CPPObject {
     internal var handler: Long = 0
-//    internal abstract fun create(): Long
+
+    fun isNativeNull(): Boolean = NULL == handler;
+
+    //    internal abstract fun create(): Long
+    companion object {
+        const val NULL = 0L
+    }
 }

@@ -5,50 +5,51 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwVideoOutput.h"
-#include "../include/HwSequenceModel.h"
-#include "../include/HwFFmpegEncoder.h"
+#include "../include/HwVideoCompiler.h"
+#include "../include/HwAsyncEncoder.h"
 #include "../platform/android/encoder/HwAndroidEncoder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
 
-HwVideoOutput::HwVideoOutput() : Unit() {
-    name = __FUNCTION__;
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventPrepare));
+HwVideoCompiler::HwVideoCompiler(string alias) : Unit(alias) {
+    registerEvent(EVENT_COMMON_PREPARE,
+                  reinterpret_cast<EventFunc>(&HwVideoCompiler::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READY,
-                  reinterpret_cast<EventFunc>(&HwVideoOutput::eventResponsePixels));
-    registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoOutput::eventWrite));
-    registerEvent(EVENT_VIDEO_OUT_START, reinterpret_cast<EventFunc>(&HwVideoOutput::eventStart));
-    registerEvent(EVENT_VIDEO_OUT_PAUSE, reinterpret_cast<EventFunc>(&HwVideoOutput::eventPause));
+                  reinterpret_cast<EventFunc>(&HwVideoCompiler::eventResponsePixels));
+    registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoCompiler::eventWrite));
+    registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&HwVideoCompiler::eventStart));
+    registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&HwVideoCompiler::eventPause));
     registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
-                  reinterpret_cast<EventFunc>(&HwVideoOutput::eventSamples));
+                  reinterpret_cast<EventFunc>(&HwVideoCompiler::eventSamples));
 }
 
-HwVideoOutput::~HwVideoOutput() {
+HwVideoCompiler::~HwVideoCompiler() {
 
 }
 
-int HwVideoOutput::getWidth() {
-    return static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width;
+int HwVideoCompiler::getWidth() {
+    return getInt32("width");
 }
 
-int HwVideoOutput::getHeight() {
-    return static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height;
+int HwVideoCompiler::getHeight() {
+    return getInt32("height");
 }
 
-bool HwVideoOutput::eventPrepare(Message *msg) {
+bool HwVideoCompiler::eventPrepare(Message *msg) {
+    Logcat::i("HWVC", "test123 HwVideoCompiler::eventPrepare");
     recording = false;
-    encoder = new HwFFmpegEncoder();
-    if (!encoder->prepare(static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path,
-                          getWidth(), getHeight())) {
-        Logcat::e("HWVC", "HwVideoOutput::eventPrepare encoder open failed.");
+    encoder = new HwAsyncEncoder();
+    string path = getString("path");
+    Logcat::i("HWVC", "test123 eventPrepare %dx%d", getWidth(), getHeight());
+    if (!encoder->prepare(path, getWidth(), getHeight())) {
+        Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }
     videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, getWidth(), getHeight());
     audioFrame = new HwAudioFrame(nullptr, HwFrameFormat::HW_SAMPLE_S32, 2, 44100, 1024);
     return true;
 }
 
-bool HwVideoOutput::eventRelease(Message *msg) {
+bool HwVideoCompiler::eventRelease(Message *msg) {
     if (encoder) {
         encoder->stop();
         encoder->release();
@@ -66,14 +67,15 @@ bool HwVideoOutput::eventRelease(Message *msg) {
     return true;
 }
 
-bool HwVideoOutput::eventResponsePixels(Message *msg) {
+bool HwVideoCompiler::eventResponsePixels(Message *msg) {
     if (recording) {
-        postEventAtFront(new Message(EVENT_COMMON_PIXELS_READ, nullptr));
+        postEvent(new Message(EVENT_COMMON_PIXELS_READ, nullptr,
+                              Message::QUEUE_MODE_FIRST_ALWAYS, nullptr));
     }
     return true;
 }
 
-bool HwVideoOutput::eventWrite(Message *msg) {
+bool HwVideoCompiler::eventWrite(Message *msg) {
     if (!recording) {
         return true;
     }
@@ -82,25 +84,25 @@ bool HwVideoOutput::eventWrite(Message *msg) {
     return true;
 }
 
-bool HwVideoOutput::eventStart(Message *msg) {
+bool HwVideoCompiler::eventStart(Message *msg) {
     recording = true;
     return true;
 }
 
-bool HwVideoOutput::eventPause(Message *msg) {
+bool HwVideoCompiler::eventPause(Message *msg) {
     recording = false;
     lastTsInNs = -1;
     lastATsInNs = -1;
     return true;
 }
 
-void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
+void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
     if (!buf) {
-        Logcat::e("HWVC", "HwVideoOutput::write failed. Buffer is null.");
+        Logcat::e("HWVC", "HwVideoCompiler::write failed. Buffer is null.");
         return;
     }
     //Enable NV12 or YV12
-#if 0
+#if 1
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     int64_t time = TimeUtils::getCurrentTimeUS();
     libyuv::NV12ToI420(buf->getData(), videoFrame->getWidth(),
@@ -123,16 +125,16 @@ void HwVideoOutput::write(HwBuffer *buf, int64_t tsInNs) {
     }
     timestamp += (tsInNs - lastTsInNs);
     lastTsInNs = tsInNs;
-    videoFrame->setPts(timestamp / 1000);
+    videoFrame->setPts(aTimestamp / 1000);
     ++count;
     if (encoder) {
         encoder->write(videoFrame);
     } else {
-        Logcat::e("HWVC", "HwVideoOutput::write failed. Encoder has release.");
+        Logcat::e("HWVC", "HwVideoCompiler::write failed. Encoder has release.");
     }
 }
 
-bool HwVideoOutput::eventSamples(Message *msg) {
+bool HwVideoCompiler::eventSamples(Message *msg) {
     if (!recording) {
         return true;
     }
@@ -148,7 +150,7 @@ bool HwVideoOutput::eventSamples(Message *msg) {
     if (encoder) {
         encoder->write(audioFrame);
     } else {
-        Logcat::e("HWVC", "HwVideoOutput::write audio failed. Encoder has release.");
+        Logcat::e("HWVC", "HwVideoCompiler::write audio failed. Encoder has release.");
     }
     return true;
 }

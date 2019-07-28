@@ -9,28 +9,26 @@
 #include "../include/HwCameraRecorder.h"
 #include "../include/HwMicrophone.h"
 #include "../include/HwCameraInput.h"
-#include "../include/HwVideoOutput.h"
+#include "../include/HwVideoCompiler.h"
 #include "HwRender.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "NativeWindow.h"
-#include "../include/HwSequenceModel.h"
+#include "HwTexture.h"
 
 HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
-    startPipeline();
-    registerAnUnit(new HwMicrophone());
-    registerAnUnit(new HwCameraInput());
-    registerAnUnit(new HwRender());
-    registerAnUnit(new HwScreen());
-    registerAnUnit(new HwVideoOutput());
+    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
+    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
+    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
-    stopPipeline();
 }
 
-HwAbsPipelineModel *HwCameraRecorder::createModel() {
-    return HwSequenceModel::build();
+void HwCameraRecorder::onDestroy() {
+    HwAbsProcessor::onDestroy();
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {
@@ -46,30 +44,33 @@ void HwCameraRecorder::updateWindow(HwWindow *win) {
 }
 
 void HwCameraRecorder::start() {
-    postEvent(new Message(EVENT_VIDEO_OUT_START, nullptr));
+    postEvent(new Message(EVENT_COMMON_START, nullptr));
 }
 
 void HwCameraRecorder::pause() {
-    postEvent(new Message(EVENT_VIDEO_OUT_PAUSE, nullptr));
+    postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
 }
 
 void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
-    int width = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width;
-    int height = static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height;
-    removeAllMessage(EVENT_RENDER_FILTER);
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-    msg->obj = new ObjectBox(new Size(width, height));
-    msg->msg = "RENDER";
-    msg->arg1 = textureId;
+    msg->obj = new HwTexture(textureId, w, h);
+    msg->desc = "RENDER";
     msg->arg2 = tsInNs;
+    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 
 void HwCameraRecorder::setOutputFilePath(string filePath) {
-    static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->path = filePath;
+    putString("path", filePath).to({ALIAS_OF_COMPILER});
 }
 
 void HwCameraRecorder::setOutputSize(int width, int height) {
-    static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->width = width;
-    static_cast<HwSequenceModel *>(getModel())->getCodecConfig()->height = height;
+    putInt32("width", width).to({ALIAS_OF_COMPILER});
+    putInt32("height", height).to({ALIAS_OF_COMPILER});
+}
+
+void HwCameraRecorder::setFilter(Filter *filter) {
+    Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
+    msg->obj = new ObjectBox(filter);
+    postEvent(msg);
 }

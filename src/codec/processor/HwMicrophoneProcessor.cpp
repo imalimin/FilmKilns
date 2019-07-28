@@ -11,26 +11,24 @@
 #include "ObjectBox.h"
 
 HwMicrophoneProcessor::HwMicrophoneProcessor() : HwAbsProcessor("HwMicrophoneProcessor") {
-    startPipeline();
-    registerAnUnit(new HwMicrophone());
-    registerAnUnit(new HwAudioCompiler());
+    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new HwAudioCompiler(ALIAS_OF_COMPILER));
 }
 
 HwMicrophoneProcessor::~HwMicrophoneProcessor() {
-    stopPipeline();
 }
 
-void HwMicrophoneProcessor::prepare(string filePath, HwFrameFormat format) {
+void HwMicrophoneProcessor::prepare(string filePath, HwSampleFormat format) {
     this->format = format;
-    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
-    msg->obj = new ObjectBox(&format);
-    postEvent(msg);
+    putString("path", filePath).to({ALIAS_OF_COMPILER});
+    putObject("format", &this->format).to({ALIAS_OF_COMPILER});
+    postEvent(new Message(EVENT_COMMON_PREPARE, nullptr));
 }
 
 void HwMicrophoneProcessor::start() {
-//    postEvent(new Message(EVENT_VIDEO_OUT_START, nullptr));
+    postEvent(new Message(EVENT_COMMON_START, nullptr));
 }
 
 void HwMicrophoneProcessor::pause() {
-
+    postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
 }

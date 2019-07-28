@@ -5,12 +5,4 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../../include/HwAbsPipelineModel.h"
-
-HwAbsPipelineModel::HwAbsPipelineModel() : Object() {
-
-}
-
-HwAbsPipelineModel::~HwAbsPipelineModel() {
-
-}
+#include "../include/HwPair.h"

@@ -18,6 +18,8 @@ public:
 
     virtual ~HwAudioProcessor();
 
+    virtual void onDestroy() override;
+
     void setSource(const string path);
 
     void prepare();
@@ -32,10 +34,9 @@ public:
 
     void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 
-protected:
-    HwAbsPipelineModel *createModel() override;
-
 private:
+    const string ALIAS_OF_AUDIO = "AUDIO";
+    const string ALIAS_OF_SPEAKER = "SPEAKER";
     function<void(int64_t, int64_t)> playProgressListener = nullptr;
 };
 

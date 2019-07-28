@@ -6,11 +6,10 @@
  */
 #include "../include/Image.h"
 #include "ObjectBox.h"
-#include "Size.h"
+#include "../include/HwTexture.h"
 #include "Logcat.h"
 
-Image::Image() : Unit() {
-    name = __FUNCTION__;
+Image::Image(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Image::eventPrepare));
     registerEvent(EVENT_IMAGE_SHOW, reinterpret_cast<EventFunc>(&Image::eventShow));
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&Image::eventInvalidate));
@@ -72,7 +71,7 @@ bool Image::eventShow(Message *msg) {
 bool Image::eventInvalidate(Message *m) {
     if (GL_NONE != tex) {
         Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-        msg->obj = new ObjectBox(new Size(hwBitmap->getWidth(), hwBitmap->getHeight()));
+        msg->obj = new HwTexture(tex, hwBitmap->getWidth(), hwBitmap->getHeight());
         msg->arg1 = tex;
         postEvent(msg);
     }

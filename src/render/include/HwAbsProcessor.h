@@ -10,10 +10,50 @@
 
 #include "Object.h"
 #include <string>
+#include <initializer_list>
 #include "UnitPipeline.h"
-#include "HwAbsPipelineModel.h"
+#include "Unit.h"
+#include "HwPair.h"
 
 using namespace std;
+
+template<typename V>
+class HwPairBuilder : public Object {
+public:
+    HwPairBuilder(UnitPipeline *pipe, int32_t what, HwPair<string, V> hwPair)
+            : Object(),
+              pipe(pipe),
+              what(what),
+              hwPair(hwPair) {
+    }
+
+    HwPairBuilder(const HwPairBuilder &builder) : Object(),
+                                                  pipe(builder.pipe),
+                                                  what(builder.what),
+                                                  hwPair(builder.hwPair) {
+    }
+
+    virtual ~HwPairBuilder() {
+        pipe = nullptr;
+    }
+
+    void to(initializer_list<string> args) {
+        for (auto it = args.begin(); it != args.end(); ++it) {
+            if (pipe) {
+                Message *msg = new Message(what, nullptr,
+                                           Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
+                msg->obj = new HwPair<string, V>(
+                        (*it) + "_" + hwPair.key(), hwPair.value());
+                pipe->postEvent(msg);
+            }
+        }
+    }
+
+private:
+    UnitPipeline *pipe = nullptr;
+    int32_t what = 0;
+    HwPair<string, V> hwPair;
+};
 
 class HwAbsProcessor : public Object {
 public:
@@ -23,30 +63,29 @@ public:
 
     void post(function<void()> runnable);
 
-    HwAbsPipelineModel *getModel();
-
 protected:
-    void startPipeline();
-
-    void stopPipeline();
+    /**
+     * Be call after release pipeline.
+     */
+    virtual void onDestroy();
 
     void registerAnUnit(Unit *unit);
 
     void postEvent(Message *msg);
 
-    void postEventAtFront(Message *msg);
+    HwPairBuilder<int32_t> putInt32(string key, int32_t value);
 
-    void removeAllMessage(int what);
+    HwPairBuilder<int64_t> putInt64(string key, int64_t value);
 
-    virtual HwAbsPipelineModel *createModel() = 0;
+    HwPairBuilder<string> putString(string key, string value);
+
+    HwPairBuilder<Object *> putObject(string key, Object *value);
 
 private:
-    void _createModel();
-
-private:
+    const string ALIAS_OF_MODEL_PROVIDER = "ModelProvider";
     string name;
     UnitPipeline *pipeline = nullptr;
-    HwAbsPipelineModel *model = nullptr;
+    HwModelProvider *provider = nullptr;
 };
 
 

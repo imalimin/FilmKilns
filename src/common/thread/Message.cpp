@@ -7,22 +7,23 @@
 #include "../include/Message.h"
 #include "../include/ObjectBox.h"
 
-Message::Message(int what, function<void(Message *msg)> runnable) {
-    this->what = what;
-    this->obj = nullptr;
-    this->runnable = runnable;
-    this->arg1 = 0;
-    this->arg2 = 0;
-    this->msg = "Undef";
+Message::Message(int32_t what, function<void(Message *msg)> runnable)
+        : Message(what, nullptr, QUEUE_MODE_NORMAL, runnable) {
 }
 
-Message::Message(int what, Object *obj, function<void(Message *msg)> runnable) {
+Message::Message(int32_t what, Object *obj, function<void(Message *msg)> runnable)
+        : Message(what, obj, QUEUE_MODE_NORMAL, runnable) {
+}
+
+Message::Message(int32_t what, Object *obj, int16_t queueMode, function<void(Message *msg)> runnable)
+        : Object() {
     this->what = what;
     this->obj = obj;
     this->runnable = runnable;
     this->arg1 = 0;
     this->arg2 = 0;
-    this->msg = "Undef";
+    this->desc = "Undef";
+    this->queueMode = queueMode;
 }
 
 Message::~Message() {

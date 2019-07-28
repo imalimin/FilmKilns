@@ -14,19 +14,21 @@
 #include <string>
 
 HwVideoProcessor::HwVideoProcessor() : HwAbsProcessor("VideoProcessor") {
-    startPipeline();
-    HwVideoInput *inputUnit = new HwVideoInput();
+    HwVideoInput *inputUnit = new HwVideoInput(ALIAS_OF_VIDEO);
     inputUnit->setPlayListener([this](int64_t us, int64_t duration) {
         this->playProgressListener(us, duration);
     });
     registerAnUnit(inputUnit);
-    registerAnUnit(new HwRender());
-    registerAnUnit(new HwScreen());
-    registerAnUnit(new HwSpeaker(HwAudioDeviceMode::LowLatency));
+    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
+    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new HwSpeaker(ALIAS_OF_SPEAKER, HwAudioDeviceMode::LowLatency));
 }
 
 HwVideoProcessor::~HwVideoProcessor() {
-    stopPipeline();
+}
+
+void HwVideoProcessor::onDestroy() {
+    HwAbsProcessor::onDestroy();
     if (unitHandler) {
         delete unitHandler;
         unitHandler = nullptr;
@@ -36,10 +38,6 @@ HwVideoProcessor::~HwVideoProcessor() {
         screenHandler = nullptr;
     }
     playProgressListener = nullptr;
-}
-
-HwAbsPipelineModel *HwVideoProcessor::createModel() {
-    return new HwAbsPipelineModel();
 }
 
 void HwVideoProcessor::setSource(const string path) {
@@ -61,18 +59,20 @@ void HwVideoProcessor::start() {
 
 void HwVideoProcessor::pause() {
     Message *msg = new Message(EVENT_VIDEO_PAUSE, nullptr);
-    postEventAtFront(msg);
+    msg->queueMode = Message::QUEUE_MODE_FIRST_ALWAYS;
+    postEvent(msg);
 }
 
 void HwVideoProcessor::stop() {
     Message *msg = new Message(EVENT_VIDEO_STOP, nullptr);
-    postEventAtFront(msg);
+    msg->queueMode = Message::QUEUE_MODE_FIRST_ALWAYS;
+    postEvent(msg);
 }
 
 void HwVideoProcessor::seek(int64_t us) {
-    removeAllMessage(EVENT_VIDEO_SEEK);
     Message *msg = new Message(EVENT_VIDEO_SEEK, nullptr);
     msg->arg2 = us;
+    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 

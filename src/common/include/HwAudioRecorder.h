@@ -45,6 +45,8 @@ public:
 
     virtual HwBuffer *read(size_t size);
 
+    virtual HwBuffer *read(size_t size, int timeOut);
+
     virtual void flush();
 
     void bufferDequeue(SLAndroidSimpleBufferQueueItf slBufferQueueItf);

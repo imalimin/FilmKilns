@@ -14,11 +14,9 @@
 
 class HwSpeaker : public Unit {
 public:
-    HwSpeaker();
+    HwSpeaker(string alias);
 
-    HwSpeaker(HwAudioDeviceMode mode);
-
-    HwSpeaker(HwAudioDeviceMode mode, HandlerThread *handlerThread);
+    HwSpeaker(string alias, HwAudioDeviceMode mode);
 
     virtual ~HwSpeaker();
 

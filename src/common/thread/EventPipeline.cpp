@@ -38,7 +38,7 @@ void EventPipeline::queueEvent(function<void()> event) {
 void EventPipeline::quit() {
     simpleLock.lock();
     if (handlerThread) {
-        handlerThread->removeAllMessage(0);
+        handlerThread->sendMessage(new Message(0, nullptr, Message::QUEUE_MODE_CLEAR, nullptr));
         if (shouldQuitThread) {
             delete handlerThread;
         }

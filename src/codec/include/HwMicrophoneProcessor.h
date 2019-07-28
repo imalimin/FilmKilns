@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWMICROPHONEPROCESSOR_H
 
 #include "HwAbsProcessor.h"
-#include "HwFrameFormat.h"
+#include "HwSampleFormat.h"
 
 class HwMicrophoneProcessor : public HwAbsProcessor {
 public:
@@ -17,14 +17,16 @@ public:
 
     ~HwMicrophoneProcessor();
 
-    void prepare(string filePath, HwFrameFormat format);
+    void prepare(string filePath, HwSampleFormat format);
 
     void start();
 
     void pause();
 
 private:
-    HwFrameFormat format;
+    const string ALIAS_OF_MIC = "MIC";
+    const string ALIAS_OF_COMPILER = "COMPILER";
+    HwSampleFormat format = HwSampleFormat::NONE;
 };
 
 

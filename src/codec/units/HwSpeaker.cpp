@@ -8,15 +8,10 @@
 #include <libavutil/samplefmt.h>
 #include "../include/HwSpeaker.h"
 
-HwSpeaker::HwSpeaker() : HwSpeaker(HwAudioDeviceMode::Normal) {
+HwSpeaker::HwSpeaker(string alias) : HwSpeaker(alias, HwAudioDeviceMode::Normal) {
 }
 
-HwSpeaker::HwSpeaker(HwAudioDeviceMode mode) : HwSpeaker(mode, nullptr) {
-}
-
-HwSpeaker::HwSpeaker(HwAudioDeviceMode mode, HandlerThread *handlerThread) : Unit(handlerThread),
-                                                                             mode(mode) {
-    name = __FUNCTION__;
+HwSpeaker::HwSpeaker(string alias, HwAudioDeviceMode mode) : Unit(alias), mode(mode) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwSpeaker::eventPrepare));
     registerEvent(EVENT_SPEAKER_FEED, reinterpret_cast<EventFunc>(&HwSpeaker::eventFeed));
 }
@@ -48,7 +43,7 @@ bool HwSpeaker::eventFeed(Message *msg) {
 //                      frame->getSampleRate(),
 //                      frame->getSampleCount(),
 //                      frame->getDataSize());
-            player->write(frame->getBuffer()->getData(), frame->getBufferSize());
+            player->write(frame->getBuffer()->getData(), frame->getBufferSize(), 1000000);
         }
     }
     return false;

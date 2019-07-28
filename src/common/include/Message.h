@@ -15,19 +15,28 @@ using namespace std;
 class Message : public Object {
 public:
     function<void(Message *msg)> runnable = nullptr;
-    int what;
-    int arg1;
-    int64_t arg2;
-    string msg;
+    int32_t what = 0;
+    int32_t arg1 = 0;
+    int64_t arg2 = 0;
+    string desc;
     Object *obj = nullptr;
+    int16_t queueMode = QUEUE_MODE_NORMAL;
 
-    Message(int what, function<void(Message *msg)> runnable);
+    Message(int32_t what, function<void(Message *msg)> runnable);
 
-    Message(int what, Object *obj, function<void(Message *msg)> runnable);
+    Message(int32_t what, Object *obj, function<void(Message *msg)> runnable);
+
+    Message(int32_t what, Object *obj, int16_t queueMode, function<void(Message *msg)> runnable);
 
     virtual ~Message();
 
     void *tyrUnBox();
+
+public:
+    static constexpr int16_t QUEUE_MODE_NORMAL = 0x00;
+    static constexpr int16_t QUEUE_MODE_UNIQUE = 0x01;
+    static constexpr int16_t QUEUE_MODE_FIRST_ALWAYS = 0x02;
+    static constexpr int16_t QUEUE_MODE_CLEAR = 0x04;
 };
 
 #endif //HARDWAREVIDEOCODEC_MESSAGE_H

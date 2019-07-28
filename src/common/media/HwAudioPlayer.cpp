@@ -239,6 +239,10 @@ void HwAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf
 }
 
 HwResult HwAudioPlayer::write(uint8_t *buffer, size_t size) {
+    return write(buffer, size, 0);
+}
+
+HwResult HwAudioPlayer::write(uint8_t *buffer, size_t size, int timeOut) {
 //    ObjectBox *cache = recycler->takeCache();
 //    if (!cache) {
 //        LOGE("Cache invalid");
@@ -251,7 +255,7 @@ HwResult HwAudioPlayer::write(uint8_t *buffer, size_t size) {
 //    memcpy(data, buffer, size);
 //    pcmList.push(new ObjectBox(data));
     //-----------------
-    size_t ret = fifo->push(buffer, size, 60000);
+    size_t ret = fifo->push(buffer, size, timeOut);
     if (0 == ret) {
         return Hw::FAILED;
     }

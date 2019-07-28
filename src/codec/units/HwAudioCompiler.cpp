@@ -6,9 +6,13 @@
 */
 
 #include "../include/HwAudioCompiler.h"
+#include "HwBuffer.h"
 
-HwAudioCompiler::HwAudioCompiler() : Unit() {
-
+HwAudioCompiler::HwAudioCompiler(string alias) : Unit(alias) {
+    registerEvent(EVENT_COMMON_PREPARE,
+                  reinterpret_cast<EventFunc>(&HwAudioCompiler::eventPrepare));
+    registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
+                  reinterpret_cast<EventFunc>(&HwAudioCompiler::eventReceiveData));
 }
 
 HwAudioCompiler::~HwAudioCompiler() {
@@ -16,9 +20,25 @@ HwAudioCompiler::~HwAudioCompiler() {
 }
 
 bool HwAudioCompiler::eventRelease(Message *msg) {
+    if (muxer) {
+        delete muxer;
+        muxer = nullptr;
+    }
     return true;
 }
 
 bool HwAudioCompiler::eventPrepare(Message *msg) {
+    Object *f = getObject("format");
+    HwSampleFormat *format = reinterpret_cast<HwSampleFormat *>(f);
+    string path = getString("path");
+    muxer = WAVRawMuxer::build(path, *format);
+    return true;
+}
+
+bool HwAudioCompiler::eventReceiveData(Message *msg) {
+    HwBuffer *buf = dynamic_cast<HwBuffer *>(msg->obj);
+    if (buf && muxer) {
+        muxer->write(buf);
+    }
     return true;
 }

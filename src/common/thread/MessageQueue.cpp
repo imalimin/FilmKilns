@@ -128,7 +128,7 @@ void MessageQueue::printQueue() {
     list<Message *>::iterator itr = queue.begin();
     while (itr != queue.end()) {
         Message *e = *itr;
-        os << e->msg << "(" << e << "),";
+        os << e->desc << "(" << e << "),";
         ++itr;
     }
     Logcat::i("HWVC", "MessageQueue(%s)", os.str().c_str());

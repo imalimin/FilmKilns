@@ -11,28 +11,23 @@
 #include "ObjectBox.h"
 
 HwAudioProcessor::HwAudioProcessor() : HwAbsProcessor("AudioProcessor") {
-    startPipeline();
-    HwAudioInput *inputUnit = new HwAudioInput();
+    HwAudioInput *inputUnit = new HwAudioInput(ALIAS_OF_AUDIO);
     inputUnit->setPlayListener([this](int64_t us, int64_t duration) {
         this->playProgressListener(us, duration);
     });
     registerAnUnit(inputUnit);
-    registerAnUnit(new HwSpeaker());
+    registerAnUnit(new HwSpeaker(ALIAS_OF_SPEAKER));
 }
 
 HwAudioProcessor::~HwAudioProcessor() {
-    stopPipeline();
+}
+
+void HwAudioProcessor::onDestroy() {
     playProgressListener = nullptr;
 }
 
-HwAbsPipelineModel *HwAudioProcessor::createModel() {
-    return new HwAbsPipelineModel();
-}
-
 void HwAudioProcessor::setSource(const string path) {
-    Message *msg = new Message(EVENT_AUDIO_SET_SOURCE, nullptr);
-    msg->obj = new ObjectBox(new string(path));
-    postEvent(msg);
+    putString("path", path).to({ALIAS_OF_AUDIO});
 }
 
 void HwAudioProcessor::prepare() {
@@ -57,9 +52,9 @@ void HwAudioProcessor::stop() {
 }
 
 void HwAudioProcessor::seek(int64_t us) {
-    removeAllMessage(EVENT_AUDIO_SEEK);
     Message *msg = new Message(EVENT_AUDIO_SEEK, nullptr);
     msg->arg2 = us;
+    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 

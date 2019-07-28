@@ -6,11 +6,13 @@
 #define HARDWAREVIDEOCODEC_HWSAMPLEFORMAT_H
 
 #include "Object.h"
-#include "../include/HwAbsMediaFrame.h"
+#include "HwFrameFormat.h"
 
 class HwSampleFormat : public Object {
 public:
     HwSampleFormat(HwFrameFormat format, uint16_t channels, uint32_t sampleRate);
+
+    HwSampleFormat(const HwSampleFormat &format);
 
     virtual ~HwSampleFormat();
 
@@ -24,6 +26,9 @@ private:
     uint16_t channels = 0;
     uint32_t sampleRate = 0;
     HwFrameFormat format = HwFrameFormat::HW_FMT_NONE;
+
+public:
+    static const HwSampleFormat NONE;
 };
 
 

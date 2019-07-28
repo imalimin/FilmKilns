@@ -10,13 +10,13 @@
 
 #include "HwAbsFrame.h"
 #include "HwSourcesAllocator.h"
-#include "../include/HwFrameFormat.h"
+#include "HwFrameFormat.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "../include/ff/libavutil/samplefmt.h"
+#include "libavutil/samplefmt.h"
 
 #ifdef __cplusplus
 }

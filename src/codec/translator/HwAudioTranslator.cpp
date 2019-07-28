@@ -3,6 +3,7 @@
 //
 
 #include "../include/HwAudioTranslator.h"
+#include "../include/HwAbsMediaFrame.h"
 #include "Logcat.h"
 
 HwAudioTranslator::HwAudioTranslator(HwSampleFormat outFormat, HwSampleFormat inFormat)

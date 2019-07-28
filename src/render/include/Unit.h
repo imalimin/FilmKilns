@@ -11,8 +11,9 @@
 #include "UnitPipeline.h"
 #include "EventPipeline.h"
 #include "Message.h"
+#include "HwBundle.h"
 #include <map>
-#include "../include/HwAbsPipelineModel.h"
+//#include "HwModelProvider.h"
 
 #define KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
 
@@ -21,20 +22,22 @@ using namespace std;
 static constexpr int EVENT_COMMON_RELEASE = KID('C', 'O', 'M', 0x01);
 static constexpr int EVENT_COMMON_PREPARE = KID('C', 'O', 'M', 0x02);
 static constexpr int EVENT_COMMON_INVALIDATE = KID('C', 'O', 'M', 0x03);
+static constexpr int EVENT_COMMON_START = KID('C', 'O', 'M', 0x04);
+static constexpr int EVENT_COMMON_PAUSE = KID('C', 'O', 'M', 0x05);
 /**
  * Notify pixels is ready to someone.
  */
-static constexpr int EVENT_COMMON_PIXELS_READY = KID('C', 'O', 'M', 0x04);
+static constexpr int EVENT_COMMON_PIXELS_READY = KID('C', 'O', 'M', 0x06);
 /**
  * Response 'EVENT_COMMON_PIXELS_READY' event for notify Unit read pixels.
  * If nobody response this event, read pixels action will be cancel.
  */
-static constexpr int EVENT_COMMON_PIXELS_READ = KID('C', 'O', 'M', 0x05);
+static constexpr int EVENT_COMMON_PIXELS_READ = KID('C', 'O', 'M', 0x07);
 /**
  * If someone response 'EVENT_COMMON_PIXELS_READY' event, then send pixels to pipeline.
  * You can handle this event.
  */
-static constexpr int EVENT_COMMON_PIXELS = KID('C', 'O', 'M', 0x06);
+static constexpr int EVENT_COMMON_PIXELS = KID('C', 'O', 'M', 0x08);
 
 static constexpr int EVENT_IMAGE_SHOW = KID('I', 'M', 'G', 0x01);
 
@@ -55,8 +58,7 @@ static constexpr int EVENT_AUDIO_START = KID('A', 'D', 'O', 0x01);
 static constexpr int EVENT_AUDIO_PAUSE = KID('A', 'D', 'O', 0x02);
 static constexpr int EVENT_AUDIO_STOP = KID('A', 'D', 'O', 0x03);
 static constexpr int EVENT_AUDIO_SEEK = KID('A', 'D', 'O', 0x04);
-static constexpr int EVENT_AUDIO_SET_SOURCE = KID('A', 'D', 'O', 0x05);
-static constexpr int EVENT_AUDIO_LOOP = KID('A', 'D', 'O', 0x06);
+static constexpr int EVENT_AUDIO_LOOP = KID('A', 'D', 'O', 0x05);
 
 static constexpr int EVENT_SPEAKER_FEED = KID('S', 'P', 'K', 0x01);
 
@@ -65,6 +67,11 @@ static constexpr int EVENT_VIDEO_OUT_PAUSE = KID('V', 'O', 'P', 0x02);
 
 static constexpr int EVENT_MICROPHONE_LOOP = KID('M', 'I', 'C', 0x01);
 static constexpr int EVENT_MICROPHONE_OUT_SAMPLES = KID('M', 'I', 'C', 0x02);
+
+/**
+ * Define class HwModelProvider.
+ */
+class HwModelProvider;
 
 typedef bool (Unit::*EventFunc)(Message *);
 
@@ -83,9 +90,10 @@ protected:
 
 class Unit : public Object {
 public:
-    Unit();
-
-    Unit(HandlerThread *handlerThread);
+    /**
+     * @param Alias is IMPORTANT for an unit. It is a tag of model provider.
+     */
+    Unit(string alias);
 
     virtual ~Unit();
 
@@ -101,25 +109,62 @@ public:
      */
     bool dispatch(Message *msg);
 
-    void post(function<void()> runnable);
+    /** Model Provider START */
+    void setModelProvider(HwModelProvider *provider);
 
-    void setModel(HwAbsPipelineModel *model);
+    HwModelProvider *getModelProvider();
 
-    HwAbsPipelineModel *getModel();
+    int32_t getInt32(string key);
+
+    int64_t getInt64(string key);
+
+    string getString(string key);
+
+    Object *getObject(string key);
+    /** Model Provider END */
 
 protected:
-    string name;
-
     void postEvent(Message *msg);
 
-    void postEventAtFront(Message *msg);
-
 private:
+    string alias;
     map<int, Event *> eventMap;
     UnitPipeline *pipeline = nullptr;
-    EventPipeline *eventPipeline = nullptr;
-    HwAbsPipelineModel *model = nullptr;
-    SimpleLock simpleLock;
+    HwModelProvider *provider = nullptr;
+};
+
+class HwModelProvider : public Unit {
+public:
+    HwModelProvider(string alias);
+
+    virtual ~HwModelProvider();
+
+    bool eventRelease(Message *msg) override;
+
+    bool eventPutInt32(Message *msg);
+
+    bool eventPutInt64(Message *msg);
+
+    bool eventPutString(Message *msg);
+
+    bool eventPutObject(Message *msg);
+
+    int32_t getInt32(string key);
+
+    int64_t getInt64(string key);
+
+    string getString(string key);
+
+    Object *getObject(string key);
+
+public:
+    static const int EVENT_PUT_INT32;
+    static const int EVENT_PUT_INT64;
+    static const int EVENT_PUT_STRING;
+    static const int EVENT_PUT_OBJECT;
+
+private:
+    HwBundle bundle;
 };
 
 
