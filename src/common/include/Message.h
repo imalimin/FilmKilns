@@ -18,7 +18,7 @@ public:
     int32_t what = 0;
     int32_t arg1 = 0;
     int64_t arg2 = 0;
-    string msg;
+    string desc;
     Object *obj = nullptr;
     int16_t queueMode = QUEUE_MODE_NORMAL;
 

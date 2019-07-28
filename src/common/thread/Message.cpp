@@ -22,7 +22,7 @@ Message::Message(int32_t what, Object *obj, int16_t queueMode, function<void(Mes
     this->runnable = runnable;
     this->arg1 = 0;
     this->arg2 = 0;
-    this->msg = "Undef";
+    this->desc = "Undef";
     this->queueMode = queueMode;
 }
 
