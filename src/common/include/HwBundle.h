@@ -38,7 +38,7 @@ public:
 private:
     map<string, int32_t> int32Map;
     map<string, int64_t> int64Map;
-    map<string, string> stringMap;
+    map<string, string> strMap;
     map<string, Object *> objMap;
 };
 
