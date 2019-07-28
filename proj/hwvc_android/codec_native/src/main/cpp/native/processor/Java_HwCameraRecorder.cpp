@@ -63,7 +63,8 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setOut
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setOutputSize
         (JNIEnv *env, jobject thiz, jlong handler, jint width, jint height) {
     if (handler) {
-        getHandler(handler)->setOutputSize(width, height);
+        getHandler(handler)->setFormat(width, height,
+                                       HwSampleFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100));
     }
 }
 

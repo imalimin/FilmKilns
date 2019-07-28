@@ -29,6 +29,10 @@ HwCameraRecorder::~HwCameraRecorder() {
 
 void HwCameraRecorder::onDestroy() {
     HwAbsProcessor::onDestroy();
+    if (audioFormat) {
+        delete audioFormat;
+        audioFormat = nullptr;
+    }
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {
@@ -64,9 +68,14 @@ void HwCameraRecorder::setOutputFilePath(string filePath) {
     putString("path", filePath).to({ALIAS_OF_COMPILER});
 }
 
-void HwCameraRecorder::setOutputSize(int width, int height) {
+void HwCameraRecorder::setFormat(int width, int height, HwSampleFormat format) {
+    if (audioFormat) {
+        delete audioFormat;
+    }
+    audioFormat = new HwSampleFormat(format);
     putInt32("width", width).to({ALIAS_OF_COMPILER});
     putInt32("height", height).to({ALIAS_OF_COMPILER});
+    putObject("audioFormat", audioFormat).to({ALIAS_OF_MIC, ALIAS_OF_COMPILER});
 }
 
 void HwCameraRecorder::setFilter(Filter *filter) {

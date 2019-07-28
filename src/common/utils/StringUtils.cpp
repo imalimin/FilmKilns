@@ -64,3 +64,7 @@ std::string StringUtils::valueOf(long value) {
     oss << value;
     return oss.str();
 }
+
+bool StringUtils::isEmpty(std::string *str) {
+    return nullptr == str || "" == *str;
+}

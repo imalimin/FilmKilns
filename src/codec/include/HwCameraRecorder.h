@@ -11,6 +11,7 @@
 #include "HwAbsProcessor.h"
 #include "HwWindow.h"
 #include "Filter.h"
+#include "HwSampleFormat.h"
 
 /**
  *    Controller                Unit                  Unit               Unit                 Unit
@@ -54,7 +55,7 @@ public:
 
     void setOutputFilePath(string filePath);
 
-    void setOutputSize(int width, int height);
+    void setFormat(int width, int height, HwSampleFormat format);
 
     void setFilter(Filter *filter);
 
@@ -64,6 +65,7 @@ private:
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
     const string ALIAS_OF_COMPILER = "COMPILER";
+    HwSampleFormat *audioFormat = nullptr;
 };
 
 

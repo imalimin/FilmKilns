@@ -36,6 +36,8 @@ public:
     static std::vector<std::string> split(const std::string &str, const std::string &delimiter);
 
     static std::string valueOf(long value);
+
+    static bool isEmpty(std::string *str);
 };
 
 

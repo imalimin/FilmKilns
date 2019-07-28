@@ -10,6 +10,8 @@
 #include "../platform/android/encoder/HwAndroidEncoder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
+#include "../include/HwSampleFormat.h"
+#include "StringUtils.h"
 
 HwVideoCompiler::HwVideoCompiler(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE,
@@ -36,16 +38,22 @@ int HwVideoCompiler::getHeight() {
 }
 
 bool HwVideoCompiler::eventPrepare(Message *msg) {
-    Logcat::i("HWVC", "test123 HwVideoCompiler::eventPrepare");
     recording = false;
-    encoder = new HwAsyncEncoder();
+    int32_t width = getInt32("height");
+    int32_t height = getInt32("width");
     string path = getString("path");
-    Logcat::i("HWVC", "test123 eventPrepare %dx%d", getWidth(), getHeight());
-    if (!encoder->prepare(path, getWidth(), getHeight())) {
+    HwSampleFormat *format = dynamic_cast<HwSampleFormat *>(getObject("audioFormat"));
+    if (StringUtils::isEmpty(&path) || !format || INT32_MIN == width || INT32_MIN == height) {
+        Logcat::e("HWVC", "HwVideoCompiler::eventPrepare failed.Invalid arguments.");
+        return true;
+    }
+    encoder = new HwAsyncEncoder();
+    if (!encoder->prepare(path, width, height)) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }
-    videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, getWidth(), getHeight());
-    audioFrame = new HwAudioFrame(nullptr, HwFrameFormat::HW_SAMPLE_S32, 2, 44100, 1024);
+    videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, width, height);
+    audioFrame = new HwAudioFrame(nullptr, format->getFormat(), format->getChannels(),
+                                  format->getSampleRate(), 1024);
     return true;
 }
 
