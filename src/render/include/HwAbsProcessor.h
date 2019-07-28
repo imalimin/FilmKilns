@@ -20,34 +20,39 @@ using namespace std;
 template<typename V>
 class HwPairBuilder : public Object {
 public:
-//    typedef void (HwAbsProcessor::*Callback)(string, V);
-
-    HwPairBuilder(HwPair<string, V> hwPair, function<void(string, HwPair<string, V> *)> callback)
+    HwPairBuilder(UnitPipeline *pipe, int32_t what, HwPair<string, V> hwPair)
             : Object(),
-              hwPair(hwPair),
-              callback(callback) {
+              pipe(pipe),
+              what(what),
+              hwPair(hwPair) {
     }
 
-//    HwPairBuilder(const HwPairBuilder &builder) : Object(),
-//                                                  hwPair(builder.hwPair),
-//                                                  callback(builder.callback) {
-//    }
+    HwPairBuilder(const HwPairBuilder &builder) : Object(),
+                                                  pipe(builder.pipe),
+                                                  what(builder.what),
+                                                  hwPair(builder.hwPair) {
+    }
 
     virtual ~HwPairBuilder() {
-        callback = nullptr;
+        pipe = nullptr;
     }
 
     void to(initializer_list<string> args) {
         for (auto it = args.begin(); it != args.end(); ++it) {
-            if (callback) {
-                callback(*it, &hwPair);
+            if (pipe) {
+                Message *msg = new Message(what, nullptr,
+                                           Message::QUEUE_MODE_FIRST_ALWAYS, nullptr);
+                msg->obj = new HwPair<string, V>(
+                        (*it) + "_" + hwPair.key(), hwPair.value());
+                pipe->postEvent(msg);
             }
         }
     }
 
 private:
+    UnitPipeline *pipe = nullptr;
+    int32_t what = 0;
     HwPair<string, V> hwPair;
-    function<void(string, HwPair<string, V> *)> callback;
 };
 
 class HwAbsProcessor : public Object {
@@ -68,13 +73,13 @@ protected:
 
     void postEvent(Message *msg);
 
-    HwPairBuilder<int32_t> *putInt32(string key, int32_t value);
+    HwPairBuilder<int32_t> putInt32(string key, int32_t value);
 
-    void putInt64(string unitAlias, string key, int64_t value);
+    HwPairBuilder<int64_t> putInt64(string key, int64_t value);
 
-    void putString(string unitAlias, string key, string value);
+    HwPairBuilder<string> putString(string key, string value);
 
-    void putObject(string unitAlias, string key, Object *value);
+    HwPairBuilder<Object *> putObject(string key, Object *value);
 
 private:
     const string ALIAS_OF_MODEL_PROVIDER = "ModelProvider";

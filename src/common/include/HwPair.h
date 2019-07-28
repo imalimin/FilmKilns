@@ -17,16 +17,15 @@ using namespace std;
 template<typename K, typename V>
 class HwPair : public Object {
 private:
-    typedef pair<K, V> Pair;
-    Pair p;
+    K first;
+    V second;
 
 public:
-    HwPair(K key, V value) {
-        p = pair<K, V>(key, value);
+    HwPair(K key, V value) : Object(), first(key), second(value) {
+
     }
 
-    HwPair(const HwPair &hwPair) {
-        this->p = pair<K, V>(hwPair.key(), hwPair.value());
+    HwPair(const HwPair &hwPair) : Object(), first(hwPair.first), second(hwPair.second) {
     }
 
     virtual ~HwPair() {
@@ -34,11 +33,11 @@ public:
     }
 
     K key() const {
-        return p.first;
+        return first;
     }
 
     V value() const {
-        return p.second;
+        return second;
     }
 };
 

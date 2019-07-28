@@ -36,9 +36,11 @@ int HwVideoCompiler::getHeight() {
 }
 
 bool HwVideoCompiler::eventPrepare(Message *msg) {
+    Logcat::i("HWVC", "test123 HwVideoCompiler::eventPrepare");
     recording = false;
     encoder = new HwAsyncEncoder();
     string path = getString("path");
+    Logcat::i("HWVC", "test123 eventPrepare %dx%d", getWidth(), getHeight());
     if (!encoder->prepare(path, getWidth(), getHeight())) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }
