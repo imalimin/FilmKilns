@@ -57,6 +57,8 @@ private:
     AVFrame *avAudioFrame = nullptr;
     HwAudioTranslator *translator = nullptr;
     bool firstVideoFrameWrite = false;
+
+    int32_t quality = 15;
 };
 
 #ifdef __cplusplus
