@@ -8,8 +8,16 @@
 #ifndef HWVC_ANDROID_HWABSVIDEOENCODER_H
 #define HWVC_ANDROID_HWABSVIDEOENCODER_H
 
+#include "HwAbsEncoder.h"
+#include "HwSampleFormat.h"
 
-class HwAbsVideoEncoder {
+class HwAbsVideoEncoder : public HwAbsEncoder {
+public:
+    HwAbsVideoEncoder();
+
+    virtual ~HwAbsVideoEncoder();
+
+    virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) = 0;
 
 };
 

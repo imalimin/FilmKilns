@@ -9,7 +9,7 @@
 #include "Logcat.h"
 #include <media/NdkImage.h>
 
-HwAndroidEncoder::HwAndroidEncoder() : HwAbsEncoder() {
+HwAndroidEncoder::HwAndroidEncoder() : HwAbsVideoEncoder() {
 
 }
 
@@ -17,10 +17,11 @@ HwAndroidEncoder::~HwAndroidEncoder() {
     release();
 }
 
-bool HwAndroidEncoder::prepare(string path, int width, int height) {
+bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     this->path = path;
     this->width = width;
     this->height = height;
+    this->audioFormat = audioFormat;
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
     return configure() && configureMuxer();
 }

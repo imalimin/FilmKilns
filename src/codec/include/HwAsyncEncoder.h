@@ -8,18 +8,18 @@
 #ifndef HWVC_ANDROID_HWASYNFFENCODER_H
 #define HWVC_ANDROID_HWASYNFFENCODER_H
 
-#include "HwAbsEncoder.h"
+#include "HwAbsVideoEncoder.h"
 #include "EventPipeline.h"
 #include "HwFrameAllocator.h"
 #include <queue>
 
-class HwAsyncEncoder : public HwAbsEncoder {
+class HwAsyncEncoder : public HwAbsVideoEncoder {
 public:
     HwAsyncEncoder();
 
     virtual ~HwAsyncEncoder();
 
-    virtual bool prepare(string path, int width, int height) override;
+    virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) override;
 
     virtual HwResult write(HwAbsMediaFrame *frame) override;
 
@@ -34,7 +34,7 @@ private:
 
 private:
     const int MAX_FRAME_CACHE = 36;
-    HwAbsEncoder *encoder = nullptr;
+    HwAbsVideoEncoder *encoder = nullptr;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     EventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;

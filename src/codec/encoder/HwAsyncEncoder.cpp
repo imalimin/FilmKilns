@@ -8,7 +8,7 @@
 #include "../include/HwAsyncEncoder.h"
 #include "../include/HwFFmpegEncoder.h"
 
-HwAsyncEncoder::HwAsyncEncoder() : HwAbsEncoder() {
+HwAsyncEncoder::HwAsyncEncoder() : HwAbsVideoEncoder() {
     pipeline = new EventPipeline("HwAsyncFFEncoder");
     hwFrameAllocator = new HwFrameAllocator();
     encoder = new HwFFmpegEncoder();
@@ -29,9 +29,9 @@ HwAsyncEncoder::~HwAsyncEncoder() {
     }
 }
 
-bool HwAsyncEncoder::prepare(string path, int width, int height) {
+bool HwAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     if (encoder) {
-        looping = encoder->prepare(path, width, height);
+        looping = encoder->prepare(path, width, height, audioFormat);
         loop();
         return looping;
     }

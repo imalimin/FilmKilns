@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWANDROIDENCODER_H
 #define HWVC_ANDROID_HWANDROIDENCODER_H
 
-#include "../../../include/HwAbsEncoder.h"
+#include "../../../include/HwAbsVideoEncoder.h"
 #include "media/NdkMediaCodec.h"
 
 
@@ -25,13 +25,13 @@ extern "C" {
 }
 #endif
 
-class HwAndroidEncoder : public HwAbsEncoder {
+class HwAndroidEncoder : public HwAbsVideoEncoder {
 public:
     HwAndroidEncoder();
 
     virtual ~HwAndroidEncoder();
 
-    virtual bool prepare(string path, int width, int height) override;
+    virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) override;
 
     virtual HwResult write(HwAbsMediaFrame *frame) override;
 
@@ -60,6 +60,7 @@ private:
     const int BUFFER_FLAG_CODEC_CONFIG = 2;
     string path;
     int width = 0, height = 0;
+    HwSampleFormat audioFormat = HwSampleFormat::NONE;
     AMediaCodec *codec = nullptr;
     HwBuffer *configBuf = nullptr;
     HwBuffer *keyFrameBuf = nullptr;

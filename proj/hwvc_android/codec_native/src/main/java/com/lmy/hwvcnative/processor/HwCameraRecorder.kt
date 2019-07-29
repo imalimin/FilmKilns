@@ -24,9 +24,10 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
         setOutputFilePath(handler, filePath)
     }
 
-    fun setOutputSize(width: Int, height: Int) {
+    fun setFormat(width: Int, height: Int, sampleFormat: Int = 102,
+                  channels: Int = 2, sampleRate: Int = 44100) {
         if (0L == handler) return
-        setOutputSize(handler, width, height)
+        setFormat(handler, width, height, sampleFormat, channels, sampleRate)
     }
 
     private fun prepare(surface: Surface) {
@@ -116,6 +117,8 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     private external fun postEvent(handler: Long, what: Int)
     private external fun invalidate(handler: Long, textureId: Int, tsInNs: Long, w: Int, h: Int)
     private external fun setOutputFilePath(handler: Long, filePath: String)
-    private external fun setOutputSize(handler: Long, width: Int, height: Int)
+    private external fun setFormat(handler: Long, width: Int, height: Int, sampleFormat: Int,
+                                   channels: Int, sampleRate: Int)
+
     private external fun setFilter(handler: Long, filter: Long)
 }

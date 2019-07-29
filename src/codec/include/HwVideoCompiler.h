@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWVIDEOOUTPUT_H
 
 #include "Unit.h"
-#include "../include/HwAbsEncoder.h"
+#include "../include/HwAbsVideoEncoder.h"
 #include "../include/HwVideoFrame.h"
 #include "../include/HwAudioFrame.h"
 #include <atomic>
@@ -45,7 +45,7 @@ private:
     int getHeight();
 
 private:
-    HwAbsEncoder *encoder = nullptr;
+    HwAbsVideoEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
     HwAudioFrame *audioFrame = nullptr;
     std::atomic_bool recording;

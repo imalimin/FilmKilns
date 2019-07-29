@@ -6,3 +6,11 @@
 */
 
 #include "../include/HwAbsVideoEncoder.h"
+
+HwAbsVideoEncoder::HwAbsVideoEncoder() : HwAbsEncoder() {
+
+}
+
+HwAbsVideoEncoder::~HwAbsVideoEncoder() {
+
+}

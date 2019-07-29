@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWFFMPEGENCODER_H
 #define HWVC_ANDROID_HWFFMPEGENCODER_H
 
-#include "HwAbsEncoder.h"
+#include "HwAbsVideoEncoder.h"
 #include "HwResult.h"
 #include "HwAbsMediaFrame.h"
 #include "HwAudioTranslator.h"
@@ -22,13 +22,13 @@ extern "C" {
 #include "ff/libavutil/avutil.h"
 #include "ff/libswresample/swresample.h"
 
-class HwFFmpegEncoder : public HwAbsEncoder {
+class HwFFmpegEncoder : public HwAbsVideoEncoder {
 public:
     HwFFmpegEncoder();
 
     virtual ~HwFFmpegEncoder();
 
-    virtual bool prepare(string path, int width, int height) override;
+    virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) override;
 
     virtual HwResult write(HwAbsMediaFrame *frame) override;
 
@@ -47,6 +47,7 @@ private:
     string path;
     int width = 0;
     int height = 0;
+    HwSampleFormat audioFormat = HwSampleFormat::NONE;
     AVFormatContext *pFormatCtx = nullptr;
     AVStream *pVideoStream = nullptr;
     AVStream *pAudioStream = nullptr;

@@ -27,7 +27,7 @@ class CameraActivity : BaseActivity() {
         surfaceView.keepScreenOn = true
         path = "${externalCacheDir.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
-        recorder?.setOutputSize(320, 480)
+        recorder?.setFormat(320, 480)
         recorder?.prepare(surfaceView)
         mFilterController = FilterController(recorder!!, progressLayout)
         filterBtn.setOnClickListener {

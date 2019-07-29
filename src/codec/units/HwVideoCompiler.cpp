@@ -39,8 +39,8 @@ int HwVideoCompiler::getHeight() {
 
 bool HwVideoCompiler::eventPrepare(Message *msg) {
     recording = false;
-    int32_t width = getInt32("height");
-    int32_t height = getInt32("width");
+    int32_t width = getInt32("width");
+    int32_t height = getInt32("height");
     string path = getString("path");
     HwSampleFormat *format = dynamic_cast<HwSampleFormat *>(getObject("audioFormat"));
     if (StringUtils::isEmpty(&path) || !format || INT32_MIN == width || INT32_MIN == height) {
@@ -48,7 +48,7 @@ bool HwVideoCompiler::eventPrepare(Message *msg) {
         return true;
     }
     encoder = new HwAsyncEncoder();
-    if (!encoder->prepare(path, width, height)) {
+    if (!encoder->prepare(path, width, height, *format)) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }
     videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, width, height);
