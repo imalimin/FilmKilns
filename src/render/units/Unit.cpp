@@ -66,15 +66,15 @@ HwModelProvider *Unit::getModelProvider() {
     return this->provider;
 }
 
-int32_t Unit::getInt32(string key) {
+const int32_t &Unit::getInt32(string key) {
     return getModelProvider()->getInt32(alias + "_" + key);
 }
 
-int64_t Unit::getInt64(string key) {
+const int64_t &Unit::getInt64(string key) {
     return getModelProvider()->getInt64(alias + "_" + key);
 }
 
-string Unit::getString(string key) {
+const string &Unit::getString(string key) {
     return getModelProvider()->getString(alias + "_" + key);
 }
 

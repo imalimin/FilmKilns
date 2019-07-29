@@ -114,11 +114,11 @@ public:
 
     HwModelProvider *getModelProvider();
 
-    int32_t getInt32(string key);
+    const int32_t &getInt32(string key);
 
-    int64_t getInt64(string key);
+    const int64_t &getInt64(string key);
 
-    string getString(string key);
+    const string &getString(string key);
 
     Object *getObject(string key);
     /** Model Provider END */
@@ -149,11 +149,11 @@ public:
 
     bool eventPutObject(Message *msg);
 
-    int32_t getInt32(string key);
+    const int32_t &getInt32(string key);
 
-    int64_t getInt64(string key);
+    const int64_t &getInt64(string key);
 
-    string getString(string key);
+    const string &getString(string key);
 
     Object *getObject(string key);
 
