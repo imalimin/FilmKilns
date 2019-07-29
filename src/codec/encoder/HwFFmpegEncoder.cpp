@@ -190,7 +190,11 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         avAudioFrame->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(
                 audioFrame->getChannels()));
         sampleCount += avAudioFrame->nb_samples;
-        avFrame->pts = sampleCount;
+//        avFrame->pts = sampleCount;
+        avAudioFrame->pts = av_rescale_q_rnd(frame->getPts(),
+                                        {1, AV_TIME_BASE},
+                                        pAudioStream->time_base,
+                                        AV_ROUND_NEAR_INF);
 
         AVFrame *avFrame = nullptr;
         translator->translate(&avFrame, &avAudioFrame);
@@ -211,8 +215,12 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         avFrame->linesize[2] = videoFrame->getWidth() / 2;
         avFrame->width = videoFrame->getWidth();
         avFrame->height = videoFrame->getHeight();
-        avFrame->pts = frameCount;
         avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
+//        avFrame->pts = frameCount;
+        avFrame->pts = av_rescale_q_rnd(frame->getPts(),
+                                        {1, AV_TIME_BASE},
+                                        pVideoStream->time_base,
+                                        AV_ROUND_NEAR_INF);
 
         avcodec_send_frame(ctx, avFrame);
     }
