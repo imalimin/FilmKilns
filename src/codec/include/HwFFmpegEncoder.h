@@ -49,6 +49,8 @@ private:
     int height = 0;
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
     AVFormatContext *pFormatCtx = nullptr;
+    AVCodecContext *vCtx = nullptr;
+    AVCodecContext *aCtx = nullptr;
     AVStream *pVideoStream = nullptr;
     AVStream *pAudioStream = nullptr;
     AVRational outTimeBase = AVRational{1, 1000000};
@@ -57,6 +59,8 @@ private:
     AVFrame *avAudioFrame = nullptr;
     HwAudioTranslator *translator = nullptr;
     bool firstVideoFrameWrite = false;
+    int64_t sampleCount = 0;
+    int64_t frameCount = 0;
 
     int32_t quality = 15;
 };
