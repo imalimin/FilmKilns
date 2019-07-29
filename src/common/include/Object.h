@@ -11,6 +11,9 @@
 #include <cstring>
 #include <cstdlib>
 //#include "semaphore.h"
+#include <string>
+
+using namespace std;
 
 class Object {
 public:
