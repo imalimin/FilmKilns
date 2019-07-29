@@ -10,7 +10,7 @@
 #include "../include/HwVideoFrame.h"
 #include "../include/HwAudioFrame.h"
 
-HwFFmpegEncoder::HwFFmpegEncoder() : HwAbsEncoder() {
+HwFFmpegEncoder::HwFFmpegEncoder() : HwAbsVideoEncoder() {
 
 }
 
@@ -18,7 +18,7 @@ HwFFmpegEncoder::~HwFFmpegEncoder() {
     release();
 }
 
-bool HwFFmpegEncoder::prepare(string path, int width, int height) {
+bool HwFFmpegEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     this->path = path;
     this->width = width;
     this->height = height;
