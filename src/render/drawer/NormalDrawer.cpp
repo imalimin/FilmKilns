@@ -29,7 +29,7 @@ static const string FRAGMENT = SHADER(
 NormalDrawer::NormalDrawer() : NormalDrawer(VERTEX, FRAGMENT) {
 }
 
-NormalDrawer::NormalDrawer(string vertex, string fragment) {
+NormalDrawer::NormalDrawer(string vertex, string fragment) : BaseDrawer() {
     this->vertex = vertex;
     this->fragment = fragment;
     init();

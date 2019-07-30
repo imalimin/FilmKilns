@@ -18,7 +18,13 @@ public:
 
     bool init(int w, int h) override;
 
+    virtual void bindResources() override;
+
     virtual void draw(GLuint texture) override;
+
+private:
+    GLint widthLocation = GL_NONE;
+    GLint heightLocation = GL_NONE;
 };
 
 
