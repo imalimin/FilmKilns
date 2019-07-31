@@ -89,6 +89,9 @@ protected:
 };
 
 class Unit : public Object {
+private:
+    friend class UnitPipeline;
+
 public:
     /**
      * @param Alias is IMPORTANT for an unit. It is a tag of model provider.
@@ -102,12 +105,6 @@ public:
     bool registerEvent(int what, EventFunc handler);
 
     virtual bool eventRelease(Message *msg)=0;
-
-    /**
-     * @msg 事件消息
-     * @return true:我可以处理这个事件，false:无法处理这个事件
-     */
-    bool dispatch(Message *msg);
 
     /** Model Provider START */
     void setModelProvider(HwModelProvider *provider);
@@ -125,6 +122,13 @@ public:
 
 protected:
     void postEvent(Message *msg);
+
+private:
+    /**
+     * @msg 事件消息
+     * @return true:我可以处理这个事件，false:无法处理这个事件
+     */
+    bool dispatch(Message *msg);
 
 private:
     string alias;
