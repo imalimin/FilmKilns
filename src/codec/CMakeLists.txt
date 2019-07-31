@@ -77,6 +77,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/units/*.cpp
             ${PROJECT_SOURCE_DIR}/translator/*.cpp
             ${PROJECT_SOURCE_DIR}/muxer/*.cpp
+            ${PROJECT_SOURCE_DIR}/io/*.cpp
             # android
             ${PROJECT_SOURCE_DIR}/platform/android/encoder/*.cpp
     )
@@ -93,6 +94,8 @@ else ()
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
             ${PROJECT_SOURCE_DIR}/translator/*.cpp
+            ${PROJECT_SOURCE_DIR}/muxer/*.cpp
+            ${PROJECT_SOURCE_DIR}/io/*.cpp
     )
 endif ()
 
