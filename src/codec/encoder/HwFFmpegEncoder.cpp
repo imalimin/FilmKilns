@@ -176,7 +176,6 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         }
         stream = pAudioStream;
         ctx = aCtx;
-        duration = static_cast<int64_t>(AV_TIME_BASE / ctx->sample_rate * frame->getBufferSize());
         HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
         avAudioFrame->data[0] = audioFrame->getBuffer()->getData();
         avAudioFrame->linesize[0] = audioFrame->getBufferSize();
@@ -192,12 +191,14 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         sampleCount += avAudioFrame->nb_samples;
 //        avFrame->pts = sampleCount;
         avAudioFrame->pts = av_rescale_q_rnd(frame->getPts(),
-                                        {1, AV_TIME_BASE},
-                                        pAudioStream->time_base,
-                                        AV_ROUND_NEAR_INF);
+                                             AV_TIME_BASE_Q,
+                                             pAudioStream->time_base,
+                                             AV_ROUND_NEAR_INF);
 
         AVFrame *avFrame = nullptr;
         translator->translate(&avFrame, &avAudioFrame);
+        duration = static_cast<int64_t>(AV_TIME_BASE / (float) ctx->sample_rate *
+                                        avAudioFrame->nb_samples);
         avcodec_send_frame(ctx, avFrame);
     } else if (frame->isVideo() && pVideoStream) {
         frameCount += 1;
@@ -218,7 +219,7 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
 //        avFrame->pts = frameCount;
         avFrame->pts = av_rescale_q_rnd(frame->getPts(),
-                                        {1, AV_TIME_BASE},
+                                        AV_TIME_BASE_Q,
                                         pVideoStream->time_base,
                                         AV_ROUND_NEAR_INF);
 

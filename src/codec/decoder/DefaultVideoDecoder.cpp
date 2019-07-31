@@ -336,8 +336,8 @@ int64_t DefaultVideoDecoder::getVideoDuration() {
                                        pFormatCtx->streams[videoTrack]->time_base,
                                        outputRational,
                                        AV_ROUND_NEAR_INF);
-    if (audioDurationUs < 0) {
-        audioDurationUs = pFormatCtx->duration;
+    if (videoDurationUs < 0) {
+        videoDurationUs = pFormatCtx->duration;
     }
     return videoDurationUs;
 }
