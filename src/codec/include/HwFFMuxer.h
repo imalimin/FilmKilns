@@ -22,17 +22,20 @@ extern "C" {
 
 class HwFFMuxer : public HwAbsMuxer {
 public:
-    HwFFMuxer(string filePath, string type);
+    HwFFMuxer();
 
     virtual ~HwFFMuxer();
 
+    virtual HwResult configure(string filePath, string type) override;
+
     virtual HwResult start();
 
-    virtual int32_t addAudioTrack(int32_t sampleRate) override;
+    virtual int32_t addTrack(HwAbsCodec *codec) override;
 
-    virtual int32_t addVideoTrack(int32_t fps) override;
-
-    virtual bool write(int32_t track) override;
+    /**
+     * @param packet AvPacket
+     */
+    virtual HwResult write(int32_t track, void *packet) override;
 
 private:
     void release();

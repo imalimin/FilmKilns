@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_HWFFCODEC_H
 
 #include "HwAbsCodec.h"
+#include "HwAudioTranslator.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,13 +26,36 @@ public:
 
     virtual ~HwFFCodec();
 
+    virtual HwResult configure(HwBundle *format) override;
+
     virtual HwResult start() override;
+
+    virtual int32_t getFrameSize() override;
+
+    /**
+     * @param packet AvPacket
+     */
+    virtual HwResult encode(HwAbsMediaFrame *frame, void **packet) override;
+
+    virtual int32_t type() override;
+
+    virtual int32_t getExtraBuffer(string key, uint8_t **buf) override;
 
 private:
     void release();
 
+    bool configureVideo(AVCodecID id, AVCodec *codec);
+
+    bool configureAudio(AVCodecID id, AVCodec *codec);
+
 private:
     AVCodecContext *ctx = nullptr;
+    AVFrame *avFrame = nullptr;
+    AVPacket *avPacket = nullptr;
+    /**
+     * Just for audio codec.
+     */
+    HwAudioTranslator *translator = nullptr;
 };
 
 #ifdef __cplusplus

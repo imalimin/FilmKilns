@@ -8,11 +8,18 @@
 #include "../include/HwAbsMuxer.h"
 
 const string HwAbsMuxer::TYPE_MP4 = "MP4";
+const int32_t HwAbsMuxer::TRACK_NONE = -1;
 
-HwAbsMuxer::HwAbsMuxer(string filePath, string type) : Object(), filePath(filePath), type(type) {
+HwAbsMuxer::HwAbsMuxer() : Object() {
 
 }
 
 HwAbsMuxer::~HwAbsMuxer() {
 
+}
+
+HwResult HwAbsMuxer::configure(string filePath, string type) {
+    this->filePath = filePath;
+    this->type = type;
+    return Hw::SUCCESS;
 }

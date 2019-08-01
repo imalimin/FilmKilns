@@ -10,30 +10,29 @@
 
 #include "Object.h"
 #include "HwResult.h"
+#include "HwAbsCodec.h"
 
 class HwAbsMuxer : public Object {
 public:
-    HwAbsMuxer(string filePath, string type);
+    HwAbsMuxer();
 
     virtual ~HwAbsMuxer();
+
+    virtual HwResult configure(string filePath, string type);
 
     virtual HwResult start()=0;
 
     /**
-     * @return audio track id
+     * add an audio or video track.
+     * @return audio or video track id
      */
-    virtual int32_t addAudioTrack(int32_t sampleRate)=0;
-
-    /**
-     * @return video track id
-     */
-    virtual int32_t addVideoTrack(int32_t fps)=0;
+    virtual int32_t addTrack(HwAbsCodec *codec)=0;
 
     /**
      * @param track track id
-     * @return true for success
+     * @return Hw::SUCCESS for success
      */
-    virtual bool write(int32_t track)=0;
+    virtual HwResult write(int32_t track, void *packet)=0;
 
 protected:
     string filePath;
@@ -41,6 +40,7 @@ protected:
 
 public:
     static const string TYPE_MP4;
+    static const int32_t TRACK_NONE;
 };
 
 

@@ -11,7 +11,9 @@
 #include "HwAbsVideoEncoder.h"
 #include "HwResult.h"
 #include "HwAbsMediaFrame.h"
-#include "HwAudioTranslator.h"
+#include "../include/HwAbsMuxer.h"
+#include "../include/HwAbsCodec.h"
+#include <mutex>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,28 +41,19 @@ public:
 private:
     bool initialize();
 
-    bool openVideoTrack();
-
-    bool openAudioTrack();
-
 private:
     string path;
     int width = 0;
     int height = 0;
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
-    AVFormatContext *pFormatCtx = nullptr;
-    AVCodecContext *vCtx = nullptr;
-    AVCodecContext *aCtx = nullptr;
-    AVStream *pVideoStream = nullptr;
-    AVStream *pAudioStream = nullptr;
-    AVRational outTimeBase = AVRational{1, 1000000};
-    AVFrame *avFrame = nullptr;
-    AVPacket *avPacket = nullptr;
-    AVFrame *avAudioFrame = nullptr;
-    HwAudioTranslator *translator = nullptr;
+    int32_t aTrack = HwAbsMuxer::TRACK_NONE, vTrack = HwAbsMuxer::TRACK_NONE;
+    HwAbsMuxer *muxer = nullptr;
+    HwAbsCodec *vCodec = nullptr;
+    HwAbsCodec *aCodec = nullptr;
     bool firstVideoFrameWrite = false;
     int64_t sampleCount = 0;
     int64_t frameCount = 0;
+    std::mutex lock;
 
     int32_t quality = 15;
 };
