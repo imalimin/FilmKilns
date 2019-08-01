@@ -6,6 +6,7 @@
 */
 
 #include "../include/HwFFMuxer.h"
+#include "Logcat.h"
 
 HwFFMuxer::HwFFMuxer(string filePath, string type) : HwAbsMuxer(filePath, type) {
     av_register_all();
@@ -14,6 +15,10 @@ HwFFMuxer::HwFFMuxer(string filePath, string type) : HwAbsMuxer(filePath, type) 
 }
 
 HwFFMuxer::~HwFFMuxer() {
+    release();
+}
+
+void HwFFMuxer::release() {
     tracks.clear();
     if (pFormatCtx) {
         if (!(pFormatCtx->flags & AVFMT_NOFILE)) {
@@ -24,14 +29,26 @@ HwFFMuxer::~HwFFMuxer() {
     }
 }
 
-int32_t HwFFMuxer::addAudioTrack() {
+HwResult HwFFMuxer::start() {
+    if (avio_open2(&pFormatCtx->pb, filePath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
+        release();
+        Logcat::e("HWVC", "HwFFMuxer::initialize failed to open output file!");
+        return Hw::FAILED;
+    }
+    avformat_write_header(pFormatCtx, nullptr);
+    return Hw::SUCCESS;
+}
+
+int32_t HwFFMuxer::addAudioTrack(int32_t sampleRate) {
     AVStream *stream = avformat_new_stream(pFormatCtx, nullptr);
+    stream->time_base = {1, sampleRate};
     tracks.emplace_back(stream);
     return tracks.size() - 1;
 }
 
-int32_t HwFFMuxer::addVideoTrack() {
+int32_t HwFFMuxer::addVideoTrack(int32_t fps) {
     AVStream *stream = avformat_new_stream(pFormatCtx, nullptr);
+    stream->time_base = {1, fps};
     tracks.emplace_back(stream);
     return tracks.size() - 1;
 }

@@ -6,3 +6,12 @@
 */
 
 #include "../include/HwAbsCodec.h"
+
+HwAbsCodec::HwAbsCodec(int32_t codecId) : Object(), codecId(codecId) {
+
+}
+
+HwAbsCodec::~HwAbsCodec() {
+
+}
+

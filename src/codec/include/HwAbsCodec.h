@@ -8,9 +8,19 @@
 #ifndef HWVC_ANDROID_HWABSCODEC_H
 #define HWVC_ANDROID_HWABSCODEC_H
 
+#include "Object.h"
+#include "HwResult.h"
 
-class HwAbsCodec {
+class HwAbsCodec : public Object {
+public:
+    HwAbsCodec(int32_t codecId);
 
+    virtual  ~HwAbsCodec();
+
+    virtual HwResult start()=0;
+
+protected:
+    int32_t codecId = INT32_MIN;
 };
 
 

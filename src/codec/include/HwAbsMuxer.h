@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_HWABSMUXER_H
 
 #include "Object.h"
+#include "HwResult.h"
 
 class HwAbsMuxer : public Object {
 public:
@@ -16,15 +17,17 @@ public:
 
     virtual ~HwAbsMuxer();
 
+    virtual HwResult start()=0;
+
     /**
      * @return audio track id
      */
-    virtual int32_t addAudioTrack()=0;
+    virtual int32_t addAudioTrack(int32_t sampleRate)=0;
 
     /**
      * @return video track id
      */
-    virtual int32_t addVideoTrack()=0;
+    virtual int32_t addVideoTrack(int32_t fps)=0;
 
     /**
      * @param track track id

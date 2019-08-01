@@ -26,11 +26,16 @@ public:
 
     virtual ~HwFFMuxer();
 
-    virtual int32_t addAudioTrack() override;
+    virtual HwResult start();
 
-    virtual int32_t addVideoTrack() override;
+    virtual int32_t addAudioTrack(int32_t sampleRate) override;
+
+    virtual int32_t addVideoTrack(int32_t fps) override;
 
     virtual bool write(int32_t track) override;
+
+private:
+    void release();
 
 private:
     AVFormatContext *pFormatCtx = nullptr;
