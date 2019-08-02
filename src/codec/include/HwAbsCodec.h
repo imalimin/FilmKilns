@@ -23,7 +23,7 @@ public:
 
     virtual HwResult start()=0;
 
-    virtual int32_t getFrameSize()=0;
+    virtual int32_t getCodecId();
 
     virtual HwBundle *getFormat();
 
@@ -44,13 +44,19 @@ protected:
     int32_t codecId = INT32_MIN;
     HwBundle *format = nullptr;
 public:
+    static const string KEY_FORMAT;
+    static const string KEY_PROFILE;
+    static const string KEY_LEVEL;
+    static const string KEY_BIT_RATE;
+    // Video
     static const string KEY_WIDTH;
     static const string KEY_HEIGHT;
     static const string KEY_FPS;
     static const string KEY_QUALITY;
+    //Audio
     static const string KEY_SAMPLE_RATE;
     static const string KEY_CHANNELS;
-    static const string KEY_AUDIO_FORMAT;
+    static const string KEY_FRAME_SIZE;
 };
 
 

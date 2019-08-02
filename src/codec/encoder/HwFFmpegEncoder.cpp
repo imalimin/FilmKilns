@@ -40,6 +40,7 @@ bool HwFFmpegEncoder::initialize() {
      * Video codec
      */
     HwBundle bundle;
+    bundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
     bundle.putInt32(HwAbsCodec::KEY_WIDTH, width);
     bundle.putInt32(HwAbsCodec::KEY_HEIGHT, height);
     bundle.putInt32(HwAbsCodec::KEY_FPS, 30);
@@ -57,7 +58,7 @@ bool HwFFmpegEncoder::initialize() {
     HwBundle aBundle;
     aBundle.putInt32(HwAbsCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
     aBundle.putInt32(HwAbsCodec::KEY_CHANNELS, audioFormat.getChannels());
-    aBundle.putInt32(HwAbsCodec::KEY_AUDIO_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
+    aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
     aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
     if (Hw::SUCCESS != aCodec->configure(&aBundle)) {
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to configure audio codec!");
@@ -96,7 +97,7 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
         if (!firstVideoFrameWrite) {
             return Hw::FAILED;
         }
-        sampleCount += aCodec->getFrameSize();
+//        sampleCount += aCodec->getFrameSize();
         aCodec->encode(frame, reinterpret_cast<void **>(&packet));
         if (packet) {
             muxer->write(aTrack, packet);

@@ -7,13 +7,17 @@
 
 #include "../include/HwAbsCodec.h"
 
+const string HwAbsCodec::KEY_FORMAT = "media-format";
+const string HwAbsCodec::KEY_PROFILE = "media-profile";
+const string HwAbsCodec::KEY_LEVEL = "media-level";
+const string HwAbsCodec::KEY_BIT_RATE = "media-bit-rate";
 const string HwAbsCodec::KEY_WIDTH = "video-width";
 const string HwAbsCodec::KEY_HEIGHT = "video-height";
 const string HwAbsCodec::KEY_FPS = "video-fps";
 const string HwAbsCodec::KEY_QUALITY = "video-quality";
 const string HwAbsCodec::KEY_SAMPLE_RATE = "audio-sample-rate";
 const string HwAbsCodec::KEY_CHANNELS = "audio-channels";
-const string HwAbsCodec::KEY_AUDIO_FORMAT = "audio-format";
+const string HwAbsCodec::KEY_FRAME_SIZE = "audio-frame-size";
 
 HwAbsCodec::HwAbsCodec(int32_t codecId) : Object(), codecId(codecId) {
 
@@ -28,5 +32,6 @@ HwResult HwAbsCodec::configure(HwBundle *format) {
     return Hw::SUCCESS;
 }
 
-HwBundle *HwAbsCodec::getFormat() { return format; }
+int32_t HwAbsCodec::getCodecId() { return codecId; }
 
+HwBundle *HwAbsCodec::getFormat() { return format; }

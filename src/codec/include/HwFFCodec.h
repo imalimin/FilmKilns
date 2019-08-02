@@ -30,8 +30,6 @@ public:
 
     virtual HwResult start() override;
 
-    virtual int32_t getFrameSize() override;
-
     /**
      * @param packet AvPacket
      */

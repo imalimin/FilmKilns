@@ -74,10 +74,17 @@ HwResult HwFFCodec::configure(HwBundle *format) {
         default:
             return Hw::FAILED;
     }
+    //Copy parameters.
+    if (format) {
+        format->putInt32(KEY_PROFILE, ctx->profile);
+        format->putInt32(KEY_LEVEL, ctx->level);
+        format->putInt64(KEY_BIT_RATE, ctx->bit_rate);
+        format->putInt32(KEY_FRAME_SIZE, ctx->frame_size);
+    }
     avFrame = av_frame_alloc();
     avPacket = av_packet_alloc();
-    if (ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
-        const int32_t &f = format->getInt32(KEY_AUDIO_FORMAT);
+    if (ctx->codec_type == AVMEDIA_TYPE_AUDIO && format) {
+        const int32_t &f = format->getInt32(KEY_FORMAT);
         translator = new HwAudioTranslator(HwSampleFormat(HwFrameFormat::HW_SAMPLE_FLTP,
                                                           ctx->channels,
                                                           ctx->sample_rate),
@@ -96,7 +103,8 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     // Configure
     ctx->codec_id = id;
     ctx->codec_type = AVMEDIA_TYPE_VIDEO;
-    ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+    ctx->pix_fmt = HwAbsMediaFrame::convertVideoFrameFormat(
+            (HwFrameFormat) format->getInt32(KEY_FORMAT));
     ctx->width = format->getInt32(KEY_WIDTH);
     ctx->height = format->getInt32(KEY_HEIGHT);
     ctx->bit_rate = ctx->width * ctx->height * 3;
@@ -167,13 +175,6 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
     return true;
 }
 
-int32_t HwFFCodec::getFrameSize() {
-    if (ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE) {
-        return 10000;
-    }
-    return ctx->frame_size;
-}
-
 int32_t HwFFCodec::type() {
     switch (ctx->codec_type) {
         case AVMEDIA_TYPE_VIDEO: {
@@ -194,7 +195,7 @@ int32_t HwFFCodec::getExtraBuffer(string key, uint8_t **buf) {
     }
     //TODO simple now
     if ("csd-0" == key) {
-        *buf = reinterpret_cast<uint8_t *>(ctx);
+        *buf = ctx->extradata;
         return ctx->extradata_size;
     }
     return 0;
@@ -228,11 +229,15 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
         }
         case AVMEDIA_TYPE_AUDIO: {
             HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
+            int32_t frameSize = ctx->frame_size;
+            if (ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE) {
+                frameSize = 10000;
+            }
             avFrame->data[0] = audioFrame->getBuffer()->getData();
             avFrame->linesize[0] = audioFrame->getBufferSize();
             avFrame->format = HwAbsMediaFrame::convertAudioFrameFormat(frame->getFormat());
             avFrame->sample_rate = audioFrame->getSampleRate();
-            avFrame->nb_samples = getFrameSize();
+            avFrame->nb_samples = frameSize;
             avFrame->channels = audioFrame->getChannels();
             avFrame->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(
                     audioFrame->getChannels()));

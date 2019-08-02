@@ -59,14 +59,23 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
     if (!stream) {
         return TRACK_NONE;
     }
+
+    // See avcodec_parameters_from_context
+    stream->codecpar->codec_id = static_cast<AVCodecID>(codec->getCodecId());
+    stream->codecpar->profile = codec->getFormat()->getInt32(HwAbsCodec::KEY_PROFILE);
+    stream->codecpar->level = codec->getFormat()->getInt32(HwAbsCodec::KEY_LEVEL);
+    stream->codecpar->bit_rate = codec->getFormat()->getInt64(HwAbsCodec::KEY_BIT_RATE);
     if (1 == codec->type()) {
+        stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
         stream->codecpar->sample_rate = codec->getFormat()->getInt32(HwAbsCodec::KEY_SAMPLE_RATE);
         stream->codecpar->channels = codec->getFormat()->getInt32(HwAbsCodec::KEY_CHANNELS);
         stream->codecpar->channel_layout = static_cast<uint64_t>(
                 av_get_default_channel_layout(stream->codecpar->channels));
         stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
+        stream->codecpar->frame_size = codec->getFormat()->getInt32(HwAbsCodec::KEY_FRAME_SIZE);
         stream->time_base = {1, stream->codecpar->sample_rate};
     } else if (0 == codec->type()) {
+        stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
         stream->codecpar->width = codec->getFormat()->getInt32(HwAbsCodec::KEY_WIDTH);
         stream->codecpar->height = codec->getFormat()->getInt32(HwAbsCodec::KEY_HEIGHT);
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
@@ -75,12 +84,10 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
     uint8_t *buf = nullptr;
     int32_t size = codec->getExtraBuffer("csd-0", &buf);
     if (size > 0) {
-//        stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(
-//                size + AV_INPUT_BUFFER_PADDING_SIZE));
-//        memcpy(stream->codecpar->extradata, buf, size);
-//        stream->codecpar->extradata_size = size;
-        AVCodecContext *ctx = reinterpret_cast<AVCodecContext *>(buf);
-        int ret = avcodec_parameters_from_context(stream->codecpar, ctx);
+        stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(
+                size + AV_INPUT_BUFFER_PADDING_SIZE));
+        memcpy(stream->codecpar->extradata, buf, size);
+        stream->codecpar->extradata_size = size;
     }
 
     tracks.push_back(stream);
