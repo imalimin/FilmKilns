@@ -47,8 +47,25 @@ HwResult HwFFMuxer::start() {
         Logcat::e("HWVC", "HwFFMuxer::initialize failed to open output file!");
         return Hw::FAILED;
     }
-    avformat_write_header(pFormatCtx, nullptr);
+    int ret = avformat_write_header(pFormatCtx, nullptr);
+    if (ret < 0) {
+        release();
+        Logcat::e("HWVC", "HwFFMuxer::initialize failed to write header!");
+        return Hw::FAILED;
+    }
     return Hw::SUCCESS;
+}
+
+void HwFFMuxer::setInt32Parameter(int32_t &param, int32_t value) {
+    if (HwBundle::VALUE_NONE != value) {
+        param = value;
+    }
+}
+
+void HwFFMuxer::setInt64Parameter(int64_t &param, int64_t value) {
+    if (HwBundle::VALUE_NONE != value) {
+        param = value;
+    }
 }
 
 int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
@@ -62,22 +79,29 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
 
     // See avcodec_parameters_from_context
     stream->codecpar->codec_id = static_cast<AVCodecID>(codec->getCodecId());
-    stream->codecpar->profile = codec->getFormat()->getInt32(HwAbsCodec::KEY_PROFILE);
-    stream->codecpar->level = codec->getFormat()->getInt32(HwAbsCodec::KEY_LEVEL);
-    stream->codecpar->bit_rate = codec->getFormat()->getInt64(HwAbsCodec::KEY_BIT_RATE);
+    setInt32Parameter(stream->codecpar->profile,
+                      codec->getFormat()->getInt32(HwAbsCodec::KEY_PROFILE));
+    setInt32Parameter(stream->codecpar->level, codec->getFormat()->getInt32(HwAbsCodec::KEY_LEVEL));
+    setInt64Parameter(stream->codecpar->bit_rate,
+                      codec->getFormat()->getInt32(HwAbsCodec::KEY_BIT_RATE));
     if (1 == codec->type()) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
-        stream->codecpar->sample_rate = codec->getFormat()->getInt32(HwAbsCodec::KEY_SAMPLE_RATE);
-        stream->codecpar->channels = codec->getFormat()->getInt32(HwAbsCodec::KEY_CHANNELS);
+        setInt32Parameter(stream->codecpar->sample_rate,
+                          codec->getFormat()->getInt32(HwAbsCodec::KEY_SAMPLE_RATE));
+        setInt32Parameter(stream->codecpar->channels,
+                          codec->getFormat()->getInt32(HwAbsCodec::KEY_CHANNELS));
+        setInt32Parameter(stream->codecpar->frame_size,
+                          codec->getFormat()->getInt32(HwAbsCodec::KEY_FRAME_SIZE));
         stream->codecpar->channel_layout = static_cast<uint64_t>(
                 av_get_default_channel_layout(stream->codecpar->channels));
         stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
-        stream->codecpar->frame_size = codec->getFormat()->getInt32(HwAbsCodec::KEY_FRAME_SIZE);
         stream->time_base = {1, stream->codecpar->sample_rate};
     } else if (0 == codec->type()) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
-        stream->codecpar->width = codec->getFormat()->getInt32(HwAbsCodec::KEY_WIDTH);
-        stream->codecpar->height = codec->getFormat()->getInt32(HwAbsCodec::KEY_HEIGHT);
+        setInt32Parameter(stream->codecpar->width,
+                          codec->getFormat()->getInt32(HwAbsCodec::KEY_WIDTH));
+        setInt32Parameter(stream->codecpar->height,
+                          codec->getFormat()->getInt32(HwAbsCodec::KEY_HEIGHT));
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
         stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
     }

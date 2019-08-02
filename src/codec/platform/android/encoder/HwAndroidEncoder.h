@@ -9,7 +9,9 @@
 #define HWVC_ANDROID_HWANDROIDENCODER_H
 
 #include "../../../include/HwAbsVideoEncoder.h"
-#include "media/NdkMediaCodec.h"
+#include "../../../include/HwAbsCodec.h"
+#include "../../../include/HwAbsMuxer.h"
+#include <mutex>
 
 
 #ifdef __cplusplus
@@ -42,32 +44,16 @@ public:
 private:
     bool configure();
 
-    bool configureMuxer();
-
-    void configureCodec(AVCodecContext *ctx);
-
-    HwResult push(HwAbsMediaFrame *frame);
-
-    HwResult pop();
-
-    HwResult write();
-
     void flush();
 
 private:
-    const int COLOR_FormatYUV420Flexible = 0x7F420888;
-    const int BUFFER_FLAG_KEY_FRAME = 1;
-    const int BUFFER_FLAG_CODEC_CONFIG = 2;
     string path;
     int width = 0, height = 0;
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
-    AMediaCodec *codec = nullptr;
-    HwBuffer *configBuf = nullptr;
-    HwBuffer *keyFrameBuf = nullptr;
-    AVRational outTimeBase = AVRational{1, 1000000};
-    AVFormatContext *pFormatCtx = nullptr;
-    AVStream *pVideoStream = nullptr;
-    AVPacket *avPacket = nullptr;
+    HwAbsCodec *vCodec = nullptr;
+    HwAbsMuxer *muxer = nullptr;
+    int32_t vTrack = HwAbsMuxer::TRACK_NONE, aTrack = HwAbsMuxer::TRACK_NONE;
+    std::mutex lock;
 };
 
 

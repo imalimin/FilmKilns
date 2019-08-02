@@ -80,6 +80,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/core/*.cpp
             # android
             ${PROJECT_SOURCE_DIR}/platform/android/encoder/*.cpp
+            ${PROJECT_SOURCE_DIR}/platform/android/core/*.cpp
     )
 else ()
     file(

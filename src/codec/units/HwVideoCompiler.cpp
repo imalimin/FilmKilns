@@ -43,11 +43,12 @@ bool HwVideoCompiler::eventPrepare(Message *msg) {
     int32_t height = getInt32("height");
     string path = getString("path");
     HwSampleFormat *format = dynamic_cast<HwSampleFormat *>(getObject("audioFormat"));
-    if (StringUtils::isEmpty(&path) || !format || INT32_MIN == width || INT32_MIN == height) {
+    if (StringUtils::isEmpty(&path) || !format || HwBundle::VALUE_NONE == width ||
+        HwBundle::VALUE_NONE == height) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare failed.Invalid arguments.");
         return true;
     }
-    encoder = new HwAsyncEncoder();
+    encoder = new HwAndroidEncoder();
     if (!encoder->prepare(path, width, height, *format)) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }

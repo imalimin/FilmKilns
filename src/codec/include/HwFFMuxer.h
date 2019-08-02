@@ -20,6 +20,10 @@ extern "C" {
 #include "ff/libavutil/avutil.h"
 #include "ff/libswresample/swresample.h"
 
+#ifdef __cplusplus
+}
+#endif
+
 class HwFFMuxer : public HwAbsMuxer {
 public:
     HwFFMuxer();
@@ -42,13 +46,13 @@ private:
 
     bool copyExtraData(AVStream *stream, HwAbsCodec *codec);
 
+    void setInt32Parameter(int32_t &param, int32_t value);
+
+    void setInt64Parameter(int64_t &param, int64_t value);
+
 private:
     AVFormatContext *pFormatCtx = nullptr;
     vector<AVStream *> tracks;
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif //HWVC_ANDROID_HWFFMUXER_H
