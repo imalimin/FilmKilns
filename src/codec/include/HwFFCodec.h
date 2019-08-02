@@ -10,6 +10,7 @@
 
 #include "HwAbsCodec.h"
 #include "HwAudioTranslator.h"
+#include "HwBuffer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +38,7 @@ public:
 
     virtual int32_t type() override;
 
-    virtual int32_t getExtraBuffer(string key, uint8_t **buf) override;
+    virtual HwBuffer *getExtraBuffer(string key) override;
 
 private:
     void release();
@@ -45,6 +46,8 @@ private:
     bool configureVideo(AVCodecID id, AVCodec *codec);
 
     bool configureAudio(AVCodecID id, AVCodec *codec);
+
+    bool parseExtraData();
 
 private:
     AVCodecContext *ctx = nullptr;
@@ -54,6 +57,7 @@ private:
      * Just for audio codec.
      */
     HwAudioTranslator *translator = nullptr;
+    HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
 };
 
 #ifdef __cplusplus

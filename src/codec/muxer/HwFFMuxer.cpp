@@ -81,17 +81,48 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
         stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
     }
-    uint8_t *buf = nullptr;
-    int32_t size = codec->getExtraBuffer("csd-0", &buf);
-    if (size > 0) {
-        stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(
-                size + AV_INPUT_BUFFER_PADDING_SIZE));
-        memcpy(stream->codecpar->extradata, buf, size);
-        stream->codecpar->extradata_size = size;
-    }
-
+    copyExtraData(stream, codec);
     tracks.push_back(stream);
     return tracks.size() - 1;
+}
+
+bool HwFFMuxer::copyExtraData(AVStream *stream, HwAbsCodec *codec) {
+    switch (stream->codecpar->codec_id) {
+        case AV_CODEC_ID_H264: {
+            HwBuffer *sps = codec->getExtraBuffer("csd-0");
+            HwBuffer *pps = codec->getExtraBuffer("csd-1");
+            if (sps && pps) {
+                stream->codecpar->extradata_size = sps->size() + pps->size() + 8;
+                uint8_t flag[4] = {0, 0, 0, 1};
+                int32_t offset = 0;
+                uint8_t *extra = static_cast<uint8_t *>(av_mallocz(
+                        stream->codecpar->extradata_size));
+                memcpy(extra + offset, &flag, 4);
+                offset += 4;
+                memcpy(extra + offset, sps->getData(), sps->size());
+                offset += sps->size();
+                memcpy(extra + offset, &flag, 4);
+                offset += 4;
+                memcpy(extra + offset, pps->getData(), pps->size());
+                stream->codecpar->extradata = extra;
+            }
+            break;
+        }
+        case AV_CODEC_ID_AAC_LATM:
+        case AV_CODEC_ID_AAC: {
+            HwBuffer *esds = codec->getExtraBuffer("csd-0");
+            if (esds) {
+                stream->codecpar->extradata_size = esds->size();
+                uint8_t *extra = static_cast<uint8_t *>(av_mallocz(esds->size()));
+                memcpy(extra, esds->getData(), esds->size());
+                stream->codecpar->extradata = extra;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    return true;
 }
 
 HwResult HwFFMuxer::write(int32_t track, void *packet) {

@@ -8,6 +8,7 @@
 #include "../include/HwFFCodec.h"
 #include "../include/HwAudioFrame.h"
 #include "../include/HwVideoFrame.h"
+#include "BinaryUtils.h"
 #include "Logcat.h"
 
 HwFFCodec::HwFFCodec(int32_t codecId) : HwAbsCodec(codecId) {
@@ -34,6 +35,12 @@ void HwFFCodec::release() {
     if (translator) {
         delete translator;
         translator = nullptr;
+    }
+    for (int i = 0; i < 4; ++i) {
+        if (buffers[i]) {
+            delete buffers[i];
+            buffers[i] = nullptr;
+        }
     }
 }
 
@@ -142,7 +149,7 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
                   ctx->codec_id);
         return false;
     }
-    return true;
+    return parseExtraData();
 }
 
 bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
@@ -172,6 +179,39 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
                   strerror(AVUNERROR(ret)));
         return false;
     }
+    return parseExtraData();
+}
+
+bool HwFFCodec::parseExtraData() {
+    if (AV_CODEC_ID_H264 == ctx->codec_id) {
+        int32_t spsPos = -1, ppsPos = -1;
+        const uint8_t *extradata = ctx->extradata;
+        for (int i = 0; i < ctx->extradata_size; ++i) {
+            if (BinaryUtils::match(&extradata[i], {0x00, 0x00, 0x00, 0x01})) {
+                if (spsPos < 0) {
+                    spsPos = i + 4;
+                    continue;
+                }
+                if (ppsPos < 0) {
+                    ppsPos = i + 4;
+                    break;
+                }
+            }
+        }
+        if (spsPos < 0 || ppsPos < 0) {
+            Logcat::e("HWVC", "HwFFCodec::configureVideo could not find sps & pps!");
+            return false;
+        }
+        buffers[0] = HwBuffer::alloc(ppsPos - spsPos - 4);
+        buffers[1] = HwBuffer::alloc(ctx->extradata_size - ppsPos);
+        memcpy(buffers[0]->getData(), ctx->extradata + spsPos, buffers[0]->size());
+        memcpy(buffers[1]->getData(), ctx->extradata + ppsPos, buffers[1]->size());
+    } else if (AV_CODEC_ID_AAC == ctx->codec_id || AV_CODEC_ID_AAC_LATM == ctx->codec_id) {
+        if (ctx->extradata_size > 0) {
+            buffers[0] = HwBuffer::alloc(ctx->extradata_size);
+            memcpy(buffers[0]->getData(), ctx->extradata, buffers[0]->size());
+        }
+    }
     return true;
 }
 
@@ -189,16 +229,17 @@ int32_t HwFFCodec::type() {
     }
 }
 
-int32_t HwFFCodec::getExtraBuffer(string key, uint8_t **buf) {
-    if (!ctx) {
-        return 0;
-    }
-    //TODO simple now
+HwBuffer *HwFFCodec::getExtraBuffer(string key) {
     if ("csd-0" == key) {
-        *buf = ctx->extradata;
-        return ctx->extradata_size;
+        return buffers[0];
+    } else if ("csd-1" == key) {
+        return buffers[1];
+    } else if ("csd-3" == key) {
+        return buffers[2];
+    } else if ("csd-4" == key) {
+        return buffers[3];
     }
-    return 0;
+    return nullptr;
 }
 
 HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {

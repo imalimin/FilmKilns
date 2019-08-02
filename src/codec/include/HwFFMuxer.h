@@ -40,6 +40,8 @@ public:
 private:
     void release();
 
+    bool copyExtraData(AVStream *stream, HwAbsCodec *codec);
+
 private:
     AVFormatContext *pFormatCtx = nullptr;
     vector<AVStream *> tracks;

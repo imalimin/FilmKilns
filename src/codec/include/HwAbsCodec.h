@@ -36,9 +36,9 @@ public:
 
     /**
      * @param key csd-0\csd-1\csd-2
-     * @return buffer size.
+     * @return buffer.
      */
-    virtual int32_t getExtraBuffer(string key, uint8_t **buf)=0;
+    virtual HwBuffer *getExtraBuffer(string key)=0;
 
 protected:
     int32_t codecId = INT32_MIN;
