@@ -7,6 +7,8 @@
 
 #include "../include/HwBundle.h"
 
+const int32_t HwBundle::VALUE_NONE = INT32_MIN;
+
 HwBundle::HwBundle() : Object() {
 
 }
@@ -35,14 +37,14 @@ void HwBundle::putObject(string key, Object *value) {
 
 const int32_t &HwBundle::getInt32(string key) {
     if (int32Map.end() == int32Map.find(key)) {
-        return INT32_MIN;
+        return VALUE_NONE;
     }
     return int32Map[key];
 }
 
 const int64_t &HwBundle::getInt64(string key) {
     if (int64Map.end() == int64Map.find(key)) {
-        return INT64_MIN;
+        return VALUE_NONE;
     }
     return int64Map[key];
 }

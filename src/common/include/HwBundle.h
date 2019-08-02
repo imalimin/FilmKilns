@@ -15,6 +15,8 @@ using namespace std;
 
 class HwBundle : public Object {
 public:
+    static const int32_t VALUE_NONE;
+public:
     HwBundle();
 
     virtual ~HwBundle();
