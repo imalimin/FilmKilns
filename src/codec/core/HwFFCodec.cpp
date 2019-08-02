@@ -216,7 +216,8 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
             avFrame->height = videoFrame->getHeight();
             avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
             avFrame->pts = frame->getPts();
-            avFrame->pkt_duration = 1;
+            avFrame->pkt_duration = static_cast<int64_t>(AV_TIME_BASE /
+                                                         (float) ctx->time_base.den );
 //        avFrame->pts = frameCount;
 //            avFrame->pts = av_rescale_q_rnd(frame->getPts(),
 //                                            AV_TIME_BASE_Q,

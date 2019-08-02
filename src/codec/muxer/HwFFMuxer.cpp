@@ -59,19 +59,19 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
     if (!stream) {
         return TRACK_NONE;
     }
-//    if (1 == codec->type()) {
-//        stream->codecpar->sample_rate = codec->getFormat()->getInt32(HwAbsCodec::KEY_SAMPLE_RATE);
-//        stream->codecpar->channels = codec->getFormat()->getInt32(HwAbsCodec::KEY_CHANNELS);
-//        stream->codecpar->channel_layout = static_cast<uint64_t>(
-//                av_get_default_channel_layout(stream->codecpar->channels));
-//        stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
-//        stream->time_base = {1, stream->codecpar->sample_rate};
-//    } else if (0 == codec->type()) {
-//        stream->codecpar->width = codec->getFormat()->getInt32(HwAbsCodec::KEY_WIDTH);
-//        stream->codecpar->height = codec->getFormat()->getInt32(HwAbsCodec::KEY_HEIGHT);
-//        stream->codecpar->format = AV_PIX_FMT_YUV420P;
-//        stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
-//    }
+    if (1 == codec->type()) {
+        stream->codecpar->sample_rate = codec->getFormat()->getInt32(HwAbsCodec::KEY_SAMPLE_RATE);
+        stream->codecpar->channels = codec->getFormat()->getInt32(HwAbsCodec::KEY_CHANNELS);
+        stream->codecpar->channel_layout = static_cast<uint64_t>(
+                av_get_default_channel_layout(stream->codecpar->channels));
+        stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
+        stream->time_base = {1, stream->codecpar->sample_rate};
+    } else if (0 == codec->type()) {
+        stream->codecpar->width = codec->getFormat()->getInt32(HwAbsCodec::KEY_WIDTH);
+        stream->codecpar->height = codec->getFormat()->getInt32(HwAbsCodec::KEY_HEIGHT);
+        stream->codecpar->format = AV_PIX_FMT_YUV420P;
+        stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
+    }
     uint8_t *buf = nullptr;
     int32_t size = codec->getExtraBuffer("csd-0", &buf);
     if (size > 0) {
@@ -92,9 +92,23 @@ HwResult HwFFMuxer::write(int32_t track, void *packet) {
         return Hw::FAILED;
     }
     AVPacket *pkt = static_cast<AVPacket *>(packet);
+    pkt->pts = av_rescale_q_rnd(pkt->pts,
+                                AV_TIME_BASE_Q,
+                                tracks[track]->time_base,
+                                AV_ROUND_NEAR_INF);
+    pkt->dts = av_rescale_q_rnd(pkt->dts,
+                                AV_TIME_BASE_Q,
+                                tracks[track]->time_base,
+                                AV_ROUND_NEAR_INF);
+    pkt->duration = av_rescale_q_rnd(pkt->duration,
+                                     AV_TIME_BASE_Q,
+                                     tracks[track]->time_base,
+                                     AV_ROUND_NEAR_INF);
     pkt->stream_index = tracks[track]->index;
     int ret = av_write_frame(pFormatCtx, pkt);
+    Logcat::i("HWVC", "HwFFMuxer::write %d, %lld, %lld", track, pkt->pts, pkt->duration);
     if (0 != ret) {
+        Logcat::i("HWVC", "HwFFMuxer::write failed: %s", strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
     return Hw::SUCCESS;
