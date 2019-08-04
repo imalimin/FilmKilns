@@ -64,6 +64,8 @@ private:
     HwBuffer *configBuf = nullptr;
     HwBuffer *keyFrameBuf = nullptr;
     AVPacket *avPacket = nullptr;
+    int32_t fps = 25;
+    int32_t frameCount = 0;
 };
 
 

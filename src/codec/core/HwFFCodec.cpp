@@ -85,7 +85,7 @@ HwResult HwFFCodec::configure(HwBundle *format) {
     if (format) {
         format->putInt32(KEY_PROFILE, ctx->profile);
         format->putInt32(KEY_LEVEL, ctx->level);
-        format->putInt64(KEY_BIT_RATE, ctx->bit_rate);
+        format->putInt32(KEY_BIT_RATE, static_cast<int32_t>(ctx->bit_rate));
         format->putInt32(KEY_FRAME_SIZE, ctx->frame_size);
     }
     avFrame = av_frame_alloc();
@@ -114,7 +114,7 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
             (HwFrameFormat) format->getInt32(KEY_FORMAT));
     ctx->width = format->getInt32(KEY_WIDTH);
     ctx->height = format->getInt32(KEY_HEIGHT);
-    ctx->bit_rate = ctx->width * ctx->height * 3;
+    ctx->bit_rate = format->getInt32(KEY_BIT_RATE);
     ctx->gop_size = 15;
 
     ctx->time_base = {1, format->getInt32(KEY_FPS)};
@@ -156,7 +156,7 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
     ctx->codec_id = id;
     ctx->codec_type = AVMEDIA_TYPE_AUDIO;
     ctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
-    ctx->bit_rate = 64000;
+    ctx->bit_rate = format->getInt32(KEY_BIT_RATE);
     ctx->sample_rate = format->getInt32(KEY_SAMPLE_RATE);
     ctx->channels = format->getInt32(KEY_CHANNELS);
     ctx->channel_layout = static_cast<uint64_t>(

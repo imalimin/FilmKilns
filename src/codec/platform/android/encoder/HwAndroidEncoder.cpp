@@ -28,12 +28,13 @@ bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleForma
 
 bool HwAndroidEncoder::configure() {
     vCodec = new HwAndroidCodec(HwAndroidCodec::HW_ANDROID_AVC);
+    const int32_t fps = 30;
     HwBundle format;
     format.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
     format.putInt32(HwAbsCodec::KEY_WIDTH, width);
     format.putInt32(HwAbsCodec::KEY_HEIGHT, height);
     format.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * 3);
-    format.putInt32(HwAbsCodec::KEY_FPS, 30);
+    format.putInt32(HwAbsCodec::KEY_FPS, fps);
     format.putInt32(HwAbsCodec::KEY_QUALITY, 15);
     if (Hw::SUCCESS != vCodec->configure(&format)) {
         Logcat::e("HWVC", "HwAndroidEncoder::configure failed to configure video codec!");

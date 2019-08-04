@@ -51,18 +51,19 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
     HwAbsCodec::configure(format);
     int32_t width = format->getInt32(KEY_WIDTH);
     int32_t height = format->getInt32(KEY_HEIGHT);
+    int32_t bitRate = (int32_t) format->getInt32(KEY_BIT_RATE);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
     AMediaFormat *cf = AMediaFormat_new();
     if (HW_ANDROID_AVC == codecId) {
+        fps = format->getInt32(KEY_FPS);
         AMediaFormat_setString(cf, AMEDIAFORMAT_KEY_MIME, "video/avc");
         AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_WIDTH, width);
         AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_HEIGHT, height);
         if (HwFrameFormat::HW_IMAGE_YV12 == (HwFrameFormat) format->getInt32(KEY_FORMAT)) {
             AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_COLOR_FORMAT, COLOR_FormatYUV420Flexible);
         }
-        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_BIT_RATE,
-                              (int32_t) format->getInt64(KEY_BIT_RATE));
-        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_FRAME_RATE, format->getInt32(KEY_FPS));
+        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_BIT_RATE, bitRate);
+        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_FRAME_RATE, fps);
         AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_I_FRAME_INTERVAL, 10);
     }
     const char *mime;
@@ -227,24 +228,35 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                             memcpy(configBuf->getData(), buf, configBuf->size());
                             wrote = false;
                         } else {
-                            if (avPacket) {
-                                av_packet_unref(avPacket);
-                            }
-                            av_init_packet(avPacket);
-                            avPacket->pts = info.presentationTimeUs;
-                            avPacket->dts = avPacket->pts;
-                            if (info.flags & BUFFER_FLAG_KEY_FRAME) {// key frame
-                                memcpy(keyFrameBuf->getData(),
-                                       configBuf->getData(),
-                                       configBuf->size());
-                                memcpy(keyFrameBuf->getData() + configBuf->size(), buf, info.size);
+                            ++frameCount;
+                            if (frameCount > 1) {//Drop first frame for config.
+                                if (avPacket) {
+                                    av_packet_unref(avPacket);
+                                }
+                                av_init_packet(avPacket);
+                                avPacket->pts = info.presentationTimeUs;
+                                avPacket->dts = avPacket->pts;
+                                avPacket->duration = static_cast<int64_t>(AV_TIME_BASE /
+                                                                          (float) fps);
+//                            if (info.flags & BUFFER_FLAG_KEY_FRAME) {// key frame
+//                                memcpy(keyFrameBuf->getData(),
+//                                       configBuf->getData(),
+//                                       configBuf->size());
+//                                memcpy(keyFrameBuf->getData() + configBuf->size(), buf, info.size);
+//                                avPacket->data = keyFrameBuf->getData();
+//                                avPacket->size = configBuf->size() + info.size;
+//                            } else {
+//                                avPacket->data = buf;
+//                                avPacket->size = info.size;
+//                            }
+                                memcpy(keyFrameBuf->getData(), &info.size, 4);
+                                memcpy(keyFrameBuf->getData() + 4, buf, info.size);
                                 avPacket->data = keyFrameBuf->getData();
-                                avPacket->size = configBuf->size() + info.size;
+                                avPacket->size = info.size + 4;
+                                wrote = true;
                             } else {
-                                avPacket->data = buf;
-                                avPacket->size = info.size;
+                                wrote = false;
                             }
-                            wrote = true;
                         }
                     }
                 }

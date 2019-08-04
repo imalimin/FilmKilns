@@ -162,10 +162,7 @@ HwResult HwFFMuxer::write(int32_t track, void *packet) {
                                 AV_TIME_BASE_Q,
                                 tracks[track]->time_base,
                                 AV_ROUND_NEAR_INF);
-    pkt->duration = av_rescale_q_rnd(pkt->duration,
-                                     AV_TIME_BASE_Q,
-                                     tracks[track]->time_base,
-                                     AV_ROUND_NEAR_INF);
+    pkt->duration = 1;
     pkt->stream_index = tracks[track]->index;
     int ret = av_write_frame(pFormatCtx, pkt);
     Logcat::i("HWVC", "HwFFMuxer::write %d, %lld, %lld", track, pkt->pts, pkt->duration);

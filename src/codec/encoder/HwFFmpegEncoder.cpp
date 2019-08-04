@@ -39,12 +39,13 @@ bool HwFFmpegEncoder::initialize() {
     /**
      * Video codec
      */
+    const int32_t fps = 30;
     HwBundle bundle;
     bundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
     bundle.putInt32(HwAbsCodec::KEY_WIDTH, width);
     bundle.putInt32(HwAbsCodec::KEY_HEIGHT, height);
-    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * 3);
-    bundle.putInt32(HwAbsCodec::KEY_FPS, 30);
+    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * fps * 3);
+    bundle.putInt32(HwAbsCodec::KEY_FPS, fps);
     bundle.putInt32(HwAbsCodec::KEY_QUALITY, quality);
     vCodec = new HwFFCodec(AV_CODEC_ID_H264);
     if (Hw::SUCCESS != vCodec->configure(&bundle)) {
@@ -60,6 +61,7 @@ bool HwFFmpegEncoder::initialize() {
     aBundle.putInt32(HwAbsCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
     aBundle.putInt32(HwAbsCodec::KEY_CHANNELS, audioFormat.getChannels());
     aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
+    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
     aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
     if (Hw::SUCCESS != aCodec->configure(&aBundle)) {
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to configure audio codec!");
@@ -91,7 +93,7 @@ bool HwFFmpegEncoder::initialize() {
 }
 
 HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
-    lock_guard<std::mutex> guard(lock);
+    lock_guard <std::mutex> guard(lock);
     AVPacket *packet = nullptr;
     if (frame->isAudio() && aCodec && muxer) {
         // Ensure that the first frame is video.
