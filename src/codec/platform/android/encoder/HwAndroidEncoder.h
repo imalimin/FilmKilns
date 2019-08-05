@@ -51,8 +51,10 @@ private:
     int width = 0, height = 0;
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
     HwAbsCodec *vCodec = nullptr;
+    HwAbsCodec *aCodec = nullptr;
     HwAbsMuxer *muxer = nullptr;
     int32_t vTrack = HwAbsMuxer::TRACK_NONE, aTrack = HwAbsMuxer::TRACK_NONE;
+    bool firstVideoFrameWrite = false;
     std::mutex lock;
 };
 

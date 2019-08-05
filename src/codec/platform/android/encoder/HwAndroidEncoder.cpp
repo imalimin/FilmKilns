@@ -9,6 +9,7 @@
 #include "Logcat.h"
 #include "../core/HwAndroidCodec.h"
 #include "../../../include/HwFFMuxer.h"
+#include "../../../include/HwFFCodec.h"
 
 HwAndroidEncoder::HwAndroidEncoder() : HwAbsVideoEncoder() {
 
@@ -41,6 +42,21 @@ bool HwAndroidEncoder::configure() {
         release();
         return false;
     }
+    /**
+     * Audio codec
+     */
+    HwBundle aBundle;
+    aBundle.putInt32(HwAbsCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
+    aBundle.putInt32(HwAbsCodec::KEY_CHANNELS, audioFormat.getChannels());
+    aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
+    aBundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
+    aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
+    if (Hw::SUCCESS != aCodec->configure(&aBundle)) {
+        Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to configure audio codec!");
+        release();
+        return false;
+    }
+    aCodec->start();
     muxer = new HwFFMuxer();
     if (Hw::SUCCESS != muxer->configure(path, HwAbsMuxer::TYPE_MP4)) {
         Logcat::e("HWVC", "HwAndroidEncoder::configure failed to configure muxer!");
@@ -50,15 +66,15 @@ bool HwAndroidEncoder::configure() {
     /**
      * Muxer start
      */
-//    aTrack = muxer->addTrack(codec);
-//    if (HwAbsMuxer::TRACK_NONE == aTrack) {
-//        Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to add audio track!");
-//        release();
-//        return false;
-//    }
     vTrack = muxer->addTrack(vCodec);
     if (HwAbsMuxer::TRACK_NONE == vTrack) {
         Logcat::e("HWVC", "HwAndroidEncoder::configure failed to add video track!");
+        release();
+        return false;
+    }
+    aTrack = muxer->addTrack(aCodec);
+    if (HwAbsMuxer::TRACK_NONE == aTrack) {
+        Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to add audio track!");
         release();
         return false;
     }
@@ -73,10 +89,21 @@ bool HwAndroidEncoder::configure() {
 HwResult HwAndroidEncoder::write(HwAbsMediaFrame *frame) {
     lock_guard<std::mutex> guard(lock);
     AVPacket *packet = nullptr;
-    if (frame->isVideo() && vCodec && muxer) {
+    if (frame->isAudio() && aCodec && muxer) {
+        // Ensure that the first frame is video.
+        if (!firstVideoFrameWrite) {
+            return Hw::FAILED;
+        }
+        aCodec->encode(frame, reinterpret_cast<void **>(&packet));
+        if (packet) {
+            muxer->write(aTrack, packet);
+        }
+        return Hw::SUCCESS;
+    } else if (frame->isVideo() && vCodec && muxer) {
         vCodec->encode(frame, reinterpret_cast<void **>(&packet));
         if (packet) {
             muxer->write(vTrack, packet);
+            firstVideoFrameWrite = true;
         }
         return Hw::SUCCESS;
     }
