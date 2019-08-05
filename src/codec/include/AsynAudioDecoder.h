@@ -27,7 +27,7 @@ public:
 
     virtual ~AsynAudioDecoder();
 
-    bool prepare(string path);
+    virtual bool prepare(string path) override;
 
     void seek(int64_t us);
 
@@ -42,15 +42,17 @@ public:
      */
     HwResult grab(HwAbsMediaFrame **frame);
 
-    int getChannels();
+    virtual int getChannels() override;
 
-    int getSampleHz();
+    virtual int getSampleHz() override;
 
-    int getSampleFormat();
+    virtual int getSampleFormat() override;
 
-    int getSamplesPerBuffer();
+    virtual int getSamplesPerBuffer() override;
 
-    int64_t getAudioDuration();
+    virtual int64_t getAudioDuration() override;
+
+    virtual int64_t getDuration() override;
 
 private:
     void loop();

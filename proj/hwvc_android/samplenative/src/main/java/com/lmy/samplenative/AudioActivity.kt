@@ -26,7 +26,7 @@ class AudioActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
         if (uri == null)
             uri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
         if (uri == null) {
-            val testFile = File(externalCacheDir, "/audio.wav")
+            val testFile = File(externalCacheDir, "/video/hw_small.mp4")
             if (!testFile.exists()) {
                 Toast.makeText(this, "没有找到该文件", Toast.LENGTH_SHORT).show()
                 finish()

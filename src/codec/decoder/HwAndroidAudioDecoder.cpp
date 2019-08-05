@@ -255,3 +255,7 @@ int64_t HwAndroidAudioDecoder::getAudioDuration() {
                                      AV_ROUND_NEAR_INF);
     return aDurationInUs;
 }
+
+int64_t HwAndroidAudioDecoder::getDuration() {
+    return -1;
+}

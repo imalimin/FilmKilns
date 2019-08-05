@@ -54,6 +54,8 @@ public:
 
     virtual int64_t getAudioDuration() override;
 
+    virtual int64_t getDuration() override;
+
 private:
     bool openTrack(int track, AVCodecContext **context);
 
@@ -83,6 +85,7 @@ private:
     AVRational outputRational = AVRational{1, 1000000};
     int64_t videoDurationUs = -1;
     int64_t audioDurationUs = -1;
+    int64_t durationUs = -1;
     bool eof = false;
     /** action */
     int64_t actionSeekInUs = -1;

@@ -190,3 +190,10 @@ int64_t AsynAudioDecoder::getAudioDuration() {
     }
     return -1;
 }
+
+int64_t AsynAudioDecoder::getDuration() {
+    if (decoder) {
+        return decoder->getDuration();
+    }
+    return -1;
+}

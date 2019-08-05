@@ -202,3 +202,10 @@ int64_t AsynVideoDecoder::getAudioDuration() {
     }
     return -1;
 }
+
+int64_t AsynVideoDecoder::getDuration() {
+    if (decoder) {
+        return decoder->getDuration();
+    }
+    return -1;
+}

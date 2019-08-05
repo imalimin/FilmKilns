@@ -22,6 +22,8 @@ public:
     virtual bool prepare(string path)=0;
 
     virtual void seek(int64_t us)=0;
+
+    virtual int64_t getDuration()=0;
 };
 namespace Hw {
     const HwResult MEDIA_WAIT = HwResult(-1);

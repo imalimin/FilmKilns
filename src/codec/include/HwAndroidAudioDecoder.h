@@ -48,6 +48,8 @@ public:
 
     int64_t getAudioDuration() override;
 
+    int64_t getDuration() override;
+
 private:
     bool prepareCodec();
 

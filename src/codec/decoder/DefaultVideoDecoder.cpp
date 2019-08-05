@@ -343,6 +343,9 @@ int64_t DefaultVideoDecoder::getVideoDuration() {
 }
 
 int64_t DefaultVideoDecoder::getAudioDuration() {
+    if (audioTrack < 0) {
+        audioDurationUs = 0;
+    }
     if (audioDurationUs >= 0) {
         return audioDurationUs;
     }
@@ -355,6 +358,20 @@ int64_t DefaultVideoDecoder::getAudioDuration() {
         audioDurationUs = pFormatCtx->duration;
     }
     return audioDurationUs;
+}
+
+int64_t DefaultVideoDecoder::getDuration() {
+    if (durationUs >= 0) {
+        return durationUs;
+    }
+    durationUs = pFormatCtx->duration;
+    if (durationUs <= 0) {
+        durationUs = getAudioDuration();
+    }
+    if (durationUs <= 0) {
+        durationUs = getVideoDuration();
+    }
+    return durationUs;
 }
 
 #ifdef __cplusplus

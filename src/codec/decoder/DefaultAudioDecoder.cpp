@@ -208,6 +208,17 @@ int64_t DefaultAudioDecoder::getAudioDuration() {
     return audioDurationUs;
 }
 
+int64_t DefaultAudioDecoder::getDuration() {
+    if (durationUs >= 0) {
+        return durationUs;
+    }
+    durationUs = pFormatCtx->duration;
+    if (durationUs <= 0) {
+        durationUs = getAudioDuration();
+    }
+    return durationUs;
+}
+
 bool DefaultAudioDecoder::openTrack(int track, AVCodecContext **context) {
     AVCodecParameters *avCodecParameters = pFormatCtx->streams[track]->codecpar;
     AVCodec *codec = NULL;

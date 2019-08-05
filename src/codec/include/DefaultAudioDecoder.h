@@ -32,7 +32,7 @@ public:
 
     virtual ~DefaultAudioDecoder();
 
-    bool prepare(string path);
+    virtual bool prepare(string path) override;
 
     void seek(int64_t us);
 
@@ -41,15 +41,17 @@ public:
      */
     virtual HwResult grab(HwAbsMediaFrame **frame);
 
-    int getChannels();
+    virtual int getChannels() override;
 
-    int getSampleHz();
+    virtual int getSampleHz() override;
 
-    int getSampleFormat();
+    virtual int getSampleFormat() override;
 
-    int getSamplesPerBuffer();
+    virtual int getSamplesPerBuffer() override;
 
-    int64_t getAudioDuration();
+    virtual int64_t getAudioDuration() override;
+
+    virtual int64_t getDuration() override;
 
 private:
     bool openTrack(int track, AVCodecContext **context);
@@ -78,6 +80,7 @@ private:
     AVSampleFormat outSampleFormat = AV_SAMPLE_FMT_S16;
     AVRational outputTimeBase = AVRational{1, 1000000};
     int64_t audioDurationUs = -1;
+    int64_t durationUs = -1;
     bool eof = false;
     /** action */
     int64_t actionSeekInUs = -1;
