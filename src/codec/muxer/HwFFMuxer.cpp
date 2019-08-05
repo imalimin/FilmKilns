@@ -95,7 +95,7 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
         stream->codecpar->channel_layout = static_cast<uint64_t>(
                 av_get_default_channel_layout(stream->codecpar->channels));
         stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
-        stream->time_base = {1, stream->codecpar->sample_rate};
+//        stream->time_base = {1, stream->codecpar->sample_rate};
     } else if (0 == codec->type()) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
         setInt32Parameter(stream->codecpar->width,
@@ -103,7 +103,7 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
         setInt32Parameter(stream->codecpar->height,
                           codec->getFormat()->getInt32(HwAbsCodec::KEY_HEIGHT));
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
-        stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
+//        stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
     }
     copyExtraData(stream, codec);
     tracks.push_back(stream);
