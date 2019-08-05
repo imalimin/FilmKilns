@@ -90,6 +90,12 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
     AMediaFormat_delete(cf);
     AVPacket *pkt = nullptr;
     HwVideoFrame *frame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, width, height);
+    int32_t offset = 0;
+    memset(frame->getBuffer()->getData() + offset, 0, width * height);
+    offset += width * height;
+    memset(frame->getBuffer()->getData() + offset, 128, width * height / 4);
+    offset += width * height / 4;
+    memset(frame->getBuffer()->getData() + offset, 128, width * height / 4);
     frame->setPts(0);
     if (Hw::SUCCESS != push(frame)) {
         return Hw::FAILED;
@@ -229,15 +235,15 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                             wrote = false;
                         } else {
                             ++frameCount;
-                            if (frameCount > 1) {//Drop first frame for config.
-                                if (avPacket) {
-                                    av_packet_unref(avPacket);
-                                }
-                                av_init_packet(avPacket);
-                                avPacket->pts = info.presentationTimeUs;
-                                avPacket->dts = avPacket->pts;
-                                avPacket->duration = static_cast<int64_t>(AV_TIME_BASE /
-                                                                          (float) fps);
+//                            if (frameCount > 1) {//Drop first frame for config.
+                            if (avPacket) {
+                                av_packet_unref(avPacket);
+                            }
+                            av_init_packet(avPacket);
+                            avPacket->pts = info.presentationTimeUs;
+                            avPacket->dts = avPacket->pts;
+                            avPacket->duration = static_cast<int64_t>(AV_TIME_BASE /
+                                                                      (float) fps);
 //                            if (info.flags & BUFFER_FLAG_KEY_FRAME) {// key frame
 //                                memcpy(keyFrameBuf->getData(),
 //                                       configBuf->getData(),
@@ -249,14 +255,14 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
 //                                avPacket->data = buf;
 //                                avPacket->size = info.size;
 //                            }
-                                memcpy(keyFrameBuf->getData(), &info.size, 4);
-                                memcpy(keyFrameBuf->getData() + 4, buf, info.size);
-                                avPacket->data = keyFrameBuf->getData();
-                                avPacket->size = info.size + 4;
-                                wrote = true;
-                            } else {
-                                wrote = false;
-                            }
+                            memcpy(keyFrameBuf->getData(), &info.size, 4);
+                            memcpy(keyFrameBuf->getData() + 4, buf, info.size);
+                            avPacket->data = keyFrameBuf->getData();
+                            avPacket->size = info.size + 4;
+                            wrote = true;
+//                            } else {
+//                                wrote = false;
+//                            }
                         }
                     }
                 }
