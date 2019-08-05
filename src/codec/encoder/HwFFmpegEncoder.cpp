@@ -38,8 +38,9 @@ bool HwFFmpegEncoder::initialize() {
     bundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
     bundle.putInt32(HwAbsCodec::KEY_WIDTH, width);
     bundle.putInt32(HwAbsCodec::KEY_HEIGHT, height);
-    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * fps * 3);
+    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * 3);
     bundle.putInt32(HwAbsCodec::KEY_FPS, fps);
+    //For CRF
     bundle.putInt32(HwAbsCodec::KEY_QUALITY, quality);
     vCodec = new HwFFCodec(AV_CODEC_ID_H264);
     if (Hw::SUCCESS != vCodec->configure(&bundle)) {

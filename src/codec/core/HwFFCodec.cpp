@@ -243,6 +243,7 @@ HwBuffer *HwFFCodec::getExtraBuffer(string key) {
 }
 
 HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
+    int64_t duration = 1;
     switch (ctx->codec_type) {
         case AVMEDIA_TYPE_VIDEO: {
             HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
@@ -258,8 +259,8 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
             avFrame->height = videoFrame->getHeight();
             avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
             avFrame->pts = frame->getPts();
-            avFrame->pkt_duration = static_cast<int64_t>(AV_TIME_BASE /
-                                                         (float) ctx->time_base.den );
+            duration = static_cast<int64_t>(AV_TIME_BASE /
+                                            (float) ctx->time_base.den );
 //        avFrame->pts = frameCount;
 //            avFrame->pts = av_rescale_q_rnd(frame->getPts(),
 //                                            AV_TIME_BASE_Q,
@@ -291,8 +292,8 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
 
             AVFrame *f = nullptr;
             translator->translate(&f, &avFrame);
-            avFrame->pkt_duration = static_cast<int64_t>(AV_TIME_BASE / (float) ctx->sample_rate *
-                                                         avFrame->nb_samples);
+            duration = static_cast<int64_t>(AV_TIME_BASE / (float) ctx->sample_rate *
+                                            avFrame->nb_samples);
             avcodec_send_frame(ctx, f);
             break;
         }
@@ -310,5 +311,6 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
         return Hw::FAILED;
     }
     *packet = avPacket;
+    avPacket->duration = duration;
     return Hw::SUCCESS;
 }

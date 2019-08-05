@@ -154,15 +154,17 @@ HwResult HwFFMuxer::write(int32_t track, void *packet) {
         return Hw::FAILED;
     }
     AVPacket *pkt = static_cast<AVPacket *>(packet);
-    pkt->pts = av_rescale_q_rnd(pkt->pts,
+    AVRational tb = tracks[track]->time_base;
+    pkt->pts = av_rescale_q(pkt->pts,
                                 AV_TIME_BASE_Q,
-                                tracks[track]->time_base,
-                                AV_ROUND_NEAR_INF);
-    pkt->dts = av_rescale_q_rnd(pkt->dts,
+                                tb);
+    pkt->dts = av_rescale_q(pkt->dts,
                                 AV_TIME_BASE_Q,
-                                tracks[track]->time_base,
-                                AV_ROUND_NEAR_INF);
-    pkt->duration = 1;
+                                tb);
+    // pts / cq * bq
+    pkt->duration = av_rescale_q(pkt->duration,
+                                     AV_TIME_BASE_Q,
+                                     tb);
     pkt->stream_index = tracks[track]->index;
     int ret = av_write_frame(pFormatCtx, pkt);
     Logcat::i("HWVC", "HwFFMuxer::write %d, %lld, %lld", track, pkt->pts, pkt->duration);
