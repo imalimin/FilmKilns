@@ -55,7 +55,7 @@ private:
     int64_t frameCount = 0;
     std::mutex lock;
 
-    int32_t quality = 15;
+    int32_t quality = 18;
 };
 
 #ifdef __cplusplus

@@ -58,6 +58,7 @@ private:
      */
     HwAudioTranslator *translator = nullptr;
     HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
+    int64_t vLastPts = 0;
 };
 
 #ifdef __cplusplus

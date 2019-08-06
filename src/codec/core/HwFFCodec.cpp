@@ -115,17 +115,18 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     ctx->width = format->getInt32(KEY_WIDTH);
     ctx->height = format->getInt32(KEY_HEIGHT);
     ctx->bit_rate = format->getInt32(KEY_BIT_RATE);
-    ctx->gop_size = 15;
-
     ctx->time_base = {1, format->getInt32(KEY_FPS)};
+    ctx->framerate = {format->getInt32(KEY_FPS), 1};
 
+
+    ctx->gop_size = 15;
 //    pCodecCtx->ticks_per_frame = 2;
     ctx->thread_count = 0;
-    ctx->qmin = 10;
-    ctx->qmax = 30;
+//    ctx->qmin = 10;
+//    ctx->qmax = 30;
     ctx->max_b_frames = 2;
-//    pCodecCtx->me_range = 16;
-//    pCodecCtx->max_qdiff = 4;
+//    ctx->me_range = 16;
+//    ctx->max_qdiff = 4;
     ctx->codec = codec;
     /**
      * Important. If not set this, the output will be fail.
@@ -136,7 +137,9 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     AVDictionary *param = nullptr;
     if (AV_CODEC_ID_H264 == ctx->codec_id) {
         ctx->profile = FF_PROFILE_H264_HIGH;
+        //0 - 51
         av_dict_set_int(&param, "crf", format->getInt32(KEY_QUALITY), 0);  // or abr,qp
+        //ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow and placebo.
         av_dict_set(&param, "preset", "superfast", 0);
         //av_dict_set(param, "profile", "main", 0)
         av_dict_set(&param, "tune", "zerolatency", 0);
@@ -259,14 +262,13 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
             avFrame->height = videoFrame->getHeight();
             avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
             avFrame->pts = frame->getPts();
-            duration = static_cast<int64_t>(AV_TIME_BASE /
-                                            (float) ctx->time_base.den );
-//        avFrame->pts = frameCount;
-//            avFrame->pts = av_rescale_q_rnd(frame->getPts(),
-//                                            AV_TIME_BASE_Q,
-//                                            pVideoStream->time_base,
-//                                            AV_ROUND_NEAR_INF);
-            avcodec_send_frame(ctx, avFrame);
+            duration = avFrame->pts - vLastPts;
+            if (duration <= 0) {
+                duration = static_cast<int64_t>(AV_TIME_BASE /
+                                                (float) ctx->time_base.den );
+            }
+            vLastPts = avFrame->pts;
+            int ret = avcodec_send_frame(ctx, avFrame);
             break;
         }
         case AVMEDIA_TYPE_AUDIO: {
@@ -284,17 +286,12 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
             avFrame->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(
                     audioFrame->getChannels()));
             avFrame->pts = frame->getPts();
-//        avFrame->pts = sampleCount;
-//            avFrame->pts = av_rescale_q_rnd(frame->getPts(),
-//                                                 AV_TIME_BASE_Q,
-//                                                 pAudioStream->time_base,
-//                                                 AV_ROUND_NEAR_INF);
 
             AVFrame *f = nullptr;
             translator->translate(&f, &avFrame);
             duration = static_cast<int64_t>(AV_TIME_BASE / (float) ctx->sample_rate *
                                             avFrame->nb_samples);
-            avcodec_send_frame(ctx, f);
+            int ret = avcodec_send_frame(ctx, f);
             break;
         }
         default:

@@ -154,22 +154,18 @@ HwResult HwFFMuxer::write(int32_t track, void *packet) {
         return Hw::FAILED;
     }
     AVPacket *pkt = static_cast<AVPacket *>(packet);
-    AVRational tb = tracks[track]->time_base;
-    pkt->pts = av_rescale_q(pkt->pts,
-                                AV_TIME_BASE_Q,
-                                tb);
-    pkt->dts = av_rescale_q(pkt->dts,
-                                AV_TIME_BASE_Q,
-                                tb);
-    // pts / cq * bq
-    pkt->duration = av_rescale_q(pkt->duration,
-                                     AV_TIME_BASE_Q,
-                                     tb);
     pkt->stream_index = tracks[track]->index;
-    int ret = av_write_frame(pFormatCtx, pkt);
-    Logcat::i("HWVC", "HwFFMuxer::write %d, %lld, %lld", track, pkt->pts, pkt->duration);
+    AVRational tb = tracks[track]->time_base;
+    // pts / cq * bq
+    av_packet_rescale_ts(pkt, AV_TIME_BASE_Q, tb);
+    if (tracks[track]->cur_dts >= pkt->dts) {
+        Logcat::i("HWVC", "HwFFMuxer::write will failed(%lld, %lld), try reset correctly.",
+                  tracks[track]->cur_dts, pkt->dts);
+        pkt->dts += 1;
+    }
+    int ret = av_interleaved_write_frame(pFormatCtx, pkt);
     if (0 != ret) {
-        Logcat::i("HWVC", "HwFFMuxer::write failed: %s", strerror(AVUNERROR(ret)));
+        Logcat::e("HWVC", "HwFFMuxer::write failed(track %d): %s", track, strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
     return Hw::SUCCESS;
