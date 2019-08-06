@@ -31,7 +31,6 @@ bool HwModelProvider::eventRelease(Message *msg) {
 bool HwModelProvider::eventPutInt32(Message *msg) {
     HwPair<string, int32_t> *p = static_cast<HwPair<string, int32_t> *>(msg->obj);
     if (p) {
-        Logcat::i("HWVC", "test123 eventPutInt32 %s, %d", p->key().c_str(), p->value());
         bundle.putInt32(p->key(), p->value());
     }
     return true;
