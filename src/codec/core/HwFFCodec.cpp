@@ -192,11 +192,11 @@ bool HwFFCodec::parseExtraData() {
         for (int i = 0; i < ctx->extradata_size; ++i) {
             if (BinaryUtils::match(&extradata[i], {0x00, 0x00, 0x00, 0x01})) {
                 if (spsPos < 0) {
-                    spsPos = i + 4;
+                    spsPos = i;
                     continue;
                 }
                 if (ppsPos < 0) {
-                    ppsPos = i + 4;
+                    ppsPos = i;
                     break;
                 }
             }
@@ -205,7 +205,7 @@ bool HwFFCodec::parseExtraData() {
             Logcat::e("HWVC", "HwFFCodec::configureVideo could not find sps & pps!");
             return false;
         }
-        buffers[0] = HwBuffer::alloc(ppsPos - spsPos - 4);
+        buffers[0] = HwBuffer::alloc(ppsPos - spsPos);
         buffers[1] = HwBuffer::alloc(ctx->extradata_size - ppsPos);
         memcpy(buffers[0]->getData(), ctx->extradata + spsPos, buffers[0]->size());
         memcpy(buffers[1]->getData(), ctx->extradata + ppsPos, buffers[1]->size());

@@ -116,19 +116,17 @@ bool HwFFMuxer::copyExtraData(AVStream *stream, HwAbsCodec *codec) {
             HwBuffer *sps = codec->getExtraBuffer("csd-0");
             HwBuffer *pps = codec->getExtraBuffer("csd-1");
             if (sps && pps) {
-                stream->codecpar->extradata_size = sps->size() + pps->size() + 8;
-                uint8_t flag[4] = {0, 0, 0, 1};
+                stream->codecpar->extradata_size = sps->size() + pps->size();
                 int32_t offset = 0;
                 uint8_t *extra = static_cast<uint8_t *>(av_mallocz(
                         stream->codecpar->extradata_size));
-                memcpy(extra + offset, &flag, 4);
-                offset += 4;
                 memcpy(extra + offset, sps->getData(), sps->size());
                 offset += sps->size();
-                memcpy(extra + offset, &flag, 4);
-                offset += 4;
                 memcpy(extra + offset, pps->getData(), pps->size());
                 stream->codecpar->extradata = extra;
+                FILE *fp = fopen("/sdcard/extra.data", "wb");
+                fwrite(stream->codecpar->extradata, 1, stream->codecpar->extradata_size, fp);
+                fclose(fp);
             }
             break;
         }
