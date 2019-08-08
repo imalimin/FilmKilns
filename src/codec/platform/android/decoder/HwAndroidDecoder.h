@@ -65,9 +65,15 @@ public:
     virtual void stop() override;
 
 private:
+    bool openTrack(int track, AVCodecContext **context);
+
+private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
     string path;
     AVFormatContext *pFormatCtx = nullptr;
+    AVCodecContext *vCodecContext = nullptr;
+    AVCodecContext *aCodecContext = nullptr;
+    int audioTrack = -1, videoTrack = -1;
 
 };
 

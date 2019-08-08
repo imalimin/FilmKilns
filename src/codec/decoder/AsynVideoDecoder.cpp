@@ -7,11 +7,13 @@
 
 #include "../include/AsynVideoDecoder.h"
 #include "TimeUtils.h"
+#include "../include/DefaultVideoDecoder.h"
+#include "../platform/android/decoder/HwAndroidDecoder.h"
 
 AsynVideoDecoder::AsynVideoDecoder() : AbsVideoDecoder() {
     playing = false;
     hwFrameAllocator = new HwFrameAllocator();
-    decoder = new DefaultVideoDecoder();
+    decoder = new HwAndroidDecoder();
 }
 
 AsynVideoDecoder::~AsynVideoDecoder() {
