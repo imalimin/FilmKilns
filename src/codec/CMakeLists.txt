@@ -79,6 +79,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/muxer/*.cpp
             ${PROJECT_SOURCE_DIR}/core/*.cpp
             # android
+            ${PROJECT_SOURCE_DIR}/platform/android/decoder/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/encoder/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/core/*.cpp
     )
