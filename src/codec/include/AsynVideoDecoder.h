@@ -25,7 +25,7 @@ using namespace std;
 extern "C" {
 #endif
 
-class AsynVideoDecoder : public AbsVideoDecoder, public AbsAudioDecoder {
+class AsynVideoDecoder : public AbsVideoDecoder {
 public:
     AsynVideoDecoder();
 
@@ -47,13 +47,13 @@ public:
 
     virtual void seek(int64_t us) override;
 
-    virtual void start();
+    virtual void start() override;
 
-    virtual void pause();
+    virtual void pause() override;
 
-    void stop();
+    virtual void stop() override;
 
-    HwResult grab(HwAbsMediaFrame **frame);
+    HwResult grab(HwAbsMediaFrame **frame) override;
 
     virtual int64_t getVideoDuration() override;
 
@@ -71,7 +71,7 @@ private:
 private:
     const int MAX_FRAME_CACHE = 36;
     HwFrameAllocator *hwFrameAllocator = nullptr;
-    DefaultVideoDecoder *decoder = nullptr;
+    AbsVideoDecoder *decoder = nullptr;
     EventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;
     HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收

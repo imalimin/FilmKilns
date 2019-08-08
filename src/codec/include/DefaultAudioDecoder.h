@@ -39,7 +39,7 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    virtual HwResult grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame) override;
 
     virtual int getChannels() override;
 
@@ -52,6 +52,12 @@ public:
     virtual int64_t getAudioDuration() override;
 
     virtual int64_t getDuration() override;
+
+    virtual void start() override;
+
+    virtual void pause() override;
+
+    virtual void stop() override;
 
 private:
     bool openTrack(int track, AVCodecContext **context);

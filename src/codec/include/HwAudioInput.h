@@ -49,7 +49,7 @@ private:
 
 private:
     const int INTERVAL_PROGRESS = 500000;
-    AsynAudioDecoder *decoder = nullptr;
+    AbsAudioDecoder *decoder = nullptr;
     PlayState playState = STOP;
     SimpleLock simpleLock;
     SimpleLock playTimeLock;

@@ -16,8 +16,6 @@ public:
 
     virtual ~AbsAudioDecoder();
 
-    virtual bool prepare(string path)=0;
-
     virtual int getChannels()=0;
 
     virtual int getSampleHz()=0;

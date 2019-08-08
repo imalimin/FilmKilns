@@ -8,7 +8,7 @@
 #include "../include/AsynVideoDecoder.h"
 #include "TimeUtils.h"
 
-AsynVideoDecoder::AsynVideoDecoder() : AbsAudioDecoder(), AbsVideoDecoder() {
+AsynVideoDecoder::AsynVideoDecoder() : AbsVideoDecoder() {
     playing = false;
     hwFrameAllocator = new HwFrameAllocator();
     decoder = new DefaultVideoDecoder();
@@ -139,10 +139,12 @@ void AsynVideoDecoder::start() {
         return;
     }
     playing = true;
+    decoder->start();
     loop();
 }
 
 void AsynVideoDecoder::pause() {
+    decoder->pause();
 }
 
 void AsynVideoDecoder::stop() {
@@ -150,6 +152,7 @@ void AsynVideoDecoder::stop() {
         return;
     }
     playing = false;
+    decoder->stop();
     grabLock.notify();
 }
 

@@ -8,8 +8,9 @@
 #define HARDWAREVIDEOCODEC_ABSDECODER_H
 
 #include "Object.h"
+#include "HwResult.h"
+#include "HwAbsMediaFrame.h"
 #include <string>
-#include <HwResult.h>
 
 using namespace std;
 
@@ -21,9 +22,17 @@ public:
 
     virtual bool prepare(string path)=0;
 
+    virtual HwResult grab(HwAbsMediaFrame **frame)=0;
+
     virtual void seek(int64_t us)=0;
 
     virtual int64_t getDuration()=0;
+
+    virtual void start()=0;
+
+    virtual void pause()=0;
+
+    virtual void stop()=0;
 };
 namespace Hw {
     const HwResult MEDIA_WAIT = HwResult(-1);

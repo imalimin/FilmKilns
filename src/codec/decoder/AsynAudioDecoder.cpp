@@ -66,10 +66,12 @@ void AsynAudioDecoder::start() {
         return;
     }
     playing = true;
+    decoder->start();
     loop();
 }
 
 void AsynAudioDecoder::pause() {
+    decoder->pause();
 }
 
 void AsynAudioDecoder::stop() {
@@ -77,6 +79,7 @@ void AsynAudioDecoder::stop() {
         return;
     }
     playing = false;
+    decoder->stop();
     grabLock.notify();
 }
 

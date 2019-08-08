@@ -23,7 +23,7 @@ extern "C" {
 #include "ff/libswresample/swresample.h"
 
 
-class DefaultVideoDecoder : public AbsVideoDecoder, public AbsAudioDecoder {
+class DefaultVideoDecoder : public AbsVideoDecoder {
 public:
     DefaultVideoDecoder();
 
@@ -48,13 +48,19 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    virtual HwResult grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame) override;
 
     virtual int64_t getVideoDuration() override;
 
     virtual int64_t getAudioDuration() override;
 
     virtual int64_t getDuration() override;
+
+    virtual void start() override;
+
+    virtual void pause() override;
+
+    virtual void stop() override;
 
 private:
     bool openTrack(int track, AVCodecContext **context);

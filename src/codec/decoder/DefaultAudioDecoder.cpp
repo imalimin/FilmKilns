@@ -308,3 +308,15 @@ void DefaultAudioDecoder::printCodecInfo() {
     }
     Logcat::e("HWVC", "%s", info);
 }
+
+void DefaultAudioDecoder::start() {
+
+}
+
+void DefaultAudioDecoder::pause() {
+
+}
+
+void DefaultAudioDecoder::stop() {
+
+}

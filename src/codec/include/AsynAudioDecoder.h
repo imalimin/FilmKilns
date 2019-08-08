@@ -10,7 +10,6 @@
 
 #include "AbsVideoDecoder.h"
 #include "DefaultAudioDecoder.h"
-#include "HwAndroidAudioDecoder.h"
 #include "EventPipeline.h"
 #include "HwAbsMediaFrame.h"
 #include "HwFrameAllocator.h"
@@ -29,18 +28,18 @@ public:
 
     virtual bool prepare(string path) override;
 
-    void seek(int64_t us);
+    void seek(int64_t us) override;
 
-    void start();
+    virtual void start() override;
 
-    void pause();
+    virtual void pause() override;
 
-    void stop();
+    virtual void stop() override;
 
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    HwResult grab(HwAbsMediaFrame **frame);
+    HwResult grab(HwAbsMediaFrame **frame) override;
 
     virtual int getChannels() override;
 
@@ -63,7 +62,7 @@ private:
 
 private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
-    DefaultAudioDecoder *decoder = nullptr;
+    AbsAudioDecoder *decoder = nullptr;
 //    HwAndroidAudioDecoder *decoder = nullptr;
     EventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;

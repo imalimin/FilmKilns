@@ -61,7 +61,7 @@ private:
 private:
     const int INTERVAL_PROGRESS = 1000000;
     TextureAllocator *texAllocator = nullptr;
-    AsynVideoDecoder *decoder = nullptr;
+    AbsVideoDecoder *decoder = nullptr;
     YUV420PFilter *yuvFilter = nullptr;
     GLuint yuv[3] = {GL_NONE, GL_NONE, GL_NONE};
     PlayState playState = STOP;

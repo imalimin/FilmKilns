@@ -6,7 +6,7 @@
  */
 #include "../include/AbsVideoDecoder.h"
 
-AbsVideoDecoder::AbsVideoDecoder() : AbsDecoder() {
+AbsVideoDecoder::AbsVideoDecoder() : AbsAudioDecoder() {
 
 }
 

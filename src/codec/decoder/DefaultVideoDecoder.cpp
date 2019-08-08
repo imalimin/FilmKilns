@@ -13,7 +13,7 @@ extern "C" {
 #endif
 #include "../include/FFUtils.h"
 
-DefaultVideoDecoder::DefaultVideoDecoder() : AbsAudioDecoder(), AbsVideoDecoder() {
+DefaultVideoDecoder::DefaultVideoDecoder() : AbsVideoDecoder() {
     hwFrameAllocator = new HwFrameAllocator();
 }
 
@@ -372,6 +372,18 @@ int64_t DefaultVideoDecoder::getDuration() {
         durationUs = getVideoDuration();
     }
     return durationUs;
+}
+
+void DefaultVideoDecoder::start() {
+
+}
+
+void DefaultVideoDecoder::pause() {
+
+}
+
+void DefaultVideoDecoder::stop() {
+
 }
 
 #ifdef __cplusplus

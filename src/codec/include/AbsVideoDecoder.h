@@ -7,15 +7,13 @@
 #ifndef HARDWAREVIDEOCODEC_ABSVIDEODECODER_H
 #define HARDWAREVIDEOCODEC_ABSVIDEODECODER_H
 
-#include "AbsDecoder.h"
+#include "AbsAudioDecoder.h"
 
-class AbsVideoDecoder : virtual public AbsDecoder {
+class AbsVideoDecoder : virtual public AbsAudioDecoder {
 public:
     AbsVideoDecoder();
 
     virtual ~AbsVideoDecoder();
-
-    virtual bool prepare(string path)=0;
 
     virtual int64_t getVideoDuration()=0;
 
