@@ -12,6 +12,7 @@
 #include "../../../include/AbsVideoDecoder.h"
 #include "../../../include/HwAbsMediaFrame.h"
 #include "../../../include/HwFrameAllocator.h"
+#include "media/NdkMediaCodec.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,14 +68,34 @@ public:
 private:
     bool openTrack(int track, AVCodecContext **context);
 
+    bool configure();
+
+    bool configureBSF();
+
+    HwResult push(AVPacket *pkt);
+
+    HwResult pop(int32_t waitInUS);
+
 private:
-    HwFrameAllocator *hwFrameAllocator = nullptr;
+    const int COLOR_FormatYUV420Flexible = 0x7F420888;
+    const int BUFFER_FLAG_KEY_FRAME = 1;
+    const int BUFFER_FLAG_CODEC_CONFIG = 2;
     string path;
     AVFormatContext *pFormatCtx = nullptr;
     AVCodecContext *vCodecContext = nullptr;
     AVCodecContext *aCodecContext = nullptr;
+    AVSampleFormat outSampleFormat = AV_SAMPLE_FMT_NONE;
+    AVBSFContext *bsf = nullptr;
+    AVPacket *avPacket = nullptr;
+    AVPacket *bsfPacket = nullptr;
     int audioTrack = -1, videoTrack = -1;
-
+    AMediaCodec *codec = nullptr;
+    HwBuffer *buffers[3] = {nullptr, nullptr, nullptr};
+    HwAbsMediaFrame *outFrame = nullptr;
+    bool eof = false;
+    int64_t videoDurationUs = -1;
+    int64_t audioDurationUs = -1;
+    int64_t durationUs = -1;
 };
 
 

@@ -5,14 +5,30 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include <libyuv.h>
 #include "HwAndroidDecoder.h"
+#include "BinaryUtils.h"
 #include "Logcat.h"
+#include "../../../include/HwVideoFrame.h"
 
 HwAndroidDecoder::HwAndroidDecoder() : AbsAudioDecoder(), AbsVideoDecoder() {
-    hwFrameAllocator = new HwFrameAllocator();
 }
 
 HwAndroidDecoder::~HwAndroidDecoder() {
+    if (avPacket) {
+        av_packet_free(&avPacket);
+        avPacket = nullptr;
+    }
+    if (bsfPacket) {
+        av_packet_free(&bsfPacket);
+        bsfPacket = nullptr;
+    }
+    if (codec) {
+//        flush();
+        AMediaCodec_stop(codec);
+        AMediaCodec_delete(codec);
+        codec = nullptr;
+    }
     if (aCodecContext) {
         avcodec_close(aCodecContext);
         aCodecContext = nullptr;
@@ -26,9 +42,13 @@ HwAndroidDecoder::~HwAndroidDecoder() {
         avformat_free_context(pFormatCtx);
         pFormatCtx = nullptr;
     }
-    if (hwFrameAllocator) {
-        delete hwFrameAllocator;
-        hwFrameAllocator = nullptr;
+    if (bsf) {
+        av_bsf_free(&bsf);
+        bsf = nullptr;
+    }
+    if (outFrame) {
+        delete outFrame;
+        outFrame = nullptr;
     }
 }
 
@@ -67,9 +87,109 @@ bool HwAndroidDecoder::prepare(string path) {
     if (-1 != audioTrack && !openTrack(audioTrack, &aCodecContext)) {
         Logcat::i("HWVC", "******** Open audio track failed. *********");
     }
-    Logcat::i("hwvc", "HwAndroidDecoder::prepare(%d x %d, du=%lld/%lld channels=%d, sampleHz=%d, frameSize=%d)",
-         width(), height(), getVideoDuration(), getAudioDuration(),
-         getChannels(), getSampleHz(), aCodecContext ? aCodecContext->frame_size : 0);
+    Logcat::i("hwvc",
+              "HwAndroidDecoder::prepare(%d x %d, du=%lld/%lld channels=%d, sampleHz=%d, frameSize=%d)",
+              width(), height(), getVideoDuration(), getAudioDuration(),
+              getChannels(), getSampleHz(), aCodecContext ? aCodecContext->frame_size : 0);
+    if (aCodecContext) {
+        outSampleFormat = av_get_packed_sample_fmt(aCodecContext->sample_fmt);
+        if (AV_SAMPLE_FMT_FLT == outSampleFormat || AV_SAMPLE_FMT_DBL == outSampleFormat) {
+            outSampleFormat = AV_SAMPLE_FMT_S32;
+        }
+    }
+    avPacket = av_packet_alloc();
+    bsfPacket = av_packet_alloc();
+    return configureBSF() && configure();
+}
+
+bool HwAndroidDecoder::configureBSF() {
+    const AVBitStreamFilter *filter = av_bsf_get_by_name("h264_mp4toannexb");
+    if (!filter) {
+        Logcat::e("HWVC", "HwAndroidDecoder::configureBSF failed");
+        return false;
+    }
+    av_bsf_alloc(filter, &bsf);
+    if (!bsf) {
+        Logcat::e("HWVC", "HwAndroidDecoder::configureBSF failed");
+        return false;
+    }
+    int ret = avcodec_parameters_from_context(bsf->par_in, vCodecContext);
+    if (ret < 0) {
+        Logcat::e("HWVC", "HwAndroidDecoder::configureBSF failed");
+        return false;
+    }
+    ret = av_bsf_init(bsf);
+    int32_t spsPos = -1, ppsPos = -1;
+    const uint8_t *extradata = bsf->par_out->extradata;
+    for (int i = 0; i < bsf->par_out->extradata_size; ++i) {
+        if (BinaryUtils::match(&extradata[i], {0x00, 0x00, 0x00, 0x01})) {
+            if (spsPos < 0) {
+                spsPos = i;
+                continue;
+            }
+            if (ppsPos < 0) {
+                ppsPos = i;
+                break;
+            }
+        }
+    }
+    if (spsPos < 0 || ppsPos < 0) {
+        Logcat::e("HWVC", "HwAndroidDecoder::configureBSF could not find sps & pps!");
+        return false;
+    }
+    buffers[0] = HwBuffer::alloc(ppsPos - spsPos);
+    buffers[1] = HwBuffer::alloc(bsf->par_out->extradata_size - ppsPos);
+    memcpy(buffers[0]->getData(), bsf->par_out->extradata + spsPos, buffers[0]->size());
+    memcpy(buffers[1]->getData(), bsf->par_out->extradata + ppsPos, buffers[1]->size());
+//    FILE *fp = fopen("/sdcard/extra-bsf.data", "wb");
+//    fwrite(bsf->par_out->extradata, 1, bsf->par_out->extradata_size, fp);
+//    fclose(fp);
+    return true;
+}
+
+bool HwAndroidDecoder::configure() {
+    FILE *fp = fopen("/sdcard/extra.data", "wb");
+    fwrite(vCodecContext->extradata, 1, vCodecContext->extradata_size, fp);
+    fclose(fp);
+    int32_t width = pFormatCtx->streams[videoTrack]->codecpar->width;
+    int32_t height = pFormatCtx->streams[videoTrack]->codecpar->height;
+    int32_t bitRate = pFormatCtx->streams[videoTrack]->codecpar->bit_rate;
+    AMediaFormat *cf = AMediaFormat_new();
+    if (AV_CODEC_ID_H264 == pFormatCtx->streams[videoTrack]->codecpar->codec_id) {
+        AMediaFormat_setString(cf, AMEDIAFORMAT_KEY_MIME, "video/avc");
+        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_WIDTH, width);
+        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_HEIGHT, height);
+        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_COLOR_FORMAT, COLOR_FormatYUV420Flexible);
+        AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_BIT_RATE, bitRate);
+        if (buffers[0]) {
+            AMediaFormat_setBuffer(cf, "scd-0", buffers[0]->getData(), buffers[0]->size());
+            if (buffers[1]) {
+                AMediaFormat_setBuffer(cf, "scd-1", buffers[1]->getData(), buffers[1]->size());
+            }
+        }
+    }
+    const char *mime = nullptr;
+    AMediaFormat_getString(cf, AMEDIAFORMAT_KEY_MIME, &mime);
+    codec = AMediaCodec_createDecoderByType(mime);
+    if (!codec) {
+        Logcat::e("HWVC", "HwAndroidDecoder::configure codec alloc failed");
+        AMediaFormat_delete(cf);
+        return false;
+    }
+    media_status_t ret = AMediaCodec_configure(codec, cf, nullptr, nullptr, 0);
+    if (media_status_t::AMEDIA_OK != ret) {
+        Logcat::e("HWVC", "HwAndroidDecoder::configure codec configure failed(%d)", ret);
+        AMediaFormat_delete(cf);
+        return false;
+    }
+    ret = AMediaCodec_start(codec);
+    if (media_status_t::AMEDIA_OK != ret) {
+        Logcat::e("HWVC", "HwAndroidDecoder::configure codec start failed(%d)", ret);
+        AMediaFormat_delete(cf);
+        return false;
+    }
+    AMediaFormat_delete(cf);
+    outFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, width, height);
     return true;
 }
 
@@ -77,7 +197,7 @@ bool HwAndroidDecoder::openTrack(int track, AVCodecContext **context) {
     AVCodecParameters *avCodecParameters = pFormatCtx->streams[track]->codecpar;
     if (videoTrack == track) {
         Logcat::i("hwvc", "HwAndroidDecoder(%s) %d x %d", path.c_str(), avCodecParameters->width,
-             avCodecParameters->height);
+                  avCodecParameters->height);
     }
     AVCodec *codec = NULL;
     if (AV_CODEC_ID_H264 == avCodecParameters->codec_id) {
@@ -112,48 +232,246 @@ bool HwAndroidDecoder::openTrack(int track, AVCodecContext **context) {
     return true;
 }
 
+HwResult HwAndroidDecoder::push(AVPacket *pkt) {
+    ssize_t bufIdx = AMediaCodec_dequeueInputBuffer(codec, 2000);
+    if (bufIdx >= 0) {
+        if (!pkt) {
+            media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx, 0, 0, 0,
+                                                                 AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM);
+            if (media_status_t::AMEDIA_OK != result) {
+                Logcat::e("HWVC", "HwAndroidDecoder::push queue eof buffer failed(%d)", result);
+            }
+            return Hw::SUCCESS;
+        }
+        size_t bufSize = 0;
+        int64_t pts = pkt->pts;
+        auto buf = AMediaCodec_getInputBuffer(codec, bufIdx, &bufSize);
+        if (bufSize > 0) {
+            memcpy(buf, pkt->data, pkt->size);
+        }
+        media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx,
+                                                             0, bufSize,
+                                                             pts, 0);
+        if (media_status_t::AMEDIA_OK != result) {
+            Logcat::e("HWVC", "HwAndroidDecoder::push queue input buffer failed(%d)", result);
+        }
+        return Hw::SUCCESS;
+    }
+    Logcat::e("HWVC", "HwAndroidDecoder::push failed bufIdx = %d", bufIdx);
+    return Hw::FAILED;
+}
+
+HwResult HwAndroidDecoder::pop(int32_t waitInUS) {
+    AMediaCodecBufferInfo info;
+    ssize_t bufIdx = AMediaCodec_dequeueOutputBuffer(codec, &info, waitInUS);
+    switch (bufIdx) {
+        case AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED: {
+            Logcat::i("HWVC", "HwAndroidDecoder AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED");
+            break;
+        }
+        case AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED: {
+            Logcat::i("HWVC", "HwAndroidDecoder AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED");
+//            auto *format = AMediaCodec_getOutputFormat(codec);
+//            uint8_t *sps = nullptr;
+//            size_t spsSize = 0;
+//            uint8_t *pps = nullptr;
+//            size_t ppsSize = 0;
+//            AMediaFormat_getBuffer(format, "csd-0", reinterpret_cast<void **>(&sps), &spsSize);
+//            AMediaFormat_getBuffer(format, "csd-1", reinterpret_cast<void **>(&pps), &ppsSize);
+//            buffers[0] = HwBuffer::alloc(spsSize);
+//            buffers[1] = HwBuffer::alloc(ppsSize);
+//            memcpy(buffers[0]->getData(), sps, spsSize);
+//            memcpy(buffers[1]->getData(), pps, ppsSize);
+            break;
+        }
+        case AMEDIACODEC_INFO_TRY_AGAIN_LATER: {
+            Logcat::i("HWVC", "HwAndroidDecoder AMEDIACODEC_INFO_TRY_AGAIN_LATER");
+            return Hw::MEDIA_WAIT;
+        }
+        case AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM: {
+            Logcat::i("HWVC", "HwAndroidDecoder AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM");
+            return Hw::MEDIA_EOF;
+        }
+        default: {
+            if (bufIdx < 0) break;
+            size_t bufSize = 0;
+            auto buf = AMediaCodec_getOutputBuffer(codec, bufIdx, &bufSize);
+            if (buf) {
+                bool wrote = false;
+                auto endOfStream = info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM;
+                if (endOfStream == 0) {//如果没有收到BUFFER_FLAG_END_OF_STREAM信号，则代表输出数据时有效的
+                    if (info.size > 0) {
+                        if (info.flags & BUFFER_FLAG_CODEC_CONFIG) {//  config
+//                            if (configBuf && configBuf->size() != info.size) {
+//                                delete configBuf;
+//                                configBuf = nullptr;
+//                            }
+//                            if (!configBuf) {
+//                                configBuf = HwBuffer::alloc(info.size);
+//                            }
+//                            memcpy(configBuf->getData(), buf, configBuf->size());
+                            wrote = false;
+                        } else {
+                            HwBuffer *nv12Buf = HwBuffer::alloc(outFrame->getBufferSize());
+                            HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(outFrame);
+                            int32_t w = videoFrame->getWidth();
+                            int32_t h = videoFrame->getHeight();
+                            int32_t stride_y = info.size / h * 2 / 3;
+                            if (stride_y != h) {
+                                for (int i = 0; i < h; ++i) {
+                                    memcpy(nv12Buf->getData() + i * w * 3 / 2,
+                                           buf + info.offset + i * stride_y * 3 / 2,
+                                           w * 3 / 2);
+                                }
+
+                            } else {
+                                memcpy(nv12Buf->getData(), buf + info.offset, nv12Buf->size());
+                            }
+                            int pixelCount = w * h;
+                            libyuv::NV12ToI420(nv12Buf->getData(), w,
+                                               nv12Buf->getData() + pixelCount, w,
+                                               videoFrame->getBuffer()->getData(),
+                                               videoFrame->getWidth(),
+                                               videoFrame->getBuffer()->getData() + pixelCount,
+                                               videoFrame->getWidth() / 2,
+                                               videoFrame->getBuffer()->getData() +
+                                               pixelCount * 5 / 4,
+                                               videoFrame->getWidth() / 2,
+                                               videoFrame->getWidth(), videoFrame->getHeight());
+                            videoFrame->setPts(info.presentationTimeUs);
+                            delete nv12Buf;
+                            wrote = true;
+                        }
+                    }
+                }
+                //缓冲区使用完后必须把它还给MediaCodec，以便再次使用，至此一个流程结束，再次循环
+                AMediaCodec_releaseOutputBuffer(codec, bufIdx, info.size != 0);
+                return wrote ? Hw::SUCCESS : Hw::FAILED;
+            }
+        }
+    }
+    return Hw::FAILED;
+}
+
+HwResult HwAndroidDecoder::grab(HwAbsMediaFrame **frame) {
+    while (true) {
+        int ret = av_read_frame(pFormatCtx, avPacket);
+        if (0 == ret) {
+            if (videoTrack == avPacket->stream_index) {
+                if (bsf) {
+                    ret = av_bsf_send_packet(bsf, avPacket);
+                    if (0 != ret) {
+                        Logcat::i("HWVC", "HwAndroidDecoder::grab av_bsf_send_packet failed");
+                    }
+                    ret = av_bsf_receive_packet(bsf, bsfPacket);
+                    if (0 == ret && bsfPacket) {
+                        push(bsfPacket);
+                        av_packet_unref(bsfPacket);
+                    }
+                }
+
+            } else if (audioTrack == avPacket->stream_index) {
+//                avcodec_send_packet(aCodecContext, avPacket);
+            }
+        }
+        av_packet_unref(avPacket);//Or av_free_packet?
+        if (AVERROR_EOF == ret) {
+            eof = true;
+        }
+        if (Hw::SUCCESS == pop(2000)) {
+            outFrame->setPts(av_rescale_q_rnd(outFrame->getPts(),
+                                              pFormatCtx->streams[videoTrack]->time_base,
+                                              AV_TIME_BASE_Q,
+                                              AV_ROUND_NEAR_INF));
+            *frame = outFrame;
+            return Hw::MEDIA_SUCCESS;
+        }
+        //如果缓冲区中既没有音频也没有视频，并且已经读取完文件，则播放完了
+        if (eof) {
+            Logcat::i("HWVC", "HwAndroidDecoder::grab end");
+            return Hw::MEDIA_EOF;
+        }
+    }
+}
+
 int HwAndroidDecoder::width() {
-    return 0;
+    if (!pFormatCtx || videoTrack < 0) return 0;
+    return pFormatCtx->streams[videoTrack]->codecpar->width;
 }
 
 int HwAndroidDecoder::height() {
-    return 0;
+    if (!pFormatCtx || videoTrack < 0) return 0;
+    return pFormatCtx->streams[videoTrack]->codecpar->height;
 }
 
 int HwAndroidDecoder::getChannels() {
-    return 0;
+    if (!pFormatCtx || audioTrack < 0) return 0;
+    return pFormatCtx->streams[videoTrack]->codecpar->channels;
 }
 
 int HwAndroidDecoder::getSampleHz() {
-    return 0;
+    if (!pFormatCtx || audioTrack < 0) return 0;
+    return pFormatCtx->streams[audioTrack]->codecpar->sample_rate;
 }
 
 int HwAndroidDecoder::getSampleFormat() {
-    return 0;
+    return outSampleFormat;
 }
 
 int HwAndroidDecoder::getSamplesPerBuffer() {
-    return 0;
+    if (!pFormatCtx || audioTrack < 0) return 0;
+    return pFormatCtx->streams[audioTrack]->codecpar->frame_size;
 }
 
 void HwAndroidDecoder::seek(int64_t us) {
 
 }
 
-HwResult HwAndroidDecoder::grab(HwAbsMediaFrame **frame) {
-    return HwResult(0);
-}
-
 int64_t HwAndroidDecoder::getVideoDuration() {
-    return 0;
+    if (videoDurationUs >= 0) {
+        return videoDurationUs;
+    }
+    videoDurationUs = pFormatCtx->streams[videoTrack]->duration;
+    videoDurationUs = av_rescale_q_rnd(videoDurationUs,
+                                       pFormatCtx->streams[videoTrack]->time_base,
+                                       AV_TIME_BASE_Q,
+                                       AV_ROUND_NEAR_INF);
+    if (videoDurationUs < 0) {
+        videoDurationUs = pFormatCtx->duration;
+    }
+    return videoDurationUs;
 }
 
 int64_t HwAndroidDecoder::getAudioDuration() {
-    return 0;
+    if (audioTrack < 0) {
+        audioDurationUs = 0;
+    }
+    if (audioDurationUs >= 0) {
+        return audioDurationUs;
+    }
+    audioDurationUs = pFormatCtx->streams[audioTrack]->duration;
+    audioDurationUs = av_rescale_q_rnd(audioDurationUs,
+                                       pFormatCtx->streams[audioTrack]->time_base,
+                                       AV_TIME_BASE_Q,
+                                       AV_ROUND_NEAR_INF);
+    if (audioDurationUs < 0) {
+        audioDurationUs = pFormatCtx->duration;
+    }
+    return audioDurationUs;
 }
 
 int64_t HwAndroidDecoder::getDuration() {
-    return 0;
+    if (durationUs >= 0) {
+        return durationUs;
+    }
+    durationUs = pFormatCtx->duration;
+    if (durationUs <= 0) {
+        durationUs = getAudioDuration();
+    }
+    if (durationUs <= 0) {
+        durationUs = getVideoDuration();
+    }
+    return durationUs;
 }
 
 void HwAndroidDecoder::start() {
