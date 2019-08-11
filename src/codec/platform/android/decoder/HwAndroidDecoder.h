@@ -78,6 +78,8 @@ private:
 
 private:
     const int COLOR_FormatYUV420Flexible = 0x7F420888;
+    const int COLOR_FormatYUV420Planar = 19;
+    const int COLOR_FormatYUV420SemiPlanar = 21;
     const int BUFFER_FLAG_KEY_FRAME = 1;
     const int BUFFER_FLAG_CODEC_CONFIG = 2;
     string path;
@@ -90,6 +92,7 @@ private:
     AVPacket *bsfPacket = nullptr;
     int audioTrack = -1, videoTrack = -1;
     AMediaCodec *codec = nullptr;
+    int32_t stride = 0;
     HwBuffer *buffers[3] = {nullptr, nullptr, nullptr};
     HwAbsMediaFrame *outFrame = nullptr;
     bool eof = false;
