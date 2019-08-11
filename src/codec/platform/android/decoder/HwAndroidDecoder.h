@@ -13,18 +13,7 @@
 #include "../../../include/HwAbsMediaFrame.h"
 #include "../../../include/HwFrameAllocator.h"
 #include "media/NdkMediaCodec.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include "../../../include/ff/libavcodec/avcodec.h"
-#include "../../../include/ff/libavformat/avformat.h"
-#include "../../../include/ff/libavutil/avutil.h"
-#include "../../../include/ff/libswresample/swresample.h"
-
-#ifdef __cplusplus
-}
-#endif
+#include "media/NdkMediaExtractor.h"
 
 class HwAndroidDecoder : public AbsVideoDecoder {
 public:
@@ -66,13 +55,9 @@ public:
     virtual void stop() override;
 
 private:
-    bool openTrack(int track, AVCodecContext **context);
-
     bool configure();
 
-    bool configureBSF();
-
-    HwResult push(AVPacket *pkt);
+    HwResult push();
 
     HwResult pop(int32_t waitInUS);
 
@@ -83,14 +68,9 @@ private:
     const int BUFFER_FLAG_KEY_FRAME = 1;
     const int BUFFER_FLAG_CODEC_CONFIG = 2;
     string path;
-    AVFormatContext *pFormatCtx = nullptr;
-    AVCodecContext *vCodecContext = nullptr;
-    AVCodecContext *aCodecContext = nullptr;
-    AVSampleFormat outSampleFormat = AV_SAMPLE_FMT_NONE;
-    AVBSFContext *bsf = nullptr;
-    AVPacket *avPacket = nullptr;
-    AVPacket *bsfPacket = nullptr;
-    int audioTrack = -1, videoTrack = -1;
+    AMediaFormat *vFmt = nullptr;
+    AMediaFormat *aFmt = nullptr;
+    AMediaExtractor *extractor = nullptr;
     AMediaCodec *codec = nullptr;
     int32_t stride = 0;
     HwBuffer *buffers[3] = {nullptr, nullptr, nullptr};
@@ -99,6 +79,8 @@ private:
     int64_t videoDurationUs = -1;
     int64_t audioDurationUs = -1;
     int64_t durationUs = -1;
+
+    int32_t mWidth = 0, mHeight = 0;
 };
 
 
