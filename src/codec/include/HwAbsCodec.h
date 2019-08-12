@@ -45,6 +45,8 @@ public:
      */
     virtual HwBuffer *getExtraBuffer(string key)=0;
 
+    virtual void flush()=0;
+
 protected:
     int32_t codecId = INT32_MIN;
     HwBundle *format = nullptr;

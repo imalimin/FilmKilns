@@ -40,6 +40,8 @@ public:
 
     virtual HwBuffer *getExtraBuffer(string key) override;
 
+    virtual void flush() override;
+
 private:
     void release();
 

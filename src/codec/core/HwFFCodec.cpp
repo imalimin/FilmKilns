@@ -249,6 +249,10 @@ HwBuffer *HwFFCodec::getExtraBuffer(string key) {
     return nullptr;
 }
 
+void HwFFCodec::flush() {
+
+}
+
 HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
     int64_t duration = 1;
     switch (ctx->codec_type) {

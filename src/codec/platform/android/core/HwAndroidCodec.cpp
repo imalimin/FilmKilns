@@ -42,16 +42,16 @@ void HwAndroidCodec::release() {
         delete hwPacket;
         hwPacket = nullptr;
     }
+    if (outFrame) {
+        delete outFrame;
+        outFrame = nullptr;
+    }
     for (int i = 0; i < 4; ++i) {
         if (buffers[i]) {
             delete buffers[i];
             buffers[i] = nullptr;
         }
     }
-}
-
-void HwAndroidCodec::flush() {
-
 }
 
 HwResult HwAndroidCodec::configure(HwBundle *format) {
@@ -75,8 +75,10 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
             AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_FRAME_RATE, fps);
             AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_I_FRAME_INTERVAL, 10);
         } else {
-            AMediaFormat_setInt32(cf, "csd-0", height);
-            AMediaFormat_setInt32(cf, "csd-1", height);
+            HwBuffer *csd0Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-0"));
+            HwBuffer *csd1Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-1"));
+            AMediaFormat_setBuffer(cf, "csd-0", csd0Buf->getData(), csd0Buf->size());
+            AMediaFormat_setBuffer(cf, "csd-1", csd1Buf->getData(), csd1Buf->size());
         }
     }
     const char *mime;
@@ -143,21 +145,33 @@ HwResult HwAndroidCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
     size_t size = 0;
     int64_t pts = 0;
     if (encodeMode) {
-        data = (*frame)->getBuffer()->getData();
-        size = (*frame)->getBufferSize();
-        pts = (*frame)->getPts();
+        if (frame && *frame) {
+            data = (*frame)->getBuffer()->getData();
+            size = (*frame)->getBufferSize();
+            pts = (*frame)->getPts();
+        }
     } else {
-        data = (*pkt)->buf();
-        size = (*pkt)->size();
-        pts = (*pkt)->getPts();
-    }
-    if (Hw::SUCCESS == push(data, size, pts)) {
-        if (Hw::SUCCESS == pop(2000)) {
-            *pkt = hwPacket;
-            return Hw::SUCCESS;
+        if (pkt && *pkt) {
+            data = (*pkt)->buf();
+            size = (*pkt)->size();
+            pts = (*pkt)->getPts();
         }
     }
-    return Hw::FAILED;
+    HwResult ret = push(data, size, pts);
+    if (Hw::SUCCESS != ret) {
+        Logcat::i("hwvc", "HwAndroidCodec::process push failed");
+    }
+    HwResult ret1 = pop(2000);
+    if (Hw::SUCCESS == ret1) {
+        if (encodeMode) {
+            *pkt = hwPacket;
+        } else {
+            *frame = outFrame;
+        }
+    } else if (HwResult(-541478725) == ret1) {
+        return ret1;
+    }
+    return ret;
 }
 
 int32_t HwAndroidCodec::type() {
@@ -184,32 +198,40 @@ HwBuffer *HwAndroidCodec::getExtraBuffer(string key) {
     return nullptr;
 }
 
+void HwAndroidCodec::flush() {
+    media_status_t ret = AMediaCodec_flush(codec);
+    if (media_status_t::AMEDIA_OK != ret) {
+        Logcat::e("HWVC", "HwAndroidCodec::flush failed(%d)", ret);
+    }
+}
+
 HwResult HwAndroidCodec::push(uint8_t *data, size_t size, int64_t pts) {
     ssize_t bufIdx = AMediaCodec_dequeueInputBuffer(codec, 2000);
-    if (bufIdx >= 0) {
-        if (!data) {
-            media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx, 0, 0, 0,
-                                                                 AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM);
-            if (media_status_t::AMEDIA_OK != result) {
-                Logcat::e("HWVC", "HwAndroidCodec::push queue eof buffer failed(%d)", result);
-            }
-            return Hw::SUCCESS;
-        }
-        size_t bufSize = 0;
-        auto buf = AMediaCodec_getInputBuffer(codec, bufIdx, &bufSize);
-        if (bufSize > 0) {
-            memcpy(buf, data, size);
-        }
-        media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx,
-                                                             0, bufSize,
-                                                             pts, 0);
+    if (bufIdx < 0) {
+        return Hw::FAILED;
+    }
+    if (!data) {
+        media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx, 0, 0, 0,
+                                                             AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM);
         if (media_status_t::AMEDIA_OK != result) {
-            Logcat::e("HWVC", "HwAndroidCodec::push queue input buffer failed(%d)", result);
+            Logcat::e("HWVC", "HwAndroidCodec::push queue eof buffer failed(%d)", result);
         }
         return Hw::SUCCESS;
     }
+    size_t bufSize = 0;
+    auto buf = AMediaCodec_getInputBuffer(codec, bufIdx, &bufSize);
+    if (bufSize > 0 && bufSize >= size) {
+        bufSize = size;
+        memcpy(buf, data, bufSize);
+    }
+    media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx,
+                                                         0, bufSize,
+                                                         pts, 0);
+    if (media_status_t::AMEDIA_OK != result) {
+        Logcat::e("HWVC", "HwAndroidCodec::push queue input buffer failed(%d)", result);
+    }
     Logcat::e("HWVC", "HwAndroidCodec::push failed bufIdx = %d", bufIdx);
-    return Hw::FAILED;
+    return Hw::SUCCESS;
 }
 
 HwResult HwAndroidCodec::pop(int32_t waitInUS) {
@@ -218,7 +240,7 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
     switch (bufIdx) {
         case AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED: {
             Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED");
-            break;
+            return Hw::FAILED;
         }
         case AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED: {
             Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED");
@@ -249,75 +271,79 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                 }
                 outFrame = new HwVideoFrame(nullptr, colorFmt, width, height);
             }
-            break;
+            return Hw::FAILED;
         }
         case AMEDIACODEC_INFO_TRY_AGAIN_LATER: {
             Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_INFO_TRY_AGAIN_LATER");
-            break;
+            return Hw::FAILED;
         }
         case AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM: {
             Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM");
-            break;
+            return Hw::FAILED;
         }
-        default: {
-            if (bufIdx < 0) break;
-            size_t inBufSize = 0;
-            auto buf = AMediaCodec_getOutputBuffer(codec, bufIdx, &inBufSize);
-            if (buf) {
-                bool wrote = false;
-                auto endOfStream = info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM;
-                if (endOfStream == 0) {//如果没有收到BUFFER_FLAG_END_OF_STREAM信号，则代表输出数据时有效的
-                    if (info.size > 0) {
-                        if (info.flags & BUFFER_FLAG_CODEC_CONFIG) {//  config
-                            wrote = false;
-                        } else {
-                            if (encodeMode) {
-                                if (hwPacket) {
-                                    delete hwPacket;
-                                }
-                                memcpy(keyFrameBuf->getData(), &info.size, 4);
-                                memcpy(keyFrameBuf->getData() + 4, buf, info.size);
-                                hwPacket = HwPacket::wrap(keyFrameBuf->getData(), info.size + 4,
-                                                          info.presentationTimeUs,
-                                                          info.presentationTimeUs);
-                                hwPacket->setDuration(static_cast<int64_t>(AV_TIME_BASE /
-                                                                           (float) fps));
-                            } else {
-                                HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(outFrame);
-                                videoFrame->setPts(info.presentationTimeUs);
-                                int32_t w = videoFrame->getWidth();
-                                int32_t h = videoFrame->getHeight();
-                                if (HwFrameFormat::HW_IMAGE_NV12 == videoFrame->getFormat()) {
-                                    int pixelCount = w * h;
-                                    libyuv::NV12ToI420(buf, stride,
-                                                       buf + stride * h, stride,
-                                                       videoFrame->getBuffer()->getData(),
-                                                       videoFrame->getWidth(),
-                                                       videoFrame->getBuffer()->getData() +
-                                                       pixelCount,
-                                                       videoFrame->getWidth() / 2,
-                                                       videoFrame->getBuffer()->getData() +
-                                                       pixelCount * 5 / 4,
-                                                       videoFrame->getWidth() / 2,
-                                                       videoFrame->getWidth(),
-                                                       videoFrame->getHeight());
-                                } else {
-                                    int32_t lines = h * 3 / 2;
-                                    for (int i = 0; i < lines; ++i) {
-                                        memcpy(videoFrame->getBuffer()->getData() + i * w,
-                                               buf + info.offset + i * stride * 3 / 2, w);
-                                    }
-                                }
-                            }
-                            wrote = true;
-                        }
+        default:
+            break;
+    }
+    if (bufIdx < 0) {
+        return Hw::FAILED;
+    }
+    size_t bufSize = 0;
+    auto buf = AMediaCodec_getOutputBuffer(codec, bufIdx, &bufSize);
+    if (!buf) {
+        AMediaCodec_releaseOutputBuffer(codec, bufIdx, false);
+        return Hw::FAILED;
+    }
+    if (info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM) {
+        AMediaCodec_releaseOutputBuffer(codec, bufIdx, false);
+        return HwResult(-541478725);
+    }
+    bool wrote = false;
+    if (info.size > 0) {
+        if (info.flags & BUFFER_FLAG_CODEC_CONFIG) {// config
+            wrote = false;
+        } else {
+            if (encodeMode) {
+                if (hwPacket) {
+                    delete hwPacket;
+                }
+                memcpy(keyFrameBuf->getData(), &info.size, 4);
+                memcpy(keyFrameBuf->getData() + 4, buf, info.size);
+                hwPacket = HwPacket::wrap(keyFrameBuf->getData(), info.size + 4,
+                                          info.presentationTimeUs,
+                                          info.presentationTimeUs);
+                hwPacket->setDuration(static_cast<int64_t>(AV_TIME_BASE /
+                                                           (float) fps));
+            } else {
+                HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(outFrame);
+                videoFrame->setPts(info.presentationTimeUs);
+                int32_t w = videoFrame->getWidth();
+                int32_t h = videoFrame->getHeight();
+                if (HwFrameFormat::HW_IMAGE_NV12 == videoFrame->getFormat()) {
+                    int pixelCount = w * h;
+                    libyuv::NV12ToI420(buf, stride,
+                                       buf + stride * h, stride,
+                                       videoFrame->getBuffer()->getData(),
+                                       videoFrame->getWidth(),
+                                       videoFrame->getBuffer()->getData() +
+                                       pixelCount,
+                                       videoFrame->getWidth() / 2,
+                                       videoFrame->getBuffer()->getData() +
+                                       pixelCount * 5 / 4,
+                                       videoFrame->getWidth() / 2,
+                                       videoFrame->getWidth(),
+                                       videoFrame->getHeight());
+                } else {
+                    int32_t lines = h * 3 / 2;
+                    for (int i = 0; i < lines; ++i) {
+                        memcpy(videoFrame->getBuffer()->getData() + i * w,
+                               buf + info.offset + i * stride * 3 / 2, w);
                     }
                 }
-                //缓冲区使用完后必须把它还给MediaCodec，以便再次使用，至此一个流程结束，再次循环
-                AMediaCodec_releaseOutputBuffer(codec, bufIdx, false);
-                return wrote ? Hw::SUCCESS : Hw::FAILED;
             }
+            wrote = true;
         }
     }
-    return Hw::FAILED;
+    //缓冲区使用完后必须把它还给MediaCodec，以便再次使用，至此一个流程结束，再次循环
+    AMediaCodec_releaseOutputBuffer(codec, bufIdx, false);
+    return wrote ? Hw::SUCCESS : Hw::FAILED;
 }

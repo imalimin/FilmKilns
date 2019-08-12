@@ -48,9 +48,9 @@ public:
 
     virtual HwBuffer *getExtraBuffer(string key) override;
 
-private:
-    void flush();
+    virtual void flush() override;
 
+private:
     void release();
 
     HwResult push(uint8_t *data, size_t size, int64_t pts);

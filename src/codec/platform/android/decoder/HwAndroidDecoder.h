@@ -12,6 +12,7 @@
 #include "../../../include/AbsVideoDecoder.h"
 #include "../../../include/HwAbsMediaFrame.h"
 #include "../../../include/HwFrameAllocator.h"
+#include "../../../include/HwAbsCodec.h"
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"
 
@@ -57,9 +58,7 @@ public:
 private:
     bool configure();
 
-    HwResult push();
-
-    HwResult pop(int32_t waitInUS);
+    void handleAction();
 
 private:
     const int COLOR_FormatYUV420Flexible = 0x7F420888;
@@ -71,16 +70,15 @@ private:
     AMediaFormat *vFmt = nullptr;
     AMediaFormat *aFmt = nullptr;
     AMediaExtractor *extractor = nullptr;
-    AMediaCodec *codec = nullptr;
-    int32_t stride = 0;
-    HwBuffer *buffers[3] = {nullptr, nullptr, nullptr};
-    HwAbsMediaFrame *outFrame = nullptr;
+    HwAbsCodec *codec = nullptr;
+    HwBuffer *vSampleBuf = nullptr;
     bool eof = false;
     int64_t videoDurationUs = -1;
     int64_t audioDurationUs = -1;
     int64_t durationUs = -1;
-
     int32_t mWidth = 0, mHeight = 0;
+    /** action */
+    int64_t actionSeekInUs = -1;
 };
 
 
