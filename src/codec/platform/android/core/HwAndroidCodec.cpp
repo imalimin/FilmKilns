@@ -35,6 +35,10 @@ void HwAndroidCodec::release() {
         delete keyFrameBuf;
         keyFrameBuf = nullptr;
     }
+    if (hwPacket) {
+        delete hwPacket;
+        hwPacket = nullptr;
+    }
     for (int i = 0; i < 4; ++i) {
         if (buffers[i]) {
             delete buffers[i];
@@ -112,7 +116,6 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
             return Hw::FAILED;
         }
     }
-    avPacket = av_packet_alloc();
     return Hw::SUCCESS;
 }
 
@@ -120,10 +123,10 @@ HwResult HwAndroidCodec::start() {
     return Hw::SUCCESS;
 }
 
-HwResult HwAndroidCodec::encode(HwAbsMediaFrame *frame, void **packet) {
-    if (Hw::SUCCESS == push(frame)) {
+HwResult HwAndroidCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
+    if (Hw::SUCCESS == push(*frame)) {
         if (Hw::SUCCESS == pop(2000)) {
-            *packet = avPacket;
+            *pkt = hwPacket;
             return Hw::SUCCESS;
         }
     }
@@ -236,14 +239,9 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                         } else {
                             ++frameCount;
 //                            if (frameCount > 1) {//Drop first frame for config.
-                            if (avPacket) {
-                                av_packet_unref(avPacket);
+                            if (hwPacket) {
+                                delete hwPacket;
                             }
-                            av_init_packet(avPacket);
-                            avPacket->pts = info.presentationTimeUs;
-                            avPacket->dts = avPacket->pts;
-                            avPacket->duration = static_cast<int64_t>(AV_TIME_BASE /
-                                                                      (float) fps);
 //                            if (info.flags & BUFFER_FLAG_KEY_FRAME) {// key frame
 //                                memcpy(keyFrameBuf->getData(),
 //                                       configBuf->getData(),
@@ -257,8 +255,11 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
 //                            }
                             memcpy(keyFrameBuf->getData(), &info.size, 4);
                             memcpy(keyFrameBuf->getData() + 4, buf, info.size);
-                            avPacket->data = keyFrameBuf->getData();
-                            avPacket->size = info.size + 4;
+                            hwPacket = HwPacket::wrap(keyFrameBuf->getData(), info.size + 4,
+                                                      info.presentationTimeUs,
+                                                      info.presentationTimeUs);
+                            hwPacket->setDuration(static_cast<int64_t>(AV_TIME_BASE /
+                                                                       (float) fps));
                             wrote = true;
 //                            } else {
 //                                wrote = false;

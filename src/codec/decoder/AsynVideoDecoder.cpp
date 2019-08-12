@@ -13,7 +13,7 @@
 AsynVideoDecoder::AsynVideoDecoder() : AbsVideoDecoder() {
     playing = false;
     hwFrameAllocator = new HwFrameAllocator();
-    decoder = new HwAndroidDecoder();
+    decoder = new DefaultVideoDecoder();
 }
 
 AsynVideoDecoder::~AsynVideoDecoder() {

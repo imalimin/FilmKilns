@@ -39,7 +39,7 @@ public:
     /**
      * @param packet AvPacket
      */
-    virtual HwResult write(int32_t track, void *packet) override;
+    virtual HwResult write(int32_t track, HwPacket *pkt) override;
 
 private:
     void release();
@@ -53,6 +53,7 @@ private:
 private:
     AVFormatContext *pFormatCtx = nullptr;
     vector<AVStream *> tracks;
+    AVPacket *avPacket = nullptr;
 };
 
 #endif //HWVC_ANDROID_HWFFMUXER_H

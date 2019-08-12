@@ -38,6 +38,7 @@ HwResult HwFFMuxer::configure(string filePath, string type) {
         return Hw::FAILED;
     }
     av_dict_set(&pFormatCtx->metadata, "comment", "hwvc", 0);
+    avPacket = av_packet_alloc();
     return Hw::SUCCESS;
 }
 
@@ -147,21 +148,21 @@ bool HwFFMuxer::copyExtraData(AVStream *stream, HwAbsCodec *codec) {
     return true;
 }
 
-HwResult HwFFMuxer::write(int32_t track, void *packet) {
-    if (!packet || track > tracks.size() - 1 || !pFormatCtx) {
+HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
+    if (!pkt || track > tracks.size() - 1 || !pFormatCtx) {
         return Hw::FAILED;
     }
-    AVPacket *pkt = static_cast<AVPacket *>(packet);
-    pkt->stream_index = tracks[track]->index;
+    pkt->ref(&avPacket);
+    avPacket->stream_index = tracks[track]->index;
     AVRational tb = tracks[track]->time_base;
     // pts / cq * bq
-    av_packet_rescale_ts(pkt, AV_TIME_BASE_Q, tb);
-    if (tracks[track]->cur_dts >= pkt->dts) {
+    av_packet_rescale_ts(avPacket, AV_TIME_BASE_Q, tb);
+    if (tracks[track]->cur_dts >= avPacket->dts) {
         Logcat::i("HWVC", "HwFFMuxer::write will failed(%lld, %lld), try reset correctly.",
-                  tracks[track]->cur_dts, pkt->dts);
-        pkt->dts += 1;
+                  tracks[track]->cur_dts, avPacket->dts);
+        avPacket->dts += 1;
     }
-    int ret = av_interleaved_write_frame(pFormatCtx, pkt);
+    int ret = av_interleaved_write_frame(pFormatCtx, avPacket);
     if (0 != ret) {
         Logcat::e("HWVC", "HwFFMuxer::write failed(track %d): %s", track, strerror(AVUNERROR(ret)));
         return Hw::FAILED;

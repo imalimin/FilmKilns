@@ -12,6 +12,7 @@
 #include "HwResult.h"
 #include "HwBundle.h"
 #include "HwAbsMediaFrame.h"
+#include "HwPacket.h"
 
 class HwAbsCodec : public Object {
 public:
@@ -27,7 +28,11 @@ public:
 
     virtual HwBundle *getFormat();
 
-    virtual HwResult encode(HwAbsMediaFrame *frame, void **packet)=0;
+    /**
+     * For encoder. HwAbsMediaFrame in & AVPacket out.
+     * For decoder. AVPacket in & HwAbsMediaFrame out.
+     */
+    virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt)=0;
 
     /**
      * @return 0 for video. 1 for audio. Other invalid.
@@ -44,6 +49,7 @@ protected:
     int32_t codecId = INT32_MIN;
     HwBundle *format = nullptr;
 public:
+    static const string KEY_MIME;
     static const string KEY_FORMAT;
     static const string KEY_PROFILE;
     static const string KEY_LEVEL;

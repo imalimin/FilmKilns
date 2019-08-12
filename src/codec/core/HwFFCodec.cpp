@@ -24,6 +24,10 @@ void HwFFCodec::release() {
         av_packet_free(&avPacket);
         avPacket = nullptr;
     }
+    if (hwPacket) {
+        delete hwPacket;
+        hwPacket = nullptr;
+    }
     if (avFrame) {
         av_frame_free(&avFrame);
         avFrame = nullptr;
@@ -245,11 +249,11 @@ HwBuffer *HwFFCodec::getExtraBuffer(string key) {
     return nullptr;
 }
 
-HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
+HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
     int64_t duration = 1;
     switch (ctx->codec_type) {
         case AVMEDIA_TYPE_VIDEO: {
-            HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
+            HwVideoFrame *videoFrame = static_cast<HwVideoFrame *>(*frame);
             int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
             avFrame->data[0] = videoFrame->getBuffer()->getData();
             avFrame->data[1] = videoFrame->getBuffer()->getData() + pixelCount;
@@ -260,8 +264,8 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
             avFrame->linesize[2] = videoFrame->getWidth() / 2;
             avFrame->width = videoFrame->getWidth();
             avFrame->height = videoFrame->getHeight();
-            avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(frame->getFormat());
-            avFrame->pts = frame->getPts();
+            avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(videoFrame->getFormat());
+            avFrame->pts = videoFrame->getPts();
             duration = avFrame->pts - vLastPts;
             if (duration <= 0) {
                 duration = static_cast<int64_t>(AV_TIME_BASE /
@@ -272,20 +276,20 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
             break;
         }
         case AVMEDIA_TYPE_AUDIO: {
-            HwAudioFrame *audioFrame = dynamic_cast<HwAudioFrame *>(frame);
+            HwAudioFrame *audioFrame = static_cast<HwAudioFrame *>(*frame);
             int32_t frameSize = ctx->frame_size;
             if (ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE) {
                 frameSize = 10000;
             }
             avFrame->data[0] = audioFrame->getBuffer()->getData();
             avFrame->linesize[0] = audioFrame->getBufferSize();
-            avFrame->format = HwAbsMediaFrame::convertAudioFrameFormat(frame->getFormat());
+            avFrame->format = HwAbsMediaFrame::convertAudioFrameFormat(audioFrame->getFormat());
             avFrame->sample_rate = audioFrame->getSampleRate();
             avFrame->nb_samples = frameSize;
             avFrame->channels = audioFrame->getChannels();
             avFrame->channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(
                     audioFrame->getChannels()));
-            avFrame->pts = frame->getPts();
+            avFrame->pts = audioFrame->getPts();
 
             AVFrame *f = nullptr;
             translator->translate(&f, &avFrame);
@@ -307,7 +311,11 @@ HwResult HwFFCodec::encode(HwAbsMediaFrame *frame, void **packet) {
         Logcat::e("HWVC", "HwFFCodec::encode failed: %s", strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
-    *packet = avPacket;
     avPacket->duration = duration;
+    if (hwPacket) {
+        delete hwPacket;
+    }
+    hwPacket = HwPacket::wrap(avPacket);
+    *pkt = hwPacket;
     return Hw::SUCCESS;
 }

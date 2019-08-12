@@ -40,7 +40,7 @@ public:
     /**
      * @param packet AvPacket.
      */
-    virtual HwResult encode(HwAbsMediaFrame *frame, void **packet) override;
+    virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
     virtual int32_t type() override;
 
@@ -63,7 +63,7 @@ private:
     AMediaCodec *codec = nullptr;
     HwBuffer *configBuf = nullptr;
     HwBuffer *keyFrameBuf = nullptr;
-    AVPacket *avPacket = nullptr;
+    HwPacket *hwPacket = nullptr;
     int32_t fps = 25;
     int32_t frameCount = 0;
 };

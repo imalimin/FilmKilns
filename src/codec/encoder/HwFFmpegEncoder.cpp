@@ -95,21 +95,21 @@ bool HwFFmpegEncoder::initialize() {
 
 HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
     lock_guard <std::mutex> guard(lock);
-    AVPacket *packet = nullptr;
+    HwPacket *packet = nullptr;
     if (frame->isAudio() && aCodec && muxer) {
         // Ensure that the first frame is video.
         if (!firstVideoFrameWrite) {
             return Hw::FAILED;
         }
 //        sampleCount += aCodec->getFrameSize();
-        aCodec->encode(frame, reinterpret_cast<void **>(&packet));
+        aCodec->process(&frame, &packet);
         if (packet) {
             muxer->write(aTrack, packet);
         }
         return Hw::SUCCESS;
     } else if (frame->isVideo() && vCodec && muxer) {
         frameCount += 1;
-        vCodec->encode(frame, reinterpret_cast<void **>(&packet));
+        vCodec->process(&frame, &packet);
         if (packet) {
             muxer->write(vTrack, packet);
             firstVideoFrameWrite = true;

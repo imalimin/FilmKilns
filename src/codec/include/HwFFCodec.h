@@ -34,7 +34,7 @@ public:
     /**
      * @param packet AvPacket
      */
-    virtual HwResult encode(HwAbsMediaFrame *frame, void **packet) override;
+    virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
     virtual int32_t type() override;
 
@@ -53,6 +53,7 @@ private:
     AVCodecContext *ctx = nullptr;
     AVFrame *avFrame = nullptr;
     AVPacket *avPacket = nullptr;
+    HwPacket *hwPacket = nullptr;
     /**
      * Just for audio codec.
      */

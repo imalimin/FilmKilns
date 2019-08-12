@@ -7,7 +7,6 @@
 
 #include "../include/HwAsyncEncoder.h"
 #include "../include/HwFFmpegEncoder.h"
-#include "../include/HwFFmpegEncoder.h"
 
 HwAsyncEncoder::HwAsyncEncoder() : HwAbsVideoEncoder() {
     pipeline = new EventPipeline("HwAsyncFFEncoder");

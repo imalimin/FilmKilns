@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "HwResult.h"
 #include "HwAbsCodec.h"
+#include "HwPacket.h"
 
 class HwAbsMuxer : public Object {
 public:
@@ -32,7 +33,7 @@ public:
      * @param track track id
      * @return Hw::SUCCESS for success
      */
-    virtual HwResult write(int32_t track, void *packet)=0;
+    virtual HwResult write(int32_t track, HwPacket *pkt)=0;
 
 protected:
     string filePath;

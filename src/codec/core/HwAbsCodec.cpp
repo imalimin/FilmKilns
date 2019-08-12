@@ -7,6 +7,7 @@
 
 #include "../include/HwAbsCodec.h"
 
+const string HwAbsCodec::KEY_MIME = "media-mime";
 const string HwAbsCodec::KEY_FORMAT = "media-format";
 const string HwAbsCodec::KEY_PROFILE = "media-profile";
 const string HwAbsCodec::KEY_LEVEL = "media-level";
