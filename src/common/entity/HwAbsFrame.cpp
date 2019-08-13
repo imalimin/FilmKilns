@@ -18,6 +18,6 @@ HwAbsFrame::~HwAbsFrame() {
     }
 }
 
-HwBuffer *HwAbsFrame::getBuffer() { return buf; }
+uint8_t *HwAbsFrame::data() { return buf->data(); }
 
-size_t HwAbsFrame::getBufferSize() { return buf->size(); }
+size_t HwAbsFrame::size() { return buf->size(); }

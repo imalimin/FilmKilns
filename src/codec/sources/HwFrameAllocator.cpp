@@ -72,7 +72,7 @@ HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
         set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->isAudio()
-                && (*itr)->getBufferSize() == avFrame->linesize[0]) {//帧类型相同，data大小相等，则可以复用
+                && (*itr)->size() == avFrame->linesize[0]) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
                 unRefQueue.erase(itr);
                 break;
@@ -89,7 +89,7 @@ HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
                                  static_cast<uint32_t>(avFrame->sample_rate),
                                  static_cast<uint64_t>(avFrame->nb_samples));
     }
-    memset(frame->getBuffer()->getData(), 0, frame->getBufferSize());
+    memset(frame->data(), 0, frame->size());
     copyInfo(frame, avFrame);
     refLock.lock();
     refQueue.insert(frame);
@@ -112,7 +112,7 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
         set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->isVideo()
-                && (*itr)->getBufferSize() == byteCount) {//帧类型相同，data大小相等，则可以复用
+                && (*itr)->size() == byteCount) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
                 unRefQueue.erase(itr);
                 break;
@@ -133,26 +133,26 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
     switch (frame->getFormat()) {
         case HwFrameFormat::HW_IMAGE_YV12: {
             if (avFrame->linesize[0] == avFrame->width) {
-                memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
-                memcpy(frame->getBuffer()->getData() + pixelCount, avFrame->data[1],
+                memcpy(frame->data(), avFrame->data[0], pixelCount);
+                memcpy(frame->data() + pixelCount, avFrame->data[1],
                        pixelCount / 4);
-                memcpy(frame->getBuffer()->getData() + pixelCount + pixelCount / 4,
+                memcpy(frame->data() + pixelCount + pixelCount / 4,
                        avFrame->data[2],
                        pixelCount / 4);
             } else {
                 int position = 0;
                 for (int i = 0; i < avFrame->height; ++i) {
-                    memcpy(frame->getBuffer()->getData() + position,
+                    memcpy(frame->data() + position,
                            avFrame->data[0] + i * avFrame->linesize[0], avFrame->width);
                     position += avFrame->width;
                 }
                 for (int i = 0; i < avFrame->height / 2; ++i) {
-                    memcpy(frame->getBuffer()->getData() + position,
+                    memcpy(frame->data() + position,
                            avFrame->data[1] + i * avFrame->linesize[1], avFrame->width / 2);
                     position += avFrame->width / 2;
                 }
                 for (int i = 0; i < avFrame->height / 2; ++i) {
-                    memcpy(frame->getBuffer()->getData() + position,
+                    memcpy(frame->data() + position,
                            avFrame->data[2] + i * avFrame->linesize[2], avFrame->width / 2);
                     position += avFrame->width / 2;
                 }
@@ -160,11 +160,11 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
             break;
         }
         case HwFrameFormat::HW_IMAGE_NV12: {
-            memcpy(frame->getBuffer()->getData(), avFrame->data[0], pixelCount);
+            memcpy(frame->data(), avFrame->data[0], pixelCount);
             int uvSize = pixelCount / 4;
             for (int i = 0; i < uvSize; ++i) {
-                *(frame->getBuffer()->getData() + pixelCount + i) = avFrame->data[1][i * 2];
-                *(frame->getBuffer()->getData() + pixelCount + uvSize + i) = avFrame->data[1][
+                *(frame->data() + pixelCount + i) = avFrame->data[1][i * 2];
+                *(frame->data() + pixelCount + uvSize + i) = avFrame->data[1][
                         i * 2 + 1];
             }
             break;
@@ -179,7 +179,7 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
 }
 
 void HwFrameAllocator::copyInfo(HwAbsMediaFrame *dest, AVFrame *src) {
-    memcpy(dest->getBuffer()->getData(), src->data[0], dest->getBufferSize());
+    memcpy(dest->data(), src->data[0], dest->size());
     dest->setPts(src->pts);
 }
 
@@ -190,7 +190,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
         set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->getFormat() == src->getFormat()
-                && (*itr)->getBufferSize() == src->getBufferSize()) {
+                && (*itr)->size() == src->size()) {
                 frame = *itr;
                 unRefQueue.erase(itr);
                 break;
@@ -200,7 +200,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
     }
     unRefLock.unlock();
     if (frame) {
-        memcpy(frame->getBuffer()->getData(), src->getBuffer()->getData(), frame->getBufferSize());
+        memcpy(frame->data(), src->data(), frame->size());
         frame->setPts(src->getPts());
     } else {
         if (src->isVideo()) {

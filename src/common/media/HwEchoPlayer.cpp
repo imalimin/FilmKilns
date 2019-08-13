@@ -81,7 +81,7 @@ void HwEchoPlayer::loop() {
         HwBuffer *buffer = recorder->read(minBufferSize);
         if (player && buffer) {
 //            Logcat::i("HWVC", "Echo write %d", buffer->size());
-            player->write(buffer->getData(), buffer->size());
+            player->write(buffer->data(), buffer->size());
         }
         delete buffer;
         this->loop();

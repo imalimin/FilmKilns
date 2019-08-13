@@ -77,8 +77,8 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
         } else {
             HwBuffer *csd0Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-0"));
             HwBuffer *csd1Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-1"));
-            AMediaFormat_setBuffer(cf, "csd-0", csd0Buf->getData(), csd0Buf->size());
-            AMediaFormat_setBuffer(cf, "csd-1", csd1Buf->getData(), csd1Buf->size());
+            AMediaFormat_setBuffer(cf, "csd-0", csd0Buf->data(), csd0Buf->size());
+            AMediaFormat_setBuffer(cf, "csd-1", csd1Buf->data(), csd1Buf->size());
         }
     }
     const char *mime;
@@ -111,13 +111,13 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
         HwVideoFrame *frame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12,
                                                width, height);
         int32_t offset = 0;
-        memset(frame->getBuffer()->getData() + offset, 0, width * height);
+        memset(frame->data() + offset, 0, width * height);
         offset += width * height;
-        memset(frame->getBuffer()->getData() + offset, 128, width * height / 4);
+        memset(frame->data() + offset, 128, width * height / 4);
         offset += width * height / 4;
-        memset(frame->getBuffer()->getData() + offset, 128, width * height / 4);
+        memset(frame->data() + offset, 128, width * height / 4);
         frame->setPts(0);
-        if (Hw::SUCCESS != push(frame->getBuffer()->getData(), frame->getBufferSize(), 0)) {
+        if (Hw::SUCCESS != push(frame->data(), frame->size(), 0)) {
             return Hw::FAILED;
         }
         for (int i = 0; i < 60; ++i) {
@@ -146,13 +146,13 @@ HwResult HwAndroidCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
     int64_t pts = 0;
     if (encodeMode) {
         if (frame && *frame) {
-            data = (*frame)->getBuffer()->getData();
-            size = (*frame)->getBufferSize();
+            data = (*frame)->data();
+            size = (*frame)->size();
             pts = (*frame)->getPts();
         }
     } else {
         if (pkt && *pkt) {
-            data = (*pkt)->buf();
+            data = (*pkt)->data();
             size = (*pkt)->size();
             pts = (*pkt)->getPts();
         }
@@ -254,8 +254,8 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                 AMediaFormat_getBuffer(format, "csd-1", reinterpret_cast<void **>(&pps), &ppsSize);
                 buffers[0] = HwBuffer::alloc(spsSize);
                 buffers[1] = HwBuffer::alloc(ppsSize);
-                memcpy(buffers[0]->getData(), sps, spsSize);
-                memcpy(buffers[1]->getData(), pps, ppsSize);
+                memcpy(buffers[0]->data(), sps, spsSize);
+                memcpy(buffers[1]->data(), pps, ppsSize);
             } else {
                 int width = 0, height = 0;
                 AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_WIDTH, &width);
@@ -306,9 +306,9 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                 if (hwPacket) {
                     delete hwPacket;
                 }
-                memcpy(keyFrameBuf->getData(), &info.size, 4);
-                memcpy(keyFrameBuf->getData() + 4, buf, info.size);
-                hwPacket = HwPacket::wrap(keyFrameBuf->getData(), info.size + 4,
+                memcpy(keyFrameBuf->data(), &info.size, 4);
+                memcpy(keyFrameBuf->data() + 4, buf, info.size);
+                hwPacket = HwPacket::wrap(keyFrameBuf->data(), info.size + 4,
                                           info.presentationTimeUs,
                                           info.presentationTimeUs);
                 hwPacket->setDuration(static_cast<int64_t>(AV_TIME_BASE /
@@ -322,12 +322,12 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                     int pixelCount = w * h;
                     libyuv::NV12ToI420(buf, stride,
                                        buf + stride * h, stride,
-                                       videoFrame->getBuffer()->getData(),
+                                       videoFrame->data(),
                                        videoFrame->getWidth(),
-                                       videoFrame->getBuffer()->getData() +
+                                       videoFrame->data() +
                                        pixelCount,
                                        videoFrame->getWidth() / 2,
-                                       videoFrame->getBuffer()->getData() +
+                                       videoFrame->data() +
                                        pixelCount * 5 / 4,
                                        videoFrame->getWidth() / 2,
                                        videoFrame->getWidth(),
@@ -335,7 +335,7 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                 } else {
                     int32_t lines = h * 3 / 2;
                     for (int i = 0; i < lines; ++i) {
-                        memcpy(videoFrame->getBuffer()->getData() + i * w,
+                        memcpy(videoFrame->data() + i * w,
                                buf + info.offset + i * stride * 3 / 2, w);
                     }
                 }

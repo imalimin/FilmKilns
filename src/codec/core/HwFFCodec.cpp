@@ -211,12 +211,12 @@ bool HwFFCodec::parseExtraData() {
         }
         buffers[0] = HwBuffer::alloc(ppsPos - spsPos);
         buffers[1] = HwBuffer::alloc(ctx->extradata_size - ppsPos);
-        memcpy(buffers[0]->getData(), ctx->extradata + spsPos, buffers[0]->size());
-        memcpy(buffers[1]->getData(), ctx->extradata + ppsPos, buffers[1]->size());
+        memcpy(buffers[0]->data(), ctx->extradata + spsPos, buffers[0]->size());
+        memcpy(buffers[1]->data(), ctx->extradata + ppsPos, buffers[1]->size());
     } else if (AV_CODEC_ID_AAC == ctx->codec_id || AV_CODEC_ID_AAC_LATM == ctx->codec_id) {
         if (ctx->extradata_size > 0) {
             buffers[0] = HwBuffer::alloc(ctx->extradata_size);
-            memcpy(buffers[0]->getData(), ctx->extradata, buffers[0]->size());
+            memcpy(buffers[0]->data(), ctx->extradata, buffers[0]->size());
         }
     }
     return true;
@@ -259,9 +259,9 @@ HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
         case AVMEDIA_TYPE_VIDEO: {
             HwVideoFrame *videoFrame = static_cast<HwVideoFrame *>(*frame);
             int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
-            avFrame->data[0] = videoFrame->getBuffer()->getData();
-            avFrame->data[1] = videoFrame->getBuffer()->getData() + pixelCount;
-            avFrame->data[2] = videoFrame->getBuffer()->getData() + pixelCount * 5 / 4;
+            avFrame->data[0] = videoFrame->data();
+            avFrame->data[1] = videoFrame->data() + pixelCount;
+            avFrame->data[2] = videoFrame->data() + pixelCount * 5 / 4;
 
             avFrame->linesize[0] = videoFrame->getWidth();
             avFrame->linesize[1] = videoFrame->getWidth() / 2;
@@ -285,8 +285,8 @@ HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
             if (ctx->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE) {
                 frameSize = 10000;
             }
-            avFrame->data[0] = audioFrame->getBuffer()->getData();
-            avFrame->linesize[0] = audioFrame->getBufferSize();
+            avFrame->data[0] = audioFrame->data();
+            avFrame->linesize[0] = audioFrame->size();
             avFrame->format = HwAbsMediaFrame::convertAudioFrameFormat(audioFrame->getFormat());
             avFrame->sample_rate = audioFrame->getSampleRate();
             avFrame->nb_samples = frameSize;

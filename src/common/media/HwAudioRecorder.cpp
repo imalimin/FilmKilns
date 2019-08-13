@@ -15,9 +15,9 @@ void bufferDequeueCallback(SLAndroidSimpleBufferQueueItf slBufferQueueItf, void 
 void HwAudioRecorder::bufferDequeue(SLAndroidSimpleBufferQueueItf slBufferQueueItf) {
     if (this->buffer) {
 //        Logcat::i("HWVC", "HwAudioRecorder...");
-        (*slBufferQueueItf)->Enqueue(slBufferQueueItf, buffer->getData(), buffer->size());
+        (*slBufferQueueItf)->Enqueue(slBufferQueueItf, buffer->data(), buffer->size());
         if (fifo) {
-            fifo->push(buffer->getData(), buffer->size());
+            fifo->push(buffer->data(), buffer->size());
         }
     }
 }

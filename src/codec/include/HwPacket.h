@@ -36,7 +36,7 @@ public:
 public:
     virtual ~HwPacket();
 
-    uint8_t *buf();
+    uint8_t *data();
 
     size_t size();
 
@@ -54,7 +54,7 @@ private:
     HwPacket();
 
 private:
-    HwBuffer *data = nullptr;
+    HwBuffer *buf = nullptr;
     int64_t pts = INT64_MIN, dts = INT64_MIN;
     int64_t duration = 1;
     int32_t flags = 0;

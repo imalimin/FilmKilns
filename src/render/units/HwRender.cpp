@@ -60,16 +60,16 @@ bool HwRender::eventReadPixels(Message *msg) {
     bool read = false;
     if (yuvReadFilter) {
         yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());
-        if (yuvReadFilter->getFrameBuffer()->read(buf->getData())) {
+        if (yuvReadFilter->getFrameBuffer()->read(buf->data())) {
             read = true;
         }
     }
-    if (!read && filter->getFrameBuffer()->read(buf->getData())) {
+    if (!read && filter->getFrameBuffer()->read(buf->data())) {
         read = true;
     }
     if (read) {
         Message *msg1 = new Message(EVENT_COMMON_PIXELS, nullptr);
-        msg1->obj = HwBuffer::wrap(buf->getData(), buf->size());
+        msg1->obj = HwBuffer::wrap(buf->data(), buf->size());
         msg1->arg2 = tsInNs;
         postEvent(msg1);
     }

@@ -37,4 +37,25 @@ HwBuffer::~HwBuffer() {
 
 size_t HwBuffer::size() { return this->_size; }
 
-uint8_t *HwBuffer::getData() { return this->buf; }
+uint8_t *HwBuffer::data() { return this->buf; }
+
+size_t HwBuffer::put(HwBuffer *buf) {
+    if (!buf) return 0;
+    size_t s = min(buf->size(), size());
+    memcpy(data(), buf->data(), s);
+    return s;
+}
+
+size_t HwBuffer::put(uint8_t *data, size_t size) {
+    if (!data || size <= 0) return 0;
+    size_t s = min(size, this->size());
+    memcpy(this->data(), data, s);
+    return s;
+}
+
+size_t HwBuffer::get(uint8_t *data, int32_t offset, size_t size) {
+    if (!data || size <= 0 || offset > this->size()) return 0;
+    size_t s = min(size, this->size() - offset);
+    memcpy(data, this->data(), s);
+    return s;
+}

@@ -17,9 +17,9 @@ public:
 
     virtual ~HwAbsFrame();
 
-    virtual HwBuffer *getBuffer();
+    virtual uint8_t *data();
 
-    virtual size_t getBufferSize();
+    virtual size_t size();
 
 private:
     HwBuffer *buf;

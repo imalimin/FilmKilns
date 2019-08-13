@@ -229,7 +229,7 @@ void HwAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf
     ttime = getCurrentTimeUS();
     HwBuffer *buf = fifo->take(getBufferByteSize());
     if (buf) {
-        (*slBufferQueueItf)->Enqueue(bufferQueueItf, buf->getData(), buf->size());
+        (*slBufferQueueItf)->Enqueue(bufferQueueItf, buf->data(), buf->size());
         delete buf;
         return;
     }

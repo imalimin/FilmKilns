@@ -25,9 +25,15 @@ private:
 public:
     virtual ~HwBuffer();
 
-    uint8_t *getData();
+    uint8_t *data();
 
     size_t size();
+
+    size_t put(HwBuffer *buf);
+
+    size_t put(uint8_t *data, size_t size);
+
+    size_t get(uint8_t *data, int32_t offset, size_t size);
 
 private:
     uint8_t *buf = nullptr;

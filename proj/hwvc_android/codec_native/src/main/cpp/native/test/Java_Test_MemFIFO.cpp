@@ -46,10 +46,10 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_MemFIFOTest_take
         if (buf) {
             ++takeCount;
             Logcat::i("HWVC", "MemFIFOTest_take: %c,%c,%c,%c,%c,%c,%c,%c, %lld, %d",
-                      (char) buf->getData()[0], (char) buf->getData()[1],
-                      (char) buf->getData()[2], (char) buf->getData()[3],
-                      (char) buf->getData()[4], (char) buf->getData()[5],
-                      (char) buf->getData()[6], (char) buf->getData()[7],
+                      (char) buf->data()[0], (char) buf->data()[1],
+                      (char) buf->data()[2], (char) buf->data()[3],
+                      (char) buf->data()[4], (char) buf->data()[5],
+                      (char) buf->data()[6], (char) buf->data()[7],
                       buf->size(), takeCount);
         }
     }

@@ -47,12 +47,12 @@ HwAbsMediaFrame *HwAudioFrame::clone() {
                                                sampleCount);
     destFrame->setPts(getPts());
     destFrame->setFormat(getFormat());
-    memcpy(destFrame->getBuffer()->getData(), getBuffer()->getData(), destFrame->getBufferSize());
+    memcpy(destFrame->data(), data(), destFrame->size());
     return destFrame;
 }
 
 void HwAudioFrame::clone(HwAbsMediaFrame *src) {
-    if (!src || !src->isAudio() || src->getBufferSize() < getBufferSize()) {
+    if (!src || !src->isAudio() || src->size() < size()) {
         Logcat::e("HWVC", "Invalid audio frame");
         return;
     }
@@ -60,5 +60,5 @@ void HwAudioFrame::clone(HwAbsMediaFrame *src) {
     srcFrame->setPts(getPts());
     srcFrame->setFormat(getFormat());
     srcFrame->setSampleFormat(channels, sampleRate, sampleCount);
-    memcpy(srcFrame->getBuffer()->getData(), getBuffer()->getData(), getBufferSize());
+    memcpy(srcFrame->data(), data(), size());
 }

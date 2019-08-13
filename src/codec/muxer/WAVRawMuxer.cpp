@@ -79,7 +79,7 @@ WAVRawMuxer::~WAVRawMuxer() {
 
 HwResult WAVRawMuxer::write(HwBuffer *buf) {
     if (file) {
-        int count = fwrite(buf->getData(), 1, buf->size(), file);
+        int count = fwrite(buf->data(), 1, buf->size(), file);
         size += count;
         return Hw::SUCCESS;
     }

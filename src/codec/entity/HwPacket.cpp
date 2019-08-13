@@ -9,7 +9,7 @@
 
 HwPacket *HwPacket::wrap(AVPacket *pkt) {
     HwPacket *p = new HwPacket();
-    p->data = HwBuffer::wrap(pkt->data, pkt->size);
+    p->buf = HwBuffer::wrap(pkt->data, pkt->size);
     p->pts = pkt->pts;
     p->dts = pkt->dts;
     p->duration = pkt->duration;
@@ -19,7 +19,7 @@ HwPacket *HwPacket::wrap(AVPacket *pkt) {
 
 HwPacket *HwPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts) {
     HwPacket *p = new HwPacket();
-    p->data = HwBuffer::wrap(buf, size);
+    p->buf = HwBuffer::wrap(buf, size);
     p->pts = pts;
     p->dts = dts;
     p->duration = 1;
@@ -29,7 +29,7 @@ HwPacket *HwPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts) {
 
 HwPacket *HwPacket::create(size_t size, int64_t pts, int64_t dts) {
     HwPacket *p = new HwPacket();
-    p->data = HwBuffer::alloc(size);
+    p->buf = HwBuffer::alloc(size);
     p->pts = pts;
     p->dts = dts;
     p->duration = 1;
@@ -42,19 +42,21 @@ HwPacket::HwPacket() : Object() {
 }
 
 HwPacket::~HwPacket() {
-    if (data) {
-        delete data;
-        data = nullptr;
+    if (buf) {
+        delete buf;
+        buf = nullptr;
     }
     pts = INT64_MIN;
     dts = INT64_MIN;
+    duration = INT64_MIN;
+    flags = 1;
 }
 
 bool HwPacket::ref(AVPacket **pkt) {
     if (!pkt || !*pkt) {
         return false;
     }
-    (*pkt)->data = buf();
+    (*pkt)->data = data();
     (*pkt)->size = size();
     (*pkt)->pts = getPts();
     (*pkt)->dts = getDts();
@@ -63,9 +65,9 @@ bool HwPacket::ref(AVPacket **pkt) {
     return true;
 }
 
-uint8_t *HwPacket::buf() { return data->getData(); }
+uint8_t *HwPacket::data() { return buf->data(); }
 
-size_t HwPacket::size() { return data->size(); }
+size_t HwPacket::size() { return buf->size(); }
 
 int64_t HwPacket::getPts() { return pts; }
 

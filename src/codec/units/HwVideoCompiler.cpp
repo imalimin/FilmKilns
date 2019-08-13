@@ -114,16 +114,16 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
 #if 1
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     int64_t time = TimeUtils::getCurrentTimeUS();
-    libyuv::NV12ToI420(buf->getData(), videoFrame->getWidth(),
-                       buf->getData() + pixelCount, videoFrame->getWidth(),
-                       videoFrame->getBuffer()->getData(), videoFrame->getWidth(),
-                       videoFrame->getBuffer()->getData() + pixelCount,
+    libyuv::NV12ToI420(buf->data(), videoFrame->getWidth(),
+                       buf->data() + pixelCount, videoFrame->getWidth(),
+                       videoFrame->data(), videoFrame->getWidth(),
+                       videoFrame->data() + pixelCount,
                        videoFrame->getWidth() / 2,
-                       videoFrame->getBuffer()->getData() + pixelCount * 5 / 4,
+                       videoFrame->data() + pixelCount * 5 / 4,
                        videoFrame->getWidth() / 2,
                        videoFrame->getWidth(), videoFrame->getHeight());
 #else
-    memcpy(videoFrame->getBuffer()->getData(), buf->getData(), buf->size());
+    memcpy(videoFrame->data(), buf->getData(), buf->size());
 #endif
 #if 0
     Logcat::i("HWVC", "HwVideoOutput::write nv12 convert cost %lld",
@@ -149,7 +149,7 @@ bool HwVideoCompiler::eventSamples(Message *msg) {
     }
     HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
     int64_t tsInNs = msg->arg2;
-    memcpy(audioFrame->getBuffer()->getData(), buf->getData(), buf->size());
+    memcpy(audioFrame->data(), buf->data(), buf->size());
     if (lastATsInNs < 0) {
         lastATsInNs = tsInNs;
     }

@@ -52,7 +52,7 @@ static void loop() {
             if (recorder) {
                 HwBuffer *buffer = recorder->read(8192);
                 if (pcmFile) {
-                    fwrite(buffer->getData(), 1, buffer->size(), pcmFile);
+                    fwrite(buffer->data(), 1, buffer->size(), pcmFile);
                 }
             }
             recorderLock.unlock();

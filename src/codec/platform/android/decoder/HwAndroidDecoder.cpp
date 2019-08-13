@@ -113,11 +113,11 @@ HwResult HwAndroidDecoder::grab(HwAbsMediaFrame **frame) {
     }
     while (true) {
         ssize_t bufSize = AMediaExtractor_readSampleData(extractor,
-                                                         vSampleBuf->getData(),
+                                                         vSampleBuf->data(),
                                                          vSampleBuf->size());
         int64_t pts = AMediaExtractor_getSampleTime(extractor);
         if (bufSize > 0) {
-            HwPacket *pkt = HwPacket::wrap(vSampleBuf->getData(), bufSize, pts, 0);
+            HwPacket *pkt = HwPacket::wrap(vSampleBuf->data(), bufSize, pts, 0);
             HwResult ret = codec->process(frame, &pkt);
             delete pkt;
             if (Hw::SUCCESS == ret) {

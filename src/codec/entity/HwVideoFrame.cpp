@@ -38,13 +38,12 @@ HwAbsMediaFrame *HwVideoFrame::clone() {
     HwVideoFrame *destFrame = new HwVideoFrame(nullptr, getFormat(), width, height);
     destFrame->setPts(getPts());
     destFrame->setFormat(getFormat());
-    memcpy(destFrame->getBuffer()->getData(), getBuffer()->getData(),
-           static_cast<size_t>(destFrame->getBufferSize()));
+    memcpy(destFrame->data(), data(), destFrame->size());
     return destFrame;
 }
 
 void HwVideoFrame::clone(HwAbsMediaFrame *src) {
-    if (!src || !src->isVideo() || src->getBufferSize() < getBufferSize()) {
+    if (!src || !src->isVideo() || src->size() < size()) {
         Logcat::e("HWVC", "Invalid video frame");
         return;
     }
@@ -52,5 +51,5 @@ void HwVideoFrame::clone(HwAbsMediaFrame *src) {
     srcFrame->setPts(getPts());
     srcFrame->setFormat(getFormat());
     srcFrame->setSize(getWidth(), getHeight());
-    memcpy(srcFrame->getBuffer()->getData(), getBuffer()->getData(), getBufferSize());
+    memcpy(srcFrame->data(), data(), size());
 }

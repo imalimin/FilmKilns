@@ -147,19 +147,19 @@ void HwVideoInput::bindTex(HwVideoFrame *frame) {
                      frame->getHeight(), 0,
                      GL_LUMINANCE,
                      GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData());
+                     frame->data());
         glBindTexture(GL_TEXTURE_2D, yuv[1]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth() / 2,
                      frame->getHeight() / 2, 0,
                      GL_LUMINANCE,
                      GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData() + size);
+                     frame->data() + size);
         glBindTexture(GL_TEXTURE_2D, yuv[2]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth() / 2,
                      frame->getHeight() / 2, 0,
                      GL_LUMINANCE,
                      GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData() + size + size / 4);
+                     frame->data() + size + size / 4);
         glBindTexture(GL_TEXTURE_2D, GL_NONE);
     } else {
         int size = frame->getWidth() * frame->getHeight();
@@ -168,19 +168,19 @@ void HwVideoInput::bindTex(HwVideoFrame *frame) {
                         frame->getHeight(),
                         GL_LUMINANCE,
                         GL_UNSIGNED_BYTE,
-                        frame->getBuffer()->getData());
+                        frame->data());
         glBindTexture(GL_TEXTURE_2D, yuv[1]);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
                      frame->getHeight() / 2,
                      GL_LUMINANCE,
                      GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData() + size);
+                     frame->data() + size);
         glBindTexture(GL_TEXTURE_2D, yuv[2]);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
                      frame->getHeight() / 2,
                      GL_LUMINANCE,
                      GL_UNSIGNED_BYTE,
-                     frame->getBuffer()->getData() + size + size / 4);
+                     frame->data() + size + size / 4);
         glBindTexture(GL_TEXTURE_2D, GL_NONE);
     }
 }
