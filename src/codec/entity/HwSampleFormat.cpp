@@ -32,3 +32,10 @@ HwFrameFormat HwSampleFormat::getFormat() { return format; }
 uint16_t HwSampleFormat::getChannels() { return channels; }
 
 uint32_t HwSampleFormat::getSampleRate() { return sampleRate; }
+
+HwSampleFormat &HwSampleFormat::operator=(const HwSampleFormat &format) {
+    this->format = format.format;
+    this->channels = format.channels;
+    this->sampleRate = format.sampleRate;
+    return *this;
+}

@@ -6,3 +6,28 @@
 */
 
 #include "../include/HwResult.h"
+
+HwResult::HwResult(int code) : Object() {
+    this->code = code;
+}
+
+HwResult::HwResult(const HwResult &value) : Object() {
+    this->code = value.code;
+}
+
+HwResult::~HwResult() {
+
+}
+
+bool HwResult::operator==(const HwResult &ret) const {
+    return ret.code == code;
+}
+
+bool HwResult::operator!=(const HwResult &ret) const {
+    return ret.code != code;
+}
+
+HwResult &HwResult::operator=(const HwResult &value) {
+    code = value.code;
+    return *this;
+}

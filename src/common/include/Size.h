@@ -16,9 +16,13 @@ public:
 
     Size();
 
+    Size(const Size &value);
+
     Size(int w, int h);
 
     virtual ~Size();
+
+    Size &operator=(const Size &value);
 };
 
 #endif //HARDWAREVIDEOCODEC_SIZE_H

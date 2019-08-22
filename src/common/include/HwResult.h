@@ -10,24 +10,23 @@
 
 #include "Object.h"
 
-using namespace std;
-
 class HwResult : public Object {
 public:
     int code = 0;
 
-    HwResult(int code) {
-        this->code = code;
-    }
+    HwResult(int code);
 
-    bool operator==(const HwResult &ret) const {
-        return ret.code == code;
-    }
+    HwResult(const HwResult &value);
 
-    bool operator!=(const HwResult &ret) const {
-        return ret.code != code;
-    }
+    ~HwResult();
+
+    bool operator==(const HwResult &ret) const;
+
+    bool operator!=(const HwResult &ret) const;
+
+    HwResult &operator=(const HwResult &value);
 };
+
 namespace Hw {
     const HwResult SUCCESS = HwResult(0);
     const HwResult FAILED = HwResult(-1);

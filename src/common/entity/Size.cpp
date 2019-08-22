@@ -6,10 +6,13 @@
  */
 #include "../include/Size.h"
 
-Size::Size() {
+Size::Size() : Object() {
     this->width = 0;
     this->height = 0;
 };
+
+Size::Size(const Size &value) : Object(), width(value.width), height(value.height) {
+}
 
 Size::Size(int w, int h) {
     this->width = w;
@@ -20,3 +23,9 @@ Size::~Size() {
     this->width = 0;
     this->height = 0;
 };
+
+Size &Size::operator=(const Size &value) {
+    this->width = value.width;
+    this->height = value.height;
+    return *this;
+}

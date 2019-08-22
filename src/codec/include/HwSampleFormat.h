@@ -22,6 +22,8 @@ public:
 
     HwFrameFormat getFormat();
 
+    HwSampleFormat &operator=(const HwSampleFormat &format);
+
 private:
     uint16_t channels = 0;
     uint32_t sampleRate = 0;
