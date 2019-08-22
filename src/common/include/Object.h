@@ -7,10 +7,8 @@
 #ifndef HARDWAREVIDEOCODEC_OBJECT_H
 #define HARDWAREVIDEOCODEC_OBJECT_H
 
-#include "pthread.h"
 #include <cstring>
 #include <cstdlib>
-//#include "semaphore.h"
 #include <string>
 
 using namespace std;
@@ -20,17 +18,6 @@ public:
     Object();
 
     virtual ~Object();
-
-    virtual void wait();
-
-    void wait(int us);
-
-    virtual void notify();
-
-private:
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
-//    sem_t sem;
 };
 
 

@@ -33,7 +33,7 @@ public:
 
     void pop();
 
-    virtual void notify() override;
+    void notify();
 
     void clear();
 

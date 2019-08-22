@@ -104,8 +104,7 @@ public:
         return true;
     }
 
-    virtual void notify() override {
-        Object::notify();
+    void notify() {
         pthread_cond_broadcast(&cond);
     }
 

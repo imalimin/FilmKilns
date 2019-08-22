@@ -7,18 +7,35 @@
 
 #include "../include/SimpleLock.h"
 
-SimpleLock::SimpleLock() {
-    pthread_mutex_init(&mutex, nullptr);
+SimpleLock::SimpleLock() : Object() {
 }
 
 SimpleLock::~SimpleLock() {
-    pthread_mutex_destroy(&mutex);
+    notify();
 }
 
 void SimpleLock::lock() {
-    pthread_mutex_lock(&mutex);
+    mtx.lock();
 }
 
 void SimpleLock::unlock() {
-    pthread_mutex_unlock(&mutex);
+    mtx.unlock();
+}
+
+void SimpleLock::notify() {
+    std::unique_lock<std::mutex> lck(mtx);
+    cond.notify_all();
+//    sem_post(&sem);//0变成1
+}
+
+void SimpleLock::wait() {
+//    sem_wait(&sem);//1变成0，等待
+    std::unique_lock<std::mutex> lck(mtx);
+    cond.wait(lck);
+}
+
+void SimpleLock::wait(int us) {
+    if (us <= 0) return;
+    std::unique_lock<std::mutex> lck(mtx);
+    cond.wait_for(lck, chrono::nanoseconds(us * 1000));
 }

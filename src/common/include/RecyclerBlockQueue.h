@@ -90,8 +90,7 @@ public:
         return recycler->size();
     }
 
-    void notify() override {
-        Object::notify();
+    void notify() {
         queue->notify();
         recycler->notify();
     }

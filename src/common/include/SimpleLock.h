@@ -9,6 +9,8 @@
 #define HARDWAREVIDEOCODEC_SIMPLELOCK_H
 
 #include "Object.h"
+#include <mutex>
+#include <condition_variable>
 
 class SimpleLock : public Object {
 public:
@@ -20,8 +22,15 @@ public:
 
     void unlock();
 
+    void wait();
+
+    void wait(int us);
+
+    void notify();
+
 private:
-    pthread_mutex_t mutex;
+    std::mutex mtx;
+    std::condition_variable cond;
 };
 
 
