@@ -171,16 +171,16 @@ void HwVideoInput::bindTex(HwVideoFrame *frame) {
                         frame->data());
         glBindTexture(GL_TEXTURE_2D, yuv[1]);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
-                     frame->getHeight() / 2,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->data() + size);
+                        frame->getHeight() / 2,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        frame->data() + size);
         glBindTexture(GL_TEXTURE_2D, yuv[2]);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
-                     frame->getHeight() / 2,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->data() + size + size / 4);
+                        frame->getHeight() / 2,
+                        GL_LUMINANCE,
+                        GL_UNSIGNED_BYTE,
+                        frame->data() + size + size / 4);
         glBindTexture(GL_TEXTURE_2D, GL_NONE);
     }
 }
@@ -232,7 +232,7 @@ HwResult HwVideoInput::grab() {
 
 bool HwVideoInput::invalidate(int tex, uint32_t width, uint32_t height) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-    msg->obj = new HwTexture(tex, width, height);
+    msg->obj = HwTexture::wrap(GL_TEXTURE_2D, tex, width, height);
     msg->desc = "RENDER";
     msg->arg1 = tex;
     postEvent(msg);

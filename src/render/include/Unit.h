@@ -68,6 +68,8 @@ static constexpr int EVENT_VIDEO_OUT_PAUSE = KID('V', 'O', 'P', 0x02);
 static constexpr int EVENT_MICROPHONE_LOOP = KID('M', 'I', 'C', 0x01);
 static constexpr int EVENT_MICROPHONE_OUT_SAMPLES = KID('M', 'I', 'C', 0x02);
 
+static constexpr int EVENT_CAMERA_INVALIDATE = KID('C', 'A', 'M', 0x00);
+
 /**
  * Define class HwModelProvider.
  */

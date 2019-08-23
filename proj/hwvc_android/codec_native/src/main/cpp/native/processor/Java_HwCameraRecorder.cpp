@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
-                                              "onHandleMessage", "(I)V"};
+                                              "onHandleMessage", "(II)V"};
 static int HwCameraRecorderWhat = 0;
 
 static HwCameraRecorder *getHandler(jlong handler) {
@@ -44,7 +44,9 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
                 HwJavaNativeHelper::getInstance()->findMethod(handler,
                                                               cOnHandleMessage,
                                                               &methodID)) {
-                pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat);
+                getHandler(handler)->mackCameraCurrent();
+                pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat,
+                                     1 == HwCameraRecorderWhat ? getHandler(handler)->getTex() : 0);
             }
         });
     }
@@ -111,9 +113,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invalidate
-        (JNIEnv *env, jobject thiz, jlong handler, jint textureId, jlong tsInNs, jint w, jint h) {
+        (JNIEnv *env, jobject thiz, jlong handler, jfloatArray matrix, jlong tsInNs,
+         jint w, jint h, jint cw, jint ch) {
     if (handler) {
-        getHandler(handler)->invalidate(textureId, static_cast<int64_t>(tsInNs), w, h);
+        jfloat *pMatrix = env->GetFloatArrayElements(matrix, JNI_FALSE);
+        getHandler(handler)->setCameraSize(cw, ch);
+        getHandler(handler)->invalidate(pMatrix, w, h);
+        env->ReleaseFloatArrayElements(matrix, pMatrix, 0);
     }
 }
 

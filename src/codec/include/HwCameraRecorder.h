@@ -12,6 +12,7 @@
 #include "HwWindow.h"
 #include "Filter.h"
 #include "HwSampleFormat.h"
+#include "HwCameraInput.h"
 
 /**
  *    Controller                Unit                  Unit               Unit                 Unit
@@ -51,13 +52,19 @@ public:
 
     void pause();
 
-    void invalidate(int textureId, int64_t tsInNs, int w, int h);
+    void invalidate(float *matrix, int w, int h);
 
     void setOutputFilePath(string filePath);
 
     void setFormat(int width, int height, HwSampleFormat format);
 
     void setFilter(Filter *filter);
+
+    uint32_t getTex();
+
+    void mackCameraCurrent();
+
+    void setCameraSize(int32_t w, int32_t h);
 
 private:
     const string ALIAS_OF_MIC = "MIC";
@@ -66,6 +73,11 @@ private:
     const string ALIAS_OF_SCREEN = "SCREEN";
     const string ALIAS_OF_COMPILER = "COMPILER";
     HwSampleFormat *audioFormat = nullptr;
+    HwCameraInput *camera = nullptr;
+    float matrix[16] = {1.0f, 0.0f, 0.0f, 0.0f,
+                        0.0f, 1.0f, 0.0f, 0.0f,
+                        0.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f};
 };
 
 

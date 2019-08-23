@@ -71,7 +71,7 @@ bool Image::eventShow(Message *msg) {
 bool Image::eventInvalidate(Message *m) {
     if (GL_NONE != tex) {
         Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-        msg->obj = new HwTexture(tex, hwBitmap->getWidth(), hwBitmap->getHeight());
+        msg->obj = HwTexture::wrap(GL_TEXTURE_2D, tex, hwBitmap->getWidth(), hwBitmap->getHeight());
         msg->arg1 = tex;
         postEvent(msg);
     }

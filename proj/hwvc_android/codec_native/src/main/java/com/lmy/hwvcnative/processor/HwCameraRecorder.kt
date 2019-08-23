@@ -47,8 +47,8 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
             override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
                 if (!prepared) {
                     prepared = true
-                    postEvent(handler, 1)
                     prepare(holder.surface)
+                    postEvent(handler, 1)
                 } else {
                     if (0L != handler) {
                         updateWindow(handler, holder.surface)
@@ -80,16 +80,17 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
         postEvent(handler, 3)
     }
 
-    fun onHandleMessage(what: Int) {
+    fun onHandleMessage(what: Int, arg1: Int) {
 //        Log.i("CameraActivity", "onHandleMessage $what")
         when (what) {
-            1 -> camera = CameraWrapper(this)
+            1 -> camera = CameraWrapper.open(arg1, this)
             2 -> camera?.release()
             3 -> {
-                val textures = camera?.draw()
+                camera?.draw()
                 if (0L != handler) {
-                    invalidate(handler, textures!![0], camera!!.getTimestamp(),
-                            CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT)
+                    invalidate(handler, camera!!.getMatrix(), 0,
+                            CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT,
+                            camera!!.cameraHeight, camera!!.cameraWidth)
                 }
             }
         }
@@ -115,7 +116,9 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     private external fun pause(handler: Long)
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
-    private external fun invalidate(handler: Long, textureId: Int, tsInNs: Long, w: Int, h: Int)
+    private external fun invalidate(handler: Long, matrix: FloatArray, tsInNs: Long,
+                                    w: Int, h: Int, cw: Int, ch: Int)
+
     private external fun setOutputFilePath(handler: Long, filePath: String)
     private external fun setFormat(handler: Long, width: Int, height: Int, sampleFormat: Int,
                                    channels: Int, sampleRate: Int)

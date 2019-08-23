@@ -8,36 +8,36 @@ package com.lmy.hwvcnative.devices
 
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
-import android.opengl.GLES20
 import android.util.Log
 
 /**
  * Created by lmyooyo@gmail.com on 2018/3/21.
  */
-class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener) {
+class CameraWrapper private constructor(private val tex: Int,
+                                        private var onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener) {
     enum class CameraIndex { BACK, FRONT }
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
         const val VIDEO_WIDTH = 320
         const val VIDEO_HEIGHT = 480
-        fun open(onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
+        fun open(tex: Int, onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
-            return CameraWrapper(onFrameAvailableListener)
+            return CameraWrapper(tex, onFrameAvailableListener)
         }
     }
 
     private var mCamera: Camera? = null
     private var mCameras = 0
     private var mCameraIndex: CameraIndex? = null
-    private val eglSurface: CameraEglSurface
+    private val surface: SurfaceTexture
     private var transformMatrix: FloatArray = FloatArray(16)
-    private var cameraWidth = 0
-    private var cameraHeight = 0
+    var cameraWidth = 0
+    var cameraHeight = 0
 
     init {
         mCameras = CameraHelper.getNumberOfCameras()
-        eglSurface = CameraEglSurface.create(VIDEO_WIDTH, VIDEO_HEIGHT) as CameraEglSurface
+        surface = SurfaceTexture(tex)
         openCamera(CameraIndex.FRONT)
     }
 
@@ -58,15 +58,13 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
         stopPreview()
         updateTexture()
         if (prepare()) {
-            eglSurface.updateLocation(VIDEO_WIDTH, VIDEO_HEIGHT, cameraWidth, cameraHeight)
             startPreview()
         }
 //        })
     }
 
     private fun updateTexture() {
-        eglSurface.updateTexture()
-        eglSurface.surface!!.setOnFrameAvailableListener(onFrameAvailableListener)
+        surface.setOnFrameAvailableListener(onFrameAvailableListener)
     }
 
     private fun getCameraIndex(): Int {
@@ -154,7 +152,7 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
             return
         }
         try {
-            mCamera!!.setPreviewTexture(eglSurface.surface)
+            mCamera!!.setPreviewTexture(surface)
             mCamera!!.startPreview()
         } catch (e: Exception) {
             release()
@@ -178,20 +176,14 @@ class CameraWrapper(private var onFrameAvailableListener: SurfaceTexture.OnFrame
     }
 
     private fun releaseTexture() {
-        eglSurface.release()
+        surface.release()
         Log.i(TAG, "releaseTexture")
     }
 
-    fun draw(): IntArray {
-        eglSurface.makeCurrent()
-        eglSurface.updateTexImage()
-        eglSurface.getTransformMatrix(transformMatrix)
-        GLES20.glViewport(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT)
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-        GLES20.glClearColor(0.3f, 0.3f, 0.3f, 0f)
-        eglSurface.draw(transformMatrix)
-        return eglSurface.getFrameBufferTexture()
+    fun draw() {
+        surface.updateTexImage()
+        surface.getTransformMatrix(transformMatrix)
     }
 
-    fun getTimestamp(): Long = eglSurface.getTimestamp()
+    fun getMatrix(): FloatArray = transformMatrix
 }

@@ -9,6 +9,12 @@
 #define HWVC_ANDROID_HWCAMERAINPUT_H
 
 #include "Unit.h"
+#include "Egl.h"
+#include "HwTexture.h"
+#include "HwAbsFBObject.h"
+#include "HwProgram.h"
+
+#define HW_SHADER(...) #__VA_ARGS__
 
 class HwCameraInput : public Unit {
 public:
@@ -20,6 +26,25 @@ public:
 
     bool eventRelease(Message *msg) override;
 
+    bool eventInvalidate(Message *msg);
+
+    uint32_t getTex();
+
+    void mackCurrent();
+
+    void calculateBestLocation(int32_t vw, int32_t vh, int32_t w, int32_t h);
+
+private:
+    void draw(int w, int h);
+
+    void notify(int64_t tsInNs, int w, int h);
+
+private:
+    Egl *egl = nullptr;
+    HwTexture *srcTex = nullptr;
+    HwTexture *destTex = nullptr;
+    HwAbsFBObject *fbo = nullptr;
+    HwProgram *program = nullptr;
 };
 
 

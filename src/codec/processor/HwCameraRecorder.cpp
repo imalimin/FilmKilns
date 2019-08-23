@@ -8,7 +8,6 @@
 #include <Size.h>
 #include "../include/HwCameraRecorder.h"
 #include "../include/HwMicrophone.h"
-#include "../include/HwCameraInput.h"
 #include "../include/HwVideoCompiler.h"
 #include "HwRender.h"
 #include "HwScreen.h"
@@ -17,8 +16,9 @@
 #include "HwTexture.h"
 
 HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
+    camera = new HwCameraInput(ALIAS_OF_CAMERA);
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
-    registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
+    registerAnUnit(camera);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
@@ -33,6 +33,7 @@ void HwCameraRecorder::onDestroy() {
         delete audioFormat;
         audioFormat = nullptr;
     }
+    camera = nullptr;
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {
@@ -55,12 +56,12 @@ void HwCameraRecorder::pause() {
     postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
 }
 
-void HwCameraRecorder::invalidate(int textureId, int64_t tsInNs, int w, int h) {
-    Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-    msg->obj = new HwTexture(textureId, w, h);
-    msg->desc = "RENDER";
-    msg->arg2 = tsInNs;
+void HwCameraRecorder::invalidate(float *matrix, int w, int h) {
+    Message *msg = new Message(EVENT_CAMERA_INVALIDATE, nullptr);
+    msg->obj = new Size(w, h);
+    msg->arg2 = reinterpret_cast<int64_t>(this->matrix);
     msg->queueMode = Message::QUEUE_MODE_UNIQUE;
+    memcpy(this->matrix, matrix, 16 * sizeof(float));
     postEvent(msg);
 }
 
@@ -82,4 +83,18 @@ void HwCameraRecorder::setFilter(Filter *filter) {
     Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
     msg->obj = new ObjectBox(filter);
     postEvent(msg);
+}
+
+uint32_t HwCameraRecorder::getTex() {
+    return camera->getTex();
+}
+
+void HwCameraRecorder::mackCameraCurrent() {
+    if (camera) {
+        camera->mackCurrent();
+    }
+}
+void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
+    putInt32("camera_width", w);
+    putInt32("camera_height", h);
 }
