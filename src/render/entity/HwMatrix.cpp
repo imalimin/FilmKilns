@@ -58,8 +58,8 @@ void HwMatrix::rotate(float dx, float dy, float dz) {
         m.matrix[1][2] = static_cast<float>(-sin(dx));
         m.matrix[2][1] = static_cast<float>(sin(dx));
         m.matrix[2][2] = static_cast<float>(cos(dx));
+        m.matrix[3][1] = 1.0f;
         multiplyBy(&m);
-        matrix[3][1] = 1.0f;
     }
     // rotate y
     if (dy != 0.0f) {
@@ -68,8 +68,8 @@ void HwMatrix::rotate(float dx, float dy, float dz) {
         m.matrix[0][2] = static_cast<float>(sin(dy));
         m.matrix[2][0] = static_cast<float>(-sin(dy));
         m.matrix[2][2] = static_cast<float>(cos(dy));
+        m.matrix[3][0] = 1.0f;
         multiplyBy(&m);
-        matrix[3][0] = 1.0f;
     }
     // rotate z
     if (dz != 0.0f) {
@@ -78,8 +78,8 @@ void HwMatrix::rotate(float dx, float dy, float dz) {
         m.matrix[0][1] = static_cast<float>(-sin(dz));
         m.matrix[1][0] = static_cast<float>(sin(dz));
         m.matrix[1][1] = static_cast<float>(cos(dz));
+        m.matrix[3][1] = 1.0f;
         multiplyBy(&m);
-//        matrix[3][1] = -1.0f;
     }
 }
 
