@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Environment
+import com.lmy.hwvcnative.devices.CameraWrapper
 import com.lmy.hwvcnative.processor.HwCameraRecorder
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.FilterController
@@ -27,7 +28,7 @@ class CameraActivity : BaseActivity() {
         surfaceView.keepScreenOn = true
         path = "${externalCacheDir.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
-        recorder?.setFormat(320, 480)
+        recorder?.setFormat(CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT)
         recorder?.prepare(surfaceView)
         mFilterController = FilterController(recorder!!, progressLayout)
         filterBtn.setOnClickListener {
