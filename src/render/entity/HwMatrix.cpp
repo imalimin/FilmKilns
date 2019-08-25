@@ -6,7 +6,10 @@
 */
 
 #include "../include/HwMatrix.h"
+#include <math.h>
 #include "Logcat.h"
+
+const float HwMatrix::PI = 3.141592653f;
 
 HwMatrix *HwMatrix::fromArray(float *array) {
     HwMatrix *val = new HwMatrix();
@@ -42,11 +45,42 @@ void HwMatrix::scale(float sx, float sy, float sz) {
 }
 
 void HwMatrix::translate(float dx, float dy, float dz) {
-
+    matrix[0][3] = dx;
+    matrix[1][3] = dy;
+    matrix[2][3] = dz;
 }
 
-void HwMatrix::rotate(float degrees) {
-
+void HwMatrix::rotate(float dx, float dy, float dz) {
+    HwMatrix m;
+    // rotate x
+    if (dx != 0.0f) {
+        m.matrix[1][1] = static_cast<float>(cos(dx));
+        m.matrix[1][2] = static_cast<float>(-sin(dx));
+        m.matrix[2][1] = static_cast<float>(sin(dx));
+        m.matrix[2][2] = static_cast<float>(cos(dx));
+        multiplyBy(&m);
+        matrix[3][1] = 1.0f;
+    }
+    // rotate y
+    if (dy != 0.0f) {
+        m.reset();
+        m.matrix[0][0] = static_cast<float>(cos(dy));
+        m.matrix[0][2] = static_cast<float>(sin(dy));
+        m.matrix[2][0] = static_cast<float>(-sin(dy));
+        m.matrix[2][2] = static_cast<float>(cos(dy));
+        multiplyBy(&m);
+        matrix[3][0] = 1.0f;
+    }
+    // rotate z
+    if (dz != 0.0f) {
+        m.reset();
+        m.matrix[0][0] = static_cast<float>(cos(dz));
+        m.matrix[0][1] = static_cast<float>(-sin(dz));
+        m.matrix[1][0] = static_cast<float>(sin(dz));
+        m.matrix[1][1] = static_cast<float>(cos(dz));
+        multiplyBy(&m);
+//        matrix[3][1] = -1.0f;
+    }
 }
 
 void HwMatrix::multiplyBy(HwMatrix *val) {

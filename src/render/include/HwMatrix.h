@@ -32,7 +32,7 @@ public:
 
     void translate(float dx, float dy, float dz);
 
-    void rotate(float degrees);
+    void rotate(float dx, float dy, float dz);
 
     void multiplyBy(HwMatrix *val);
 
@@ -40,6 +40,9 @@ public:
 
 private:
     float multiply(HwMatrix *val1, int i, HwMatrix *val2, int j);
+
+public:
+    static const float PI;
 
 private:
     float matrix[4][4] = {1.0f, 0.0f, 0.0f, 0.0f,

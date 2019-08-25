@@ -131,6 +131,9 @@ void HwCameraInput::updateMatrix(int32_t w, int32_t h, HwMatrix *matrix) {
     } else {
         scale.scale(1.0f, h / (w / ratio), 1.0f);
     }
+    HwMatrix trans;
+    trans.rotate(0.0f, HwMatrix::PI, 0.0f);
+    matrix->multiplyBy(&trans);
     scale.multiplyBy(matrix);
     program->updateMatrix(&scale);
 }
