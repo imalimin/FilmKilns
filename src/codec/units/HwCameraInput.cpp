@@ -76,12 +76,14 @@ bool HwCameraInput::eventRelease(Message *msg) {
 
 bool HwCameraInput::eventInvalidate(Message *msg) {
     int64_t tsInNs = 0;
+    int32_t w = msg->arg1;
+    int32_t h = static_cast<int>(msg->arg2);
     if (msg->obj) {
         HwMatrix *matrix = dynamic_cast<HwMatrix *>(msg->obj);
-        program->updateMatrix(matrix);
+        updateMatrix(w, h, matrix);
     }
-    draw(msg->arg1, static_cast<int>(msg->arg2));
-    notify(tsInNs, msg->arg1, static_cast<int>(msg->arg2));
+    draw(w, h);
+    notify(tsInNs, w, h);
     return true;
 }
 
@@ -93,7 +95,6 @@ void HwCameraInput::draw(int w, int h) {
         }
         fbo = HwFBObject::alloc();
         fbo->bindTex(destTex);
-//        calculateBestLocation(w, h, getInt32("camera_width"), getInt32("camera_height"));
     }
     glViewport(0, 0, destTex->getWidth(), destTex->getHeight());
     glClear(GL_COLOR_BUFFER_BIT);
@@ -122,36 +123,14 @@ void HwCameraInput::mackCurrent() {
     }
 }
 
-void HwCameraInput::calculateBestLocation(int32_t vw, int32_t vh, int32_t w, int32_t h) {
-    int32_t previewWidth = w, previewHeight = h;
-    float previewScale = previewWidth / (float) previewHeight;
-    float videoScale = vw / (float) vh;
-    int32_t destPreviewWidth = previewWidth;
-    int32_t destPreviewHeight = previewHeight;
-    if (previewScale > videoScale) {
-        destPreviewWidth = static_cast<int32_t>(previewHeight * videoScale);
-        if (0 != destPreviewWidth % 2) ++destPreviewWidth;
+void HwCameraInput::updateMatrix(int32_t w, int32_t h, HwMatrix *matrix) {
+    HwMatrix scale;
+    float ratio = getInt32("camera_width") / (float) getInt32("camera_height");
+    if (ratio > w / (float) h) {
+        scale.scale(w / (h * ratio), 1.0f, 1.0f);
     } else {
-        destPreviewHeight = static_cast<int32_t>(previewWidth / videoScale);
-        if (0 != destPreviewHeight % 2) ++destPreviewHeight;
+        scale.scale(1.0f, h / (w / ratio), 1.0f);
     }
-    float left = (previewWidth - destPreviewWidth) / 2.0f / previewWidth;
-    float right = 1.0f - left;
-    float bottom = (previewHeight - destPreviewHeight) / 2.0f / previewHeight;
-    float top = 1.0f - bottom;
-    // xy
-    float position[8]{
-            -1.0f, -1.0f, //LEFT,BOTTOM
-            1.0f, -1.0f, //RIGHT,BOTTOM
-            -1.0f, 1.0f, //LEFT,TOP
-            1.0f, 1.0f//RIGHT,TOP
-    };
-    // st
-    float texCoordinate[8]{
-            left, top, //LEFT,BOTTOM
-            right, top, //RIGHT,BOTTOM
-            left, bottom, //LEFT,TOP
-            right, bottom//RIGHT,TOP
-    };
-    program->updateLocation(texCoordinate, position);
+    scale.multiplyBy(matrix);
+    program->updateMatrix(&scale);
 }

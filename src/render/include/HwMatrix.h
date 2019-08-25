@@ -34,11 +34,18 @@ public:
 
     void rotate(float degrees);
 
+    void multiplyBy(HwMatrix *val);
+
+    void reset();
+
 private:
-    float matrix[16] = {1.0f, 0.0f, 0.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f, 0.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f};
+    float multiply(HwMatrix *val1, int i, HwMatrix *val2, int j);
+
+private:
+    float matrix[4][4] = {1.0f, 0.0f, 0.0f, 0.0f,
+                          0.0f, 1.0f, 0.0f, 0.0f,
+                          0.0f, 0.0f, 1.0f, 0.0f,
+                          0.0f, 0.0f, 0.0f, 1.0f};
 };
 
 

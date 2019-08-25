@@ -20,7 +20,7 @@ class CameraWrapper private constructor(private val tex: Int,
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
         const val VIDEO_WIDTH = 320
-        const val VIDEO_HEIGHT = 480
+        const val VIDEO_HEIGHT = 320
         fun open(tex: Int, onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
             return CameraWrapper(tex, onFrameAvailableListener)

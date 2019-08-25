@@ -96,6 +96,8 @@ void HwCameraRecorder::mackCameraCurrent() {
 }
 
 void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
-    putInt32("camera_width", w);
-    putInt32("camera_height", h);
+    cw = w;
+    ch = h;
+    putInt32("camera_width", w).to({ALIAS_OF_CAMERA});
+    putInt32("camera_height", h).to({ALIAS_OF_CAMERA});
 }

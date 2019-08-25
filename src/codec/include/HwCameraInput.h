@@ -30,12 +30,12 @@ public:
 
     void mackCurrent();
 
-    void calculateBestLocation(int32_t vw, int32_t vh, int32_t w, int32_t h);
-
 private:
     void draw(int w, int h);
 
     void notify(int64_t tsInNs, int w, int h);
+
+    void updateMatrix(int32_t w, int32_t h, HwMatrix *matrix);
 
 private:
     Egl *egl = nullptr;

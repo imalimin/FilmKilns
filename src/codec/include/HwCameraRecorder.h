@@ -74,6 +74,8 @@ private:
     const string ALIAS_OF_COMPILER = "COMPILER";
     HwSampleFormat *audioFormat = nullptr;
     HwCameraInput *camera = nullptr;
+    int32_t cw = 0;
+    int32_t ch = 0;
 };
 
 
