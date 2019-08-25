@@ -6,6 +6,7 @@
 */
 
 #include "../include/HwCameraInput.h"
+#include <GLES2/gl2.h>
 #include "Egl.h"
 #include "NativeWindow.h"
 #include "../include/HwFBObject.h"
@@ -99,8 +100,11 @@ void HwCameraInput::draw(int w, int h) {
         }
         fbo = HwFBObject::alloc();
         fbo->bindTex(destTex);
-        calculateBestLocation(w, h, getInt32("camera_width"), getInt32("camera_height"));
+//        calculateBestLocation(w, h, getInt32("camera_width"), getInt32("camera_height"));
     }
+    glViewport(0, 0, destTex->getWidth(), destTex->getHeight());
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
     program->draw(srcTex, fbo);
 }
 
