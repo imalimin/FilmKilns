@@ -65,7 +65,7 @@ void HwProgram::draw(HwTexture *tex, HwAbsFBObject *fbo) {
     tex->bind();
     glUniform1i(uTextureLocation, 0);
     enableVertex(aPositionLocation, aTextureCoordinateLocation);
-    setUniformMatrix4fv(uTextureMatrix, matrix);
+    setUniformMatrix4fv(uTextureMatrix, matrix.data());
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glDisableVertexAttribArray(aPositionLocation);
     glDisableVertexAttribArray(aTextureCoordinateLocation);
@@ -185,6 +185,6 @@ int32_t HwProgram::getUniformLocation(string name) {
     return glGetUniformLocation(program, name.c_str());
 }
 
-void HwProgram::updateMatrix(float *matrix) {
-    memcpy(this->matrix, matrix, 16 * sizeof(float));
+void HwProgram::updateMatrix(HwMatrix *matrix) {
+    this->matrix = *matrix;
 }

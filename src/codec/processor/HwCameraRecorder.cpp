@@ -56,12 +56,12 @@ void HwCameraRecorder::pause() {
     postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
 }
 
-void HwCameraRecorder::invalidate(float *matrix, int w, int h) {
+void HwCameraRecorder::invalidate(HwMatrix *matrix, int w, int h) {
     Message *msg = new Message(EVENT_CAMERA_INVALIDATE, nullptr);
-    msg->obj = new Size(w, h);
-    msg->arg2 = reinterpret_cast<int64_t>(this->matrix);
+    msg->obj = new HwMatrix(*matrix);
+    msg->arg1 = w;
+    msg->arg2 = h;
     msg->queueMode = Message::QUEUE_MODE_UNIQUE;
-    memcpy(this->matrix, matrix, 16 * sizeof(float));
     postEvent(msg);
 }
 
@@ -94,6 +94,7 @@ void HwCameraRecorder::mackCameraCurrent() {
         camera->mackCurrent();
     }
 }
+
 void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
     putInt32("camera_width", w);
     putInt32("camera_height", h);

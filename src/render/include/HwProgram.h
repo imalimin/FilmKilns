@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "HwTexture.h"
 #include "HwAbsFBObject.h"
+#include "HwMatrix.h"
 
 class HwProgram : public Object {
 public:
@@ -31,7 +32,7 @@ public:
 
     void setUniformMatrix4fv(int32_t location, float *value);
 
-    void updateMatrix(float *matrix);
+    void updateMatrix(HwMatrix *matrix);
 
 private:
     HwProgram(string *vertex, string *fragment);
@@ -62,10 +63,7 @@ private:
     int32_t uTextureMatrix = 0;
     float position[8] = {0.0f};
     float texCoordinate[8] = {0.0f};
-    float matrix[16] = {1.0f, 0.0f, 0.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f, 0.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f};
+    HwMatrix matrix;
     bool requestUpdateLocation = false;
     uint32_t vbo = 0;
     int rotation = 0;

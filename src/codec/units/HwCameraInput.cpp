@@ -11,21 +11,6 @@
 #include "NativeWindow.h"
 #include "../include/HwFBObject.h"
 
-static const string VERTEX_CAMERA = HW_SHADER(
-        attribute
-        vec4 aPosition;
-        attribute
-        vec4 aTextureCoord;
-        uniform
-        mat4 uTextureMatrix;
-        varying
-        vec2 vTextureCoord;
-        void main() {
-            gl_Position = aPosition;
-            vTextureCoord = (uTextureMatrix * aTextureCoord).xy;
-        }
-);
-
 HwCameraInput::HwCameraInput(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwCameraInput::eventPrepare));
     registerEvent(EVENT_CAMERA_INVALIDATE,
@@ -41,7 +26,14 @@ bool HwCameraInput::eventPrepare(Message *msg) {
     egl = new Egl();
     srcTex = HwTexture::allocOES();
     destTex = HwTexture::alloc();
-    string vertex(VERTEX_CAMERA);
+    string vertex("        attribute vec4 aPosition;\n"
+                  "        attribute vec4 aTextureCoord;\n"
+                  "        uniform mat4 uTextureMatrix;\n"
+                  "        varying vec2 vTextureCoord;\n"
+                  "        void main() {\n"
+                  "            gl_Position = aPosition;\n"
+                  "            vTextureCoord = (uTextureMatrix * aTextureCoord).xy;\n"
+                  "        }");
     string fragment("        #extension GL_OES_EGL_image_external : require\n"
                     "        precision mediump float;\n"
                     "        varying mediump vec2 vTextureCoord;\n"
@@ -83,12 +75,13 @@ bool HwCameraInput::eventRelease(Message *msg) {
 }
 
 bool HwCameraInput::eventInvalidate(Message *msg) {
-    Size *size = dynamic_cast<Size *>(msg->obj);
     int64_t tsInNs = 0;
-    float *matrix = reinterpret_cast<float *>(msg->arg2);
-    program->updateMatrix(matrix);
-    draw(size->width, size->height);
-    notify(tsInNs, size->width, size->height);
+    if (msg->obj) {
+        HwMatrix *matrix = dynamic_cast<HwMatrix *>(msg->obj);
+        program->updateMatrix(matrix);
+    }
+    draw(msg->arg1, static_cast<int>(msg->arg2));
+    notify(tsInNs, msg->arg1, static_cast<int>(msg->arg2));
     return true;
 }
 

@@ -9,6 +9,8 @@
 
 class ObjectBox : public Object {
 public:
+    static ObjectBox *box(void *ptr);
+
     void *ptr;
 
     ObjectBox(void *ptr);

@@ -52,7 +52,7 @@ public:
 
     void pause();
 
-    void invalidate(float *matrix, int w, int h);
+    void invalidate(HwMatrix *matrix, int w, int h);
 
     void setOutputFilePath(string filePath);
 
@@ -74,10 +74,6 @@ private:
     const string ALIAS_OF_COMPILER = "COMPILER";
     HwSampleFormat *audioFormat = nullptr;
     HwCameraInput *camera = nullptr;
-    float matrix[16] = {1.0f, 0.0f, 0.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f, 0.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f};
 };
 
 

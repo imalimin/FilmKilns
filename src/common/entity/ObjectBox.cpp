@@ -4,7 +4,11 @@
 
 #include "../include/ObjectBox.h"
 
-ObjectBox::ObjectBox(void *ptr) {
+ObjectBox *ObjectBox::box(void *ptr) {
+    return new ObjectBox(ptr);
+}
+
+ObjectBox::ObjectBox(void *ptr) : Object() {
     this->ptr = ptr;
 }
 

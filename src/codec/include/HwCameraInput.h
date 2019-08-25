@@ -14,8 +14,6 @@
 #include "HwAbsFBObject.h"
 #include "HwProgram.h"
 
-#define HW_SHADER(...) #__VA_ARGS__
-
 class HwCameraInput : public Unit {
 public:
     HwCameraInput(string alias);
