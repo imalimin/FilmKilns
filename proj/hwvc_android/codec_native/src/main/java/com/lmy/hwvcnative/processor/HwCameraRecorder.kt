@@ -109,6 +109,11 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     override fun invalidate() {
     }
 
+    fun backward() {
+        if (isNativeNull()) return
+        backward(handler)
+    }
+
     private external fun create(): Long
     private external fun prepare(handler: Long, surface: Surface)
     private external fun updateWindow(handler: Long, surface: Surface)
@@ -124,4 +129,5 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
                                    channels: Int, sampleRate: Int)
 
     private external fun setFilter(handler: Long, filter: Long)
+    private external fun backward(handler: Long)
 }

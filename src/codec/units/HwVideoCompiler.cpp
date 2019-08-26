@@ -23,6 +23,8 @@ HwVideoCompiler::HwVideoCompiler(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&HwVideoCompiler::eventPause));
     registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
                   reinterpret_cast<EventFunc>(&HwVideoCompiler::eventSamples));
+    registerEvent(EVENT_VIDEO_COMPILER_BACKWARD,
+                  reinterpret_cast<EventFunc>(&HwVideoCompiler::eventBackward));
 }
 
 HwVideoCompiler::~HwVideoCompiler() {
@@ -100,8 +102,21 @@ bool HwVideoCompiler::eventStart(Message *msg) {
 
 bool HwVideoCompiler::eventPause(Message *msg) {
     recording = false;
+    if (!clip.empty()) {
+        track.put(clip.start, clip.end);
+        clip.clear();
+    }
     lastTsInNs = -1;
     lastATsInNs = -1;
+    return true;
+}
+
+bool HwVideoCompiler::eventBackward(Message *msg) {
+    if (recording) {
+        Logcat::e("HWVC", "HwVideoCompiler::eventBackward failed. Recording now.");
+        return true;
+    }
+    track.backward();
     return true;
 }
 
@@ -157,9 +172,87 @@ bool HwVideoCompiler::eventSamples(Message *msg) {
     lastATsInNs = tsInNs;
     audioFrame->setPts(aTimestamp / 1000);
     if (encoder) {
+        if (clip.empty()) {
+            clip.start = audioFrame->getPts();
+        }
+        clip.end = audioFrame->getPts();
         encoder->write(audioFrame);
     } else {
         Logcat::e("HWVC", "HwVideoCompiler::write audio failed. Encoder has release.");
     }
     return true;
+}
+
+HwVideoCompiler::HwClip::HwClip() : HwClip(-1, -1) {
+
+}
+
+HwVideoCompiler::HwClip::HwClip(int64_t start, int64_t end) : Object(), start(start), end(end) {
+
+}
+
+HwVideoCompiler::HwClip::HwClip(const HwVideoCompiler::HwClip &value) : Object(),
+                                                                        start(value.start),
+                                                                        end(value.end) {
+
+}
+
+HwVideoCompiler::HwClip::~HwClip() {
+    start = 0;
+    end = 0;
+}
+
+HwVideoCompiler::HwClip &HwVideoCompiler::HwClip::operator=(const HwVideoCompiler::HwClip &value) {
+    this->start = value.start;
+    this->end = value.end;
+    return *this;
+}
+
+int64_t HwVideoCompiler::HwClip::duration() {
+    if (start > end) return 0;
+    return end - start;
+}
+
+bool HwVideoCompiler::HwClip::empty() {
+    return start < 0 && end < 0;
+}
+
+void HwVideoCompiler::HwClip::clear() {
+    this->start = -1;
+    this->end = -1;
+}
+
+HwVideoCompiler::HwTrack::HwTrack() : Object() {
+
+}
+
+HwVideoCompiler::HwTrack::~HwTrack() {
+    std::lock_guard<std::mutex> guard(mtx);
+    while (!clips.empty()) {
+        clips.pop();
+    }
+}
+
+void HwVideoCompiler::HwTrack::put(int64_t start, int64_t end) {
+    std::lock_guard<std::mutex> guard(mtx);
+    HwClip clip = HwClip(start, end);
+    durationInUs += clip.duration();
+    clips.push(clip);
+}
+
+HwVideoCompiler::HwClip &HwVideoCompiler::HwTrack::backward() {
+    std::lock_guard<std::mutex> guard(mtx);
+    if (clips.empty()) {
+        HwClip clip = HwClip(-1, -1);
+        return clip;
+    }
+    HwClip clip = clips.top();
+    durationInUs -= clip.duration();
+    clips.pop();
+    return clip;
+}
+
+int64_t HwVideoCompiler::HwTrack::duration() {
+    std::lock_guard<std::mutex> guard(mtx);
+    return durationInUs;
 }

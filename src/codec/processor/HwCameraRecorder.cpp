@@ -96,8 +96,10 @@ void HwCameraRecorder::mackCameraCurrent() {
 }
 
 void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
-    cw = w;
-    ch = h;
     putInt32("camera_width", w).to({ALIAS_OF_CAMERA});
     putInt32("camera_height", h).to({ALIAS_OF_CAMERA});
+}
+
+void HwCameraRecorder::backward() {
+    postEvent(new Message(EVENT_VIDEO_COMPILER_BACKWARD, nullptr));
 }

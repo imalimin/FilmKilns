@@ -66,6 +66,11 @@ public:
 
     void setCameraSize(int32_t w, int32_t h);
 
+    /**
+     * delete nearly video clip.
+     */
+    void backward();
+
 private:
     const string ALIAS_OF_MIC = "MIC";
     const string ALIAS_OF_CAMERA = "CAMERA";
@@ -74,8 +79,6 @@ private:
     const string ALIAS_OF_COMPILER = "COMPILER";
     HwSampleFormat *audioFormat = nullptr;
     HwCameraInput *camera = nullptr;
-    int32_t cw = 0;
-    int32_t ch = 0;
 };
 
 

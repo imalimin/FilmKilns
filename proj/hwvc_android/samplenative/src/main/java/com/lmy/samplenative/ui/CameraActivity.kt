@@ -63,6 +63,9 @@ class CameraActivity : BaseActivity() {
             }
             task.execute()
         }
+        backBtn.setOnClickListener {
+            recorder?.backward()
+        }
     }
 
     override fun onDestroy() {

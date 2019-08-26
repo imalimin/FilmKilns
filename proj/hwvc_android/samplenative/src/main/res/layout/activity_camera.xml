@@ -29,14 +29,29 @@
             android:text="Record"
             android:textColor="@color/colorAccent" />
 
-        <Button
+        <TextView
             android:id="@+id/nextBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:background="#33ffffff"
+            android:padding="8dp"
             android:text="Done"
+            android:textColor="@color/colorAccent" />
+
+        <TextView
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="6dp"
+            android:layout_toStartOf="@id/nextBtn"
+            android:background="#33ffffff"
+            android:padding="8dp"
+            android:text="DEL"
             android:textColor="@color/colorAccent" />
     </RelativeLayout>
 </RelativeLayout>
