@@ -270,6 +270,11 @@ HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
             avFrame->height = videoFrame->getHeight();
             avFrame->format = HwAbsMediaFrame::convertVideoFrameFormat(videoFrame->getFormat());
             avFrame->pts = videoFrame->getPts();
+            if (HwVideoFrame::HW_PIC_I == videoFrame->getPicType()) {
+                avFrame->pict_type = AV_PICTURE_TYPE_I;
+            } else {
+                avFrame->pict_type = AV_PICTURE_TYPE_NONE;
+            }
             duration = avFrame->pts - vLastPts;
             if (duration <= 0) {
                 duration = static_cast<int64_t>(AV_TIME_BASE /

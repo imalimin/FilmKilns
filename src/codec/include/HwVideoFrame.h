@@ -12,6 +12,10 @@
 
 class HwVideoFrame : public HwAbsMediaFrame {
 public:
+    static const int32_t HW_PIC_DEF;
+    /** I frame */
+    static const int32_t HW_PIC_I;
+public:
     HwVideoFrame(HwSourcesAllocator *allocator,
                  HwFrameFormat format,
                  uint32_t width,
@@ -31,9 +35,14 @@ public:
 
     virtual void clone(HwAbsMediaFrame *src);
 
+    void setPicType(int32_t picType);
+
+    int32_t getPicType();
+
 private:
     uint32_t width = 0;
     uint32_t height = 0;
+    int32_t picType = HW_PIC_DEF;
 };
 
 

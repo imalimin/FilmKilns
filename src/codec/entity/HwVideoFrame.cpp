@@ -8,6 +8,9 @@
 #include "../include/HwVideoFrame.h"
 #include "Logcat.h"
 
+const int32_t HwVideoFrame::HW_PIC_DEF = 0;
+const int32_t HwVideoFrame::HW_PIC_I = 1;
+
 HwVideoFrame::HwVideoFrame(HwSourcesAllocator *allocator,
                            HwFrameFormat format,
                            uint32_t width,
@@ -51,5 +54,10 @@ void HwVideoFrame::clone(HwAbsMediaFrame *src) {
     srcFrame->setPts(getPts());
     srcFrame->setFormat(getFormat());
     srcFrame->setSize(getWidth(), getHeight());
+    srcFrame->setPicType(getPicType());
     memcpy(srcFrame->data(), data(), size());
 }
+
+void HwVideoFrame::setPicType(int32_t picType) { this->picType = picType; }
+
+int32_t HwVideoFrame::getPicType() { return picType; }

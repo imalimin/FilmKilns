@@ -94,7 +94,7 @@ bool HwFFmpegEncoder::initialize() {
 }
 
 HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
-    lock_guard <std::mutex> guard(lock);
+    lock_guard<std::mutex> guard(lock);
     HwPacket *packet = nullptr;
     if (frame->isAudio() && aCodec && muxer) {
         // Ensure that the first frame is video.

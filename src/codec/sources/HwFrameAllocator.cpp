@@ -200,8 +200,7 @@ HwAbsMediaFrame *HwFrameAllocator::ref(HwAbsMediaFrame *src) {
     }
     unRefLock.unlock();
     if (frame) {
-        memcpy(frame->data(), src->data(), frame->size());
-        frame->setPts(src->getPts());
+        src->clone(frame);
     } else {
         if (src->isVideo()) {
             HwVideoFrame *videoFrame = static_cast<HwVideoFrame *>(src);

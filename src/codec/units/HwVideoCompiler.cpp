@@ -145,8 +145,10 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
     Logcat::i("HWVC", "HwVideoOutput::write nv12 convert cost %lld",
               TimeUtils::getCurrentTimeUS() - time);
 #endif
+    videoFrame->setPicType(HwVideoFrame::HW_PIC_DEF);
     if (lastTsInNs < 0) {
         lastTsInNs = tsInNs;
+        videoFrame->setPicType(HwVideoFrame::HW_PIC_I);
     }
     timestamp += (tsInNs - lastTsInNs);
     lastTsInNs = tsInNs;
@@ -346,6 +348,7 @@ void HwVideoCompiler::remuxer() {
                 continue;
             }
             if (videoTrack == avPacket->stream_index) {
+//                Logcat::i("hwvc", "HwFFmpegEncoder::write %d", avPacket->flags & AV_PKT_FLAG_KEY);
                 if (vLastTime < 0) {
                     vLastTime = avPacket->pts - 1;
                 }
