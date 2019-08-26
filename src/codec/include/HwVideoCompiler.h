@@ -13,7 +13,7 @@
 #include "../include/HwVideoFrame.h"
 #include "../include/HwAudioFrame.h"
 #include <atomic>
-#include <stack>
+#include <list>
 
 class HwVideoCompiler : public Unit {
 public:
@@ -46,6 +46,8 @@ private:
     int getWidth();
 
     int getHeight();
+
+    void remuxer();
 
 private:
     HwAbsVideoEncoder *encoder = nullptr;
@@ -93,9 +95,11 @@ private:
 
         int64_t duration();
 
+        bool contain(int64_t pts);
+
     private:
         int64_t durationInUs = 0;
-        stack<HwClip> clips;
+        list<HwClip> clips;
         std::mutex mtx;
     };
 
