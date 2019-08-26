@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvcom)
+project(hwvcom LANGUAGES C CXX)
 
 option(HWDEBUG "Whether show opengl logs." ON)
 if (HWDEBUG)

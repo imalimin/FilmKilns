@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvc_render)
+project(hwvc_render LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}/../common/include

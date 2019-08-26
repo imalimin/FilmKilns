@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvc_codec)
+project(hwvc_codec LANGUAGES C CXX)
 set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared")
 set(FFMPEG ${PREBUILD_SHARED}/ffmpeg)
 set(YUV ${PREBUILD_SHARED}/yuv)

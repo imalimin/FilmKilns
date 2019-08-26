@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvc_native)
+project(hwvc_native LANGUAGES C CXX)
 set(HWVC_PATH ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${HWVC_PATH}/common/include
