@@ -61,6 +61,7 @@ bool HwVideoCompiler::eventPrepare(Message *msg) {
 }
 
 bool HwVideoCompiler::eventRelease(Message *msg) {
+    eventPause(nullptr);
     if (encoder) {
         encoder->stop();
         encoder->release();
@@ -340,21 +341,18 @@ void HwVideoCompiler::remuxer() {
                                            AV_TIME_BASE_Q,
                                            AV_ROUND_NEAR_INF);
             if (!track.contain(pts)) {
+                if (videoTrack == avPacket->stream_index) {
+                    vLastTime = avPacket->pts;
+                    vDLastTime = avPacket->dts;
+                } else if (audioTrack == avPacket->stream_index) {
+                    aLastTime = avPacket->pts;
+                    aDLastTime = avPacket->dts;
+                }
                 av_packet_unref(avPacket);
-                aLastTime = -1;
-                vLastTime = -1;
-                aDLastTime = -1;
-                vDLastTime = -1;
                 continue;
             }
             if (videoTrack == avPacket->stream_index) {
 //                Logcat::i("hwvc", "HwFFmpegEncoder::write %d", avPacket->flags & AV_PKT_FLAG_KEY);
-                if (vLastTime < 0) {
-                    vLastTime = avPacket->pts - 1;
-                }
-                if (vDLastTime < 0) {
-                    vDLastTime = avPacket->dts - 1;
-                }
                 vTime += (avPacket->pts - vLastTime);
                 vDTime += (avPacket->dts - vDLastTime);
                 vLastTime = avPacket->pts;
@@ -363,12 +361,6 @@ void HwVideoCompiler::remuxer() {
                 avPacket->dts = vDTime;
                 avPacket->stream_index = ovideoTrack;
             } else if (audioTrack == avPacket->stream_index) {
-                if (aLastTime < 0) {
-                    aLastTime = avPacket->pts - 1;
-                }
-                if (aDLastTime < 0) {
-                    aDLastTime = avPacket->dts - 1;
-                }
                 aTime += (avPacket->pts - aLastTime);
                 aDTime += (avPacket->dts - aDLastTime);
                 aLastTime = avPacket->pts;
