@@ -71,6 +71,8 @@ public:
      */
     void backward();
 
+    void setRecordListener(function<void(int64_t)> listener);
+
 private:
     const string ALIAS_OF_MIC = "MIC";
     const string ALIAS_OF_CAMERA = "CAMERA";
@@ -79,6 +81,7 @@ private:
     const string ALIAS_OF_COMPILER = "COMPILER";
     HwSampleFormat *audioFormat = nullptr;
     HwCameraInput *camera = nullptr;
+    function<void(int64_t)> recordListener = nullptr;
 };
 
 

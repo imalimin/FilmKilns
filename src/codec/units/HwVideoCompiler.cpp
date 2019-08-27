@@ -76,6 +76,7 @@ bool HwVideoCompiler::eventRelease(Message *msg) {
         delete videoFrame;
         videoFrame = nullptr;
     }
+    this->recordListener = nullptr;
     remuxer();
     return true;
 }
@@ -118,7 +119,12 @@ bool HwVideoCompiler::eventBackward(Message *msg) {
         Logcat::e("HWVC", "HwVideoCompiler::eventBackward failed. Recording now.");
         return true;
     }
-    track.backward();
+    auto clip = track.backward();
+    offsetOfDuration -= clip.duration();
+    // Notify record progress.
+    if (recordListener) {
+        recordListener(getRecordTimeInUs());
+    }
     return true;
 }
 
@@ -181,11 +187,27 @@ bool HwVideoCompiler::eventSamples(Message *msg) {
         }
         clip.end = audioFrame->getPts();
         encoder->write(audioFrame);
+        // Notify record progress.
+        if (recordListener) {
+            recordListener(getRecordTimeInUs());
+        }
     } else {
         Logcat::e("HWVC", "HwVideoCompiler::write audio failed. Encoder has release.");
     }
     return true;
 }
+
+void HwVideoCompiler::setRecordListener(function<void(int64_t)> listener) {
+    this->recordListener = listener;
+}
+
+int64_t HwVideoCompiler::getRecordTimeInUs() {
+    return max(timestamp / 1000, aTimestamp / 1000) + offsetOfDuration;
+}
+
+//********************************
+// HwVideoCompiler end
+//********************************
 
 HwVideoCompiler::HwClip::HwClip() : HwClip(-1, -1) {
 
@@ -242,7 +264,7 @@ void HwVideoCompiler::HwTrack::put(int64_t start, int64_t end) {
     clips.push_front(clip);
 }
 
-HwVideoCompiler::HwClip &HwVideoCompiler::HwTrack::backward() {
+HwVideoCompiler::HwClip HwVideoCompiler::HwTrack::backward() {
     std::lock_guard<std::mutex> guard(mtx);
     if (clips.empty()) {
         HwClip clip = HwClip(-1, -1);

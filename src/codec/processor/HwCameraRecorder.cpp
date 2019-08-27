@@ -21,7 +21,11 @@ HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
     registerAnUnit(camera);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
+    HwVideoCompiler *c = new HwVideoCompiler(ALIAS_OF_COMPILER);
+    c->setRecordListener([this](int64_t timeInUs) {
+        this->recordListener(timeInUs);
+    });
+    registerAnUnit(c);
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
@@ -34,6 +38,7 @@ void HwCameraRecorder::onDestroy() {
         audioFormat = nullptr;
     }
     camera = nullptr;
+    this->recordListener = nullptr;
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {
@@ -102,4 +107,8 @@ void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
 
 void HwCameraRecorder::backward() {
     postEvent(new Message(EVENT_VIDEO_COMPILER_BACKWARD, nullptr));
+}
+
+void HwCameraRecorder::setRecordListener(function<void(int64_t)> listener) {
+    this->recordListener = listener;
 }

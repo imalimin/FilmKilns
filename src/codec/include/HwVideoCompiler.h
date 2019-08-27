@@ -40,6 +40,8 @@ public:
 
     bool eventBackward(Message *msg);
 
+    void setRecordListener(function<void(int64_t)> listener);
+
 private:
     void write(HwBuffer *buf, int64_t tsInNs);
 
@@ -48,6 +50,8 @@ private:
     int getHeight();
 
     void remuxer();
+
+    int64_t getRecordTimeInUs();
 
 private:
     HwAbsVideoEncoder *encoder = nullptr;
@@ -58,7 +62,12 @@ private:
     int64_t lastTsInNs = -1, lastATsInNs = -1;
     // frame timestamp in ns.
     int64_t timestamp = -1, aTimestamp = -1;
+    int64_t offsetOfDuration = 0;
     int count = 0;
+    /**
+     * Listeners
+     */
+    function<void(int64_t)> recordListener = nullptr;
 
 private:
     class HwClip : public Object {
@@ -91,7 +100,7 @@ private:
 
         void put(int64_t start, int64_t end);
 
-        HwVideoCompiler::HwClip &backward();
+        HwVideoCompiler::HwClip backward();
 
         int64_t duration();
 

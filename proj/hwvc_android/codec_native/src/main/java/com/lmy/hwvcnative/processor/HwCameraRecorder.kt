@@ -1,6 +1,8 @@
 package com.lmy.hwvcnative.processor
 
 import android.graphics.SurfaceTexture
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
@@ -14,6 +16,8 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     private var filter: Filter? = null
     private var camera: CameraWrapper? = null
     private var prepared = false
+    private var onRecordProgressListener: ((Long) -> Unit)? = null
+    private val mHandler = Handler(Looper.getMainLooper())
 
     init {
         handler = create()
@@ -112,6 +116,20 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     fun backward() {
         if (isNativeNull()) return
         backward(handler)
+    }
+
+    fun setOnRecordProgressListener(listener: (Long) -> Unit) {
+        this.onRecordProgressListener = listener
+    }
+
+    /**
+     * Don`t touch. Call from jni.
+     * @param timeInUs Timestamp for record progress.
+     */
+    fun onRecordProgress(timeInUs: Long) {
+        mHandler.post {
+            onRecordProgressListener?.invoke(timeInUs)
+        }
     }
 
     private external fun create(): Long

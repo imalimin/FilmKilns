@@ -14,6 +14,8 @@ import com.lmy.samplenative.VideoActivity
 import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.android.synthetic.main.view_filter.*
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CameraActivity : BaseActivity() {
     private lateinit var mFilterController: FilterController
@@ -21,6 +23,7 @@ class CameraActivity : BaseActivity() {
     private var recording = false
     private var requestPreview = false
     private lateinit var path: String
+    private val formator = SimpleDateFormat("mm:ss.SSS")
 
     override fun getLayoutResource(): Int = R.layout.activity_camera
     override fun initView() {
@@ -30,6 +33,9 @@ class CameraActivity : BaseActivity() {
         recorder?.setOutputFilePath(path)
         recorder?.setFormat(CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT)
         recorder?.prepare(surfaceView)
+        recorder?.setOnRecordProgressListener {
+            timeView.text = formator.format(Date(it / 1000))
+        }
         mFilterController = FilterController(recorder!!, progressLayout)
         filterBtn.setOnClickListener {
             mFilterController.chooseFilter(this)
