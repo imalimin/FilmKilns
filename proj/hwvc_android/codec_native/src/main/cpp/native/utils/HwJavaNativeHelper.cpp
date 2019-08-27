@@ -189,8 +189,13 @@ bool HwJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jm
     auto itr = methodMap.find(key);
     if (methodMap.end() == itr) {
         jclass clazz = pEnv->GetObjectClass(jObject);
-        *methodID = pEnv->GetMethodID(clazz, method.name.c_str(), method.sign.c_str());
+        jmethodID id = pEnv->GetMethodID(clazz, method.name.c_str(), method.sign.c_str());
         pEnv->DeleteLocalRef(clazz);
+        if (!id || pEnv->ExceptionCheck()) {
+            *methodID = nullptr;
+            return false;
+        }
+        *methodID = id;
         methodMap.insert(pair<string, jmethodID>(key, *methodID));
     } else {
         *methodID = itr->second;
