@@ -25,6 +25,15 @@ extern "C" {
 }
 #endif
 
+/**
+ * Hardware codec for android.
+ *
+ * Request key frame:
+ * Bundle params = new Bundle();
+ * params.putInt(MediaCodec.PARAMETER_KEY_REQUEST_SYNC_FRAME, 0);
+ * mMediaCodec.setParameters(params);
+ *
+ */
 class HwAndroidCodec : public HwAbsCodec {
 public:
     static HwAbsCodec *createDecoder(int32_t codecId);
