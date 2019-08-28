@@ -20,6 +20,18 @@
         android:layout_marginBottom="32dp"
         android:padding="8dp">
 
+        <TextView
+            android:id="@+id/swapBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="#33ffffff"
+            android:padding="8dp"
+            android:text="SWAP"
+            android:textColor="@color/colorAccent" />
+
         <Button
             android:id="@+id/recordBtn"
             android:layout_width="wrap_content"

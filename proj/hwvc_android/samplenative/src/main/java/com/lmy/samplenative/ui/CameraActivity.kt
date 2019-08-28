@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
-import android.os.Environment
 import com.lmy.hwvcnative.devices.CameraWrapper
 import com.lmy.hwvcnative.processor.HwCameraRecorder
 import com.lmy.samplenative.BaseActivity
@@ -71,6 +70,9 @@ class CameraActivity : BaseActivity() {
         }
         backBtn.setOnClickListener {
             recorder?.backward()
+        }
+        swapBtn.setOnClickListener {
+            recorder?.swapCamera()
         }
     }
 

@@ -18,6 +18,7 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     private var prepared = false
     private var onRecordProgressListener: ((Long) -> Unit)? = null
     private val mHandler = Handler(Looper.getMainLooper())
+    private var mCameraIndex = CameraWrapper.CameraIndex.FRONT
 
     init {
         handler = create()
@@ -41,9 +42,14 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
 
     fun release() {
         if (0L == handler) return
-        postEvent(handler, 2)
+        postEvent(handler, EVENT_RELEASE)
         release(handler)
         handler = 0L
+    }
+
+    fun swapCamera() {
+        if (0L == handler) return
+        postEvent(handler, EVENT_SWAP)
     }
 
     fun prepare(view: SurfaceView) {
@@ -52,7 +58,7 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
                 if (!prepared) {
                     prepared = true
                     prepare(holder.surface)
-                    postEvent(handler, 1)
+                    postEvent(handler, EVENT_PREPARE)
                 } else {
                     if (0L != handler) {
                         updateWindow(handler, holder.surface)
@@ -81,14 +87,22 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
         if (0L == handler) return
-        postEvent(handler, 3)
+        postEvent(handler, EVENT_DRAW)
     }
 
     fun onHandleMessage(what: Int, arg1: Int) {
 //        Log.i("CameraActivity", "onHandleMessage $what")
         when (what) {
-            1 -> camera = CameraWrapper.open(arg1, this)
+            1 -> camera = CameraWrapper.open(mCameraIndex, arg1, this)
             2 -> camera?.release()
+            4 -> {
+                mCameraIndex = if (CameraWrapper.CameraIndex.FRONT == mCameraIndex)
+                    CameraWrapper.CameraIndex.BACK
+                else {
+                    CameraWrapper.CameraIndex.FRONT
+                }
+                camera?.switchCamera(mCameraIndex)
+            }
             3 -> {
                 camera?.draw()
                 if (0L != handler) {
@@ -148,4 +162,11 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
 
     private external fun setFilter(handler: Long, filter: Long)
     private external fun backward(handler: Long)
+
+    companion object {
+        const val EVENT_PREPARE = 1
+        const val EVENT_RELEASE = 2
+        const val EVENT_DRAW = 3
+        const val EVENT_SWAP = 4
+    }
 }

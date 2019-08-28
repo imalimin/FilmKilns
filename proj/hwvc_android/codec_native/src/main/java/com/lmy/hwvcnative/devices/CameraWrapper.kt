@@ -13,7 +13,8 @@ import android.util.Log
 /**
  * Created by lmyooyo@gmail.com on 2018/3/21.
  */
-class CameraWrapper private constructor(private val tex: Int,
+class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
+                                        private val tex: Int,
                                         private var onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener) {
     enum class CameraIndex { BACK, FRONT }
     companion object {
@@ -21,9 +22,9 @@ class CameraWrapper private constructor(private val tex: Int,
         const val TAG = "CameraWrapper"
         const val VIDEO_WIDTH = 544
         const val VIDEO_HEIGHT = 960
-        fun open(tex: Int, onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
+        fun open(index: CameraWrapper.CameraIndex, tex: Int, onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
-            return CameraWrapper(tex, onFrameAvailableListener)
+            return CameraWrapper(index, tex, onFrameAvailableListener)
         }
     }
 
@@ -38,7 +39,7 @@ class CameraWrapper private constructor(private val tex: Int,
     init {
         mCameras = CameraHelper.getNumberOfCameras()
         surface = SurfaceTexture(tex)
-        openCamera(CameraIndex.FRONT)
+        openCamera(index)
     }
 
     fun switchCamera(index: CameraIndex) {

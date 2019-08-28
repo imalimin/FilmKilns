@@ -49,8 +49,18 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
                                                               cOnHandleMessage,
                                                               &methodID)) {
                 getHandler(handler)->mackCameraCurrent();
-                pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat,
-                                     1 == HwCameraRecorderWhat ? getHandler(handler)->getTex() : 0);
+                switch (HwCameraRecorderWhat) {
+                    case 4: {
+                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat,
+                                             1 == HwCameraRecorderWhat ? getHandler(
+                                                     handler)->getTex() : 0);
+                        break;
+                    }
+                    default:
+                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat,
+                                             1 == HwCameraRecorderWhat ? getHandler(
+                                                     handler)->getTex() : 0);
+                }
             }
         });
     }
