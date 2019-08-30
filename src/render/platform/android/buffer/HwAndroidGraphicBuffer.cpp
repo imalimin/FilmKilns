@@ -66,6 +66,7 @@ HwAndroidGraphicBuffer::~HwAndroidGraphicBuffer() {
 }
 
 bool HwAndroidGraphicBuffer::bind() {
+    //Like glTexImage2D.
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, pImageKHR);
     return true;
 }
