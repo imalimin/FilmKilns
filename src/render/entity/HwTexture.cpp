@@ -36,12 +36,9 @@ HwTexture *HwTexture::wrap(uint32_t target, uint32_t tex, int w, int h) {
     return new HwTexture(target, tex, w, h);
 }
 
-HwTexture::HwTexture(uint32_t target) : Object(),
-                                        tar(target),
-                                        tex(GL_NONE),
-                                        fmt(GL_RGBA),
-                                        size(Size(0, 0)),
+HwTexture::HwTexture(uint32_t target) : HwAbsTexture(target),
                                         isRef(false) {
+    fmt = GL_RGBA;
     glGenTextures(1, &tex);
     bind();
     glTexParameterf(tar, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -51,19 +48,18 @@ HwTexture::HwTexture(uint32_t target) : Object(),
     unbind();
 }
 
-HwTexture::HwTexture(uint32_t target, uint32_t tex, int w, int h) : Object(),
-                                                                    tar(target),
-                                                                    tex(tex),
-                                                                    fmt(GL_RGBA),
-                                                                    size(Size(w, h)),
+HwTexture::HwTexture(uint32_t target, uint32_t tex, int w, int h) : HwAbsTexture(target),
                                                                     isRef(true) {
+    this->tex = tex;
+    this->fmt = GL_RGBA;
+    this->size = Size(w, h);
 }
 
 HwTexture::~HwTexture() {
     if (isRef) {
         tex = 0;
     } else {
-        if (GL_NONE != tex) {
+        if (GL_NONE != tex && glIsTexture(tex)) {
             glDeleteTextures(1, &tex);
         }
     }
@@ -79,21 +75,8 @@ void HwTexture::unbind() {
     glBindTexture(tar, GL_NONE);
 }
 
-uint32_t HwTexture::texId() {
-    return tex;
-}
-
-int HwTexture::getWidth() {
-    return size.width;
-}
-
-int HwTexture::getHeight() {
-    return size.height;
-}
-
-uint32_t HwTexture::target() { return tar; }
-
 void HwTexture::update(HwBuffer *buf, int32_t w, int32_t h) {
+    HwAbsTexture::update(buf, w, h);
     size.width = w;
     size.height = h;
     bind();

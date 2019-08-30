@@ -56,11 +56,8 @@ HwProgram::~HwProgram() {
     }
 }
 
-void HwProgram::draw(HwTexture *tex, HwAbsFBObject *fbo) {
+void HwProgram::draw(HwTexture *tex) {
     glUseProgram(program);
-    if (fbo) {
-        fbo->bind();
-    }
     glActiveTexture(GL_TEXTURE0);
     tex->bind();
     glUniform1i(uTextureLocation, 0);
@@ -70,9 +67,6 @@ void HwProgram::draw(HwTexture *tex, HwAbsFBObject *fbo) {
     glDisableVertexAttribArray(aPositionLocation);
     glDisableVertexAttribArray(aTextureCoordinateLocation);
     tex->unbind();
-    if (fbo) {
-        fbo->unbind();
-    }
     glUseProgram(GL_NONE);
 }
 

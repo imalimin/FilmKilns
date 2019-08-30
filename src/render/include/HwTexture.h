@@ -8,11 +8,11 @@
 #ifndef HWVC_ANDROID_HWTEXTURE_H
 #define HWVC_ANDROID_HWTEXTURE_H
 
-#include "Object.h"
+#include "HwAbsTexture.h"
 #include "Size.h"
 #include "HwBuffer.h"
 
-class HwTexture : public Object {
+class HwTexture : public HwAbsTexture {
 public:
 #ifdef __ANDROID__
 
@@ -29,19 +29,11 @@ public:
 public:
     virtual ~HwTexture();
 
-    uint32_t texId();
+    virtual void bind() override;
 
-    int getWidth();
+    virtual void unbind() override;
 
-    int getHeight();
-
-    void bind();
-
-    void unbind();
-
-    uint32_t target();
-
-    void update(HwBuffer *buf, int32_t w, int32_t h);
+    virtual void update(HwBuffer *buf, int32_t w, int32_t h) override;
 
 private:
     HwTexture(uint32_t target);
@@ -49,10 +41,6 @@ private:
     HwTexture(uint32_t target, uint32_t tex, int w, int h);
 
 private:
-    uint32_t tar;
-    uint32_t tex;
-    uint32_t fmt;
-    Size size;
     bool applied = false;
     bool isRef;
 };

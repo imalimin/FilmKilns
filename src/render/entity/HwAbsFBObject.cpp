@@ -16,7 +16,7 @@ HwAbsFBObject::~HwAbsFBObject() {
     this->tex = nullptr;
 }
 
-void HwAbsFBObject::bindTex(HwTexture *tex) {
+void HwAbsFBObject::bindTex(HwAbsTexture *tex) {
     if (this->tex == tex) {
         return;
     }

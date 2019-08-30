@@ -10,7 +10,7 @@
 
 #include "Object.h"
 #include "Size.h"
-#include "HwTexture.h"
+#include "HwAbsTexture.h"
 
 class HwAbsFBObject : public Object {
 public:
@@ -18,7 +18,7 @@ public:
 
     virtual ~HwAbsFBObject();
 
-    void bindTex(HwTexture *tex);
+    void bindTex(HwAbsTexture *tex);
 
     void unbindTex();
 
@@ -28,7 +28,7 @@ public:
 
 private:
     uint32_t fbo = 0;
-    HwTexture *tex = nullptr;
+    HwAbsTexture *tex = nullptr;
 };
 
 

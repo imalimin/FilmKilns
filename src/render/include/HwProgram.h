@@ -10,7 +10,6 @@
 
 #include "Object.h"
 #include "HwTexture.h"
-#include "HwAbsFBObject.h"
 #include "HwMatrix.h"
 
 class HwProgram : public Object {
@@ -20,7 +19,7 @@ public:
 public:
     virtual ~HwProgram();
 
-    void draw(HwTexture *tex, HwAbsFBObject *fbo);
+    void draw(HwTexture *tex);
 
     void updateLocation(float *texCoordinate, float *position);
 

@@ -6,6 +6,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/platform/android
             ${PROJECT_SOURCE_DIR}/platform/android/buffer
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader
+            ${PROJECT_SOURCE_DIR}/platform/android/entity
     )
 else ()
     include_directories(
@@ -51,6 +52,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader/*.cpp
+            ${PROJECT_SOURCE_DIR}/platform/android/entity/*.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwAbsFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwAndroidFrameBuffer.cpp

@@ -99,7 +99,9 @@ void HwCameraInput::draw(int w, int h) {
     glViewport(0, 0, destTex->getWidth(), destTex->getHeight());
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
-    program->draw(srcTex, fbo);
+    fbo->bind();
+    program->draw(srcTex);
+    fbo->unbind();
 }
 
 void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
