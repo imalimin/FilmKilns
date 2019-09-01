@@ -24,7 +24,7 @@ Filter::~Filter() {
         delete fbo;
         fbo = nullptr;
     }
-    if (fbo) {
+    if (drawer) {
         delete drawer;
         drawer = nullptr;
     }

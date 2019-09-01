@@ -9,8 +9,10 @@
 #define HWVC_ANDROID_HWPROGRAM_H
 
 #include "Object.h"
-#include "HwTexture.h"
+#include "HwAbsTexture.h"
 #include "HwMatrix.h"
+
+#define HW_SHADER(...) #__VA_ARGS__
 
 class HwProgram : public Object {
 public:
@@ -19,7 +21,7 @@ public:
 public:
     virtual ~HwProgram();
 
-    void draw(HwTexture *tex);
+    void draw(HwAbsTexture *tex);
 
     void updateLocation(float *texCoordinate, float *position);
 
@@ -32,6 +34,10 @@ public:
     void setUniformMatrix4fv(int32_t location, float *value);
 
     void updateMatrix(HwMatrix *matrix);
+
+    void bind();
+
+    void unbind();
 
 private:
     HwProgram(string *vertex, string *fragment);

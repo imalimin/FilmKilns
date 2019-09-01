@@ -7,28 +7,25 @@
 #ifndef HARDWAREVIDEOCODEC_HWVCFILTER_H
 #define HARDWAREVIDEOCODEC_HWVCFILTER_H
 
-#include "Filter.h"
+#include "HwAbsFilter.h"
 #include "PngDecoder.h"
 #include <string>
 #include "../tinyxml/FilterReader.h"
 
 using namespace std;
 
-class HwvcFilter : public Filter {
+class HwvcFilter : public HwAbsFilter {
 public:
     HwvcFilter(char *path);
 
-#ifdef ANDROID
-
-    HwvcFilter(char *path, bool requestHwMode);
-
-#endif
-
     virtual ~HwvcFilter();
 
-    virtual bool init(int w, int h) override;
+    virtual bool init() override;
 
-    void bindResources() override;
+    virtual void draw(HwAbsTexture *src, HwAbsTexture *dest) override;
+
+private:
+    void bindResources();
 
 private:
     FilterReader *reader = nullptr;
@@ -37,12 +34,12 @@ private:
     int size = 0;
     int paramSize = 0;
     float *params = nullptr;
-    GLuint *textures = nullptr;
-    GLint *textureLocations = nullptr;
-    GLint *paramLocations = nullptr;
+    uint32_t *textures = nullptr;
+    int32_t *textureLocations = nullptr;
+    int32_t *paramLocations = nullptr;
     PngDecoder *decoder = nullptr;
 
-    GLuint loadTexture(string pngBuf);
+    uint32_t loadTexture(string pngBuf);
 };
 
 

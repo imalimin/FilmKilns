@@ -6,19 +6,20 @@
  */
 #include "Logcat.h"
 #include "../include/HwRender.h"
-#include "../include/NormalFilter.h"
+#include "../include/HwNormalFilter.h"
 #include "../include/ObjectBox.h"
 #include "TimeUtils.h"
 #include "../include/RGBA2NV12Filter.h"
 #include "../include/HwTexture.h"
+#include "../include/HwFBObject.h"
 
 HwRender::HwRender(string alias) : Unit(alias) {
 #ifdef ANDROID
-    filter = new NormalFilter(true);
+    filter = new HwNormalFilter();
 #else
     filter = new NormalFilter();
 #endif
-    yuvReadFilter = new RGBA2NV12Filter();
+//    yuvReadFilter = new RGBA2NV12Filter();
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READ,
                   reinterpret_cast<EventFunc>(&HwRender::eventReadPixels));
@@ -58,15 +59,15 @@ bool HwRender::eventRelease(Message *msg) {
 
 bool HwRender::eventReadPixels(Message *msg) {
     bool read = false;
-    if (yuvReadFilter) {
-        yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());
-        if (yuvReadFilter->getFrameBuffer()->read(buf->data())) {
-            read = true;
-        }
-    }
-    if (!read && filter->getFrameBuffer()->read(buf->data())) {
-        read = true;
-    }
+//    if (yuvReadFilter) {
+//        yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());
+//        if (yuvReadFilter->getFrameBuffer()->read(buf->data())) {
+//            read = true;
+//        }
+//    }
+//    if (!read && filter->getFrameBuffer()->read(buf->data())) {
+//        read = true;
+//    }
     if (read) {
         Message *msg1 = new Message(EVENT_COMMON_PIXELS, nullptr);
         msg1->obj = HwBuffer::wrap(buf->data(), buf->size());
@@ -82,7 +83,7 @@ bool HwRender::eventRenderFilter(Message *msg) {
     tsInNs = msg->arg2;
     checkFilter(tex->getWidth(), tex->getHeight());
     glViewport(0, 0, tex->getWidth(), tex->getHeight());
-    renderFilter(tex->texId());
+    renderFilter(tex);
     notifyPixelsReady();
     renderScreen();
     return true;
@@ -95,28 +96,28 @@ bool HwRender::eventSetFilter(Message *msg) {
         delete filter;
         filter = nullptr;
     }
-    filter = newFilter;
+//    filter = newFilter;
     return true;
 }
 
 void HwRender::renderScreen() {
     Logcat::i("HWVC", "Render::renderScreen");
     Message *msg = new Message(EVENT_SCREEN_DRAW, nullptr);
-    msg->obj = new ObjectBox(new Size(filter->getFrameBuffer()->width(),
-                                      filter->getFrameBuffer()->height()));
-    msg->arg1 = filter->getFrameBuffer()->getFrameTexture();
+    msg->obj = new ObjectBox(new Size(target->getWidth(), target->getHeight()));
+    msg->arg1 = target->texId();
     postEvent(msg);
 }
 
 void HwRender::checkFilter(int width, int height) {
     if (filter) {
-        bool ret = filter->init(width, height);
-        if (yuvReadFilter) {
-            yuvReadFilter->init(width, height);
-        }
+        bool ret = filter->init();
+//        if (yuvReadFilter) {
+//            yuvReadFilter->init(width, height);
+//        }
         if (ret) {
-            size_t size = static_cast<size_t>(filter->getFrameBuffer()->width()
-                                              * filter->getFrameBuffer()->height() * 3 / 2);
+            target = HwTexture::alloc(GL_TEXTURE_2D);
+            target->update(nullptr, width, height);
+            size_t size = static_cast<size_t>(width * height * 3 / 2);
             buf = HwBuffer::alloc(size);
         }
     }
@@ -125,9 +126,9 @@ void HwRender::checkFilter(int width, int height) {
     }
 }
 
-void HwRender::renderFilter(GLuint texture) {
-    Logcat::i("HWVC", "Render::renderFilter %d", texture);
-    filter->draw(texture);
+void HwRender::renderFilter(HwAbsTexture *tex) {
+    Logcat::i("HWVC", "Render::renderFilter %d", tex->texId());
+    filter->draw(tex, target);
 #if 0
     if (yuvReadFilter) {
         yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());

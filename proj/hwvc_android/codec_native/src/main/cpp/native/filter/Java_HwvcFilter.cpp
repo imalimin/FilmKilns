@@ -19,7 +19,7 @@ static HwvcFilter *getHandler(jlong handler) {
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_filter_HwvcFilter_create
         (JNIEnv *env, jobject thiz, jstring path, jboolean requestHwMode) {
     char *pPath = const_cast<char *>(env->GetStringUTFChars(path, NULL));
-    jlong handler = reinterpret_cast<jlong>(new HwvcFilter(pPath, JNI_TRUE == requestHwMode));
+    jlong handler = reinterpret_cast<jlong>(new HwvcFilter(pPath));
     env->ReleaseStringUTFChars(path, pPath);
     return handler;
 }

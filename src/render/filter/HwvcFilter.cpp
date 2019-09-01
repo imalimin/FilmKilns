@@ -9,19 +9,10 @@
 #include "../entity/FilterEntity.h"
 #include "log.h"
 
-HwvcFilter::HwvcFilter(char *path) : Filter() {
+HwvcFilter::HwvcFilter(char *path) : HwAbsFilter() {
     reader = new FilterReader(path);
     decoder = new PngDecoder();
 }
-
-#ifdef ANDROID
-
-HwvcFilter::HwvcFilter(char *path, bool requestHwMode) : Filter(requestHwMode) {
-    reader = new FilterReader(path);
-    decoder = new PngDecoder();
-}
-
-#endif
 
 HwvcFilter::~HwvcFilter() {
     if (params) {
@@ -51,15 +42,15 @@ HwvcFilter::~HwvcFilter() {
     }
 }
 
-bool HwvcFilter::init(int w, int h) {
-    if (!Filter::init(w, h))
+bool HwvcFilter::init() {
+    if (!HwAbsFilter::init())
         return false;
     struct timeval start, end;
     gettimeofday(&start, NULL);
     FilterEntity *entity = reader->read();
     gettimeofday(&end, NULL);
     long time = end.tv_usec - start.tv_usec;
-    drawer = new NormalDrawer(entity->vertex, entity->fragment);
+    program = HwProgram::create(&entity->vertex, &entity->fragment);
     //读取Sampler
     this->size = entity->samplers.size();
     if (0 != this->size) {
@@ -67,7 +58,7 @@ bool HwvcFilter::init(int w, int h) {
         textureLocations = new GLint[size];
         int i = 0;
         for (auto itr = entity->samplers.begin(); itr != entity->samplers.end(); itr++) {
-            textureLocations[i] = drawer->getUniformLocation(itr->first);
+            textureLocations[i] = program->getUniformLocation(itr->first);
             textures[i] = loadTexture(itr->second);
             ++i;
         }
@@ -79,7 +70,7 @@ bool HwvcFilter::init(int w, int h) {
         params = new float[paramSize];
         int i = 0;
         for (auto itr = entity->params.begin(); itr != entity->params.end(); itr++) {
-            paramLocations[i] = drawer->getUniformLocation(itr->first);
+            paramLocations[i] = program->getUniformLocation(itr->first);
             params[i] = itr->second;
             ++i;
         }
@@ -91,8 +82,14 @@ bool HwvcFilter::init(int w, int h) {
     return true;
 }
 
+void HwvcFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
+    program->bind();
+    bindResources();
+    program->unbind();
+    HwAbsFilter::draw(src, dest);
+}
+
 void HwvcFilter::bindResources() {
-    Filter::bindResources();
     /**
      * GL_TEXTURE0为保留Sampler，给默认画面使用
      */
@@ -103,7 +100,7 @@ void HwvcFilter::bindResources() {
         glUniform1i(textureLocations[i], offset);
     }
     for (int i = 0; i < paramSize; ++i) {
-        drawer->setUniform1f(paramLocations[i], params[i]);
+        program->setUniform1f(paramLocations[i], params[i]);
     }
 }
 

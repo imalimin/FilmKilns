@@ -9,8 +9,10 @@
 #define HARDWAREVIDEOCODEC_RENDER_H
 
 #include "Unit.h"
-#include "Filter.h"
+#include "HwAbsFilter.h"
 #include "HwBuffer.h"
+#include "HwAbsTexture.h"
+#include "HwAbsFBObject.h"
 
 class HwRender : public Unit {
 public:
@@ -31,7 +33,7 @@ public:
 private:
     void checkFilter(int width, int height);
 
-    void renderFilter(GLuint texture);
+    void renderFilter(HwAbsTexture *tex);
 
     void renderScreen();
 
@@ -40,8 +42,9 @@ private:
     void notifyPixelsReady();
 
 private:
-    Filter *filter = nullptr;
-    Filter *yuvReadFilter = nullptr;
+    HwAbsTexture *target = nullptr;
+    HwAbsFilter *filter = nullptr;
+    HwAbsFilter *yuvReadFilter = nullptr;
     uint8_t *pixels = nullptr;
     int count = 0;
     HwBuffer *buf = nullptr;

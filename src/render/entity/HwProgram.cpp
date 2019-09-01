@@ -56,8 +56,8 @@ HwProgram::~HwProgram() {
     }
 }
 
-void HwProgram::draw(HwTexture *tex) {
-    glUseProgram(program);
+void HwProgram::draw(HwAbsTexture *tex) {
+    bind();
     glActiveTexture(GL_TEXTURE0);
     tex->bind();
     glUniform1i(uTextureLocation, 0);
@@ -67,7 +67,7 @@ void HwProgram::draw(HwTexture *tex) {
     glDisableVertexAttribArray(aPositionLocation);
     glDisableVertexAttribArray(aTextureCoordinateLocation);
     tex->unbind();
-    glUseProgram(GL_NONE);
+    unbind();
 }
 
 uint32_t HwProgram::createVBOs() {
@@ -130,13 +130,10 @@ uint32_t HwProgram::createProgram(string *vertex, string *fragment) {
     if (GL_NONE == vertexShader || GL_NONE == fragmentShader) {
         return GL_NONE;
     }
-    //附着顶点和片段着色器
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
-    //链接program
     glLinkProgram(program);
-    //告诉OpenGL ES使用此program
-    glUseProgram(program);
+    bind();
     return program;
 }
 
@@ -161,6 +158,14 @@ void HwProgram::updateLocation(float *texCoordinate, float *position) {
         memcpy(this->position, position, (size_t) HW_VERTEX_BYTE_SIZE);
     }
     requestUpdateLocation = true;
+}
+
+void HwProgram::bind() {
+    glUseProgram(program);
+}
+
+void HwProgram::unbind() {
+    glUseProgram(GL_NONE);
 }
 
 void HwProgram::setUniform1f(int32_t location, float value) {

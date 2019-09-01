@@ -33,5 +33,6 @@ uint32_t HwAbsTexture::target() {
 }
 
 void HwAbsTexture::update(HwBuffer *buf, int32_t w, int32_t h) {
-
+    size.width = w;
+    size.height = h;
 }
