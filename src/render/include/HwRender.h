@@ -42,7 +42,9 @@ private:
     void notifyPixelsReady();
 
 private:
+    HwAbsFBObject *fbo = nullptr;
     HwAbsTexture *target = nullptr;
+    HwAbsTexture *yuvTarget = nullptr;
     HwAbsFilter *filter = nullptr;
     HwAbsFilter *yuvReadFilter = nullptr;
     uint8_t *pixels = nullptr;

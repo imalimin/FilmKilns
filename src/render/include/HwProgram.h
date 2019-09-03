@@ -33,6 +33,8 @@ public:
 
     void setUniformMatrix4fv(int32_t location, float *value);
 
+    void setUniform1i(int32_t location, int32_t value);
+
     void updateMatrix(HwMatrix *matrix);
 
     void bind();

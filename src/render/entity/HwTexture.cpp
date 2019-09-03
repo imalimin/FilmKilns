@@ -91,3 +91,8 @@ void HwTexture::update(HwBuffer *buf, int32_t w, int32_t h) {
     }
     unbind();
 }
+
+bool HwTexture::read(uint8_t *pixels) {
+    glReadPixels(0, 0, getWidth(), getHeight(), fmt, GL_UNSIGNED_BYTE, pixels);
+    return true;
+}

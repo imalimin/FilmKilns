@@ -10,6 +10,7 @@
 #include "HwAndroidGraphicBuffer.h"
 #include "HwAndroidUtils.h"
 #include "Logcat.h"
+#include "../../../include/HwTexture.h"
 #include <GLES2/gl2.h>
 
 HwAndroidTexture::HwAndroidTexture(uint32_t target) : HwAbsTexture(target) {
@@ -87,4 +88,11 @@ void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h) {
 
 bool HwAndroidTexture::support() {
     return sdk >= 26 || sdk <= 23;
+}
+
+bool HwAndroidTexture::read(uint8_t *pixels) {
+    if (graphicBuffer) {
+        return static_cast<HwAbsGraphicBuffer *>(graphicBuffer)->read(pixels);
+    }
+    return texCompat->read(pixels);
 }

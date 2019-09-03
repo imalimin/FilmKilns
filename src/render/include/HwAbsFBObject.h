@@ -10,7 +10,8 @@
 
 #include "Object.h"
 #include "Size.h"
-#include "HwAbsTexture.h"
+
+class HwAbsTexture;
 
 class HwAbsFBObject : public Object {
 public:
@@ -25,6 +26,8 @@ public:
     void bind();
 
     void unbind();
+
+    virtual bool read(uint8_t *pixels);
 
 private:
     uint32_t fbo = 0;

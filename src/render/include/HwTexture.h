@@ -35,6 +35,9 @@ public:
 
     virtual void update(HwBuffer *buf, int32_t w, int32_t h) override;
 
+public:
+    virtual bool read(uint8_t *pixels) override;
+
 private:
     HwTexture(uint32_t target);
 

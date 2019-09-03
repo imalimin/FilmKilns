@@ -6,6 +6,7 @@
 */
 
 #include "../include/HwAbsFBObject.h"
+#include "../include/HwAbsTexture.h"
 #include <GLES2/gl2.h>
 
 HwAbsFBObject::HwAbsFBObject() : Object() {
@@ -49,4 +50,14 @@ void HwAbsFBObject::bind() {
 
 void HwAbsFBObject::unbind() {
     glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+}
+
+bool HwAbsFBObject::read(uint8_t *pixels) {
+    if (!tex) {
+        return false;
+    }
+    bind();
+    bool ret = tex->read(pixels);
+    unbind();
+    return ret;
 }

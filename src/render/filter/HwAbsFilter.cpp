@@ -40,6 +40,7 @@ void HwAbsFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     }
     program->draw(src);
     if (fbo) {
+        fbo->unbindTex();
         fbo->unbind();
     }
 }

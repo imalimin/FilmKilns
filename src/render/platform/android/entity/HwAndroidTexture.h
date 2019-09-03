@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWANDROIDTEXTURE_H
 
 #include "../../../include/HwAbsTexture.h"
-#include "../../../include/HwTexture.h"
+#include "../../../include/HwAbsTexture.h"
 
 class HwAndroidTexture : public HwAbsTexture {
 public:
@@ -23,13 +23,16 @@ public:
 
     virtual void update(HwBuffer *buf, int32_t w, int32_t h) override;
 
+public:
+    virtual bool read(uint8_t *pixels) override;
+
 private:
     bool support();
 
 private:
     int sdk = 0;
     Object *graphicBuffer = nullptr;
-    HwTexture *texCompat = nullptr;
+    HwAbsTexture *texCompat = nullptr;
 };
 
 

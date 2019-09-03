@@ -11,8 +11,12 @@
 #include "Object.h"
 #include "Size.h"
 #include "HwBuffer.h"
+#include "HwAbsFBObject.h"
 
 class HwAbsTexture : public Object {
+private:
+    friend class HwAbsFBObject;
+
 public:
     HwAbsTexture(uint32_t target);
 
@@ -31,6 +35,12 @@ public:
     uint32_t target();
 
     virtual void update(HwBuffer *buf, int32_t w, int32_t h);
+
+public:
+    /**
+     * Call by HwAbsFBObject
+     */
+    virtual bool read(uint8_t *pixels)=0;
 
 protected:
     uint32_t tar;

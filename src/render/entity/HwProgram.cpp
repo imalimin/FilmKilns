@@ -176,6 +176,10 @@ void HwProgram::setUniformMatrix4fv(int32_t location, float *value) {
     glUniformMatrix4fv(location, 1, GL_FALSE, value);
 }
 
+void HwProgram::setUniform1i(int32_t location, int32_t value) {
+    glUniform1i(location, value);
+}
+
 int32_t HwProgram::getAttribLocation(string name) {
     return glGetAttribLocation(program, name.c_str());
 }
