@@ -42,15 +42,13 @@ HwvcFilter::~HwvcFilter() {
     }
 }
 
-bool HwvcFilter::init() {
-    if (!HwAbsFilter::init())
-        return false;
+HwProgram *HwvcFilter::createProgram() {
     struct timeval start, end;
     gettimeofday(&start, NULL);
     FilterEntity *entity = reader->read();
     gettimeofday(&end, NULL);
     long time = end.tv_usec - start.tv_usec;
-    program = HwProgram::create(&entity->vertex, &entity->fragment);
+    HwProgram *program = HwProgram::create(&entity->vertex, &entity->fragment);
     //读取Sampler
     this->size = entity->samplers.size();
     if (0 != this->size) {
@@ -79,17 +77,12 @@ bool HwvcFilter::init() {
     LOGI("%s(ver: %d) read cost: %ld / %ld us", entity->name.c_str(), entity->version, time,
          (end.tv_usec - start.tv_usec));
     delete entity;
-    return true;
+    return program;
 }
 
-void HwvcFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
+void HwvcFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+    HwAbsFilter::drawFirst(program, src, dest);
     program->bind();
-    bindResources();
-    program->unbind();
-    HwAbsFilter::draw(src, dest);
-}
-
-void HwvcFilter::bindResources() {
     /**
      * GL_TEXTURE0为保留Sampler，给默认画面使用
      */
@@ -102,6 +95,7 @@ void HwvcFilter::bindResources() {
     for (int i = 0; i < paramSize; ++i) {
         program->setUniform1f(paramLocations[i], params[i]);
     }
+    program->unbind();
 }
 
 GLuint HwvcFilter::loadTexture(string pngBuf) {

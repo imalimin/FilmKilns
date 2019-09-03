@@ -23,12 +23,20 @@ HwAbsFilter::~HwAbsFilter() {
     }
 }
 
-bool HwAbsFilter::init() {
+bool HwAbsFilter::prepare() {
     if (initialized)
         return false;
     fbo = HwFBObject::alloc();
+    program = createProgram();
+    if (!program) {
+        return false;
+    }
     initialized = true;
     return true;
+}
+
+void HwAbsFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+
 }
 
 void HwAbsFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
@@ -38,6 +46,7 @@ void HwAbsFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
         fbo->bindTex(dest);
         fbo->bind();
     }
+    drawFirst(program, src, dest);
     program->draw(src);
     if (fbo) {
         fbo->unbindTex();

@@ -20,12 +20,9 @@ public:
 
     virtual ~HwvcFilter();
 
-    virtual bool init() override;
+    virtual HwProgram *createProgram() override;
 
-    virtual void draw(HwAbsTexture *src, HwAbsTexture *dest) override;
-
-private:
-    void bindResources();
+    virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
     FilterReader *reader = nullptr;

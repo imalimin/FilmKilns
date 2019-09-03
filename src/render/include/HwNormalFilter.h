@@ -16,9 +16,7 @@ public:
 
     virtual ~HwNormalFilter();
 
-    virtual bool init() override;
-
-    virtual void draw(HwAbsTexture *src, HwAbsTexture *dest) override;
+    virtual HwProgram *createProgram() override;
 
 };
 

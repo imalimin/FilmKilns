@@ -35,16 +35,8 @@ HwNormalFilter::~HwNormalFilter() {
 
 }
 
-bool HwNormalFilter::init() {
-    if (!HwAbsFilter::init()) {
-        return false;
-    }
+HwProgram *HwNormalFilter::createProgram() {
     string vertex = string(VERTEX);
     string fragment = string(FRAGMENT);
-    program = HwProgram::create(&vertex, &fragment);
-    return true;
-}
-
-void HwNormalFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
-    HwAbsFilter::draw(src, dest);
+    return HwProgram::create(&vertex, &fragment);;
 }

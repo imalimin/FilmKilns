@@ -72,20 +72,17 @@ HwRGBA2NV12Filter::~HwRGBA2NV12Filter() {
 
 }
 
-bool HwRGBA2NV12Filter::init() {
-    if (!HwAbsFilter::init()) {
-        return false;
-    }
+HwProgram *HwRGBA2NV12Filter::createProgram() {
     string vertex = string(VERTEX);
     string fragment = string(FRAGMENT);
-    program = HwProgram::create(&vertex, &fragment);
+    HwProgram *program = HwProgram::create(&vertex, &fragment);
     this->widthLocation = program->getUniformLocation("width");
-    return true;
+    return program;
 }
 
-void HwRGBA2NV12Filter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
+void HwRGBA2NV12Filter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+    HwAbsFilter::drawFirst(program, src, dest);
     program->bind();
     program->setUniform1i(this->widthLocation, dest->getWidth() * 4);
     program->unbind();
-    HwAbsFilter::draw(src, dest);
 }

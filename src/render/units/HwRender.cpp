@@ -126,9 +126,9 @@ void HwRender::renderScreen() {
 
 void HwRender::checkFilter(int width, int height) {
     if (filter) {
-        bool ret = filter->init();
+        bool ret = filter->prepare();
         if (yuvReadFilter) {
-            yuvReadFilter->init();
+            yuvReadFilter->prepare();
             yuvTarget = HwTexture::alloc(GL_TEXTURE_2D);
             yuvTarget->update(nullptr, width / 4, height * 3 / 2);
             fbo = HwFBObject::alloc();

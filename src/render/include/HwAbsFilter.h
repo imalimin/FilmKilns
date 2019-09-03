@@ -24,7 +24,7 @@ public:
 
     virtual ~HwAbsFilter();
 
-    virtual bool init();
+    bool prepare();
 
     virtual void draw(HwAbsTexture *src, HwAbsTexture *dest);
 
@@ -32,11 +32,13 @@ public:
 
     virtual void setParam(int key, int value);
 
-protected:
-    HwProgram *program = nullptr;
+    virtual HwProgram *createProgram()=0;
+
+    virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
 
 private:
     HwAbsFBObject *fbo = nullptr;
+    HwProgram *program = nullptr;
     bool initialized = false;
 };
 
