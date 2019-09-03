@@ -7,7 +7,7 @@
 
 #include "Object.h"
 #include "UnitPipeline.h"
-#include "Filter.h"
+#include "HwAbsFilter.h"
 #include "HwWindow.h"
 
 class PictureProcessor : public Object {
@@ -22,7 +22,7 @@ public:
 
     void show(const string file);
 
-    void setFilter(Filter *filter);
+    void setFilter(HwAbsFilter *filter);
 
     void invalidate();
 

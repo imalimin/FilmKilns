@@ -49,7 +49,7 @@ void PictureProcessor::show(const string file) {
 }
 
 
-void PictureProcessor::setFilter(Filter *filter) {
+void PictureProcessor::setFilter(HwAbsFilter *filter) {
     Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
     msg->obj = new ObjectBox(filter);
     pipeline->postEvent(msg);

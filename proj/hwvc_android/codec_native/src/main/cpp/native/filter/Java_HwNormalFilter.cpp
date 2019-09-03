@@ -6,22 +6,22 @@
  */
 #include <jni.h>
 #include <log.h>
-#include "NormalFilter.h"
+#include "HwNormalFilter.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static NormalFilter *getHandler(jlong handler) {
-    return reinterpret_cast<NormalFilter *>(handler);
+static HwNormalFilter *getHandler(jlong handler) {
+    return reinterpret_cast<HwNormalFilter *>(handler);
 }
 
-JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_filter_NormalFilter_create
+JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_filter_HwNormalFilter_create
         (JNIEnv *env, jobject thiz) {
-    return reinterpret_cast<jlong>(new NormalFilter());
+    return reinterpret_cast<jlong>(new HwNormalFilter());
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_filter_NormalFilter_setParams
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_filter_HwNormalFilter_setParams
         (JNIEnv *env, jobject thiz, jlong handler, jintArray params) {
     if (handler) {
         int *pParams = env->GetIntArrayElements(params, JNI_FALSE);

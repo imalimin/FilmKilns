@@ -3,7 +3,6 @@ package com.lmy.samplenative
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
-import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,7 +15,6 @@ import com.lmy.hwvcnative.filter.*
 import com.lmy.samplenative.adapter.OnRecyclerItemClickListener
 import com.lmy.samplenative.adapter.RecyclerAdapter
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.lang.Exception
@@ -110,7 +108,7 @@ class FilterController(private val filterSupport: FilterSupport,
     private fun choose(which: Int) {
         when (which) {
             0 -> {
-                filterSupport.setFilter(NormalFilter())
+                filterSupport.setFilter(HwNormalFilter())
                 show(0)
             }
             1 -> {
@@ -135,7 +133,7 @@ class FilterController(private val filterSupport: FilterSupport,
                 show(0)
             }
             else -> {
-                filterSupport.setFilter(NormalFilter())
+                filterSupport.setFilter(HwNormalFilter())
                 show(0)
             }
         }

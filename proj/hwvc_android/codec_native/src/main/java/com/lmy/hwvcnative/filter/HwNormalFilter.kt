@@ -1,6 +1,6 @@
 package com.lmy.hwvcnative.filter
 
-class NormalFilter : Filter() {
+class HwNormalFilter : Filter() {
 
     init {
         handler = create()

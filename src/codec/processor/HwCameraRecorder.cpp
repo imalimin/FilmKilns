@@ -84,7 +84,7 @@ void HwCameraRecorder::setFormat(int width, int height, HwSampleFormat format) {
     putObject("audioFormat", audioFormat).to({ALIAS_OF_MIC, ALIAS_OF_COMPILER});
 }
 
-void HwCameraRecorder::setFilter(Filter *filter) {
+void HwCameraRecorder::setFilter(HwAbsFilter *filter) {
     Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
     msg->obj = new ObjectBox(filter);
     postEvent(msg);

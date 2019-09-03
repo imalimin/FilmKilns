@@ -107,12 +107,12 @@ bool HwRender::eventRenderFilter(Message *msg) {
 
 bool HwRender::eventSetFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventSetFilter");
-//    Filter *newFilter = static_cast<Filter *>(msg->tyrUnBox());
+    HwAbsFilter *newFilter = static_cast<HwAbsFilter *>(msg->tyrUnBox());
     if (filter) {
         delete filter;
         filter = nullptr;
     }
-//    filter = newFilter;
+    filter = newFilter;
     return true;
 }
 

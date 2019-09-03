@@ -10,7 +10,7 @@
 
 #include "HwAbsProcessor.h"
 #include "HwWindow.h"
-#include "Filter.h"
+#include "HwAbsFilter.h"
 #include "HwSampleFormat.h"
 #include "HwCameraInput.h"
 
@@ -58,7 +58,7 @@ public:
 
     void setFormat(int width, int height, HwSampleFormat format);
 
-    void setFilter(Filter *filter);
+    void setFilter(HwAbsFilter *filter);
 
     uint32_t getTex();
 

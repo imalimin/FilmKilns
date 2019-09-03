@@ -76,7 +76,7 @@ void HwVideoProcessor::seek(int64_t us) {
     postEvent(msg);
 }
 
-void HwVideoProcessor::setFilter(Filter *filter) {
+void HwVideoProcessor::setFilter(HwAbsFilter *filter) {
     Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
     msg->obj = new ObjectBox(filter);
     postEvent(msg);

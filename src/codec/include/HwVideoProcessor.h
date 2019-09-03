@@ -9,7 +9,7 @@
 
 #include "Object.h"
 #include "HwAbsProcessor.h"
-#include "Filter.h"
+#include "HwAbsFilter.h"
 #include "HwWindow.h"
 
 class HwVideoProcessor : public HwAbsProcessor {
@@ -32,7 +32,7 @@ public:
 
     void seek(int64_t us);
 
-    void setFilter(Filter *filter);
+    void setFilter(HwAbsFilter *filter);
 
     void updateWindow(HwWindow *win);
 

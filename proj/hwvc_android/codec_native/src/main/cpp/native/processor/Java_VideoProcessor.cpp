@@ -91,7 +91,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_seek
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setFilter
         (JNIEnv *env, jobject thiz, jlong handler, jlong filter) {
     if (handler && filter) {
-        getHandler(handler)->setFilter(reinterpret_cast<Filter *>(filter));
+        getHandler(handler)->setFilter(reinterpret_cast<HwAbsFilter *>(filter));
     }
 }
 
