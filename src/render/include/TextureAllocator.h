@@ -5,9 +5,9 @@
 #ifndef HARDWAREVIDEOCODEC_TEXTURECENTR_H
 #define HARDWAREVIDEOCODEC_TEXTURECENTR_H
 
-#include <vector>
 #include "Object.h"
-#include <GLES2/gl2.h>
+#include <vector>
+#include "HwAbsTexture.h"
 
 using namespace std;
 
@@ -17,16 +17,14 @@ public:
 
     virtual ~TextureAllocator();
 
-    GLuint alloc();
+    HwAbsTexture *alloc();
 
-    GLuint *alloc(int len);
+    HwAbsTexture *alloc(uint8_t *rgba, int width, int height, uint32_t fmt);
 
-    GLuint alloc(uint8_t *rgba, int width, int height);
-
-    void recycle(GLuint texture);
+    void recycle(HwAbsTexture **tex);
 
 private:
-    vector<GLuint> textures;
+    vector<HwAbsTexture *> textures;
 
     void clear();
 };

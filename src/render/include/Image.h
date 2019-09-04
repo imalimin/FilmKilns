@@ -31,7 +31,7 @@ public:
 private:
     TextureAllocator *texAllocator = nullptr;
     HwBitmap *hwBitmap = nullptr;
-    GLuint tex = GL_NONE;
+    HwAbsTexture *tex = nullptr;
 
     void show(string path);
 

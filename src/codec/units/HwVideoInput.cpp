@@ -129,60 +129,32 @@ bool HwVideoInput::eventLoop(Message *msg) {
     return true;
 }
 
-void HwVideoInput::checkFilter() {
+void HwVideoInput::checkEnv(int32_t w, int32_t h) {
     if (!yuvFilter) {
-        yuvFilter = new YUV420PFilter();
-        yuvFilter->init(decoder->width(), decoder->height());
+        yuvFilter = new HwYV122RGBAFilter();
+        yuvFilter->prepare();
+        target = HwTexture::alloc();
+        target->update(nullptr, w, h, GL_RGBA);
     }
 }
 
 void HwVideoInput::bindTex(HwVideoFrame *frame) {
-    if (GL_NONE == yuv[0] || GL_NONE == yuv[1] || GL_NONE == yuv[2]) {
-        yuv[0] = texAllocator->alloc();
-        yuv[1] = texAllocator->alloc();
-        yuv[2] = texAllocator->alloc();
-        int size = frame->getWidth() * frame->getHeight();
-        glBindTexture(GL_TEXTURE_2D, yuv[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth(),
-                     frame->getHeight(), 0,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->data());
-        glBindTexture(GL_TEXTURE_2D, yuv[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth() / 2,
-                     frame->getHeight() / 2, 0,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->data() + size);
-        glBindTexture(GL_TEXTURE_2D, yuv[2]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, frame->getWidth() / 2,
-                     frame->getHeight() / 2, 0,
-                     GL_LUMINANCE,
-                     GL_UNSIGNED_BYTE,
-                     frame->data() + size + size / 4);
-        glBindTexture(GL_TEXTURE_2D, GL_NONE);
-    } else {
-        int size = frame->getWidth() * frame->getHeight();
-        glBindTexture(GL_TEXTURE_2D, yuv[0]);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth(),
-                        frame->getHeight(),
-                        GL_LUMINANCE,
-                        GL_UNSIGNED_BYTE,
-                        frame->data());
-        glBindTexture(GL_TEXTURE_2D, yuv[1]);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
-                        frame->getHeight() / 2,
-                        GL_LUMINANCE,
-                        GL_UNSIGNED_BYTE,
-                        frame->data() + size);
-        glBindTexture(GL_TEXTURE_2D, yuv[2]);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame->getWidth() / 2,
-                        frame->getHeight() / 2,
-                        GL_LUMINANCE,
-                        GL_UNSIGNED_BYTE,
-                        frame->data() + size + size / 4);
-        glBindTexture(GL_TEXTURE_2D, GL_NONE);
+    if (!y || !u || !v) {
+        y = texAllocator->alloc();
+        u = texAllocator->alloc();
+        v = texAllocator->alloc();
     }
+    int size = frame->getWidth() * frame->getHeight();
+    HwBuffer *buf = HwBuffer::wrap(frame->data(), size);
+    y->update(buf, frame->getWidth(), frame->getHeight(), GL_LUMINANCE);
+    delete buf;
+
+    buf = HwBuffer::wrap(frame->data() + size, size / 4);
+    u->update(buf, frame->getWidth() / 2, frame->getHeight() / 2, GL_LUMINANCE);
+    delete buf;
+    buf = HwBuffer::wrap(frame->data() + size + size / 4, size / 4);
+    v->update(buf, frame->getWidth() / 2, frame->getHeight() / 2, GL_LUMINANCE);
+    delete buf;
 }
 
 HwResult HwVideoInput::grab() {
@@ -214,14 +186,13 @@ HwResult HwVideoInput::grab() {
         }
         lastPts = curPts;
         lastShowTime = curTimeInUs;
-        checkFilter();
+        checkEnv(videoFrame->getWidth(), videoFrame->getHeight());
         bindTex(videoFrame);
 //        lock->lock();
         glViewport(0, 0, videoFrame->getWidth(), videoFrame->getHeight());
 //        lock->unlock();
-        yuvFilter->draw(yuv[0], yuv[1], yuv[2]);
-        invalidate(yuvFilter->getFrameBuffer()->getFrameTexture(), videoFrame->getWidth(),
-                   videoFrame->getHeight());
+        yuvFilter->draw(y, u, v, target);
+        invalidate(target);
     } else if (frame->isAudio()) {
         playAudioFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
         Logcat::i("HWVC", "HwVideoInput::play audio pts=%lld", frame->getPts());
@@ -230,11 +201,11 @@ HwResult HwVideoInput::grab() {
     return ret;
 }
 
-bool HwVideoInput::invalidate(int tex, uint32_t width, uint32_t height) {
+bool HwVideoInput::invalidate(HwAbsTexture *tex) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-    msg->obj = HwTexture::wrap(GL_TEXTURE_2D, tex, width, height);
+    msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
+                               tex->getWidth(), tex->getHeight(), tex->fmt());
     msg->desc = "RENDER";
-    msg->arg1 = tex;
     postEvent(msg);
     return true;
 }

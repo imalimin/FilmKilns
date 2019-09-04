@@ -11,6 +11,7 @@
 #include "HwAbsTexture.h"
 #include "Size.h"
 #include "HwBuffer.h"
+#include <GLES2/gl2.h>
 
 class HwTexture : public HwAbsTexture {
 public:
@@ -24,7 +25,7 @@ public:
 
     static HwTexture *alloc(uint32_t target);
 
-    static HwTexture *wrap(uint32_t target, uint32_t tex, int w, int h);
+    static HwTexture *wrap(uint32_t target, uint32_t tex, int w, int h, uint32_t fmt);
 
 public:
     virtual ~HwTexture();
@@ -33,7 +34,7 @@ public:
 
     virtual void unbind() override;
 
-    virtual void update(HwBuffer *buf, int32_t w, int32_t h) override;
+    virtual void update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt = GL_RGBA) override;
 
 public:
     virtual bool read(uint8_t *pixels) override;

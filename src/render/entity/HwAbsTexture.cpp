@@ -32,7 +32,10 @@ uint32_t HwAbsTexture::target() {
     return tar;
 }
 
-void HwAbsTexture::update(HwBuffer *buf, int32_t w, int32_t h) {
+void HwAbsTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
     size.width = w;
     size.height = h;
+    _fmt = fmt;
 }
+
+uint32_t HwAbsTexture::fmt() { return _fmt; }

@@ -15,7 +15,6 @@
 
 HwAndroidTexture::HwAndroidTexture(uint32_t target) : HwAbsTexture(target) {
     sdk = HwAndroidUtils::getAndroidApi();
-    fmt = GL_RGBA;
     if (support()) {
         glGenTextures(1, &tex);
         bind();
@@ -62,8 +61,12 @@ void HwAndroidTexture::unbind() {
     }
 }
 
-void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h) {
-    HwAbsTexture::update(buf, w, h);
+void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
+    if (GL_RGBA != fmt) {
+        Logcat::e("hwvc", "HwAndroidTexture::update Only support RGBA fmt.");
+        return;
+    }
+    HwAbsTexture::update(buf, w, h, fmt);
     /**
      * Support GraphicBuffer.
      * sdk >= 26: AHardwareBuffer.

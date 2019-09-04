@@ -10,6 +10,7 @@
 #include "../include/ObjectBox.h"
 #include "TimeUtils.h"
 #include "../include/HwRGBA2NV12Filter.h"
+#include "../include/HwAbsTexture.h"
 #include "../include/HwTexture.h"
 #include "../include/HwFBObject.h"
 #include <GLES2/gl2.h>
@@ -95,7 +96,7 @@ bool HwRender::eventReadPixels(Message *msg) {
 
 bool HwRender::eventRenderFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventFilter");
-    HwTexture *tex = static_cast<HwTexture *>(msg->obj);
+    HwAbsTexture *tex = static_cast<HwAbsTexture *>(msg->obj);
     tsInNs = msg->arg2;
     checkFilter(tex->getWidth(), tex->getHeight());
     glViewport(0, 0, tex->getWidth(), tex->getHeight());

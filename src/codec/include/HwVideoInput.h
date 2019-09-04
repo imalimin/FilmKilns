@@ -10,7 +10,8 @@
 #include "HwStreamMedia.h"
 #include "TextureAllocator.h"
 #include "../include/AsynVideoDecoder.h"
-#include "YUV420PFilter.h"
+#include "HwYV122RGBAFilter.h"
+#include "HwAbsTexture.h"
 #include "EventPipeline.h"
 #include "Egl.h"
 #include "HwAbsMediaFrame.h"
@@ -40,15 +41,13 @@ public:
 
     bool eventLoop(Message *msg);
 
-    bool invalidate(int tex, uint32_t width, uint32_t height);
-
     void setPlayListener(function<void(int64_t, int64_t)> listener);
 
 private:
 
     void loop();
 
-    void checkFilter();
+    void checkEnv(int32_t w, int32_t h);
 
     HwResult grab();
 
@@ -58,12 +57,17 @@ private:
 
     void bindTex(HwVideoFrame *frame);
 
+    bool invalidate(HwAbsTexture *tex);
+
 private:
     const int INTERVAL_PROGRESS = 1000000;
     TextureAllocator *texAllocator = nullptr;
     AbsVideoDecoder *decoder = nullptr;
-    YUV420PFilter *yuvFilter = nullptr;
-    GLuint yuv[3] = {GL_NONE, GL_NONE, GL_NONE};
+    HwYV122RGBAFilter *yuvFilter = nullptr;
+    HwAbsTexture *y = nullptr;
+    HwAbsTexture *u = nullptr;
+    HwAbsTexture *v = nullptr;
+    HwAbsTexture *target = nullptr;
     PlayState playState = STOP;
     SimpleLock simpleLock;
     string path;

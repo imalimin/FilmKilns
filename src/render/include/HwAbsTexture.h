@@ -12,6 +12,7 @@
 #include "Size.h"
 #include "HwBuffer.h"
 #include "HwAbsFBObject.h"
+#include "GLES2/gl2.h"
 
 class HwAbsTexture : public Object {
 private:
@@ -34,7 +35,9 @@ public:
 
     uint32_t target();
 
-    virtual void update(HwBuffer *buf, int32_t w, int32_t h);
+    uint32_t fmt();
+
+    virtual void update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt = GL_RGBA);
 
 public:
     /**
@@ -45,7 +48,7 @@ public:
 protected:
     uint32_t tar;
     uint32_t tex;
-    uint32_t fmt;
+    uint32_t _fmt;
     Size size;
 };
 

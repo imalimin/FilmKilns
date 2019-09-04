@@ -106,7 +106,7 @@ void HwCameraInput::draw(int w, int h) {
 
 void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-    msg->obj = HwTexture::wrap(destTex->target(), destTex->texId(), w, h);
+    msg->obj = HwTexture::wrap(destTex->target(), destTex->texId(), w, h, destTex->fmt());
     msg->arg2 = tsInNs;
     msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);

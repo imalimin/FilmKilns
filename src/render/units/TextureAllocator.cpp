@@ -5,6 +5,7 @@
 #include "../include/TextureAllocator.h"
 #include "ObjectBox.h"
 #include "log.h"
+#include "../include/HwTexture.h"
 
 TextureAllocator::TextureAllocator() {
 }
@@ -13,58 +14,35 @@ TextureAllocator::~TextureAllocator() {
     clear();
 }
 
-GLuint TextureAllocator::alloc() {
-    GLuint texture = GL_NONE;
-    glGenTextures(1, &texture);
-    if (GL_NONE == texture)
-        return GL_NONE;
-    textures.push_back(texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameterf(GL_TEXTURE_2D,
-                    GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D,
-                    GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D,
-                    GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D,
-                    GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glBindTexture(GL_TEXTURE_2D, GL_NONE);
-    return texture;
-}
-
-GLuint *TextureAllocator::alloc(int len) {
-    GLuint texture[len];
-    glGenTextures(len, texture);
-    for (GLuint tex:texture) {
-        textures.push_back(tex);
-        glBindTexture(GL_TEXTURE_2D, tex);
-        glTexParameterf(GL_TEXTURE_2D,
-                        GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D,
-                        GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D,
-                        GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D,
-                        GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glBindTexture(GL_TEXTURE_2D, GL_NONE);
+HwAbsTexture *TextureAllocator::alloc() {
+    HwAbsTexture *tex = HwTexture::alloc();
+    if (nullptr == tex) {
+        return nullptr;
     }
-    return texture;
+    textures.push_back(tex);
+    return tex;
 }
 
-GLuint TextureAllocator::alloc(uint8_t *rgba, int width, int height) {
-    GLuint texture = alloc();
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                 rgba);
-    glBindTexture(GL_TEXTURE_2D, GL_NONE);
-    return texture;
+HwAbsTexture *TextureAllocator::alloc(uint8_t *rgba, int width, int height, uint32_t fmt) {
+    HwAbsTexture *tex = alloc();
+    if (nullptr == tex) {
+        return nullptr;
+    }
+    HwBuffer *buf = HwBuffer::wrap(rgba, width * height * 4);
+    tex->update(buf, width, height, fmt);
+    delete buf;
+    return tex;
 }
 
-void TextureAllocator::recycle(GLuint texture) {
+void TextureAllocator::recycle(HwAbsTexture **tex) {
+    if (nullptr == tex || nullptr == *tex) {
+        return;
+    }
     for (auto itr = textures.cbegin(); itr != textures.cend(); itr++) {
-        if (GL_NONE != *itr && texture == *itr) {
-            LOGI("TextureAllocator %s %d", __func__, *itr);
-            glDeleteTextures(1, &texture);
+        if (nullptr != *itr && *tex == *itr) {
+            LOGI("TextureAllocator %s %d", __func__, (*tex)->texId());
+            delete *tex;
+            *tex = nullptr;
             textures.erase(itr);
             break;
         }
@@ -72,10 +50,9 @@ void TextureAllocator::recycle(GLuint texture) {
 }
 
 void TextureAllocator::clear() {
-    for (auto t:textures) {
-        if (GL_NONE != t) {
-            glDeleteTextures(1, &t);
-            t = GL_NONE;
+    for (auto it:textures) {
+        if (nullptr != it) {
+            delete it;
         }
     }
     textures.clear();

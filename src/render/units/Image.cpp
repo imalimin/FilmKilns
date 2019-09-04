@@ -35,7 +35,10 @@ void Image::show(string path) {
     if (!decode(path)) {
         return;
     }
-    tex = texAllocator->alloc(hwBitmap->getPixels(), hwBitmap->getWidth(), hwBitmap->getHeight());
+    tex = texAllocator->alloc(hwBitmap->getPixels(),
+                              hwBitmap->getWidth(),
+                              hwBitmap->getHeight(),
+                              GL_RGBA);
     eventInvalidate(nullptr);
 }
 
@@ -71,8 +74,10 @@ bool Image::eventShow(Message *msg) {
 bool Image::eventInvalidate(Message *m) {
     if (GL_NONE != tex) {
         Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-        msg->obj = HwTexture::wrap(GL_TEXTURE_2D, tex, hwBitmap->getWidth(), hwBitmap->getHeight());
-        msg->arg1 = tex;
+        msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
+                                   tex->getWidth(),
+                                   tex->getHeight(),
+                                   tex->fmt());
         postEvent(msg);
     }
     return true;
