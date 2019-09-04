@@ -31,7 +31,7 @@ public:
     bool eventReadPixels(Message *msg);
 
 private:
-    void checkFilter(int width, int height);
+    void checkEnv(int width, int height);
 
     void renderFilter(HwAbsTexture *tex);
 
@@ -47,7 +47,6 @@ private:
     HwAbsTexture *yuvTarget = nullptr;
     HwAbsFilter *filter = nullptr;
     HwAbsFilter *yuvReadFilter = nullptr;
-    uint8_t *pixels = nullptr;
     int count = 0;
     HwBuffer *buf = nullptr;
     int64_t tsInNs = 0;

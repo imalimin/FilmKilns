@@ -33,8 +33,6 @@ HwAndroidTexture::~HwAndroidTexture() {
     if (GL_NONE != tex && glIsTexture(tex)) {
         glDeleteTextures(1, &tex);
     }
-    size.width = 0;
-    size.height = 0;
     if (graphicBuffer) {
         delete graphicBuffer;
         graphicBuffer = nullptr;
@@ -82,7 +80,7 @@ void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt)
         } else {
             return;
         }
-        static_cast<HwAbsGraphicBuffer *>(graphicBuffer)->bind();
+        graphicBuffer->bind();
         glBindTexture(tar, GL_NONE);
     } else {
         texCompat->update(buf, w, h);
@@ -95,7 +93,7 @@ bool HwAndroidTexture::support() {
 
 bool HwAndroidTexture::read(uint8_t *pixels) {
     if (graphicBuffer) {
-        return static_cast<HwAbsGraphicBuffer *>(graphicBuffer)->read(pixels);
+        return graphicBuffer->read(pixels);
     }
     return texCompat->read(pixels);
 }

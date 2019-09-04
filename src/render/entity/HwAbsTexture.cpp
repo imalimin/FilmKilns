@@ -13,7 +13,8 @@ HwAbsTexture::HwAbsTexture(uint32_t target) : Object(),
 }
 
 HwAbsTexture::~HwAbsTexture() {
-
+    size.width = 0;
+    size.height = 0;
 }
 
 uint32_t HwAbsTexture::texId() {

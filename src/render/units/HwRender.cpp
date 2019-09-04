@@ -15,12 +15,14 @@
 #include "../include/HwFBObject.h"
 #include <GLES2/gl2.h>
 
-HwRender::HwRender(string alias) : Unit(alias) {
 #ifdef ANDROID
-    filter = new HwNormalFilter();
-#else
-    filter = new HwNormalFilter();
+
+#include "../platform/android/entity/HwAndroidTexture.h"
+
 #endif
+
+HwRender::HwRender(string alias) : Unit(alias) {
+    filter = new HwNormalFilter();
     yuvReadFilter = new HwRGBA2NV12Filter();
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READ,
@@ -48,10 +50,6 @@ bool HwRender::eventRelease(Message *msg) {
         Logcat::i("HWVC", "Render::eventRelease filter");
         filter = nullptr;
     }
-    if (pixels) {
-        delete[] pixels;
-        pixels = nullptr;
-    }
     if (buf) {
         delete buf;
         buf = nullptr;
@@ -73,7 +71,6 @@ bool HwRender::eventRelease(Message *msg) {
 
 bool HwRender::eventReadPixels(Message *msg) {
     bool read = false;
-    fbo->bind();
     if (yuvReadFilter) {
         glViewport(0, 0, yuvTarget->getWidth(), yuvTarget->getHeight());
         yuvReadFilter->draw(target, yuvTarget);
@@ -84,7 +81,6 @@ bool HwRender::eventReadPixels(Message *msg) {
     if (!read && fbo->read(buf->data())) {
         read = true;
     }
-    fbo->unbind();
     if (read) {
         Message *msg1 = new Message(EVENT_COMMON_PIXELS, nullptr);
         msg1->obj = HwBuffer::wrap(buf->data(), buf->size());
@@ -98,7 +94,7 @@ bool HwRender::eventRenderFilter(Message *msg) {
     Logcat::i("HWVC", "Render::eventFilter");
     HwAbsTexture *tex = static_cast<HwAbsTexture *>(msg->obj);
     tsInNs = msg->arg2;
-    checkFilter(tex->getWidth(), tex->getHeight());
+    checkEnv(tex->getWidth(), tex->getHeight());
     glViewport(0, 0, tex->getWidth(), tex->getHeight());
     renderFilter(tex);
     notifyPixelsReady();
@@ -125,52 +121,30 @@ void HwRender::renderScreen() {
     postEvent(msg);
 }
 
-void HwRender::checkFilter(int width, int height) {
+void HwRender::checkEnv(int width, int height) {
     if (filter) {
         bool ret = filter->prepare();
-        if (yuvReadFilter) {
-            yuvReadFilter->prepare();
+        if (ret) {
+            target = HwTexture::alloc(GL_TEXTURE_2D);
+            target->update(nullptr, width, height);
+        }
+    }
+    if (yuvReadFilter) {
+        bool ret = yuvReadFilter->prepare();
+        if (ret) {
             yuvTarget = HwTexture::alloc(GL_TEXTURE_2D);
             yuvTarget->update(nullptr, width / 4, height * 3 / 2);
             fbo = HwFBObject::alloc();
             fbo->bindTex(yuvTarget);
-        }
-        if (ret) {
-            target = HwTexture::alloc(GL_TEXTURE_2D);
-            target->update(nullptr, width, height);
             size_t size = static_cast<size_t>(width * height * 3 / 2);
             buf = HwBuffer::alloc(size);
         }
-    }
-    if (!pixels) {
-        pixels = new uint8_t[width * height * 3 / 2];
     }
 }
 
 void HwRender::renderFilter(HwAbsTexture *tex) {
     Logcat::i("HWVC", "Render::renderFilter %d", tex->texId());
     filter->draw(tex, target);
-#if 0
-    if (yuvReadFilter) {
-        yuvReadFilter->draw(filter->getFrameBuffer()->getFrameTexture());
-    }
-    //Test fbo read.
-    ++count;
-    if (count >= 150) {
-        count = 0;
-        int64_t time = TimeUtils::getCurrentTimeUS();
-        yuvReadFilter->getFrameBuffer()->read(pixels);
-        FILE *file = fopen("/sdcard/pixels.yv12", "wb");
-        size_t size = yuvReadFilter->getFrameBuffer()->width()
-                      * yuvReadFilter->getFrameBuffer()->height() * 4;
-        Logcat::i("HWVC", "HwAndroidFrameBuffer::read cost %lld, %dx%d",
-                  TimeUtils::getCurrentTimeUS() - time,
-                  yuvReadFilter->getFrameBuffer()->width(),
-                  yuvReadFilter->getFrameBuffer()->height());
-        fwrite(pixels, 1, size, file);
-        fclose(file);
-    }
-#endif
 }
 
 void HwRender::notifyPixelsReady() {

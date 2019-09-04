@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWANDROIDTEXTURE_H
 
 #include "../../../include/HwAbsTexture.h"
-#include "../../../include/HwAbsTexture.h"
+#include "HwAbsGraphicBuffer.h"
 
 class HwAndroidTexture : public HwAbsTexture {
 public:
@@ -31,7 +31,7 @@ private:
 
 private:
     int sdk = 0;
-    Object *graphicBuffer = nullptr;
+    HwAbsGraphicBuffer *graphicBuffer = nullptr;
     HwAbsTexture *texCompat = nullptr;
 };
 
