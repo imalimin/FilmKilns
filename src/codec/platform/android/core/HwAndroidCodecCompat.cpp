@@ -6,4 +6,3 @@
 */
 
 #include "HwAndroidCodecCompat.h"
-#include "../include/HwJavaNativeHelper.h"

@@ -14,6 +14,7 @@
 #include "../include/HwAudioFrame.h"
 #include <atomic>
 #include <list>
+#include <vector>
 
 class HwVideoCompiler : public Unit {
 public:
@@ -49,7 +50,7 @@ private:
 
     int getHeight();
 
-    void remuxer();
+    void remux();
 
     int64_t getRecordTimeInUs();
 
@@ -68,6 +69,7 @@ private:
      * Listeners
      */
     function<void(int64_t)> recordListener = nullptr;
+    bool requestReMux = false;
 
 private:
     class HwClip : public Object {
@@ -105,6 +107,8 @@ private:
         int64_t duration();
 
         bool contain(int64_t pts);
+
+        void get(std::vector<int64_t> *trimIns, std::vector<int64_t> *trimOuts);
 
     private:
         int64_t durationInUs = 0;

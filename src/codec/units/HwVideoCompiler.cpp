@@ -12,6 +12,7 @@
 #include "TimeUtils.h"
 #include "../include/HwSampleFormat.h"
 #include "StringUtils.h"
+#include "../include/HwVideoUtils.h"
 
 HwVideoCompiler::HwVideoCompiler(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE,
@@ -77,7 +78,9 @@ bool HwVideoCompiler::eventRelease(Message *msg) {
         videoFrame = nullptr;
     }
     this->recordListener = nullptr;
-    remuxer();
+    if (requestReMux) {
+        remux();
+    }
     return true;
 }
 
@@ -121,6 +124,7 @@ bool HwVideoCompiler::eventBackward(Message *msg) {
     }
     auto clip = track.backward();
     offsetOfDuration -= clip.duration();
+    requestReMux = true;
     // Notify record progress.
     if (recordListener) {
         recordListener(getRecordTimeInUs());
@@ -292,134 +296,28 @@ bool HwVideoCompiler::HwTrack::contain(int64_t pts) {
     return false;
 }
 
-void HwVideoCompiler::remuxer() {
-    string path = getString("path");
-    av_register_all();
-    /**
-     * Open input
-     */
-    AVFormatContext *ctx = avformat_alloc_context();
-    if (avformat_open_input(&ctx, path.c_str(), NULL, NULL) != 0) {
-        LOGE("Couldn't open input stream.");
-        return;
+void HwVideoCompiler::HwTrack::get(std::vector<int64_t> *trimIns,
+                                   std::vector<int64_t> *trimOuts) {
+    auto itr = clips.begin();
+    while (itr != clips.end()) {
+        trimIns->push_back(itr->start);
+        trimOuts->push_back(itr->end);
+        ++itr;
     }
-    if (avformat_find_stream_info(ctx, NULL) < 0) {
-        LOGE("Couldn't find stream information.");
-        return;
-    }
-    int32_t videoTrack = -1, audioTrack = -1;
-    for (int i = 0; i < ctx->nb_streams; i++) {
-        if (-1 == videoTrack &&
-            AVMediaType::AVMEDIA_TYPE_VIDEO == ctx->streams[i]->codecpar->codec_type) {
-            videoTrack = i;
-        }
-        if (-1 == audioTrack &&
-            AVMediaType::AVMEDIA_TYPE_AUDIO == ctx->streams[i]->codecpar->codec_type) {
-            audioTrack = i;
-        }
-    }
-    /**
-     * Open output
-     */
-    string opath = string(path);
-    int32_t ovideoTrack = -1, oaudioTrack = -1;
-    opath.append(".remuxer.mp4");
-    AVFormatContext *octx = nullptr;
-    int ret = avformat_alloc_output_context2(&octx, NULL, "MP4", opath.c_str());
-    if (ret < 0 || !octx) {
-        Logcat::e("HWVC", "HwFFMuxer::configure failed %s", strerror(AVUNERROR(ret)));
-        return;
-    }
-    av_dict_set(&octx->metadata, "comment", "hwvc", 0);
-    if (videoTrack >= 0) {
-        AVStream *stream = avformat_new_stream(octx, nullptr);
-        avcodec_parameters_copy(stream->codecpar, ctx->streams[videoTrack]->codecpar);
-        ovideoTrack = stream->index;
-    }
-    if (audioTrack >= 0) {
-        AVStream *stream = avformat_new_stream(octx, nullptr);
-        avcodec_parameters_copy(stream->codecpar, ctx->streams[audioTrack]->codecpar);
-        oaudioTrack = stream->index;
-    }
-    if (avio_open2(&octx->pb, opath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
-        return;
-    }
-    ret = avformat_write_header(octx, nullptr);
-    /*
-     * Start remxuer.
-     */
-    AVPacket *avPacket = av_packet_alloc();
-    ret = 0;
-    bool reset = false;
-    int64_t aTime = 0, vTime = 0;
-    int64_t aDTime = 0, vDTime = 0;
-    int64_t aLastTime = 0, vLastTime = 0;
-    int64_t aDLastTime = 0, vDLastTime = 0;
-    while (AVERROR_EOF != ret) {
-        ret = av_read_frame(ctx, avPacket);
-        if (0 == ret) {
-            int64_t pts = av_rescale_q_rnd(avPacket->pts,
-                                           ctx->streams[avPacket->stream_index]->time_base,
-                                           AV_TIME_BASE_Q,
-                                           AV_ROUND_NEAR_INF);
-            if (!track.contain(pts)) {
-                if (videoTrack == avPacket->stream_index) {
-                    vLastTime = avPacket->pts;
-                    vDLastTime = avPacket->dts;
-                } else if (audioTrack == avPacket->stream_index) {
-                    aLastTime = avPacket->pts;
-                    aDLastTime = avPacket->dts;
-                }
-                av_packet_unref(avPacket);
-                continue;
-            }
-            if (videoTrack == avPacket->stream_index) {
-//                Logcat::i("hwvc", "HwFFmpegEncoder::write %d", avPacket->flags & AV_PKT_FLAG_KEY);
-                vTime += (avPacket->pts - vLastTime);
-                vDTime += (avPacket->dts - vDLastTime);
-                vLastTime = avPacket->pts;
-                vDLastTime = avPacket->dts;
-                avPacket->pts = vTime;
-                avPacket->dts = vDTime;
-                avPacket->stream_index = ovideoTrack;
-            } else if (audioTrack == avPacket->stream_index) {
-                aTime += (avPacket->pts - aLastTime);
-                aDTime += (avPacket->dts - aDLastTime);
-                aLastTime = avPacket->pts;
-                aDLastTime = avPacket->dts;
-                avPacket->pts = aTime;
-                avPacket->dts = aDTime;
-                avPacket->stream_index = oaudioTrack;
-            } else {
-                av_packet_unref(avPacket);
-                continue;
-            }
-            int flag = av_interleaved_write_frame(octx, avPacket);
-            av_packet_unref(avPacket);
-            Logcat::i("hwvc", "remuxer end. write %lld, ret = %d", pts, flag);
-        }
-    }
-    /*
-     * Release output
-     */
-    if (octx) {
-        av_write_trailer(octx);
-        if (!(octx->flags & AVFMT_NOFILE)) {
-            avio_closep(&octx->pb);
-        }
-        avformat_free_context(octx);
-        octx = nullptr;
-    }
-    Logcat::i("hwvc", "remuxer end.");
-    if (ctx) {
-        if (!(ctx->flags & AVFMT_NOFILE)) {
-            avio_closep(&ctx->pb);
-        }
-        avformat_free_context(ctx);
-        ctx = nullptr;
-    }
-    if (avPacket) {
-        av_packet_free(&avPacket);
-        avPacket = nullptr;
+}
+
+void HwVideoCompiler::remux() {
+    std::vector<int64_t> trimIns;
+    std::vector<int64_t> trimOuts;
+    track.get(&trimIns, &trimOuts);
+    string input = getString("path");
+    string output = string(input);
+    output.append(".remux.mp4");
+    if (trimIns.size() > 1 && trimOuts.size() > 1 && trimIns.size() == trimOuts.size()) {
+        HwResult ret = HwVideoUtils::remux(input, output, trimIns, trimOuts);
+        std::string path = std::string(input);
+        path.append(".src.mp4");
+        int r = rename(input.c_str(), path.c_str());
+        r = rename(output.c_str(), input.c_str());
     }
 }
