@@ -76,6 +76,22 @@ HwVideoUtils::Context *HwVideoUtils::Context::open(std::string path,
     return ctx;
 }
 
+bool HwVideoUtils::recode(AVPacket **pkt, Context *iCtx, RecodeContext *rCtx) {
+    if (RecodeContext::FLAG_LAST_PKT_SKIPPED == rCtx->flag && !((*pkt)->flags & AV_PKT_FLAG_KEY)) {
+        rCtx->flag = RecodeContext::FLAG_RECODING;
+        if (nullptr == rCtx->dCtx && nullptr == rCtx->eCtx) {
+            createCodec(iCtx->c->streams[iCtx->vTrackIndex], &rCtx->dCtx, &rCtx->eCtx);
+        }
+    }
+    if (RecodeContext::FLAG_RECODING == rCtx->flag && (*pkt)->flags & AV_PKT_FLAG_KEY) {
+        rCtx->flag = RecodeContext::FLAG_NONE;
+    }
+    if (RecodeContext::FLAG_RECODING == rCtx->flag) {
+
+    }
+    return true;
+}
+
 HwResult HwVideoUtils::remux(std::string input, std::string output,
                              std::vector<int64_t> trimIns,
                              std::vector<int64_t> trimOuts) {
@@ -98,8 +114,8 @@ HwResult HwVideoUtils::remux(std::string input, std::string output,
      * Start remxuer.
      */
     AVPacket *avPacket = av_packet_alloc();
+    auto *rCtx = new RecodeContext();
     int32_t ret = 0;
-    bool reset = false;
     int64_t aTime = 0, vTime = 0;
     int64_t aDTime = 0, vDTime = 0;
     int64_t aLastTime = 0, vLastTime = 0;
@@ -113,6 +129,10 @@ HwResult HwVideoUtils::remux(std::string input, std::string output,
                                            AV_ROUND_NEAR_INF);
             if (!contains(&trimIns, &trimOuts, pts)) {
                 if (iCtx->vTrackIndex == avPacket->stream_index) {
+                    if (1 == avPacket->flags & AV_PKT_FLAG_KEY) {
+                        ++rCtx->gopIndex;
+                    }
+                    rCtx->flag = RecodeContext::FLAG_LAST_PKT_SKIPPED;
                     vLastTime = avPacket->pts;
                     vDLastTime = avPacket->dts;
                 } else if (iCtx->aTrackIndex == avPacket->stream_index) {
@@ -124,6 +144,7 @@ HwResult HwVideoUtils::remux(std::string input, std::string output,
             }
             if (iCtx->vTrackIndex == avPacket->stream_index) {
 //                Logcat::i("hwvc", "HwFFmpegEncoder::write %d", avPacket->flags & AV_PKT_FLAG_KEY);
+                recode(&avPacket, iCtx, rCtx);
                 vTime += (avPacket->pts - vLastTime);
                 vDTime += (avPacket->dts - vDLastTime);
                 vLastTime = avPacket->pts;
@@ -154,6 +175,7 @@ HwResult HwVideoUtils::remux(std::string input, std::string output,
     av_write_trailer(oCtx->c);
     delete oCtx;
     delete iCtx;
+    delete rCtx;
     if (avPacket) {
         av_packet_free(&avPacket);
         avPacket = nullptr;
@@ -172,7 +194,7 @@ bool HwVideoUtils::contains(std::vector<int64_t> *trimIns, std::vector<int64_t> 
     return false;
 }
 
-bool HwVideoUtils::createCodec(AVStream *stream, AVCodecContext **eCtx, AVCodecContext **dCtx) {
+bool HwVideoUtils::createCodec(AVStream *stream, AVCodecContext **dCtx, AVCodecContext **eCtx) {
     AVCodecParameters *avCodecParameters = stream->codecpar;
     AVCodec *codec = avcodec_find_decoder(avCodecParameters->codec_id);
     if (nullptr == codec) {

@@ -51,7 +51,7 @@ bool HwVideoCompiler::eventPrepare(Message *msg) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare failed.Invalid arguments.");
         return true;
     }
-    encoder = new HwAsyncEncoder();
+    encoder = new HwAndroidEncoder();
     if (!encoder->prepare(path, width, height, *format)) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }
@@ -138,7 +138,7 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
         return;
     }
     //Enable NV12 or YV12
-#if 1
+#if 0
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     int64_t time = TimeUtils::getCurrentTimeUS();
     libyuv::NV12ToI420(buf->data(), videoFrame->getWidth(),
@@ -150,7 +150,7 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
                        videoFrame->getWidth() / 2,
                        videoFrame->getWidth(), videoFrame->getHeight());
 #else
-    memcpy(videoFrame->data(), buf->getData(), buf->size());
+    memcpy(videoFrame->data(), buf->data(), buf->size());
 #endif
 #if 0
     Logcat::i("HWVC", "HwVideoOutput::write nv12 convert cost %lld",

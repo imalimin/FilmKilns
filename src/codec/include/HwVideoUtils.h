@@ -45,6 +45,16 @@ public:
         Context(Context &context) {}
     };
 
+    class RecodeContext : public Object {
+    public:
+        static const int32_t FLAG_NONE = 0;
+        static const int32_t FLAG_LAST_PKT_SKIPPED = 1;
+        static const int32_t FLAG_RECODING = 2;
+        AVCodecContext *dCtx = nullptr, *eCtx = nullptr;
+        int32_t gopIndex = -1;
+        int32_t flag = FLAG_NONE;
+    };
+
 public:
     static HwResult remux(std::string input, std::string output,
                           std::vector<int64_t> trimIns,
@@ -54,7 +64,9 @@ private:
     static bool contains(std::vector<int64_t> *trimIns, std::vector<int64_t> *trimOuts,
                          int64_t pts);
 
-    static bool createCodec(AVStream *stream, AVCodecContext **eCtx, AVCodecContext **dCtx);
+    static bool createCodec(AVStream *stream, AVCodecContext **dCtx, AVCodecContext **eCtx);
+
+    static bool recode(AVPacket **pkt, Context *iCtx, RecodeContext *rCtx);
 };
 
 
