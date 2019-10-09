@@ -8,18 +8,73 @@
 #include "../include/HwVideoUtils.h"
 #include "Logcat.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+HwVideoUtils::Context::Context() : Object() {
 
-#include "../include/ff/libavcodec/avcodec.h"
-#include "../include/ff/libavformat/avformat.h"
-#include "../include/ff/libavutil/avutil.h"
-#include "../include/ff/libswresample/swresample.h"
-
-#ifdef __cplusplus
 }
-#endif
+
+HwVideoUtils::Context::~Context() {
+    if (c) {
+        if (!(c->flags & AVFMT_NOFILE) && c->pb) {
+            avio_closep(&c->pb);
+        }
+        avformat_free_context(c);
+        c = nullptr;
+    }
+}
+
+HwVideoUtils::Context *HwVideoUtils::Context::open(std::string path) {
+    HwVideoUtils::Context *ctx = new HwVideoUtils::Context();
+    ctx->c = avformat_alloc_context();
+    if (avformat_open_input(&(ctx->c), path.c_str(), NULL, NULL) != 0) {
+        Logcat::e("hwvc", "HwVideoUtils::remux Couldn't open input stream.");
+        delete ctx;
+        return nullptr;
+    }
+    if (avformat_find_stream_info(ctx->c, NULL) < 0) {
+        Logcat::e("hwvc", "HwVideoUtils::remux Couldn't find stream information.");
+        delete ctx;
+        return nullptr;
+    }
+    for (int i = 0; i < ctx->c->nb_streams; i++) {
+        if (-1 == ctx->vTrackIndex &&
+            AVMediaType::AVMEDIA_TYPE_VIDEO == ctx->c->streams[i]->codecpar->codec_type) {
+            ctx->vTrackIndex = i;
+        }
+        if (-1 == ctx->aTrackIndex &&
+            AVMediaType::AVMEDIA_TYPE_AUDIO == ctx->c->streams[i]->codecpar->codec_type) {
+            ctx->aTrackIndex = i;
+        }
+    }
+    return ctx;
+}
+
+HwVideoUtils::Context *HwVideoUtils::Context::open(std::string path,
+                                                   HwVideoUtils::Context *iCtx) {
+    HwVideoUtils::Context *ctx = new HwVideoUtils::Context();
+    int ret = avformat_alloc_output_context2(&(ctx->c), NULL, "MP4", path.c_str());
+    if (ret < 0 || !ctx->c) {
+        Logcat::e("HWVC", "HwVideoUtils::remux configure failed %s", strerror(AVUNERROR(ret)));
+        delete ctx;
+        return nullptr;
+    }
+    av_dict_set(&ctx->c->metadata, "comment", "hwvc", 0);
+    if (iCtx->vTrackIndex >= 0) {
+        AVStream *stream = avformat_new_stream(ctx->c, nullptr);
+        avcodec_parameters_copy(stream->codecpar, iCtx->c->streams[iCtx->vTrackIndex]->codecpar);
+        ctx->vTrackIndex = stream->index;
+    }
+    if (iCtx->aTrackIndex >= 0) {
+        AVStream *stream = avformat_new_stream(ctx->c, nullptr);
+        avcodec_parameters_copy(stream->codecpar, iCtx->c->streams[iCtx->aTrackIndex]->codecpar);
+        ctx->aTrackIndex = stream->index;
+    }
+    if (avio_open2(&ctx->c->pb, path.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
+        delete ctx;
+        return nullptr;
+    }
+    ret = avformat_write_header(ctx->c, nullptr);
+    return ctx;
+}
 
 HwResult HwVideoUtils::remux(std::string input, std::string output,
                              std::vector<int64_t> trimIns,
@@ -28,80 +83,46 @@ HwResult HwVideoUtils::remux(std::string input, std::string output,
     /**
      * Open input
      */
-    AVFormatContext *ctx = avformat_alloc_context();
-    if (avformat_open_input(&ctx, input.c_str(), NULL, NULL) != 0) {
-        Logcat::e("hwvc", "Couldn't open input stream.");
+    HwVideoUtils::Context *iCtx = HwVideoUtils::Context::open(input);
+    if (nullptr == iCtx) {
         return Hw::FAILED;
-    }
-    if (avformat_find_stream_info(ctx, NULL) < 0) {
-        Logcat::e("hwvc", "Couldn't find stream information.");
-        return Hw::FAILED;
-    }
-    int32_t videoTrack = -1, audioTrack = -1;
-    for (int i = 0; i < ctx->nb_streams; i++) {
-        if (-1 == videoTrack &&
-            AVMediaType::AVMEDIA_TYPE_VIDEO == ctx->streams[i]->codecpar->codec_type) {
-            videoTrack = i;
-        }
-        if (-1 == audioTrack &&
-            AVMediaType::AVMEDIA_TYPE_AUDIO == ctx->streams[i]->codecpar->codec_type) {
-            audioTrack = i;
-        }
     }
     /**
      * Open output
      */
-    int32_t ovideoTrack = -1, oaudioTrack = -1;
-    AVFormatContext *octx = nullptr;
-    int ret = avformat_alloc_output_context2(&octx, NULL, "MP4", output.c_str());
-    if (ret < 0 || !octx) {
-        Logcat::e("HWVC", "HwFFMuxer::configure failed %s", strerror(AVUNERROR(ret)));
+    HwVideoUtils::Context *oCtx = HwVideoUtils::Context::open(output, iCtx);
+    if (nullptr == oCtx) {
         return Hw::FAILED;
     }
-    av_dict_set(&octx->metadata, "comment", "hwvc", 0);
-    if (videoTrack >= 0) {
-        AVStream *stream = avformat_new_stream(octx, nullptr);
-        avcodec_parameters_copy(stream->codecpar, ctx->streams[videoTrack]->codecpar);
-        ovideoTrack = stream->index;
-    }
-    if (audioTrack >= 0) {
-        AVStream *stream = avformat_new_stream(octx, nullptr);
-        avcodec_parameters_copy(stream->codecpar, ctx->streams[audioTrack]->codecpar);
-        oaudioTrack = stream->index;
-    }
-    if (avio_open2(&octx->pb, output.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
-        return Hw::FAILED;
-    }
-    ret = avformat_write_header(octx, nullptr);
     /*
      * Start remxuer.
      */
     AVPacket *avPacket = av_packet_alloc();
-    ret = 0;
+    int32_t ret = 0;
     bool reset = false;
     int64_t aTime = 0, vTime = 0;
     int64_t aDTime = 0, vDTime = 0;
     int64_t aLastTime = 0, vLastTime = 0;
     int64_t aDLastTime = 0, vDLastTime = 0;
     while (AVERROR_EOF != ret) {
-        ret = av_read_frame(ctx, avPacket);
+        ret = av_read_frame(iCtx->c, avPacket);
         if (0 == ret) {
             int64_t pts = av_rescale_q_rnd(avPacket->pts,
-                                           ctx->streams[avPacket->stream_index]->time_base,
+                                           iCtx->c->streams[avPacket->stream_index]->time_base,
                                            AV_TIME_BASE_Q,
                                            AV_ROUND_NEAR_INF);
             if (!contains(&trimIns, &trimOuts, pts)) {
-                if (videoTrack == avPacket->stream_index) {
+                if (iCtx->vTrackIndex == avPacket->stream_index) {
                     vLastTime = avPacket->pts;
                     vDLastTime = avPacket->dts;
-                } else if (audioTrack == avPacket->stream_index) {
+                } else if (iCtx->aTrackIndex == avPacket->stream_index) {
                     aLastTime = avPacket->pts;
                     aDLastTime = avPacket->dts;
                 }
                 av_packet_unref(avPacket);
                 continue;
             }
-            if (videoTrack == avPacket->stream_index) {
+            if (iCtx->vTrackIndex == avPacket->stream_index) {
 //                Logcat::i("hwvc", "HwFFmpegEncoder::write %d", avPacket->flags & AV_PKT_FLAG_KEY);
                 vTime += (avPacket->pts - vLastTime);
                 vDTime += (avPacket->dts - vDLastTime);
@@ -109,47 +130,35 @@ HwResult HwVideoUtils::remux(std::string input, std::string output,
                 vDLastTime = avPacket->dts;
                 avPacket->pts = vTime;
                 avPacket->dts = vDTime;
-                avPacket->stream_index = ovideoTrack;
-            } else if (audioTrack == avPacket->stream_index) {
+                avPacket->stream_index = oCtx->vTrackIndex;
+            } else if (iCtx->aTrackIndex == avPacket->stream_index) {
                 aTime += (avPacket->pts - aLastTime);
                 aDTime += (avPacket->dts - aDLastTime);
                 aLastTime = avPacket->pts;
                 aDLastTime = avPacket->dts;
                 avPacket->pts = aTime;
                 avPacket->dts = aDTime;
-                avPacket->stream_index = oaudioTrack;
+                avPacket->stream_index = oCtx->aTrackIndex;
             } else {
                 av_packet_unref(avPacket);
                 continue;
             }
-            int flag = av_interleaved_write_frame(octx, avPacket);
+            int flag = av_interleaved_write_frame(oCtx->c, avPacket);
             av_packet_unref(avPacket);
-            Logcat::i("hwvc", "remuxer end. write %lld, ret = %d", pts, flag);
+            Logcat::i("hwvc", "HwVideoUtils::remux end. write %lld, ret = %d", pts, flag);
         }
     }
     /*
      * Release output
      */
-    if (octx) {
-        av_write_trailer(octx);
-        if (!(octx->flags & AVFMT_NOFILE)) {
-            avio_closep(&octx->pb);
-        }
-        avformat_free_context(octx);
-        octx = nullptr;
-    }
-    Logcat::i("hwvc", "remuxer end.");
-    if (ctx) {
-        if (!(ctx->flags & AVFMT_NOFILE)) {
-            avio_closep(&ctx->pb);
-        }
-        avformat_free_context(ctx);
-        ctx = nullptr;
-    }
+    av_write_trailer(oCtx->c);
+    delete oCtx;
+    delete iCtx;
     if (avPacket) {
         av_packet_free(&avPacket);
         avPacket = nullptr;
     }
+    Logcat::i("hwvc", "remuxer end.");
     return Hw::SUCCESS;
 }
 
@@ -161,4 +170,30 @@ bool HwVideoUtils::contains(std::vector<int64_t> *trimIns, std::vector<int64_t> 
         }
     }
     return false;
+}
+
+bool HwVideoUtils::createCodec(AVStream *stream, AVCodecContext **eCtx, AVCodecContext **dCtx) {
+    AVCodecParameters *avCodecParameters = stream->codecpar;
+    AVCodec *codec = avcodec_find_decoder(avCodecParameters->codec_id);
+    if (nullptr == codec) {
+        return false;
+    }
+    *dCtx = avcodec_alloc_context3(codec);
+    avcodec_parameters_to_context(*dCtx, avCodecParameters);
+    if (avcodec_open2(*dCtx, codec, NULL) < 0) {
+        Logcat::e("hwvc", "Couldn't open decode codec.");
+        avcodec_free_context(dCtx);
+        return false;
+    }
+    codec = avcodec_find_encoder(avCodecParameters->codec_id);
+    *eCtx = avcodec_alloc_context3(codec);
+    avcodec_parameters_to_context(*eCtx, avCodecParameters);
+    if (avcodec_open2(*eCtx, codec, NULL) < 0) {
+        Logcat::e("hwvc", "Couldn't open encode codec.");
+        avcodec_close(*dCtx);
+        avcodec_free_context(dCtx);
+        avcodec_free_context(eCtx);
+        return false;
+    }
+    return true;
 }

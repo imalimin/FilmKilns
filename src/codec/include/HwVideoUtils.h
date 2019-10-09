@@ -12,16 +12,49 @@
 #include "HwResult.h"
 #include <vector>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "../include/ff/libavcodec/avcodec.h"
+#include "../include/ff/libavformat/avformat.h"
+#include "../include/ff/libavutil/avutil.h"
+#include "../include/ff/libswresample/swresample.h"
+
+#ifdef __cplusplus
+}
+#endif
+
 class HwVideoUtils : public Object {
 public:
-    static HwResult
-    remux(std::string input, std::string output,
-          std::vector<int64_t> trimIns,
-          std::vector<int64_t> trimOuts);
+    class Context : public Object {
+    public:
+        AVFormatContext *c;
+        int32_t vTrackIndex = -1;
+        int32_t aTrackIndex = -1;
+    public:
+        static Context *open(std::string path);
+
+        static Context *open(std::string path, Context *iCtx);
+
+        ~Context();
+
+    private:
+        Context();
+
+        Context(Context &context) {}
+    };
+
+public:
+    static HwResult remux(std::string input, std::string output,
+                          std::vector<int64_t> trimIns,
+                          std::vector<int64_t> trimOuts);
 
 private:
-    static bool
-    contains(std::vector<int64_t> *trimIns, std::vector<int64_t> *trimOuts, int64_t pts);
+    static bool contains(std::vector<int64_t> *trimIns, std::vector<int64_t> *trimOuts,
+                         int64_t pts);
+
+    static bool createCodec(AVStream *stream, AVCodecContext **eCtx, AVCodecContext **dCtx);
 };
 
 
