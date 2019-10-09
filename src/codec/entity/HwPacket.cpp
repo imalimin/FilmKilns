@@ -17,13 +17,13 @@ HwPacket *HwPacket::wrap(AVPacket *pkt) {
     return p;
 }
 
-HwPacket *HwPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts) {
+HwPacket *HwPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags) {
     HwPacket *p = new HwPacket();
     p->buf = HwBuffer::wrap(buf, size);
     p->pts = pts;
     p->dts = dts;
     p->duration = 1;
-    p->flags = 1;
+    p->flags = flags;
     return p;
 }
 
@@ -33,7 +33,7 @@ HwPacket *HwPacket::create(size_t size, int64_t pts, int64_t dts) {
     p->pts = pts;
     p->dts = dts;
     p->duration = 1;
-    p->flags = 1;
+    p->flags = 0;
     return p;
 }
 

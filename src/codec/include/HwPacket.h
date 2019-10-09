@@ -29,7 +29,7 @@ class HwPacket : public Object {
 public:
     static HwPacket *wrap(AVPacket *pkt);
 
-    static HwPacket *wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts);
+    static HwPacket *wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);
 
     static HwPacket *create(size_t size, int64_t pts, int64_t dts);
 

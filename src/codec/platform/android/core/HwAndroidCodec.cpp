@@ -73,7 +73,7 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
             }
             AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_BIT_RATE, bitRate);
             AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_FRAME_RATE, fps);
-            AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_I_FRAME_INTERVAL, 10);
+            AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_I_FRAME_INTERVAL, 3);// Seconds
         } else {
             HwBuffer *csd0Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-0"));
             HwBuffer *csd1Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-1"));
@@ -310,7 +310,8 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                 memcpy(keyFrameBuf->data() + 4, buf, info.size);
                 hwPacket = HwPacket::wrap(keyFrameBuf->data(), info.size + 4,
                                           info.presentationTimeUs,
-                                          info.presentationTimeUs);
+                                          info.presentationTimeUs,
+                                          info.flags & BUFFER_FLAG_KEY_FRAME ? AV_PKT_FLAG_KEY : 0);
                 hwPacket->setDuration(static_cast<int64_t>(AV_TIME_BASE /
                                                            (float) fps));
             } else {
