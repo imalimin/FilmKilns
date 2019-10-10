@@ -56,6 +56,10 @@ public:
     };
 
 public:
+    static HwResult remuxCopy(std::string input, std::string output,
+                          std::vector<int64_t> trimIns,
+                          std::vector<int64_t> trimOuts);
+
     static HwResult remux(std::string input, std::string output,
                           std::vector<int64_t> trimIns,
                           std::vector<int64_t> trimOuts);

@@ -314,7 +314,7 @@ void HwVideoCompiler::remux() {
     string output = string(input);
     output.append(".remux.mp4");
     if (trimIns.size() > 1 && trimOuts.size() > 1 && trimIns.size() == trimOuts.size()) {
-        HwResult ret = HwVideoUtils::remux(input, output, trimIns, trimOuts);
+        HwResult ret = HwVideoUtils::remuxCopy(input, output, trimIns, trimOuts);
         std::string path = std::string(input);
         path.append(".src.mp4");
         int r = rename(input.c_str(), path.c_str());
