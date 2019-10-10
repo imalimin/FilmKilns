@@ -77,17 +77,48 @@ HwVideoUtils::Context *HwVideoUtils::Context::open(std::string path,
 }
 
 bool HwVideoUtils::recode(AVPacket **pkt, Context *iCtx, RecodeContext *rCtx) {
+    int ret = -1;
     if (RecodeContext::FLAG_LAST_PKT_SKIPPED == rCtx->flag && !((*pkt)->flags & AV_PKT_FLAG_KEY)) {
         rCtx->flag = RecodeContext::FLAG_RECODING;
         if (nullptr == rCtx->dCtx && nullptr == rCtx->eCtx) {
-            createCodec(iCtx->c->streams[iCtx->vTrackIndex], &rCtx->dCtx, &rCtx->eCtx);
+            if (!createCodec(iCtx->c->streams[iCtx->vTrackIndex], &rCtx->dCtx, &rCtx->eCtx)) {
+                rCtx->flag = RecodeContext::FLAG_NONE;
+                return false;
+            }
+        }
+        avcodec_flush_buffers(rCtx->dCtx);
+        avcodec_flush_buffers(rCtx->eCtx);
+        int64_t requestPts = (*pkt)->pts;
+        ret = avformat_seek_file(iCtx->c, -1, INT64_MIN,
+                                 requestPts, INT64_MAX,
+                                 AVSEEK_FLAG_BACKWARD);
+        while (AVERROR_EOF != ret) {
+            av_packet_unref(*pkt);
+            ret = av_read_frame(iCtx->c, *pkt);
+            if (iCtx->vTrackIndex == (*pkt)->stream_index) {
+                if ((*pkt)->pts >= requestPts) {
+                    break;
+                }
+                ret = avcodec_send_packet(rCtx->dCtx, *pkt);
+            }
         }
     }
     if (RecodeContext::FLAG_RECODING == rCtx->flag && (*pkt)->flags & AV_PKT_FLAG_KEY) {
         rCtx->flag = RecodeContext::FLAG_NONE;
     }
     if (RecodeContext::FLAG_RECODING == rCtx->flag) {
-
+        AVFrame *avFrame = av_frame_alloc();
+        int64_t requestPts = (*pkt)->pts;
+        ret = avcodec_send_packet(rCtx->dCtx, *pkt);
+        do {
+            ret = avcodec_receive_frame(rCtx->dCtx, avFrame);
+        } while (requestPts != avFrame->pts);
+        if (0 == ret) {
+            av_packet_unref(*pkt);
+            ret = avcodec_send_frame(rCtx->eCtx, avFrame);
+            ret = avcodec_receive_packet(rCtx->eCtx, *pkt);
+        }
+        av_frame_free(&avFrame);
     }
     return true;
 }
@@ -202,16 +233,32 @@ bool HwVideoUtils::createCodec(AVStream *stream, AVCodecContext **dCtx, AVCodecC
     }
     *dCtx = avcodec_alloc_context3(codec);
     avcodec_parameters_to_context(*dCtx, avCodecParameters);
-    if (avcodec_open2(*dCtx, codec, NULL) < 0) {
-        Logcat::e("hwvc", "Couldn't open decode codec.");
+    int ret = avcodec_open2(*dCtx, codec, NULL);
+    if (ret < 0) {
+        Logcat::e("hwvc", "Couldn't open decode codec: %s", av_err2str(ret));
         avcodec_free_context(dCtx);
         return false;
     }
     codec = avcodec_find_encoder(avCodecParameters->codec_id);
     *eCtx = avcodec_alloc_context3(codec);
-    avcodec_parameters_to_context(*eCtx, avCodecParameters);
-    if (avcodec_open2(*eCtx, codec, NULL) < 0) {
-        Logcat::e("hwvc", "Couldn't open encode codec.");
+    ret = avcodec_parameters_to_context(*eCtx, avCodecParameters);
+    (*eCtx)->codec = codec;
+    (*eCtx)->time_base = stream->time_base;
+    (*eCtx)->framerate = stream->avg_frame_rate;
+    (*eCtx)->gop_size = 15;
+    (*eCtx)->thread_count = 0;
+    (*eCtx)->max_b_frames = 2;
+    AVDictionary *param = nullptr;
+    if (AV_CODEC_ID_H264 == (*eCtx)->codec_id) {
+        (*eCtx)->profile = FF_PROFILE_H264_HIGH;
+        av_dict_set_int(&param, "crf", 25, 0);  // or abr,qp
+        av_dict_set(&param, "preset", "superfast", 0);
+        av_dict_set(&param, "tune", "zerolatency", 0);
+    }
+    ret = avcodec_open2(*eCtx, codec, &param);
+    av_dict_free(&param);
+    if (ret < 0) {
+        Logcat::e("hwvc", "Couldn't open encode codec: %s", av_err2str(ret));
         avcodec_close(*dCtx);
         avcodec_free_context(dCtx);
         avcodec_free_context(eCtx);
