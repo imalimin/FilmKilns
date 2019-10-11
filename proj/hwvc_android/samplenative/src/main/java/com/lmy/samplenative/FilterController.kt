@@ -29,7 +29,7 @@ class FilterController(private val filterSupport: FilterSupport,
 
     companion object {
         private val FILTERS = arrayOf(
-                "Normal", "Beauty V4", "Beach", "Clean", "Pink")
+                "Normal", "Beauty V4", "Beach", "Clean", "Pink", "Rise")
     }
 
     private var oneBar: SeekBar = progressLayout.getChildAt(0) as SeekBar
@@ -130,6 +130,10 @@ class FilterController(private val filterSupport: FilterSupport,
             }
             4 -> {
                 filterSupport.setFilter(HwvcFilter("$hwfDir/pink.hwf", true))
+                show(0)
+            }
+            5 -> {
+                filterSupport.setFilter(HwvcFilter("$hwfDir/rise.hwf", true))
                 show(0)
             }
             else -> {

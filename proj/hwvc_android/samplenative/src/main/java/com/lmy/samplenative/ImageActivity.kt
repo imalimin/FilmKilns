@@ -20,6 +20,7 @@ class ImageActivity : BaseActivity(), TextureView.SurfaceTextureListener {
             if (!prepared) {
                 prepared = true
                 processor?.prepare(holder.surface)
+//                processor?.show("/sdcard/DCIM/Camera/IMG_20190704_144705.jpg")
                 processor?.show("${progressLayout.context.externalCacheDir.path}/image/lena.png")
             } else {
                 processor?.updateWindow(holder.surface)
