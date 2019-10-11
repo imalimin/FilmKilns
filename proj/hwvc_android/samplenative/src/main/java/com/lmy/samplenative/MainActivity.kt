@@ -10,7 +10,6 @@ import com.lmy.samplenative.ui.AudioRecordAndMuxActivity
 import com.lmy.samplenative.ui.BitmapActivity
 import com.lmy.samplenative.ui.CameraActivity
 import com.lmy.samplenative.ui.TestAudioRecorderActivity
-import com.microsoft.officeuifabric.BuildConfig
 import com.microsoft.officeuifabric.listitem.ListItemDivider
 import kotlinx.android.synthetic.main.activity_main.*
 
