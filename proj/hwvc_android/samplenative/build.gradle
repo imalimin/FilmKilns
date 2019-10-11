@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
-    compileSdkVersion 26
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.lmy.samplenative"
         minSdkVersion 22
-        targetSdkVersion 26
+        targetSdkVersion 28
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 
@@ -28,13 +28,18 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation "com.android.support:design:26.1.0"
+    implementation "com.android.support:support-v4:$support_version"
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:recyclerview-v7:$support_version"
+    implementation "com.android.support:cardview-v7:$support_version"
+    implementation "com.android.support:exifinterface:$support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.tencent.bugly:crashreport:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    implementation 'com.microsoft.uifabric:OfficeUIFabric:0.2.12'
     implementation project(':codec_native')
 }
