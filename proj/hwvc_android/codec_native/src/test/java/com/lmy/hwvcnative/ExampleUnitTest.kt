@@ -19,7 +19,7 @@ class ExampleUnitTest {
 
     @Test
     fun png2Base64String() {
-        val pngPath = "/Users/lmy/Filter_04/rise/rise.png"
+        val pngPath = "/Users/lmy/Filter_05/hs_abaose/hs_abaose.png"
         val encoder = Base64.getEncoder()
         val ins = FileInputStream(pngPath)
         val result = encoder.encodeToString(ins.readBytes())
