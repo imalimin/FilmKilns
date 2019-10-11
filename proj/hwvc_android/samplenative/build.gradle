@@ -40,6 +40,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.tencent.bugly:crashreport:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
-    implementation 'com.microsoft.uifabric:OfficeUIFabric:0.2.12'
+    implementation project(':OfficeUIFabric')
     implementation project(':codec_native')
 }

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/searchbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/uifabricSearchbarBackgroundColor"
+    android:gravity="center_vertical"
+    android:paddingBottom="@dimen/uifabric_searchbar_padding_bottom">
+
+    <LinearLayout
+        android:id="@+id/search_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/uifabric_searchbar_search_view_height"
+        android:layout_marginStart="@dimen/uifabric_searchbar_search_view_container_margin_horizontal"
+        android:layout_marginTop="@dimen/uifabric_searchbar_search_view_container_margin_vertical"
+        android:layout_marginEnd="@dimen/uifabric_searchbar_search_view_container_margin_horizontal"
+        android:layout_marginBottom="@dimen/uifabric_searchbar_search_view_container_margin_vertical"
+        android:focusableInTouchMode="true"
+        android:gravity="center_vertical"
+        android:importantForAccessibility="no"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/search_back_button"
+            style="?actionButtonStyle"
+            android:layout_width="@dimen/uifabric_min_touch_size"
+            android:layout_height="@dimen/uifabric_min_touch_size"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/searchbar_back"
+            android:minWidth="0dp"
+            android:src="@drawable/ms_ic_arrow_back"
+            android:tint="?attr/uifabricSearchbarBackButtonColor" />
+
+        <ImageView
+            android:id="@+id/search_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/uifabric_searchbar_search_icon_padding_start"
+            android:paddingEnd="@dimen/uifabric_searchbar_search_icon_padding_end"
+            android:src="@drawable/ms_ic_search"
+            android:tint="?attr/uifabricSearchbarSearchIconColor"/>
+
+        <!--Using theme instead of style to pick up colorControlActivated and textColorHint, etc.-->
+        <android.support.v7.widget.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/uifabric_searchbar_search_view_height"
+            android:layout_weight="1"
+            android:background="@null"
+            android:imeOptions="actionSearch|flagNoExtractUi|flagNoFullscreen"
+            android:theme="@style/Widget.UIFabric.SearchView"
+            app:closeIcon="@null"
+            app:iconifiedByDefault="false"
+            app:searchIcon="@null" />
+
+        <FrameLayout
+            android:layout_width="@dimen/uifabric_min_touch_size"
+            android:layout_height="@dimen/uifabric_min_touch_size">
+
+            <ProgressBar
+                android:id="@+id/search_progress"
+                style="@style/Widget.UIFabric.CircularProgress.XSmall.Search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/search_close"
+                style="?actionButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/searchbar_clear_search"
+                android:src="@drawable/ms_ic_close_circle"
+                android:tint="?attr/uifabricSearchbarCloseIconColor"
+                android:tintMode="src_in"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

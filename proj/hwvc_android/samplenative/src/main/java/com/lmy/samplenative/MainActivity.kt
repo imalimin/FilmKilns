@@ -1,18 +1,21 @@
 package com.lmy.samplenative
 
-import android.content.Context
 import android.content.Intent
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.TextView
+import com.lmy.samplenative.adapter.OnRecyclerItemClickListener
+import com.lmy.samplenative.adapter.SimpleTextAdapter
 import com.lmy.samplenative.ui.AudioRecordAndMuxActivity
 import com.lmy.samplenative.ui.BitmapActivity
 import com.lmy.samplenative.ui.CameraActivity
 import com.lmy.samplenative.ui.TestAudioRecorderActivity
+import com.microsoft.officeuifabric.BuildConfig
+import com.microsoft.officeuifabric.listitem.ListItemDivider
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickListener {
+
     private val ITEMS = arrayListOf(
             Item("Echo Player") { startActivity(Intent(this, EchoActivity::class.java)) },
             Item("Image Editor") { startActivity(Intent(this, ImageActivity::class.java)) },
@@ -28,22 +31,22 @@ class MainActivity : BaseActivity() {
 
     override fun getLayoutResource(): Int = R.layout.activity_main
     override fun initView() {
+        setSupportActionBar(toolbar)
+        toolbar.title = resources.getString(R.string.app_name)
+        toolbar.subtitle = BuildConfig.VERSION_NAME
         SourcesManager(this).initialize()
-        listView.adapter = Adapter(this, R.layout.item_simple_text, ITEMS)
-        listView.setOnItemClickListener { parent, view, position, id ->
-            (listView.adapter as Adapter).getItem(position).action()
-        }
+        val adapter = SimpleTextAdapter()
+        val list = ArrayList<String>()
+        ITEMS.forEach { list.add(it.name) }
+        adapter.bindData(list)
+        listView.adapter = adapter
+        listView.addItemDecoration(ListItemDivider(this, DividerItemDecoration.VERTICAL))
+        listView.addOnItemTouchListener(OnRecyclerItemClickListener(this, this))
     }
 
     class Item(val name: String, val action: () -> Unit)
 
-    class Adapter(context: Context, resource: Int, items: List<Item>)
-        : ArrayAdapter<Item>(context, resource, items) {
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val itemView = convertView ?: super.getView(position, convertView, parent)
-            val textView = itemView.findViewById<TextView>(R.id.text1)
-            textView?.text = getItem(position).name
-            return itemView
-        }
+    override fun onItemClick(parent: RecyclerView?, view: View?, position: Int) {
+        ITEMS[position].action()
     }
 }

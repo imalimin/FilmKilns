@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<resources>
+
+    <!-- *** UIFabric Theme *** -->
+
+    <style name="TextAppearance.UIFabric" parent="TextAppearance.AppCompat" />
+
+    <style name="TextAppearance.UIFabric.Headline">
+        <item name="android:textSize">28sp</item>
+        <item name="android:fontFamily">"sans-serif-light"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.Title1">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">"sans-serif-medium"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.Title2">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">"sans-serif"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.Heading">
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">"sans-serif"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.SubHeading">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">"sans-serif"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.SubHeading2">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">"sans-serif-medium"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.Body1">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">"sans-serif"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.Body2">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">"sans-serif-medium"</item>
+    </style>
+
+    <style name="TextAppearance.UIFabric.Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">"sans-serif"</item>
+    </style>
+
+    <!-- *** UIFabric Semantic Styles *** -->
+
+    <!--Button-->
+    <style name="TextAppearance.UIFabric.Button" parent="TextAppearance.UIFabric.Body2">
+        <item name="android:textColor">@color/button_text</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+    <style name="TextAppearance.UIFabric.Button.Borderless">
+        <item name="android:textColor">@color/button_text_borderless</item>
+    </style>
+
+    <!--Calendar-->
+    <!--calendar_week_day_text_selector sets the colors for these-->
+    <style name="TextAppearance.UIFabric.CalendarDay" parent="TextAppearance.UIFabric.SubHeading">
+        <item name="android:textColor">@null</item>
+    </style>
+    <style name="TextAppearance.UIFabric.CalendarDay2" parent="TextAppearance.UIFabric.SubHeading2">
+        <item name="android:textColor">@null</item>
+    </style>
+    <style name="TextAppearance.UIFabric.WeekDayHeader" parent="TextAppearance.UIFabric.Body2">
+        <item name="android:textColor">@null</item>
+    </style>
+
+    <!--ListItem-->
+    <style name="TextAppearance.UIFabric.ListItemTitle" parent="TextAppearance.UIFabric.SubHeading">
+        <item name="android:textColor">?attr/uifabricListItemTitleColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ListItemSubtitle" parent="TextAppearance.UIFabric.Body1">
+        <item name="android:textColor">?attr/uifabricListItemSubtitleColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ListItemFooter" parent="TextAppearance.UIFabric.Caption">
+        <item name="android:textColor">?attr/uifabricListItemFooterColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ListItemTitle.LargeHeader" parent="TextAppearance.UIFabric.Title1">
+        <item name="android:textColor">?attr/uifabricListItemTitleColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ListItemSubtitle.LargeHeader">
+        <item name="android:textColor">?attr/uifabricListItemSubtitleLargeHeaderColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ListItemFooter.LargeHeader" parent="TextAppearance.UIFabric.Body1">
+        <item name="android:textColor">?attr/uifabricListItemFooterColor</item>
+    </style>
+
+    <!--ListSubHeader-->
+    <style name="TextAppearance.UIFabric.ListSubHeaderTitle" parent="TextAppearance.UIFabric.Body2" />
+    <style name="TextAppearance.UIFabric.ListSubHeaderTitle.Primary">
+        <item name="android:textColor">?attr/uifabricListSubHeaderTitlePrimaryColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ListSubHeaderTitle.Secondary">
+        <item name="android:textColor">?attr/uifabricListSubHeaderTitleSecondaryColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ListSubHeaderTitle.Tertiary">
+        <item name="android:textColor">?attr/uifabricListSubHeaderTitleTertiaryColor</item>
+    </style>
+
+    <!--NumberPicker-->
+    <style name="TextAppearance.UIFabric.NumberPicker" parent="TextAppearance.UIFabric.Heading"/>
+    <style name="TextAppearance.UIFabric.NumberPicker.Selected">
+        <item name="android:fontFamily">"sans-serif-medium"</item>
+    </style>
+
+    <!--PeoplePicker-->
+    <style name="TextAppearance.UIFabric.PeoplePickerLabel" parent="TextAppearance.UIFabric.SubHeading">
+        <item name="android:textColor">?attr/uifabricPeoplePickerLabelTextColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.PeoplePickerText" parent="TextAppearance.UIFabric.Heading" />
+    <style name="TextAppearance.UIFabric.PeoplePickerCountSpan" parent="TextAppearance.UIFabric.Caption">
+        <item name="android:textColor">?attr/uifabricPeoplePickerCountSpanTextColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.PeoplePickerSearchDirectoryButton" parent="TextAppearance.UIFabric.Button.Borderless" />
+
+    <!--PopupMenu-->
+    <style name="TextAppearance.UIFabric.PopupMenuTitle" parent="TextAppearance.UIFabric.Body1" />
+
+    <!--Searchbar-->
+    <style name="TextAppearance.UIFabric.SearchbarSearchViewText" parent="TextAppearance.UIFabric.SubHeading">
+        <item name="android:textColor">?attr/uifabricSearchbarSearchViewTextColor</item>
+    </style>
+
+    <!--Snackbar-->
+    <style name="TextAppearance.UIFabric.SnackbarText" parent="TextAppearance.UIFabric.Body1">
+        <item name="android:textColor">?attr/uifabricSnackbarTextColor</item>
+    </style>
+
+    <!--TabLayout-->
+    <style name="TextAppearance.UIFabric.Tab.Light" parent="TextAppearance.UIFabric.Body2">
+        <item name="android:textColor">?attr/uifabricTabTextColor</item>
+        <item name="textAllCaps">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!--Toolbar-->
+    <style name="TextAppearance.UIFabric.ToolbarTitle" parent="TextAppearance.UIFabric.Title1">
+        <item name="android:textColor">?attr/uifabricToolbarTitleTextColor</item>
+    </style>
+    <style name="TextAppearance.UIFabric.ToolbarSubtitle" parent="TextAppearance.UIFabric.Caption">
+        <item name="android:textColor">?attr/uifabricToolbarSubtitleTextColor</item>
+    </style>
+
+    <!--Tooltip-->
+    <style name="TextAppearance.UIFabric.Tooltip" parent="TextAppearance.UIFabric.Body2">
+        <item name="android:textColor">?attr/uifabricTooltipTextColor</item>
+    </style>
+
+</resources>

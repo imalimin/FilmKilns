@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<resources>
+
+    <style name="Theme.UIFabric" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/uifabric_communication_blue</item>
+        <item name="colorPrimaryDark">@color/uifabric_communication_shade_10</item>
+        <item name="colorAccent">@color/uifabric_communication_blue</item>
+        <item name="android:textColorPrimary">@color/uifabric_gray_900</item>
+        <item name="buttonStyle">@style/Widget.UIFabric.Button</item>
+        <item name="toolbarStyle">@style/Theme.UIFabric.Toolbar</item>
+
+        <!-- *** Theme Semantic Colors *** -->
+
+        <item name="uifabricColorPrimaryLight">@color/uifabric_communication_tint_20</item>
+        <item name="uifabricColorPrimaryExtraLight">@color/uifabric_communication_tint_40</item>
+
+        <!-- *** Base Semantic Colors *** -->
+
+        <!--Backgrounds-->
+        <item name="uifabricBackgroundColor">@color/uifabric_white</item>
+        <item name="uifabricBackgroundPressedColor">@color/uifabric_gray_100</item>
+        <item name="uifabricBackgroundPrimaryColor">?attr/colorPrimary</item>
+        <item name="uifabricBackgroundSecondaryColor">@color/uifabric_gray_900</item>
+
+        <!--Backgrounds, Transparent-->
+        <item name="uifabricBackgroundSecondary20Color">#33000000</item>
+
+        <!--Foregrounds-->
+        <item name="uifabricForegroundColor">@color/uifabric_gray_900</item>
+        <item name="uifabricForegroundSelectedColor">?attr/colorPrimary</item>
+        <item name="uifabricForegroundSecondaryColor">@color/uifabric_gray_400</item>
+        <item name="uifabricForegroundOnPrimaryColor">@color/uifabric_white</item>
+        <item name="uifabricForegroundOnSecondaryColor">@color/uifabric_white</item>
+        <item name="uifabricDividerColor">@color/uifabric_gray_100</item>
+
+        <!--Foregrounds, Transparent-->
+        <item name="uifabricForegroundOnPrimary90Color">#E6FFFFFF</item>
+        <item name="uifabricForegroundOnPrimary70Color">#B3FFFFFF</item>
+
+        <!-- *** Semantic Colors *** -->
+
+        <!--Button-->
+        <item name="uifabricButtonBackgroundDefaultColor">?attr/uifabricBackgroundPrimaryColor</item>
+        <item name="uifabricButtonBackgroundDisabledColor">@color/uifabric_gray_50</item>
+        <item name="uifabricButtonBackgroundPressedColor">?attr/colorControlHighlight</item>
+        <item name="uifabricButtonTextDefaultColor">?attr/uifabricForegroundOnPrimaryColor</item>
+        <item name="uifabricButtonTextDisabledColor">@color/uifabric_gray_300</item>
+
+        <!--Button Borderless-->
+        <item name="uifabricButtonBorderlessBackgroundDefaultColor">@android:color/transparent</item>
+        <item name="uifabricButtonBorderlessBackgroundDisabledColor">@android:color/transparent</item>
+        <item name="uifabricButtonBorderlessTextDefaultColor">?attr/colorPrimary</item>
+
+        <!--CalendarView-->
+        <item name="uifabricCalendarBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricCalendarWeekHeadingBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricCalendarWeekHeadingWeekDayTextColor">?attr/uifabricForegroundSecondaryColor</item>
+        <item name="uifabricCalendarWeekHeadingWeekendTextColor">@color/uifabric_gray_200</item>
+        <item name="uifabricCalendarMonthOverlayBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricCalendarMonthOverlayTextColor">?attr/uifabricForegroundColor</item>
+        <item name="uifabricCalendarOtherMonthBackgroundColor">@color/uifabric_gray_25</item>
+        <item name="uifabricCalendarSelectedColor">?attr/uifabricForegroundSelectedColor</item>
+        <item name="uifabricCalendarDayTodayBackgroundColor">?attr/uifabricColorPrimaryExtraLight</item>
+        <!--day selector-->
+        <item name="uifabricCalendarDayTextActiveColor">?attr/uifabricForegroundSelectedColor</item>
+        <item name="uifabricCalendarDayTextActiveCheckedColor">?attr/uifabricForegroundOnPrimaryColor</item>
+        <item name="uifabricCalendarDayTextInactiveCheckedColor">?attr/uifabricForegroundOnPrimaryColor</item>
+        <item name="uifabricCalendarDayTextDefaultColor">?attr/uifabricForegroundSecondaryColor</item>
+
+        <!--DateTimePicker-->
+        <item name="uifabricDateTimePickerToolbarTitleTextColor">?attr/colorPrimary</item>
+        <item name="uifabricDateTimePickerTabTextColor">?attr/uifabricForegroundSecondaryColor</item>
+        <item name="uifabricDateTimePickerDialogBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricDateTimePickerToolbarIconColor">?attr/colorPrimary</item>
+
+        <!--Dialog-->
+        <item name="uifabricDialogBackgroundColor">?attr/uifabricBackgroundColor</item>
+
+        <!--Drawer-->
+        <item name="uifabricDrawerBackgroundColor">?attr/uifabricBackgroundColor</item>
+
+        <!--ListItemView-->
+        <item name="uifabricListItemBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricListItemTitleColor">?attr/uifabricForegroundColor</item>
+        <item name="uifabricListItemSubtitleColor">?attr/uifabricForegroundSecondaryColor</item>
+        <item name="uifabricListItemSubtitleLargeHeaderColor">?attr/uifabricForegroundColor</item>
+        <item name="uifabricListItemFooterColor">?attr/uifabricForegroundSecondaryColor</item>
+        <item name="uifabricListItemRippleColor">?attr/uifabricBackgroundPressedColor</item>
+
+        <!--ListSubHeader-->
+        <item name="uifabricListSubHeaderTitlePrimaryColor">?attr/colorPrimary</item>
+        <item name="uifabricListSubHeaderTitleSecondaryColor">?attr/uifabricForegroundColor</item>
+        <item name="uifabricListSubHeaderTitleTertiaryColor">?attr/uifabricForegroundSecondaryColor</item>
+
+        <!--NumberPicker-->
+        <item name="uifabricNumberPickerBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricNumberPickerDefaultTextColor">?attr/uifabricForegroundSecondaryColor</item>
+        <item name="uifabricNumberPickerSelectedTextColor">?attr/uifabricForegroundSelectedColor</item>
+
+        <!--PeoplePicker-->
+        <item name="uifabricPeoplePickerBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricPeoplePickerPopupBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricPeoplePickerTextViewBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricPeoplePickerTextViewDragBackgroundColor">?attr/uifabricBackgroundPrimaryColor</item>
+        <item name="uifabricPeoplePickerHintTextColor">@color/uifabric_gray_300</item>
+        <item name="uifabricPeoplePickerLabelTextColor">?attr/uifabricForegroundSecondaryColor</item>
+        <item name="uifabricPeoplePickerCountSpanTextColor">?attr/uifabricForegroundSecondaryColor</item>
+
+        <!--Persona Chip-->
+        <!--TODO add hex values to the colors file when they get added to the toolkit-->
+        <item name="uifabricPersonaChipBackgroundNormalColor">@color/uifabric_gray_50</item>
+        <item name="uifabricPersonaChipBackgroundActiveColor">?attr/uifabricBackgroundPrimaryColor</item>
+        <item name="uifabricPersonaChipBackgroundErrorColor">#FFF3F4</item>
+        <item name="uifabricPersonaChipBackgroundErrorActiveColor">#E8484C</item>
+        <item name="uifabricPersonaChipBackgroundPressedColor">#0D000000</item>
+        <item name="uifabricPersonaChipTextNormalColor">@color/uifabric_gray_900</item>
+        <item name="uifabricPersonaChipTextActiveColor">?attr/uifabricForegroundOnPrimaryColor</item>
+        <item name="uifabricPersonaChipTextErrorColor">#E63237</item>
+        <item name="uifabricPersonaChipTextDisabledColor">@color/uifabric_gray_400</item>
+
+        <!--PopupMenu-->
+        <item name="uifabricPopupMenuBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricPopupMenuItemTitleColor">?attr/uifabricForegroundColor</item>
+        <item name="uifabricPopupMenuItemForegroundSelectedColor">?attr/uifabricForegroundSelectedColor</item>
+        <item name="uifabricPopupMenuItemCheckBackgroundRippleColor">@color/uifabric_gray_300</item>
+
+        <!--Progress-->
+        <item name="uifabricProgressPrimaryColor">?attr/colorPrimary</item>
+
+        <!--Searchbar-->
+        <item name="uifabricSearchbarBackgroundColor">?attr/uifabricBackgroundPrimaryColor</item>
+        <item name="uifabricSearchbarSearchViewContainerBackgroundColor">?attr/uifabricBackgroundSecondary20Color</item>
+        <item name="uifabricSearchbarBackButtonColor">?attr/uifabricForegroundOnPrimaryColor</item>
+        <item name="uifabricSearchbarSearchIconColor">?attr/uifabricForegroundOnPrimary90Color</item>
+        <item name="uifabricSearchbarSearchViewTextColor">?attr/uifabricForegroundOnPrimaryColor</item>
+        <item name="uifabricSearchbarSearchViewTextHintColor">?attr/uifabricForegroundOnPrimary90Color</item>
+        <item name="uifabricSearchbarProgressColor">?attr/uifabricForegroundOnPrimary70Color</item>
+        <item name="uifabricSearchbarCloseIconColor">?attr/uifabricForegroundOnPrimary70Color</item>
+
+        <!--Snackbar-->
+        <item name="uifabricSnackbarBackgroundColor">?attr/uifabricBackgroundSecondaryColor</item>
+        <item name="uifabricSnackbarBackgroundAnnouncementColor">?attr/uifabricBackgroundPrimaryColor</item>
+        <item name="uifabricSnackbarTextColor">?attr/uifabricForegroundOnSecondaryColor</item>
+        <item name="uifabricSnackbarActionTextColor">?attr/uifabricColorPrimaryLight</item>
+        <item name="uifabricSnackbarActionTextAnnouncementColor">?attr/uifabricForegroundOnPrimaryColor</item>
+
+        <!--TabLayout-->
+        <item name="uifabricTabLayoutBackgroundColor">?attr/uifabricBackgroundColor</item>
+        <item name="uifabricTabTextColor">?attr/uifabricForegroundSecondaryColor</item>
+        <item name="uifabricTabSelectedTextColor">?attr/uifabricForegroundSelectedColor</item>
+        <item name="uifabricTabIndicatorColor">?attr/uifabricForegroundSelectedColor</item>
+
+        <!--Toolbar-->
+        <item name="uifabricToolbarTitleTextColor">?attr/uifabricForegroundOnPrimaryColor</item>
+        <item name="uifabricToolbarSubtitleTextColor">?attr/uifabricForegroundOnPrimaryColor</item>
+
+        <!--Tooltip-->
+        <item name="uifabricTooltipBackgroundColor">?attr/uifabricBackgroundSecondaryColor</item>
+        <item name="uifabricTooltipTextColor">?attr/uifabricForegroundOnSecondaryColor</item>
+    </style>
+
+</resources>
