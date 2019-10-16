@@ -4,78 +4,75 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="false">
 
-    <SurfaceView
-        android:id="@+id/surfaceView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="false" />
+        android:orientation="vertical">
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/swapBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="SWAP" />
+
+            <Button
+                android:id="@+id/recordBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Record" />
+
+            <TextView
+                style="@style/TextAppearance.UIFabric.Caption"
+                android:id="@+id/timeView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="6dp"
+                android:layout_toStartOf="@id/recordBtn"
+                android:text="00:00.000" />
+
+            <Button
+                android:id="@+id/nextBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Done" />
+
+            <Button
+                android:id="@+id/backBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="6dp"
+                android:layout_toStartOf="@id/nextBtn"
+                android:text="Del" />
+        </RelativeLayout>
+    </LinearLayout>
 
     <include layout="@layout/view_filter" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp"
-        android:padding="8dp">
-
-        <TextView
-            android:id="@+id/swapBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="#33ffffff"
-            android:padding="8dp"
-            android:text="SWAP"
-            android:textColor="@color/colorAccent" />
-
-        <Button
-            android:id="@+id/recordBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:background="#33ffffff"
-            android:text="Record"
-            android:textColor="@color/colorAccent" />
-
-        <TextView
-            android:id="@+id/timeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="6dp"
-            android:layout_toStartOf="@id/recordBtn"
-            android:text="00:00.000"
-            android:textColor="@color/colorAccent"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/nextBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="#33ffffff"
-            android:padding="8dp"
-            android:text="Done"
-            android:textColor="@color/colorAccent" />
-
-        <TextView
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="6dp"
-            android:layout_toStartOf="@id/nextBtn"
-            android:background="#33ffffff"
-            android:padding="8dp"
-            android:text="DEL"
-            android:textColor="@color/colorAccent" />
-    </RelativeLayout>
 </RelativeLayout>
