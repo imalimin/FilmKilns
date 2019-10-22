@@ -51,7 +51,7 @@ bool HwVideoCompiler::eventPrepare(Message *msg) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare failed.Invalid arguments.");
         return true;
     }
-    encoder = new HwAndroidEncoder();
+    encoder = new HwAsyncEncoder();
     if (!encoder->prepare(path, width, height, *format)) {
         Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
     }
