@@ -16,6 +16,11 @@ class HwBitmapFactory : public Object {
 public:
     static HwBitmap *decodeFile(std::string file);
 
+    /**
+     * @param  file          文件路径
+     * @param  recycleBitmap 复用bitmap
+     * @return HwBitmap
+     */
     static HwBitmap *decodeFile(std::string file, HwBitmap *recycleBitmap);
 
 };

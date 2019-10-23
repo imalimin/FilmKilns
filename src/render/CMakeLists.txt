@@ -3,6 +3,7 @@ project(hwvc_render LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/../al_bitmap/include
             ${PROJECT_SOURCE_DIR}/platform/android
             ${PROJECT_SOURCE_DIR}/platform/android/buffer
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader
@@ -11,6 +12,7 @@ if (ANDROID)
 else ()
     include_directories(
             ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/../al_bitmap/include
     )
 endif ()
 option(GL_DEBUG "Whether show opengl logs." ON)
@@ -95,6 +97,7 @@ if (ANDROID)
             log)
     target_link_libraries( # Specifies the target library.
             hwvc_render
+            albitmap
             hwvcom
             # Links the target library to the log library
             # included in the NDK.
@@ -108,5 +111,6 @@ else ()
     # TODO other platform
     target_link_libraries( # Specifies the target library.
             hwvc_render
+            albitmap
             hwvcom)
 endif ()

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvcom LANGUAGES C CXX)
+project(albitmap LANGUAGES C CXX)
 
 option(HWDEBUG "Whether show opengl logs." ON)
 if (HWDEBUG)
@@ -11,8 +11,7 @@ set(PREBUILD_STATIC ${PROJECT_SOURCE_DIR}/prebuild/static)
 set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
 set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 
-# 引入cpufeatures模块
-include_directories(${ANDROID_NDK}/sources/android/cpufeatures)
+include_directories(${PROJECT_SOURCE_DIR}/../common/include)
 
 #include_directories(
 #        ${PREBUILD_STATIC}/libturbojpeg/include
@@ -28,31 +27,48 @@ else ()
 endif ()
 message(STATUS "hwcommom CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
+#------------------STATIC START----------------------
+#libjpeg
+add_library(
+        libjpeg
+        STATIC
+        IMPORTED)
+set_target_properties(
+        libjpeg
+        PROPERTIES IMPORTED_LOCATION
+        "${JPGE}/libjpeg.a")
+
+#libturbojpeg
+add_library(
+        libturbojpeg
+        STATIC
+        IMPORTED)
+set_target_properties(
+        libturbojpeg
+        PROPERTIES IMPORTED_LOCATION
+        "${JPGE}/libturbojpeg.a")
+
+#libpng16
+add_library(
+        libpng
+        STATIC
+        IMPORTED)
+set_target_properties(
+        libpng
+        PROPERTIES IMPORTED_LOCATION
+        "${PNG}/libpng.a")
+
+#------------------STATIC END----------------------
+
 file(
         GLOB
         SOURCES
-        ${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c
-        ${PROJECT_SOURCE_DIR}/*.cpp
-        ${PROJECT_SOURCE_DIR}/entity/*.cpp
-        ${PROJECT_SOURCE_DIR}/thread/*.cpp
-        ${PROJECT_SOURCE_DIR}/utils/*.cpp
-        ${PROJECT_SOURCE_DIR}/media/*.cpp
-        ${PROJECT_SOURCE_DIR}/media/sles/*.cpp
-        ${PROJECT_SOURCE_DIR}/sources/*.cpp
+        ${PROJECT_SOURCE_DIR}/decoder/*.cpp
+        ${PROJECT_SOURCE_DIR}/image/*.cpp
 )
-if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
-    set_property(SOURCE ${SOURCES} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
-    add_definitions("-DHAVE_NEON=1")
-elseif (${ANDROID_ABI} STREQUAL "x86")
-    set_property(SOURCE ${SOURCES} APPEND_STRING PROPERTY COMPILE_FLAGS
-            " -mssse3  -Wno-unknown-attributes \
-                   -Wno-deprecated-declarations \
-                   -Wno-constant-conversion \
-                   -Wno-static-in-inline")
-    add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
-endif ()
+
 add_library(
-        hwvcom
+        albitmap
         SHARED
         ${SOURCES}
 )
@@ -67,8 +83,10 @@ find_library(
         z)
 
 target_link_libraries(
+        albitmap
         hwvcom
-        OpenSLES
-        ${zlib}
+        libjpeg
+        libturbojpeg
+        libpng
         ${log-lib}
 )
