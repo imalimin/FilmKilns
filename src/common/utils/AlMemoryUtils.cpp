@@ -5,6 +5,7 @@
 #include "../include/AlMemoryUtils.h"
 
 size_t AlMemoryUtils::memcpy(const unsigned char *dst, const unsigned char *src, size_t size) {
+#ifdef __ANDROID__
     if (AlMemoryUtils::supportNeon()) {
         if (size & 63) {
             int alignSize = (size - size % 64);
@@ -17,7 +18,12 @@ size_t AlMemoryUtils::memcpy(const unsigned char *dst, const unsigned char *src,
         std::memcpy((void *) dst, src, size);
     }
     return size;
+#else
+    return memcpy(dst, src, size);
+#endif
 }
+
+#ifdef __ANDROID__
 
 bool AlMemoryUtils::supportNeon() {
     return android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM &&
@@ -83,3 +89,5 @@ size_t AlMemoryUtils::memcpy128(const unsigned char *dst, const unsigned char *s
 #endif
     return size;
 }
+
+#endif

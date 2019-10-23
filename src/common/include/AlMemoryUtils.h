@@ -12,15 +12,20 @@ class AlMemoryUtils : public Object {
 public:
     static size_t memcpy(const unsigned char *dst, const unsigned char *src, size_t size);
 
+#ifdef __ANDROID__
+
     static bool supportNeon();
 
 private:
     /**
      * Neon memory copy.
      */
+
     static size_t memcpy64(const unsigned char *dst, const unsigned char *src, size_t size);
 
     static size_t memcpy128(const unsigned char *dst, const unsigned char *src, size_t size);
+
+#endif
 };
 
 
