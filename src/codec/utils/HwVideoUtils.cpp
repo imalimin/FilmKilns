@@ -150,6 +150,7 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
     int64_t aDTime = 0, vDTime = 0;
     int64_t aLastTime = 0, vLastTime = 0;
     int64_t aDLastTime = 0, vDLastTime = 0;
+    bool isClipFirstFrame = true;
     bool tryRemux = false;
     while (AVERROR_EOF != ret) {
         ret = av_read_frame(iCtx->c, avPacket);
@@ -158,10 +159,15 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
                                            iCtx->c->streams[avPacket->stream_index]->time_base,
                                            AV_TIME_BASE_Q,
                                            AV_ROUND_NEAR_INF);
+//            if (iCtx->vTrackIndex == avPacket->stream_index) {
+//                Logcat::i("hwvc", "HwFFmpegEncoder::write %lld, %d", pts,
+//                          avPacket->flags & AV_PKT_FLAG_KEY);
+//            }
             if (!contains(&trimIns, &trimOuts, pts)) {
                 if (iCtx->vTrackIndex == avPacket->stream_index) {
                     vLastTime = avPacket->pts;
                     vDLastTime = avPacket->dts;
+                    isClipFirstFrame = true;
                 } else if (iCtx->aTrackIndex == avPacket->stream_index) {
                     aLastTime = avPacket->pts;
                     aDLastTime = avPacket->dts;
@@ -170,11 +176,12 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
                 continue;
             }
             if (iCtx->vTrackIndex == avPacket->stream_index) {
-//                Logcat::i("hwvc", "HwFFmpegEncoder::write %d", avPacket->flags & AV_PKT_FLAG_KEY);
-                if (!(avPacket->flags & AV_PKT_FLAG_KEY)) {
+                if (isClipFirstFrame && !(avPacket->flags & AV_PKT_FLAG_KEY)) {
+                    Logcat::i("hwvc", "HwFFmpegEncoder::write tryRemux %lld", pts);
                     tryRemux = true;
                     break;
                 }
+                isClipFirstFrame = false;
                 vTime += (avPacket->pts - vLastTime);
                 vDTime += (avPacket->dts - vDLastTime);
                 vLastTime = avPacket->pts;
