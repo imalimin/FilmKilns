@@ -59,10 +59,24 @@ std::vector<std::string> StringUtils::split(const std::string &str, const std::s
     return result;
 }
 
+std::string StringUtils::valueOf(int32_t value) {
+    return valueOf<int32_t>(value);
+}
+
 std::string StringUtils::valueOf(long value) {
-    std::ostringstream oss;
-    oss << value;
-    return oss.str();
+    return valueOf<long>(value);
+}
+
+std::string StringUtils::valueOf(int64_t value) {
+    return valueOf<int64_t>(value);
+}
+
+std::string StringUtils::valueOf(float value) {
+    return valueOf<float>(value);
+}
+
+std::string StringUtils::valueOf(double value) {
+    return valueOf<double>(value);
 }
 
 bool StringUtils::isEmpty(std::string *str) {

@@ -35,7 +35,22 @@ public:
 
     static std::vector<std::string> split(const std::string &str, const std::string &delimiter);
 
+    template <typename T>
+    static std::string valueOf(T value){
+        std::ostringstream oss;
+        oss << value;
+        return oss.str();
+    }
+
+    static std::string valueOf(int32_t value);
+
     static std::string valueOf(long value);
+
+    static std::string valueOf(int64_t value);
+
+    static std::string valueOf(float value);
+
+    static std::string valueOf(double value);
 
     static bool isEmpty(std::string *str);
 };
