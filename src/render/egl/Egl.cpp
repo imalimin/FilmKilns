@@ -112,6 +112,11 @@ void Egl::init(EGLContext context, HwWindow *win) {
         !eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &height)) {
         Logcat::e("HWVC", "Egl init failed");
     }
+
+#ifdef __ANDROID__
+    eglPresentationTimeANDROID = reinterpret_cast<EGL_PRESENTATION_TIME_ANDROID>(eglGetProcAddress(
+            "eglPresentationTimeANDROID"));
+#endif
     //If interval is set to a value of 0, buffer swaps are not synchronized to a video frame, and the swap happens as soon as the render is complete.
 //    eglSwapInterval(eglDisplay, 0);
 }
@@ -275,3 +280,14 @@ bool Egl::isAttachWindow() { return nullptr != win; }
 EGLContext Egl::getContext() {
     return eglContext;
 }
+
+#ifdef __ANDROID__
+
+bool Egl::setTimestamp(int64_t nsecs) {
+    if (nullptr == eglPresentationTimeANDROID || EGL_NO_DISPLAY == eglDisplay) {
+        return false;
+    }
+    return EGL_TRUE == eglPresentationTimeANDROID(eglDisplay, eglSurface, nsecs);
+}
+
+#endif

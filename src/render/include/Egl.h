@@ -30,6 +30,10 @@ const int CONFIG_BUFFER[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                              EGL_STENCIL_SIZE, 0,
                              EGL_NONE};
 
+typedef EGLBoolean (EGLAPIENTRYP EGL_PRESENTATION_TIME_ANDROID)(EGLDisplay display,
+                                                                    EGLSurface surface,
+                                                                    khronos_stime_nanoseconds_t time);
+
 class Egl : public Object {
 public:
     static EGLContext currentContext();
@@ -59,12 +63,19 @@ public:
 
     bool isAttachWindow();
 
+#ifdef __ANDROID__
+
+    bool setTimestamp(int64_t nsecs);
+
+#endif
+
 private:
     HwWindow *win = nullptr;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
     EGLConfig eglConfig = nullptr;
     EGLContext eglContext = EGL_NO_CONTEXT;
     EGLSurface eglSurface = EGL_NO_SURFACE;
+    EGL_PRESENTATION_TIME_ANDROID eglPresentationTimeANDROID = nullptr;
 
     void init(EGLContext context, HwWindow *win);
 
