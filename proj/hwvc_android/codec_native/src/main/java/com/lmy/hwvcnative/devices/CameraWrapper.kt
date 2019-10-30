@@ -187,4 +187,9 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
     }
 
     fun getMatrix(): FloatArray = transformMatrix
+
+    /**
+     * @return nanoseconds
+     */
+    fun timestamp(): Long = surface.timestamp
 }

@@ -61,11 +61,15 @@ void HwCameraRecorder::pause() {
     postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
 }
 
-void HwCameraRecorder::invalidate(HwMatrix *matrix, int w, int h) {
+void HwCameraRecorder::invalidate(HwMatrix *matrix, int w, int h, int64_t tsInNs) {
     Message *msg = new Message(EVENT_CAMERA_INVALIDATE, nullptr);
+    int32_t size = 0;
+    size |= w;
+    size = size << 16;
+    size |= h;
     msg->obj = new HwMatrix(*matrix);
-    msg->arg1 = w;
-    msg->arg2 = h;
+    msg->arg1 = size;
+    msg->arg2 = tsInNs;
     msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }

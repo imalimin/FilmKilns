@@ -75,9 +75,10 @@ bool HwCameraInput::eventRelease(Message *msg) {
 }
 
 bool HwCameraInput::eventInvalidate(Message *msg) {
-    int64_t tsInNs = 0;
-    int32_t w = msg->arg1;
-    int32_t h = static_cast<int>(msg->arg2);
+    int32_t size = msg->arg1;
+    int64_t tsInNs = msg->arg2;
+    int32_t h = size & 0xFFFF;
+    int32_t w = size >> 16;
     if (msg->obj) {
         HwMatrix *matrix = dynamic_cast<HwMatrix *>(msg->obj);
         updateMatrix(w, h, matrix);

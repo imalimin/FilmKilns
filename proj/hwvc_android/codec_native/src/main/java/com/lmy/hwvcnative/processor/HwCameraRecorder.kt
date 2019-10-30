@@ -106,7 +106,7 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
             3 -> {
                 camera?.draw()
                 if (0L != handler) {
-                    invalidate(handler, camera!!.getMatrix(), 0,
+                    invalidate(handler, camera!!.getMatrix(), camera!!.timestamp(),
                             CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT,
                             camera!!.cameraHeight, camera!!.cameraWidth)
                 }

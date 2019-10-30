@@ -52,7 +52,7 @@ public:
 
     void pause();
 
-    void invalidate(HwMatrix *matrix, int w, int h);
+    void invalidate(HwMatrix *matrix, int w, int h, int64_t tsInNs);
 
     void setOutputFilePath(string filePath);
 

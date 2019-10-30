@@ -147,7 +147,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invali
             HwMatrix *m = HwMatrix::fromArray(pMatrix);
             env->ReleaseFloatArrayElements(matrix, pMatrix, 0);
             getHandler(handler)->setCameraSize(cw, ch);
-            getHandler(handler)->invalidate(m, w, h);
+            getHandler(handler)->invalidate(m, w, h, tsInNs);
             delete m;
         }
     }
