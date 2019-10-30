@@ -6,6 +6,7 @@
 */
 
 #include "../include/HwVideoUtils.h"
+#include "StringUtils.h"
 #include "Logcat.h"
 
 HwVideoUtils::Context::Context() : Object() {
@@ -126,6 +127,15 @@ bool HwVideoUtils::recode(AVPacket **pkt, Context *iCtx, RecodeContext *rCtx) {
 HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
                                  std::vector<int64_t> trimIns,
                                  std::vector<int64_t> trimOuts) {
+    std::string sb;
+    for (int i = 0; i < trimIns.size(); ++i) {
+        sb.append("[");
+        sb.append(StringUtils::valueOf(trimIns[i]));
+        sb.append(",");
+        sb.append(StringUtils::valueOf(trimOuts[i]));
+        sb.append("],");
+    }
+    Logcat::i("hwvc", "HwVideoUtils::remuxCopy %s", sb.c_str());
     av_register_all();
     /**
      * Open input
@@ -177,7 +187,7 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
             }
             if (iCtx->vTrackIndex == avPacket->stream_index) {
                 if (isClipFirstFrame && !(avPacket->flags & AV_PKT_FLAG_KEY)) {
-                    Logcat::i("hwvc", "HwFFmpegEncoder::write tryRemux %lld", pts);
+                    Logcat::i("hwvc", "HwVideoUtils::write tryRemux %lld", pts);
                     tryRemux = true;
                     break;
                 }
@@ -203,7 +213,7 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
             }
             int flag = av_interleaved_write_frame(oCtx->c, avPacket);
             av_packet_unref(avPacket);
-            Logcat::i("hwvc", "HwVideoUtils::remux end. write %lld, ret = %d", pts, flag);
+//            Logcat::i("hwvc", "HwVideoUtils::remux end. write %lld, ret = %d", pts, flag);
         }
     }
     /*
@@ -216,7 +226,7 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
         av_packet_free(&avPacket);
         avPacket = nullptr;
     }
-    Logcat::i("hwvc", "remux copy end.");
+    Logcat::i("hwvc", "HwVideoUtils::remux copy end.");
     return !tryRemux ? Hw::SUCCESS : remux(input, output, trimIns, trimOuts);
 }
 
@@ -304,7 +314,7 @@ HwResult HwVideoUtils::remux(std::string input, std::string output, std::vector<
         }
         int flag = av_interleaved_write_frame(oCtx->c, avPacket);
         av_packet_unref(avPacket);
-        Logcat::i("hwvc", "HwVideoUtils::remux end. write %lld, ret = %d", pts, flag);
+//        Logcat::i("hwvc", "HwVideoUtils::remux end. write %lld, ret = %d", pts, flag);
     }
     /*
      * Release output
@@ -321,7 +331,7 @@ HwResult HwVideoUtils::remux(std::string input, std::string output, std::vector<
         av_frame_free(&avFrame);
         avFrame = nullptr;
     }
-    Logcat::i("hwvc", "remux end.");
+    Logcat::i("hwvc", "HwVideoUtils::remux end.");
     return Hw::SUCCESS;
 }
 

@@ -138,7 +138,7 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
         return;
     }
     //Enable NV12 or YV12
-#if 0
+#if 1
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
     int64_t time = TimeUtils::getCurrentTimeUS();
     libyuv::NV12ToI420(buf->data(), videoFrame->getWidth(),
@@ -161,7 +161,7 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
         lastTsInNs = tsInNs;
         videoFrame->setPicType(HwVideoFrame::HW_PIC_I);
     }
-    timestamp += (tsInNs - lastTsInNs);
+    vTimestamp += (tsInNs - lastTsInNs);
     lastTsInNs = tsInNs;
     videoFrame->setPts(aTimestamp / 1000);
     ++count;
@@ -187,9 +187,9 @@ bool HwVideoCompiler::eventSamples(Message *msg) {
     audioFrame->setPts(aTimestamp / 1000);
     if (encoder) {
         if (clip.empty()) {
-            clip.start = audioFrame->getPts();
+            clip.start = track.lastTrimOut();
         }
-        clip.end = audioFrame->getPts();
+        clip.end = videoFrame->getPts();
         encoder->write(audioFrame);
         // Notify record progress.
         if (recordListener) {
@@ -206,7 +206,7 @@ void HwVideoCompiler::setRecordListener(function<void(int64_t)> listener) {
 }
 
 int64_t HwVideoCompiler::getRecordTimeInUs() {
-    return max(timestamp / 1000, aTimestamp / 1000) + offsetOfDuration;
+    return max(vTimestamp / 1000, aTimestamp / 1000) + offsetOfDuration;
 }
 
 //********************************
@@ -265,6 +265,7 @@ void HwVideoCompiler::HwTrack::put(int64_t start, int64_t end) {
     std::lock_guard<std::mutex> guard(mtx);
     HwClip clip = HwClip(start, end);
     durationInUs += clip.duration();
+    lastTrimOutInUs = clip.end;
     clips.push_front(clip);
 }
 
@@ -283,6 +284,10 @@ HwVideoCompiler::HwClip HwVideoCompiler::HwTrack::backward() {
 int64_t HwVideoCompiler::HwTrack::duration() {
     std::lock_guard<std::mutex> guard(mtx);
     return durationInUs;
+}
+int64_t HwVideoCompiler::HwTrack::lastTrimOut() {
+    std::lock_guard<std::mutex> guard(mtx);
+    return lastTrimOutInUs;
 }
 
 bool HwVideoCompiler::HwTrack::contain(int64_t pts) {

@@ -62,7 +62,7 @@ private:
     // last timestamp in ns.
     int64_t lastTsInNs = -1, lastATsInNs = -1;
     // frame timestamp in ns.
-    int64_t timestamp = -1, aTimestamp = -1;
+    int64_t vTimestamp = -1, aTimestamp = -1;
     int64_t offsetOfDuration = 0;
     int count = 0;
     /**
@@ -106,12 +106,15 @@ private:
 
         int64_t duration();
 
+        int64_t lastTrimOut();
+
         bool contain(int64_t pts);
 
         void get(std::vector<int64_t> *trimIns, std::vector<int64_t> *trimOuts);
 
     private:
-        int64_t durationInUs = 0;
+        int64_t durationInUs = 0; /* backward会相应减少 */
+        int64_t lastTrimOutInUs = 0; /* 最后一个分段的结束时间，backward不会影响这个 */
         list<HwClip> clips;
         std::mutex mtx;
     };
