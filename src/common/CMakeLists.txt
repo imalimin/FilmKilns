@@ -12,7 +12,10 @@ set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
 set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 
 # 引入cpufeatures模块
-include_directories(${ANDROID_NDK}/sources/android/cpufeatures)
+include_directories(
+        ${ANDROID_NDK}/sources/android/cpufeatures
+        ${PROJECT_SOURCE_DIR}/include
+)
 
 #include_directories(
 #        ${PREBUILD_STATIC}/libturbojpeg/include
@@ -39,6 +42,8 @@ file(
         ${PROJECT_SOURCE_DIR}/media/*.cpp
         ${PROJECT_SOURCE_DIR}/media/sles/*.cpp
         ${PROJECT_SOURCE_DIR}/sources/*.cpp
+
+        ${PROJECT_SOURCE_DIR}/include/*.h
 )
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")

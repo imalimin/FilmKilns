@@ -13,6 +13,10 @@
 
 using namespace std;
 
+#define al_class(cls) \
+class cls : public Object \
+
+
 class Object {
 public:
     Object();
