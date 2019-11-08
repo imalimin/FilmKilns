@@ -7,7 +7,8 @@
 
 #include "Object.h"
 #include "Message.h"
-#include "HandlerThread.h"
+#include "AlHandlerThread.h"
+#include "AlHandler.h"
 #include "SimpleLock.h"
 #include <vector>
 
@@ -35,7 +36,8 @@ private:
     void clear();
 
 private:
-    HandlerThread *pipeline = nullptr;
+    AlHandlerThread *mThread = nullptr;
+    AlHandler *mHandler = nullptr;
     SimpleLock simpleLock;
     vector<Unit *> units;
     bool available = true;

@@ -7,51 +7,42 @@
 
 UnitPipeline::UnitPipeline(string name) {
     available = true;
-    pipeline = new HandlerThread(name);
+    mThread = AlHandlerThread::create(name);
+    mHandler = new AlHandler(mThread->getLooper(), [this](AlMessage *msg) {
+        Message *m = dynamic_cast<Message *>(msg->obj);
+        if (m && m->runnable) {
+            m->runnable(m);
+        }
+        this->dispatch(m);
+    });
 }
 
 UnitPipeline::~UnitPipeline() {
     release();
-    if (pipeline) {
-        delete pipeline;
-        pipeline = nullptr;
-    }
+    mThread->quitSafely();
+    delete mThread;
+    mThread = nullptr;
+    delete mHandler;
+    mHandler = nullptr;
 }
 
 void UnitPipeline::release() {
     if (available) {
         simpleLock.lock();
         available = false;
-        Message *msg1 = new Message(EVENT_COMMON_RELEASE, nullptr);
-        if (pipeline) {
-            msg1->runnable = [this](Message *msg2) {
-                /**
-                 * @NOTE 不置空的话会出现不可预料的崩溃
-                 */
-                msg2->runnable = nullptr;
-                this->dispatch(msg2);
-            };
-            pipeline->sendMessage(msg1);
+        Message *msg = new Message(EVENT_COMMON_RELEASE, nullptr);
+        if (mHandler) {
+            mHandler->sendMessage(AlMessage::obtain(EVENT_COMMON_RELEASE, msg));
         }
         simpleLock.unlock();
     }
 }
 
 void UnitPipeline::postEvent(Message *msg) {
-    if (pipeline) {
-        // If runnable is not null.Just run, not dispatch.
-        if (!(msg->runnable)) {
-            msg->runnable = [this](Message *msg2) {
-                /**
-                 * @NOTE 不置空的话会出现不可预料的崩溃
-                 */
-                msg2->runnable = nullptr;
-                this->dispatch(msg2);
-            };
-        }
+    if (mHandler) {
         simpleLock.lock();
         if (available) {
-            pipeline->sendMessage(msg);
+            mHandler->sendMessage(AlMessage::obtain(msg->what, msg, msg->queueMode));
         } else {
             Logcat::i("HWVC", "UnitPipeline skip message %p", msg);
             delete msg;
