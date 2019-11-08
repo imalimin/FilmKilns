@@ -9,7 +9,7 @@
 #include "../include/HwFFmpegEncoder.h"
 
 HwAsyncEncoder::HwAsyncEncoder() : HwAbsVideoEncoder() {
-    pipeline = new EventPipeline("HwAsyncFFEncoder");
+    pipeline = AlEventPipeline::create("HwAsyncFFEncoder");
     hwFrameAllocator = new HwFrameAllocator();
     encoder = new HwFFmpegEncoder();
 }

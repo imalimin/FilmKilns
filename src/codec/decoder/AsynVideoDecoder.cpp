@@ -38,7 +38,7 @@ AsynVideoDecoder::~AsynVideoDecoder() {
 bool AsynVideoDecoder::prepare(string path) {
     playing = false;
     if (!pipeline) {
-        pipeline = new EventPipeline("AsynVideoDecoder");
+        pipeline = AlEventPipeline::create("AsynVideoDecoder");
     }
     if (decoder) {
         if (!decoder->prepare(path)) {

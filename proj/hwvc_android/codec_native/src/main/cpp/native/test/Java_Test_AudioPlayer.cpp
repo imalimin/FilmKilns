@@ -9,7 +9,7 @@
 #include <jni.h>
 #include <log.h>
 #include "../include/HwAudioPlayer.h"
-#include "../include/EventPipeline.h"
+#include "../include/AlEventPipeline.h"
 #include <mutex>
 
 #ifdef __cplusplus
@@ -20,7 +20,7 @@ extern "C" {
 
 static HwAudioPlayer *player = nullptr;
 static FILE *file = nullptr;
-static EventPipeline *pipeline = nullptr;
+static AlEventPipeline *pipeline = nullptr;
 static int index = 0;
 SimpleLock simpleLock;
 SimpleLock waitLock;
@@ -48,7 +48,7 @@ static void loopTest() {
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_media_AudioPlayerTest_start
         (JNIEnv *env, jobject thiz) {
-    pipeline = new EventPipeline("AudioPlayerTest");
+    pipeline = AlEventPipeline::create("AudioPlayerTest");
     file = fopen(TEST_HWPLAYER_PCM, "rb");
     if (file) {
         pipeline->queueEvent([] {

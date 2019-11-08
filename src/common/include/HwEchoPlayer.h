@@ -9,7 +9,7 @@
 
 #include "HwAudioPlayer.h"
 #include "HwAudioRecorder.h"
-#include "EventPipeline.h"
+#include "AlEventPipeline.h"
 #include "SLEngine.h"
 
 class HwEchoPlayer : public Object {
@@ -28,7 +28,7 @@ private:
     SLEngine *engine = nullptr;
     HwAudioPlayer *player = nullptr;
     HwAudioRecorder *recorder = nullptr;
-    EventPipeline *pipeline = nullptr;
+    AlEventPipeline *pipeline = nullptr;
     uint8_t *buffer = nullptr;
     bool running = false;
     SimpleLock simpleLock;

@@ -7,6 +7,7 @@
 #include <log.h>
 #include "../include/HwAudioRecorder.h"
 #include "../include/HwAudioPlayer.h"
+#include "AlEventPipeline.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,7 +17,7 @@ extern "C" {
 
 static HwAudioRecorder *recorder = nullptr;
 static HwAudioPlayer *player = nullptr;
-static EventPipeline *pipeline = nullptr;
+static AlEventPipeline *pipeline = nullptr;
 FILE *pcmFile = nullptr;
 SimpleLock recorderLock;
 
@@ -82,7 +83,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_TestHwAudioRecorder_start
         (JNIEnv *env, jobject thiz) {
     stop();
     if (!pipeline) {
-        pipeline = new EventPipeline("AudioRecorderTest");
+        pipeline = AlEventPipeline::create("AudioRecorderTest");
     }
     pcmFile = fopen(TEST_HWRECORDER_PCM, "wb");
     recorder = new HwAudioRecorder(2, 48000, SL_PCMSAMPLEFORMAT_FIXED_32, 1024);
@@ -95,7 +96,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_TestHwAudioRecorder_play
         (JNIEnv *env, jobject thiz) {
     stop();
     if (!pipeline) {
-        pipeline = new EventPipeline("AudioRecorderTest");
+        pipeline = AlEventPipeline::create("AudioRecorderTest");
     }
     pcmFile = fopen(TEST_HWRECORDER_PCM, "rb");
     player = new HwAudioPlayer(2, 48000, SL_PCMSAMPLEFORMAT_FIXED_32, 1024);

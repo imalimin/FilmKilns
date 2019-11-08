@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWASYNFFENCODER_H
 
 #include "HwAbsVideoEncoder.h"
-#include "EventPipeline.h"
+#include "AlEventPipeline.h"
 #include "HwFrameAllocator.h"
 #include <queue>
 
@@ -36,7 +36,7 @@ private:
     const int MAX_FRAME_CACHE = 36;
     HwAbsVideoEncoder *encoder = nullptr;
     HwFrameAllocator *hwFrameAllocator = nullptr;
-    EventPipeline *pipeline = nullptr;
+    AlEventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;
     SimpleLock simpleLock;
     SimpleLock writeBlock;

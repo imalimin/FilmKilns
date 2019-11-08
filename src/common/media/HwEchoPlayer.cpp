@@ -23,7 +23,7 @@ HwEchoPlayer::HwEchoPlayer(int channels, int sampleHz, int format, int samplesPe
                                format,
                                samplesPerBuffer);
     this->minBufferSize = player->getBufferByteSize();
-    this->pipeline = new EventPipeline("HwEchoPlayer");
+    this->pipeline = AlEventPipeline::create("HwEchoPlayer");
 }
 
 HwEchoPlayer::~HwEchoPlayer() {

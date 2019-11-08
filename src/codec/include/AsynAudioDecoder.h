@@ -10,7 +10,7 @@
 
 #include "AbsVideoDecoder.h"
 #include "DefaultAudioDecoder.h"
-#include "EventPipeline.h"
+#include "AlEventPipeline.h"
 #include "HwAbsMediaFrame.h"
 #include "HwFrameAllocator.h"
 #include "SimpleLock.h"
@@ -64,7 +64,7 @@ private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
     AbsAudioDecoder *decoder = nullptr;
 //    HwAndroidAudioDecoder *decoder = nullptr;
-    EventPipeline *pipeline = nullptr;
+    AlEventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;
     HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收
     atomic_bool playing;

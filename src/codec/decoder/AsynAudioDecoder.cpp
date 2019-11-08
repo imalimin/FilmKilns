@@ -36,7 +36,7 @@ AsynAudioDecoder::~AsynAudioDecoder() {
 bool AsynAudioDecoder::prepare(string path) {
     playing = false;
     if (!pipeline) {
-        pipeline = new EventPipeline("AsynAudioDecoder");
+        pipeline = AlEventPipeline::create("AsynAudioDecoder");
     }
     if (decoder) {
         if (!decoder->prepare(path)) {

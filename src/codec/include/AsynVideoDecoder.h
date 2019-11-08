@@ -10,7 +10,7 @@
 #include "AbsVideoDecoder.h"
 #include "DefaultVideoDecoder.h"
 #include "RecyclerBlockQueue.h"
-#include "EventPipeline.h"
+#include "AlEventPipeline.h"
 #include "HwAbsMediaFrame.h"
 #include "HwFrameAllocator.h"
 #include "SimpleLock.h"
@@ -72,7 +72,7 @@ private:
     const int MAX_FRAME_CACHE = 36;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     AbsVideoDecoder *decoder = nullptr;
-    EventPipeline *pipeline = nullptr;
+    AlEventPipeline *pipeline = nullptr;
     queue<HwAbsMediaFrame *> cache;
     HwAbsMediaFrame *outputFrame = nullptr;//用于缓存一帧，以便在下次grab的时候进行回收
     atomic_bool playing;
