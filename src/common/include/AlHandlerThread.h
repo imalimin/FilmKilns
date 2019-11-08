@@ -17,7 +17,7 @@
 
 al_class(AlHandlerThread) {
 public:
-    static AlHandlerThread *create();
+    static AlHandlerThread *create(std::string name);
 
 public:
     ~AlHandlerThread();
@@ -29,13 +29,14 @@ public:
     AlLooper *getLooper();
 
 private:
-    AlHandlerThread();
+    AlHandlerThread(std::string name);
 
     AlHandlerThread(AlHandlerThread &e) {}
 
     void run();
 
 private:
+    std::string name;
     std::thread mThread = thread(&AlHandlerThread::run, this);
     AlLooper *mLooper = nullptr;
     std::mutex mtx_l;

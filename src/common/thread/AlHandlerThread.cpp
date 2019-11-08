@@ -9,11 +9,11 @@
 #include "AlLooper.h"
 #include "Logcat.h"
 
-AlHandlerThread *AlHandlerThread::create() {
-    return new AlHandlerThread();
+AlHandlerThread *AlHandlerThread::create(std::string name) {
+    return new AlHandlerThread(name);
 }
 
-AlHandlerThread::AlHandlerThread() : Object() {
+AlHandlerThread::AlHandlerThread(std::string name) : Object(), name(name) {
 }
 
 void AlHandlerThread::run() {
