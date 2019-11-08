@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2018-present, lmyooyo@gmail.com.
+ * Copyright (c) 2018-present, aliminabc@gmail.com.
  *
- * This source code is licensed under the GPL license found in the
+ * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 package com.lmy.hwvcnative.devices
@@ -15,7 +15,7 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 /**
- * Created by lmyooyo@gmail.com on 2018/3/27.
+ * Created by aliminabc@gmail.com on 2018/3/27.
  */
 abstract class BaseTexture(var textureId: IntArray,
                            var name: String = "BaseTexture") : Texture {

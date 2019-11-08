@@ -1,7 +1,7 @@
 package com.lmy.samplenative.adapter
 
 /**
- * Created by lmyooyo@gmail.com on 2018/4/19.
+ * Created by aliminabc@gmail.com on 2018/4/19.
  */
 abstract class RecyclerViewPoolAdapter<E> : RecyclerAdapter<E,
         RecyclerAdapter.BaseViewHolder<E>>() {

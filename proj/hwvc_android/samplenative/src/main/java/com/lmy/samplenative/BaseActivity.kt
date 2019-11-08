@@ -12,7 +12,7 @@ import android.view.View
 import com.lmy.samplenative.helper.PermissionHelper
 
 /**
- * Created by lmyooyo@gmail.com on 2018/9/21.
+ * Created by aliminabc@gmail.com on 2018/9/21.
  */
 open abstract class BaseActivity : AppCompatActivity() {
     abstract fun initView()

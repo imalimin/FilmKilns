@@ -19,7 +19,7 @@ import java.io.InputStream
 import java.util.*
 
 /**
- * Created by lmyooyo@gmail.com on 2018/7/24.
+ * Created by aliminabc@gmail.com on 2018/7/24.
  */
 class FilterController(private val filterSupport: FilterSupport,
                        private val progressLayout: ViewGroup)

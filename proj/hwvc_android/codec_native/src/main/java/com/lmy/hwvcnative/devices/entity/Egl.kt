@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2018-present, lmyooyo@gmail.com.
+ * Copyright (c) 2018-present, aliminabc@gmail.com.
  *
- * This source code is licensed under the GPL license found in the
+ * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
 package com.lmy.hwvcnative.devices.entity
@@ -14,7 +14,7 @@ import javax.microedition.khronos.egl.EGL10
 
 
 /**
- * Created by lmyooyo@gmail.com on 2018/3/26.
+ * Created by aliminabc@gmail.com on 2018/3/26.
  */
 class Egl(private val name: String) {
     companion object {
