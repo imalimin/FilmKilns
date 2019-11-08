@@ -49,10 +49,10 @@ public:
     void *tyrUnBox();
 
 public:
-    static const int16_t QUEUE_MODE_NORMAL;
-    static const int16_t QUEUE_MODE_UNIQUE;
-    static const int16_t QUEUE_MODE_FIRST_ALWAYS;
-    static const int16_t QUEUE_MODE_CLEAR;
+    static constexpr int16_t QUEUE_MODE_NORMAL = 0x00;
+    static constexpr int16_t QUEUE_MODE_UNIQUE = 0x01;
+    static constexpr int16_t QUEUE_MODE_FIRST_ALWAYS = 0x02;
+    static constexpr int16_t QUEUE_MODE_CLEAR = 0x04;
 };
 
 

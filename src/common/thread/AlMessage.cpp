@@ -8,11 +8,6 @@
 #include "AlMessage.h"
 #include "ObjectBox.h"
 
-const int16_t AlMessage::QUEUE_MODE_NORMAL = 0x00;
-const int16_t AlMessage::QUEUE_MODE_UNIQUE = 0x01;
-const int16_t AlMessage::QUEUE_MODE_FIRST_ALWAYS = 0x02;
-const int16_t AlMessage::QUEUE_MODE_CLEAR = 0x04;
-
 AlMessage *AlMessage::obtain() {
     return new AlMessage();
 }
