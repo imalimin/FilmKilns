@@ -14,7 +14,9 @@ using namespace std;
 
 class Message : public Object {
 public:
-    function<void(Message *msg)> runnable = nullptr;
+    typedef function<void(Message *msg)> Runnable;
+public:
+    Runnable runnable = nullptr;
     int32_t what = 0;
     int32_t arg1 = 0;
     int64_t arg2 = 0;
@@ -22,11 +24,11 @@ public:
     Object *obj = nullptr;
     int16_t queueMode = QUEUE_MODE_NORMAL;
 
-    Message(int32_t what, function<void(Message *msg)> runnable);
+    Message(int32_t what, Runnable runnable);
 
-    Message(int32_t what, Object *obj, function<void(Message *msg)> runnable);
+    Message(int32_t what, Object *obj, Runnable runnable);
 
-    Message(int32_t what, Object *obj, int16_t queueMode, function<void(Message *msg)> runnable);
+    Message(int32_t what, Object *obj, int16_t queueMode, Runnable runnable);
 
     virtual ~Message();
 

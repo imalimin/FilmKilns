@@ -7,15 +7,15 @@
 #include "../include/Message.h"
 #include "../include/ObjectBox.h"
 
-Message::Message(int32_t what, function<void(Message *msg)> runnable)
+Message::Message(int32_t what, Runnable runnable)
         : Message(what, nullptr, QUEUE_MODE_NORMAL, runnable) {
 }
 
-Message::Message(int32_t what, Object *obj, function<void(Message *msg)> runnable)
+Message::Message(int32_t what, Object *obj, Runnable runnable)
         : Message(what, obj, QUEUE_MODE_NORMAL, runnable) {
 }
 
-Message::Message(int32_t what, Object *obj, int16_t queueMode, function<void(Message *msg)> runnable)
+Message::Message(int32_t what, Object *obj, int16_t queueMode, Runnable runnable)
         : Object() {
     this->what = what;
     this->obj = obj;
