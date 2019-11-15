@@ -9,10 +9,14 @@
 #define HWVC_ANDROID_ALMESSAGE_H
 
 #include "Object.h"
+#include <queue>
+#include <mutex>
 
 class AlLooper;
 
 class AlHandler;
+
+class AlMessageManager;
 
 al_class(AlMessage) {
 public:
@@ -27,15 +31,7 @@ private:
     friend AlHandler;
     AlHandler *target = nullptr;
 
-public:
-    static AlMessage *obtain();
-
-    static AlMessage *obtain(int32_t what);
-
-    static AlMessage *obtain(int32_t what, Object *obj);
-
-    static AlMessage *obtain(int32_t what, Object *obj, int16_t queueMode);
-
+private:
     AlMessage();
 
     AlMessage(int32_t what);
@@ -44,6 +40,10 @@ public:
 
     AlMessage(int32_t what, Object *obj, int16_t queueMode);
 
+    AlMessage(AlMessage &e) : Object() {
+    }
+
+public:
     virtual ~AlMessage();
 
     void *tyrUnBox();
@@ -53,6 +53,37 @@ public:
     static constexpr int16_t QUEUE_MODE_UNIQUE = 0x01;
     static constexpr int16_t QUEUE_MODE_FIRST_ALWAYS = 0x02;
     static constexpr int16_t QUEUE_MODE_CLEAR = 0x04;
+
+public:
+    static AlMessage *obtain();
+
+    static AlMessage *obtain(int32_t what);
+
+    static AlMessage *obtain(int32_t what, Object *obj);
+
+    static AlMessage *obtain(int32_t what, Object *obj, int16_t queueMode);
+};
+
+al_class(AlMessageManager) {
+private:
+    friend AlMessage;
+
+    static AlMessageManager *getInstance();
+
+public:
+
+    void recycle(AlMessage *msg);
+
+    AlMessage *popOne();
+
+private:
+    static AlMessageManager *instance;
+    std::queue<AlMessage *> pool;
+    std::mutex poolMtx;
+
+    AlMessageManager() : Object() {}
+
+    AlMessageManager(AlMessageManager &e) : Object() {}
 };
 
 
