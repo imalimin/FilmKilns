@@ -43,7 +43,7 @@ size_t AlMemoryUtils::memcpy64(const unsigned char *dst, const unsigned char *sr
         "+r"(sz)
         :: "cc", "memory", "v0", "v1", "v2", "v3"     // Clobber List
         );
-#else
+#elseif defined(_ARM_ARCH_7)
     asm volatile (
     "1:\n"
     "VLDM %1!, {d0-d7}\n"
@@ -72,7 +72,7 @@ size_t AlMemoryUtils::memcpy128(const unsigned char *dst, const unsigned char *s
         "+r"(len)
         :: "cc", "memory", "v0", "v1", "v2", "v3"     // Clobber List
         );
-#else
+#elseif defined(_ARM_ARCH_7)
     asm volatile (
     "1:\n"
     "VLDM %0!,    {d0-d15}\n\t"
