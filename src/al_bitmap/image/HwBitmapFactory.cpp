@@ -18,8 +18,8 @@ HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     ret = pDecoder->decodeFile(file, &rgba, &width, &height);//先尝试以png进行解码
     delete pDecoder;
     if (ret <= 0) {//解码失败则使用jpeg解码
-        JpegDecoder *jDecoder = new JpegDecoder();
-        ret = jDecoder->decodeFile(file, &rgba, &width, &height);
+        JpegDecoder *jDecoder = new JpegDecoder(file);
+//        ret = jDecoder->decodeFile(file, &rgba, &width, &height);
         delete jDecoder;
     }
     if (!ret || 0 == width || 0 == height) {

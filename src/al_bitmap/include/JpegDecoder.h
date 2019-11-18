@@ -8,22 +8,26 @@
 #define HARDWAREVIDEOCODEC_JPEGDECODER_H
 
 #include <string>
-#include "Object.h"
+#include "AlAbsDecoder.h"
 #include "FileUtils.h"
-#include "../prebuild/static/libturbojpeg/include/jpeglib.h"
-#include "../prebuild/static/libturbojpeg/include/turbojpeg.h"
+#include "jpeglib.h"
+#include "turbojpeg.h"
 
-using namespace std;
 
-class JpegDecoder : public Object {
+class JpegDecoder : public AlAbsDecoder {
 public:
-    JpegDecoder();
+    JpegDecoder(std::string path);
+
+    JpegDecoder(JpegDecoder &e) : AlAbsDecoder() {}
 
     virtual ~JpegDecoder();
 
-    int decodeFile(string file, uint8_t **rgb, int *width, int *height);
+    AlBitmapInfo getInfo() override;
+
+    HwResult process() override;
 
 private:
+    std::string path;
     tjhandle handle;
 };
 

@@ -16,6 +16,9 @@ using namespace std;
 #define al_class(cls) \
 class cls : public Object \
 
+#define al_interface(cls) \
+class cls : public Object \
+
 
 class Object {
 public:

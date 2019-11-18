@@ -9,8 +9,6 @@
 
 #include "Unit.h"
 #include "BaseDrawer.h"
-#include "JpegDecoder.h"
-#include "PngDecoder.h"
 #include "TextureAllocator.h"
 #include "HwBitmapFactory.h"
 
