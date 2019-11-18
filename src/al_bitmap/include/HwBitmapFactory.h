@@ -24,7 +24,7 @@ public:
      */
     static HwBitmap *decodeFile(std::string file, HwBitmap *recycleBitmap);
 
-    static HwBitmap *decodeBuffer(HwBuffer *buf);
+    static HwBitmap *decodeBuffer(HwBuffer *srcBuf);
 
 };
 

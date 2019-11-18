@@ -23,20 +23,21 @@ PngDecoder::PngDecoder(std::string path) : AlAbsDecoder(), path(path) {
     }
 }
 
-PngDecoder::~PngDecoder() {
-    release();
+PngDecoder::PngDecoder(HwBuffer *buf) : AlAbsDecoder(), buf(buf) {
+    handler = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp) NULL, NULL, NULL);
+    if (!handler) {
+        release();
+        LOGE("PngDecoder init failed");
+    }
+    infoHandler = png_create_info_struct(handler);
+    if (!infoHandler) {
+        release();
+        LOGE("PngDecoder init failed");
+    }
 }
 
-static void readCallback(png_structp handler, png_bytep data, png_size_t length) {
-    ImageSource *src = (ImageSource *) png_get_io_ptr(handler);
-
-    if (src->offset + length <= src->size) {
-        memcpy(data, src->data + src->offset, length);
-        src->offset += length;
-    } else {
-        LOGE("PNG read buf failed");
-        png_error(handler, "pngReaderCallback failed");
-    }
+PngDecoder::~PngDecoder() {
+    release();
 }
 
 static void fillBuffer(uint8_t *rgba, int w, int h, png_bytep *row, int channels, int color_type) {
@@ -65,27 +66,11 @@ void PngDecoder::release() {
 
 AlBitmapInfo PngDecoder::getInfo() {
     AlBitmapInfo info;
-    FILE *file = fopen(path.c_str(), "rb");
-    if (nullptr == file) {
-        return info;
+    if (buf) {
+        getInfo(info, buf);
+    } else {
+        getInfo(info, path);
     }
-    setjmp(png_jmpbuf(handler));
-    uint8_t *buf = new uint8_t[PNG_CHECK_BYTES];
-    fread(buf, 1, PNG_CHECK_BYTES, file);
-    int ret = png_sig_cmp(buf, (png_size_t) 0, PNG_CHECK_BYTES);
-    if (0 != ret) {
-        fclose(file);
-        LOGE("%s not a png(%d)", path.c_str(), ret);
-        return info;//不是png文件
-    }
-    rewind(file);
-    png_init_io(handler, file);
-    png_read_png(handler, infoHandler, PNG_TRANSFORM_EXPAND, 0);
-    info.width = png_get_image_width(handler, infoHandler);
-    info.height = png_get_image_height(handler, infoHandler);
-    info.depth = png_get_bit_depth(handler, infoHandler);
-    info.colorSpace = AlColorSpace::RGBA;
-    fclose(file);
     this->info = info;
     return info;
 }
@@ -107,4 +92,62 @@ HwResult PngDecoder::process(HwBuffer **buf, AlBitmapInfo *info) {
     png_bytep *row = png_get_rows(handler, infoHandler);
     fillBuffer((*buf)->data(), info->width, info->height, row, channels, color_type);
     return Hw::SUCCESS;
+}
+
+void PngDecoder::getInfo(AlBitmapInfo &info, std::string &path) {
+    FILE *file = fopen(path.c_str(), "rb");
+    if (nullptr == file) {
+        return;
+    }
+    if (setjmp(png_jmpbuf(handler))) {
+        return;
+    }
+    uint8_t *buf = new uint8_t[PNG_CHECK_BYTES];
+    fread(buf, 1, PNG_CHECK_BYTES, file);
+    int ret = png_sig_cmp(buf, (png_size_t) 0, PNG_CHECK_BYTES);
+    if (0 != ret) {
+        fclose(file);
+        Logcat::i("PngDecoder", "%s(%d): Invalid png file", __FUNCTION__, __LINE__);
+        return;//不是png文件
+    }
+    rewind(file);
+    png_init_io(handler, file);
+    png_read_png(handler, infoHandler, PNG_TRANSFORM_EXPAND, 0);
+    info.width = png_get_image_width(handler, infoHandler);
+    info.height = png_get_image_height(handler, infoHandler);
+    info.depth = png_get_bit_depth(handler, infoHandler);
+    info.colorSpace = AlColorSpace::RGBA;
+    fclose(file);
+}
+
+static void readFunc(png_structp handler, png_bytep data, png_size_t length) {
+    PngDecoder::AlImageSource *src = (PngDecoder::AlImageSource *) png_get_io_ptr(handler);
+    if (src->offset + length <= src->size) {
+        memcpy(data, src->data + src->offset, length);
+        src->offset += length;
+    } else {
+        LOGE("PNG read buf failed");
+        png_error(handler, "pngReaderCallback failed");
+    }
+}
+
+void PngDecoder::getInfo(AlBitmapInfo &info, HwBuffer *buf) {
+    if (setjmp(png_jmpbuf(handler))) {
+        return;
+    }
+    AlImageSource src;
+    src.data = buf->data();
+    src.size = buf->size();
+    src.offset = 0;
+    int ret = png_sig_cmp(src.data, (png_size_t) 0, PNG_CHECK_BYTES);
+    if (0 != ret) {
+        Logcat::i("PngDecoder", "%s(%d): Invalid png file", __FUNCTION__, __LINE__);
+        return;//不是png文件
+    }
+    png_set_read_fn(handler, &src, readFunc);
+    png_read_png(handler, infoHandler, PNG_TRANSFORM_EXPAND, 0);
+    info.width = png_get_image_width(handler, infoHandler);
+    info.height = png_get_image_height(handler, infoHandler);
+    info.depth = png_get_bit_depth(handler, infoHandler);
+    info.colorSpace = AlColorSpace::RGBA;
 }

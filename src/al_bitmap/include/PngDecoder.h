@@ -11,17 +11,19 @@
 #include "FileUtils.h"
 #include "../prebuild/static/libpng/include/png.h"
 
-typedef struct {
-    uint8_t *data;
-    int size;
-    int offset;
-} ImageSource;
-
 class PngDecoder : public AlAbsDecoder {
+public:
+    typedef struct {
+        uint8_t *data;
+        int size;
+        int offset;
+    } AlImageSource;
 public:
     PngDecoder(std::string path);
 
-    PngDecoder(const PngDecoder &e) : AlAbsDecoder() {};
+    PngDecoder(HwBuffer *buf);
+
+    PngDecoder(const PngDecoder &e) : AlAbsDecoder(), path("") {};
 
     virtual ~PngDecoder();
 
@@ -31,11 +33,16 @@ public:
 
 private:
     std::string path;
+    HwBuffer *buf = nullptr;
     png_structp handler;
     png_infop infoHandler;
     AlBitmapInfo info;
 
     void release();
+
+    void getInfo(AlBitmapInfo &info, std::string &path);
+
+    void getInfo(AlBitmapInfo &info, HwBuffer *buf);
 };
 
 
