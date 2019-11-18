@@ -11,6 +11,7 @@
 #include "Unit.h"
 #include "TextureAllocator.h"
 #include "HwAbsTexture.h"
+#include "AlImageCanvasModel.h"
 
 class AlImage : public Unit {
 public:
@@ -29,6 +30,8 @@ public:
 private:
     TextureAllocator *texAllocator = nullptr;
     HwAbsTexture *tex = nullptr;
+    // Model
+    AlImageCanvasModel canvasModel;
 };
 
 
