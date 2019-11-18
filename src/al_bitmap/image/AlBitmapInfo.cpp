@@ -6,13 +6,27 @@
  */
 
 #include "AlBitmapInfo.h"
+#include "Logcat.h"
 
 AlBitmapInfo::AlBitmapInfo() : Object() {};
 
-AlBitmapInfo::AlBitmapInfo(AlBitmapInfo &e) : Object() {
-
+AlBitmapInfo::AlBitmapInfo(const AlBitmapInfo &e) : Object(),
+                                                    width(e.width),
+                                                    height(e.height),
+                                                    depth(e.depth),
+                                                    colorSpace(e.colorSpace) {
 };
 
 AlBitmapInfo::~AlBitmapInfo() {
 
+}
+
+void AlBitmapInfo::dump() {
+    Logcat::i("AlBitmapInfo", "%s(%d): %dx%d, %d, %d",
+              __FUNCTION__,
+              __LINE__,
+              width,
+              height,
+              depth,
+              colorSpace);
 };

@@ -1,0 +1,51 @@
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+#include "HwJavaNativeHelper.h"
+#include "AlImageProcessor.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+static AlImageProcessor *getHandler(jlong handler) {
+    return reinterpret_cast<AlImageProcessor *>(handler);
+}
+
+JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_create
+        (JNIEnv *env, jobject thiz) {
+    AlImageProcessor *p = new AlImageProcessor();
+    p->post([] {
+        HwJavaNativeHelper::getInstance()->attachThread();
+    });
+    jlong handler = reinterpret_cast<jlong>(p);
+    HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
+    return handler;
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setCanvas
+        (JNIEnv *env, jobject thiz, jlong handler, jint w, jint h, jint color) {
+    if (handler) {
+        getHandler(handler)->setCanvas(w, h, color);
+    }
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_addLayer
+        (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
+    if (handler) {
+        const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
+        std::string str(pPath);
+        env->ReleaseStringUTFChars(path, pPath);
+        return getHandler(handler)->addLayer(str.c_str()).code;
+    }
+    return Hw::FAILED.code;
+}
+
+#ifdef __cplusplus
+}
+#endif
+

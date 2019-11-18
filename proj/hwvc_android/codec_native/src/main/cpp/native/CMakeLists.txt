@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(hwvc_native LANGUAGES C CXX)
 set(HWVC_PATH ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
+        ${PROJECT_SOURCE_DIR}/include
         ${HWVC_PATH}/common/include
         ${HWVC_PATH}/al_bitmap/include
         ${HWVC_PATH}/codec/include

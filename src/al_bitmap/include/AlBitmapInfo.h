@@ -23,15 +23,17 @@ public:
 public:
     AlBitmapInfo();
 
-    AlBitmapInfo(AlBitmapInfo &e);
+    AlBitmapInfo(const AlBitmapInfo &e);
 
     virtual ~AlBitmapInfo();
+
+    void dump();
 
 public:
     int32_t width = 0;
     int32_t height = 0;
-    ColorSpace colorSpace = ColorSpace::NONE;
     uint32_t depth = 0;
+    ColorSpace colorSpace = ColorSpace::NONE;
 };
 
 

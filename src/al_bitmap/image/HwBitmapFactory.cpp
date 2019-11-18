@@ -11,6 +11,7 @@
 #include "../include/Logcat.h"
 
 HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
+    AlBitmapInfo info;
     int ret = 0;
     int width = 0, height = 0;
     uint8_t *rgba = nullptr;
@@ -18,9 +19,11 @@ HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     ret = pDecoder->decodeFile(file, &rgba, &width, &height);//先尝试以png进行解码
     delete pDecoder;
     if (ret <= 0) {//解码失败则使用jpeg解码
-        JpegDecoder *jDecoder = new JpegDecoder(file);
-//        ret = jDecoder->decodeFile(file, &rgba, &width, &height);
-        delete jDecoder;
+        AlAbsDecoder *decoder = new JpegDecoder(file);
+        decoder->process(&rgba, &info);
+        width = info.width;
+        height = info.height;
+        delete decoder;
     }
     if (!ret || 0 == width || 0 == height) {
         Logcat::i("HWVC", "HwBitmapFactory decodeFile %s failed", file.c_str());

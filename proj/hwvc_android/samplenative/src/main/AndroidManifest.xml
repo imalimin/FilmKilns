@@ -50,6 +50,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ImageActivity" />
+        <activity android:name=".ui.AlImageActivity" />
         <activity android:name=".AudioPlayerActivity" />
         <activity android:name=".TestMemFIFOActivity" />
         <activity android:name=".EchoActivity" />

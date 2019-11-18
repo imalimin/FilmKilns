@@ -8,11 +8,20 @@
 #define HARDWAREVIDEOCODEC_JPEGDECODER_H
 
 #include <string>
+#include <csetjmp>
 #include "AlAbsDecoder.h"
 #include "FileUtils.h"
 #include "jpeglib.h"
 #include "turbojpeg.h"
 
+extern "C" {
+struct error_mgr {
+    struct jpeg_error_mgr jpegErrorMgr;
+    jmp_buf setjmp_buffer;
+};
+
+void error_exit(j_common_ptr cinfo);
+};
 
 class JpegDecoder : public AlAbsDecoder {
 public:
@@ -24,7 +33,7 @@ public:
 
     AlBitmapInfo getInfo() override;
 
-    HwResult process() override;
+    HwResult process(uint8_t **buf, AlBitmapInfo *info) override;
 
 private:
     std::string path;

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(hwvc_render LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
+            ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../common/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
             ${PROJECT_SOURCE_DIR}/platform/android
@@ -11,6 +12,7 @@ if (ANDROID)
     )
 else ()
     include_directories(
+            ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../common/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
     )

@@ -22,7 +22,7 @@ public:
 
     virtual AlBitmapInfo getInfo() = 0;
 
-    virtual HwResult process() = 0;
+    virtual HwResult process(uint8_t **buf, AlBitmapInfo *info) = 0;
 };
 
 

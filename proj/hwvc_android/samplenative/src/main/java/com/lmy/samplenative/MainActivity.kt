@@ -6,10 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.lmy.samplenative.adapter.OnRecyclerItemClickListener
 import com.lmy.samplenative.adapter.SimpleTextAdapter
-import com.lmy.samplenative.ui.AudioRecordAndMuxActivity
-import com.lmy.samplenative.ui.BitmapActivity
-import com.lmy.samplenative.ui.CameraActivity
-import com.lmy.samplenative.ui.TestAudioRecorderActivity
+import com.lmy.samplenative.ui.*
 import com.microsoft.officeuifabric.listitem.ListItemDivider
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -18,6 +15,7 @@ class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickList
     private val ITEMS = arrayListOf(
             Item("Echo Player") { startActivity(Intent(this, EchoActivity::class.java)) },
             Item("Image Editor") { startActivity(Intent(this, ImageActivity::class.java)) },
+            Item("New Image Editor") { startActivity(Intent(this, AlImageActivity::class.java)) },
             Item("Audio Player") { startActivity(Intent(this, AudioActivity::class.java)) },
             Item("Video Player") { startActivity(Intent(this, VideoActivity::class.java)) },
             Item("Audio Recorder & Mux") { startActivity(Intent(this, AudioRecordAndMuxActivity::class.java)) },
