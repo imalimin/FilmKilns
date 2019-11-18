@@ -7,11 +7,11 @@
 #include "../include/HwvcFilter.h"
 #include "../include/NormalDrawer.h"
 #include "../entity/FilterEntity.h"
+#include "HwBitmapFactory.h"
 #include "log.h"
 
 HwvcFilter::HwvcFilter(char *path) : HwAbsFilter() {
     reader = new FilterReader(path);
-    decoder = new PngDecoder();
 }
 
 HwvcFilter::~HwvcFilter() {
@@ -31,10 +31,6 @@ HwvcFilter::~HwvcFilter() {
     if (textureLocations) {
         delete[]textureLocations;
         textureLocations = nullptr;
-    }
-    if (decoder) {
-        delete decoder;
-        decoder = nullptr;
     }
     if (reader) {
         delete reader;
@@ -99,15 +95,10 @@ void HwvcFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *
 }
 
 GLuint HwvcFilter::loadTexture(string pngBuf) {
-    if (!decoder) {
-        LOGE("Decoder is null");
-        return GL_NONE;
-    }
-    uint8_t *rgba;
-    int width = 0, height = 0;
-    int ret = decoder->decodeBuf((uint8_t *) pngBuf.data(), pngBuf.size(), &rgba, &width, &height);
-    if (!ret) {
-        LOGE("Read image failed(%d)", ret);
+    HwBitmap *bmp = HwBitmapFactory::decodeBuffer(
+            HwBuffer::wrap((uint8_t *) pngBuf.data(), pngBuf.size()));
+    if (nullptr == bmp) {
+        LOGE("Read image failed");
         return GL_NONE;
     }
     GLuint texture = GL_NONE;
@@ -123,8 +114,9 @@ GLuint HwvcFilter::loadTexture(string pngBuf) {
                     GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D,
                     GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bmp->getWidth(), bmp->getHeight(), 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, bmp->getPixels());
     glBindTexture(GL_TEXTURE_2D, GL_NONE);
-    delete[]rgba;
+    delete bmp;
     return texture;
 }

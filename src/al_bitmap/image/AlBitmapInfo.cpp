@@ -29,4 +29,15 @@ void AlBitmapInfo::dump() {
               height,
               depth,
               colorSpace);
-};
+}
+
+void AlBitmapInfo::reset() {
+    width = 0;
+    height = 0;
+    depth = 0;
+    colorSpace = AlColorSpace::NONE;
+}
+
+bool AlBitmapInfo::isNull() {
+    return width <= 0 || height <= 0 || depth <= 0 || AlColorSpace::NONE == colorSpace;
+}

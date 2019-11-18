@@ -17,7 +17,7 @@
 extern "C" {
 struct error_mgr {
     struct jpeg_error_mgr jpegErrorMgr;
-    jmp_buf setjmp_buffer;
+    jmp_buf jmpBuf;
 };
 
 void error_exit(j_common_ptr cinfo);
@@ -27,13 +27,13 @@ class JpegDecoder : public AlAbsDecoder {
 public:
     JpegDecoder(std::string path);
 
-    JpegDecoder(JpegDecoder &e) : AlAbsDecoder() {}
+    JpegDecoder(const JpegDecoder &e) : AlAbsDecoder() {}
 
     virtual ~JpegDecoder();
 
     AlBitmapInfo getInfo() override;
 
-    HwResult process(uint8_t **buf, AlBitmapInfo *info) override;
+    HwResult process(HwBuffer **buf, AlBitmapInfo *info) override;
 
 private:
     std::string path;

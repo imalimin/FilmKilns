@@ -7,8 +7,7 @@
 #ifndef HARDWAREVIDEOCODEC_PNGDECODER_H
 #define HARDWAREVIDEOCODEC_PNGDECODER_H
 
-#include <string>
-#include "Object.h"
+#include "AlAbsDecoder.h"
 #include "FileUtils.h"
 #include "../prebuild/static/libpng/include/png.h"
 
@@ -18,24 +17,23 @@ typedef struct {
     int offset;
 } ImageSource;
 
-class PngDecoder : public Object {
+class PngDecoder : public AlAbsDecoder {
 public:
-    PngDecoder();
+    PngDecoder(std::string path);
+
+    PngDecoder(const PngDecoder &e) : AlAbsDecoder() {};
 
     virtual ~PngDecoder();
 
+    AlBitmapInfo getInfo() override;
 
-    /**
-     *
-     * @return 0:failed, 1:success, -1:not png file
-     */
-    int decodeFile(string path, uint8_t **rgba, int *width, int *height);
-
-    int decodeBuf(uint8_t *pngBuf, int bufSize, uint8_t **rgba, int *width, int *height);
+    HwResult process(HwBuffer **buf, AlBitmapInfo *info) override;
 
 private:
+    std::string path;
     png_structp handler;
     png_infop infoHandler;
+    AlBitmapInfo info;
 
     void release();
 };

@@ -33,7 +33,6 @@ private:
     int size = 0;
     GLuint *textures = nullptr;
     GLint *textureLocations = nullptr;
-    PngDecoder *decoder = nullptr;
 
     GLuint loadTexture(string path);
 };

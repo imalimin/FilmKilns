@@ -13,11 +13,8 @@ set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/../common/include)
-
-include_directories(
-        ${PREBUILD_STATIC}/libturbojpeg/include
-        ${PREBUILD_STATIC}/libpng/include
-)
+include_directories(${PREBUILD_STATIC}/libturbojpeg/include)
+include_directories(${PREBUILD_STATIC}/libpng/include)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")

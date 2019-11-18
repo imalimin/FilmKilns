@@ -34,7 +34,6 @@ private:
     uint32_t *textures = nullptr;
     int32_t *textureLocations = nullptr;
     int32_t *paramLocations = nullptr;
-    PngDecoder *decoder = nullptr;
 
     uint32_t loadTexture(string pngBuf);
 };

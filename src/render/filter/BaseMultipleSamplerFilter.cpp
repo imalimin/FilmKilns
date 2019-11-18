@@ -7,6 +7,7 @@
 #include <cassert>
 #include "../include/BaseMultipleSamplerFilter.h"
 #include "../include/NormalDrawer.h"
+#include "HwBitmapFactory.h"
 #include "log.h"
 
 BaseMultipleSamplerFilter::BaseMultipleSamplerFilter(char **names, char **samplers, int size) {
@@ -14,7 +15,6 @@ BaseMultipleSamplerFilter::BaseMultipleSamplerFilter(char **names, char **sample
     this->names = names;
     this->samplers = samplers;
     this->size = size;
-    this->decoder = new PngDecoder();
 }
 
 BaseMultipleSamplerFilter::~BaseMultipleSamplerFilter() {
@@ -26,10 +26,6 @@ BaseMultipleSamplerFilter::~BaseMultipleSamplerFilter() {
     if (textureLocations) {
         delete[]textureLocations;
         textureLocations = nullptr;
-    }
-    if (decoder) {
-        delete decoder;
-        decoder = nullptr;
     }
 }
 
@@ -52,15 +48,9 @@ bool BaseMultipleSamplerFilter::init(int w, int h) {
 }
 
 GLuint BaseMultipleSamplerFilter::loadTexture(string path) {
-    if (!decoder) {
-        LOGE("Decoder is null");
-        return GL_NONE;
-    }
-    uint8_t *rgba;
-    int width = 0, height = 0;
-    int ret = decoder->decodeFile(path, &rgba, &width, &height);
-    if (!ret) {
-        LOGE("Read image failed(%d)", ret);
+    HwBitmap *bmp = HwBitmapFactory::decodeFile(path);
+    if (nullptr == bmp) {
+        LOGE("Read image failed");
         return GL_NONE;
     }
     GLuint texture = GL_NONE;
@@ -76,8 +66,10 @@ GLuint BaseMultipleSamplerFilter::loadTexture(string path) {
                     GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D,
                     GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bmp->getWidth(), bmp->getHeight(), 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, bmp->getPixels());
     glBindTexture(GL_TEXTURE_2D, GL_NONE);
+    delete bmp;
     return texture;
 }
 

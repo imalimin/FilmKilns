@@ -9,17 +9,9 @@
 #define HWVC_ANDROID_HWBITMAPINFO_H
 
 #include "Object.h"
+#include "AlColorSpace.h"
 
 al_class(AlBitmapInfo) {
-public:
-    enum class ColorSpace : int {
-        NONE = -1,
-        RGB,
-        RGBA,
-        YV12,      /** YUV420P. Called I420 on android. */
-        NV12,      /** YUV420SP */
-        GRAY,
-    };
 public:
     AlBitmapInfo();
 
@@ -27,13 +19,17 @@ public:
 
     virtual ~AlBitmapInfo();
 
+    bool isNull();
+
+    void reset();
+
     void dump();
 
 public:
     int32_t width = 0;
     int32_t height = 0;
     uint32_t depth = 0;
-    ColorSpace colorSpace = ColorSpace::NONE;
+    AlColorSpace colorSpace = AlColorSpace::NONE;
 };
 
 

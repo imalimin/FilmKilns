@@ -9,17 +9,24 @@
 #define HARDWAREVIDEOCODEC_HWBITMAP_H
 
 #include "Object.h"
-#include "ImageFormat.h"
+#include "AlColorSpace.h"
+#include "AlBitmapInfo.h"
 #include "HwResult.h"
 
-class HwBitmap : public Object {
+al_class(HwBitmap) {
 public:
-    static HwBitmap *create(int width, int height, ImageFormat format);
+    static HwBitmap *create(AlBitmapInfo info);
 
-    static float getImageFormatBytes(ImageFormat format);
+    static HwBitmap *create(int width, int height, AlColorSpace format);
 
-    HwBitmap(int width, int height, ImageFormat format);
+    static float getImageFormatBytes(AlColorSpace format);
 
+private:
+    HwBitmap(int width, int height, uint32_t depth, AlColorSpace format);
+
+    HwBitmap(const HwBitmap &e) : Object() {};
+
+public:
     virtual ~HwBitmap();
 
     int getWidth();
@@ -29,7 +36,7 @@ public:
     /**
      * 改变HwBitmap大小和格式，用于内存复用
      */
-    HwResult resize(int width, int height, ImageFormat format);
+    HwResult resize(int width, int height, AlColorSpace format);
 
     /**
      * 获取指向图片像素内存的指针
@@ -41,6 +48,8 @@ public:
      */
     uint64_t getByteSize();
 
+    void dump();
+
 private:
 
     void config();
@@ -48,9 +57,7 @@ private:
 private:
     uint8_t *pixels = nullptr;//用于存储图片像素的buffer
     uint64_t byteSize = 0;
-    int width = 0;
-    int height = 0;
-    ImageFormat format = ImageFormat::NONE;
+    AlBitmapInfo info;
 };
 
 

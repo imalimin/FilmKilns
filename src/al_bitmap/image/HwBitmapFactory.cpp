@@ -12,29 +12,34 @@
 
 HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     AlBitmapInfo info;
-    int ret = 0;
-    int width = 0, height = 0;
-    uint8_t *rgba = nullptr;
-    PngDecoder *pDecoder = new PngDecoder();
-    ret = pDecoder->decodeFile(file, &rgba, &width, &height);//先尝试以png进行解码
-    delete pDecoder;
-    if (ret <= 0) {//解码失败则使用jpeg解码
-        AlAbsDecoder *decoder = new JpegDecoder(file);
-        decoder->process(&rgba, &info);
-        width = info.width;
-        height = info.height;
+    HwBuffer *buf = nullptr;
+    HwResult ret = Hw::FAILED;
+    AlAbsDecoder *decoder = new PngDecoder(file);
+    info = decoder->getInfo();
+    if (!info.isNull()) { // Png format
+        ret = decoder->process(&buf, &info);//先尝试以png进行解码
+    }
+    delete decoder;
+    if (Hw::SUCCESS != ret) {//解码失败则使用jpeg解码
+        decoder = new JpegDecoder(file);
+        ret = decoder->process(&buf, &info);
         delete decoder;
     }
-    if (!ret || 0 == width || 0 == height) {
+    if (Hw::SUCCESS != ret || info.isNull()) {
         Logcat::i("HWVC", "HwBitmapFactory decodeFile %s failed", file.c_str());
         return nullptr;
     }
-    HwBitmap *bitmap = HwBitmap::create(width, height, ImageFormat::RGBA);
-    memcpy(bitmap->getPixels(), rgba, static_cast<size_t>(bitmap->getByteSize()));
-    delete[]rgba;//这里重复申请了一次内存，待优化
+    HwBitmap *bitmap = HwBitmap::create(info);
+    memcpy(bitmap->getPixels(), buf->data(), static_cast<size_t>(bitmap->getByteSize()));
+    bitmap->dump();
+    delete buf;//这里重复申请了一次内存，待优化
     return bitmap;
 }
 
 HwBitmap *HwBitmapFactory::decodeFile(std::string file, HwBitmap *recycleBitmap) {
+    return nullptr;
+}
+
+HwBitmap *HwBitmapFactory::decodeBuffer(HwBuffer *buf) {
     return nullptr;
 }

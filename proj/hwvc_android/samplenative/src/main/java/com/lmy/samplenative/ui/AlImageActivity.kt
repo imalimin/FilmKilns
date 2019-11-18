@@ -10,6 +10,6 @@ class AlImageActivity : BaseActivity() {
     private val processor = AlImageProcessor.create()
     override fun getLayoutResource(): Int = R.layout.activity_al_image
     override fun initView() {
-        processor.addLayer(File(Environment.getExternalStorageDirectory(), "1.jpg").absolutePath)
+        processor.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
     }
 }

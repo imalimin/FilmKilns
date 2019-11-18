@@ -18,7 +18,7 @@ void error_exit(j_common_ptr cinfo) {
     (*cinfo->err->output_message)(cinfo);
 
 /* Return control to the setjmp point */
-    longjmp(errorMgr->setjmp_buffer, 1);
+    longjmp(errorMgr->jmpBuf, 1);
 }
 
 JpegDecoder::JpegDecoder(std::string path) : AlAbsDecoder(), path(path) {
@@ -41,7 +41,7 @@ AlBitmapInfo JpegDecoder::getInfo() {
     cinfo.image_width = 0;
     cinfo.image_height = 0;
     errorMgr.jpegErrorMgr.error_exit = error_exit;
-    if (setjmp(errorMgr.setjmp_buffer)) {
+    if (setjmp(errorMgr.jmpBuf)) {
         jpeg_destroy_decompress(&cinfo);
         fclose(file);
         return info;
@@ -56,13 +56,13 @@ AlBitmapInfo JpegDecoder::getInfo() {
     info.width = cinfo.image_width;
     info.height = cinfo.image_height;
     info.depth = 8;
-    info.colorSpace = AlBitmapInfo::ColorSpace::RGBA;
+    info.colorSpace = AlColorSpace::RGBA;
     jpeg_destroy_decompress(&cinfo);
     fclose(file);
     return info;
 }
 
-HwResult JpegDecoder::process(uint8_t **buf, AlBitmapInfo *info) {
+HwResult JpegDecoder::process(HwBuffer **buf, AlBitmapInfo *info) {
     uint8_t *buffer = nullptr;
     unsigned long length = readFile(path, &buffer);
     if (0 == length) {
@@ -76,10 +76,10 @@ HwResult JpegDecoder::process(uint8_t **buf, AlBitmapInfo *info) {
     tjDecompressHeader3(handle, buffer, length, &info->width, &info->height, &subsample, &colorspace);
 
     flags |= 0;
-    *buf = new uint8_t[info->width * info->height * channels];
-    tjDecompress2(handle, buffer, length, *buf, info->width, 0, info->height, fmt, flags);
+    *buf = HwBuffer::alloc(info->width * info->height * channels);
+    tjDecompress2(handle, buffer, length, (*buf)->data(), info->width, 0, info->height, fmt, flags);
     delete[]buffer;
     info->depth = 8;
-    info->colorSpace = AlBitmapInfo::ColorSpace::RGBA;
+    info->colorSpace = AlColorSpace::RGBA;
     return Hw::SUCCESS;
 }

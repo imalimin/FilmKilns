@@ -8,37 +8,48 @@
 #include "../include/HwBitmap.h"
 #include "../include/Logcat.h"
 
-HwBitmap *HwBitmap::create(int width, int height, ImageFormat format) {
-    if (ImageFormat::NONE == format) {
-        Logcat::e("HWVC", "Invalid image format!");
+HwBitmap *HwBitmap::create(AlBitmapInfo info) {
+    if (AlColorSpace::NONE == info.colorSpace) {
+        Logcat::e("HWVC", "Invalid image color space!");
         return nullptr;
     }
-    return new HwBitmap(width, height, format);
+    return new HwBitmap(info.width, info.height, info.depth, info.colorSpace);
 }
 
-float HwBitmap::getImageFormatBytes(ImageFormat format) {
+HwBitmap *HwBitmap::create(int width, int height, AlColorSpace colorSpace) {
+    if (AlColorSpace::NONE == colorSpace) {
+        Logcat::e("HWVC", "Invalid image color space!");
+        return nullptr;
+    }
+    return new HwBitmap(width, height, 8, colorSpace);
+}
+
+float HwBitmap::getImageFormatBytes(AlColorSpace format) {
     switch (format) {
-        case ImageFormat::RGB:
+        case AlColorSpace::RGB:
             return 3;
-        case ImageFormat::RGBA:
+        case AlColorSpace::RGBA:
             return 4;
-        case ImageFormat::NV12:
-        case ImageFormat::NV21:
+        case AlColorSpace::NV12:
+        case AlColorSpace::YV12:
             return 1.5;
+        case AlColorSpace::GRAY:
+            return 1;
         default:
             return 0;
     }
 }
 
-HwBitmap::HwBitmap(int width, int height, ImageFormat format) {
-    this->width = width;
-    this->height = height;
-    this->format = format;
+HwBitmap::HwBitmap(int width, int height, uint32_t depth, AlColorSpace colorSpace) {
+    this->info.width = width;
+    this->info.height = height;
+    this->info.depth = depth;
+    this->info.colorSpace = colorSpace;
     config();
 }
 
 void HwBitmap::config() {
-    if (ImageFormat::NONE == format) {
+    if (AlColorSpace::NONE == info.colorSpace) {
         Logcat::e("HWVC", "Invalid image format!");
         return;
     }
@@ -52,27 +63,27 @@ HwBitmap::~HwBitmap() {
         pixels = nullptr;
     }
     byteSize = 0;
-    width = 0;
-    height = 0;
-    format = ImageFormat::NONE;
+    info.width = 0;
+    info.height = 0;
+    info.colorSpace = AlColorSpace::NONE;
 }
 
-int HwBitmap::getWidth() { return width; }
+int HwBitmap::getWidth() { return info.width; }
 
-int HwBitmap::getHeight() { return height; }
+int HwBitmap::getHeight() { return info.height; }
 
-HwResult HwBitmap::resize(int width, int height, ImageFormat format) {
-    if (ImageFormat::NONE == format) {
+HwResult HwBitmap::resize(int width, int height, AlColorSpace colorSpace) {
+    if (AlColorSpace::NONE == colorSpace) {
         Logcat::e("HWVC", "Invalid image format!");
         return Hw::FAILED;
     }
-    int64_t byteSize = static_cast<uint64_t>(width * height * getImageFormatBytes(format));
+    int64_t byteSize = static_cast<uint64_t>(width * height * getImageFormatBytes(colorSpace));
     if (byteSize > this->byteSize) {
         return Hw::FAILED;
     }
-    this->width = width;
-    this->height = height;
-    this->format = format;
+    this->info.width = width;
+    this->info.height = height;
+    this->info.colorSpace = colorSpace;
     if (!this->pixels) {
         this->byteSize = getByteSize();
         this->pixels = new uint8_t[this->byteSize];
@@ -83,5 +94,9 @@ HwResult HwBitmap::resize(int width, int height, ImageFormat format) {
 uint8_t *HwBitmap::getPixels() { return pixels; }
 
 uint64_t HwBitmap::getByteSize() {
-    return static_cast<uint64_t>(width * height * getImageFormatBytes(format));
+    return static_cast<uint64_t>(info.width * info.height * getImageFormatBytes(info.colorSpace));
+}
+
+void HwBitmap::dump() {
+    info.dump();
 }
