@@ -21,7 +21,7 @@ public:
 public:
     PngDecoder(std::string path);
 
-    PngDecoder(HwBuffer *buf);
+    PngDecoder(AlBuffer *buf);
 
     PngDecoder(const PngDecoder &e) : AlAbsDecoder(), path("") {};
 
@@ -29,11 +29,11 @@ public:
 
     AlBitmapInfo getInfo() override;
 
-    HwResult process(HwBuffer **buf, AlBitmapInfo *info) override;
+    HwResult process(AlBuffer **buf, AlBitmapInfo *info) override;
 
 private:
     std::string path;
-    HwBuffer *buf = nullptr;
+    AlBuffer *buf = nullptr;
     png_structp handler;
     png_infop infoHandler;
     AlBitmapInfo info;
@@ -42,7 +42,7 @@ private:
 
     void getInfo(AlBitmapInfo &info, std::string &path);
 
-    void getInfo(AlBitmapInfo &info, HwBuffer *buf);
+    void getInfo(AlBitmapInfo &info, AlBuffer *buf);
 };
 
 

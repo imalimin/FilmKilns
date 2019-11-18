@@ -33,7 +33,7 @@ public:
 
     AlBitmapInfo getInfo() override;
 
-    HwResult process(HwBuffer **buf, AlBitmapInfo *info) override;
+    HwResult process(AlBuffer **buf, AlBitmapInfo *info) override;
 
 private:
     std::string path;

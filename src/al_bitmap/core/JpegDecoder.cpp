@@ -62,7 +62,7 @@ AlBitmapInfo JpegDecoder::getInfo() {
     return info;
 }
 
-HwResult JpegDecoder::process(HwBuffer **buf, AlBitmapInfo *info) {
+HwResult JpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     uint8_t *buffer = nullptr;
     unsigned long length = readFile(path, &buffer);
     if (0 == length) {
@@ -76,7 +76,7 @@ HwResult JpegDecoder::process(HwBuffer **buf, AlBitmapInfo *info) {
     tjDecompressHeader3(handle, buffer, length, &info->width, &info->height, &subsample, &colorspace);
 
     flags |= 0;
-    *buf = HwBuffer::alloc(info->width * info->height * channels);
+    *buf = AlBuffer::alloc(info->width * info->height * channels);
     tjDecompress2(handle, buffer, length, (*buf)->data(), info->width, 0, info->height, fmt, flags);
     delete[]buffer;
     info->depth = 8;

@@ -12,7 +12,7 @@
 
 HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     AlBitmapInfo info;
-    HwBuffer *buf = nullptr;
+    AlBuffer *buf = nullptr;
     HwResult ret = Hw::FAILED;
     AlAbsDecoder *decoder = new PngDecoder(file);
     info = decoder->getInfo();
@@ -40,9 +40,9 @@ HwBitmap *HwBitmapFactory::decodeFile(std::string file, HwBitmap *recycleBitmap)
     return nullptr;
 }
 
-HwBitmap *HwBitmapFactory::decodeBuffer(HwBuffer *srcBuf) {
+HwBitmap *HwBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
     AlBitmapInfo info;
-    HwBuffer *buf = nullptr;
+    AlBuffer *buf = nullptr;
     HwResult ret = Hw::FAILED;
     AlAbsDecoder *decoder = new PngDecoder(srcBuf);
     info = decoder->getInfo();

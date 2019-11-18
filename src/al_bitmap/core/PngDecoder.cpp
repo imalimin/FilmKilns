@@ -23,7 +23,7 @@ PngDecoder::PngDecoder(std::string path) : AlAbsDecoder(), path(path) {
     }
 }
 
-PngDecoder::PngDecoder(HwBuffer *buf) : AlAbsDecoder(), buf(buf) {
+PngDecoder::PngDecoder(AlBuffer *buf) : AlAbsDecoder(), buf(buf) {
     handler = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp) NULL, NULL, NULL);
     if (!handler) {
         release();
@@ -75,7 +75,7 @@ AlBitmapInfo PngDecoder::getInfo() {
     return info;
 }
 
-HwResult PngDecoder::process(HwBuffer **buf, AlBitmapInfo *info) {
+HwResult PngDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     if (this->info.width <= 0 || this->info.height <= 0) {
         this->info = getInfo();
         if (this->info.width <= 0 || this->info.height <= 0) {
@@ -86,7 +86,7 @@ HwResult PngDecoder::process(HwBuffer **buf, AlBitmapInfo *info) {
     info->height = this->info.height;
     info->depth = this->info.depth;
     info->colorSpace = this->info.colorSpace;
-    *buf = HwBuffer::alloc(info->width * info->height * 4);
+    *buf = AlBuffer::alloc(info->width * info->height * 4);
     int color_type = png_get_color_type(handler, infoHandler);
     int channels = png_get_channels(handler, infoHandler);
     png_bytep *row = png_get_rows(handler, infoHandler);
@@ -131,7 +131,7 @@ static void readFunc(png_structp handler, png_bytep data, png_size_t length) {
     }
 }
 
-void PngDecoder::getInfo(AlBitmapInfo &info, HwBuffer *buf) {
+void PngDecoder::getInfo(AlBitmapInfo &info, AlBuffer *buf) {
     if (setjmp(png_jmpbuf(handler))) {
         return;
     }

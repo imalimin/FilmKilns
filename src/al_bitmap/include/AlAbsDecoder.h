@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "HwResult.h"
 #include "AlBitmapInfo.h"
-#include "HwBuffer.h"
+#include "AlBuffer.h"
 
 al_interface(AlAbsDecoder) {
 public:
@@ -23,7 +23,7 @@ public:
 
     virtual AlBitmapInfo getInfo() = 0;
 
-    virtual HwResult process(HwBuffer **buf, AlBitmapInfo *info) = 0;
+    virtual HwResult process(AlBuffer **buf, AlBitmapInfo *info) = 0;
 };
 
 

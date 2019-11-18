@@ -10,7 +10,7 @@
 
 #include "Object.h"
 #include "HwBitmap.h"
-#include "HwBuffer.h"
+#include "AlBuffer.h"
 #include "string"
 
 class HwBitmapFactory : public Object {
@@ -24,7 +24,7 @@ public:
      */
     static HwBitmap *decodeFile(std::string file, HwBitmap *recycleBitmap);
 
-    static HwBitmap *decodeBuffer(HwBuffer *srcBuf);
+    static HwBitmap *decodeBuffer(AlBuffer *srcBuf);
 
 };
 
