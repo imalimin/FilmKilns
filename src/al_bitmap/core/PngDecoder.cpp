@@ -40,16 +40,30 @@ PngDecoder::~PngDecoder() {
     release();
 }
 
-static void fillBuffer(uint8_t *rgba, int w, int h, png_bytep *row, int channels, int color_type) {
+static void fillBuffer(uint8_t *rgba, int w, int h, png_bytep *row,
+                       int channels, int color_type, int offset) {
     if (channels == 4 || color_type == PNG_COLOR_TYPE_RGB_ALPHA) {
-        for (int i = 0; i < h; ++i) {
-            memcpy(rgba + i * w * 4, row[i], w * 4);
+        if (1 == offset) {
+            for (int i = 0; i < h; ++i) {
+                memcpy(rgba + i * w * 4, row[i], w * 4);
+            }
+        } else {
+            for (int i = 0; i < h; ++i) {
+                for (int j = 0; j < w; ++j) {
+                    rgba[i * w * 4 + j * 4] = row[i][j * 4 * offset];
+                    rgba[i * w * 4 + j * 4 + 1] = row[i][j * 4 * offset + 1 * offset];
+                    rgba[i * w * 4 + j * 4 + 2] = row[i][j * 4 * offset + 2 * offset];
+                    rgba[i * w * 4 + j * 4 + 3] = row[i][j * 4 * offset + 3 * offset];;
+                }
+            }
         }
     } else if (channels == 3 || color_type == PNG_COLOR_TYPE_RGB) {
         for (int i = 0; i < h; ++i) {
             for (int j = 0; j < w; ++j) {
-                memcpy(rgba + i * w * 4 + j * 4, row[i] + j * 3, 3);
-                (rgba)[i * w * 4 + j * 4 + 3] = 255;
+                rgba[i * w * 4 + j * 4] = row[i][j * 3 * offset];
+                rgba[i * w * 4 + j * 4 + 1] = row[i][j * 3 * offset + 1 * offset];
+                rgba[i * w * 4 + j * 4 + 2] = row[i][j * 3 * offset + 2 * offset];
+                rgba[i * w * 4 + j * 4 + 3] = 255;
             }
         }
     }
@@ -90,7 +104,8 @@ HwResult PngDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     int color_type = png_get_color_type(handler, infoHandler);
     int channels = png_get_channels(handler, infoHandler);
     png_bytep *row = png_get_rows(handler, infoHandler);
-    fillBuffer((*buf)->data(), info->width, info->height, row, channels, color_type);
+    fillBuffer((*buf)->data(), info->width, info->height, row, channels, color_type,
+               this->info.depth / 8);
     return Hw::SUCCESS;
 }
 
