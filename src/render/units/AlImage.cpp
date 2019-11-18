@@ -43,13 +43,18 @@ bool AlImage::onNewLayer(Message *msg) {
                               bmp->getHeight(),
                               GL_RGBA);
     delete bmp;
+    onInvalidate(nullptr);
+    return true;
+}
+
+bool AlImage::onInvalidate(Message *m) {
     if (GL_NONE != tex) {
-        Message *m = new Message(EVENT_RENDER_FILTER, nullptr);
-        m->obj = HwTexture::wrap(tex->target(), tex->texId(),
-                                 tex->getWidth(),
-                                 tex->getHeight(),
-                                 tex->fmt());
-        postEvent(m);
+        Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
+        msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
+                                   tex->getWidth(),
+                                   tex->getHeight(),
+                                   tex->fmt());
+        postEvent(msg);
     }
     return true;
 }

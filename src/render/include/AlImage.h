@@ -24,6 +24,8 @@ public:
 
     bool onNewLayer(Message *msg);
 
+    bool onInvalidate(Message *m);
+
 private:
     TextureAllocator *texAllocator = nullptr;
     HwAbsTexture *tex = nullptr;

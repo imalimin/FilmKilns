@@ -28,6 +28,8 @@ public:
 
     HwResult addLayer(const char *path);
 
+    void invalidate();
+
 private:
     const string ALIAS_OF_IMAGE = "IMAGE";
     const string ALIAS_OF_RENDER = "RENDER";

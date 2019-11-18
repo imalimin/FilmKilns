@@ -25,6 +25,13 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             updateWindow(handler, surface)
         }
+        invalidate()
+    }
+
+    fun invalidate() {
+        if (!isNativeNull()) {
+            invalidate(handler)
+        }
     }
 
     fun setCanvas(w: Int, h: Int, color: Int = 0) {
@@ -43,6 +50,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun release(handler: Long)
     private external fun prepare(handler: Long, surface: Surface)
     private external fun updateWindow(handler: Long, surface: Surface)
+    private external fun invalidate(handler: Long)
     private external fun setCanvas(handler: Long, w: Int, h: Int, color: Int)
     private external fun addLayer(handler: Long, path: String): Int
 

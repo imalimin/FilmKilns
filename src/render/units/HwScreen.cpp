@@ -35,10 +35,14 @@ bool HwScreen::eventRelease(Message *msg) {
 
 bool HwScreen::eventPrepare(Message *msg) {
     Logcat::i("HWVC", "Screen::eventPrepare");
-    NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
-    this->width = nw->win->getWidth();
-    this->height = nw->win->getHeight();
-    initWindow(nw);
+    if (msg->obj) {
+        NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
+        this->width = nw->win->getWidth();
+        this->height = nw->win->getHeight();
+        initWindow(nw);
+    } else {
+        initWindow(nullptr);
+    }
     return true;
 }
 
@@ -46,6 +50,8 @@ bool HwScreen::eventUpdateWindow(Message *msg) {
     Logcat::i("HWVC", "Screen::eventUpdateWindow");
     NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
     if (egl) {
+        this->width = nw->win->getWidth();
+        this->height = nw->win->getHeight();
         egl->updateWindow(nw->win);
     }
     return true;
@@ -63,13 +69,18 @@ bool HwScreen::eventDraw(Message *msg) {
 
 void HwScreen::initWindow(NativeWindow *nw) {
     if (!egl) {
-        if (nw->hasContext()) {
-            egl = new Egl(nw->context, nw->win);
-            Logcat::i("HWVC", "Screen::init EGL with context %d x %d", egl->width(), egl->height());
+        if (nw) {
+            if (nw->hasContext()) {
+                egl = Egl::create(nw->context, nw->win, true);
+                Logcat::i("HWVC", "Screen::init EGL with context %d x %d", egl->width(),
+                          egl->height());
+            } else {
+                egl = Egl::create(nullptr, nw->win, true);
+                nw->context = egl->getContext();
+                Logcat::i("HWVC", "Screen::init EGL %d x %d", egl->width(), egl->height());
+            }
         } else {
-            egl = new Egl(nw->win);
-            nw->context = egl->getContext();
-            Logcat::i("HWVC", "Screen::init EGL %d x %d", egl->width(), egl->height());
+            egl = Egl::create(nullptr, nullptr, true);
         }
         egl->makeCurrent();
         drawer = new NormalDrawer();

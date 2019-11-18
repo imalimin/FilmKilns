@@ -15,6 +15,8 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
+    postEvent(msg);
 }
 
 AlImageProcessor::~AlImageProcessor() {
@@ -44,4 +46,8 @@ HwResult AlImageProcessor::addLayer(const char *path) {
     putString("layer", std::string(path)).to({ALIAS_OF_IMAGE});
     postEvent(new Message(EVENT_AIMAGE_NEW_LAYER, nullptr));
     return Hw::SUCCESS;
+}
+
+void AlImageProcessor::invalidate() {
+    postEvent(new Message(EVENT_COMMON_INVALIDATE, nullptr));
 }

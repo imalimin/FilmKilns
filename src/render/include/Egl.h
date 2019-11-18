@@ -10,6 +10,7 @@
 #include <EGL/egl.h>
 #include "Object.h"
 #include "HwWindow.h"
+#include <atomic>
 
 const int CONFIG_WIN[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                           EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -31,12 +32,17 @@ const int CONFIG_BUFFER[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                              EGL_NONE};
 
 typedef EGLBoolean (EGLAPIENTRYP EGL_PRESENTATION_TIME_ANDROID)(EGLDisplay display,
-                                                                    EGLSurface surface,
-                                                                    khronos_stime_nanoseconds_t time);
+                                                                EGLSurface surface,
+                                                                khronos_stime_nanoseconds_t time);
 
 class Egl : public Object {
 public:
     static EGLContext currentContext();
+
+    static Egl *create(EGLContext context, HwWindow *win, bool focusTypeWin = false);
+
+private:
+    Egl(EGLContext context, HwWindow *win, bool focusTypeWin);
 
 public:
     Egl();
@@ -70,13 +76,6 @@ public:
 #endif
 
 private:
-    HwWindow *win = nullptr;
-    EGLDisplay eglDisplay = EGL_NO_DISPLAY;
-    EGLConfig eglConfig = nullptr;
-    EGLContext eglContext = EGL_NO_CONTEXT;
-    EGLSurface eglSurface = EGL_NO_SURFACE;
-    EGL_PRESENTATION_TIME_ANDROID eglPresentationTimeANDROID = nullptr;
-
     void init(EGLContext context, HwWindow *win);
 
     EGLDisplay createDisplay(EGLNativeDisplayType display_id);
@@ -92,6 +91,15 @@ private:
     EGLint getParams(EGLint attribute);
 
     bool checkError();
+
+private:
+    std::atomic_bool focusTypeWin;
+    HwWindow *win = nullptr;
+    EGLDisplay eglDisplay = EGL_NO_DISPLAY;
+    EGLConfig eglConfig = nullptr;
+    EGLContext eglContext = EGL_NO_CONTEXT;
+    EGLSurface eglSurface = EGL_NO_SURFACE;
+    EGL_PRESENTATION_TIME_ANDROID eglPresentationTimeANDROID = nullptr;
 };
 
 

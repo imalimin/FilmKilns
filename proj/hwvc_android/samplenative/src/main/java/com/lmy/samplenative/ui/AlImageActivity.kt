@@ -11,17 +11,9 @@ import java.io.File
 
 class AlImageActivity : BaseActivity() {
     private val processor = AlImageProcessor.create()
-    private var prepared = false
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-            Log.i("HWVC", "surfaceChanged: $p1, $p2, $p3 | ${surfaceView.width}, ${surfaceView.height}")
-            if (!prepared) {
-                prepared = true
-                processor.prepare(holder.surface)
-                processor.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
-            } else {
-                processor.updateWindow(holder.surface)
-            }
+            processor.updateWindow(holder.surface)
         }
 
         override fun surfaceDestroyed(p0: SurfaceHolder?) {
@@ -38,6 +30,7 @@ class AlImageActivity : BaseActivity() {
     override fun initView() {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
+        processor.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
     }
 
     override fun onDestroy() {

@@ -73,6 +73,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_releas
     HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_invalidate
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        getHandler(handler)->invalidate();
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif

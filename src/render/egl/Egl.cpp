@@ -23,19 +23,32 @@ EGLContext Egl::currentContext() {
     return context;
 }
 
-Egl::Egl() {
+Egl *Egl::create(EGLContext context, HwWindow *win, bool focusTypeWin) {
+    return new Egl(context, win, focusTypeWin);
+}
+
+Egl::Egl() : Object() {
+    focusTypeWin = false;
     init(nullptr, nullptr);
 }
 
-Egl::Egl(EGLContext context) {
+Egl::Egl(EGLContext context) : Object() {
+    focusTypeWin = false;
     init(context, nullptr);
 }
 
-Egl::Egl(HwWindow *win) {
+Egl::Egl(HwWindow *win) : Object() {
+    focusTypeWin = nullptr != win;
     init(nullptr, win);
 }
 
-Egl::Egl(EGLContext context, HwWindow *win) {
+Egl::Egl(EGLContext context, HwWindow *win) : Object() {
+    focusTypeWin = nullptr != win;
+    init(context, win);
+}
+
+Egl::Egl(EGLContext context, HwWindow *win, bool focusTypeWin) : Object() {
+    this->focusTypeWin = focusTypeWin || nullptr != win;
     init(context, win);
 }
 
@@ -79,7 +92,7 @@ void Egl::init(EGLContext context, HwWindow *win) {
         LOGE("$s failed", __func__);
         return;
     }
-    if (win && win->getANativeWindow()) {
+    if (focusTypeWin || (win && win->getANativeWindow())) {
         createConfig(CONFIG_WIN);
     } else {
         createConfig(CONFIG_BUFFER);
@@ -258,7 +271,7 @@ bool Egl::checkError() {
 }
 
 bool Egl::updateWindow(HwWindow *win) {
-    if (!isAttachWindow()) {
+    if (!focusTypeWin) {
         return false;
     }
     if (this->win) {
