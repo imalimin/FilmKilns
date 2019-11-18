@@ -7,6 +7,7 @@
 
 #include "HwJavaNativeHelper.h"
 #include "AlImageProcessor.h"
+#include "HwAndroidWindow.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,6 +28,21 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_creat
     return handler;
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_prepare
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface, jstring path,
+         jint width, jint height) {
+    if (handler) {
+        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_updateWindow
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+    if (handler) {
+        getHandler(handler)->updateWindow(new HwAndroidWindow(env, surface));
+    }
+}
+
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setCanvas
         (JNIEnv *env, jobject thiz, jlong handler, jint w, jint h, jint color) {
     if (handler) {
@@ -43,6 +59,18 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_addLay
         return getHandler(handler)->addLayer(str.c_str()).code;
     }
     return Hw::FAILED.code;
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_release
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        AlImageProcessor *p = getHandler(handler);
+        p->post([] {
+            HwJavaNativeHelper::getInstance()->detachThread();
+        });
+        delete p;
+    }
+    HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
 #ifdef __cplusplus

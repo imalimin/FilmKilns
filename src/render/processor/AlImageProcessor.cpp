@@ -6,21 +6,42 @@
 */
 
 #include "AlImageProcessor.h"
-#include "HwBitmapFactory.h"
+#include "AlImage.h"
+#include "HwRender.h"
+#include "HwScreen.h"
+#include "ObjectBox.h"
 
 AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
-
+    registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
+    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
+    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
 }
 
 AlImageProcessor::~AlImageProcessor() {
 
 }
 
+void AlImageProcessor::onDestroy() {
+    HwAbsProcessor::onDestroy();
+}
+
+void AlImageProcessor::prepare(HwWindow *win) {
+    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
+    msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+    postEvent(msg);
+}
+
+void AlImageProcessor::updateWindow(HwWindow *win) {
+    Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
+    msg->obj = ObjectBox::box(new NativeWindow(win, nullptr));
+    postEvent(msg);
+}
+
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
 }
 
 HwResult AlImageProcessor::addLayer(const char *path) {
-    auto *bitmap = HwBitmapFactory::decodeFile(std::string(path));
-    delete bitmap;
+    putString("layer", std::string(path)).to({ALIAS_OF_IMAGE});
+    postEvent(new Message(EVENT_AIMAGE_NEW_LAYER, nullptr));
     return Hw::SUCCESS;
 }

@@ -10,6 +10,7 @@
 
 #include "HwAbsProcessor.h"
 #include "HwResult.h"
+#include "HwWindow.h"
 
 class AlImageProcessor : public HwAbsProcessor {
 public:
@@ -17,9 +18,20 @@ public:
 
     ~AlImageProcessor();
 
+    virtual void onDestroy() override;
+
+    void prepare(HwWindow *win);
+
+    void updateWindow(HwWindow *win);
+
     void setCanvas(int32_t w, int32_t h, int32_t color);
 
     HwResult addLayer(const char *path);
+
+private:
+    const string ALIAS_OF_IMAGE = "IMAGE";
+    const string ALIAS_OF_RENDER = "RENDER";
+    const string ALIAS_OF_SCREEN = "SCREEN";
 };
 
 

@@ -72,6 +72,8 @@ static constexpr int EVENT_CAMERA_INVALIDATE = KID('C', 'A', 'M', 0x00);
 
 static constexpr int EVENT_VIDEO_COMPILER_BACKWARD = KID('H', 'V', 'C', 0x00);
 
+static constexpr int EVENT_AIMAGE_NEW_LAYER = KID('A', 'I', 'G', 0x00);
+
 /**
  * Define class HwModelProvider.
  */
