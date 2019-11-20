@@ -15,6 +15,8 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
+    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
     Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
     postEvent(msg);
 }

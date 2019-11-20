@@ -22,12 +22,17 @@ public:
 
     void draw(AlImageCanvas *canvas);
 
+    int32_t getWidth();
+
+    int32_t getHeight();
+
 private:
     AlImageLayer(HwAbsTexture *tex);
 
     AlImageLayer(const AlImageLayer &e) : Object() {};
 
 private:
+    //Manager by TextureAllocator. DON`T delete here.
     HwAbsTexture *tex;
 };
 

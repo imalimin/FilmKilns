@@ -14,28 +14,32 @@ AlImageLayerManager::AlImageLayerManager() : Object() {
 }
 
 AlImageLayerManager::~AlImageLayerManager() {
-    this->texAllocator = nullptr;
     //TODO release
+    auto itr = mLayers.begin();
+    while (mLayers.end() != itr) {
+        AlImageLayer *layer = itr->second;
+        delete layer;
+        ++itr;
+    }
+    mLayers.clear();
 }
 
-void AlImageLayerManager::setTextureAllocator(TextureAllocator *texAllocator) {
-    this->texAllocator = texAllocator;
-}
-
-void AlImageLayerManager::update(std::list<AlImageLayerModel *> *list) {
+void AlImageLayerManager::update(std::list<AlImageLayerModel *> *list,
+                                 TextureAllocator *texAllocator) {
     auto it = list->begin();
     while (list->end() != it) {
-        if (!found(*it)) {
-            newLayer(*it);
+        if (!_found(*it)) {
+            _newLayer(*it, texAllocator);
         }
         ++it;
     }
 }
 
-bool AlImageLayerManager::newLayer(AlImageLayerModel *model) {
+bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
+                                    TextureAllocator *texAllocator) {
     HwBitmap *bmp = HwBitmapFactory::decodeFile(model->getPath());
     if (nullptr == bmp) {
-        Logcat::e("AlImage", "%s(%d): decode %s failed", __FUNCTION__, __LINE__,
+        Logcat::e("AlImageLayerManager", "%s(%d): decode %s failed", __FUNCTION__, __LINE__,
                   model->getPath().c_str());
         return true;
     }
@@ -49,7 +53,7 @@ bool AlImageLayerManager::newLayer(AlImageLayerModel *model) {
     return true;
 }
 
-bool AlImageLayerManager::found(AlImageLayerModel *model) {
+bool AlImageLayerManager::_found(AlImageLayerModel *model) {
     return mLayers.end() != mLayers.find(model);
 }
 

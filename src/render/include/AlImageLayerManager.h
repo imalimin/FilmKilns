@@ -21,9 +21,7 @@ public:
 
     ~AlImageLayerManager();
 
-    void setTextureAllocator(TextureAllocator *texAllocator);
-
-    void update(std::list<AlImageLayerModel *> *list);
+    void update(std::list<AlImageLayerModel *> *list, TextureAllocator *texAllocator);
 
     int32_t size();
 
@@ -32,12 +30,11 @@ public:
 private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};
 
-    bool newLayer(AlImageLayerModel *model);
+    bool _newLayer(AlImageLayerModel *model, TextureAllocator *texAllocator);
 
-    bool found(AlImageLayerModel *model);
+    bool _found(AlImageLayerModel *model);
 
 private:
-    TextureAllocator *texAllocator = nullptr;
     std::map<AlImageLayerModel *, AlImageLayer *> mLayers;
 };
 

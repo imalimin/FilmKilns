@@ -23,3 +23,11 @@ AlImageLayer::~AlImageLayer() {
 void AlImageLayer::draw(AlImageCanvas *canvas) {
 
 }
+
+int32_t AlImageLayer::getWidth() {
+    return this->tex->getWidth();
+}
+
+int32_t AlImageLayer::getHeight() {
+    return this->tex->getHeight();
+}

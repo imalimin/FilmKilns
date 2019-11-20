@@ -33,6 +33,9 @@ public:
     bool onUpdateCanvas(Message *m);
 
 private:
+    void _newDefaultCanvas();
+
+private:
     TextureAllocator *texAllocator = nullptr;
 
     /*+------------------+*/
@@ -40,7 +43,9 @@ private:
     /*+------------------+*/
 private:
     AlImageCanvasModel *getCanvas();
+
     std::list<AlImageLayerModel *> *getLayers();
+
     AlImageCanvas mCanvas;
     AlImageLayerManager mLayerManager;
 };

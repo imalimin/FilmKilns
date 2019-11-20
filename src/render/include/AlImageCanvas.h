@@ -18,18 +18,17 @@ public:
 
     ~AlImageCanvas();
 
-    void prepare(TextureAllocator *texAllocator);
     void release();
 
-    void update(int32_t w, int32_t h, int32_t color);
+    void update(int32_t w, int32_t h, int32_t color, TextureAllocator *texAllocator);
 
     HwAbsTexture *getOutput();
 
 private:
     AlImageCanvas(const AlImageCanvas &e) : Object() {};
 private:
-    TextureAllocator *texAllocator = nullptr;
     HwAbsFBObject *fbo = nullptr;
+    //Manager by TextureAllocator. DON`T delete here.
     HwAbsTexture *mCanvasTex = nullptr;
 };
 

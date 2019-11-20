@@ -15,6 +15,7 @@ HwAbsFBObject::HwAbsFBObject() : Object() {
 
 HwAbsFBObject::~HwAbsFBObject() {
     this->tex = nullptr;
+    glDeleteFramebuffers(1, &fbo);
 }
 
 void HwAbsFBObject::bindTex(HwAbsTexture *tex) {

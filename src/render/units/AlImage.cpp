@@ -32,19 +32,18 @@ bool AlImage::eventRelease(Message *msg) {
 
 bool AlImage::onPrepare(Message *msg) {
     texAllocator = new TextureAllocator();
-    mCanvas.prepare(texAllocator);
-    mLayerManager.setTextureAllocator(texAllocator);
     return true;
 }
 
 bool AlImage::onUpdateCanvas(Message *m) {
     auto model = getCanvas();
-    mCanvas.update(model->getWidth(), model->getHeight(), model->getColor());
+    mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(), texAllocator);
     return true;
 }
 
 bool AlImage::onNewLayer(Message *msg) {
-    mLayerManager.update(getLayers());
+    mLayerManager.update(getLayers(), texAllocator);
+    _newDefaultCanvas();
     onInvalidate(nullptr);
     return true;
 }
@@ -54,6 +53,10 @@ bool AlImage::onInvalidate(Message *m) {
     layer->draw(&mCanvas);
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     auto tex = mCanvas.getOutput();
+    if (nullptr == tex) {
+        Logcat::e("AlImage", "%s(%d): Empty canvas", __FUNCTION__, __LINE__);
+        return true;
+    }
     msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
                                tex->getWidth(),
                                tex->getHeight(),
@@ -72,4 +75,17 @@ AlImageCanvasModel *AlImage::getCanvas() {
 std::list<AlImageLayerModel *> *AlImage::getLayers() {
     auto *obj = static_cast<ObjectBox *>(getObject("layers"));
     return static_cast<list<AlImageLayerModel *> *>(obj->ptr);
+}
+
+void AlImage::_newDefaultCanvas() {
+    if (0 == mLayerManager.size()) {
+        return;
+    }
+    auto model = getCanvas();
+    if (model->getWidth() > 0 && model->getHeight() > 0) {
+        return;
+    }
+    auto layer = mLayerManager.getLayout(0);
+    model->set(layer->getWidth(), layer->getHeight(), 0);
+    mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(), texAllocator);
 }
