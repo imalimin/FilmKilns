@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlImageCanvas.h"
 #include "HwAbsTexture.h"
-#include "HwAbsFilter.h"
+#include "AlCanvasFilter.h"
 
 al_class(AlImageLayer) {
 public:
@@ -35,7 +35,7 @@ private:
 private:
     //Manager by TextureAllocator. DON`T delete here.
     HwAbsTexture *tex;
-    HwAbsFilter *mCanvasFilter;
+    AlCanvasFilter *mCanvasFilter;
 };
 
 

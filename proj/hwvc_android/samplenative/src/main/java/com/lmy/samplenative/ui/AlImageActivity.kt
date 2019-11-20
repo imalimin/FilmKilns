@@ -30,6 +30,7 @@ class AlImageActivity : BaseActivity() {
     override fun initView() {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
+        processor.setCanvas(1080, 1920, 0)
         processor.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
     }
 

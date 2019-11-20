@@ -28,7 +28,7 @@ HwProgram *AlCanvasFilter::createProgram() {
                     "        varying mediump vec2 vTextureCoord;\n"
                     "        uniform sampler2D uTexture;\n"
                     "        void main() {\n"
-                    "            vec4 color = vec4(texture2D(uTexture, vTextureCoord).rgb, 1.0);\n"
+                    "            vec4 color = texture2D(uTexture, vTextureCoord);\n"
                     "            gl_FragColor = color;\n"
                     "        }");
     return HwProgram::create(&vertex, &fragment);
@@ -36,4 +36,9 @@ HwProgram *AlCanvasFilter::createProgram() {
 
 void AlCanvasFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
+    program->updateMatrix(&matrix);
+}
+
+void AlCanvasFilter::setScale(float scale) {
+    matrix.scale(scale, scale, 1.0f);
 }

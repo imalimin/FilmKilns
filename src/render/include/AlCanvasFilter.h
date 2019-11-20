@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALCANVASFILTER_H
 
 #include "HwAbsFilter.h"
+#include "HwMatrix.h"
 
 class AlCanvasFilter : public HwAbsFilter {
 public:
@@ -16,10 +17,15 @@ public:
 
     virtual ~AlCanvasFilter();
 
+    void setScale(float scale);
+
 private:
     HwProgram *createProgram() override;
 
     void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+
+private:
+    HwMatrix matrix;
 };
 
 
