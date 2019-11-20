@@ -14,7 +14,9 @@ AlImageLayerManager::AlImageLayerManager() : Object() {
 }
 
 AlImageLayerManager::~AlImageLayerManager() {
-    //TODO release
+}
+
+void AlImageLayerManager::release() {
     auto itr = mLayers.begin();
     while (mLayers.end() != itr) {
         AlImageLayer *layer = itr->second;

@@ -23,6 +23,7 @@ AlImage::~AlImage() {
 
 bool AlImage::eventRelease(Message *msg) {
     mCanvas.release();
+    mLayerManager.release();
     if (texAllocator) {
         delete texAllocator;
         texAllocator = nullptr;

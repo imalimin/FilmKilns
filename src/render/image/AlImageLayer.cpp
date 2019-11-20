@@ -7,6 +7,7 @@
 
 #include "AlImageLayer.h"
 #include "HwTexture.h"
+#include "AlCanvasFilter.h"
 
 AlImageLayer *AlImageLayer::create(HwAbsTexture *tex) {
     return new AlImageLayer(tex);
@@ -17,11 +18,20 @@ AlImageLayer::AlImageLayer(HwAbsTexture *tex) : Object() {
 }
 
 AlImageLayer::~AlImageLayer() {
-
+    delete mCanvasFilter;
+    mCanvasFilter = nullptr;
 }
 
 void AlImageLayer::draw(AlImageCanvas *canvas) {
-
+    if (nullptr == mCanvasFilter) {
+        mCanvasFilter = new AlCanvasFilter();
+        mCanvasFilter->prepare();
+    }
+    HwAbsTexture *canvasTex = canvas->getOutput();
+    if (canvasTex) {
+        mCanvasFilter->draw(this->tex, canvasTex);
+        delete canvasTex;
+    }
 }
 
 int32_t AlImageLayer::getWidth() {

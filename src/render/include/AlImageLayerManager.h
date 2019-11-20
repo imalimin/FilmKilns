@@ -21,6 +21,8 @@ public:
 
     ~AlImageLayerManager();
 
+    void release();
+
     void update(std::list<AlImageLayerModel *> *list, TextureAllocator *texAllocator);
 
     int32_t size();
