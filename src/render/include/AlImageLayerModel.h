@@ -12,11 +12,21 @@
 
 al_class(AlImageLayerModel) {
 public:
-    AlImageLayerModel();
+    static AlImageLayerModel *create(const std::string path);
+
+private:
+    AlImageLayerModel(const std::string &path);
+
+public:
 
     AlImageLayerModel(const AlImageLayerModel &e);
 
     ~AlImageLayerModel();
+
+    std::string getPath();
+
+private:
+    std::string path;
 };
 
 

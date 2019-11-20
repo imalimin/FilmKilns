@@ -8,10 +8,13 @@
 #include "AlImage.h"
 #include "HwBitmapFactory.h"
 #include "HwTexture.h"
+#include "ObjectBox.h"
 
 AlImage::AlImage(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&AlImage::onPrepare));
     registerEvent(EVENT_AIMAGE_NEW_LAYER, reinterpret_cast<EventFunc>(&AlImage::onNewLayer));
+    registerEvent(EVENT_AIMAGE_UPDATE_CANVAS,
+                  reinterpret_cast<EventFunc>(&AlImage::onUpdateCanvas));
 }
 
 AlImage::~AlImage() {
@@ -19,6 +22,7 @@ AlImage::~AlImage() {
 }
 
 bool AlImage::eventRelease(Message *msg) {
+    mCanvas.release();
     if (texAllocator) {
         delete texAllocator;
         texAllocator = nullptr;
@@ -28,33 +32,44 @@ bool AlImage::eventRelease(Message *msg) {
 
 bool AlImage::onPrepare(Message *msg) {
     texAllocator = new TextureAllocator();
+    mCanvas.prepare(texAllocator);
+    mLayerManager.setTextureAllocator(texAllocator);
+    return true;
+}
+
+bool AlImage::onUpdateCanvas(Message *m) {
+    auto model = getCanvas();
+    mCanvas.update(model->getWidth(), model->getHeight(), model->getColor());
     return true;
 }
 
 bool AlImage::onNewLayer(Message *msg) {
-    std::string path = getString("layer");
-    HwBitmap *bmp = HwBitmapFactory::decodeFile(path);
-    if (nullptr == bmp) {
-        Logcat::e("AlImage", "%s(%d): decode %s failed", __FUNCTION__, __LINE__, path.c_str());
-        return true;
-    }
-    tex = texAllocator->alloc(bmp->getPixels(),
-                              bmp->getWidth(),
-                              bmp->getHeight(),
-                              GL_RGBA);
-    delete bmp;
+    mLayerManager.update(getLayers());
     onInvalidate(nullptr);
     return true;
 }
 
 bool AlImage::onInvalidate(Message *m) {
-    if (GL_NONE != tex) {
-        Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
-        msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
-                                   tex->getWidth(),
-                                   tex->getHeight(),
-                                   tex->fmt());
-        postEvent(msg);
-    }
+    auto layer = mLayerManager.getLayout(0);
+    layer->draw(&mCanvas);
+    Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
+    auto tex = mCanvas.getOutput();
+    msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
+                               tex->getWidth(),
+                               tex->getHeight(),
+                               tex->fmt());
+    postEvent(msg);
     return true;
+}
+
+/*+------------------+*/
+/*|     Model        |*/
+/*+------------------+*/
+AlImageCanvasModel *AlImage::getCanvas() {
+    return dynamic_cast<AlImageCanvasModel *>(getObject("canvas"));
+}
+
+std::list<AlImageLayerModel *> *AlImage::getLayers() {
+    auto *obj = static_cast<ObjectBox *>(getObject("layers"));
+    return static_cast<list<AlImageLayerModel *> *>(obj->ptr);
 }

@@ -19,6 +19,8 @@ public:
 
     HwAbsTexture *alloc();
 
+    HwAbsTexture *alloc(int width, int height, uint32_t fmt);
+
     HwAbsTexture *alloc(uint8_t *rgba, int width, int height, uint32_t fmt);
 
     void recycle(HwAbsTexture **tex);

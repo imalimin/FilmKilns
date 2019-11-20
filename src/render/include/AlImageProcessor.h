@@ -11,6 +11,9 @@
 #include "HwAbsProcessor.h"
 #include "HwResult.h"
 #include "HwWindow.h"
+#include "AlImageCanvasModel.h"
+#include "AlImageLayerModel.h"
+#include <list>
 
 class AlImageProcessor : public HwAbsProcessor {
 public:
@@ -34,6 +37,8 @@ private:
     const string ALIAS_OF_IMAGE = "IMAGE";
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
+    AlImageCanvasModel mCanvasModel;
+    std::list<AlImageLayerModel *> mLayers;
 };
 
 

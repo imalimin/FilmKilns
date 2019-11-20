@@ -23,6 +23,10 @@ HwAbsTexture *TextureAllocator::alloc() {
     return tex;
 }
 
+HwAbsTexture *TextureAllocator::alloc(int width, int height, uint32_t fmt) {
+    return alloc(nullptr, width, height, fmt);
+}
+
 HwAbsTexture *TextureAllocator::alloc(uint8_t *rgba, int width, int height, uint32_t fmt) {
     HwAbsTexture *tex = alloc();
     if (nullptr == tex) {

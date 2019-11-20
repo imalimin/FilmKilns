@@ -40,10 +40,15 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 }
 
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
+    mCanvasModel.set(w, h, color);
+    putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
+    postEvent(new Message(EVENT_AIMAGE_UPDATE_CANVAS, nullptr));
 }
 
 HwResult AlImageProcessor::addLayer(const char *path) {
-    putString("layer", std::string(path)).to({ALIAS_OF_IMAGE});
+    std::string str(path);
+    mLayers.push_front(AlImageLayerModel::create(str));
+    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
     postEvent(new Message(EVENT_AIMAGE_NEW_LAYER, nullptr));
     return Hw::SUCCESS;
 }

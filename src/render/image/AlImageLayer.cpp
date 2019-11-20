@@ -6,11 +6,20 @@
 */
 
 #include "AlImageLayer.h"
+#include "HwTexture.h"
 
-AlImageLayer::AlImageLayer() : Object() {
+AlImageLayer *AlImageLayer::create(HwAbsTexture *tex) {
+    return new AlImageLayer(tex);
+}
 
+AlImageLayer::AlImageLayer(HwAbsTexture *tex) : Object() {
+    this->tex = tex;
 }
 
 AlImageLayer::~AlImageLayer() {
+
+}
+
+void AlImageLayer::draw(AlImageCanvas *canvas) {
 
 }

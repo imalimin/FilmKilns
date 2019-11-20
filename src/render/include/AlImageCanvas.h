@@ -9,6 +9,8 @@
 #define HWVC_ANDROID_ALIMAGECANVAS_H
 
 #include "Object.h"
+#include "HwAbsTexture.h"
+#include "TextureAllocator.h"
 
 al_class(AlImageCanvas) {
 public:
@@ -16,8 +18,19 @@ public:
 
     ~AlImageCanvas();
 
+    void prepare(TextureAllocator *texAllocator);
+    void release();
+
+    void update(int32_t w, int32_t h, int32_t color);
+
+    HwAbsTexture *getOutput();
+
 private:
     AlImageCanvas(const AlImageCanvas &e) : Object() {};
+private:
+    TextureAllocator *texAllocator = nullptr;
+    HwAbsFBObject *fbo = nullptr;
+    HwAbsTexture *mCanvasTex = nullptr;
 };
 
 

@@ -9,15 +9,26 @@
 #define HWVC_ANDROID_ALIMAGELAYER_H
 
 #include "Object.h"
+#include "AlImageCanvas.h"
+#include "HwAbsTexture.h"
 
 al_class(AlImageLayer) {
 public:
-    AlImageLayer();
+public:
+    static AlImageLayer *create(HwAbsTexture *tex);
 
+public:
     ~AlImageLayer();
 
+    void draw(AlImageCanvas *canvas);
+
 private:
+    AlImageLayer(HwAbsTexture *tex);
+
     AlImageLayer(const AlImageLayer &e) : Object() {};
+
+private:
+    HwAbsTexture *tex;
 };
 
 

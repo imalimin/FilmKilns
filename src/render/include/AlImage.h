@@ -11,7 +11,10 @@
 #include "Unit.h"
 #include "TextureAllocator.h"
 #include "HwAbsTexture.h"
+#include "AlImageCanvas.h"
 #include "AlImageCanvasModel.h"
+#include "AlImageLayerManager.h"
+#include <list>
 
 class AlImage : public Unit {
 public:
@@ -27,11 +30,19 @@ public:
 
     bool onInvalidate(Message *m);
 
+    bool onUpdateCanvas(Message *m);
+
 private:
     TextureAllocator *texAllocator = nullptr;
-    HwAbsTexture *tex = nullptr;
-    // Model
-    AlImageCanvasModel canvasModel;
+
+    /*+------------------+*/
+    /*|     Model        |*/
+    /*+------------------+*/
+private:
+    AlImageCanvasModel *getCanvas();
+    std::list<AlImageLayerModel *> *getLayers();
+    AlImageCanvas mCanvas;
+    AlImageLayerManager mLayerManager;
 };
 
 

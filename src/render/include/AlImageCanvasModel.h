@@ -22,6 +22,12 @@ public:
 
     void set(int32_t width, int32_t height, int32_t color);
 
+    int32_t getWidth();
+
+    int32_t getHeight();
+
+    int32_t getColor();
+
 private:
     int32_t width = 0;
     int32_t height = 0;

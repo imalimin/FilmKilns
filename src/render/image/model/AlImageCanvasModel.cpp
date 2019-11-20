@@ -28,3 +28,15 @@ void AlImageCanvasModel::set(int32_t width, int32_t height, int32_t color) {
     this->color = color;
     setSize(width, height);
 }
+
+int32_t AlImageCanvasModel::getWidth() {
+    return width;
+}
+
+int32_t AlImageCanvasModel::getHeight() {
+    return height;
+}
+
+int32_t AlImageCanvasModel::getColor() {
+    return color;
+}

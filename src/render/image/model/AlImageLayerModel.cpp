@@ -7,7 +7,12 @@
 
 #include "AlImageLayerModel.h"
 
-AlImageLayerModel::AlImageLayerModel() : Object() {
+
+AlImageLayerModel *AlImageLayerModel::create(const std::string path) {
+    return new AlImageLayerModel(path);
+}
+
+AlImageLayerModel::AlImageLayerModel(const std::string &path) : Object(), path(path) {
 
 }
 
@@ -17,4 +22,8 @@ AlImageLayerModel::AlImageLayerModel(const AlImageLayerModel &e) : Object() {
 
 AlImageLayerModel::~AlImageLayerModel() {
 
+}
+
+std::string AlImageLayerModel::getPath() {
+    return path;
 }
