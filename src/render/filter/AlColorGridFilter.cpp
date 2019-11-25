@@ -32,9 +32,9 @@ bool AlColorGridFilter::prepare(TextureAllocator *texAllocator) {
             bmp[i * 4 + 2] = 255;
             bmp[i * 4 + 3] = 255;
         } else {
-            bmp[i * 4 + 0] = 200;
-            bmp[i * 4 + 1] = 200;
-            bmp[i * 4 + 2] = 200;
+            bmp[i * 4 + 0] = 203;
+            bmp[i * 4 + 1] = 203;
+            bmp[i * 4 + 2] = 203;
             bmp[i * 4 + 3] = 255;
         }
     }
@@ -58,20 +58,20 @@ bool AlColorGridFilter::prepare() {
 }
 
 HwProgram *AlColorGridFilter::createProgram() {
-    string vertex("        attribute vec4 aPosition;\n"
-                  "        attribute vec4 aTextureCoord;\n"
-                  "        varying vec2 vTextureCoord;\n"
-                  "        void main() {\n"
-                  "            gl_Position = aPosition;\n"
-                  "            vTextureCoord = aTextureCoord.xy;\n"
-                  "        }");
-    string fragment("        precision mediump float;\n"
-                    "        varying mediump vec2 vTextureCoord;\n"
-                    "        uniform sampler2D uTexture;\n"
-                    "        void main() {\n"
-                    "            vec4 color = texture2D(uTexture, vTextureCoord);\n"
-                    "            gl_FragColor = color;\n"
-                    "        }");
+    string vertex("attribute vec4 aPosition;\n"
+                  "attribute vec4 aTextureCoord;\n"
+                  "varying vec2 vTextureCoord;\n"
+                  "void main() {\n"
+                  "    gl_Position = aPosition;\n"
+                  "    vTextureCoord = aTextureCoord.xy;\n"
+                  "}");
+    string fragment("precision mediump float;\n"
+                    "varying mediump vec2 vTextureCoord;\n"
+                    "uniform sampler2D uTexture;\n"
+                    "void main() {\n"
+                    "    vec4 color = texture2D(uTexture, vTextureCoord);\n"
+                    "    gl_FragColor = color;\n"
+                    "}");
     return HwProgram::create(&vertex, &fragment);
 }
 

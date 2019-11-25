@@ -39,8 +39,8 @@ private:
 
 private:
     HwAbsTexture *srcTex = nullptr;
-    static constexpr int GRID_WIDTH = 32;
-    static constexpr int GRID_HEIGHT = 32;
+    static constexpr int GRID_WIDTH = 24;
+    static constexpr int GRID_HEIGHT = 24;
 };
 
 
