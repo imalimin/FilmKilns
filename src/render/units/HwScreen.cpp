@@ -7,6 +7,8 @@
 #include "Size.h"
 #include "Logcat.h"
 
+#define TAG "HwScreen"
+
 HwScreen::HwScreen(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwScreen::eventPrepare));
     registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
@@ -18,7 +20,7 @@ HwScreen::~HwScreen() {
 }
 
 bool HwScreen::eventRelease(Message *msg) {
-    Logcat::i("HWVC", "Screen::eventRelease");
+    Logcat::i(TAG, "Screen::eventRelease");
     if (egl) {
         egl->makeCurrent();
     }
@@ -34,7 +36,7 @@ bool HwScreen::eventRelease(Message *msg) {
 }
 
 bool HwScreen::eventPrepare(Message *msg) {
-    Logcat::i("HWVC", "Screen::eventPrepare");
+    Logcat::i(TAG, "Screen::eventPrepare");
     if (msg->obj) {
         NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
         this->width = nw->win->getWidth();
@@ -47,12 +49,11 @@ bool HwScreen::eventPrepare(Message *msg) {
 }
 
 bool HwScreen::eventUpdateWindow(Message *msg) {
-    Logcat::i("HWVC", "Screen::eventUpdateWindow");
     NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
-    if (egl) {
+    if (egl && egl->updateWindow(nw->win)) {
         this->width = nw->win->getWidth();
         this->height = nw->win->getHeight();
-        egl->updateWindow(nw->win);
+        Logcat::i("HwScreen", "%s(%d)", __FUNCTION__, __LINE__);
     }
     return true;
 }
@@ -72,12 +73,12 @@ void HwScreen::initWindow(NativeWindow *nw) {
         if (nw) {
             if (nw->hasContext()) {
                 egl = Egl::create(nw->context, nw->win, true);
-                Logcat::i("HWVC", "Screen::init EGL with context %d x %d", egl->width(),
+                Logcat::i(TAG, "Screen::init EGL with context %d x %d", egl->width(),
                           egl->height());
             } else {
                 egl = Egl::create(nullptr, nw->win, true);
                 nw->context = egl->getContext();
-                Logcat::i("HWVC", "Screen::init EGL %d x %d", egl->width(), egl->height());
+                Logcat::i(TAG, "Screen::init EGL %d x %d", egl->width(), egl->height());
             }
         } else {
             egl = Egl::create(nullptr, nullptr, true);
@@ -94,7 +95,7 @@ void HwScreen::draw(GLuint texture) {
 //    string glslVersion = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
 //    LOGE("version: %s", glslVersion.c_str());
     if (egl->isAttachWindow()) {
-        Logcat::i("HWVC", "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
+        Logcat::i(TAG, "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
         glViewport(0, 0, egl->width(), egl->height());
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.0, 0.0, 0.0, 0.0);
