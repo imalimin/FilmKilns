@@ -9,24 +9,30 @@
 #define HWVC_ANDROID_ALIMAGELAYERMODEL_H
 
 #include "Object.h"
+#include "AlVec2.h"
 
 al_class(AlImageLayerModel) {
 public:
     static AlImageLayerModel *create(const std::string path);
 
 private:
-    AlImageLayerModel(const std::string &path);
+    AlImageLayerModel(int32_t id, const std::string &path);
 
 public:
 
-    AlImageLayerModel(const AlImageLayerModel &e);
+    AlImageLayerModel(const AlImageLayerModel &o);
 
     ~AlImageLayerModel();
 
     std::string getPath();
 
 private:
+    int32_t id = 0;
     std::string path;
+    float alpha = 1.0f;
+    float rotation = 0.0f;
+    AlVec2 position;
+    AlVec2 scale;
 };
 
 

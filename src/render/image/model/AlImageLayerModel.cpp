@@ -9,14 +9,28 @@
 
 
 AlImageLayerModel *AlImageLayerModel::create(const std::string path) {
-    return new AlImageLayerModel(path);
+    return new AlImageLayerModel(0, path);
 }
 
-AlImageLayerModel::AlImageLayerModel(const std::string &path) : Object(), path(path) {
+AlImageLayerModel::AlImageLayerModel(int32_t id, const std::string &path)
+        : Object(),
+          path(path),
+          id(id),
+          alpha(1.0f),
+          rotation(0.0f),
+          position(AlVec2(0.0f, 0.0f)),
+          scale(AlVec2(0.0f, 0.0f)) {
 
 }
 
-AlImageLayerModel::AlImageLayerModel(const AlImageLayerModel &e) : Object() {
+AlImageLayerModel::AlImageLayerModel(const AlImageLayerModel &o)
+        : Object(),
+          id(o.id),
+          path(o.path),
+          alpha(o.alpha),
+          rotation(o.rotation),
+          position(o.position),
+          scale(o.scale) {
 
 }
 
