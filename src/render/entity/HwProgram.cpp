@@ -62,7 +62,9 @@ void HwProgram::draw(HwAbsTexture *tex) {
     tex->bind();
     glUniform1i(uTextureLocation, 0);
     enableVertex(aPositionLocation, aTextureCoordinateLocation);
-    setUniformMatrix4fv(uTextureMatrix, matrix.data());
+//    if (GL_NONE != uTextureMatrix) {
+        setUniformMatrix4fv(uTextureMatrix, matrix.data());
+//    }
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glDisableVertexAttribArray(aPositionLocation);
     glDisableVertexAttribArray(aTextureCoordinateLocation);

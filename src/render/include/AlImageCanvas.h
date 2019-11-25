@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "HwAbsTexture.h"
 #include "TextureAllocator.h"
+#include "AlColorGridFilter.h"
 
 al_class(AlImageCanvas) {
 public:
@@ -30,10 +31,12 @@ public:
 
 private:
     AlImageCanvas(const AlImageCanvas &e) : Object() {};
+
 private:
     HwAbsFBObject *fbo = nullptr;
     //Manager by TextureAllocator. DON`T delete here.
     HwAbsTexture *mCanvasTex = nullptr;
+    AlColorGridFilter *mBgDrawer = nullptr;
 };
 
 

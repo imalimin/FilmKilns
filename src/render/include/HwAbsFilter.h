@@ -24,7 +24,7 @@ public:
 
     virtual ~HwAbsFilter();
 
-    bool prepare();
+    virtual bool prepare();
 
     virtual void draw(HwAbsTexture *src, HwAbsTexture *dest);
 

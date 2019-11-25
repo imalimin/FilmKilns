@@ -20,6 +20,8 @@ AlImageCanvas::~AlImageCanvas() {
 
 void AlImageCanvas::release() {
     delete fbo;
+    delete mBgDrawer;
+    mCanvasTex = nullptr;
 }
 
 HwAbsTexture *AlImageCanvas::getOutput() {
@@ -35,14 +37,13 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator
         mCanvasTex = texAllocator->alloc(nullptr, w, h, GL_RGBA);
         fbo = HwFBObject::alloc();
         fbo->bindTex(mCanvasTex);
+        mBgDrawer = AlColorGridFilter::create();
+        mBgDrawer->prepare(texAllocator);
     } else {
         mCanvasTex->update(nullptr, w, h, GL_RGBA);
     }
     glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
-    fbo->bind();
-    glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    fbo->unbind();
+    mBgDrawer->draw(mCanvasTex);
     Logcat::e("AlImageCanvas", "%s(%d): Canvas size %dx%d", __FUNCTION__, __LINE__,
               mCanvasTex->getWidth(), mCanvasTex->getHeight());
 }
