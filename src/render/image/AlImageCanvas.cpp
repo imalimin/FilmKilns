@@ -46,3 +46,11 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator
     Logcat::e("AlImageCanvas", "%s(%d): Canvas size %dx%d", __FUNCTION__, __LINE__,
               mCanvasTex->getWidth(), mCanvasTex->getHeight());
 }
+
+int32_t AlImageCanvas::getWidth() {
+    return nullptr != mCanvasTex ? mCanvasTex->getWidth() : 0;
+}
+
+int32_t AlImageCanvas::getHeight() {
+    return nullptr != mCanvasTex ? mCanvasTex->getHeight() : 0;
+}

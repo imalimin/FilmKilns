@@ -24,6 +24,10 @@ public:
 
     HwAbsTexture *getOutput();
 
+    int32_t getWidth();
+
+    int32_t getHeight();
+
 private:
     AlImageCanvas(const AlImageCanvas &e) : Object() {};
 private:

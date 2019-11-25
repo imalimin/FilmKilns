@@ -14,6 +14,9 @@
 #include "HwAbsFBObject.h"
 #include "GLES2/gl2.h"
 
+/**
+ * Use with HwAbsFBObject
+ */
 class HwAbsTexture : public Object {
 private:
     friend class HwAbsFBObject;

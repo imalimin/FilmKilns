@@ -39,9 +39,9 @@ float *HwMatrix::data() {
 }
 
 void HwMatrix::scale(float sx, float sy, float sz) {
-    matrix[0][0] = 1.0f / sx;
-    matrix[1][1] = 1.0f / sy;
-    matrix[2][2] = 1.0f / sz;
+    matrix[0][0] = sx;
+    matrix[1][1] = sy;
+    matrix[2][2] = sz;
 }
 
 void HwMatrix::translate(float dx, float dy, float dz) {

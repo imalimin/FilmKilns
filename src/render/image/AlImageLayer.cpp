@@ -25,12 +25,23 @@ void AlImageLayer::draw(AlImageCanvas *canvas) {
     if (nullptr == mCanvasFilter) {
         mCanvasFilter = new AlCanvasFilter();
         mCanvasFilter->prepare();
-        mCanvasFilter->setScale(0.5f);
     }
     HwAbsTexture *canvasTex = canvas->getOutput();
     if (canvasTex) {
-        glViewport(0, 0, canvasTex->getWidth(), canvasTex->getHeight());
-        mCanvasFilter->draw(this->tex, canvasTex);
+        float canvasRatio = canvas->getWidth() / (float) canvas->getHeight();
+        float layerRatio = getWidth() / (float) getHeight();
+        float scaleX = 1.0f, scaleY = 1.0f;
+        if (canvasRatio > layerRatio) {
+            scaleX =  canvasRatio * layerRatio;
+            scaleY = 1.0f;
+        } else {
+            scaleX = 1.0f;
+            scaleY = canvasRatio / layerRatio;
+        }
+        mCanvasFilter->setScale(scaleX, scaleY);
+        //Draw
+        glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
+        mCanvasFilter->draw(this->tex, canvas->getOutput());
         delete canvasTex;
     }
 }

@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/AlCanvasFilter.h"
+#include "AlCanvasFilter.h"
 
 AlCanvasFilter::AlCanvasFilter() : HwAbsFilter() {
 
@@ -21,8 +21,8 @@ HwProgram *AlCanvasFilter::createProgram() {
                   "        uniform mat4 uTextureMatrix;\n"
                   "        varying vec2 vTextureCoord;\n"
                   "        void main() {\n"
-                  "            gl_Position = aPosition;\n"
-                  "            vTextureCoord = (uTextureMatrix * aTextureCoord).xy;\n"
+                  "            gl_Position = uTextureMatrix * aPosition;\n"
+                  "            vTextureCoord = aTextureCoord.xy;\n"
                   "        }");
     string fragment("        precision mediump float;\n"
                     "        varying mediump vec2 vTextureCoord;\n"
@@ -39,6 +39,6 @@ void AlCanvasFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
     program->updateMatrix(&matrix);
 }
 
-void AlCanvasFilter::setScale(float scale) {
-    matrix.scale(scale, scale, 1.0f);
+void AlCanvasFilter::setScale(float scaleX, float scaleY) {
+    matrix.scale(scaleX, scaleY, 1.0f);
 }

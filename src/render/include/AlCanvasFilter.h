@@ -17,7 +17,7 @@ public:
 
     virtual ~AlCanvasFilter();
 
-    void setScale(float scale);
+    void setScale(float scaleX, float scaleY);
 
 private:
     HwProgram *createProgram() override;
