@@ -43,18 +43,30 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
     mCanvasModel.set(w, h, color);
-    putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_AIMAGE_UPDATE_CANVAS, nullptr));
+    _notifyCanvasUpdate();
 }
 
-HwResult AlImageProcessor::addLayer(const char *path) {
+int32_t AlImageProcessor::addLayer(const char *path) {
     std::string str(path);
-    mLayers.push_front(AlImageLayerModel::create(str));
-    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_AIMAGE_NEW_LAYER, nullptr));
-    return Hw::SUCCESS;
+    auto *layer = AlImageLayerModel::create(&mLayerIdCreator, str);
+    if (nullptr == layer) {
+        return Hw::FAILED.code;
+    }
+    mLayers.push_front(layer);
+    _notifyLayerUpdate();
+    return layer->getId();
 }
 
 void AlImageProcessor::invalidate() {
     postEvent(new Message(EVENT_COMMON_INVALIDATE, nullptr));
+}
+
+void AlImageProcessor::_notifyCanvasUpdate() {
+    putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
+    postEvent(new Message(EVENT_AIMAGE_UPDATE_CANVAS, nullptr));
+}
+
+void AlImageProcessor::_notifyLayerUpdate() {
+    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
+    postEvent(new Message(EVENT_AIMAGE_NEW_LAYER, nullptr));
 }

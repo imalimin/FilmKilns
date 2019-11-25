@@ -29,9 +29,14 @@ public:
 
     void setCanvas(int32_t w, int32_t h, int32_t color);
 
-    HwResult addLayer(const char *path);
+    int32_t addLayer(const char *path);
 
     void invalidate();
+
+private:
+    void _notifyCanvasUpdate();
+
+    void _notifyLayerUpdate();
 
 private:
     const string ALIAS_OF_IMAGE = "IMAGE";
@@ -39,6 +44,7 @@ private:
     const string ALIAS_OF_SCREEN = "SCREEN";
     AlImageCanvasModel mCanvasModel;
     std::list<AlImageLayerModel *> mLayers;
+    AlIdentityCreator mLayerIdCreator;
 };
 
 

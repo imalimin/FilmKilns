@@ -56,7 +56,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_addLay
         const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
         std::string str(pPath);
         env->ReleaseStringUTFChars(path, pPath);
-        return getHandler(handler)->addLayer(str.c_str()).code;
+        return getHandler(handler)->addLayer(str.c_str());
     }
     return Hw::FAILED.code;
 }

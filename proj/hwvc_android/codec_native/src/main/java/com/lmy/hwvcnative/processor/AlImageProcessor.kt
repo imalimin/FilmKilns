@@ -40,10 +40,11 @@ class AlImageProcessor private constructor() : CPPObject() {
         }
     }
 
-    fun addLayer(path: String) {
+    fun addLayer(path: String): Int {
         if (!isNativeNull()) {
-            val ret = addLayer(handler, path)
+            return addLayer(handler, path)
         }
+        return -1
     }
 
     private external fun create(): Long

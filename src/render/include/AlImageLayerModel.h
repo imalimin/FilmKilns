@@ -10,10 +10,11 @@
 
 #include "Object.h"
 #include "AlVec2.h"
+#include "AlIdentityCreator.h"
 
 al_class(AlImageLayerModel) {
 public:
-    static AlImageLayerModel *create(const std::string path);
+    static AlImageLayerModel *create(AlIdentityCreator *creator, const std::string path);
 
 private:
     AlImageLayerModel(int32_t id, const std::string &path);
@@ -26,8 +27,10 @@ public:
 
     std::string getPath();
 
+    int32_t getId();
+
 private:
-    int32_t id = 0;
+    int32_t id = AlIdentityCreator::NONE_ID;
     std::string path;
     float alpha = 1.0f;
     float rotation = 0.0f;

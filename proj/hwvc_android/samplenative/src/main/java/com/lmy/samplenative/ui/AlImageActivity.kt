@@ -31,7 +31,8 @@ class AlImageActivity : BaseActivity() {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
         processor.setCanvas(1080, 1920, 0)
-        processor.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
+        val layerId = processor.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
+        Log.i("HWVC", "addLayer $layerId")
     }
 
     override fun onDestroy() {

@@ -7,9 +7,8 @@
 
 #include "AlImageLayerModel.h"
 
-
-AlImageLayerModel *AlImageLayerModel::create(const std::string path) {
-    return new AlImageLayerModel(0, path);
+AlImageLayerModel *AlImageLayerModel::create(AlIdentityCreator *creator, const std::string path) {
+    return new AlImageLayerModel(creator->generate(), path);
 }
 
 AlImageLayerModel::AlImageLayerModel(int32_t id, const std::string &path)
@@ -40,4 +39,8 @@ AlImageLayerModel::~AlImageLayerModel() {
 
 std::string AlImageLayerModel::getPath() {
     return path;
+}
+
+int32_t AlImageLayerModel::getId() {
+    return id;
 }
