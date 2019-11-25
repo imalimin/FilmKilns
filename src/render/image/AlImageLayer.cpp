@@ -32,7 +32,7 @@ void AlImageLayer::draw(AlImageCanvas *canvas) {
         float layerRatio = getWidth() / (float) getHeight();
         float scaleX = 1.0f, scaleY = 1.0f;
         if (canvasRatio > layerRatio) {
-            scaleX =  canvasRatio * layerRatio;
+            scaleX =  layerRatio / canvasRatio;
             scaleY = 1.0f;
         } else {
             scaleX = 1.0f;
