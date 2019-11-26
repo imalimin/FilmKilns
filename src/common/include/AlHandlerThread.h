@@ -11,9 +11,9 @@
 #include "Object.h"
 #include "AlHandler.h"
 #include "AlLooper.h"
-#include "SimpleLock.h"
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 
 al_class(AlHandlerThread) {
 public:
@@ -40,8 +40,7 @@ private:
     std::thread mThread = thread(&AlHandlerThread::run, this);
     AlLooper *mLooper = nullptr;
     std::mutex mtx_l;
-    std::mutex mtx_h;
-    SimpleLock lock;
+    std::condition_variable cond;
     std::atomic_bool exiting;
     std::atomic_bool exited;
 };

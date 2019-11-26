@@ -9,11 +9,17 @@
 #include "AlLooper.h"
 #include "Logcat.h"
 
+#define TAG "AlHandlerThread"
+
 AlHandlerThread *AlHandlerThread::create(std::string name) {
     return new AlHandlerThread(name);
 }
 
-AlHandlerThread::AlHandlerThread(std::string name) : Object(), name(name) {
+AlHandlerThread::AlHandlerThread(std::string name)
+        : Object(),
+          name(name),
+          exited(false),
+          exiting(false) {
 }
 
 void AlHandlerThread::run() {
@@ -22,17 +28,18 @@ void AlHandlerThread::run() {
     AlLooper::prepare();
     mtx_l.lock();
     mLooper = AlLooper::myLooper();
-    mtx_l.unlock();
     // 通知getLooper方法，Looper准备好了
-    lock.notify();
+    cond.notify_all();
+    mtx_l.unlock();
+    Logcat::i(TAG, "%s(%d) loop.", __FUNCTION__, __LINE__);
     AlLooper::loop();
     AlLooper::exit();
     mtx_l.lock();
     exiting = false;
-    exited = true;
     mLooper = nullptr;
     mtx_l.unlock();
-    Logcat::i("AlHandlerThread", "%s(%d) exit.", __FUNCTION__, __LINE__);
+    exited = true;
+    Logcat::i(TAG, "%s(%d) exit.", __FUNCTION__, __LINE__);
 }
 
 AlHandlerThread::~AlHandlerThread() {
@@ -65,13 +72,15 @@ bool AlHandlerThread::quitSafely() {
 }
 
 AlLooper *AlHandlerThread::getLooper() {
-    //TODO 这里mLooper可能为空
-    std::lock_guard<std::mutex> guard(mtx_h);
-    if (!exited && nullptr == mLooper) {
-        lock.wait();
-    }
     if (exited) {
-        Logcat::i("AlHandlerThread", "%s(%d) thread had exit.", __FUNCTION__, __LINE__);
+        Logcat::i(TAG, "%s(%d) thread had exit.", __FUNCTION__, __LINE__);
+        return nullptr;
+    }
+    //TODO 这里mLooper可能为空
+    std::unique_lock<std::mutex> lck(mtx_l);
+    if (nullptr == mLooper) {
+        Logcat::i(TAG, "%s(%d) wait.", __FUNCTION__, __LINE__);
+        cond.wait(lck);
     }
     return mLooper;
 }
