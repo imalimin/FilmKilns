@@ -38,7 +38,7 @@ class AlImageActivity : BaseActivity() {
         processor?.setCanvas(1080, 1920, 0)
         val layerId = processor?.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
         if (null != layerId) {
-            processor?.setRotation(layerId, 3.141592653f / 2.0f)
+            processor?.setRotation(layerId, 3.141592653f / 4.0f)
         }
         Log.i("HWVC", "addLayer $layerId")
     }

@@ -17,19 +17,30 @@ public:
 
     void setScale(float scaleX, float scaleY);
 
+    /**
+     * 旋转
+     * @param rotation 旋转弧度
+     */
     void setRotation(float rotation);
 
     float *data();
+
+    void dump();
+
+private:
+    void _set(int32_t x, int32_t y, float val);
+
+    float _get(int32_t x, int32_t y);
 
 public:
     static const float PI;
     static const int SIZE;
 
 private:
-    float matrix[4][4] = {1.0f, 0.0f, 0.0f, 0.0f,
-                          0.0f, 1.0f, 0.0f, 0.0f,
-                          0.0f, 0.0f, 1.0f, 0.0f,
-                          0.0f, 0.0f, 0.0f, 1.0f};
+    float matrix[16] = {1.0f, 0.0f, 0.0f, 0.0f,
+                        0.0f, 1.0f, 0.0f, 0.0f,
+                        0.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f};
 };
 
 

@@ -43,8 +43,10 @@ void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
 
 void AlCanvasDrawer::setScale(float scaleX, float scaleY) {
     matrix.setScale(scaleX, scaleY);
+    matrix.dump();
 }
 
 void AlCanvasDrawer::setRotation(float rotation) {
     matrix.setRotation(rotation);
+    matrix.dump();
 }
