@@ -48,6 +48,8 @@ private:
 
     void _notifyLayerUpdate();
 
+    AlImageLayerModel *_getLayer(int32_t id);
+
 private:
     const string ALIAS_OF_IMAGE = "IMAGE";
     const string ALIAS_OF_RENDER = "RENDER";
@@ -55,6 +57,7 @@ private:
     AlImageCanvasModel mCanvasModel;
     std::list<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;
+    std::mutex mLayerMtx;
 };
 
 

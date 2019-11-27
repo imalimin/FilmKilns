@@ -46,9 +46,12 @@ void AlImageLayer::_draw(AlImageCanvas *canvas) {
         scaleX = 1.0f;
         scaleY = canvasRatio / layerRatio;
     }
-    mCanvasDrawer->setScale(scaleX, scaleY);
+    //Set render params
+    mCanvasDrawer->setAlpha(model->getAlpha());
+    mCanvasDrawer->setScale(model->getScale().x * scaleX, model->getScale().y * scaleY);
     mCanvasDrawer->setRotation(model->getRotation());
-    //Draw
+    mCanvasDrawer->setTranslate(model->getPosition().x, model->getPosition().y);
+    //Draw layer
     glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
     mCanvasDrawer->draw(this->tex, canvas->getOutput());
 }

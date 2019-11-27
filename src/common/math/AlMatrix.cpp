@@ -50,6 +50,11 @@ float AlMatrix::_get(int32_t x, int32_t y) {
     return matrix[x + y * 4];
 }
 
+void AlMatrix::setTranslate(float x, float y) {
+    _set(0, 3, x);
+    _set(1, 3, y);
+}
+
 void AlMatrix::dump() {
     Logcat::i(TAG, "1: {%f, %f, %f, %f}", _get(0, 0), _get(0, 1), _get(0, 2), _get(0, 3));
     Logcat::i(TAG, "2: {%f, %f, %f, %f}", _get(1, 0), _get(1, 1), _get(1, 2), _get(1, 3));

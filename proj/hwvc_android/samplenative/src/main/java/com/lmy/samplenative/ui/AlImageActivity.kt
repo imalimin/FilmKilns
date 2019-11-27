@@ -31,7 +31,8 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
     override fun getLayoutResource(): Int = R.layout.activity_al_image
 
     override fun initView() {
-        seekBar.setOnSeekBarChangeListener(this)
+        scaleBar.setOnSeekBarChangeListener(this)
+        transBar.setOnSeekBarChangeListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
             processor = AlImageProcessor.create()
@@ -63,8 +64,13 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
         return super.onKeyDown(keyCode, event)
     }
 
-    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-        processor?.setRotation(curLayerId, 3.141592653f * progress / 1000)
+    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+        when (seekBar.id) {
+            R.id.scaleBar ->
+                processor?.setRotation(curLayerId, 3.141592653f * progress / 1000)
+            R.id.transBar ->
+                processor?.setTranslate(curLayerId, progress / 1000f, 0.0f)
+        }
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {

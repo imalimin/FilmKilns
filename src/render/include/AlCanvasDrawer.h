@@ -22,6 +22,10 @@ public:
 
     void setRotation(float rotation);
 
+    void setTranslate(float x, float y);
+
+    void setAlpha(float alpha);
+
 private:
     HwProgram *createProgram() override;
 
@@ -29,6 +33,7 @@ private:
 
 private:
     AlMatrix matrix;
+    float alpha = 0.0;
 };
 
 

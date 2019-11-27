@@ -23,6 +23,8 @@ public:
      */
     void setRotation(float rotation);
 
+    void setTranslate(float x, float y);
+
     float *data();
 
     void dump();

@@ -29,9 +29,21 @@ public:
 
     int32_t getId();
 
+    void setAlpha(float alpha);
+
+    float getAlpha();
+
+    void setScale(float scaleX, float scaleY);
+
+    AlVec2 getScale();
+
     void setRotation(float rotation);
 
     float getRotation();
+
+    void setPosition(float x, float y);
+
+    AlVec2 getPosition();
 
 private:
     std::string path;

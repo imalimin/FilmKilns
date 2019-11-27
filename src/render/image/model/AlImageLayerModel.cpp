@@ -18,7 +18,7 @@ AlImageLayerModel::AlImageLayerModel(int32_t id, const std::string &path)
           alpha(1.0f),
           rotation(0.0f),
           position(AlVec2(0.0f, 0.0f)),
-          scale(AlVec2(0.0f, 0.0f)) {
+          scale(AlVec2(1.0f, 1.0f)) {
 
 }
 
@@ -45,10 +45,36 @@ int32_t AlImageLayerModel::getId() {
     return id;
 }
 
+void AlImageLayerModel::setAlpha(float alpha) {
+    this->alpha = alpha;
+}
+
+float AlImageLayerModel::getAlpha() {
+    return alpha;
+}
+
+void AlImageLayerModel::setScale(float scaleX, float scaleY) {
+    scale.x = scaleX;
+    scale.y = scaleY;
+}
+
+AlVec2 AlImageLayerModel::getScale() {
+    return scale;
+}
+
 void AlImageLayerModel::setRotation(float rotation) {
     this->rotation = rotation;
 }
 
 float AlImageLayerModel::getRotation() {
     return rotation;
+}
+
+void AlImageLayerModel::setPosition(float x, float y) {
+    position.x = x;
+    position.y = y;
+}
+
+AlVec2 AlImageLayerModel::getPosition() {
+    return position;
 }

@@ -50,3 +50,12 @@ void AlCanvasDrawer::setRotation(float rotation) {
     matrix.setRotation(rotation);
     matrix.dump();
 }
+
+void AlCanvasDrawer::setTranslate(float x, float y) {
+    matrix.setTranslate(x, y);
+    matrix.dump();
+}
+
+void AlCanvasDrawer::setAlpha(float alpha) {
+    this->alpha = alpha;
+}
