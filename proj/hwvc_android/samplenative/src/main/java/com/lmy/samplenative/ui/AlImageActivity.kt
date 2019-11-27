@@ -4,14 +4,16 @@ import android.os.Environment
 import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
+import android.widget.SeekBar
 import com.lmy.hwvcnative.processor.AlImageProcessor
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
 import kotlinx.android.synthetic.main.activity_al_image.*
 import java.io.File
 
-class AlImageActivity : BaseActivity() {
+class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
     private var processor: AlImageProcessor? = null
+    private var curLayerId = -1
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
             processor?.updateWindow(holder.surface)
@@ -29,6 +31,7 @@ class AlImageActivity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_al_image
 
     override fun initView() {
+        seekBar.setOnSeekBarChangeListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
             processor = AlImageProcessor.create()
@@ -38,7 +41,7 @@ class AlImageActivity : BaseActivity() {
         processor?.setCanvas(1080, 1920, 0)
         val layerId = processor?.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
         if (null != layerId) {
-            processor?.setRotation(layerId, 3.141592653f / 4.0f)
+            curLayerId = layerId
         }
         Log.i("HWVC", "addLayer $layerId")
     }
@@ -58,5 +61,15 @@ class AlImageActivity : BaseActivity() {
             processor?.release()
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        processor?.setRotation(curLayerId, 3.141592653f * progress / 1000)
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
     }
 }

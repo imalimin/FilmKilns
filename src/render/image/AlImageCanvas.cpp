@@ -42,10 +42,16 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator
     } else {
         mCanvasTex->update(nullptr, w, h, GL_RGBA);
     }
-    glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
-    mBgDrawer->draw(mCanvasTex);
+    clear();
     Logcat::e("AlImageCanvas", "%s(%d): Canvas size %dx%d", __FUNCTION__, __LINE__,
               mCanvasTex->getWidth(), mCanvasTex->getHeight());
+}
+
+void AlImageCanvas::clear() {
+    if (mCanvasTex && mBgDrawer) {
+        glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
+        mBgDrawer->draw(mCanvasTex);
+    }
 }
 
 int32_t AlImageCanvas::getWidth() {

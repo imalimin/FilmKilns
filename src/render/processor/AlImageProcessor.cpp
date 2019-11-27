@@ -17,7 +17,7 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
-    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
+    Message *msg = new Message(EVENT_COMMON_PREPARE);
     postEvent(msg);
 }
 
@@ -30,13 +30,13 @@ void AlImageProcessor::onDestroy() {
 }
 
 void AlImageProcessor::prepare(HwWindow *win) {
-    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
+    Message *msg = new Message(EVENT_COMMON_PREPARE);
     msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
     postEvent(msg);
 }
 
 void AlImageProcessor::updateWindow(HwWindow *win) {
-    Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
+    Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW);
     msg->obj = ObjectBox::box(new NativeWindow(win, nullptr));
     postEvent(msg);
 }
@@ -58,17 +58,17 @@ int32_t AlImageProcessor::addLayer(const char *path) {
 }
 
 void AlImageProcessor::invalidate() {
-    postEvent(new Message(EVENT_COMMON_INVALIDATE, nullptr));
+    postEvent(new Message(EVENT_COMMON_INVALIDATE, nullptr, Message::QUEUE_MODE_UNIQUE));
 }
 
 void AlImageProcessor::_notifyCanvasUpdate() {
     putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_AIMAGE_UPDATE_CANVAS, nullptr));
+    postEvent(new Message(EVENT_AIMAGE_UPDATE_CANVAS));
 }
 
 void AlImageProcessor::_notifyLayerUpdate() {
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_AIMAGE_NEW_LAYER, nullptr));
+    postEvent(new Message(EVENT_AIMAGE_NEW_LAYER));
 }
 
 int32_t AlImageProcessor::removeLayer(int32_t id) {
@@ -80,13 +80,14 @@ int32_t AlImageProcessor::setScale(int32_t id, float scale) {
 }
 
 int32_t AlImageProcessor::setRotation(int32_t id, float rotation) {
-    for (AlImageLayerModel *it:mLayers) {
+    for (AlImageLayerModel *it : mLayers) {
         if (id == it->getId()) {
             it->setRotation(rotation);
+            invalidate();
             return Hw::SUCCESS.code;
         }
     }
-    return Hw::SUCCESS.code;
+    return Hw::FAILED.code;
 }
 
 int32_t AlImageProcessor::setTranslate(int32_t id, float x, float y) {

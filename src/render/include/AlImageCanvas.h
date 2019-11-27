@@ -23,6 +23,8 @@ public:
 
     void update(int32_t w, int32_t h, int32_t color, TextureAllocator *texAllocator);
 
+    void clear();
+
     HwAbsTexture *getOutput();
 
     int32_t getWidth();

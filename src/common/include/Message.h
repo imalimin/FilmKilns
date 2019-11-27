@@ -24,11 +24,11 @@ public:
     Object *obj = nullptr;
     int16_t queueMode = QUEUE_MODE_NORMAL;
 
-    Message(int32_t what, Runnable runnable);
+    Message(int32_t what, Runnable runnable = nullptr);
 
-    Message(int32_t what, Object *obj, Runnable runnable);
+    Message(int32_t what, Object *obj, Runnable runnable = nullptr);
 
-    Message(int32_t what, Object *obj, int16_t queueMode, Runnable runnable);
+    Message(int32_t what, Object *obj, int16_t queueMode, Runnable runnable = nullptr);
 
     virtual ~Message();
 
