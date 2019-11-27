@@ -8,17 +8,19 @@
 #include "AlImageLayer.h"
 #include "HwTexture.h"
 
-AlImageLayer *AlImageLayer::create(HwAbsTexture *tex) {
-    return new AlImageLayer(tex);
+AlImageLayer *AlImageLayer::create(AlImageLayerModel *model, HwAbsTexture *tex) {
+    return new AlImageLayer(model, tex);
 }
 
-AlImageLayer::AlImageLayer(HwAbsTexture *tex) : Object() {
+AlImageLayer::AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex) : Object() {
+    this->model = model;
     this->tex = tex;
 }
 
 AlImageLayer::~AlImageLayer() {
     delete mCanvasFilter;
     mCanvasFilter = nullptr;
+    model = nullptr;
 }
 
 void AlImageLayer::draw(AlImageCanvas *canvas) {
@@ -32,13 +34,14 @@ void AlImageLayer::draw(AlImageCanvas *canvas) {
         float layerRatio = getWidth() / (float) getHeight();
         float scaleX = 1.0f, scaleY = 1.0f;
         if (canvasRatio > layerRatio) {
-            scaleX =  layerRatio / canvasRatio;
+            scaleX = layerRatio / canvasRatio;
             scaleY = 1.0f;
         } else {
             scaleX = 1.0f;
             scaleY = canvasRatio / layerRatio;
         }
         mCanvasFilter->setScale(scaleX, scaleY);
+        mCanvasFilter->setRotation(model->getRotation());
         //Draw
         glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
         mCanvasFilter->draw(this->tex, canvas->getOutput());

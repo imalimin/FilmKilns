@@ -50,7 +50,7 @@ bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
                                     bmp->getHeight(),
                                     GL_RGBA);
     delete bmp;
-    AlImageLayer *layer = AlImageLayer::create(tex);
+    AlImageLayer *layer = AlImageLayer::create(model, tex);
     mLayers.insert(pair<AlImageLayerModel *, AlImageLayer *>(model, layer));
     return true;
 }

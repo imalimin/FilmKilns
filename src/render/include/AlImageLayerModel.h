@@ -29,6 +29,10 @@ public:
 
     int32_t getId();
 
+    void setRotation(float rotation);
+
+    float getRotation();
+
 private:
     std::string path;
     int32_t id = AlIdentityCreator::NONE_ID;

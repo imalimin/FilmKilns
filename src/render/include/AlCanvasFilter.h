@@ -19,6 +19,8 @@ public:
 
     void setScale(float scaleX, float scaleY);
 
+    void setRotation(float rotation);
+
 private:
     HwProgram *createProgram() override;
 

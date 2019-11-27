@@ -12,11 +12,12 @@
 #include "AlImageCanvas.h"
 #include "HwAbsTexture.h"
 #include "AlCanvasFilter.h"
+#include "AlImageLayerModel.h"
 
 al_class(AlImageLayer) {
 public:
 public:
-    static AlImageLayer *create(HwAbsTexture *tex);
+    static AlImageLayer *create(AlImageLayerModel *model, HwAbsTexture *tex);
 
 public:
     ~AlImageLayer();
@@ -28,14 +29,15 @@ public:
     int32_t getHeight();
 
 private:
-    AlImageLayer(HwAbsTexture *tex);
+    AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex);
 
     AlImageLayer(const AlImageLayer &e) : Object() {};
 
 private:
+    AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.
-    HwAbsTexture *tex;
-    AlCanvasFilter *mCanvasFilter;
+    HwAbsTexture *tex = nullptr;
+    AlCanvasFilter *mCanvasFilter = nullptr;
 };
 
 

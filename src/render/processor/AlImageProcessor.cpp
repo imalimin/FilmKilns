@@ -72,7 +72,7 @@ void AlImageProcessor::_notifyLayerUpdate() {
 }
 
 int32_t AlImageProcessor::removeLayer(int32_t id) {
-    return Hw::SUCCESS.code;
+    return Hw::FAILED.code;
 }
 
 int32_t AlImageProcessor::setScale(int32_t id, float scale) {
@@ -80,6 +80,12 @@ int32_t AlImageProcessor::setScale(int32_t id, float scale) {
 }
 
 int32_t AlImageProcessor::setRotation(int32_t id, float rotation) {
+    for (AlImageLayerModel *it:mLayers) {
+        if (id == it->getId()) {
+            it->setRotation(rotation);
+            return Hw::SUCCESS.code;
+        }
+    }
     return Hw::SUCCESS.code;
 }
 

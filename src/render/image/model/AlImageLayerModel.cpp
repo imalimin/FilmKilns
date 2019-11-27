@@ -44,3 +44,11 @@ std::string AlImageLayerModel::getPath() {
 int32_t AlImageLayerModel::getId() {
     return id;
 }
+
+void AlImageLayerModel::setRotation(float rotation) {
+    this->rotation = rotation;
+}
+
+float AlImageLayerModel::getRotation() {
+    return rotation;
+}

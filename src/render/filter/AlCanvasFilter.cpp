@@ -42,3 +42,7 @@ void AlCanvasFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
 void AlCanvasFilter::setScale(float scaleX, float scaleY) {
     matrix.scale(scaleX, scaleY, 1.0f);
 }
+
+void AlCanvasFilter::setRotation(float rotation) {
+    matrix.rotate(0.0f, 0.0f, rotation);
+}
