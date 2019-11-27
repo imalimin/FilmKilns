@@ -7,15 +7,15 @@
 
 #include "AlIdentityCreator.h"
 
-AlIdentityCreator::AlIdentityCreator() : Object(), cur(0) {
+AlIdentityCreator::AlIdentityCreator() : Object(), cur(NONE_ID) {
 }
 
-AlIdentityCreator::AlIdentityCreator(const AlIdentityCreator &o) : Object(), cur(0) {
+AlIdentityCreator::AlIdentityCreator(const AlIdentityCreator &o) : Object(), cur(NONE_ID) {
 
 }
 
 AlIdentityCreator::~AlIdentityCreator() {
-    this->cur = 0;
+    this->cur = NONE_ID;
 }
 
 int32_t AlIdentityCreator::generate() {
