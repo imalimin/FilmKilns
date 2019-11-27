@@ -16,6 +16,11 @@
 
 class HwProgram : public Object {
 public:
+    static void calculateFitWinVertex(float *vertex,
+                                      Size texSize,
+                                      Size winSize,
+                                      int32_t scaleType = 0);
+
     static HwProgram *create(string *vertex, string *fragment);
 
 public:

@@ -39,16 +39,20 @@ void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
     auto *m = HwMatrix::from(&matrix);
     program->updateMatrix(m);
     delete m;
+    float *vertex = new float[8];
+    HwProgram::calculateFitWinVertex(vertex,
+                                     Size(src->getWidth(), src->getHeight()),
+                                     Size(dest->getWidth(), dest->getHeight()));
+    program->updateLocation(nullptr, vertex);
+    delete[] vertex;
 }
 
 void AlCanvasDrawer::setScale(float scaleX, float scaleY) {
     matrix.setScale(scaleX, scaleY);
-    matrix.dump();
 }
 
 void AlCanvasDrawer::setRotation(float rotation) {
     matrix.setRotation(rotation);
-    matrix.dump();
 }
 
 void AlCanvasDrawer::setTranslate(float x, float y) {

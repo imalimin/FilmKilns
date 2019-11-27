@@ -11,6 +11,37 @@
 #include "Logcat.h"
 #include "../include/Egl.h"
 
+void HwProgram::calculateFitWinVertex(float *vertex,
+                                      Size texSize,
+                                      Size winSize,
+                                      int32_t scaleType) {
+    int viewWidth = winSize.width;
+    int viewHeight = winSize.height;
+    float viewScale = viewWidth / (float) viewHeight;
+    float picScale = texSize.width / (float) texSize.height;
+
+    int destViewWidth = viewWidth;
+    int destViewHeight = viewHeight;
+    if (viewScale > picScale) {
+        destViewWidth = (int) (viewHeight * picScale);
+    } else {
+        destViewHeight = (int) (viewWidth / picScale);
+    }
+    float left = -destViewWidth / (float) viewWidth;
+    float right = -left;
+    float bottom = -destViewHeight / (float) viewHeight;
+    float top = -bottom;
+
+    vertex[0] = left;
+    vertex[1] = bottom;
+    vertex[2] = right;
+    vertex[3] = bottom;
+    vertex[4] = left;
+    vertex[5] = top;
+    vertex[6] = right;
+    vertex[7] = top;
+}
+
 HwProgram *HwProgram::create(string *vertex, string *fragment) {
     if (EGL_NO_CONTEXT == Egl::currentContext()) {
         Logcat::e("hwvc", "Please attach an egl context first.");

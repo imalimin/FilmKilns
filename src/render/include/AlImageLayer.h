@@ -35,6 +35,8 @@ private:
 
     void _draw(AlImageCanvas *canvas);
 
+    void _applyParams();
+
 private:
     AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.

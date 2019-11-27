@@ -2,8 +2,9 @@
 // Created by mingyi.li on 2018/12/25.
 //
 
-#include "../include/HwScreen.h"
-#include "../include/NormalDrawer.h"
+#include "HwScreen.h"
+#include "NormalDrawer.h"
+#include "HwProgram.h"
 #include "Size.h"
 #include "Logcat.h"
 
@@ -105,37 +106,15 @@ void HwScreen::draw(GLuint texture) {
 }
 
 void HwScreen::setScaleType(int dw, int dh) {
-    int viewWidth = egl->width();
-    int viewHeight = egl->height();
-    float viewScale = viewWidth / (float) viewHeight;
-    float picScale = dw / (float) dh;
-
-    int destViewWidth = viewWidth;
-    int destViewHeight = viewHeight;
-    if (viewScale > picScale) {
-        destViewWidth = (int) (viewHeight * picScale);
-    } else {
-        destViewHeight = (int) (viewWidth / picScale);
-    }
-    float left = -destViewWidth / (float) viewWidth;
-    float right = -left;
-    float bottom = -destViewHeight / (float) viewHeight;
-    float top = -bottom;
-
     float *texCoordinate = new float[8]{
             0.0f, 0.0f,//LEFT,BOTTOM
             1.0f, 0.0f,//RIGHT,BOTTOM
             0.0f, 1.0f,//LEFT,TOP
             1.0f, 1.0f//RIGHT,TOP
     };
-    float *position = new float[8]{
-            left, bottom, //LEFT,BOTTOM
-            right, bottom, //RIGHT,BOTTOM
-            left, top, //LEFT,TOP
-            right, top,//RIGHT,TOP
-    };
-
-    drawer->updateLocation(texCoordinate, position);
+    float *vertex = new float[8];
+    HwProgram::calculateFitWinVertex(vertex, Size(dw, dh), Size(egl->width(), egl->height()));
+    drawer->updateLocation(texCoordinate, vertex);
     delete[]texCoordinate;
-    delete[]position;
+    delete[]vertex;
 }

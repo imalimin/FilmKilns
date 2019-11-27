@@ -35,31 +35,25 @@ void AlImageLayer::draw(AlImageCanvas *canvas) {
     }
 }
 
-void AlImageLayer::_draw(AlImageCanvas *canvas) {
-    float canvasRatio = canvas->getWidth() / (float) canvas->getHeight();
-    float layerRatio = getWidth() / (float) getHeight();
-    float scaleX = 1.0f, scaleY = 1.0f;
-    if (canvasRatio > layerRatio) {
-        scaleX = layerRatio / canvasRatio;
-        scaleY = 1.0f;
-    } else {
-        scaleX = 1.0f;
-        scaleY = canvasRatio / layerRatio;
-    }
-    //Set render params
-    mCanvasDrawer->setAlpha(model->getAlpha());
-    mCanvasDrawer->setScale(model->getScale().x * scaleX, model->getScale().y * scaleY);
-    mCanvasDrawer->setRotation(model->getRotation());
-    mCanvasDrawer->setTranslate(model->getPosition().x, model->getPosition().y);
-    //Draw layer
-    glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
-    mCanvasDrawer->draw(this->tex, canvas->getOutput());
-}
-
 int32_t AlImageLayer::getWidth() {
     return this->tex->getWidth();
 }
 
 int32_t AlImageLayer::getHeight() {
     return this->tex->getHeight();
+}
+
+void AlImageLayer::_draw(AlImageCanvas *canvas) {
+    //Set render params
+    _applyParams();
+    //Draw layer
+    glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
+    mCanvasDrawer->draw(this->tex, canvas->getOutput());
+}
+
+void AlImageLayer::_applyParams() {
+    mCanvasDrawer->setAlpha(model->getAlpha());
+    mCanvasDrawer->setScale(model->getScale().x, model->getScale().y);
+    mCanvasDrawer->setRotation(model->getRotation());
+    mCanvasDrawer->setTranslate(model->getPosition().x, model->getPosition().y);
 }

@@ -69,7 +69,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
             R.id.scaleBar ->
                 processor?.setRotation(curLayerId, 3.141592653f * progress / 1000)
             R.id.transBar ->
-                processor?.setTranslate(curLayerId, progress / 1000f, 0.0f)
+                processor?.setTranslate(curLayerId, progress / 1000f, progress / 1000f)
         }
     }
 
