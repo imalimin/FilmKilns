@@ -17,6 +17,12 @@ HwMatrix *HwMatrix::fromArray(float *array) {
     return val;
 }
 
+HwMatrix *HwMatrix::from(AlMatrix *src) {
+    auto *dest = new HwMatrix();
+    memcpy(dest->data(), src->data(), 16 * sizeof(float));
+    return dest;
+}
+
 HwMatrix::HwMatrix() : Object() {
 
 }

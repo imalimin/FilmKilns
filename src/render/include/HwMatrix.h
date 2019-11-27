@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_HWMATRIX_H
 
 #include "Object.h"
+#include "AlMatrix.h"
 
 /**
  * 4 x 4 matrix.
@@ -16,6 +17,8 @@
 class HwMatrix : public Object {
 public:
     static HwMatrix *fromArray(float *array);
+
+    static HwMatrix *from(AlMatrix *src);
 
 public:
     HwMatrix();

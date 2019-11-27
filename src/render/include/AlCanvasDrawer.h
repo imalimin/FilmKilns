@@ -10,6 +10,7 @@
 
 #include "HwAbsFilter.h"
 #include "HwMatrix.h"
+#include "AlMatrix.h"
 
 class AlCanvasDrawer : public HwAbsFilter {
 public:
@@ -27,7 +28,7 @@ private:
     void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
-    HwMatrix matrix;
+    AlMatrix matrix;
 };
 
 

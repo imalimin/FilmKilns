@@ -36,13 +36,15 @@ HwProgram *AlCanvasDrawer::createProgram() {
 
 void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
-    program->updateMatrix(&matrix);
+    auto *m = HwMatrix::from(&matrix);
+    program->updateMatrix(m);
+    delete m;
 }
 
 void AlCanvasDrawer::setScale(float scaleX, float scaleY) {
-    matrix.scale(scaleX, scaleY, 1.0f);
+    matrix.setScale(scaleX, scaleY);
 }
 
 void AlCanvasDrawer::setRotation(float rotation) {
-    matrix.rotate(0.0f, 0.0f, rotation);
+    matrix.setRotation(rotation);
 }
