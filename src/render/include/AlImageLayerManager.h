@@ -27,6 +27,8 @@ public:
 
     int32_t size();
 
+    bool empty();
+
     AlImageLayer *getLayout(int32_t index);
 
 private:

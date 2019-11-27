@@ -39,6 +39,7 @@ bool AlImage::onPrepare(Message *msg) {
 bool AlImage::onUpdateCanvas(Message *m) {
     auto model = getCanvas();
     mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(), texAllocator);
+    onInvalidate(nullptr);
     return true;
 }
 
@@ -50,6 +51,9 @@ bool AlImage::onNewLayer(Message *msg) {
 }
 
 bool AlImage::onInvalidate(Message *m) {
+    if (mLayerManager.empty()) {
+        return true;
+    }
     auto layer = mLayerManager.getLayout(0);
     layer->draw(&mCanvas);
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);

@@ -63,6 +63,10 @@ int32_t AlImageLayerManager::size() {
     return mLayers.size();
 }
 
+bool AlImageLayerManager::empty() {
+    return 0 == size();
+}
+
 AlImageLayer *AlImageLayerManager::getLayout(int32_t index) {
     if (0 == size()) return nullptr;
     auto it = mLayers.begin();

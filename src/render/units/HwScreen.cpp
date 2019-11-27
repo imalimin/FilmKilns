@@ -62,8 +62,10 @@ bool HwScreen::eventDraw(Message *msg) {
     Size *size = static_cast<Size *>(msg->tyrUnBox());
     GLuint tex = static_cast<GLuint>(msg->arg1);
     egl->makeCurrent();
-    setScaleType(size->width, size->height);
-    draw(tex);
+    if (egl->isAttachWindow()) {
+        setScaleType(size->width, size->height);
+        draw(tex);
+    }
     delete size;
     return true;
 }
@@ -94,13 +96,11 @@ void HwScreen::initWindow(NativeWindow *nw) {
 void HwScreen::draw(GLuint texture) {
 //    string glslVersion = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
 //    LOGE("version: %s", glslVersion.c_str());
-    if (egl->isAttachWindow()) {
-        Logcat::i(TAG, "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
-        glViewport(0, 0, egl->width(), egl->height());
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
-        drawer->draw(texture);
-    }
+    Logcat::i(TAG, "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
+    glViewport(0, 0, egl->width(), egl->height());
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    drawer->draw(texture);
     egl->swapBuffers();
 }
 
