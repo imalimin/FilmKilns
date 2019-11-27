@@ -70,3 +70,23 @@ void AlImageProcessor::_notifyLayerUpdate() {
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
     postEvent(new Message(EVENT_AIMAGE_NEW_LAYER, nullptr));
 }
+
+int32_t AlImageProcessor::removeLayer(int32_t id) {
+    return Hw::SUCCESS.code;
+}
+
+int32_t AlImageProcessor::setScale(int32_t id, float scale) {
+    return Hw::SUCCESS.code;
+}
+
+int32_t AlImageProcessor::setRotation(int32_t id, float rotation) {
+    return Hw::SUCCESS.code;
+}
+
+int32_t AlImageProcessor::setTranslate(int32_t id, float x, float y) {
+    return Hw::SUCCESS.code;
+}
+
+int32_t AlImageProcessor::setAlpha(int32_t id, float alpha) {
+    return Hw::SUCCESS.code;
+}

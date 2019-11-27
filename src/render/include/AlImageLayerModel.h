@@ -30,8 +30,8 @@ public:
     int32_t getId();
 
 private:
-    int32_t id = AlIdentityCreator::NONE_ID;
     std::string path;
+    int32_t id = AlIdentityCreator::NONE_ID;
     float alpha = 1.0f;
     float rotation = 0.0f;
     AlVec2 position;

@@ -34,15 +34,91 @@ class AlImageProcessor private constructor() : CPPObject() {
         }
     }
 
+    /**
+     * 设置画布大小
+     * @param w     新的画布宽度
+     * @param h     新的画布高度
+     * @param color 画布颜色
+     */
     fun setCanvas(w: Int, h: Int, color: Int = 0) {
         if (!isNativeNull()) {
             setCanvas(handler, w, h, color)
         }
     }
 
+    /**
+     * 添加新的图层
+     * @param path 图片文件路径
+     * @return     新图层的id，id < 0表示添加失败，可用于后续的图层操作
+     */
     fun addLayer(path: String): Int {
         if (!isNativeNull()) {
             return addLayer(handler, path)
+        }
+        return -1
+    }
+
+    /**
+     * 移除图层
+     * @param id 图层id
+     * @return   {@link AlResult}
+     */
+    fun removeLayer(id: Int): Int {
+        if (!isNativeNull()) {
+            return removeLayer(handler, id)
+        }
+        return -1
+    }
+
+    /**
+     * 缩放图层
+     * @param id    图层id
+     * @param scale 缩放倍数
+     * @return      {@link AlResult}
+     */
+    fun setScale(id: Int, scale: Float): Int {
+        if (!isNativeNull()) {
+            return setScale(handler, id, scale)
+        }
+        return -1
+    }
+
+    /**
+     * 旋转图层
+     * @param id       图层id
+     * @param rotation 旋转角度，单位弧度
+     * @return         {@link AlResult}
+     */
+    fun setRotation(id: Int, rotation: Float): Int {
+        if (!isNativeNull()) {
+            return setRotation(handler, id, rotation)
+        }
+        return -1
+    }
+
+    /**
+     * 移动图层
+     * @param id 图层id
+     * @param x  相对于画布的x轴位移，画布中心为0点，范围[-1, 1]，绝对值大于1时会超出画布范围而不可见
+     * @param y  相对于画布的y轴位移，同x
+     * @return   {@link AlResult}
+     */
+    fun setTranslate(id: Int, x: Float, y: Float): Int {
+        if (!isNativeNull()) {
+            return setTranslate(handler, id, x, y)
+        }
+        return -1
+    }
+
+    /**
+     * 设置图层透明度
+     * @param id    图层id
+     * @param alpha 图层透明度，范围[0, 1]，1为完全不透明
+     * @return      {@link AlResult}
+     */
+    fun setAlpha(id: Int, alpha: Float): Int {
+        if (!isNativeNull()) {
+            return setAlpha(handler, id, alpha)
         }
         return -1
     }
@@ -54,6 +130,11 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun invalidate(handler: Long)
     private external fun setCanvas(handler: Long, w: Int, h: Int, color: Int)
     private external fun addLayer(handler: Long, path: String): Int
+    private external fun removeLayer(handler: Long, id: Int): Int
+    private external fun setScale(handler: Long, id: Int, scale: Float): Int
+    private external fun setRotation(handler: Long, id: Int, rotation: Float): Int
+    private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
+    private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
 
     companion object {
         fun create(): AlImageProcessor = AlImageProcessor()

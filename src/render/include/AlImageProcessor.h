@@ -29,9 +29,19 @@ public:
 
     void setCanvas(int32_t w, int32_t h, int32_t color);
 
+    void invalidate();
+
     int32_t addLayer(const char *path);
 
-    void invalidate();
+    int32_t removeLayer(int32_t id);
+
+    int32_t setScale(int32_t id, float scale);
+
+    int32_t setRotation(int32_t id, float rotation);
+
+    int32_t setTranslate(int32_t id, float x, float y);
+
+    int32_t setAlpha(int32_t id, float alpha);
 
 private:
     void _notifyCanvasUpdate();
