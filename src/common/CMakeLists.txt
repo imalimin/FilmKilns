@@ -42,6 +42,7 @@ file(
         ${PROJECT_SOURCE_DIR}/media/*.cpp
         ${PROJECT_SOURCE_DIR}/media/sles/*.cpp
         ${PROJECT_SOURCE_DIR}/sources/*.cpp
+        ${PROJECT_SOURCE_DIR}/math/*.cpp
 
         ${PROJECT_SOURCE_DIR}/include/*.h
 )
