@@ -5,17 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALCANVASFILTER_H
-#define HWVC_ANDROID_ALCANVASFILTER_H
+#ifndef HWVC_ANDROID_ALCANVASDRAWER_H
+#define HWVC_ANDROID_ALCANVASDRAWER_H
 
 #include "HwAbsFilter.h"
 #include "HwMatrix.h"
 
-class AlCanvasFilter : public HwAbsFilter {
+class AlCanvasDrawer : public HwAbsFilter {
 public:
-    AlCanvasFilter();
+    AlCanvasDrawer();
 
-    virtual ~AlCanvasFilter();
+    virtual ~AlCanvasDrawer();
 
     void setScale(float scaleX, float scaleY);
 
@@ -31,4 +31,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALCANVASFILTER_H
+#endif //HWVC_ANDROID_ALCANVASDRAWER_H

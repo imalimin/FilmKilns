@@ -5,17 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlCanvasFilter.h"
+#include "AlCanvasDrawer.h"
 
-AlCanvasFilter::AlCanvasFilter() : HwAbsFilter() {
-
-}
-
-AlCanvasFilter::~AlCanvasFilter() {
+AlCanvasDrawer::AlCanvasDrawer() : HwAbsFilter() {
 
 }
 
-HwProgram *AlCanvasFilter::createProgram() {
+AlCanvasDrawer::~AlCanvasDrawer() {
+
+}
+
+HwProgram *AlCanvasDrawer::createProgram() {
     string vertex("        attribute vec4 aPosition;\n"
                   "        attribute vec4 aTextureCoord;\n"
                   "        uniform mat4 uTextureMatrix;\n"
@@ -34,15 +34,15 @@ HwProgram *AlCanvasFilter::createProgram() {
     return HwProgram::create(&vertex, &fragment);
 }
 
-void AlCanvasFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     program->updateMatrix(&matrix);
 }
 
-void AlCanvasFilter::setScale(float scaleX, float scaleY) {
+void AlCanvasDrawer::setScale(float scaleX, float scaleY) {
     matrix.scale(scaleX, scaleY, 1.0f);
 }
 
-void AlCanvasFilter::setRotation(float rotation) {
+void AlCanvasDrawer::setRotation(float rotation) {
     matrix.rotate(0.0f, 0.0f, rotation);
 }

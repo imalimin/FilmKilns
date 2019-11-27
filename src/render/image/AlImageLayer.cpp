@@ -18,35 +18,39 @@ AlImageLayer::AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex) : Object
 }
 
 AlImageLayer::~AlImageLayer() {
-    delete mCanvasFilter;
-    mCanvasFilter = nullptr;
+    delete mCanvasDrawer;
+    mCanvasDrawer = nullptr;
     model = nullptr;
 }
 
 void AlImageLayer::draw(AlImageCanvas *canvas) {
-    if (nullptr == mCanvasFilter) {
-        mCanvasFilter = new AlCanvasFilter();
-        mCanvasFilter->prepare();
+    if (nullptr == mCanvasDrawer) {
+        mCanvasDrawer = new AlCanvasDrawer();
+        mCanvasDrawer->prepare();
     }
     HwAbsTexture *canvasTex = canvas->getOutput();
     if (canvasTex) {
-        float canvasRatio = canvas->getWidth() / (float) canvas->getHeight();
-        float layerRatio = getWidth() / (float) getHeight();
-        float scaleX = 1.0f, scaleY = 1.0f;
-        if (canvasRatio > layerRatio) {
-            scaleX = layerRatio / canvasRatio;
-            scaleY = 1.0f;
-        } else {
-            scaleX = 1.0f;
-            scaleY = canvasRatio / layerRatio;
-        }
-        mCanvasFilter->setScale(scaleX, scaleY);
-        mCanvasFilter->setRotation(model->getRotation());
-        //Draw
-        glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
-        mCanvasFilter->draw(this->tex, canvas->getOutput());
+        _draw(canvas);
         delete canvasTex;
     }
+}
+
+void AlImageLayer::_draw(AlImageCanvas *canvas) {
+    float canvasRatio = canvas->getWidth() / (float) canvas->getHeight();
+    float layerRatio = getWidth() / (float) getHeight();
+    float scaleX = 1.0f, scaleY = 1.0f;
+    if (canvasRatio > layerRatio) {
+        scaleX = layerRatio / canvasRatio;
+        scaleY = 1.0f;
+    } else {
+        scaleX = 1.0f;
+        scaleY = canvasRatio / layerRatio;
+    }
+    mCanvasDrawer->setScale(scaleX, scaleY);
+    mCanvasDrawer->setRotation(model->getRotation());
+    //Draw
+    glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
+    mCanvasDrawer->draw(this->tex, canvas->getOutput());
 }
 
 int32_t AlImageLayer::getWidth() {

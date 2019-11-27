@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlImageCanvas.h"
 #include "HwAbsTexture.h"
-#include "AlCanvasFilter.h"
+#include "AlCanvasDrawer.h"
 #include "AlImageLayerModel.h"
 
 al_class(AlImageLayer) {
@@ -33,11 +33,13 @@ private:
 
     AlImageLayer(const AlImageLayer &e) : Object() {};
 
+    void _draw(AlImageCanvas *canvas);
+
 private:
     AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.
     HwAbsTexture *tex = nullptr;
-    AlCanvasFilter *mCanvasFilter = nullptr;
+    AlCanvasDrawer *mCanvasDrawer = nullptr;
 };
 
 
