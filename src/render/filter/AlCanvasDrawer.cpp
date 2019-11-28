@@ -36,40 +36,49 @@ HwProgram *AlCanvasDrawer::createProgram() {
 
 void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
-    int32_t width = dest->getWidth();
-    int32_t height = dest->getHeight();
-    float aspectRatio = width > height ?
-                        (float) width / (float) height :
-                        (float) height / (float) width;
-
-    float left = -1.0f;
-    float right = -left;
-    float bottom = -1.0f;
-    float top = -bottom;
-    if (width > height) {
-        matrix.update(-aspectRatio, aspectRatio, -1.0f, 1.0f, -1.0f, 1.0f);
-        left = -src->getWidth() / (float) src->getHeight();
-        right = -left;
-        bottom = -1.0f;
-        top = -bottom;
-    } else {
-        matrix.update(-1.0f, 1.0f, -aspectRatio, aspectRatio, -1.0f, 1.0f);
-        left = -1.0f;
-        right = -left;
-        bottom = -src->getHeight() / (float) src->getWidth();
-        top = -bottom;
-    }
+    AlSize sSize(src->getWidth(), src->getHeight());
+    AlSize dSize(dest->getWidth(), dest->getHeight());
+    _calculateRect(sSize, dSize);
+    matrix.update(dRectF.left, dRectF.right, dRectF.bottom, dRectF.top, -1.0f, 1.0f);
     auto *m = HwMatrix::fromArray(matrix.data());
     program->updateMatrix(m);
     delete m;
     float *vertex = new float[8]{
-            left, bottom, //LEFT,BOTTOM
-            right, bottom, //RIGHT,BOTTOM
-            left, top, //LEFT,TOP
-            right, top,//RIGHT,TOP
+            sRectF.left, sRectF.bottom, //LEFT,BOTTOM
+            sRectF.right, sRectF.bottom, //RIGHT,BOTTOM
+            sRectF.left, sRectF.top, //LEFT,TOP
+            sRectF.right, sRectF.top,//RIGHT,TOP
     };
     program->updateLocation(nullptr, vertex);
     delete[] vertex;
+}
+
+void AlCanvasDrawer::_calculateRect(AlSize &src, AlSize &dest) {
+    float aspectRatio = dest.width > dest.height ?
+                        (float) dest.width / (float) dest.height :
+                        (float) dest.height / (float) dest.width;
+    if (dest.width > dest.height) {
+        //计算正交矩阵
+        dRectF.left = -aspectRatio;
+        dRectF.right = -dRectF.left;
+        dRectF.bottom = -1.0f;
+        dRectF.top = -dRectF.bottom;
+        //计算顶点
+        sRectF.left = -src.width / (float) src.height;
+        sRectF.right = -sRectF.left;
+        sRectF.bottom = -1.0f;
+        sRectF.top = -sRectF.bottom;
+    } else {
+        dRectF.left = -1.0f;
+        dRectF.right = -dRectF.left;
+        dRectF.bottom = -aspectRatio;
+        dRectF.top = -dRectF.bottom;
+        sRectF.left = -1.0f;
+        sRectF.right = -sRectF.left;
+        sRectF.bottom = -src.height / (float) src.width;
+        sRectF.top = -sRectF.bottom;
+    }
+
 }
 
 void AlCanvasDrawer::setScale(float scaleX, float scaleY) {

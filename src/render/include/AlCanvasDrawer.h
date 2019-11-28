@@ -11,6 +11,8 @@
 #include "HwAbsFilter.h"
 #include "HwMatrix.h"
 #include "AlOrthMatrix.h"
+#include "AlRectF.h"
+#include "AlSize.h"
 
 class AlCanvasDrawer : public HwAbsFilter {
 public:
@@ -31,7 +33,11 @@ private:
 
     void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
+    void _calculateRect(AlSize &src, AlSize &dest);
+
 private:
+    AlRectF sRectF;
+    AlRectF dRectF;
     AlOrthMatrix matrix;
     float alpha = 0.0;
 };
