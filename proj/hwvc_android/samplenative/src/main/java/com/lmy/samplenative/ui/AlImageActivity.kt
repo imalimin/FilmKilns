@@ -40,6 +40,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
         processor?.setCanvas(1080, 1920, 0)
+//        processor?.addLayer(File(Environment.getExternalStorageDirectory(), "喵-result.jpg").absolutePath)
         val layerId = processor?.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
         if (null != layerId) {
             curLayerId = layerId

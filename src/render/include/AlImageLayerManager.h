@@ -29,7 +29,7 @@ public:
 
     bool empty();
 
-    AlImageLayer *getLayout(int32_t index);
+    AlImageLayer *getLayer(int32_t index);
 
 private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};

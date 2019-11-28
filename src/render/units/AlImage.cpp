@@ -56,8 +56,11 @@ bool AlImage::onInvalidate(Message *m) {
         return true;
     }
     mCanvas.clear();
-    auto layer = mLayerManager.getLayout(0);
-    layer->draw(&mCanvas);
+    int size = mLayerManager.size();
+    for (int i = 0; i < size; ++i) {
+        auto layer = mLayerManager.getLayer(i);
+        layer->draw(&mCanvas);
+    }
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     auto tex = mCanvas.getOutput();
     if (nullptr == tex) {
@@ -85,14 +88,14 @@ std::list<AlImageLayerModel *> *AlImage::getLayers() {
 }
 
 void AlImage::_newDefaultCanvas() {
-    if (0 == mLayerManager.size()) {
+    if (mLayerManager.empty()) {
         return;
     }
     auto model = getCanvas();
     if (model->getWidth() > 0 && model->getHeight() > 0) {
         return;
     }
-    auto layer = mLayerManager.getLayout(0);
+    auto layer = mLayerManager.getLayer(0);
     model->set(layer->getWidth(), layer->getHeight(), 0);
     mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(), texAllocator);
 }
