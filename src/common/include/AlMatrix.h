@@ -9,23 +9,27 @@
 
 al_class(AlMatrix) {
 public:
+    static AlMatrix &fromArray(float *array);
+
     AlMatrix();
 
     AlMatrix(const AlMatrix &o);
 
     virtual ~AlMatrix();
 
-    void setScale(float scaleX, float scaleY);
+    virtual void setScale(float scaleX, float scaleY);
 
     /**
      * 旋转
      * @param rotation 旋转弧度
      */
-    void setRotation(float rotation);
+    virtual void setRotation(float rotation);
 
-    void setTranslate(float x, float y);
+    virtual void setTranslate(float x, float y);
 
-    float *data();
+    AlMatrix &operator*(AlMatrix m);
+
+    virtual float *data();
 
     void dump();
 

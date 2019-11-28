@@ -13,8 +13,10 @@
 
 using namespace std;
 
-#define al_class(cls) \
-class cls : public Object \
+#define al_class_ex(cls, parent) \
+class cls : public parent \
+
+#define al_class(cls) al_class_ex(cls, Object)
 
 #define al_interface(cls) \
 class cls : public Object \

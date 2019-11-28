@@ -11,6 +11,15 @@
 const float AlMatrix::PI = 3.141592653f;
 const int AlMatrix::SIZE = 16;
 
+AlMatrix &AlMatrix::fromArray(float *array) {
+    static AlMatrix *mat;
+    if (mat == nullptr) {
+        mat = new AlMatrix();
+    }
+    memcpy(mat->matrix, array, SIZE * sizeof(float));
+    return *mat;
+}
+
 AlMatrix::AlMatrix() : Object() {
 
 }
@@ -53,6 +62,22 @@ float AlMatrix::_get(int32_t x, int32_t y) {
 void AlMatrix::setTranslate(float x, float y) {
     _set(0, 3, x);
     _set(1, 3, y);
+}
+
+AlMatrix &AlMatrix::operator*(AlMatrix m) {
+    static AlMatrix *mat;
+    if (mat == nullptr) {
+        mat = new AlMatrix();
+    }
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            mat->_set(i, j, _get(i, 0) * m._get(0, j) +
+                            _get(i, 1) * m._get(1, j) +
+                            _get(i, 2) * m._get(2, j) +
+                            _get(i, 3) * m._get(3, j));
+        }
+    }
+    return *mat;
 }
 
 void AlMatrix::dump() {
