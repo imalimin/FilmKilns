@@ -20,6 +20,10 @@ public:
 
     virtual ~AlRectF();
 
+    float getWidth();
+
+    float getHeight();
+
     void set(float left, float top, float right, float bottom);
 
 public:

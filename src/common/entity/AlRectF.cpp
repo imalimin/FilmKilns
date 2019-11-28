@@ -38,6 +38,14 @@ AlRectF::~AlRectF() {
     set(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
+float AlRectF::getWidth() {
+    return right - left;
+}
+
+float AlRectF::getHeight() {
+    return top - bottom;
+}
+
 void AlRectF::set(float left, float top, float right, float bottom) {
     this->left = left;
     this->top = top;
