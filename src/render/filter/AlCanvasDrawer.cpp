@@ -39,8 +39,8 @@ void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
     AlSize sSize(src->getWidth(), src->getHeight());
     AlSize dSize(dest->getWidth(), dest->getHeight());
     _calculateRect(sSize, dSize);
-    matrix.update(dRectF.left, dRectF.right, dRectF.bottom, dRectF.top, -1.0f, 1.0f);
-    auto *m = HwMatrix::fromArray(matrix.data());
+    oMat.update(dRectF.left, dRectF.right, dRectF.bottom, dRectF.top, -1.0f, 1.0f);
+    auto *m = HwMatrix::fromArray((oMat * tMat).data());
     program->updateMatrix(m);
     delete m;
     float *vertex = new float[8]{
@@ -82,16 +82,16 @@ void AlCanvasDrawer::_calculateRect(AlSize &src, AlSize &dest) {
 }
 
 void AlCanvasDrawer::setScale(float scaleX, float scaleY) {
-    matrix.setScale(scaleX, scaleY);
+    tMat.setScale(scaleX, scaleY);
 }
 
 void AlCanvasDrawer::setRotation(float rotation) {
-    matrix.setRotation(rotation);
+    tMat.setRotation(rotation);
 }
 
 void AlCanvasDrawer::setTranslate(float x, float y) {
-    matrix.setTranslate(x, y);
-    matrix.dump();
+    tMat.setTranslate(x, y);
+    tMat.dump();
 }
 
 void AlCanvasDrawer::setAlpha(float alpha) {

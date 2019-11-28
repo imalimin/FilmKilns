@@ -38,7 +38,10 @@ private:
 private:
     AlRectF sRectF;
     AlRectF dRectF;
-    AlOrthMatrix matrix;
+    //Orthogonal matrix
+    AlOrthMatrix oMat;
+    //Translate matrix
+    AlOrthMatrix tMat;
     float alpha = 0.0;
 };
 

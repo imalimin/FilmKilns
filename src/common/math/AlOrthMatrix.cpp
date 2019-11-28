@@ -17,24 +17,6 @@ AlOrthMatrix::~AlOrthMatrix() {
 
 }
 
-void AlOrthMatrix::setScale(float scaleX, float scaleY) {
-    tMat.setScale(scaleX, scaleY);
-}
-
-void AlOrthMatrix::setRotation(float rotation) {
-    tMat.setRotation(rotation);
-}
-
-void AlOrthMatrix::setTranslate(float x, float y) {
-    tMat.setTranslate(x, y);
-}
-
-float *AlOrthMatrix::data() {
-    AlMatrix mat = oMat * tMat;
-    memcpy(AlMatrix::data(), mat.data(), SIZE * sizeof(float));
-    return AlMatrix::data();
-}
-
 void AlOrthMatrix::update(float left, float right, float bottom, float top, float near, float far) {
     float r_width = 1.0f / (right - left);
     float r_height = 1.0f / (top - bottom);
@@ -47,7 +29,7 @@ void AlOrthMatrix::update(float left, float right, float bottom, float top, floa
     float tz = -(far + near) * r_depth;
 
     int mOffset = 0;
-    auto *m = oMat.data();
+    auto *m = this->data();
     m[mOffset + 0] = x;
     m[mOffset + 5] = y;
     m[mOffset + 10] = z;

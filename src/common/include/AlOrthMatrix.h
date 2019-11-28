@@ -18,23 +18,8 @@ public:
 
     virtual ~AlOrthMatrix();
 
-    void setScale(float scaleX, float scaleY) override;
-
-    void setRotation(float rotation) override;
-
-    void setTranslate(float x, float y) override;
-
-    float *data() override;
-
     void update(float left, float right, float bottom, float top, float near, float far);
 
-private:
-    AlMatrix vMat;
-    AlMatrix pMat;
-    //变换矩阵
-    AlMatrix tMat;
-    //正交投影矩阵
-    AlMatrix oMat;
 };
 
 
