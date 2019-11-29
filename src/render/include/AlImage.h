@@ -25,7 +25,7 @@ public:
 
     bool onPrepare(Message *msg);
 
-    bool onNewLayer(Message *msg);
+    bool onUpdateLayer(Message *msg);
 
     bool onInvalidate(Message *m);
 

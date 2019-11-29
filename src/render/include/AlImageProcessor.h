@@ -33,9 +33,9 @@ public:
 
     int32_t addLayer(const char *path);
 
-    HwResult moveLayerIndex(int32_t id, int32_t index);
-
     HwResult removeLayer(int32_t id);
+
+    HwResult moveLayerIndex(int32_t id, int32_t index);
 
     HwResult setScale(int32_t id, float scale);
 

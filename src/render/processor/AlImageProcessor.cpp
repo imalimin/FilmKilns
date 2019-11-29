@@ -57,7 +57,7 @@ void AlImageProcessor::_notifyCanvasUpdate() {
 
 void AlImageProcessor::_notifyLayerUpdate() {
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_AIMAGE_NEW_LAYER));
+    postEvent(new Message(EVENT_AIMAGE_UPDATE_LAYER));
 }
 
 int32_t AlImageProcessor::addLayer(const char *path) {
@@ -70,6 +70,26 @@ int32_t AlImageProcessor::addLayer(const char *path) {
     mLayers.push_back(layer);
     _notifyLayerUpdate();
     return layer->getId();
+}
+
+HwResult AlImageProcessor::removeLayer(int32_t id) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    if (mLayers.empty()) {
+        return Hw::FAILED;
+    }
+    size_t size = mLayers.size();
+    for (int i = 0; i < size; ++i) {
+        AlImageLayerModel *it = mLayers[i];
+        if (id == it->getId()) {
+            auto itr = mLayers.begin();
+            std::advance(itr, i);
+            mLayers.erase(itr);
+            delete it;
+            _notifyLayerUpdate();
+            return Hw::SUCCESS;
+        }
+    }
+    return Hw::FAILED;
 }
 
 HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
@@ -91,11 +111,6 @@ HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
             return Hw::SUCCESS;
         }
     }
-    return Hw::FAILED;
-}
-
-HwResult AlImageProcessor::removeLayer(int32_t id) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
     return Hw::FAILED;
 }
 

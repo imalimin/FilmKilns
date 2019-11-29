@@ -8,6 +8,7 @@
 #include "AlImageLayerManager.h"
 #include "HwBitmapFactory.h"
 #include "Logcat.h"
+#include <algorithm>
 
 AlImageLayerManager::AlImageLayerManager() : Object() {
 
@@ -29,11 +30,22 @@ void AlImageLayerManager::release() {
 void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
                                  TextureAllocator *texAllocator) {
     this->models = list;
+    std::vector<int32_t> ids;
     unsigned int size = list->size();
     for (unsigned int i = 0; i < size; ++i) {
         auto *it = list->at(i);
+        ids.push_back(it->getId());
         if (!_found(it->getId())) {
             _newLayer(it, texAllocator);
+        }
+    }
+
+    for (auto itr = mLayers.begin(); mLayers.end() != itr; ++itr) {
+        auto result = std::find(mLayers.begin(), mLayers.end(), itr->first);
+        if (result == mLayers.end()) {
+            mLayers.erase(itr);
+            texAllocator->recycle(&(itr->second->tex));
+            delete itr->second;
         }
     }
 }

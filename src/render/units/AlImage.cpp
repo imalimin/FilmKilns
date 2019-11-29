@@ -13,7 +13,7 @@
 AlImage::AlImage(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&AlImage::onPrepare));
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlImage::onInvalidate));
-    registerEvent(EVENT_AIMAGE_NEW_LAYER, reinterpret_cast<EventFunc>(&AlImage::onNewLayer));
+    registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlImage::onUpdateLayer));
     registerEvent(EVENT_AIMAGE_UPDATE_CANVAS,
                   reinterpret_cast<EventFunc>(&AlImage::onUpdateCanvas));
 }
@@ -44,7 +44,7 @@ bool AlImage::onUpdateCanvas(Message *m) {
     return true;
 }
 
-bool AlImage::onNewLayer(Message *msg) {
+bool AlImage::onUpdateLayer(Message *msg) {
     mLayerManager.update(getLayers(), texAllocator);
     _newDefaultCanvas();
     onInvalidate(nullptr);

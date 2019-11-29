@@ -14,6 +14,8 @@
 #include "AlCanvasDrawer.h"
 #include "AlImageLayerModel.h"
 
+class AlImageLayerManager;
+
 al_class(AlImageLayer) {
 public:
 public:
@@ -40,6 +42,7 @@ private:
 private:
     AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.
+    friend AlImageLayerManager;
     HwAbsTexture *tex = nullptr;
     AlCanvasDrawer *mCanvasDrawer = nullptr;
 };
