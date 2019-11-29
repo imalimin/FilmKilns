@@ -26,14 +26,15 @@ void AlImageLayerManager::release() {
     mLayers.clear();
 }
 
-void AlImageLayerManager::update(std::list<AlImageLayerModel *> *list,
+void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
                                  TextureAllocator *texAllocator) {
-    auto it = list->begin();
-    while (list->end() != it) {
-        if (!_found(*it)) {
-            _newLayer(*it, texAllocator);
+    this->models = list;
+    unsigned int size = list->size();
+    for (unsigned int i = 0; i < size; ++i) {
+        auto *it = list->at(i);
+        if (!_found(it->getId())) {
+            _newLayer(it, texAllocator);
         }
-        ++it;
     }
 }
 
@@ -51,32 +52,31 @@ bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
                                     GL_RGBA);
     delete bmp;
     AlImageLayer *layer = AlImageLayer::create(model, tex);
-    mLayers.insert(pair<AlImageLayerModel *, AlImageLayer *>(model, layer));
+    mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
     return true;
 }
 
-bool AlImageLayerManager::_found(AlImageLayerModel *model) {
-    return mLayers.end() != mLayers.find(model);
+bool AlImageLayerManager::_found(int32_t id) {
+    return mLayers.end() != mLayers.find(id);
 }
 
 int32_t AlImageLayerManager::size() {
-    return mLayers.size();
+    if (empty()) {
+        return 0;
+    }
+    return models->size();
 }
 
 bool AlImageLayerManager::empty() {
-    return 0 == size();
+    return nullptr == models || models->empty();
 }
 
 AlImageLayer *AlImageLayerManager::getLayer(int32_t index) {
     if (0 == size()) return nullptr;
-    int i = 0;
-    auto itr = mLayers.begin();
-    while (mLayers.end() != itr) {
-        if (i == index) {
-            return itr->second;
-        }
-        ++i;
-        ++itr;
+    int32_t id = models->at(index)->getId();
+    auto itr = mLayers.find(id);
+    if (mLayers.end() == itr) {
+        return nullptr;
     }
-    return nullptr;
+    return itr->second;
 }

@@ -59,6 +59,20 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
+     * 改变图层层级
+     * @param id    图层id
+     * @param index 图层层级，index >= 0，if(index > layer size) index = layer size
+     *              0为最底层，会被所有图层遮挡
+     * @return      {@link AlResult}
+     */
+    fun moveLayeIndex(id: Int, index: Int): Int {
+        if (!isNativeNull()) {
+            return moveLayeIndex(handler, id, index)
+        }
+        return -1
+    }
+
+    /**
      * 移除图层
      * @param id 图层id
      * @return   {@link AlResult}
@@ -130,6 +144,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun invalidate(handler: Long)
     private external fun setCanvas(handler: Long, w: Int, h: Int, color: Int)
     private external fun addLayer(handler: Long, path: String): Int
+    private external fun moveLayeIndex(handler: Long, id: Int, index: Int): Int
     private external fun removeLayer(handler: Long, id: Int): Int
     private external fun setScale(handler: Long, id: Int, scale: Float): Int
     private external fun setRotation(handler: Long, id: Int, rotation: Float): Int

@@ -67,58 +67,80 @@ int32_t AlImageProcessor::addLayer(const char *path) {
     if (nullptr == layer) {
         return Hw::FAILED.code;
     }
-    mLayers.push_front(layer);
+    mLayers.push_back(layer);
     _notifyLayerUpdate();
     return layer->getId();
 }
 
-int32_t AlImageProcessor::removeLayer(int32_t id) {
+HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    return Hw::FAILED.code;
+    if (mLayers.empty()) {
+        return Hw::FAILED;
+    }
+    size_t size = mLayers.size();
+    index = std::max(index, 0);
+    index = std::min<int32_t>(index, size - 1);
+    for (int i = 0; i < size; ++i) {
+        AlImageLayerModel *it = mLayers[i];
+        if (id == it->getId()) {
+            auto itr = mLayers.begin();
+            std::advance(itr, i);
+            mLayers.erase(itr);
+            mLayers.insert(mLayers.begin() + index, it);
+            invalidate();
+            return Hw::SUCCESS;
+        }
+    }
+    return Hw::FAILED;
 }
 
-int32_t AlImageProcessor::setScale(int32_t id, float scale) {
+HwResult AlImageProcessor::removeLayer(int32_t id) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    return Hw::FAILED;
+}
+
+HwResult AlImageProcessor::setScale(int32_t id, float scale) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
         layer->setScale(scale, scale);
         invalidate();
-        return Hw::SUCCESS.code;
+        return Hw::SUCCESS;
     }
-    return Hw::FAILED.code;
+    return Hw::FAILED;
 }
 
-int32_t AlImageProcessor::setRotation(int32_t id, float rotation) {
+HwResult AlImageProcessor::setRotation(int32_t id, float rotation) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
         layer->setRotation(rotation);
         invalidate();
-        return Hw::SUCCESS.code;
+        return Hw::SUCCESS;
     }
-    return Hw::FAILED.code;
+    return Hw::FAILED;
 }
 
-int32_t AlImageProcessor::setTranslate(int32_t id, float x, float y) {
+HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
         layer->setPosition(x, y);
         invalidate();
-        return Hw::SUCCESS.code;
+        return Hw::SUCCESS;
     }
-    return Hw::FAILED.code;
+    return Hw::FAILED;
 }
 
-int32_t AlImageProcessor::setAlpha(int32_t id, float alpha) {
+HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
         layer->setAlpha(alpha);
         invalidate();
-        return Hw::SUCCESS.code;
+        return Hw::SUCCESS;
     }
-    return Hw::FAILED.code;
+    return Hw::FAILED;
 }
 
 AlImageLayerModel *AlImageProcessor::_getLayer(int32_t id) {

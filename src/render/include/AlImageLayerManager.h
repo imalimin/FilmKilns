@@ -12,7 +12,7 @@
 #include "AlImageLayer.h"
 #include "AlImageLayerModel.h"
 #include "TextureAllocator.h"
-#include <list>
+#include <vector>
 #include <map>
 
 al_class(AlImageLayerManager) {
@@ -23,7 +23,7 @@ public:
 
     void release();
 
-    void update(std::list<AlImageLayerModel *> *list, TextureAllocator *texAllocator);
+    void update(std::vector<AlImageLayerModel *> *list, TextureAllocator *texAllocator);
 
     int32_t size();
 
@@ -36,10 +36,14 @@ private:
 
     bool _newLayer(AlImageLayerModel *model, TextureAllocator *texAllocator);
 
-    bool _found(AlImageLayerModel *model);
+    bool _found(int32_t id);
 
 private:
-    std::map<AlImageLayerModel *, AlImageLayer *> mLayers;
+    /**
+     * AlImageProcessor::mLayers instance.
+     */
+    std::vector<AlImageLayerModel *> *models = nullptr;
+    std::map<int32_t, AlImageLayer *> mLayers;
 };
 
 

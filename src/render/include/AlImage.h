@@ -14,7 +14,6 @@
 #include "AlImageCanvas.h"
 #include "AlImageCanvasModel.h"
 #include "AlImageLayerManager.h"
-#include <list>
 
 class AlImage : public Unit {
 public:
@@ -44,7 +43,7 @@ private:
 private:
     AlImageCanvasModel *getCanvas();
 
-    std::list<AlImageLayerModel *> *getLayers();
+    std::vector<AlImageLayerModel *> *getLayers();
 
     AlImageCanvas mCanvas;
     AlImageLayerManager mLayerManager;

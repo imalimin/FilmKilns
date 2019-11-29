@@ -15,6 +15,12 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/handleBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="HANDLE" />
+
         <SeekBar
             android:id="@+id/scaleBar"
             android:layout_width="match_parent"

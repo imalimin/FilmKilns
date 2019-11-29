@@ -13,7 +13,7 @@
 #include "HwWindow.h"
 #include "AlImageCanvasModel.h"
 #include "AlImageLayerModel.h"
-#include <list>
+#include <vector>
 
 class AlImageProcessor : public HwAbsProcessor {
 public:
@@ -33,15 +33,17 @@ public:
 
     int32_t addLayer(const char *path);
 
-    int32_t removeLayer(int32_t id);
+    HwResult moveLayerIndex(int32_t id, int32_t index);
 
-    int32_t setScale(int32_t id, float scale);
+    HwResult removeLayer(int32_t id);
 
-    int32_t setRotation(int32_t id, float rotation);
+    HwResult setScale(int32_t id, float scale);
 
-    int32_t setTranslate(int32_t id, float x, float y);
+    HwResult setRotation(int32_t id, float rotation);
 
-    int32_t setAlpha(int32_t id, float alpha);
+    HwResult setTranslate(int32_t id, float x, float y);
+
+    HwResult setAlpha(int32_t id, float alpha);
 
 private:
     void _notifyCanvasUpdate();
@@ -55,7 +57,7 @@ private:
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
     AlImageCanvasModel mCanvasModel;
-    std::list<AlImageLayerModel *> mLayers;
+    std::vector<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;
     std::mutex mLayerMtx;
 };

@@ -59,7 +59,9 @@ bool AlImage::onInvalidate(Message *m) {
     int size = mLayerManager.size();
     for (int i = 0; i < size; ++i) {
         auto layer = mLayerManager.getLayer(i);
-        layer->draw(&mCanvas);
+        if (layer) {
+            layer->draw(&mCanvas);
+        }
     }
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     auto tex = mCanvas.getOutput();
@@ -82,9 +84,9 @@ AlImageCanvasModel *AlImage::getCanvas() {
     return dynamic_cast<AlImageCanvasModel *>(getObject("canvas"));
 }
 
-std::list<AlImageLayerModel *> *AlImage::getLayers() {
+std::vector<AlImageLayerModel *> *AlImage::getLayers() {
     auto *obj = static_cast<ObjectBox *>(getObject("layers"));
-    return static_cast<list<AlImageLayerModel *> *>(obj->ptr);
+    return static_cast<vector<AlImageLayerModel *> *>(obj->ptr);
 }
 
 void AlImage::_newDefaultCanvas() {
