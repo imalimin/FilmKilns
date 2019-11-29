@@ -5,10 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include <algorithm>
 #include "AlImageLayerManager.h"
 #include "HwBitmapFactory.h"
 #include "Logcat.h"
-#include <algorithm>
 
 AlImageLayerManager::AlImageLayerManager() : Object() {
 
@@ -21,6 +21,7 @@ void AlImageLayerManager::release() {
     auto itr = mLayers.begin();
     while (mLayers.end() != itr) {
         AlImageLayer *layer = itr->second;
+//            texAllocator->recycle(&(itr->second->tex));
         delete layer;
         ++itr;
     }
@@ -40,12 +41,15 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
         }
     }
 
-    for (auto itr = mLayers.begin(); mLayers.end() != itr; ++itr) {
-        auto result = std::find(mLayers.begin(), mLayers.end(), itr->first);
-        if (result == mLayers.end()) {
-            mLayers.erase(itr);
-            texAllocator->recycle(&(itr->second->tex));
-            delete itr->second;
+    for (auto itr = mLayers.begin(); mLayers.end() != itr;) {
+        auto result = std::find(ids.begin(), ids.end(), itr->first);
+        if (result == ids.end()) {
+            auto *it = itr->second;
+            itr = mLayers.erase(itr);
+            texAllocator->recycle(&(it->tex));
+            delete it;
+        } else {
+            ++itr;
         }
     }
 }

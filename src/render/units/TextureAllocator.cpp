@@ -7,6 +7,8 @@
 #include "log.h"
 #include "../include/HwTexture.h"
 
+#define TAG "TextureAllocator"
+
 TextureAllocator::TextureAllocator() {
 }
 
@@ -43,8 +45,9 @@ void TextureAllocator::recycle(HwAbsTexture **tex) {
         return;
     }
     for (auto itr = textures.cbegin(); itr != textures.cend(); itr++) {
-        if (nullptr != *itr && *tex == *itr) {
-            LOGI("TextureAllocator %s %d", __func__, (*tex)->texId());
+        auto *it = *itr;
+        if (it && *tex == it) {
+            Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, it->texId());
             delete *tex;
             *tex = nullptr;
             textures.erase(itr);
