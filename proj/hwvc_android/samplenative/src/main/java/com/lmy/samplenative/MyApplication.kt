@@ -6,14 +6,14 @@
  */
 package com.lmy.samplenative
 
-import android.app.Application
+import com.lmy.common.BaseApplication
 import com.lmy.hwvcnative.HWVC
 import com.tencent.bugly.crashreport.CrashReport
 
 /**
  * Created by aliminabc@gmail.com on 2018/5/29.
  */
-class MyApplication : Application() {
+class MyApplication : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
         CrashReport.initCrashReport(applicationContext, "d7f93990a9", false)

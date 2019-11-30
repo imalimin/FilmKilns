@@ -1,2 +1,2 @@
-include ':samplenative', ':OfficeUIFabric'
+include ':samplenative', ':OfficeUIFabric', ':hwcommon'
 include ':codec_native'

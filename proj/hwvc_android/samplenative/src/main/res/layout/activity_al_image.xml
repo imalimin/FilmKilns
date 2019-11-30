@@ -16,10 +16,10 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/handleBtn"
+            android:id="@+id/addLayerBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HANDLE" />
+            android:text="Add Layer" />
 
         <SeekBar
             android:id="@+id/scaleBar"

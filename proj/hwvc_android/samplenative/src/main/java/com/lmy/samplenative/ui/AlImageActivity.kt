@@ -1,19 +1,24 @@
 package com.lmy.samplenative.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Environment
 import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
+import android.view.View
 import android.widget.SeekBar
+import com.lmy.common.ui.GallerySelectActivity
 import com.lmy.hwvcnative.processor.AlImageProcessor
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
 import kotlinx.android.synthetic.main.activity_al_image.*
 import java.io.File
 
-class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
+class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener, View.OnClickListener {
     private var processor: AlImageProcessor? = null
-    private var curLayerId = -1
+    private val mLayers = ArrayList<Int>()
+    private var mCurrentLayer = -1
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
             processor?.updateWindow(holder.surface)
@@ -31,23 +36,25 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
     override fun getLayoutResource(): Int = R.layout.activity_al_image
 
     override fun initView() {
+        surfaceView.keepScreenOn = true
+        surfaceView.holder.addCallback(surfaceCallback)
+        GallerySelectActivity.request(this, 100, 1)
+        addLayerBtn.setOnClickListener(this)
         scaleBar.setOnSeekBarChangeListener(this)
         transBar.setOnSeekBarChangeListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
             processor = AlImageProcessor.create()
         }
-        surfaceView.keepScreenOn = true
-        surfaceView.holder.addCallback(surfaceCallback)
         processor?.setCanvas(1080, 1920, 0)
-        val layerId0 = processor?.addLayer(File(Environment.getExternalStorageDirectory(), "喵-result.jpg").absolutePath)
-        val layerId = processor?.addLayer(File(Environment.getExternalStorageDirectory(), "001.8.png").absolutePath)
-        if (null != layerId) {
-            curLayerId = layerId
-        }
-        Log.i("HWVC", "addLayer $layerId")
-        handleBtn.setOnClickListener {
-            processor?.removeLayer(layerId0!!)
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.addLayerBtn -> {
+                GallerySelectActivity.request(this, 100, 1)
+//                processor?.removeLayer(mCurrentLayer)
+            }
         }
     }
 
@@ -71,9 +78,9 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         when (seekBar.id) {
             R.id.scaleBar ->
-                processor?.setRotation(curLayerId, 3.141592653f * progress / 1000)
+                processor?.setRotation(mCurrentLayer, 3.141592653f * progress / 1000)
             R.id.transBar ->
-                processor?.setTranslate(curLayerId, progress / 1000f, progress / 1000f)
+                processor?.setTranslate(mCurrentLayer, progress / 1000f, progress / 1000f)
         }
     }
 
@@ -81,5 +88,25 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener {
     }
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (Activity.RESULT_OK != resultCode) {
+            return
+        }
+        when (requestCode) {
+            100 -> {
+                val result = GallerySelectActivity.getResultDtata(data)
+                if (null != result && result.isNotEmpty()) {
+                    val layerId = processor?.addLayer(result[0])
+                    if (null != layerId && layerId >= 0) {
+                        mLayers.add(layerId)
+                        mCurrentLayer = layerId
+                        Log.i("HWVC", "addLayer $layerId")
+                    }
+                }
+            }
+        }
     }
 }
