@@ -40,4 +40,20 @@
     <style name="BaseDialogTitleTextAppearance" parent="Base.TextAppearance.AppCompat.Title">
         <item name="android:textSize">@dimen/textSize</item>
     </style>
+
+    <style name="ButtonGalleryDoneStyle" parent="android:Widget.TextView">
+        <item name="android:background">@drawable/selector_gallery_done</item>
+        <item name="android:textColor">@drawable/selector_gallery_text_done</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:text">@string/action_done</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ToolbarTextAppearance">
+        <item name="android:textSize">@dimen/textSize</item>
+        <item name="android:textColor">@color/colorTitle</item>
+    </style>
 </resources>
