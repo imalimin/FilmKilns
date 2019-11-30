@@ -12,10 +12,10 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion target_version
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion min_version
+        targetSdkVersion target_version
         versionCode 22
         versionName '0.2.12'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

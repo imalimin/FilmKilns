@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
-    compileSdkVersion 28
+    compileSdkVersion target_version
     defaultConfig {
         applicationId "com.lmy.samplenative"
-        minSdkVersion 22
-        targetSdkVersion 28
+        minSdkVersion min_version
+        targetSdkVersion target_version
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 
@@ -42,4 +42,5 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation project(':OfficeUIFabric')
     implementation project(':codec_native')
+    implementation project(':hwcommon')
 }
