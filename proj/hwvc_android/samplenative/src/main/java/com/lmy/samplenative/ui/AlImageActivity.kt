@@ -47,7 +47,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         GallerySelectActivity.request(this, 100, 1)
         showOpt.setOnClickListener(this)
         scaleBar.setOnSeekBarChangeListener(this)
-        transBar.setOnSeekBarChangeListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
             processor = AlImageProcessor.create()
@@ -92,8 +91,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         when (seekBar.id) {
             R.id.scaleBar ->
                 processor?.setRotation(mCurrentLayer, 3.141592653f * progress / 1000)
-            R.id.transBar ->
-                processor?.setTranslate(mCurrentLayer, progress / 1000f, progress / 1000f)
         }
     }
 
