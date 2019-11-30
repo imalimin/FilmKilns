@@ -6,6 +6,9 @@
 */
 
 #include "AlCanvasDrawer.h"
+#include "Logcat.h"
+
+#define TAG "AlCanvasDrawer"
 
 AlCanvasDrawer::AlCanvasDrawer() : HwAbsFilter() {
 
@@ -90,7 +93,7 @@ void AlCanvasDrawer::setRotation(float rotation) {
 }
 
 void AlCanvasDrawer::setTranslate(float x, float y) {
-    tMat.setTranslate(x, y);
+    tMat.setTranslate(x * dRectF.getWidth() / 2.0f, y * dRectF.getHeight() / 2.0f);
     tMat.dump();
 }
 

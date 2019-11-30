@@ -75,6 +75,11 @@ void AlImageLayerModel::setPosition(float x, float y) {
     position.y = y;
 }
 
+void AlImageLayerModel::postPosition(float x, float y) {
+    position.x += x;
+    position.y += y;
+}
+
 AlVec2 AlImageLayerModel::getPosition() {
     return position;
 }

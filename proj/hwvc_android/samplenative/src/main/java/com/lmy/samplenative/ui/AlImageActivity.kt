@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.SeekBar
@@ -16,7 +17,8 @@ import com.microsoft.officeuifabric.bottomsheet.BottomSheetDialog
 import com.microsoft.officeuifabric.bottomsheet.BottomSheetItem
 import kotlinx.android.synthetic.main.activity_al_image.*
 
-class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener, View.OnClickListener,
+class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
+        View.OnClickListener, View.OnTouchListener,
         BottomSheetItem.OnClickListener {
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
@@ -41,6 +43,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener, View.On
     override fun initView() {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
+        surfaceView.setOnTouchListener(this)
         GallerySelectActivity.request(this, 100, 1)
         showOpt.setOnClickListener(this)
         scaleBar.setOnSeekBarChangeListener(this)
@@ -58,6 +61,14 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener, View.On
                 showAllOpt()
             }
         }
+    }
+
+    //Move layer
+    override fun onTouch(v: View, event: MotionEvent): Boolean {
+        val x = event.x / v.width.toFloat() * 2f - 1f
+        val y = event.y / v.height.toFloat() * 2f - 1f
+        processor?.moveLayer(mCurrentLayer, x, y)
+        return true
     }
 
     override fun onDestroy() {

@@ -41,6 +41,8 @@ public:
 
     float getRotation();
 
+    void postPosition(float x, float y);
+
     void setPosition(float x, float y);
 
     AlVec2 getPosition();
