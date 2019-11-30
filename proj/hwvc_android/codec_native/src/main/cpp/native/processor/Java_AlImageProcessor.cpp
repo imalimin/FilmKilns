@@ -80,10 +80,18 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_addLay
     return Hw::FAILED.code;
 }
 
-JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_moveLayeIndex
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_moveLayerIndex
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jint index) {
     if (handler) {
         getHandler(handler)->moveLayerIndex(id, index).code;
+    }
+    return Hw::FAILED.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_moveLayer
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y) {
+    if (handler) {
+        getHandler(handler)->moveLayer(id, x, y).code;
     }
     return Hw::FAILED.code;
 }

@@ -37,6 +37,8 @@ public:
 
     HwResult moveLayerIndex(int32_t id, int32_t index);
 
+    HwResult moveLayer(int32_t id, float x, float y);
+
     HwResult setScale(int32_t id, float scale);
 
     HwResult setRotation(int32_t id, float rotation);

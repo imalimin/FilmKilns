@@ -2,6 +2,7 @@ package com.lmy.hwvcnative.processor
 
 import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
+import com.lmy.hwvcnative.entity.AlResult
 
 class AlImageProcessor private constructor() : CPPObject() {
     init {
@@ -65,11 +66,18 @@ class AlImageProcessor private constructor() : CPPObject() {
      *              0为最底层，会被所有图层遮挡
      * @return      {@link AlResult}
      */
-    fun moveLayeIndex(id: Int, index: Int): Int {
+    fun moveLayerIndex(id: Int, index: Int): Int {
         if (!isNativeNull()) {
-            return moveLayeIndex(handler, id, index)
+            return moveLayerIndex(handler, id, index)
         }
         return -1
+    }
+
+    fun moveLayer(x: Float, y: Float): Int {
+        if (!isNativeNull()) {
+            return moveLayer(handler, x, y)
+        }
+        return AlResult.FAILED
     }
 
     /**
@@ -81,7 +89,7 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             return removeLayer(handler, id)
         }
-        return -1
+        return AlResult.FAILED
     }
 
     /**
@@ -144,7 +152,8 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun invalidate(handler: Long)
     private external fun setCanvas(handler: Long, w: Int, h: Int, color: Int)
     private external fun addLayer(handler: Long, path: String): Int
-    private external fun moveLayeIndex(handler: Long, id: Int, index: Int): Int
+    private external fun moveLayerIndex(handler: Long, id: Int, index: Int): Int
+    private external fun moveLayer(handler: Long, x: Float, y: Float): Int
     private external fun removeLayer(handler: Long, id: Int): Int
     private external fun setScale(handler: Long, id: Int, scale: Float): Int
     private external fun setRotation(handler: Long, id: Int, rotation: Float): Int
