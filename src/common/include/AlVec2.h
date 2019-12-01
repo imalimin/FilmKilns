@@ -18,7 +18,7 @@ public:
 
     AlVec2(const AlVec2 &o);
 
-    ~AlVec2();
+    virtual ~AlVec2();
 
 public:
     float x = 0.0f;
