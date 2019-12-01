@@ -71,11 +71,11 @@ void AlImageLayer::_calculateLayerQuad(AlSize &src, AlSize &dest) {
                         (float) dest.height / (float) dest.width;
     float width = 0.0f, height = 0.0f;
     if (dest.width > dest.height) {
-        width = src.width / (float) src.height / aspectRatio;
-        height = 1.0f;
+        width = src.width / (float) src.height / aspectRatio * model->getScale().x;
+        height = 1.0f * model->getScale().y;
     } else {
-        width = 1.0f;
-        height = src.height / (float) src.width / aspectRatio;
+        width = 1.0f * model->getScale().x;
+        height = src.height / (float) src.width / aspectRatio * model->getScale().y;
     }
     AlPointF leftTop(-width + model->getPosition().x, height + model->getPosition().y);
     AlPointF leftBottom(-width + model->getPosition().x, -height + model->getPosition().y);
