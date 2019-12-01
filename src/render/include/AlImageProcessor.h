@@ -44,6 +44,8 @@ public:
 
     HwResult setTranslate(int32_t id, float x, float y);
 
+    HwResult postTranslate(int32_t id, float dx, float dy);
+
     HwResult setAlpha(int32_t id, float alpha);
 
     void calculatePosition(float &x, float &y);

@@ -56,7 +56,7 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             return addLayer(handler, path)
         }
-        return -1
+        return AlResult.FAILED
     }
 
     /**
@@ -70,7 +70,7 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             return moveLayerIndex(handler, id, index)
         }
-        return -1
+        return AlResult.FAILED
     }
 
     /**
@@ -95,7 +95,7 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             return setScale(handler, id, scale)
         }
-        return -1
+        return AlResult.FAILED
     }
 
     /**
@@ -108,7 +108,7 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             return setRotation(handler, id, rotation)
         }
-        return -1
+        return AlResult.FAILED
     }
 
     /**
@@ -122,7 +122,14 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             return setTranslate(handler, id, x, y)
         }
-        return -1
+        return AlResult.FAILED
+    }
+
+    fun postTranslate(id: Int, dx: Float, dy: Float): Int {
+        if (!isNativeNull()) {
+            return postTranslate(handler, id, dx, dy)
+        }
+        return AlResult.FAILED
     }
 
     /**
@@ -135,7 +142,7 @@ class AlImageProcessor private constructor() : CPPObject() {
         if (!isNativeNull()) {
             return setAlpha(handler, id, alpha)
         }
-        return -1
+        return AlResult.FAILED
     }
 
     private external fun create(): Long
@@ -150,6 +157,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun setScale(handler: Long, id: Int, scale: Float): Int
     private external fun setRotation(handler: Long, id: Int, rotation: Float): Int
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
+    private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
 
     companion object {

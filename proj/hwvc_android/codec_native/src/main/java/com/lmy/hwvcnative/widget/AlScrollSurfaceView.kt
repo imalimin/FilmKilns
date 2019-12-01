@@ -53,10 +53,11 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
         return result
     }
 
-    fun setOnScrollListener(listener: (v: SurfaceView, x: Float, y: Float) -> Unit) {
+    fun setOnScrollListener(listener: (v: SurfaceView, x: Float, y: Float,
+                                       dx: Float, dy: Float) -> Unit) {
         setOnScrollListener(object : OnScrollListener {
-            override fun onScroll(v: SurfaceView, x: Float, y: Float) {
-                listener(v, x, y)
+            override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float) {
+                listener(v, x, y, dx, dy)
             }
         })
     }
@@ -98,7 +99,9 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
 //        mCurrentPosition.y = scroller.currY.toFloat()
         mCurrentPosition.x -= distanceX
         mCurrentPosition.y -= distanceY
-        onScrollListener?.onScroll(this, mCurrentPosition.x, mCurrentPosition.y)
+        onScrollListener?.onScroll(this,
+                mCurrentPosition.x, mCurrentPosition.y,
+                distanceX, distanceY)
         return true
     }
 
@@ -106,6 +109,6 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
     }
 
     interface OnScrollListener {
-        fun onScroll(v: SurfaceView, x: Float, y: Float)
+        fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float)
     }
 }

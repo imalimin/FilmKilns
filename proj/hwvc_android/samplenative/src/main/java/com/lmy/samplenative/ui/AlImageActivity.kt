@@ -43,10 +43,10 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun initView() {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
-        surfaceView.setOnScrollListener { v, x, y ->
-            processor?.setTranslate(mCurrentLayer,
-                    x / v.width.toFloat() * 2f,
-                    y / v.height.toFloat() * 2f)
+        surfaceView.setOnScrollListener { v, x, y, dx, dy ->
+            processor?.postTranslate(mCurrentLayer,
+                    -dx / v.width.toFloat() * 2f,
+                    -dy / v.height.toFloat() * 2f)
         }
         GallerySelectActivity.request(this, 100, 1)
         showOpt.setOnClickListener(this)

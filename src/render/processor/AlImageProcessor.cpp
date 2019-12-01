@@ -152,6 +152,18 @@ HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
     return Hw::FAILED;
 }
 
+HwResult AlImageProcessor::postTranslate(int32_t id, float dx, float dy) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer) {
+        calculatePosition(dx, dy);
+        layer->setPosition(layer->getPosition().x + dx, layer->getPosition().y + dy);
+        invalidate();
+        return Hw::SUCCESS;
+    }
+    return Hw::FAILED;
+}
+
 HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
