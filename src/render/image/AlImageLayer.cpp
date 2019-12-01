@@ -46,6 +46,9 @@ int32_t AlImageLayer::getHeight() {
 void AlImageLayer::_draw(AlImageCanvas *canvas) {
     //Set render params
     _applyParams();
+    AlSize sSize(this->tex->getWidth(), this->tex->getHeight());
+    AlSize dSize(canvas->getWidth(), canvas->getHeight());
+    _calculateLayerQuad(sSize, dSize);
     //Draw layer
     glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
     mCanvasDrawer->draw(this->tex, canvas->getOutput());
@@ -55,5 +58,28 @@ void AlImageLayer::_applyParams() {
     mCanvasDrawer->setAlpha(model->getAlpha());
     mCanvasDrawer->setScale(model->getScale().x, model->getScale().y);
     mCanvasDrawer->setRotation(model->getRotation());
-    mCanvasDrawer->setTranslate(model->getPosition().x, model->getPosition().y);
+    ///矩阵Y轴与正常坐标系Y轴相反
+    mCanvasDrawer->setTranslate(model->getPosition().x, -model->getPosition().y);
+}
+
+void AlImageLayer::_calculateLayerQuad(AlSize &src, AlSize &dest) {
+    if (nullptr == model) {
+        return;
+    }
+    float aspectRatio = dest.width > dest.height ?
+                        (float) dest.width / (float) dest.height :
+                        (float) dest.height / (float) dest.width;
+    float width = 0.0f, height = 0.0f;
+    if (dest.width > dest.height) {
+        width = src.width / (float) src.height / aspectRatio;
+        height = 1.0f;
+    } else {
+        width = 1.0f;
+        height = src.height / (float) src.width / aspectRatio;
+    }
+    AlPointF leftTop(-width + model->getPosition().x, height + model->getPosition().y);
+    AlPointF leftBottom(-width + model->getPosition().x, -height + model->getPosition().y);
+    AlPointF rightBottom(width + model->getPosition().x, -height + model->getPosition().y);
+    AlPointF rightTop(width + model->getPosition().x, height + model->getPosition().y);
+    model->setQuad(leftTop, leftBottom, rightBottom, rightTop);
 }

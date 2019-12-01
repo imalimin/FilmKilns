@@ -195,3 +195,22 @@ void AlImageProcessor::calculatePosition(float &x, float &y) {
         y = y / scale;
     }
 }
+
+/// 根据window坐标获取对应的Layer，还需要适配缩放旋转的情况
+/// \param x x坐标，x=[-1,1]
+/// \param y y坐标，y=[-1,1]
+/// \return 对应的图层id，否则-1
+int32_t AlImageProcessor::getLayer(float x, float y) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    calculatePosition(x, y);
+    size_t size = mLayers.size();
+    for (int i = size - 1; i >= 0; --i) {
+        auto *it = mLayers.at(static_cast<unsigned int>(i));
+//        Logcat::i(TAG, "%s(%d): %f, %f", __FUNCTION__, __LINE__, x, y);
+        if (it && it->getQuad().contain(AlPointF(x, y))) {
+//            it->dump();
+            return it->getId();
+        }
+    }
+    return Hw::FAILED.code;
+}

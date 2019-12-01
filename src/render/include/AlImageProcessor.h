@@ -50,6 +50,8 @@ public:
 
     void calculatePosition(float &x, float &y);
 
+    int32_t getLayer(float x, float y);
+
 private:
     void _notifyCanvasUpdate();
 

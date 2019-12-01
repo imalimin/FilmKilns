@@ -39,6 +39,11 @@ private:
 
     void _applyParams();
 
+    ///
+    /// \param src 图层大小
+    /// \param dest 窗口大小
+    void _calculateLayerQuad(AlSize &src, AlSize &dest);
+
 private:
     AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.

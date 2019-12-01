@@ -6,6 +6,9 @@
 */
 
 #include "AlImageLayerModel.h"
+#include "Logcat.h"
+
+#define TAG "AlImageLayerModel"
 
 AlImageLayerModel *AlImageLayerModel::create(AlIdentityCreator *creator, const std::string path) {
     return new AlImageLayerModel(creator->generate(), path);
@@ -82,4 +85,34 @@ void AlImageLayerModel::postPosition(float x, float y) {
 
 AlVec2 AlImageLayerModel::getPosition() {
     return position;
+}
+
+void AlImageLayerModel::setQuad(AlPointF leftTop,
+                                AlPointF leftBottom,
+                                AlPointF rightBottom,
+                                AlPointF rightTop) {
+    quad.setLeftTop(leftTop.x, leftTop.y);
+    quad.setLeftBottom(leftBottom.x, leftBottom.y);
+    quad.setRightBottom(rightBottom.x, rightBottom.y);
+    quad.setRightTop(rightTop.x, rightTop.y);
+}
+
+AlQuad AlImageLayerModel::getQuad() {
+    return quad;
+}
+
+void AlImageLayerModel::dump() {
+    Logcat::i(TAG, "+--------------------------+");
+    Logcat::i(TAG, "layer: %d", id);
+    Logcat::i(TAG, "alpha: %f", alpha);
+    Logcat::i(TAG, "scale: %f, %f", scale.x, scale.y);
+    Logcat::i(TAG, "rotat: %f", rotation);
+    Logcat::i(TAG, "posit: %f, %f", position.x, position.y);
+    Logcat::i(TAG, "quad : [%f,%f]-----[%f,%f]",
+              quad.leftTop().x, quad.leftTop().y,
+              quad.rightTop().x, quad.rightTop().y);
+    Logcat::i(TAG, "quad : [%f,%f]-----[%f,%f]",
+              quad.leftBottom().x, quad.leftBottom().y,
+              quad.rightBottom().x, quad.rightBottom().y);
+    Logcat::i(TAG, "+--------------------------+");
 }

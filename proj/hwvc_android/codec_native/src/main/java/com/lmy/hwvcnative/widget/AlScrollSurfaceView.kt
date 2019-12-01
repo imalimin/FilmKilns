@@ -14,6 +14,7 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
     private lateinit var mGestureDetector: GestureDetectorCompat
     private lateinit var scroller: OverScroller
     private var onScrollListener: OnScrollListener? = null
+    private var onPosClickListener: OnPosClickListener? = null
 
     private val mCurrentPosition = PointF(0f, 0f)
     private var minFlingVelocity = 0
@@ -66,6 +67,18 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
         onScrollListener = listener
     }
 
+    fun setOnPosClickListener(listener: (v: SurfaceView, x: Float, y: Float) -> Unit) {
+        setOnPosClickListener(object : OnPosClickListener {
+            override fun onClick(v: SurfaceView, x: Float, y: Float) {
+                listener(v, x, y)
+            }
+        })
+    }
+
+    fun setOnPosClickListener(listener: OnPosClickListener?) {
+        onPosClickListener = listener
+    }
+
     /**
      * +---------------------+
      * |  OnGestureListener  |
@@ -78,8 +91,11 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
         return false
     }
 
-    override fun onDown(e: MotionEvent?): Boolean {
+    override fun onDown(e: MotionEvent): Boolean {
         parent.requestDisallowInterceptTouchEvent(true)
+        onPosClickListener?.onClick(this,
+                e.x * 2 / width.toFloat() - 1f,
+                -(e.y * 2 / height.toFloat() - 1f))
         return true
     }
 
@@ -101,7 +117,7 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
         mCurrentPosition.y -= distanceY
         onScrollListener?.onScroll(this,
                 mCurrentPosition.x, mCurrentPosition.y,
-                distanceX, distanceY)
+                -distanceX / width.toFloat() * 2f, distanceY / height.toFloat() * 2f)
         return true
     }
 
@@ -110,5 +126,9 @@ class AlScrollSurfaceView : SurfaceView, GestureDetector.OnGestureListener {
 
     interface OnScrollListener {
         fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float)
+    }
+
+    interface OnPosClickListener {
+        fun onClick(v: SurfaceView, x: Float, y: Float)
     }
 }

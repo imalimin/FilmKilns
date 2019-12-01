@@ -83,7 +83,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_addLay
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_moveLayerIndex
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jint index) {
     if (handler) {
-        getHandler(handler)->moveLayerIndex(id, index).code;
+        return getHandler(handler)->moveLayerIndex(id, index).code;
     }
     return Hw::FAILED.code;
 }
@@ -91,7 +91,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_moveLa
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_removeLayer
         (JNIEnv *env, jobject thiz, jlong handler, jint id) {
     if (handler) {
-        getHandler(handler)->removeLayer(id).code;
+        return getHandler(handler)->removeLayer(id).code;
     }
     return Hw::FAILED.code;
 }
@@ -99,7 +99,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_remove
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setScale
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat scale) {
     if (handler) {
-        getHandler(handler)->setScale(id, scale).code;
+        return getHandler(handler)->setScale(id, scale).code;
     }
     return Hw::FAILED.code;
 }
@@ -107,7 +107,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setSca
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setRotation
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat rotation) {
     if (handler) {
-        getHandler(handler)->setRotation(id, rotation).code;
+        return getHandler(handler)->setRotation(id, rotation).code;
     }
     return Hw::FAILED.code;
 }
@@ -115,7 +115,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setRot
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setTranslate
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y) {
     if (handler) {
-        getHandler(handler)->setTranslate(id, x, y);
+        return getHandler(handler)->setTranslate(id, x, y).code;
     }
     return Hw::FAILED.code;
 }
@@ -123,7 +123,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setTra
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_postTranslate
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat dx, jfloat dy) {
     if (handler) {
-        getHandler(handler)->postTranslate(id, dx, dy);
+        return getHandler(handler)->postTranslate(id, dx, dy).code;
     }
     return Hw::FAILED.code;
 }
@@ -131,7 +131,15 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_postTr
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setAlpha
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat alpha) {
     if (handler) {
-        getHandler(handler)->setAlpha(id, alpha).code;
+        return getHandler(handler)->setAlpha(id, alpha).code;
+    }
+    return Hw::FAILED.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_getLayer
+        (JNIEnv *env, jobject thiz, jlong handler, jfloat x, jfloat y) {
+    if (handler) {
+        return getHandler(handler)->getLayer(x, y);
     }
     return Hw::FAILED.code;
 }

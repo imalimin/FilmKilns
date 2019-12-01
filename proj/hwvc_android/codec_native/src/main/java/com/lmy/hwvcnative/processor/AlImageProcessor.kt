@@ -145,6 +145,20 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
+    /**
+     * 根据View坐标获取layer id
+     * 用于点击选择图层
+     * @param x 相对于View的x轴坐标
+     * @param y 相对于View的y轴坐标
+     * @return  图层id，负数表示没找到
+     */
+    fun getLayer(x: Float, y: Float): Int {
+        if (!isNativeNull()) {
+            return getLayer(handler, x, y)
+        }
+        return AlResult.FAILED
+    }
+
     private external fun create(): Long
     private external fun release(handler: Long)
     private external fun prepare(handler: Long, surface: Surface)
@@ -159,6 +173,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
+    private external fun getLayer(handler: Long, x: Float, y: Float): Int
 
     companion object {
         fun create(): AlImageProcessor = AlImageProcessor()

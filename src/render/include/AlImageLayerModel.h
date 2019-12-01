@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "AlVec2.h"
 #include "AlIdentityCreator.h"
+#include "AlQuad.h"
 
 al_class(AlImageLayerModel) {
 public:
@@ -47,6 +48,12 @@ public:
 
     AlVec2 getPosition();
 
+    void setQuad(AlPointF leftTop, AlPointF leftBottom, AlPointF rightBottom, AlPointF rightTop);
+
+    AlQuad getQuad();
+
+    void dump();
+
 private:
     std::string path;
     int32_t id = AlIdentityCreator::NONE_ID;
@@ -54,6 +61,7 @@ private:
     float rotation = 0.0f;
     AlVec2 position;
     AlVec2 scale;
+    AlQuad quad;
 };
 
 
