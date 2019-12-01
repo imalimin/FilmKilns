@@ -29,3 +29,7 @@ Size &Size::operator=(const Size &value) {
     this->height = value.height;
     return *this;
 }
+
+float Size::ratio() {
+    return width / (float) height;
+}

@@ -11,6 +11,8 @@
 #include "HwScreen.h"
 #include "ObjectBox.h"
 
+#define TAG "AlImageProcessor"
+
 AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
@@ -36,6 +38,8 @@ void AlImageProcessor::prepare(HwWindow *win) {
 }
 
 void AlImageProcessor::updateWindow(HwWindow *win) {
+    mWinSize.width = win->getWidth();
+    mWinSize.height = win->getHeight();
     Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW);
     msg->obj = ObjectBox::box(new NativeWindow(win, nullptr));
     postEvent(msg);
@@ -92,17 +96,6 @@ HwResult AlImageProcessor::removeLayer(int32_t id) {
     return Hw::FAILED;
 }
 
-HwResult AlImageProcessor::moveLayer(int32_t id, float x, float y) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
-    if (layer) {
-        layer->setPosition(x, y);
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
-}
-
 HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     if (mLayers.empty()) {
@@ -151,6 +144,7 @@ HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
+        calculatePosition(x, y);
         layer->setPosition(x, y);
         invalidate();
         return Hw::SUCCESS;
@@ -176,4 +170,16 @@ AlImageLayerModel *AlImageProcessor::_getLayer(int32_t id) {
         }
     }
     return nullptr;
+}
+
+void AlImageProcessor::calculatePosition(float &x, float &y) {
+    float winRatio = mWinSize.ratio();
+    float cRatio = mCanvasModel.getWidth() / (float) mCanvasModel.getHeight();
+    if (winRatio > cRatio) {
+        float scale = cRatio / winRatio;
+        x = x / scale;
+    } else {
+        float scale = winRatio / cRatio;
+        y = y / scale;
+    }
 }

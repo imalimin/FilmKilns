@@ -13,6 +13,7 @@
 #include "HwWindow.h"
 #include "AlImageCanvasModel.h"
 #include "AlImageLayerModel.h"
+#include "AlSize.h"
 #include <vector>
 
 class AlImageProcessor : public HwAbsProcessor {
@@ -37,8 +38,6 @@ public:
 
     HwResult moveLayerIndex(int32_t id, int32_t index);
 
-    HwResult moveLayer(int32_t id, float x, float y);
-
     HwResult setScale(int32_t id, float scale);
 
     HwResult setRotation(int32_t id, float rotation);
@@ -46,6 +45,8 @@ public:
     HwResult setTranslate(int32_t id, float x, float y);
 
     HwResult setAlpha(int32_t id, float alpha);
+
+    void calculatePosition(float &x, float &y);
 
 private:
     void _notifyCanvasUpdate();
@@ -62,6 +63,7 @@ private:
     std::vector<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;
     std::mutex mLayerMtx;
+    AlSize mWinSize;
 };
 
 

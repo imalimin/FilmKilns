@@ -88,14 +88,6 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_moveLa
     return Hw::FAILED.code;
 }
 
-JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_moveLayer
-        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y) {
-    if (handler) {
-        getHandler(handler)->moveLayer(id, x, y).code;
-    }
-    return Hw::FAILED.code;
-}
-
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_removeLayer
         (JNIEnv *env, jobject thiz, jlong handler, jint id) {
     if (handler) {

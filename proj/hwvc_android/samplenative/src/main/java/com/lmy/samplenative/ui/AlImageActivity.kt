@@ -66,7 +66,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         val x = event.x / v.width.toFloat() * 2f - 1f
         val y = event.y / v.height.toFloat() * 2f - 1f
-        processor?.moveLayer(mCurrentLayer, x, y)
+        processor?.setTranslate(mCurrentLayer, x, y)
         return true
     }
 

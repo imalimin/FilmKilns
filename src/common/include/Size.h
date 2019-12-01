@@ -23,6 +23,8 @@ public:
     virtual ~Size();
 
     Size &operator=(const Size &value);
+
+    float ratio();
 };
 
 #endif //HARDWAREVIDEOCODEC_SIZE_H

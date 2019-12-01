@@ -10,6 +10,8 @@
 #include "HwTexture.h"
 #include "Logcat.h"
 
+#define TAG "AlImageCanvas"
+
 AlImageCanvas::AlImageCanvas() : Object() {
 
 }
@@ -43,14 +45,15 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator
         mCanvasTex->update(nullptr, w, h, GL_RGBA);
     }
     clear();
-    Logcat::e("AlImageCanvas", "%s(%d): Canvas size %dx%d", __FUNCTION__, __LINE__,
-              mCanvasTex->getWidth(), mCanvasTex->getHeight());
 }
 
 void AlImageCanvas::clear() {
     if (mCanvasTex && mBgDrawer) {
         glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
         mBgDrawer->draw(mCanvasTex);
+        Logcat::i(TAG, "%s(%d) Canvas clear. Size %dx%d",
+                  __FUNCTION__, __LINE__,
+                  mCanvasTex->getWidth(), mCanvasTex->getHeight());
     }
 }
 
