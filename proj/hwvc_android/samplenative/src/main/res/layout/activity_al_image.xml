@@ -15,6 +15,57 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+            <TableRow>
+
+                <TextView
+                    android:paddingRight="8dp"
+                    android:text="Layer"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/layerView"
+                    android:text="-1"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:paddingRight="8dp"
+                    android:text="Scale"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/scaleView"
+                    android:text="0"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:paddingRight="8dp"
+                    android:text="Rotation"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/rotateView"
+                    android:text="0"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+            </TableRow>
+        </TableLayout>
+
         <SeekBar
             android:id="@+id/scaleBar"
             android:layout_width="match_parent"

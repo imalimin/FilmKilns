@@ -44,7 +44,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         surfaceView.holder.addCallback(surfaceCallback)
         surfaceView?.setOnPosClickListener { v, x, y ->
             if (null != processor) {
-                mCurrentLayer = processor!!.getLayer(x, y)
+                setCurLayer(processor!!.getLayer(x, y))
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
@@ -113,7 +113,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                     val layerId = processor?.addLayer(result[0])
                     if (null != layerId && layerId >= 0) {
                         mLayers.add(layerId)
-                        mCurrentLayer = layerId
+                        setCurLayer(layerId)
                         Log.i("HWVC", "addLayer $layerId")
                     }
                 }
@@ -158,5 +158,10 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
         }
         dialog.show()
+    }
+
+    private fun setCurLayer(layer: Int) {
+        mCurrentLayer = layer
+        layerView.text = mCurrentLayer.toString()
     }
 }
