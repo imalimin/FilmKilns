@@ -20,28 +20,22 @@ public:
 
     virtual ~AlCanvasDrawer();
 
-    void setScale(float scaleX, float scaleY);
-
-    void setRotation(float rotation);
-
-    void setTranslate(float x, float y);
-
     void setAlpha(float alpha);
+
+    void setMatrix(AlMatrix &matrix);
+
+    void setVertex(float *vertex);
 
 private:
     HwProgram *createProgram() override;
 
     void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
-    void _calculateRect(AlSize &src, AlSize &dest);
-
 private:
     AlRectF sRectF;
     AlRectF dRectF;
-    //Orthogonal matrix
-    AlOrthMatrix oMat;
-    //Translate matrix
-    AlMatrix tMat;
+    float vertex[8];
+    AlMatrix matrix;
     float alpha = 0.0;
 };
 

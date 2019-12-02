@@ -17,6 +17,8 @@ public:
 
     AlPointF(const AlVec2 &o);
 
+    AlPointF(const AlPointF &o);
+
     virtual ~AlPointF();
 
 };

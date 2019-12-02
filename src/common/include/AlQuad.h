@@ -40,6 +40,12 @@ public:
     /// \return true or fale
     bool contain(AlPointF pointF);
 
+    /// 绕Y轴翻转
+    /// \return
+    AlQuad &mirrorVertical();
+
+    AlQuad &mirrorHorizontal();
+
 private:
     AlPointF _leftTop;
     AlPointF _leftBottom;

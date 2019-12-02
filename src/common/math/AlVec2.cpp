@@ -7,6 +7,16 @@
 
 #include "AlVec2.h"
 
+void AlVec2::swap(AlVec2 *vec1, AlVec2 *vec2) {
+    float tmp = vec1->x;
+    vec1->x = vec2->x;
+    vec2->x = tmp;
+
+    tmp = vec1->y;
+    vec1->y = vec2->y;
+    vec2->y = tmp;
+}
+
 AlVec2::AlVec2(float x, float y) : Object(), x(x), y(y) {
 
 }

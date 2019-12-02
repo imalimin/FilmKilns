@@ -10,10 +10,11 @@
 
 #include "Object.h"
 #include "AlMatrix.h"
+#include "AlVec2.h"
 
 al_class(AlVec4) {
 public:
-    AlVec4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f);
+    AlVec4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f);
 
     AlVec4(const AlVec4 &o);
 
@@ -26,15 +27,18 @@ public:
 
     /// 向量于矩阵相乘
     /// \param mat 矩阵
-    /// \param pre 前乘或后乘，默认false表示后乘
-    void multiply(AlMatrix mat, bool pre = false);
+    /// \param pre 前乘或后乘，默认true表示前乘
+    AlVec4 &multiply(AlMatrix mat, bool pre = true);
+
+    AlVec2 xy();
 
     void dump();
+
 public:
     float x = 0.0f;
     float y = 0.0f;
     float z = 0.0f;
-    float w = 0.0f;
+    float w = 1.0f;
 };
 
 

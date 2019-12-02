@@ -50,7 +50,7 @@ public:
 
     void setQuad(AlPointF leftTop, AlPointF leftBottom, AlPointF rightBottom, AlPointF rightTop);
 
-    AlQuad getQuad();
+    AlQuad &getQuad();
 
     void dump();
 

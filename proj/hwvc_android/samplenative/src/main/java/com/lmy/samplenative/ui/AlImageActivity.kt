@@ -18,8 +18,7 @@ import com.microsoft.officeuifabric.bottomsheet.BottomSheetItem
 import kotlinx.android.synthetic.main.activity_al_image.*
 
 class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
-        View.OnClickListener, View.OnTouchListener,
-        BottomSheetItem.OnClickListener {
+        View.OnClickListener, BottomSheetItem.OnClickListener {
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
     private val mLayers = ArrayList<Int>()
@@ -68,14 +67,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                 showAllOpt()
             }
         }
-    }
-
-    //Move layer
-    override fun onTouch(v: View, event: MotionEvent): Boolean {
-        val x = event.x / v.width.toFloat() * 2f - 1f
-        val y = event.y / v.height.toFloat() * 2f - 1f
-        processor?.setTranslate(mCurrentLayer, x, y)
-        return true
     }
 
     override fun onDestroy() {

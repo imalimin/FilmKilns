@@ -15,6 +15,10 @@ AlPointF::AlPointF(const AlVec2 &o) : AlVec2(o) {
 
 }
 
+AlPointF::AlPointF(const AlPointF &o) : AlVec2(o) {
+
+}
+
 AlPointF::~AlPointF() {
 
 }

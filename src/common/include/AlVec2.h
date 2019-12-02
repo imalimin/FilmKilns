@@ -14,6 +14,9 @@
  */
 al_class(AlVec2) {
 public:
+    static void swap(AlVec2 *vec1, AlVec2 *vec2);
+
+public:
     AlVec2(float x = 0.0f, float y = 0.0f);
 
     AlVec2(const AlVec2 &o);

@@ -97,7 +97,7 @@ void AlImageLayerModel::setQuad(AlPointF leftTop,
     quad.setRightTop(rightTop.x, rightTop.y);
 }
 
-AlQuad AlImageLayerModel::getQuad() {
+AlQuad &AlImageLayerModel::getQuad() {
     return quad;
 }
 

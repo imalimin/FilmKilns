@@ -7,6 +7,8 @@
 
 #include "AlImageLayer.h"
 #include "HwTexture.h"
+#include "AlVec4.h"
+#include "Logcat.h"
 
 AlImageLayer *AlImageLayer::create(AlImageLayerModel *model, HwAbsTexture *tex) {
     return new AlImageLayer(model, tex);
@@ -44,42 +46,91 @@ int32_t AlImageLayer::getHeight() {
 }
 
 void AlImageLayer::_draw(AlImageCanvas *canvas) {
-    //Set render params
-    _applyParams();
-    AlSize sSize(this->tex->getWidth(), this->tex->getHeight());
     AlSize dSize(canvas->getWidth(), canvas->getHeight());
-    _calculateLayerQuad(sSize, dSize);
+    //Set render params
+    _applyParams(dSize);
     //Draw layer
     glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
     mCanvasDrawer->draw(this->tex, canvas->getOutput());
 }
 
-void AlImageLayer::_applyParams() {
+void AlImageLayer::_applyParams(AlSize &dest) {
+    AlSize sSize(this->tex->getWidth(), this->tex->getHeight());
+    AlRectF sRectF, dRectF;
+    _calculateRect(sSize, dest, sRectF, dRectF);
+    oMat.update(dRectF.left, dRectF.right, dRectF.bottom, dRectF.top, -1.0f, 1.0f);
+
+    _setScale(model->getScale().x, model->getScale().y);
+    _setRotation(model->getRotation());
+    ///TODO 矩阵Y轴与正常坐标系Y轴相反
+    _setTranslate(model->getPosition().x, -model->getPosition().y, dRectF);
+
+    ///设置Drawer的变换矩阵
     mCanvasDrawer->setAlpha(model->getAlpha());
-    mCanvasDrawer->setScale(model->getScale().x, model->getScale().y);
-    mCanvasDrawer->setRotation(model->getRotation());
-    ///矩阵Y轴与正常坐标系Y轴相反
-    mCanvasDrawer->setTranslate(model->getPosition().x, -model->getPosition().y);
+    AlMatrix mat = oMat * tMat;
+    mCanvasDrawer->setMatrix(mat);
+    float *vertex = new float[8]{
+            sRectF.left, sRectF.bottom, //LEFT,BOTTOM
+            sRectF.right, sRectF.bottom, //RIGHT,BOTTOM
+            sRectF.left, sRectF.top, //LEFT,TOP
+            sRectF.right, sRectF.top,//RIGHT,TOP
+    };
+    /// 根据Window大小设置纹理顶点
+    /// 保证图片大边总是填充满Window小边
+    /// 此时layer model的scale为1
+    mCanvasDrawer->setVertex(vertex);
+    delete[] vertex;
+    /// 计算图片旋转缩放位移后所在的区域
+    /// 与Shader中的uTextureMatrix * aPosition一致
+    AlVec4 leftTop(sRectF.left, sRectF.top), leftBottom(sRectF.left, sRectF.bottom);
+    AlVec4 rightBottom(sRectF.right, sRectF.bottom), rightTop(sRectF.right, sRectF.top);
+    auto lt = leftTop.multiply(mat).xy();
+    auto lb = leftBottom.multiply(mat).xy();
+    auto rb = rightBottom.multiply(mat).xy();
+    auto rt = rightTop.multiply(mat).xy();
+    model->setQuad(lt, lb, rb, rt);
+    ///TODO 这里需要把Y轴翻转一次
+    model->getQuad().mirrorVertical();
+    model->dump();
 }
 
-void AlImageLayer::_calculateLayerQuad(AlSize &src, AlSize &dest) {
-    if (nullptr == model) {
-        return;
-    }
+void AlImageLayer::_setScale(float scaleX, float scaleY) {
+    tMat.setScale(scaleX, scaleY);
+}
+
+void AlImageLayer::_setRotation(float rotation) {
+    tMat.setRotation(rotation);
+}
+
+void AlImageLayer::_setTranslate(float x, float y, AlRectF rectF) {
+    tMat.setTranslate(x * rectF.getWidth() / 2.0f, y * rectF.getHeight() / 2.0f);
+    tMat.dump();
+}
+
+void
+AlImageLayer::_calculateRect(AlSize &src, AlSize &dest, AlRectF &srcRectF, AlRectF &destRectF) {
     float aspectRatio = dest.width > dest.height ?
                         (float) dest.width / (float) dest.height :
                         (float) dest.height / (float) dest.width;
-    float width = 0.0f, height = 0.0f;
     if (dest.width > dest.height) {
-        width = src.width / (float) src.height / aspectRatio * model->getScale().x;
-        height = 1.0f * model->getScale().y;
+        //计算正交矩阵
+        destRectF.left = -aspectRatio;
+        destRectF.right = -destRectF.left;
+        destRectF.bottom = -1.0f;
+        destRectF.top = -destRectF.bottom;
+        //计算顶点
+        srcRectF.left = -src.width / (float) src.height;
+        srcRectF.right = -srcRectF.left;
+        srcRectF.bottom = -1.0f;
+        srcRectF.top = -srcRectF.bottom;
     } else {
-        width = 1.0f * model->getScale().x;
-        height = src.height / (float) src.width / aspectRatio * model->getScale().y;
+        destRectF.left = -1.0f;
+        destRectF.right = -destRectF.left;
+        destRectF.bottom = -aspectRatio;
+        destRectF.top = -destRectF.bottom;
+        srcRectF.left = -1.0f;
+        srcRectF.right = -srcRectF.left;
+        srcRectF.bottom = -src.height / (float) src.width;
+        srcRectF.top = -srcRectF.bottom;
     }
-    AlPointF leftTop(-width + model->getPosition().x, height + model->getPosition().y);
-    AlPointF leftBottom(-width + model->getPosition().x, -height + model->getPosition().y);
-    AlPointF rightBottom(width + model->getPosition().x, -height + model->getPosition().y);
-    AlPointF rightTop(width + model->getPosition().x, height + model->getPosition().y);
-    model->setQuad(leftTop, leftBottom, rightBottom, rightTop);
 }

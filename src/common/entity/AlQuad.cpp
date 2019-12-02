@@ -65,10 +65,32 @@ AlPointF AlQuad::rightTop() {
     return _rightTop;
 }
 
+/// 四边形内的点都在顺时针（逆时针）向量的同一边
+/// 即夹角小于90o，向量积同向
+/// \param pointF 要求解的点
+/// \return 是否在四边形内部
 bool AlQuad::contain(AlPointF pointF) {
-    bool lt = pointF.x >= _leftTop.x && pointF.y <= _leftTop.y;
-    bool lb = pointF.x >= _leftTop.x && pointF.y >= _leftBottom.y;
-    bool rb = pointF.x <= _rightBottom.x && pointF.y >= _rightBottom.y;
-    bool rt = pointF.x <= _rightTop.x && pointF.y <= _rightTop.y;
-    return lt && lb && rb && rt;
+    float a = (_leftTop.x - _rightTop.x) * (pointF.y - _rightTop.y)
+              - (_leftTop.y - _rightTop.y) * (pointF.x - _rightTop.x);
+    float b = (_rightTop.x - _rightBottom.x) * (pointF.y - _rightBottom.y)
+              - (_rightTop.y - _rightBottom.y) * (pointF.x - _rightBottom.x);
+    float c = (_rightBottom.x - _leftBottom.x) * (pointF.y - _leftBottom.y)
+              - (_rightBottom.y - _leftBottom.y) * (pointF.x - _leftBottom.x);
+    float d = (_leftBottom.x - _leftTop.x) * (pointF.y - _leftTop.y)
+              - (_leftBottom.y - _leftTop.y) * (pointF.x - _leftTop.x);
+    return (a > 0 && b > 0 && c > 0 && d > 0) || (a < 0 && b < 0 && c < 0 && d < 0);
+}
+
+AlQuad &AlQuad::mirrorVertical() {
+    AlVec2::swap(&_leftTop, &_leftBottom);
+    AlVec2::swap(&_rightTop, &_rightBottom);
+    _leftTop.y = -_leftTop.y;
+    _leftBottom.y = -_leftBottom.y;
+    _rightBottom.y = -_rightBottom.y;
+    _rightTop.y = -_rightTop.y;
+    return *this;
+}
+
+AlQuad &AlQuad::mirrorHorizontal() {
+    return *this;
 }
