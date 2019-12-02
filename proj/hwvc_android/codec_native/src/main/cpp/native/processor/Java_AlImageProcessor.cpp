@@ -144,6 +144,17 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_getLay
     return Hw::FAILED.code;
 }
 
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_save
+        (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
+    HwResult ret = Hw::FAILED.code;
+    if (handler) {
+        const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
+        ret = getHandler(handler)->save(std::string(pPath));
+        env->ReleaseStringUTFChars(path, pPath);
+    }
+    return ret.code;
+}
+
 #ifdef __cplusplus
 }
 #endif

@@ -16,6 +16,7 @@ AlImage::AlImage(string alias) : Unit(alias) {
     registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlImage::onUpdateLayer));
     registerEvent(EVENT_AIMAGE_UPDATE_CANVAS,
                   reinterpret_cast<EventFunc>(&AlImage::onUpdateCanvas));
+    registerEvent(EVENT_AIMAGE_SAVE, reinterpret_cast<EventFunc>(&AlImage::onSave));
 }
 
 AlImage::~AlImage() {
@@ -74,6 +75,14 @@ bool AlImage::onInvalidate(Message *m) {
                                tex->getHeight(),
                                tex->fmt());
     postEvent(msg);
+    return true;
+}
+
+bool AlImage::onSave(Message *m) {
+    auto output = mCanvas.getOutput();
+    HwBuffer *buf = HwBuffer::alloc(output->getWidth() * output->getHeight() * 4);
+    mCanvas.getOutput()->read(buf->data());
+    delete buf;
     return true;
 }
 

@@ -52,6 +52,8 @@ public:
 
     int32_t getLayer(float x, float y);
 
+    HwResult save(std::string path);
+
 private:
     void _notifyCanvasUpdate();
 

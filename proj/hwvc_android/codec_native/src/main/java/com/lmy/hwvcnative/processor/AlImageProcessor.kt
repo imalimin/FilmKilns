@@ -125,6 +125,13 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
+    /**
+     * 移动图层，会累加前一次的位移
+     * @param id 图层id
+     * @param x  相对于画布的x轴位移，画布中心为0点，范围[-1, 1]，绝对值大于1时会超出画布范围而不可见
+     * @param y  相对于画布的y轴位移，同x
+     * @return   {@link AlResult}
+     */
     fun postTranslate(id: Int, dx: Float, dy: Float): Int {
         if (!isNativeNull()) {
             return postTranslate(handler, id, dx, dy)
@@ -159,6 +166,17 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
+    /**
+     * 保存图片
+     * @return {@link AlResult}
+     */
+    fun save(path: String): Int {
+        if (!isNativeNull()) {
+            return save(handler, path)
+        }
+        return AlResult.FAILED
+    }
+
     private external fun create(): Long
     private external fun release(handler: Long)
     private external fun prepare(handler: Long, surface: Surface)
@@ -174,6 +192,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
     private external fun getLayer(handler: Long, x: Float, y: Float): Int
+    private external fun save(handler: Long, path: String): Int
 
     companion object {
         fun create(): AlImageProcessor = AlImageProcessor()

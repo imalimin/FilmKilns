@@ -31,6 +31,8 @@ public:
 
     bool onUpdateCanvas(Message *m);
 
+    bool onSave(Message *m);
+
 private:
     void _newDefaultCanvas();
 

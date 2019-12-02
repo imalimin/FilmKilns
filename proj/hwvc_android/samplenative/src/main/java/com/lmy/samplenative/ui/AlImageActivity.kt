@@ -2,6 +2,7 @@ package com.lmy.samplenative.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Environment
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -16,6 +17,7 @@ import com.lmy.samplenative.R
 import com.microsoft.officeuifabric.bottomsheet.BottomSheetDialog
 import com.microsoft.officeuifabric.bottomsheet.BottomSheetItem
 import kotlinx.android.synthetic.main.activity_al_image.*
+import java.io.File
 
 class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         View.OnClickListener, BottomSheetItem.OnClickListener {
@@ -123,7 +125,8 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 
     private val OPTS = arrayListOf<BottomSheetItem>(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Show All Layer"))
+            BottomSheetItem(1, R.mipmap.ic_launcher, "Show All Layer"),
+            BottomSheetItem(3, R.mipmap.ic_launcher, "Save"))
 
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
         when (item.id) {
@@ -132,6 +135,10 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
             1 -> {
                 showAllLayers()
+            }
+            3 -> {
+                processor?.save("${File(Environment.getExternalStorageDirectory(),
+                        "alimage.jpg").absoluteFile}")
             }
         }
     }

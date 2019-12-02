@@ -214,3 +214,9 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
     }
     return Hw::FAILED.code;
 }
+
+HwResult AlImageProcessor::save(std::string path) {
+    Message *msg = new Message(EVENT_AIMAGE_SAVE);
+    postEvent(msg);
+    return Hw::SUCCESS;
+}
