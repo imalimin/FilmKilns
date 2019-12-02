@@ -13,6 +13,7 @@
 #include "HwAbsTexture.h"
 #include "AlCanvasDrawer.h"
 #include "AlImageLayerModel.h"
+#include "AlLayerMeasure.h"
 
 class AlImageLayerManager;
 
@@ -37,18 +38,7 @@ private:
 
     void _draw(AlImageCanvas *canvas);
 
-    void _applyParams(AlSize &dest);
-
-    void _setScale(float scaleX, float scaleY);
-
-    void _setRotation(float rotation);
-
-    void _setTranslate(float x, float y, AlRectF rectF);
-
-    /// 计算正交矩阵
-    /// \param src 图层大小
-    /// \param dest 窗口大小
-    void _calculateRect(AlSize &src, AlSize &dest, AlRectF &srcRectF, AlRectF &destRectF);
+    void _measure(AlSize &canvasSize);
 
 private:
     AlImageLayerModel *model = nullptr;
@@ -56,11 +46,7 @@ private:
     friend AlImageLayerManager;
     HwAbsTexture *tex = nullptr;
     AlCanvasDrawer *mCanvasDrawer = nullptr;
-    ///用于变换操作的矩阵
-    ///Orthogonal matrix
-    AlOrthMatrix oMat;
-    ///Translate matrix
-    AlMatrix tMat;
+    AlLayerMeasure measure;
 };
 
 

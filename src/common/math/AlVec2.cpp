@@ -28,3 +28,8 @@ AlVec2::~AlVec2() {
     x = 0.0f;
     y = 0.0f;
 }
+
+void AlVec2::set(AlVec2 vec) {
+    x = vec.x;
+    y = vec.y;
+}

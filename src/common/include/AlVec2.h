@@ -23,6 +23,8 @@ public:
 
     virtual ~AlVec2();
 
+    void set(AlVec2 vec);
+
 public:
     float x = 0.0f;
     float y = 0.0f;
