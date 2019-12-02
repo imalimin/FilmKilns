@@ -41,7 +41,7 @@ private:
     //Orthogonal matrix
     AlOrthMatrix oMat;
     //Translate matrix
-    AlOrthMatrix tMat;
+    AlMatrix tMat;
     float alpha = 0.0;
 };
 

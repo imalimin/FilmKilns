@@ -97,7 +97,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         when (seekBar.id) {
             R.id.scaleBar ->
-                processor?.setScale(mCurrentLayer, progress / 1000f * 5)
+                processor?.setRotation(mCurrentLayer, 3.141592653f * progress / 1000)
         }
     }
 

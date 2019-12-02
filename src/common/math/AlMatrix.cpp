@@ -40,10 +40,10 @@ void AlMatrix::setScale(float scaleX, float scaleY) {
 
 void AlMatrix::setRotation(float rotation) {
     AlMatrix mat;
-    mat._set(0, 0, cosf(rotation) * _get(0, 0));
-    mat._set(0, 1, -sinf(rotation) * _get(1, 1));
-    mat._set(1, 0, sinf(rotation) * _get(0, 0));
-    mat._set(1, 1, cosf(rotation) * _get(1, 1));
+    mat._set(0, 0, cosf(rotation) * get(0, 0));
+    mat._set(0, 1, -sinf(rotation) * get(1, 1));
+    mat._set(1, 0, sinf(rotation) * get(0, 0));
+    mat._set(1, 1, cosf(rotation) * get(1, 1));
     memcpy(data(), mat.data(), SIZE * sizeof(float));
 }
 
@@ -51,12 +51,12 @@ float *AlMatrix::data() {
     return matrix;
 }
 
-void AlMatrix::_set(int32_t x, int32_t y, float val) {
-    matrix[x + y * 4] = val;
+void AlMatrix::_set(int32_t row, int32_t col, float val) {
+    matrix[row + col * 4] = val;
 }
 
-float AlMatrix::_get(int32_t x, int32_t y) {
-    return matrix[x + y * 4];
+float AlMatrix::get(int32_t row, int32_t col) {
+    return matrix[row + col * 4];
 }
 
 void AlMatrix::setTranslate(float x, float y) {
@@ -71,18 +71,18 @@ AlMatrix &AlMatrix::operator*(AlMatrix m) {
     }
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            mat->_set(i, j, _get(i, 0) * m._get(0, j) +
-                            _get(i, 1) * m._get(1, j) +
-                            _get(i, 2) * m._get(2, j) +
-                            _get(i, 3) * m._get(3, j));
+            mat->_set(i, j, get(i, 0) * m.get(0, j) +
+                            get(i, 1) * m.get(1, j) +
+                            get(i, 2) * m.get(2, j) +
+                            get(i, 3) * m.get(3, j));
         }
     }
     return *mat;
 }
 
 void AlMatrix::dump() {
-    Logcat::i(TAG, "1: {%f, %f, %f, %f}", _get(0, 0), _get(0, 1), _get(0, 2), _get(0, 3));
-    Logcat::i(TAG, "2: {%f, %f, %f, %f}", _get(1, 0), _get(1, 1), _get(1, 2), _get(1, 3));
-    Logcat::i(TAG, "3: {%f, %f, %f, %f}", _get(2, 0), _get(2, 1), _get(2, 2), _get(2, 3));
-    Logcat::i(TAG, "4: {%f, %f, %f, %f}", _get(3, 0), _get(3, 1), _get(3, 2), _get(3, 3));
+    Logcat::i(TAG, "1: {%f, %f, %f, %f}", get(0, 0), get(0, 1), get(0, 2), get(0, 3));
+    Logcat::i(TAG, "2: {%f, %f, %f, %f}", get(1, 0), get(1, 1), get(1, 2), get(1, 3));
+    Logcat::i(TAG, "3: {%f, %f, %f, %f}", get(2, 0), get(2, 1), get(2, 2), get(2, 3));
+    Logcat::i(TAG, "4: {%f, %f, %f, %f}", get(3, 0), get(3, 1), get(3, 2), get(3, 3));
 }

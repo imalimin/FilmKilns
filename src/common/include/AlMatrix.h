@@ -29,14 +29,18 @@ public:
 
     AlMatrix &operator*(AlMatrix m);
 
+    /// 根据下标取矩阵的值
+    /// \param row 行
+    /// \param col 列
+    /// \return 下标对应的值
+    float get(int32_t row, int32_t col);
+
     virtual float *data();
 
     void dump();
 
 private:
-    void _set(int32_t x, int32_t y, float val);
-
-    float _get(int32_t x, int32_t y);
+    void _set(int32_t row, int32_t col, float val);
 
 public:
     static const float PI;

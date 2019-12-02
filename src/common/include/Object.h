@@ -27,6 +27,8 @@ public:
     Object();
 
     virtual ~Object();
+
+    virtual std::string toString();
 };
 
 

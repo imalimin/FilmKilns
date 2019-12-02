@@ -11,3 +11,7 @@ Object::Object() {
 
 Object::~Object() {
 }
+
+std::string Object::toString() {
+    return std::string();
+}

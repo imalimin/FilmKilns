@@ -7,6 +7,7 @@
 
 #include "AlCanvasDrawer.h"
 #include "Logcat.h"
+#include "AlVec4.h"
 
 #define TAG "AlCanvasDrawer"
 
@@ -43,7 +44,8 @@ void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
     AlSize dSize(dest->getWidth(), dest->getHeight());
     _calculateRect(sSize, dSize);
     oMat.update(dRectF.left, dRectF.right, dRectF.bottom, dRectF.top, -1.0f, 1.0f);
-    auto *m = HwMatrix::fromArray((oMat * tMat).data());
+    AlMatrix mat = oMat * tMat;
+    auto *m = HwMatrix::fromArray(mat.data());
     program->updateMatrix(m);
     delete m;
     float *vertex = new float[8]{
@@ -52,6 +54,9 @@ void AlCanvasDrawer::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
             sRectF.left, sRectF.top, //LEFT,TOP
             sRectF.right, sRectF.top,//RIGHT,TOP
     };
+    AlVec4 leftTop(sRectF.left, sRectF.top);
+    leftTop.multiply(mat);
+    leftTop.dump();
     program->updateLocation(nullptr, vertex);
     delete[] vertex;
 }
