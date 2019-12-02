@@ -60,3 +60,58 @@ HwBitmap *HwBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
     delete buf;
     return bitmap;
 }
+
+HwResult
+HwBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf, int32_t quality, std::string path) {
+    if (nullptr == buf || w <= 0 || h <= 0 || path.empty()) return Hw::FAILED;
+
+    FILE *file = fopen(path.c_str(), "wb");
+    if (file == nullptr) {
+        return Hw::FAILED;
+    }
+
+    //1.创建jpeg压缩对象
+    struct jpeg_compress_struct jcs;
+
+    //错误回调
+    struct jpeg_error_mgr error;
+    jcs.err = jpeg_std_error(&error);
+
+    //2.创建压缩对象
+    jpeg_create_compress(&jcs);
+
+    //3.指定存储文件
+    jpeg_stdio_dest(&jcs, file);
+
+    //4.压缩参数配置
+    jcs.image_width = w;
+    jcs.image_height = h;
+
+    //yuv
+    jcs.input_components = 4;
+    jcs.in_color_space = JCS_EXT_RGBA;
+    jpeg_set_defaults(&jcs);
+
+    //开启哈夫曼
+    jcs.arith_code = FALSE;
+    jcs.optimize_coding = TRUE;
+    jpeg_set_quality(&jcs, quality, TRUE);
+
+    //5.开始压缩
+    jpeg_start_compress(&jcs, TRUE);
+
+    int row_stride = w << 2;
+
+    JSAMPROW row[1];
+    while (jcs.next_scanline < jcs.image_height) {
+        uint8_t *pixels = buf->data() + jcs.next_scanline * row_stride;
+        row[0] = pixels;
+        jpeg_write_scanlines(&jcs, row, 1);
+    }
+
+    //6.结束压缩，释放资源
+    jpeg_finish_compress(&jcs);
+    fclose(file);
+    jpeg_destroy_compress(&jcs);
+    return Hw::SUCCESS;
+}

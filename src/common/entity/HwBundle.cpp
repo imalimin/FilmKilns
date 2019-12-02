@@ -51,7 +51,7 @@ const int64_t &HwBundle::getInt64(string key) {
 
 const string &HwBundle::getString(string key) {
     if (strMap.end() == strMap.find(key)) {
-        return "";
+        return std::string();
     }
     return strMap[key];
 }

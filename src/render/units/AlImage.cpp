@@ -79,9 +79,15 @@ bool AlImage::onInvalidate(Message *m) {
 }
 
 bool AlImage::onSave(Message *m) {
+    std::string path = getString("output_path");
+    if (path.empty()) {
+        return true;
+    }
     auto output = mCanvas.getOutput();
-    HwBuffer *buf = HwBuffer::alloc(output->getWidth() * output->getHeight() * 4);
+    size_t size = static_cast<size_t>(output->getWidth() * output->getHeight() * 4);
+    AlBuffer *buf = AlBuffer::alloc(size);
     mCanvas.getOutput()->read(buf->data());
+    HwBitmapFactory::save(output->getWidth(), output->getHeight(), buf, 80, path);
     delete buf;
     return true;
 }

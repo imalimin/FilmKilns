@@ -216,6 +216,7 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
 }
 
 HwResult AlImageProcessor::save(std::string path) {
+    putString("output_path", path).to({ALIAS_OF_IMAGE});
     Message *msg = new Message(EVENT_AIMAGE_SAVE);
     postEvent(msg);
     return Hw::SUCCESS;

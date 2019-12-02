@@ -26,6 +26,8 @@ public:
 
     static HwBitmap *decodeBuffer(AlBuffer *srcBuf);
 
+    static HwResult save(int32_t w, int32_t h, AlBuffer *buf, int32_t quality, std::string path);
+
 };
 
 
