@@ -35,14 +35,14 @@ AlMatrix::~AlMatrix() {
 void AlMatrix::setScale(float scaleX, float scaleY) {
     _set(0, 0, scaleX);
     _set(1, 1, scaleY);
-    _set(2, 3, 1.0f);
+    _set(3, 2, 1.0f);
 }
 
 void AlMatrix::setRotation(float rotation) {
     AlMatrix mat;
     mat._set(0, 0, cosf(rotation) * get(0, 0));
-    mat._set(0, 1, -sinf(rotation) * get(1, 1));
-    mat._set(1, 0, sinf(rotation) * get(0, 0));
+    mat._set(1, 0, -sinf(rotation) * get(1, 1));
+    mat._set(0, 1, sinf(rotation) * get(0, 0));
     mat._set(1, 1, cosf(rotation) * get(1, 1));
     memcpy(data(), mat.data(), SIZE * sizeof(float));
 }
@@ -52,16 +52,16 @@ float *AlMatrix::data() {
 }
 
 void AlMatrix::_set(int32_t row, int32_t col, float val) {
-    matrix[row + col * 4] = val;
+    matrix[row * 4 + col] = val;
 }
 
 float AlMatrix::get(int32_t row, int32_t col) {
-    return matrix[row + col * 4];
+    return matrix[row * 4 + col];
 }
 
 void AlMatrix::setTranslate(float x, float y) {
-    _set(0, 3, x);
-    _set(1, 3, y);
+    _set(3, 0, x);
+    _set(3, 1, y);
 }
 
 AlMatrix &AlMatrix::operator*(AlMatrix m) {
@@ -71,10 +71,10 @@ AlMatrix &AlMatrix::operator*(AlMatrix m) {
     }
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            mat->_set(i, j, get(i, 0) * m.get(0, j) +
-                            get(i, 1) * m.get(1, j) +
-                            get(i, 2) * m.get(2, j) +
-                            get(i, 3) * m.get(3, j));
+            mat->_set(j, i, get(0, i) * m.get(j, 0) +
+                            get(1, i) * m.get(j, 1) +
+                            get(2, i) * m.get(j, 2) +
+                            get(3, i) * m.get(j, 3));
         }
     }
     return *mat;

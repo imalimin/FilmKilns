@@ -22,6 +22,13 @@
             android:layout_margin="8dp"
             android:max="1000" />
 
+        <SeekBar
+            android:id="@+id/rotateBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:max="1000" />
+
         <ImageButton
             android:id="@+id/showOpt"
             android:layout_width="wrap_content"
