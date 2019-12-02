@@ -38,7 +38,7 @@ public:
     /// 碰撞检测
     /// \param pointF 进行检测的点
     /// \return true or fale
-    bool contain(AlPointF pointF);
+    bool inside(AlPointF pointF);
 
     /// 绕Y轴翻转
     /// \return

@@ -10,6 +10,8 @@
 #include "AlVec4.h"
 #include "Logcat.h"
 
+#define TAG "AlImageLayer"
+
 AlImageLayer *AlImageLayer::create(AlImageLayerModel *model, HwAbsTexture *tex) {
     return new AlImageLayer(model, tex);
 }
@@ -76,7 +78,7 @@ void AlImageLayer::_applyParams(AlSize &dest) {
             sRectF.right, sRectF.top,//RIGHT,TOP
     };
     /// 根据Window大小设置纹理顶点
-    /// 保证图片大边总是填充满Window小边
+    /// 保证图片大边总是填充满Canvas小边
     /// 此时layer model的scale为1
     mCanvasDrawer->setVertex(vertex);
     delete[] vertex;
@@ -91,7 +93,6 @@ void AlImageLayer::_applyParams(AlSize &dest) {
     model->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
     model->getQuad().mirrorVertical();
-    model->dump();
 }
 
 void AlImageLayer::_setScale(float scaleX, float scaleY) {
@@ -104,33 +105,39 @@ void AlImageLayer::_setRotation(float rotation) {
 
 void AlImageLayer::_setTranslate(float x, float y, AlRectF rectF) {
     tMat.setTranslate(x * rectF.getWidth() / 2.0f, y * rectF.getHeight() / 2.0f);
-    tMat.dump();
 }
 
-void
-AlImageLayer::_calculateRect(AlSize &src, AlSize &dest, AlRectF &srcRectF, AlRectF &destRectF) {
+void AlImageLayer::_calculateRect(AlSize &src, AlSize &dest,
+                                  AlRectF &srcRectF, AlRectF &destRectF) {
     float aspectRatio = dest.width > dest.height ?
                         (float) dest.width / (float) dest.height :
                         (float) dest.height / (float) dest.width;
+
+    //计算正交矩阵
     if (dest.width > dest.height) {
-        //计算正交矩阵
         destRectF.left = -aspectRatio;
         destRectF.right = -destRectF.left;
         destRectF.bottom = -1.0f;
         destRectF.top = -destRectF.bottom;
-        //计算顶点
-        srcRectF.left = -src.width / (float) src.height;
-        srcRectF.right = -srcRectF.left;
-        srcRectF.bottom = -1.0f;
-        srcRectF.top = -srcRectF.bottom;
     } else {
         destRectF.left = -1.0f;
         destRectF.right = -destRectF.left;
         destRectF.bottom = -aspectRatio;
         destRectF.top = -destRectF.bottom;
-        srcRectF.left = -1.0f;
+    }
+    /// 根据Canvas大小计算纹理顶点
+    /// 保证图片总是完整填充到Canvas
+    /// 并保证至Layer和Canvas至少有一边相等
+    /// 此时layer model的scale=1为默认状态
+    if (src.width / (float) src.height > dest.width / (float) dest.height) {
+        srcRectF.left = destRectF.left;
         srcRectF.right = -srcRectF.left;
-        srcRectF.bottom = -src.height / (float) src.width;
+        srcRectF.bottom = srcRectF.left * src.height / (float) src.width;
         srcRectF.top = -srcRectF.bottom;
+    } else {
+        srcRectF.bottom = destRectF.bottom;
+        srcRectF.top = -srcRectF.bottom;
+        srcRectF.left = srcRectF.bottom * src.width / (float) src.height;
+        srcRectF.right = -srcRectF.left;
     }
 }

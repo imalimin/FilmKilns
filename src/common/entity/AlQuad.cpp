@@ -69,7 +69,7 @@ AlPointF AlQuad::rightTop() {
 /// 即夹角小于90o，向量积同向
 /// \param pointF 要求解的点
 /// \return 是否在四边形内部
-bool AlQuad::contain(AlPointF pointF) {
+bool AlQuad::inside(AlPointF pointF) {
     float a = (_leftTop.x - _rightTop.x) * (pointF.y - _rightTop.y)
               - (_leftTop.y - _rightTop.y) * (pointF.x - _rightTop.x);
     float b = (_rightTop.x - _rightBottom.x) * (pointF.y - _rightBottom.y)

@@ -207,7 +207,7 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
     for (int i = size - 1; i >= 0; --i) {
         auto *it = mLayers.at(static_cast<unsigned int>(i));
 //        Logcat::i(TAG, "%s(%d): %f, %f", __FUNCTION__, __LINE__, x, y);
-        if (it && it->getQuad().contain(AlPointF(x, y))) {
+        if (it && it->getQuad().inside(AlPointF(x, y))) {
 //            it->dump();
             return it->getId();
         }
