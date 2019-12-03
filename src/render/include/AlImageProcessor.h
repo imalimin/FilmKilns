@@ -14,6 +14,7 @@
 #include "AlImageCanvasModel.h"
 #include "AlImageLayerModel.h"
 #include "AlSize.h"
+#include "AlRational.h"
 #include <vector>
 
 class AlImageProcessor : public HwAbsProcessor {
@@ -38,7 +39,7 @@ public:
 
     HwResult moveLayerIndex(int32_t id, int32_t index);
 
-    HwResult setScale(int32_t id, float scale);
+    HwResult setScale(int32_t id, AlRational scale);
 
     HwResult setRotation(int32_t id, float rotation);
 

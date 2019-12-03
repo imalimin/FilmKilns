@@ -18,6 +18,8 @@ public:
 
     ~AlRational();
 
+    float toFloat();
+
 public:
     int32_t num; ///< Numerator
     int32_t den; ///< Denominator

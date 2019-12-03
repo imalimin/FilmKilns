@@ -5,12 +5,11 @@ import android.content.Intent
 import android.os.Environment
 import android.util.Log
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.SeekBar
 import com.lmy.common.ui.GallerySelectActivity
-import com.lmy.hwvcnative.entity.AlResult
+import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.processor.AlImageProcessor
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
@@ -91,7 +90,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         when (seekBar.id) {
             R.id.scaleBar ->
-                processor?.setScale(mCurrentLayer, progress / 1000f * 3 + 0.5f)
+                processor?.setScale(mCurrentLayer, AlRational(progress * 3 + 500, 1000))
             R.id.rotateBar ->
                 processor?.setRotation(mCurrentLayer, 3.141592653f * progress / 1000)
         }

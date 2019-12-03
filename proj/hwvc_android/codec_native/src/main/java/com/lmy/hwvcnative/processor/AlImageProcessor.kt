@@ -2,6 +2,7 @@ package com.lmy.hwvcnative.processor
 
 import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
+import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.entity.AlResult
 
 class AlImageProcessor private constructor() : CPPObject() {
@@ -91,9 +92,9 @@ class AlImageProcessor private constructor() : CPPObject() {
      * @param scale 缩放倍数
      * @return      {@link AlResult}
      */
-    fun setScale(id: Int, scale: Float): Int {
+    fun setScale(id: Int, scale: AlRational): Int {
         if (!isNativeNull()) {
-            return setScale(handler, id, scale)
+            return setScale(handler, id, scale.num, scale.den)
         }
         return AlResult.FAILED
     }
@@ -186,7 +187,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun addLayer(handler: Long, path: String): Int
     private external fun moveLayerIndex(handler: Long, id: Int, index: Int): Int
     private external fun removeLayer(handler: Long, id: Int): Int
-    private external fun setScale(handler: Long, id: Int, scale: Float): Int
+    private external fun setScale(handler: Long, id: Int, scaleNum: Int, scaleDen: Int): Int
     private external fun setRotation(handler: Long, id: Int, rotation: Float): Int
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int

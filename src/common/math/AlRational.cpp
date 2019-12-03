@@ -17,5 +17,9 @@ AlRational::AlRational(const AlRational &o) : Object(), num(o.num), den(o.den) {
 
 AlRational::~AlRational() {
     num = 0;
-    num = 1;
+    den = 1;
+}
+
+float AlRational::toFloat() {
+    return num / (float) den;
 }

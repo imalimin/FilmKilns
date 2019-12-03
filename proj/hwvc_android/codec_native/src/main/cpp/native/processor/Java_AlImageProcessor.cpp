@@ -97,9 +97,9 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_remove
 }
 
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setScale
-        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat scale) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jint scaleNum, jint scaleDen) {
     if (handler) {
-        return getHandler(handler)->setScale(id, scale).code;
+        return getHandler(handler)->setScale(id, AlRational(scaleNum, scaleDen)).code;
     }
     return Hw::FAILED.code;
 }

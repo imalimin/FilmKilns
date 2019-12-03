@@ -118,11 +118,11 @@ HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
     return Hw::FAILED;
 }
 
-HwResult AlImageProcessor::setScale(int32_t id, float scale) {
+HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        layer->setScale(scale, scale);
+        layer->setScale(scale.toFloat(), scale.toFloat());
         invalidate();
         return Hw::SUCCESS;
     }
