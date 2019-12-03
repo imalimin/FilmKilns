@@ -22,21 +22,7 @@ AlImageLayer::AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex) : Object
 }
 
 AlImageLayer::~AlImageLayer() {
-    delete mCanvasDrawer;
-    mCanvasDrawer = nullptr;
     model = nullptr;
-}
-
-void AlImageLayer::draw(AlImageCanvas *canvas) {
-    if (nullptr == mCanvasDrawer) {
-        mCanvasDrawer = new AlCanvasDrawer();
-        mCanvasDrawer->prepare();
-    }
-    HwAbsTexture *canvasTex = canvas->getOutput();
-    if (canvasTex) {
-        _draw(canvas);
-        delete canvasTex;
-    }
 }
 
 int32_t AlImageLayer::getWidth() {
@@ -47,37 +33,32 @@ int32_t AlImageLayer::getHeight() {
     return this->tex->getHeight();
 }
 
-void AlImageLayer::_draw(AlImageCanvas *canvas) {
-    AlSize canvasSize(canvas->getWidth(), canvas->getHeight());
-    //Set render params
-    _measure(canvasSize);
-    //Draw layer
-    glViewport(0, 0, canvas->getWidth(), canvas->getHeight());
-    mCanvasDrawer->draw(this->tex, canvas->getOutput());
-}
-
-void AlImageLayer::_measure(AlSize &canvasSize) {
+HwResult AlImageLayer::measure(AlImageLayerDrawModel &drawModel) {
+    AlSize canvasSize = drawModel.getCanvasSize();
     AlSize src(this->tex->getWidth(), this->tex->getHeight());
     /// 对图层和画布进行正交投影计算，转换坐标系，保证图像旋转缩放不会变形，并得到归一化的区域
-    measure.update(src, canvasSize);
-    measure.setScale(model->getScale().x, model->getScale().y);
-    measure.setRotation(model->getRotation());
+    aMeasure.update(src, canvasSize);
+    aMeasure.setScale(model->getScale().x, model->getScale().y);
+    aMeasure.setRotation(model->getRotation());
     ///TODO 矩阵Y轴与正常坐标系Y轴相反
-    measure.setTranslate(model->getPosition().x, -model->getPosition().y);
-    AlMatrix mat = measure.getMatrix();
-    AlRectF rectF = measure.getLayerRectF();
+    aMeasure.setTranslate(model->getPosition().x, -model->getPosition().y);
+    drawModel.tex = HwTexture::wrap(tex->target(),
+                                    tex->texId(),
+                                    tex->getWidth(),
+                                    tex->getHeight(),
+                                    tex->fmt());
+    drawModel.alpha = model->getAlpha();
+    drawModel.mat = aMeasure.getMatrix();
+    drawModel.vertexRectF = aMeasure.getLayerRectF();
+    ///Update quad.
     AlVec2 lt;
     AlVec2 lb;
     AlVec2 rb;
     AlVec2 rt;
     ///获得经过位移旋转缩放变换后图像的位置坐标
-    measure.getTransLORectF(lt, lb, rb, rt);
-    ///设置Drawer的变换矩阵
-    mCanvasDrawer->setAlpha(model->getAlpha());
-    mCanvasDrawer->setMatrix(mat);
-    ///设置纹理顶点
-    mCanvasDrawer->setVertexRectF(rectF);
+    aMeasure.getTransLORectF(lt, lb, rb, rt);
     model->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
     model->getQuad().mirrorVertical();
+    return Hw::SUCCESS;
 }

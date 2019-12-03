@@ -57,10 +57,7 @@ bool AlImage::onInvalidate(Message *m) {
     if (!mLayerManager.empty()) {
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
-            auto layer = mLayerManager.getLayer(i);
-            if (layer) {
-                layer->draw(&mCanvas);
-            }
+            mCanvas.draw(mLayerManager.getLayer(i));
         }
     }
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);

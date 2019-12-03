@@ -9,11 +9,11 @@
 #define HWVC_ANDROID_ALIMAGELAYER_H
 
 #include "Object.h"
-#include "AlImageCanvas.h"
+#include "HwResult.h"
 #include "HwAbsTexture.h"
-#include "AlCanvasDrawer.h"
 #include "AlImageLayerModel.h"
 #include "AlLayerMeasure.h"
+#include "AlImageLayerDrawModel.h"
 
 class AlImageLayerManager;
 
@@ -25,28 +25,26 @@ public:
 public:
     ~AlImageLayer();
 
-    void draw(AlImageCanvas *canvas);
-
     int32_t getWidth();
 
     int32_t getHeight();
+
+    /// Measure all params for canvas
+    /// \param drawModel
+    /// \return {@link HwResult}
+    HwResult measure(AlImageLayerDrawModel &drawModel);
 
 private:
     AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex);
 
     AlImageLayer(const AlImageLayer &e) : Object() {};
 
-    void _draw(AlImageCanvas *canvas);
-
-    void _measure(AlSize &canvasSize);
-
 private:
     AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.
     friend AlImageLayerManager;
     HwAbsTexture *tex = nullptr;
-    AlCanvasDrawer *mCanvasDrawer = nullptr;
-    AlLayerMeasure measure;
+    AlLayerMeasure aMeasure;
 };
 
 
