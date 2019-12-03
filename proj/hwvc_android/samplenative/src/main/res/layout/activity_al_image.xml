@@ -67,14 +67,6 @@
         </TableLayout>
 
         <SeekBar
-            android:id="@+id/scaleBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:progress="166"
-            android:max="1000" />
-
-        <SeekBar
             android:id="@+id/rotateBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

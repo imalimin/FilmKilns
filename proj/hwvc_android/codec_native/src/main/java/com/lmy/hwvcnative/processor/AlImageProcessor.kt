@@ -100,6 +100,19 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
+     * 累乘缩放图层
+     * @param id 图层id
+     * @param ds 缩放因子
+     * @return   {@link AlResult}
+     */
+    fun postScale(id: Int, ds: AlRational): Int {
+        if (!isNativeNull()) {
+            return postScale(handler, id, ds.num, ds.den)
+        }
+        return AlResult.FAILED
+    }
+
+    /**
      * 旋转图层
      * @param id       图层id
      * @param rotation 旋转角度，单位弧度
@@ -115,7 +128,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     /**
      * 移动图层
      * @param id 图层id
-     * @param x  相对于画布的x轴位移，画布中心为0点，范围[-1, 1]，绝对值大于1时会超出画布范围而不可见
+     * @param x  相对于画布的x轴位移，画布中心为0点，x∈[-1, 1]为画布可见范围，绝对值大于1时会超出画布范围而不可见
      * @param y  相对于画布的y轴位移，同x
      * @return   {@link AlResult}
      */
@@ -129,8 +142,8 @@ class AlImageProcessor private constructor() : CPPObject() {
     /**
      * 移动图层，会累加前一次的位移
      * @param id 图层id
-     * @param x  相对于画布的x轴位移，画布中心为0点，范围[-1, 1]，绝对值大于1时会超出画布范围而不可见
-     * @param y  相对于画布的y轴位移，同x
+     * @param dx  相对于画布的x轴位移，画布中心为0点
+     * @param dy  相对于画布的y轴位移，同dx
      * @return   {@link AlResult}
      */
     fun postTranslate(id: Int, dx: Float, dy: Float): Int {
@@ -188,6 +201,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun moveLayerIndex(handler: Long, id: Int, index: Int): Int
     private external fun removeLayer(handler: Long, id: Int): Int
     private external fun setScale(handler: Long, id: Int, scaleNum: Int, scaleDen: Int): Int
+    private external fun postScale(handler: Long, id: Int, dsNum: Int, dsDen: Int): Int
     private external fun setRotation(handler: Long, id: Int, rotation: Float): Int
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int

@@ -41,6 +41,8 @@ public:
 
     HwResult setScale(int32_t id, AlRational scale);
 
+    HwResult postScale(int32_t id, AlRational ds);
+
     HwResult setRotation(int32_t id, float rotation);
 
     HwResult setTranslate(int32_t id, float x, float y);

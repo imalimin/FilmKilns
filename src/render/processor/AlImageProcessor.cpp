@@ -129,6 +129,18 @@ HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
     return Hw::FAILED;
 }
 
+HwResult AlImageProcessor::postScale(int32_t id, AlRational ds) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer) {
+        layer->setScale(layer->getScale().x * ds.toFloat(),
+                        layer->getScale().y * ds.toFloat());
+        invalidate();
+        return Hw::SUCCESS;
+    }
+    return Hw::FAILED;
+}
+
 HwResult AlImageProcessor::setRotation(int32_t id, float rotation) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
