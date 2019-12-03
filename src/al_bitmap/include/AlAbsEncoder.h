@@ -9,6 +9,9 @@
 #define HWVC_ANDROID_ABSENCODER_H
 
 #include "Object.h"
+#include "AlBuffer.h"
+#include "HwResult.h"
+#include "AlBitmapInfo.h"
 
 al_interface(AlAbsEncoder) {
 public:
@@ -16,9 +19,9 @@ public:
 
     AlAbsEncoder(AlAbsEncoder &e) : Object() {}
 
-    virtual ~AlAbsEncoder(){};
+    virtual ~AlAbsEncoder() {};
 
-    virtual void *process() = 0;
+    virtual HwResult process(AlBuffer *buf, AlBitmapInfo *info, std::string path) = 0;
 };
 
 

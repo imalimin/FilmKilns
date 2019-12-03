@@ -64,3 +64,11 @@ int32_t AlImageCanvas::getWidth() {
 int32_t AlImageCanvas::getHeight() {
     return nullptr != mCanvasTex ? mCanvasTex->getHeight() : 0;
 }
+
+HwResult AlImageCanvas::read(AlBuffer *buf) {
+    if (nullptr == mCanvasTex || nullptr == buf) return Hw::FAILED;
+    mCanvasTex->bind();
+    mCanvasTex->read(buf->data());
+    mCanvasTex->unbind();
+    return Hw::SUCCESS;
+}

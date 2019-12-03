@@ -9,6 +9,8 @@
 #define HWVC_ANDROID_ALIMAGECANVAS_H
 
 #include "Object.h"
+#include "HwResult.h"
+#include "AlBuffer.h"
 #include "HwAbsTexture.h"
 #include "TextureAllocator.h"
 #include "AlColorGridFilter.h"
@@ -30,6 +32,8 @@ public:
     int32_t getWidth();
 
     int32_t getHeight();
+
+    HwResult read(AlBuffer *buf);
 
 private:
     AlImageCanvas(const AlImageCanvas &e) : Object() {};

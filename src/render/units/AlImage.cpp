@@ -86,8 +86,8 @@ bool AlImage::onSave(Message *m) {
     auto output = mCanvas.getOutput();
     size_t size = static_cast<size_t>(output->getWidth() * output->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
-    mCanvas.getOutput()->read(buf->data());
-    HwBitmapFactory::save(output->getWidth(), output->getHeight(), buf, 80, path);
+    mCanvas.read(buf);
+    HwBitmapFactory::save(output->getWidth(), output->getHeight(), buf, path);
     delete buf;
     return true;
 }
