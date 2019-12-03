@@ -123,10 +123,15 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         }
     }
 
+    private fun setCurLayer(layer: Int) {
+        mCurrentLayer = layer
+        layerView.text = mCurrentLayer.toString()
+    }
+
     private val OPTS = arrayListOf<BottomSheetItem>(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Show All Layer"),
-            BottomSheetItem(3, R.mipmap.ic_launcher, "Save"))
+            BottomSheetItem(1, R.mipmap.ic_launcher, "Delete Layer"),
+            BottomSheetItem(2, R.mipmap.ic_launcher, "Save"))
 
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
         when (item.id) {
@@ -134,9 +139,9 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                 GallerySelectActivity.request(this, 100, 1)
             }
             1 -> {
-                showAllLayers()
+                processor?.removeLayer(mCurrentLayer)
             }
-            3 -> {
+            2 -> {
                 processor?.save("${File(Environment.getExternalStorageDirectory(),
                         "alimage.jpg").absoluteFile}")
             }
@@ -147,28 +152,5 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         bottomSheetDialog = BottomSheetDialog(this, OPTS)
         bottomSheetDialog?.onItemClickListener = this
         bottomSheetDialog?.show()
-    }
-
-    private fun showAllLayers() {
-        val list = mLayers.mapTo(ArrayList()) { BottomSheetItem(it, R.mipmap.ic_launcher, "Layer $it") }
-        val dialog = BottomSheetDialog(this, list)
-        dialog.onItemClickListener = object : BottomSheetItem.OnClickListener {
-            override fun onBottomSheetItemClick(item: BottomSheetItem) {
-                if (AlResult.SUCCESS == processor?.removeLayer(item.id)) {
-                    for (i in 0 until mLayers.size) {
-                        if (mLayers[i] == item.id) {
-                            mLayers.removeAt(i)
-                        }
-
-                    }
-                }
-            }
-        }
-        dialog.show()
-    }
-
-    private fun setCurLayer(layer: Int) {
-        mCurrentLayer = layer
-        layerView.text = mCurrentLayer.toString()
     }
 }
