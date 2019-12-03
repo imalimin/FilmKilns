@@ -54,14 +54,13 @@ bool AlImage::onUpdateLayer(Message *msg) {
 
 bool AlImage::onInvalidate(Message *m) {
     mCanvas.clear();
-    if (mLayerManager.empty()) {
-        return true;
-    }
-    int size = mLayerManager.size();
-    for (int i = 0; i < size; ++i) {
-        auto layer = mLayerManager.getLayer(i);
-        if (layer) {
-            layer->draw(&mCanvas);
+    if (!mLayerManager.empty()) {
+        int size = mLayerManager.size();
+        for (int i = 0; i < size; ++i) {
+            auto layer = mLayerManager.getLayer(i);
+            if (layer) {
+                layer->draw(&mCanvas);
+            }
         }
     }
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
