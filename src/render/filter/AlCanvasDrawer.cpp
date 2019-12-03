@@ -53,6 +53,17 @@ void AlCanvasDrawer::setMatrix(AlMatrix &matrix) {
     this->matrix = matrix;
 }
 
-void AlCanvasDrawer::setVertex(float *vertex) {
-    memcpy(this->vertex, vertex, 2 * 4 * sizeof(float));
+void AlCanvasDrawer::setVertexRectF(AlRectF &rectF) {
+    this->vertex[0] = rectF.left;
+    this->vertex[1] = rectF.bottom;
+    this->vertex[2] = rectF.right;
+    this->vertex[3] = rectF.bottom;
+    this->vertex[4] = rectF.left;
+    this->vertex[5] = rectF.top;
+    this->vertex[6] = rectF.right;
+    this->vertex[7] = rectF.top;
+}
+
+void AlCanvasDrawer::setPositionRectF(AlRectF &rectF) {
+
 }

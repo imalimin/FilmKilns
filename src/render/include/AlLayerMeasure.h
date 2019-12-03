@@ -42,7 +42,7 @@ public:
 
     AlMatrix getMatrix();
 
-    void getVertex(float *vertex);
+    AlRectF getLayerRectF();
 
     /// 获取图层变换后的归一化坐标
     /// 与Shader中的uTextureMatrix * aPosition一致

@@ -65,8 +65,7 @@ void AlImageLayer::_measure(AlSize &canvasSize) {
     ///TODO 矩阵Y轴与正常坐标系Y轴相反
     measure.setTranslate(model->getPosition().x, -model->getPosition().y);
     AlMatrix mat = measure.getMatrix();
-    float vertex[8];
-    measure.getVertex(vertex);
+    AlRectF rectF = measure.getLayerRectF();
     AlVec2 lt;
     AlVec2 lb;
     AlVec2 rb;
@@ -77,7 +76,7 @@ void AlImageLayer::_measure(AlSize &canvasSize) {
     mCanvasDrawer->setAlpha(model->getAlpha());
     mCanvasDrawer->setMatrix(mat);
     ///设置纹理顶点
-    mCanvasDrawer->setVertex(vertex);
+    mCanvasDrawer->setVertexRectF(rectF);
     model->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
     model->getQuad().mirrorVertical();

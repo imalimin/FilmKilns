@@ -39,7 +39,7 @@ void AlLayerMeasure::setTranslate(float x, float y) {
 
 
 void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &dest,
-                                   AlRectF &srcRectF, AlRectF &destRectF) {
+                                    AlRectF &srcRectF, AlRectF &destRectF) {
     float aspectRatio = dest.width > dest.height ?
                         (float) dest.width / (float) dest.height :
                         (float) dest.height / (float) dest.width;
@@ -77,19 +77,12 @@ AlMatrix AlLayerMeasure::getMatrix() {
     return oMat * tMat;
 }
 
-void AlLayerMeasure::getVertex(float *vertex) {
-    vertex[0] = lRectF.left;
-    vertex[1] = lRectF.bottom;
-    vertex[2] = lRectF.right;
-    vertex[3] = lRectF.bottom;
-    vertex[4] = lRectF.left;
-    vertex[5] = lRectF.top;
-    vertex[6] = lRectF.right;
-    vertex[7] = lRectF.top;
+AlRectF AlLayerMeasure::getLayerRectF() {
+    return lRectF;
 }
 
 void AlLayerMeasure::getTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
-                                    AlVec2 &rightBottom, AlVec2 &rightTop) {
+                                     AlVec2 &rightBottom, AlVec2 &rightTop) {
     AlMatrix mat = getMatrix();
     AlVec4 lt(lRectF.left, lRectF.top);
     AlVec4 lb(lRectF.left, lRectF.bottom);

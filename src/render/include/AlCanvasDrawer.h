@@ -24,7 +24,9 @@ public:
 
     void setMatrix(AlMatrix &matrix);
 
-    void setVertex(float *vertex);
+    void setVertexRectF(AlRectF &rectF);
+
+    void setPositionRectF(AlRectF &rectF);
 
 private:
     HwProgram *createProgram() override;
