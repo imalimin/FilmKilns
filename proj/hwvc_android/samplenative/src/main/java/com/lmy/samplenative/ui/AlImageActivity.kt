@@ -132,18 +132,24 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 
     private val OPTS = arrayListOf<BottomSheetItem>(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Delete Layer"),
-            BottomSheetItem(2, R.mipmap.ic_launcher, "Save"))
+            BottomSheetItem(10, R.mipmap.ic_launcher, "Rest Layer"),
+            BottomSheetItem(100, R.mipmap.ic_launcher, "Delete Layer"),
+            BottomSheetItem(200, R.mipmap.ic_launcher, "Save"))
 
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
         when (item.id) {
             0 -> {
                 GallerySelectActivity.request(this, 100, 1)
             }
-            1 -> {
+            10 -> {
+                processor?.setTranslate(mCurrentLayer, 0f, 0f)
+                processor?.setRotation(mCurrentLayer, 0f)
+                processor?.setScale(mCurrentLayer, AlRational(1, 1))
+            }
+            100 -> {
                 processor?.removeLayer(mCurrentLayer)
             }
-            2 -> {
+            200 -> {
                 processor?.save("${File(Environment.getExternalStorageDirectory(),
                         "alimage.jpg").absoluteFile}")
             }
