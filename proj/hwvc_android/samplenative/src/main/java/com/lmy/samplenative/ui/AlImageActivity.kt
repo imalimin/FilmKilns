@@ -43,7 +43,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun initView() {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
-        surfaceView?.setOnPosClickListener { v, x, y ->
+        surfaceView?.setOnClickListener { v, x, y ->
             if (null != processor) {
                 setCurLayer(processor!!.getLayer(x, y))
             }

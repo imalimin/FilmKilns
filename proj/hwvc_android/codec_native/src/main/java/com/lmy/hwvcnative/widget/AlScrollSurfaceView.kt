@@ -13,7 +13,7 @@ class AlScrollSurfaceView : SurfaceView {
     private lateinit var mScaleDetector: ScaleGestureDetector
     private lateinit var scroller: OverScroller
     private var onScrollListener: OnScrollListener? = null
-    private var onPosClickListener: OnPosClickListener? = null
+    private var onClickListener: OnClickListener? = null
     private var onScaleListener: OnScaleListener? = null
 
     private val mCurrentPosition = PointF(0f, 0f)
@@ -70,16 +70,16 @@ class AlScrollSurfaceView : SurfaceView {
         onScrollListener = listener
     }
 
-    fun setOnPosClickListener(listener: (v: SurfaceView, x: Float, y: Float) -> Unit) {
-        setOnPosClickListener(object : OnPosClickListener {
+    fun setOnClickListener(listener: (v: SurfaceView, x: Float, y: Float) -> Unit) {
+        setOnClickListener(object : OnClickListener {
             override fun onClick(v: SurfaceView, x: Float, y: Float) {
                 listener(v, x, y)
             }
         })
     }
 
-    fun setOnPosClickListener(listener: OnPosClickListener?) {
-        onPosClickListener = listener
+    fun setOnClickListener(listener: OnClickListener?) {
+        onClickListener = listener
     }
 
     fun setOnScaleListener(listener: (v: SurfaceView, ds: AlRational) -> Unit) {
@@ -98,7 +98,7 @@ class AlScrollSurfaceView : SurfaceView {
         fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float)
     }
 
-    interface OnPosClickListener {
+    interface OnClickListener {
         fun onClick(v: SurfaceView, x: Float, y: Float)
     }
 
@@ -118,7 +118,7 @@ class AlScrollSurfaceView : SurfaceView {
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent): Boolean {
             parent.requestDisallowInterceptTouchEvent(true)
-            onPosClickListener?.onClick(this@AlScrollSurfaceView,
+            onClickListener?.onClick(this@AlScrollSurfaceView,
                     e.x * 2 / width.toFloat() - 1f,
                     -(e.y * 2 / height.toFloat() - 1f))
             return true
