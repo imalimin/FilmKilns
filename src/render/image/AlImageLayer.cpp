@@ -42,11 +42,7 @@ HwResult AlImageLayer::measure(AlImageLayerDrawModel &drawModel) {
     aMeasure.setRotation(model->getRotation());
     ///TODO 矩阵Y轴与正常坐标系Y轴相反
     aMeasure.setTranslate(model->getPosition().x, -model->getPosition().y);
-    drawModel.tex = HwTexture::wrap(tex->target(),
-                                    tex->texId(),
-                                    tex->getWidth(),
-                                    tex->getHeight(),
-                                    tex->fmt());
+    drawModel.tex = HwTexture::wrap(dynamic_cast<HwTexture *>(tex));
     drawModel.alpha = model->getAlpha();
     drawModel.mat = aMeasure.getMatrix();
     drawModel.vertexRectF = aMeasure.getLayerRectF();

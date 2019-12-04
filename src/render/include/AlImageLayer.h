@@ -15,6 +15,8 @@
 #include "AlLayerMeasure.h"
 #include "AlImageLayerDrawModel.h"
 
+class AlImageCanvas;
+
 class AlImageLayerManager;
 
 al_class(AlImageLayer) {
@@ -29,15 +31,18 @@ public:
 
     int32_t getHeight();
 
-    /// Measure all params for canvas
-    /// \param drawModel
-    /// \return {@link HwResult}
-    HwResult measure(AlImageLayerDrawModel &drawModel);
-
 private:
     AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex);
 
     AlImageLayer(const AlImageLayer &e) : Object() {};
+
+private:
+    friend AlImageCanvas;
+
+    /// Measure all params for canvas
+    /// \param drawModel
+    /// \return {@link HwResult}
+    HwResult measure(AlImageLayerDrawModel &drawModel);
 
 private:
     AlImageLayerModel *model = nullptr;

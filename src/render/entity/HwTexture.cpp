@@ -31,6 +31,12 @@ HwTexture *HwTexture::alloc(uint32_t target) {
     return new HwTexture(target);
 }
 
+HwTexture *HwTexture::wrap(HwTexture *tex) {
+    HwTexture *t = new HwTexture(tex->target(), tex->texId(), tex->getWidth(), tex->getHeight());
+    t->_fmt = tex->fmt();
+    return t;
+}
+
 HwTexture *HwTexture::wrap(uint32_t target, uint32_t tex, int w, int h, uint32_t fmt) {
     HwTexture *t = new HwTexture(target, tex, w, h);
     t->_fmt = fmt;

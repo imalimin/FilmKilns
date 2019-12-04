@@ -25,6 +25,8 @@ public:
 
     static HwTexture *alloc(uint32_t target);
 
+    static HwTexture *wrap(HwTexture *tex);
+
     static HwTexture *wrap(uint32_t target, uint32_t tex, int w, int h, uint32_t fmt);
 
 public:
