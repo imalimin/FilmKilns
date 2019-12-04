@@ -37,15 +37,14 @@ HwResult AlImageLayer::measure(AlImageLayerDrawModel &drawModel) {
     AlSize canvasSize = drawModel.getCanvasSize();
     AlSize src(this->tex->getWidth(), this->tex->getHeight());
     /// 对图层和画布进行正交投影计算，转换坐标系，保证图像旋转缩放不会变形，并得到归一化的区域
-    aMeasure.update(src, canvasSize);
+    aMeasure.updateOrthogonal(src, canvasSize);
     aMeasure.setScale(model->getScale().x, model->getScale().y);
     aMeasure.setRotation(model->getRotation());
     ///TODO 矩阵Y轴与正常坐标系Y轴相反
     aMeasure.setTranslate(model->getPosition().x, -model->getPosition().y);
+    aMeasure.measure(drawModel);
     drawModel.tex = HwTexture::wrap(dynamic_cast<HwTexture *>(tex));
     drawModel.alpha = model->getAlpha();
-    drawModel.mat = aMeasure.getMatrix();
-    drawModel.vertexRectF = aMeasure.getLayerRectF();
     ///Update quad.
     AlVec2 lt;
     AlVec2 lb;

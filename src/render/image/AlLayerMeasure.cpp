@@ -20,7 +20,7 @@ AlLayerMeasure::~AlLayerMeasure() {
 
 }
 
-void AlLayerMeasure::update(AlSize &src, AlSize &dest) {
+void AlLayerMeasure::updateOrthogonal(AlSize &src, AlSize &dest) {
     _calculateRect(src, dest, lRectF, cRectF);
     oMat.update(cRectF.left, cRectF.right, cRectF.bottom, cRectF.top, -1.0f, 1.0f);
 }
@@ -73,17 +73,9 @@ void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &dest,
     }
 }
 
-AlMatrix AlLayerMeasure::getMatrix() {
-    return oMat * tMat;
-}
-
-AlRectF AlLayerMeasure::getLayerRectF() {
-    return lRectF;
-}
-
 void AlLayerMeasure::getTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
                                      AlVec2 &rightBottom, AlVec2 &rightTop) {
-    AlMatrix mat = getMatrix();
+    AlMatrix mat = oMat * tMat;
     AlVec4 lt(lRectF.left, lRectF.top);
     AlVec4 lb(lRectF.left, lRectF.bottom);
     AlVec4 rb(lRectF.right, lRectF.bottom);
@@ -92,4 +84,10 @@ void AlLayerMeasure::getTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
     leftBottom.set(lb.multiply(mat).xy());
     rightBottom.set(rb.multiply(mat).xy());
     rightTop.set(rt.multiply(mat).xy());
+}
+
+HwResult AlLayerMeasure::measure(AlImageLayerDrawModel &drawModel) {
+    drawModel.mat = oMat * tMat;
+    drawModel.vertexRectF = lRectF;
+    return Hw::SUCCESS;
 }
