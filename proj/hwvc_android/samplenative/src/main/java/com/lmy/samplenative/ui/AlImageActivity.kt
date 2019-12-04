@@ -54,6 +54,9 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         surfaceView?.setOnScaleListener { v, ds ->
             processor?.postScale(mCurrentLayer, ds)
         }
+        surfaceView?.setOnRotateListener { v, dr ->
+            processor?.postRotation(mCurrentLayer, dr)
+        }
         GallerySelectActivity.request(this, 100, 1)
         showOpt.setOnClickListener(this)
         rotateBar.setOnSeekBarChangeListener(this)

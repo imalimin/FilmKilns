@@ -152,6 +152,17 @@ HwResult AlImageProcessor::setRotation(int32_t id, float rotation) {
     return Hw::FAILED;
 }
 
+HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer) {
+        layer->setRotation(layer->getRotation() + dr.toFloat());
+        invalidate();
+        return Hw::SUCCESS;
+    }
+    return Hw::FAILED;
+}
+
 HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);

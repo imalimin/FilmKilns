@@ -7,6 +7,8 @@ import android.util.AttributeSet
 import android.view.*
 import android.widget.OverScroller
 import com.lmy.hwvcnative.entity.AlRational
+import kotlin.math.abs
+import kotlin.math.atan2
 
 class AlScrollSurfaceView : SurfaceView {
     private lateinit var mGestureDetector: GestureDetectorCompat
@@ -15,9 +17,15 @@ class AlScrollSurfaceView : SurfaceView {
     private var onScrollListener: OnScrollListener? = null
     private var onClickListener: OnClickListener? = null
     private var onScaleListener: OnScaleListener? = null
+    private var onRotateListener: OnRotateListener? = null
 
     private val mCurrentPosition = PointF(0f, 0f)
     private var minFlingVelocity = 0
+    private val minRotateVelocity = Math.PI / 180 / 2
+    //Rotate gesture
+    private var rotate = false
+    private var startRotate = 0.0
+    private var previousRotate = 0.0
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -48,13 +56,39 @@ class AlScrollSurfaceView : SurfaceView {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
-        if (mScaleDetector.onTouchEvent(event)) {
-//            return true
+        mScaleDetector.onTouchEvent(event)
+        mGestureDetector.onTouchEvent(event)
+
+        when (event.action and MotionEvent.ACTION_MASK) {
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                parent.requestDisallowInterceptTouchEvent(true)
+                rotate = true
+                val spanX = event.getX(0) - event.getX(1)
+                val spanY = event.getY(0) - event.getY(1)
+                startRotate = atan2(spanY, spanX).toDouble()
+                previousRotate = startRotate
+            }
+            MotionEvent.ACTION_POINTER_UP -> {
+                rotate = false
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                rotate = false
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if (rotate) {
+                    val spanX = event.getX(0) - event.getX(1)
+                    val spanY = event.getY(0) - event.getY(1)
+                    val rotate = atan2(spanY, spanX).toDouble()
+                    val delta = rotate - previousRotate
+                    if (abs(delta) > minRotateVelocity) {
+                        onRotateListener?.onRotate(this@AlScrollSurfaceView,
+                                AlRational((delta * PRECISIONS).toInt(), PRECISIONS))
+                        previousRotate = rotate
+                    }
+                }
+            }
         }
-        if (mGestureDetector.onTouchEvent(event)) {
-            return true
-        }
-        return false
+        return true
     }
 
     fun setOnScrollListener(listener: (v: SurfaceView, x: Float, y: Float,
@@ -94,6 +128,18 @@ class AlScrollSurfaceView : SurfaceView {
         onScaleListener = listener
     }
 
+    fun setOnRotateListener(listener: (v: SurfaceView, dr: AlRational) -> Unit) {
+        setOnRotateListener(object : OnRotateListener {
+            override fun onRotate(v: SurfaceView, dr: AlRational) {
+                listener(v, dr)
+            }
+        })
+    }
+
+    fun setOnRotateListener(listener: OnRotateListener) {
+        onRotateListener = listener
+    }
+
     interface OnScrollListener {
         fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float)
     }
@@ -108,6 +154,10 @@ class AlScrollSurfaceView : SurfaceView {
          * @param ds scale factor. currentSpan / previousSpan
          */
         fun onScale(v: SurfaceView, ds: AlRational)
+    }
+
+    interface OnRotateListener {
+        fun onRotate(v: SurfaceView, dr: AlRational)
     }
 
     /**
@@ -153,22 +203,22 @@ class AlScrollSurfaceView : SurfaceView {
      * +--------------------------------+
      */
     private val mScaleListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-        private var previewScaleFactor = 1f
+        private var previousScaleFactor = 1f
         override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
-            previewScaleFactor = 1f
+            previousScaleFactor = 1f
             return super.onScaleBegin(detector)
         }
 
-        override fun onScaleEnd(detector: ScaleGestureDetector) {
-            super.onScaleEnd(detector)
-        }
-
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            val num = (detector.scaleFactor * 100000).toInt()
-            val den = (previewScaleFactor * 100000).toInt()
+            val num = (detector.scaleFactor * PRECISIONS).toInt()
+            val den = (previousScaleFactor * PRECISIONS).toInt()
             onScaleListener?.onScale(this@AlScrollSurfaceView, AlRational(num, den))
-            previewScaleFactor = detector.scaleFactor
+            previousScaleFactor = detector.scaleFactor
             return super.onScale(detector)
         }
+    }
+
+    companion object {
+        const val PRECISIONS = 100000
     }
 }

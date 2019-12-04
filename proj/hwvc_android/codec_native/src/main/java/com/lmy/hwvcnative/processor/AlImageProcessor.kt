@@ -126,6 +126,19 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
+     * 累加旋转图层
+     * @param id 图层id
+     * @param dr 旋转角度，单位弧度，分数表示
+     * @return   {@link AlResult}
+     */
+    fun postRotation(id: Int, dr: AlRational): Int {
+        if (!isNativeNull()) {
+            return postRotation(handler, id, dr.num, dr.den)
+        }
+        return AlResult.FAILED
+    }
+
+    /**
      * 移动图层
      * @param id 图层id
      * @param x  相对于画布的x轴位移，画布中心为0点，x∈[-1, 1]为画布可见范围，绝对值大于1时会超出画布范围而不可见
@@ -203,6 +216,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun setScale(handler: Long, id: Int, scaleNum: Int, scaleDen: Int): Int
     private external fun postScale(handler: Long, id: Int, dsNum: Int, dsDen: Int): Int
     private external fun setRotation(handler: Long, id: Int, rotation: Float): Int
+    private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int): Int
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
