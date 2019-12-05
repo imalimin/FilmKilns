@@ -38,6 +38,8 @@ private:
 
     bool _found(int32_t id);
 
+    void _correctAngle(TextureAllocator *texAllocator, HwAbsTexture **tex, AlRational radian);
+
 private:
     /**
      * AlImageProcessor::mLayers instance.

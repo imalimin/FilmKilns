@@ -29,3 +29,16 @@ void Logcat::e(const string &TAG, const string fmt, ...) {
     va_end(args);
 #endif
 }
+
+void Logcat::w(const string &TAG, const string fmt, ...) {
+#ifdef HWDEBUG
+    va_list args;
+    va_start(args, fmt);
+#ifdef ANDROID
+    __android_log_vprint(ANDROID_LOG_WARN, TAG.c_str(), fmt.c_str(), args);
+#else
+    printf(fmt.c_str(), args);
+#endif
+    va_end(args);
+#endif
+}

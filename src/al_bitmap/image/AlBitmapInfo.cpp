@@ -23,13 +23,14 @@ AlBitmapInfo::~AlBitmapInfo() {
 }
 
 void AlBitmapInfo::dump() {
-    Logcat::i("AlBitmapInfo", "%s(%d): %dx%d, %d, %d",
+    Logcat::i("AlBitmapInfo", "%s(%d): %dx%d, depth=%d, colorSpace=%d, rotation=%f",
               __FUNCTION__,
               __LINE__,
               width,
               height,
               depth,
-              colorSpace);
+              colorSpace,
+              rotation.toFloat());
 }
 
 void AlBitmapInfo::reset() {

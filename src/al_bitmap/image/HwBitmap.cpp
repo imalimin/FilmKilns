@@ -102,6 +102,10 @@ uint64_t HwBitmap::getByteSize() {
     return static_cast<uint64_t>(info.width * info.height * getImageFormatBytes(info.colorSpace));
 }
 
+AlRational HwBitmap::getRotation() {
+    return info.rotation;
+}
+
 void HwBitmap::dump() {
     info.dump();
 }

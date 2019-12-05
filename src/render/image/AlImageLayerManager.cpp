@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "AlImageLayerManager.h"
 #include "HwBitmapFactory.h"
+#include "AlRotateFilter.h"
 #include "Logcat.h"
 
 AlImageLayerManager::AlImageLayerManager() : Object() {
@@ -62,14 +63,41 @@ bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
                   model->getPath().c_str());
         return true;
     }
-    auto *tex = texAllocator->alloc(bmp->getPixels(),
-                                    bmp->getWidth(),
-                                    bmp->getHeight(),
-                                    GL_RGBA);
+    auto rotation = bmp->getRotation();
+    auto *srcTex = texAllocator->alloc(bmp->getPixels(),
+                                       bmp->getWidth(),
+                                       bmp->getHeight(),
+                                       GL_RGBA);
     delete bmp;
-    AlImageLayer *layer = AlImageLayer::create(model, tex);
+    _correctAngle(texAllocator, &srcTex, rotation);
+    AlImageLayer *layer = AlImageLayer::create(model, srcTex);
     mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
     return true;
+}
+
+void AlImageLayerManager::_correctAngle(TextureAllocator *texAllocator,
+                                        HwAbsTexture **tex,
+                                        AlRational radian) {
+    HwAbsTexture *destTex = nullptr;
+    auto rFloat = fmod(std::abs(radian.toFloat()), 2.0);
+    if (0 != rFloat) {
+        if (0.5 == rFloat || 1.5 == rFloat) {///宽高对换
+            destTex = texAllocator->alloc((*tex)->getHeight(),
+                                          (*tex)->getWidth(),
+                                          GL_RGBA);
+        } else {
+            destTex = texAllocator->alloc((*tex)->getWidth(),
+                                          (*tex)->getHeight(),
+                                          GL_RGBA);
+        }
+        AlRotateFilter filter;
+        filter.prepare();
+        filter.setRotation(radian);
+        glViewport(0, 0, destTex->getWidth(), destTex->getHeight());
+        filter.draw(*tex, destTex);
+        texAllocator->recycle(tex);
+        *tex = destTex;
+    }
 }
 
 bool AlImageLayerManager::_found(int32_t id) {

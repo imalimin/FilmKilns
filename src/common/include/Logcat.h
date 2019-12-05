@@ -22,6 +22,8 @@ public:
     static void i(const string &TAG, const string fmt, ...);
 
     static void e(const string &TAG, const string fmt, ...);
+
+    static void w(const string &TAG, const string fmt, ...);
 };
 
 

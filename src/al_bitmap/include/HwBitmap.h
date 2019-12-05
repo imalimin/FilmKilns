@@ -50,6 +50,8 @@ public:
      */
     uint64_t getByteSize();
 
+    AlRational getRotation();
+
     void dump();
 
 private:

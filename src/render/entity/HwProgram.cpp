@@ -96,6 +96,8 @@ void HwProgram::draw(HwAbsTexture *tex) {
     if (uTextureMatrix >= 0) {
         setUniformMatrix4fv(uTextureMatrix, matrix.data());
     }
+    /// n = 顶点数，当0 == n % 2时，三角形为(n - 2, n - 1, n)
+    /// n = 顶点数，当0 != n % 2时，三角形为(n - 1, n - 2, n)
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glDisableVertexAttribArray(aPositionLocation);
     glDisableVertexAttribArray(aTextureCoordinateLocation);
