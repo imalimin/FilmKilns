@@ -93,8 +93,8 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel &model) {
 
 HwResult AlImageCanvas::read(AlBuffer *buf) {
     if (nullptr == mCanvasTex || nullptr == buf) return Hw::FAILED;
-    mCanvasTex->bind();
+    fbo->bind();
     mCanvasTex->read(buf->data());
-    mCanvasTex->unbind();
+    fbo->unbind();
     return Hw::SUCCESS;
 }
