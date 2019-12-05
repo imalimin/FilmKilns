@@ -59,7 +59,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         }
         GallerySelectActivity.request(this, 100, 1)
         showOpt.setOnClickListener(this)
-        rotateBar.setOnSeekBarChangeListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
             processor = AlImageProcessor.create()
@@ -93,10 +92,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-        when (seekBar.id) {
-            R.id.rotateBar ->
-                processor?.setRotation(mCurrentLayer, 3.141592653f * progress / 1000)
-        }
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -143,7 +138,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
             10 -> {
                 processor?.setTranslate(mCurrentLayer, 0f, 0f)
-                processor?.setRotation(mCurrentLayer, 0f)
+                processor?.setRotation(mCurrentLayer, AlRational.zero())
                 processor?.setScale(mCurrentLayer, AlRational(1, 1))
             }
             100 -> {
