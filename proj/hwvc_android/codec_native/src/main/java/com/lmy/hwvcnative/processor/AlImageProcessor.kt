@@ -1,11 +1,16 @@
 package com.lmy.hwvcnative.processor
 
+import android.os.Handler
+import android.os.Looper
 import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.entity.AlResult
 
 class AlImageProcessor private constructor() : CPPObject() {
+    private val mMainHandler = Handler(Looper.getMainLooper())
+    private var onSaveListener: OnSaveListener? = null
+
     init {
         handler = create()
     }
@@ -222,6 +227,43 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
     private external fun getLayer(handler: Long, x: Float, y: Float): Int
     private external fun save(handler: Long, path: String): Int
+
+
+    /***************************/
+    /**      Listener         **/
+    /***************************/
+    interface OnSaveListener {
+        fun onSave(code: Int, msg: String?, path: String?)
+    }
+
+    fun setOnSaveListener(listener: OnSaveListener) {
+        this.onSaveListener = listener
+    }
+
+    fun setOnSaveListener(listener: (code: Int, msg: String?, path: String?) -> Unit) {
+        setOnSaveListener(object : OnSaveListener {
+            override fun onSave(code: Int, msg: String?, path: String?) {
+                listener(code, msg, path)
+            }
+        })
+    }
+
+    /***************************/
+    /** Callback from native  **/
+    /***************************/
+
+    /**
+     * 图像保存完成回调
+     * @param code {@link AlResult}
+     * @param msg  状态信息
+     * @param path 保存路径
+     */
+    fun onSave(code: Int, msg: String?, path: String?) {
+        mMainHandler.post {
+            onSaveListener?.onSave(code, msg, path)
+        }
+    }
+
 
     companion object {
         fun create(): AlImageProcessor = AlImageProcessor()

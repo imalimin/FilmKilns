@@ -13,8 +13,32 @@
 extern "C" {
 #endif
 
+static JMethodDescription mOnSave = {"Java_com_lmy_hwvcnative_processor_AlImageProcessor",
+                                     "onSave", "(ILjava/lang/String;Ljava/lang/String;)V"};
+
 static AlImageProcessor *getHandler(jlong handler) {
     return reinterpret_cast<AlImageProcessor *>(handler);
+}
+
+static void bindListener(jlong handler) {
+    getHandler(handler)->setOnSaveListener([handler](int32_t code,
+                                                     const char *msg,
+                                                     const char *path) {
+        jobject jObject = nullptr;
+        JNIEnv *pEnv = nullptr;
+        jmethodID methodID = nullptr;
+        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                          mOnSave,
+                                                          &methodID)) {
+            jstring jMsg = pEnv->NewStringUTF(msg);
+            jstring jPath = pEnv->NewStringUTF(path);
+            pEnv->CallVoidMethod(jObject, methodID, static_cast<jint>(code), jMsg, jPath);
+            pEnv->DeleteLocalRef(jPath);
+            pEnv->DeleteLocalRef(jMsg);
+        }
+    });
 }
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_create
@@ -25,6 +49,7 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_creat
     });
     jlong handler = reinterpret_cast<jlong>(p);
     HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
+    bindListener(handler);
     return handler;
 }
 

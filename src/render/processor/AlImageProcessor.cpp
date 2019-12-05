@@ -14,17 +14,23 @@
 #define TAG "AlImageProcessor"
 
 AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
-    registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
+    auto aImage = new AlImage(ALIAS_OF_IMAGE);
+    registerAnUnit(aImage);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
     Message *msg = new Message(EVENT_COMMON_PREPARE);
     postEvent(msg);
+    aImage->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
+        if (this->onSaveListener) {
+            this->onSaveListener(code, msg, path);
+        }
+    });
 }
 
 AlImageProcessor::~AlImageProcessor() {
-
+    this->onSaveListener = nullptr;
 }
 
 void AlImageProcessor::onDestroy() {
@@ -246,4 +252,8 @@ HwResult AlImageProcessor::save(std::string path) {
     Message *msg = new Message(EVENT_AIMAGE_SAVE);
     postEvent(msg);
     return Hw::SUCCESS;
+}
+
+void AlImageProcessor::setOnSaveListener(AlImage::OnSaveListener listener) {
+    this->onSaveListener = listener;
 }

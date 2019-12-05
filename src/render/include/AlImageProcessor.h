@@ -8,6 +8,7 @@
 #ifndef HWVC_ANDROID_ALIMAGEPROCESSOR_H
 #define HWVC_ANDROID_ALIMAGEPROCESSOR_H
 
+#include <vector>
 #include "HwAbsProcessor.h"
 #include "HwResult.h"
 #include "HwWindow.h"
@@ -15,7 +16,7 @@
 #include "AlImageLayerModel.h"
 #include "AlSize.h"
 #include "AlRational.h"
-#include <vector>
+#include "AlImage.h"
 
 class AlImageProcessor : public HwAbsProcessor {
 public:
@@ -59,6 +60,8 @@ public:
 
     HwResult save(std::string path);
 
+    void setOnSaveListener(AlImage::OnSaveListener listener);
+
 private:
     void _notifyCanvasUpdate();
 
@@ -75,6 +78,7 @@ private:
     AlIdentityCreator mLayerIdCreator;
     std::mutex mLayerMtx;
     AlSize mWinSize;
+    AlImage::OnSaveListener onSaveListener = nullptr;
 };
 
 

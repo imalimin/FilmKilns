@@ -17,6 +17,9 @@
 
 class AlImage : public Unit {
 public:
+    ///code, msg, path
+    typedef function<void(int32_t, const char *, const char *)> OnSaveListener;
+public:
     AlImage(string alias);
 
     virtual ~AlImage();
@@ -32,6 +35,8 @@ public:
     bool onUpdateCanvas(Message *m);
 
     bool onSave(Message *m);
+
+    void setOnSaveListener(OnSaveListener listener);
 
 private:
     void _newDefaultCanvas();
@@ -51,6 +56,7 @@ private:
 
     AlImageCanvas mCanvas;
     AlImageLayerManager mLayerManager;
+    OnSaveListener onSaveListener = nullptr;
 };
 
 

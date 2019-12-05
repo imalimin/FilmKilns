@@ -20,7 +20,7 @@ AlImage::AlImage(string alias) : Unit(alias) {
 }
 
 AlImage::~AlImage() {
-
+    this->onSaveListener = nullptr;
 }
 
 bool AlImage::eventRelease(Message *msg) {
@@ -71,6 +71,9 @@ bool AlImage::onInvalidate(Message *m) {
 bool AlImage::onSave(Message *m) {
     std::string path = getString("output_path");
     if (path.empty()) {
+        if (onSaveListener) {
+            onSaveListener(Hw::FAILED.code, "Failed", path.c_str());
+        }
         return true;
     }
     auto output = mCanvas.getOutput();
@@ -79,6 +82,9 @@ bool AlImage::onSave(Message *m) {
     mCanvas.read(buf);
     HwBitmapFactory::save(output->getWidth(), output->getHeight(), buf, path);
     delete buf;
+    if (onSaveListener) {
+        onSaveListener(Hw::SUCCESS.code, "Success", path.c_str());
+    }
     return true;
 }
 
@@ -115,4 +121,8 @@ void AlImage::_drawAllLayer() {
             mCanvas.draw(mLayerManager.getLayer(i));
         }
     }
+}
+
+void AlImage::setOnSaveListener(AlImage::OnSaveListener listener) {
+    this->onSaveListener = listener;
 }

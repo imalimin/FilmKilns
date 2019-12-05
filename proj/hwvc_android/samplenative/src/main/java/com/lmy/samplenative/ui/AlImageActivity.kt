@@ -2,12 +2,16 @@ package com.lmy.samplenative.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.SeekBar
+import android.widget.Toast
 import com.lmy.common.ui.GallerySelectActivity
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.processor.AlImageProcessor
@@ -19,7 +23,9 @@ import kotlinx.android.synthetic.main.activity_al_image.*
 import java.io.File
 
 class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
-        View.OnClickListener, BottomSheetItem.OnClickListener {
+        View.OnClickListener, BottomSheetItem.OnClickListener,
+        AlImageProcessor.OnSaveListener {
+
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
     private val mLayers = ArrayList<Int>()
@@ -64,6 +70,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             processor = AlImageProcessor.create()
         }
         processor?.setCanvas(1080, 1920, 0)
+        processor?.setOnSaveListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -123,6 +130,19 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     private fun setCurLayer(layer: Int) {
         mCurrentLayer = layer
         layerView.text = mCurrentLayer.toString()
+    }
+
+    override fun onSave(code: Int, msg: String?, path: String?) {
+        Toast.makeText(this@AlImageActivity,
+                "Save finish: $code",
+                Toast.LENGTH_LONG).show()
+        if (null != path) {
+            MediaScannerConnection.scanFile(this, Array<String>(1) { path }, null) { _: String, uri: Uri ->
+                val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+                mediaScanIntent.data = uri
+                sendBroadcast(mediaScanIntent)
+            }
+        }
     }
 
     private val OPTS = arrayListOf<BottomSheetItem>(
