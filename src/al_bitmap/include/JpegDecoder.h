@@ -36,6 +36,9 @@ public:
     HwResult process(AlBuffer **buf, AlBitmapInfo *info) override;
 
 private:
+    int _getOrientation(jpeg_saved_marker_ptr make_list);
+
+private:
     std::string path;
     tjhandle handle;
 };

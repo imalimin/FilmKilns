@@ -53,13 +53,7 @@ bool AlImage::onUpdateLayer(Message *msg) {
 }
 
 bool AlImage::onInvalidate(Message *m) {
-    mCanvas.clear();
-    if (!mLayerManager.empty()) {
-        int size = mLayerManager.size();
-        for (int i = 0; i < size; ++i) {
-            mCanvas.draw(mLayerManager.getLayer(i));
-        }
-    }
+    _drawAllLayer();
     Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
     auto tex = mCanvas.getOutput();
     if (nullptr == tex) {
@@ -111,4 +105,14 @@ void AlImage::_newDefaultCanvas() {
     auto layer = mLayerManager.getLayer(0);
     model->set(layer->getWidth(), layer->getHeight(), 0);
     mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(), texAllocator);
+}
+
+void AlImage::_drawAllLayer() {
+    mCanvas.clear();
+    if (!mLayerManager.empty()) {
+        int size = mLayerManager.size();
+        for (int i = 0; i < size; ++i) {
+            mCanvas.draw(mLayerManager.getLayer(i));
+        }
+    }
 }

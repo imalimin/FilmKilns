@@ -36,6 +36,8 @@ public:
 private:
     void _newDefaultCanvas();
 
+    void _drawAllLayer();
+
 private:
     TextureAllocator *texAllocator = nullptr;
 
