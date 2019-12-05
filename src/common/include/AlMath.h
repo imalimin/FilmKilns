@@ -12,7 +12,9 @@
 
 al_class(AlMath) {
 public:
-    static int calculate(float x, float y);
+    static uint16_t swap16(uint16_t val);
+
+    static uint32_t swap32(uint32_t val);
 
 private:
     AlMath() : Object() {};

@@ -6,6 +6,7 @@
  */
 #include "JpegDecoder.h"
 #include "jpeglib.h"
+#include "AlMath.h"
 #include "Logcat.h"
 #include <csetjmp>
 
@@ -13,6 +14,38 @@
 #define JPEG_ICC_MARKER JPEG_APP0 + 2
 #define G_LITTLE_ENDIAN     1234
 #define G_BIG_ENDIAN        4321
+
+LOCAL(unsigned short) de_get16(void *ptr, uint endian) {
+    unsigned short val;
+
+    memcpy(&val, ptr, sizeof(val));
+    if (endian == G_BIG_ENDIAN) {
+#ifndef WORDS_BIGENDIAN
+        val = AlMath::swap16(val);
+#endif
+    } else {
+#ifdef WORDS_BIGENDIAN
+        val = vlc_bswap16( val );
+#endif
+    }
+    return val;
+}
+
+LOCAL(unsigned int) de_get32(void *ptr, uint endian) {
+    unsigned int val;
+
+    memcpy(&val, ptr, sizeof(val));
+    if (endian == G_BIG_ENDIAN) {
+#ifndef WORDS_BIGENDIAN
+        val = AlMath::swap32(val);
+#endif
+    } else {
+#ifdef WORDS_BIGENDIAN
+        val = vlc_bswap32( val );
+#endif
+    }
+    return val;
+}
 
 void error_exit(j_common_ptr cinfo) {
 /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
@@ -70,56 +103,15 @@ AlBitmapInfo JpegDecoder::getInfo() {
     return info;
 }
 
-static inline uint16_t vlc_bswap16(uint16_t x) {
-    return (x << 8) | (x >> 8);
-}
-
-LOCAL(unsigned short) de_get16(void *ptr, uint endian) {
-    unsigned short val;
-
-    memcpy(&val, ptr, sizeof(val));
-    if (endian == G_BIG_ENDIAN) {
-#ifndef WORDS_BIGENDIAN
-        val = vlc_bswap16(val);
-#endif
-    } else {
-#ifdef WORDS_BIGENDIAN
-        val = vlc_bswap16( val );
-#endif
-    }
-    return val;
-}
-
-/** Byte swap (32 bits) */
-static inline uint32_t vlc_bswap32(uint32_t x) {
-#if defined (__GNUC__) || defined(__clang__)
-    return __builtin_bswap32(x);
-#else
-    return ((x & 0x000000FF) << 24)
-             | ((x & 0x0000FF00) <<  8)
-             | ((x & 0x00FF0000) >>  8)
-             | ((x & 0xFF000000) >> 24);
-#endif
-}
-
-
-LOCAL(unsigned int) de_get32(void *ptr, uint endian) {
-    unsigned int val;
-
-    memcpy(&val, ptr, sizeof(val));
-    if (endian == G_BIG_ENDIAN) {
-#ifndef WORDS_BIGENDIAN
-        val = vlc_bswap32(val);
-#endif
-    } else {
-#ifdef WORDS_BIGENDIAN
-        val = vlc_bswap32( val );
-#endif
-    }
-    return val;
-}
-
-
+/*
+ * Look through the meta data in the libjpeg decompress structure to determine
+ * if an EXIF Orientation tag is present. If so return its value (1-8),
+ * otherwise return 0
+ *
+ * This function is based on the function get_orientation in io-jpeg.c, part of
+ * the GdkPixbuf library, licensed under LGPLv2+.
+ *   Copyright (C) 1999 Michael Zucchi, The Free Software Foundation
+*/
 int JpegDecoder::_getOrientation(jpeg_saved_marker_ptr make_list) {
     uint i;                    /* index into working buffer */
     uint16_t tag_type;           /* endianed tag type extracted from tiff header */
