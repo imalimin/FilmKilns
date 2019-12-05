@@ -5,7 +5,6 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include <cmath>
 #include "AlMath.h"
 
 uint16_t AlMath::swap16(uint16_t val) {
@@ -21,4 +20,16 @@ uint32_t AlMath::swap32(uint32_t val) {
              | ((val & 0x00FF0000) >>  8)
              | ((val & 0xFF000000) >> 24);
 #endif
+}
+
+int32_t AlMath::gcd(int32_t a, int32_t b) {
+    while (a != b) {
+        if (a > b) a = a - b;
+        else b = b - a;
+    }
+    return a;
+}
+
+int32_t AlMath::lcm(int32_t a, int32_t b) {
+    return a * b / gcd(a, b);
 }

@@ -114,13 +114,13 @@ class AlImageProcessor private constructor() : CPPObject() {
 
     /**
      * 旋转图层
-     * @param id       图层id
-     * @param rotation 旋转角度，单位弧度
-     * @return         {@link AlResult}
+     * @param id 图层id
+     * @param r  旋转弧度，分数表示，没有乘以PI
+     * @return   {@link AlResult}
      */
-    fun setRotation(id: Int, rotation: Float): Int {
+    fun setRotation(id: Int, r: AlRational): Int {
         if (!isNativeNull()) {
-            return setRotation(handler, id, rotation)
+            return setRotation(handler, id, r.num, r.den)
         }
         return AlResult.FAILED
     }
@@ -128,7 +128,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     /**
      * 累加旋转图层
      * @param id 图层id
-     * @param dr 旋转角度，单位弧度，分数表示
+     * @param dr 旋转弧度，分数表示，没有乘以PI
      * @return   {@link AlResult}
      */
     fun postRotation(id: Int, dr: AlRational): Int {
@@ -215,7 +215,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun removeLayer(handler: Long, id: Int): Int
     private external fun setScale(handler: Long, id: Int, scaleNum: Int, scaleDen: Int): Int
     private external fun postScale(handler: Long, id: Int, dsNum: Int, dsDen: Int): Int
-    private external fun setRotation(handler: Long, id: Int, rotation: Float): Int
+    private external fun setRotation(handler: Long, id: Int, rNum: Int, rDen: Int): Int
     private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int): Int
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int

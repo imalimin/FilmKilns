@@ -82,7 +82,7 @@ class AlScrollSurfaceView : SurfaceView {
                     val delta = rotate - previousRotate
                     if (abs(delta) > minRotateVelocity) {
                         onRotateListener?.onRotate(this@AlScrollSurfaceView,
-                                AlRational((delta * PRECISIONS).toInt(), PRECISIONS))
+                                AlRational((delta * PRECISIONS / Math.PI).toInt(), PRECISIONS))
                         previousRotate = rotate
                     }
                 }

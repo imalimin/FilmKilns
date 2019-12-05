@@ -113,9 +113,9 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_postSc
 }
 
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setRotation
-        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat rotation) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jint rNum, jint rDen) {
     if (handler) {
-        return getHandler(handler)->setRotation(id, rotation).code;
+        return getHandler(handler)->setRotation(id, AlRational(rNum, rDen)).code;
     }
     return Hw::FAILED.code;
 }

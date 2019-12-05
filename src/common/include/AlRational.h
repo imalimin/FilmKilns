@@ -12,11 +12,15 @@
 
 al_class(AlRational) {
 public:
+    AlRational();
+
     AlRational(int32_t num, int32_t den);
 
     AlRational(const AlRational &o);
 
     ~AlRational();
+
+    AlRational &operator+(AlRational r);
 
     float toFloat();
 

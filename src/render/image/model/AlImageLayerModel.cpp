@@ -19,7 +19,7 @@ AlImageLayerModel::AlImageLayerModel(int32_t id, const std::string &path)
           path(path),
           id(id),
           alpha(1.0f),
-          rotation(0.0f),
+          rotation(AlRational()),
           position(AlVec2(0.0f, 0.0f)),
           scale(AlVec2(1.0f, 1.0f)) {
 
@@ -65,11 +65,12 @@ AlVec2 AlImageLayerModel::getScale() {
     return scale;
 }
 
-void AlImageLayerModel::setRotation(float rotation) {
-    this->rotation = rotation;
+void AlImageLayerModel::setRotation(AlRational &r) {
+    this->rotation.num = r.num;
+    this->rotation.den = r.den;
 }
 
-float AlImageLayerModel::getRotation() {
+AlRational AlImageLayerModel::getRotation() {
     return rotation;
 }
 
@@ -106,7 +107,7 @@ void AlImageLayerModel::dump() {
     Logcat::i(TAG, "layer: %d", id);
     Logcat::i(TAG, "alpha: %f", alpha);
     Logcat::i(TAG, "scale: %f, %f", scale.x, scale.y);
-    Logcat::i(TAG, "rotat: %f", rotation);
+    Logcat::i(TAG, "rotat: %f", rotation.toFloat());
     Logcat::i(TAG, "posit: %f, %f", position.x, position.y);
     Logcat::i(TAG, "quad : [%f,%f]-----[%f,%f]",
               quad.leftTop().x, quad.leftTop().y,

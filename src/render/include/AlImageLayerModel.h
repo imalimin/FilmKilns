@@ -12,6 +12,7 @@
 #include "AlVec2.h"
 #include "AlIdentityCreator.h"
 #include "AlQuad.h"
+#include "AlRational.h"
 
 al_class(AlImageLayerModel) {
 public:
@@ -38,9 +39,9 @@ public:
 
     AlVec2 getScale();
 
-    void setRotation(float rotation);
+    void setRotation(AlRational &r);
 
-    float getRotation();
+    AlRational getRotation();
 
     void postPosition(float x, float y);
 
@@ -58,7 +59,8 @@ private:
     std::string path;
     int32_t id = AlIdentityCreator::NONE_ID;
     float alpha = 1.0f;
-    float rotation = 0.0f;
+    ///弧度表示，r=rotation*PI
+    AlRational rotation = AlRational();
     AlVec2 position;
     AlVec2 scale;
     AlQuad quad;

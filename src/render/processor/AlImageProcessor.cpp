@@ -141,11 +141,11 @@ HwResult AlImageProcessor::postScale(int32_t id, AlRational ds) {
     return Hw::FAILED;
 }
 
-HwResult AlImageProcessor::setRotation(int32_t id, float rotation) {
+HwResult AlImageProcessor::setRotation(int32_t id, AlRational r) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        layer->setRotation(rotation);
+        layer->setRotation(r);
         invalidate();
         return Hw::SUCCESS;
     }
@@ -156,7 +156,10 @@ HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        layer->setRotation(layer->getRotation() + dr.toFloat());
+        ///TODO 还可以提高精度
+        auto nr = layer->getRotation().toFloat() + dr.toFloat();
+        auto r = AlRational(static_cast<int32_t>(nr * 100000), 100000);
+        layer->setRotation(r);
         invalidate();
         return Hw::SUCCESS;
     }
