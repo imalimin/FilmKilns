@@ -26,12 +26,19 @@ AlRational::~AlRational() {
 }
 
 AlRational &AlRational::operator+(AlRational r) {
+    static AlRational *r1;
+    if (r1 == nullptr) {
+        r1 = new AlRational();
+    }
     int32_t gcd = AlMath::gcd(this->den, r.den);
-    this->den = this->den * r.den / gcd;
-    this->num = this->num * r.den / gcd + r.num * this->den / gcd;
-    return *this;
+    r1->num = this->num * r.den / gcd + r.num * this->den / gcd;
+    r1->den = this->den * r.den / gcd;
+    return *r1;
 }
 
 float AlRational::toFloat() {
+    if (0 == den) {
+        return 0.0f;
+    }
     return num / (float) den;
 }
