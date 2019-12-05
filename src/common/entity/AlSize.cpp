@@ -28,3 +28,14 @@ AlSize &AlSize::operator=(const AlSize &o) {
     this->height = o.height;
     return *this;
 }
+
+bool AlSize::operator==(const AlSize &o) {
+    bool v0 = this->width == o.width;
+    bool v1 = this->height == o.height;
+    return v0 && v1;
+}
+
+bool AlSize::operator!=(const AlSize &o) {
+    bool v = *this == o;
+    return !v;
+}

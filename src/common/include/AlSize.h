@@ -22,6 +22,10 @@ public:
 
     AlSize &operator=(const AlSize &o);
 
+    bool operator==(const AlSize &o);
+
+    bool operator!=(const AlSize &o);
+
 };
 
 

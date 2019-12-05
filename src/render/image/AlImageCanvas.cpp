@@ -52,6 +52,8 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator
 void AlImageCanvas::clear() {
     if (mCanvasTex && mBgDrawer) {
         glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
+        AlSize size(mCanvasTex->getWidth(), mCanvasTex->getHeight());
+        mBgDrawer->update(size);
         mBgDrawer->draw(mCanvasTex);
         Logcat::i(TAG, "%s(%d) Canvas clear. Size %dx%d",
                   __FUNCTION__, __LINE__,

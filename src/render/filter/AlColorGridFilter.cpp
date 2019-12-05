@@ -6,6 +6,7 @@
 */
 
 #include "AlColorGridFilter.h"
+#include "HwBuffer.h"
 
 AlColorGridFilter *AlColorGridFilter::create() {
     return new AlColorGridFilter();
@@ -24,9 +25,28 @@ void AlColorGridFilter::release(TextureAllocator *texAllocator) {
 }
 
 bool AlColorGridFilter::prepare(TextureAllocator *texAllocator) {
-    uint8_t *bmp = new uint8_t[GRID_WIDTH * GRID_HEIGHT * 4];
-    for (int i = 0; i < GRID_WIDTH; ++i) {
-        if (i < GRID_WIDTH / 2) {
+    this->srcTex = texAllocator->alloc(size, size, GL_RGBA);
+    return prepare();
+}
+
+bool AlColorGridFilter::prepare() {
+    return HwAbsFilter::prepare();
+}
+
+void AlColorGridFilter::update(AlSize &canvasSize) {
+    if (this->canvasSize == canvasSize) {
+        return;
+    }
+    this->canvasSize.width = canvasSize.width;
+    this->canvasSize.height = canvasSize.height;
+    this->size = GRID_SIZE * canvasSize.width / 1080;
+    if (0 != this->size % 2) {
+        size += 1;
+    }
+    auto *buf = HwBuffer::alloc(size * size * 4);
+    auto *bmp = buf->data();
+    for (int i = 0; i < size; ++i) {
+        if (i < size / 2) {
             bmp[i * 4 + 0] = 255;
             bmp[i * 4 + 1] = 255;
             bmp[i * 4 + 2] = 255;
@@ -38,23 +58,18 @@ bool AlColorGridFilter::prepare(TextureAllocator *texAllocator) {
             bmp[i * 4 + 3] = 255;
         }
     }
-    for (int i = 1; i < GRID_HEIGHT; ++i) {
-        if (i < GRID_HEIGHT / 2) {
-            size_t size = GRID_WIDTH * 4;
-            memcpy(bmp + GRID_WIDTH * 4 * i, bmp, size);
+    for (int i = 1; i < size; ++i) {
+        if (i < size / 2) {
+            size_t len = size * 4;
+            memcpy(bmp + size * 4 * i, bmp, len);
         } else {
-            size_t size = GRID_WIDTH * 4 / 2;
-            memcpy(bmp + GRID_WIDTH * 4 * i, bmp + size, size);
-            memcpy(bmp + GRID_WIDTH * 4 * i + size, bmp, size);
+            size_t len = size * 4 / 2;
+            memcpy(bmp + size * 4 * i, bmp + len, len);
+            memcpy(bmp + size * 4 * i + len, bmp, len);
         }
     }
-    this->srcTex = texAllocator->alloc(bmp, GRID_WIDTH, GRID_HEIGHT, GL_RGBA);
-    delete[] bmp;
-    return prepare();
-}
-
-bool AlColorGridFilter::prepare() {
-    return HwAbsFilter::prepare();
+    this->srcTex->update(buf, size, size, GL_RGBA);
+    delete buf;
 }
 
 HwProgram *AlColorGridFilter::createProgram() {
@@ -78,8 +93,8 @@ HwProgram *AlColorGridFilter::createProgram() {
 void AlColorGridFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     float left = 0.0f;
-    float right = dest->getWidth() / (float) GRID_WIDTH;
-    float top = dest->getHeight() / (float) GRID_HEIGHT;
+    float right = dest->getWidth() / (float) size;
+    float top = dest->getHeight() / (float) size;
     float bottom = 0.0f;
     float *texCoordinate = new float[8]{
             left, bottom,//LEFT,BOTTOM

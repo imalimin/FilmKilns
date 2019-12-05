@@ -69,7 +69,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         if (null == processor) {
             processor = AlImageProcessor.create()
         }
-        processor?.setCanvas(1080, 1920, 0)
+        processor?.setCanvas(1080, 1920)
         processor?.setOnSaveListener(this)
     }
 

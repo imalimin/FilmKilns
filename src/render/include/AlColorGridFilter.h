@@ -10,6 +10,7 @@
 
 #include "HwAbsFilter.h"
 #include "TextureAllocator.h"
+#include "AlSize.h"
 
 class AlColorGridFilter : public HwAbsFilter {
 public:
@@ -21,6 +22,8 @@ public:
     bool prepare(TextureAllocator *texAllocator);
 
     void release(TextureAllocator *texAllocator);
+
+    void update(AlSize &canvasSize);
 
     void draw(HwAbsTexture *dest);
 
@@ -39,8 +42,9 @@ private:
 
 private:
     HwAbsTexture *srcTex = nullptr;
-    static constexpr int GRID_WIDTH = 24;
-    static constexpr int GRID_HEIGHT = 24;
+    static constexpr int GRID_SIZE = 24;
+    AlSize canvasSize = AlSize();
+    int32_t size = 0;
 };
 
 
