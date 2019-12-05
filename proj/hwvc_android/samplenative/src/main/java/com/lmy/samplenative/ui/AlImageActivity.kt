@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.view.KeyEvent
@@ -63,7 +62,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         surfaceView?.setOnRotateListener { v, dr ->
             processor?.postRotation(mCurrentLayer, dr)
         }
-        GallerySelectActivity.request(this, 100, 1)
         showOpt.setOnClickListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
@@ -71,6 +69,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         }
         processor?.setCanvas(1080, 1920)
         processor?.setOnSaveListener(this)
+        pickImage()
     }
 
     override fun onClick(v: View?) {
@@ -113,7 +112,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             return
         }
         when (requestCode) {
-            100 -> {
+            REQUEST_IMAGE -> {
                 val result = GallerySelectActivity.getResultDtata(data)
                 if (null != result && result.isNotEmpty()) {
                     val layerId = processor?.addLayer(result[0])
@@ -130,6 +129,10 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     private fun setCurLayer(layer: Int) {
         mCurrentLayer = layer
         layerView.text = mCurrentLayer.toString()
+    }
+
+    private fun pickImage() {
+        GallerySelectActivity.request(this, REQUEST_IMAGE, 1)
     }
 
     override fun onSave(code: Int, msg: String?, path: String?) {
@@ -154,7 +157,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
         when (item.id) {
             0 -> {
-                GallerySelectActivity.request(this, 100, 1)
+                pickImage()
             }
             10 -> {
                 processor?.setTranslate(mCurrentLayer, 0f, 0f)
@@ -175,5 +178,9 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         bottomSheetDialog = BottomSheetDialog(this, OPTS)
         bottomSheetDialog?.onItemClickListener = this
         bottomSheetDialog?.show()
+    }
+
+    companion object {
+        const val REQUEST_IMAGE = 100
     }
 }

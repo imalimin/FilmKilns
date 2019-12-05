@@ -36,6 +36,14 @@ bool HwAbsFilter::prepare() {
 }
 
 void HwAbsFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+    drawStart(program, src, dest);
+}
+
+void HwAbsFilter::drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+
+}
+
+void HwAbsFilter::drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
 
 }
 
@@ -48,6 +56,7 @@ void HwAbsFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     }
     drawFirst(program, src, dest);
     program->draw(src);
+    drawEnd(program, src, dest);
     if (fbo) {
         fbo->unbindTex();
         fbo->unbind();

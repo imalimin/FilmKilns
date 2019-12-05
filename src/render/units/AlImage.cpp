@@ -76,6 +76,7 @@ bool AlImage::onSave(Message *m) {
         }
         return true;
     }
+    _drawAllLayer(true);
     auto output = mCanvas.getOutput();
     size_t size = static_cast<size_t>(output->getWidth() * output->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
@@ -113,8 +114,8 @@ void AlImage::_newDefaultCanvas() {
     mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(), texAllocator);
 }
 
-void AlImage::_drawAllLayer() {
-    mCanvas.clear();
+void AlImage::_drawAllLayer(bool showBg) {
+    mCanvas.clear(showBg);
     if (!mLayerManager.empty()) {
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {

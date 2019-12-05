@@ -32,9 +32,13 @@ public:
 
     virtual void setParam(int key, int value);
 
-    virtual HwProgram *createProgram()=0;
+    virtual HwProgram *createProgram() = 0;
 
     virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
+
+    virtual void drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
+
+    virtual void drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
 
 private:
     HwAbsFBObject *fbo = nullptr;

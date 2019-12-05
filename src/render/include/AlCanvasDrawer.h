@@ -31,7 +31,9 @@ public:
 private:
     HwProgram *createProgram() override;
 
-    void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    void drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+
+    void drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
     AlRectF sRectF;

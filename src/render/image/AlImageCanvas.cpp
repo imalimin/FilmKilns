@@ -49,12 +49,19 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator
     clear();
 }
 
-void AlImageCanvas::clear() {
-    if (mCanvasTex && mBgDrawer) {
+void AlImageCanvas::clear(bool transparent) {
+    if (mCanvasTex) {
         glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
-        AlSize size(mCanvasTex->getWidth(), mCanvasTex->getHeight());
-        mBgDrawer->update(size);
-        mBgDrawer->draw(mCanvasTex);
+        if (!transparent && mBgDrawer) {
+            AlSize size(mCanvasTex->getWidth(), mCanvasTex->getHeight());
+            mBgDrawer->update(size);
+            mBgDrawer->draw(mCanvasTex);
+        } else {
+            fbo->bind();
+            glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            fbo->unbind();
+        }
         Logcat::i(TAG, "%s(%d) Canvas clear. Size %dx%d",
                   __FUNCTION__, __LINE__,
                   mCanvasTex->getWidth(), mCanvasTex->getHeight());
