@@ -10,11 +10,12 @@
 
 AlBitmapInfo::AlBitmapInfo() : Object() {};
 
-AlBitmapInfo::AlBitmapInfo(const AlBitmapInfo &e) : Object(),
-                                                    width(e.width),
-                                                    height(e.height),
-                                                    depth(e.depth),
-                                                    colorSpace(e.colorSpace) {
+AlBitmapInfo::AlBitmapInfo(const AlBitmapInfo &o) : Object(),
+                                                    width(o.width),
+                                                    height(o.height),
+                                                    depth(o.depth),
+                                                    colorSpace(o.colorSpace),
+                                                    rotation(o.rotation) {
 };
 
 AlBitmapInfo::~AlBitmapInfo() {

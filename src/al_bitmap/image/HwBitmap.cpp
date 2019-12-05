@@ -13,7 +13,7 @@ HwBitmap *HwBitmap::create(AlBitmapInfo info) {
         Logcat::e("HWVC", "Invalid image color space!");
         return nullptr;
     }
-    return new HwBitmap(info.width, info.height, info.depth, info.colorSpace);
+    return new HwBitmap(info);
 }
 
 HwBitmap *HwBitmap::create(int width, int height, AlColorSpace colorSpace) {
@@ -38,6 +38,11 @@ float HwBitmap::getImageFormatBytes(AlColorSpace format) {
         default:
             return 0;
     }
+}
+
+HwBitmap::HwBitmap(AlBitmapInfo &info) {
+    this->info = info;
+    config();
 }
 
 HwBitmap::HwBitmap(int width, int height, uint32_t depth, AlColorSpace colorSpace) {

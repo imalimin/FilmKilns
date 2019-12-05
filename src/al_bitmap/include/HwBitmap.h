@@ -22,6 +22,8 @@ public:
     static float getImageFormatBytes(AlColorSpace format);
 
 private:
+    HwBitmap(AlBitmapInfo &info);
+
     HwBitmap(int width, int height, uint32_t depth, AlColorSpace format);
 
     HwBitmap(const HwBitmap &e) : Object() {};

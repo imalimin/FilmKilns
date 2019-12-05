@@ -59,7 +59,7 @@ private:
     std::string path;
     int32_t id = AlIdentityCreator::NONE_ID;
     float alpha = 1.0f;
-    ///弧度表示，r=rotation*PI
+    ///弧度表示，顺时针方向为正向(CW)，r=rotation*PI
     AlRational rotation = AlRational();
     AlVec2 position;
     AlVec2 scale;

@@ -93,7 +93,18 @@ AlBitmapInfo JpegDecoder::getInfo() {
     jpeg_read_header(&cinfo, true);
 
     int orientation = _getOrientation(cinfo.marker_list);
-
+    switch (orientation) {
+        case 6: {
+            info.rotation = AlRational(1, 2);
+            break;
+        }
+        case 8: {
+            info.rotation = AlRational(3, 2);
+            break;
+        }
+        default:
+            break;
+    }
     info.width = cinfo.image_width;
     info.height = cinfo.image_height;
     info.depth = 8;
@@ -101,6 +112,29 @@ AlBitmapInfo JpegDecoder::getInfo() {
     jpeg_destroy_decompress(&cinfo);
     fclose(file);
     return info;
+}
+
+HwResult JpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
+    uint8_t *buffer = nullptr;
+    unsigned long length = readFile(path, &buffer);
+    if (0 == length) {
+        return 0;
+    }
+
+    int subsample, colorspace;
+    int flags = 0;
+    int fmt = TJPF_RGBA;
+    int channels = 4;
+    tjDecompressHeader3(handle, buffer, length, &info->width, &info->height, &subsample,
+                        &colorspace);
+
+    flags |= 0;
+    *buf = AlBuffer::alloc(info->width * info->height * channels);
+    tjDecompress2(handle, buffer, length, (*buf)->data(), info->width, 0, info->height, fmt, flags);
+    delete[]buffer;
+    info->depth = 8;
+    info->colorSpace = AlColorSpace::RGBA;
+    return Hw::SUCCESS;
 }
 
 /*
@@ -236,28 +270,4 @@ int JpegDecoder::_getOrientation(jpeg_saved_marker_ptr make_list) {
     }
 
     return 0;     /* No EXIF Orientation tag found */
-}
-
-HwResult JpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
-    getInfo();
-    uint8_t *buffer = nullptr;
-    unsigned long length = readFile(path, &buffer);
-    if (0 == length) {
-        return 0;
-    }
-
-    int subsample, colorspace;
-    int flags = 0;
-    int fmt = TJPF_RGBA;
-    int channels = 4;
-    tjDecompressHeader3(handle, buffer, length, &info->width, &info->height, &subsample,
-                        &colorspace);
-
-    flags |= 0;
-    *buf = AlBuffer::alloc(info->width * info->height * channels);
-    tjDecompress2(handle, buffer, length, (*buf)->data(), info->width, 0, info->height, fmt, flags);
-    delete[]buffer;
-    info->depth = 8;
-    info->colorSpace = AlColorSpace::RGBA;
-    return Hw::SUCCESS;
 }

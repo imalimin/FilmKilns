@@ -10,12 +10,13 @@
 
 #include "Object.h"
 #include "AlColorSpace.h"
+#include "AlRational.h"
 
 al_class(AlBitmapInfo) {
 public:
     AlBitmapInfo();
 
-    AlBitmapInfo(const AlBitmapInfo &e);
+    AlBitmapInfo(const AlBitmapInfo &o);
 
     virtual ~AlBitmapInfo();
 
@@ -30,6 +31,8 @@ public:
     int32_t height = 0;
     uint32_t depth = 0;
     AlColorSpace colorSpace = AlColorSpace::NONE;
+    ///表示需要旋转多少弧度才能正向像是，顺时针方向为正向(CW)
+    AlRational rotation = AlRational();
 };
 
 
