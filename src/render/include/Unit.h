@@ -112,6 +112,16 @@ public:
 
     bool registerEvent(int what, EventFunc handler);
 
+    /// 该函数会接收到一个pipeline实例即将销毁的消息
+    /// 请在此释放跟opengl相关的资源，或其它
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | none         | none      | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
     virtual bool eventRelease(Message *msg)=0;
 
     /** Model Provider START */

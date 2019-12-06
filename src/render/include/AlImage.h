@@ -28,12 +28,48 @@ public:
 
     bool onPrepare(Message *msg);
 
+    /// 表示图层有更新，比如新增或删除图层
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | none         | none      | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
     bool onUpdateLayer(Message *msg);
 
+    /// 重绘所有图层，并绘制到窗口
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | none         | none      | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
     bool onInvalidate(Message *m);
 
+    /// 更新画布
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | none         | none      | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
     bool onUpdateCanvas(Message *m);
 
+    /// 保存图片
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | none         | none      | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
     bool onSave(Message *m);
 
     void setOnSaveListener(OnSaveListener listener);
