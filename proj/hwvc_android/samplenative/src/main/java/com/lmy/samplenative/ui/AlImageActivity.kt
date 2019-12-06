@@ -1,6 +1,7 @@
 package com.lmy.samplenative.ui
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -22,8 +23,7 @@ import kotlinx.android.synthetic.main.activity_al_image.*
 import java.io.File
 
 class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
-        View.OnClickListener, BottomSheetItem.OnClickListener,
-        AlImageProcessor.OnSaveListener {
+        View.OnClickListener, AlImageProcessor.OnSaveListener {
 
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
@@ -46,6 +46,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun getLayoutResource(): Int = R.layout.activity_al_image
 
     override fun initView() {
+        optLayout.visibility = View.GONE
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
         surfaceView?.setOnClickListener { v, x, y ->
@@ -62,7 +63,10 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         surfaceView?.setOnRotateListener { v, dr ->
             processor?.postRotation(mCurrentLayer, dr)
         }
-        showOpt.setOnClickListener(this)
+        optBtn.setOnClickListener(this)
+        fileBtn.setOnClickListener(this)
+        canvasBtn.setOnClickListener(this)
+        layerBtn.setOnClickListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
             processor = AlImageProcessor.create()
@@ -74,8 +78,21 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.showOpt -> {
-                showAllOpt()
+            R.id.fileBtn -> {
+                bottomSheetDialog = FileOptDialog(this, processor).show()
+            }
+            R.id.canvasBtn -> {
+                bottomSheetDialog = CanvasOptDialog(this, processor).show()
+            }
+            R.id.layerBtn -> {
+                bottomSheetDialog = LayerOptDialog(this, processor).show()
+            }
+            R.id.optBtn -> {
+                optLayout.visibility = if (View.VISIBLE == optLayout.visibility) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
             }
         }
     }
@@ -131,9 +148,11 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         layerView.text = mCurrentLayer.toString()
     }
 
-    private fun pickImage() {
+    fun pickImage() {
         GallerySelectActivity.request(this, REQUEST_IMAGE, 1)
     }
+
+    fun getCurrentLayer(): Int = mCurrentLayer
 
     override fun onSave(code: Int, msg: String?, path: String?) {
         Toast.makeText(this@AlImageActivity,
@@ -148,43 +167,93 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         }
     }
 
+    companion object {
+        const val REQUEST_IMAGE = 100
+    }
+}
+
+interface IOptDialog {
+    fun show(): BottomSheetDialog
+}
+
+class FileOptDialog(private var context: Context, private var processor: AlImageProcessor?)
+    : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf<BottomSheetItem>(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
-            BottomSheetItem(10, R.mipmap.ic_launcher, "Rest Layer"),
-            BottomSheetItem(100, R.mipmap.ic_launcher, "Delete Layer"),
-            BottomSheetItem(110, R.mipmap.ic_launcher, "Change Canvas"),
-            BottomSheetItem(200, R.mipmap.ic_launcher, "Save"))
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Save"),
+            BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
+            BottomSheetItem(2, R.mipmap.ic_launcher, "None")
+    )
+
+    override fun show(): BottomSheetDialog {
+        val dialog = BottomSheetDialog(context, OPTS)
+        dialog.onItemClickListener = this
+        dialog.show()
+        return dialog
+    }
 
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
         when (item.id) {
             0 -> {
-                pickImage()
-            }
-            10 -> {
-                processor?.setTranslate(mCurrentLayer, 0f, 0f)
-                processor?.setRotation(mCurrentLayer, AlRational.zero())
-                processor?.setScale(mCurrentLayer, AlRational(1, 1))
-            }
-            100 -> {
-                processor?.removeLayer(mCurrentLayer)
-            }
-            110 -> {
-                processor?.setCanvas(1080,1080)
-            }
-            200 -> {
                 processor?.save("${File(Environment.getExternalStorageDirectory(),
                         "alimage.jpg").absoluteFile}")
             }
         }
     }
 
-    private fun showAllOpt() {
-        bottomSheetDialog = BottomSheetDialog(this, OPTS)
-        bottomSheetDialog?.onItemClickListener = this
-        bottomSheetDialog?.show()
+}
+
+class CanvasOptDialog(private var context: Context, private var processor: AlImageProcessor?)
+    : IOptDialog, BottomSheetItem.OnClickListener {
+    private val OPTS = arrayListOf<BottomSheetItem>(
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Change Canvas"),
+            BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
+            BottomSheetItem(2, R.mipmap.ic_launcher, "None")
+    )
+
+    override fun show(): BottomSheetDialog {
+        val dialog = BottomSheetDialog(context, OPTS)
+        dialog.onItemClickListener = this
+        dialog.show()
+        return dialog
     }
 
-    companion object {
-        const val REQUEST_IMAGE = 100
+    override fun onBottomSheetItemClick(item: BottomSheetItem) {
+        when (item.id) {
+            0 -> {
+                processor?.setCanvas(1080, 1080)
+            }
+        }
+    }
+}
+
+class LayerOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
+    : IOptDialog, BottomSheetItem.OnClickListener {
+    private val OPTS = arrayListOf<BottomSheetItem>(
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
+            BottomSheetItem(1, R.mipmap.ic_launcher, "Rest Layer"),
+            BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer")
+    )
+
+    override fun show(): BottomSheetDialog {
+        val dialog = BottomSheetDialog(context, OPTS)
+        dialog.onItemClickListener = this
+        dialog.show()
+        return dialog
+    }
+
+    override fun onBottomSheetItemClick(item: BottomSheetItem) {
+        when (item.id) {
+            0 -> {
+                context.pickImage()
+            }
+            1 -> {
+                processor?.setTranslate(context.getCurrentLayer(), 0f, 0f)
+                processor?.setRotation(context.getCurrentLayer(), AlRational.zero())
+                processor?.setScale(context.getCurrentLayer(), AlRational(1, 1))
+            }
+            2 -> {
+                processor?.removeLayer(context.getCurrentLayer())
+            }
+        }
     }
 }
