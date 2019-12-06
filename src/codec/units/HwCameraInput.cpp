@@ -129,9 +129,9 @@ void HwCameraInput::updateMatrix(int32_t w, int32_t h, HwMatrix *matrix) {
     HwMatrix scale;
     float ratio = getInt32("camera_width") / (float) getInt32("camera_height");
     if (ratio > w / (float) h) {
-        scale.scale((h * ratio) / w, 1.0f, 1.0f);
+        scale.scale(w / (h * ratio), 1.0f, 1.0f);
     } else {
-        scale.scale(1.0f, (w / ratio) / h, 1.0f);
+        scale.scale(1.0f, h / (w / ratio), 1.0f);
     }
     HwMatrix trans;
     trans.rotate(0.0f, HwMatrix::PI, 0.0f);
