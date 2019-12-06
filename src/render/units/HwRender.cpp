@@ -129,6 +129,9 @@ void HwRender::checkEnv(int width, int height) {
             target->update(nullptr, width, height);
         }
     }
+    if (target && (target->getWidth() != width || target->getHeight() != height)) {
+        target->update(nullptr, width, height);
+    }
     if (yuvReadFilter) {
         bool ret = yuvReadFilter->prepare();
         if (ret) {
@@ -139,6 +142,9 @@ void HwRender::checkEnv(int width, int height) {
             size_t size = static_cast<size_t>(width * height * 3 / 2);
             buf = HwBuffer::alloc(size);
         }
+    }
+    if (yuvTarget && (yuvTarget->getWidth() != width || yuvTarget->getHeight() != height)) {
+        yuvTarget->update(nullptr, width, height);
     }
 }
 

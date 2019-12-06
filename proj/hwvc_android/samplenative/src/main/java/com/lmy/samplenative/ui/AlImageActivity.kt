@@ -152,6 +152,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
             BottomSheetItem(10, R.mipmap.ic_launcher, "Rest Layer"),
             BottomSheetItem(100, R.mipmap.ic_launcher, "Delete Layer"),
+            BottomSheetItem(110, R.mipmap.ic_launcher, "Change Canvas"),
             BottomSheetItem(200, R.mipmap.ic_launcher, "Save"))
 
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
@@ -166,6 +167,9 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
             100 -> {
                 processor?.removeLayer(mCurrentLayer)
+            }
+            110 -> {
+                processor?.setCanvas(1080,1080)
             }
             200 -> {
                 processor?.save("${File(Environment.getExternalStorageDirectory(),

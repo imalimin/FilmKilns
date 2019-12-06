@@ -56,6 +56,10 @@ public:
 
     void calculatePosition(float &x, float &y);
 
+    /// 根据window坐标获取对应的Layer，还需要适配缩放旋转的情况
+    /// \param x x坐标，x∈[-1,1]
+    /// \param y y坐标，y∈[-1,1]
+    /// \return 对应的图层id，否则-1
     int32_t getLayer(float x, float y);
 
     HwResult save(std::string path);
