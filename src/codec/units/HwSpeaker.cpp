@@ -12,7 +12,6 @@ HwSpeaker::HwSpeaker(string alias) : HwSpeaker(alias, HwAudioDeviceMode::Normal)
 }
 
 HwSpeaker::HwSpeaker(string alias, HwAudioDeviceMode mode) : Unit(alias), mode(mode) {
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwSpeaker::eventPrepare));
     registerEvent(EVENT_SPEAKER_FEED, reinterpret_cast<EventFunc>(&HwSpeaker::eventFeed));
 }
 
@@ -25,7 +24,7 @@ HwSpeaker::~HwSpeaker() {
     }
 }
 
-bool HwSpeaker::eventPrepare(Message *msg) {
+bool HwSpeaker::onCreate(Message *msg) {
     return false;
 }
 

@@ -20,9 +20,9 @@ public:
 
     virtual ~HwRender();
 
-    bool onDestroy(Message *msg) override;
+    bool onCreate(Message *msg) override;
 
-    bool eventPrepare(Message *msg);
+    bool onDestroy(Message *msg) override;
 
     bool eventRenderFilter(Message *msg);
 

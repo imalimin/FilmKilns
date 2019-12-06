@@ -28,6 +28,11 @@ void HwAbsProcessor::onDestroy() {
 
 }
 
+void HwAbsProcessor::prepare() {
+    Message *msg = new Message(EVENT_COMMON_PREPARE);
+    postEvent(msg);
+}
+
 void HwAbsProcessor::registerAnUnit(Unit *unit) {
     if (pipeline) {
 //        if(!provider){

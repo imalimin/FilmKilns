@@ -20,7 +20,7 @@ public:
 
     bool onDestroy(Message *msg);
 
-    bool eventPrepare(Message *msg);
+    bool onCreate(Message *msg) override;
 
     bool eventSetSource(Message *msg);
 

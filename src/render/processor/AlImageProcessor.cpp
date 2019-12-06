@@ -20,8 +20,7 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
-    Message *msg = new Message(EVENT_COMMON_PREPARE);
-    postEvent(msg);
+    prepare();
     aImage->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
         if (this->onSaveListener) {
             this->onSaveListener(code, msg, path);
@@ -35,12 +34,6 @@ AlImageProcessor::~AlImageProcessor() {
 
 void AlImageProcessor::onDestroy() {
     HwAbsProcessor::onDestroy();
-}
-
-void AlImageProcessor::prepare(HwWindow *win) {
-    Message *msg = new Message(EVENT_COMMON_PREPARE);
-    msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
-    postEvent(msg);
 }
 
 void AlImageProcessor::updateWindow(HwWindow *win) {

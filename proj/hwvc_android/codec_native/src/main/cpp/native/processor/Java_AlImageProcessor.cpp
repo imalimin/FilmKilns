@@ -53,14 +53,6 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_creat
     return handler;
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface, jstring path,
-         jint width, jint height) {
-    if (handler) {
-        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
-    }
-}
-
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_updateWindow
         (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {

@@ -24,7 +24,6 @@
 HwRender::HwRender(string alias) : Unit(alias) {
     filter = new HwNormalFilter();
     yuvReadFilter = new HwRGBA2NV12Filter();
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwRender::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READ,
                   reinterpret_cast<EventFunc>(&HwRender::eventReadPixels));
     registerEvent(EVENT_RENDER_FILTER, reinterpret_cast<EventFunc>(&HwRender::eventRenderFilter));
@@ -34,7 +33,7 @@ HwRender::HwRender(string alias) : Unit(alias) {
 HwRender::~HwRender() {
 }
 
-bool HwRender::eventPrepare(Message *msg) {
+bool HwRender::onCreate(Message *msg) {
     Logcat::i("HWVC", "Render::eventPrepare");
     return true;
 }

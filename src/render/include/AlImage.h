@@ -24,9 +24,9 @@ public:
 
     virtual ~AlImage();
 
-    bool onDestroy(Message *msg) override;
+    bool onCreate(Message *msg) override;
 
-    bool onPrepare(Message *msg);
+    bool onDestroy(Message *msg) override;
 
     /// 表示图层有更新，比如新增或删除图层
     /// FORMAT:

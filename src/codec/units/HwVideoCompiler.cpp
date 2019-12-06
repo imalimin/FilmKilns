@@ -15,8 +15,6 @@
 #include "../include/HwVideoUtils.h"
 
 HwVideoCompiler::HwVideoCompiler(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_PREPARE,
-                  reinterpret_cast<EventFunc>(&HwVideoCompiler::eventPrepare));
     registerEvent(EVENT_COMMON_PIXELS_READY,
                   reinterpret_cast<EventFunc>(&HwVideoCompiler::eventResponsePixels));
     registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&HwVideoCompiler::eventWrite));
@@ -40,7 +38,7 @@ int HwVideoCompiler::getHeight() {
     return getInt32("height");
 }
 
-bool HwVideoCompiler::eventPrepare(Message *msg) {
+bool HwVideoCompiler::onCreate(Message *msg) {
     recording = false;
     int32_t width = getInt32("width");
     int32_t height = getInt32("height");

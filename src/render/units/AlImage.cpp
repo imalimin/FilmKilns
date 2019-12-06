@@ -11,7 +11,6 @@
 #include "ObjectBox.h"
 
 AlImage::AlImage(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&AlImage::onPrepare));
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlImage::onInvalidate));
     registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlImage::onUpdateLayer));
     registerEvent(EVENT_AIMAGE_UPDATE_CANVAS,
@@ -23,6 +22,11 @@ AlImage::~AlImage() {
     this->onSaveListener = nullptr;
 }
 
+bool AlImage::onCreate(Message *msg) {
+    texAllocator = new TextureAllocator();
+    return true;
+}
+
 bool AlImage::onDestroy(Message *msg) {
     mCanvas.release();
     mLayerManager.release();
@@ -30,11 +34,6 @@ bool AlImage::onDestroy(Message *msg) {
         delete texAllocator;
         texAllocator = nullptr;
     }
-    return true;
-}
-
-bool AlImage::onPrepare(Message *msg) {
-    texAllocator = new TextureAllocator();
     return true;
 }
 

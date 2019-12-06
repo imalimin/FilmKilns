@@ -38,7 +38,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool eventPrepare(Message *msg);
+    bool onCreate(Message *msg) override;
 
     /// 更新Window，用于App从后台切到前台，eglSurface需要
     /// FORMAT:

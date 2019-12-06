@@ -9,8 +9,6 @@
 #include "HwBuffer.h"
 
 HwAudioCompiler::HwAudioCompiler(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_PREPARE,
-                  reinterpret_cast<EventFunc>(&HwAudioCompiler::eventPrepare));
     registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
                   reinterpret_cast<EventFunc>(&HwAudioCompiler::eventReceiveData));
 }
@@ -27,7 +25,7 @@ bool HwAudioCompiler::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwAudioCompiler::eventPrepare(Message *msg) {
+bool HwAudioCompiler::onCreate(Message *msg) {
     Object *f = getObject("format");
     HwSampleFormat *format = reinterpret_cast<HwSampleFormat *>(f);
     string path = getString("path");

@@ -112,6 +112,8 @@ public:
 
     bool registerEvent(int what, EventFunc handler);
 
+    virtual bool onCreate(Message *msg) = 0;
+
     /// 该函数会接收到一个pipeline实例即将销毁的消息
     /// 请在此释放跟opengl相关的资源，或其它
     /// FORMAT:
@@ -122,7 +124,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    virtual bool onDestroy(Message *msg)=0;
+    virtual bool onDestroy(Message *msg) = 0;
 
     /** Model Provider START */
     void setModelProvider(HwModelProvider *provider);
@@ -160,6 +162,8 @@ public:
     HwModelProvider(string alias);
 
     virtual ~HwModelProvider();
+
+    bool onCreate(Message *msg) override;
 
     bool onDestroy(Message *msg) override;
 

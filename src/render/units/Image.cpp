@@ -10,7 +10,6 @@
 #include "Logcat.h"
 
 Image::Image(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Image::eventPrepare));
     registerEvent(EVENT_IMAGE_SHOW, reinterpret_cast<EventFunc>(&Image::eventShow));
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&Image::eventInvalidate));
 }
@@ -59,7 +58,7 @@ bool Image::decode(string path) {
     return true;
 }
 
-bool Image::eventPrepare(Message *msg) {
+bool Image::onCreate(Message *msg) {
     texAllocator = new TextureAllocator();
     return true;
 }

@@ -18,7 +18,7 @@ public:
 
     virtual ~HwMicrophone();
 
-    bool eventPrepare(Message *msg);
+    bool onCreate(Message *msg) override;
 
     bool onDestroy(Message *msg) override;
 

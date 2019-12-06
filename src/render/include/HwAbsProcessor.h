@@ -61,6 +61,8 @@ public:
 
     virtual ~HwAbsProcessor();
 
+    void prepare();
+
     void post(function<void()> runnable);
 
 protected:

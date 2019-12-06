@@ -11,7 +11,6 @@
 #define TAG "HwScreen"
 
 HwScreen::HwScreen(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwScreen::eventPrepare));
     registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
     registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
                   reinterpret_cast<EventFunc>(&HwScreen::eventUpdateWindow));
@@ -36,8 +35,8 @@ bool HwScreen::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwScreen::eventPrepare(Message *msg) {
-    Logcat::i(TAG, "Screen::eventPrepare");
+bool HwScreen::onCreate(Message *msg) {
+    Logcat::i(TAG, "Screen::onCreate");
     if (msg->obj) {
         NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
         this->width = nw->win->getWidth();

@@ -13,7 +13,6 @@
 #include "HwTexture.h"
 
 HwVideoInput::HwVideoInput(string alias) : HwStreamMedia(alias) {
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPrepare));
     registerEvent(EVENT_VIDEO_START, reinterpret_cast<EventFunc>(&HwVideoInput::eventStart));
     registerEvent(EVENT_VIDEO_PAUSE, reinterpret_cast<EventFunc>(&HwVideoInput::eventPause));
     registerEvent(EVENT_VIDEO_SEEK, reinterpret_cast<EventFunc>(&HwVideoInput::eventSeek));
@@ -49,7 +48,7 @@ bool HwVideoInput::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwVideoInput::eventPrepare(Message *msg) {
+bool HwVideoInput::onCreate(Message *msg) {
     playState = PAUSE;
     if (!decoder->prepare(path)) {
         LOGE("HwVideoInput::open %s failed", path.c_str());

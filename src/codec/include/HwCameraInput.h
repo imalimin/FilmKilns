@@ -20,7 +20,7 @@ public:
 
     virtual ~HwCameraInput();
 
-    bool eventPrepare(Message *msg);
+    bool onCreate(Message *msg) override;
 
     bool onDestroy(Message *msg) override;
 

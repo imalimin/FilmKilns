@@ -10,7 +10,6 @@
 #include "Thread.h"
 
 HwAudioInput::HwAudioInput(string alias) : HwStreamMedia(alias) {
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwAudioInput::eventPrepare));
     registerEvent(EVENT_AUDIO_START, reinterpret_cast<EventFunc>(&HwAudioInput::eventStart));
     registerEvent(EVENT_AUDIO_PAUSE, reinterpret_cast<EventFunc>(&HwAudioInput::eventPause));
     registerEvent(EVENT_AUDIO_STOP, reinterpret_cast<EventFunc>(&HwAudioInput::eventStop));
@@ -29,7 +28,7 @@ HwAudioInput::~HwAudioInput() {
     simpleLock.unlock();
 }
 
-bool HwAudioInput::eventPrepare(Message *msg) {
+bool HwAudioInput::onCreate(Message *msg) {
     playState = PAUSE;
     string path = getPath();
     if (!decoder->prepare(path)) {

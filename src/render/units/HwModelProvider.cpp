@@ -75,3 +75,7 @@ const string &HwModelProvider::getString(string key) {
 Object *HwModelProvider::getObject(string key) {
     return bundle.getObject(key);
 }
+
+bool HwModelProvider::onCreate(Message *msg) {
+    return true;
+}

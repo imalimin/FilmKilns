@@ -12,7 +12,6 @@
 #include "../include/HwFBObject.h"
 
 HwCameraInput::HwCameraInput(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&HwCameraInput::eventPrepare));
     registerEvent(EVENT_CAMERA_INVALIDATE,
                   reinterpret_cast<EventFunc>(&HwCameraInput::eventInvalidate));
 }
@@ -21,7 +20,7 @@ HwCameraInput::~HwCameraInput() {
 
 }
 
-bool HwCameraInput::eventPrepare(Message *msg) {
+bool HwCameraInput::onCreate(Message *msg) {
     Logcat::i("HWVC", "HwCameraInput::eventPrepare");
     egl = new Egl();
     srcTex = HwTexture::allocOES();

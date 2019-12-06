@@ -26,8 +26,6 @@ public:
 
     virtual void onDestroy() override;
 
-    void prepare(HwWindow *win);
-
     void updateWindow(HwWindow *win);
 
     void setCanvas(int32_t w, int32_t h, int32_t color);
