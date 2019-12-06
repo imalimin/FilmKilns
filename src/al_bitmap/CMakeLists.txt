@@ -27,14 +27,14 @@ message(STATUS "hwcommom CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #------------------STATIC START----------------------
 #libjpeg
-add_library(
-        libjpeg
-        STATIC
-        IMPORTED)
-set_target_properties(
-        libjpeg
-        PROPERTIES IMPORTED_LOCATION
-        "${JPGE}/libjpeg.a")
+#add_library(
+#        libjpeg
+#        STATIC
+#        IMPORTED)
+#set_target_properties(
+#        libjpeg
+#        PROPERTIES IMPORTED_LOCATION
+#        "${JPGE}/libjpeg.a")
 
 #libturbojpeg
 add_library(
@@ -48,13 +48,13 @@ set_target_properties(
 
 #libpng16
 add_library(
-        libpng
+        libpng16
         STATIC
         IMPORTED)
 set_target_properties(
-        libpng
+        libpng16
         PROPERTIES IMPORTED_LOCATION
-        "${PNG}/libpng.a")
+        "${PNG}/libpng16.a")
 
 #------------------STATIC END----------------------
 
@@ -83,8 +83,8 @@ find_library(
 target_link_libraries(
         albitmap
         hwvcom
-        libjpeg
+#        libjpeg
         libturbojpeg
-        libpng
+        libpng16
         ${log-lib}
 )

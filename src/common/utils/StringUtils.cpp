@@ -63,10 +63,6 @@ std::string StringUtils::valueOf(int32_t value) {
     return valueOf<int32_t>(value);
 }
 
-std::string StringUtils::valueOf(long value) {
-    return valueOf<long>(value);
-}
-
 std::string StringUtils::valueOf(int64_t value) {
     return valueOf<int64_t>(value);
 }

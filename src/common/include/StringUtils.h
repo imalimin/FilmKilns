@@ -44,8 +44,6 @@ public:
 
     static std::string valueOf(int32_t value);
 
-    static std::string valueOf(long value);
-
     static std::string valueOf(int64_t value);
 
     static std::string valueOf(float value);
