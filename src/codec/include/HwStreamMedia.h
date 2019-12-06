@@ -16,7 +16,7 @@ public:
 
     virtual ~HwStreamMedia();
 
-    virtual bool eventRelease(Message *msg)=0;
+    virtual bool onDestroy(Message *msg)=0;
 
     virtual bool eventStart(Message *msg) = 0;
 

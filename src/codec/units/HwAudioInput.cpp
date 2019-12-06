@@ -39,8 +39,8 @@ bool HwAudioInput::eventPrepare(Message *msg) {
     return false;
 }
 
-bool HwAudioInput::eventRelease(Message *msg) {
-    LOGI("HwAudioInput::eventRelease");
+bool HwAudioInput::onDestroy(Message *msg) {
+    LOGI("HwAudioInput::onDestroy");
     eventStop(nullptr);
     return false;
 }

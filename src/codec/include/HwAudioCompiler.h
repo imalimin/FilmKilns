@@ -18,7 +18,7 @@ public:
 
     virtual ~HwAudioCompiler();
 
-    bool eventRelease(Message *msg) override;
+    bool onDestroy(Message *msg) override;
 
     bool eventPrepare(Message *msg);
 

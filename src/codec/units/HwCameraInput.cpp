@@ -48,8 +48,8 @@ bool HwCameraInput::eventPrepare(Message *msg) {
     return true;
 }
 
-bool HwCameraInput::eventRelease(Message *msg) {
-    Logcat::i("HWVC", "HwCameraInput::eventRelease");
+bool HwCameraInput::onDestroy(Message *msg) {
+    Logcat::i("HWVC", "HwCameraInput::onDestroy");
     egl->makeCurrent();
     if (fbo) {
         delete fbo;

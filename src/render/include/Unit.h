@@ -122,7 +122,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    virtual bool eventRelease(Message *msg)=0;
+    virtual bool onDestroy(Message *msg)=0;
 
     /** Model Provider START */
     void setModelProvider(HwModelProvider *provider);
@@ -161,7 +161,7 @@ public:
 
     virtual ~HwModelProvider();
 
-    bool eventRelease(Message *msg) override;
+    bool onDestroy(Message *msg) override;
 
     bool eventPutInt32(Message *msg);
 

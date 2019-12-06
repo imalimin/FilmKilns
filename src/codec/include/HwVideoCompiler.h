@@ -24,7 +24,7 @@ public:
 
     bool eventPrepare(Message *msg);
 
-    bool eventRelease(Message *msg) override;
+    bool onDestroy(Message *msg) override;
 
     /**
      * Response read pixels message.

@@ -20,7 +20,7 @@ public:
 
     virtual ~HwSpeaker();
 
-    bool eventRelease(Message *msg);
+    bool onDestroy(Message *msg);
 
     bool eventPrepare(Message *msg);
 

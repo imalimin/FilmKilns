@@ -24,7 +24,7 @@ public:
 
     virtual ~AlImage();
 
-    bool eventRelease(Message *msg) override;
+    bool onDestroy(Message *msg) override;
 
     bool onPrepare(Message *msg);
 

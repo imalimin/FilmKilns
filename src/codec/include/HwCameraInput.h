@@ -22,7 +22,7 @@ public:
 
     bool eventPrepare(Message *msg);
 
-    bool eventRelease(Message *msg) override;
+    bool onDestroy(Message *msg) override;
 
     bool eventInvalidate(Message *msg);
 

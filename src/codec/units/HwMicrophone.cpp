@@ -29,7 +29,7 @@ bool HwMicrophone::eventPrepare(Message *msg) {
     return true;
 }
 
-bool HwMicrophone::eventRelease(Message *msg) {
+bool HwMicrophone::onDestroy(Message *msg) {
     if (recorder) {
         recorder->stop();
         delete recorder;

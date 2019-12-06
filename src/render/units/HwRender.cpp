@@ -39,15 +39,15 @@ bool HwRender::eventPrepare(Message *msg) {
     return true;
 }
 
-bool HwRender::eventRelease(Message *msg) {
-    Logcat::i("HWVC", "Render::eventRelease");
+bool HwRender::onDestroy(Message *msg) {
+    Logcat::i("HWVC", "Render::onDestroy");
     if (yuvReadFilter) {
         delete yuvReadFilter;
         yuvReadFilter = nullptr;
     }
     if (filter) {
         delete filter;
-        Logcat::i("HWVC", "Render::eventRelease filter");
+        Logcat::i("HWVC", "Render::onDestroy filter");
         filter = nullptr;
     }
     if (buf) {

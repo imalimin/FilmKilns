@@ -61,7 +61,7 @@ bool HwVideoCompiler::eventPrepare(Message *msg) {
     return true;
 }
 
-bool HwVideoCompiler::eventRelease(Message *msg) {
+bool HwVideoCompiler::onDestroy(Message *msg) {
     eventPause(nullptr);
     if (encoder) {
         encoder->stop();

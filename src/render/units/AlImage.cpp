@@ -23,7 +23,7 @@ AlImage::~AlImage() {
     this->onSaveListener = nullptr;
 }
 
-bool AlImage::eventRelease(Message *msg) {
+bool AlImage::onDestroy(Message *msg) {
     mCanvas.release();
     mLayerManager.release();
     if (texAllocator) {

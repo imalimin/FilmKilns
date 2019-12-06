@@ -18,8 +18,8 @@ Image::Image(string alias) : Unit(alias) {
 Image::~Image() {
 }
 
-bool Image::eventRelease(Message *msg) {
-    Logcat::i("HWVC", "Image::eventRelease");
+bool Image::onDestroy(Message *msg) {
+    Logcat::i("HWVC", "Image::onDestroy");
     if (texAllocator) {
         delete texAllocator;
         texAllocator = nullptr;

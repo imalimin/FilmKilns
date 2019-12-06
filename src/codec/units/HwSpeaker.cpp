@@ -29,7 +29,7 @@ bool HwSpeaker::eventPrepare(Message *msg) {
     return false;
 }
 
-bool HwSpeaker::eventRelease(Message *msg) {
+bool HwSpeaker::onDestroy(Message *msg) {
     return false;
 }
 

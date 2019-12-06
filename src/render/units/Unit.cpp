@@ -21,7 +21,7 @@ bool Event::dispatch(Unit *unit, Message *msg) {
 }
 
 Unit::Unit(string alias) : alias(alias) {
-    registerEvent(EVENT_COMMON_RELEASE, reinterpret_cast<EventFunc>(&Unit::eventRelease));
+    registerEvent(EVENT_COMMON_RELEASE, reinterpret_cast<EventFunc>(&Unit::onDestroy));
 }
 
 Unit::~Unit() {

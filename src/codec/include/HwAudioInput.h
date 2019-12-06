@@ -18,7 +18,7 @@ public:
 
     virtual ~HwAudioInput();
 
-    bool eventRelease(Message *msg);
+    bool onDestroy(Message *msg);
 
     bool eventPrepare(Message *msg);
 

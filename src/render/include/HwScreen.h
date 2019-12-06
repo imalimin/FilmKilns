@@ -26,7 +26,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool eventRelease(Message *msg) override;
+    bool onDestroy(Message *msg) override;
 
     /// 该函数会接收到一个pipeline实例初始化的消息
     /// 请在此准备该Unit所需的资源

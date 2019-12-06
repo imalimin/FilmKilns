@@ -19,7 +19,7 @@ HwAudioCompiler::~HwAudioCompiler() {
 
 }
 
-bool HwAudioCompiler::eventRelease(Message *msg) {
+bool HwAudioCompiler::onDestroy(Message *msg) {
     if (muxer) {
         delete muxer;
         muxer = nullptr;

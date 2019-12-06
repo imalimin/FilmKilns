@@ -35,8 +35,8 @@ HwVideoInput::~HwVideoInput() {
     playListener = nullptr;
 }
 
-bool HwVideoInput::eventRelease(Message *msg) {
-    LOGI("HwVideoInput::eventRelease");
+bool HwVideoInput::onDestroy(Message *msg) {
+    LOGI("HwVideoInput::onDestroy");
     eventStop(nullptr);
     if (yuvFilter) {
         delete yuvFilter;

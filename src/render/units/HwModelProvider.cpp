@@ -24,7 +24,7 @@ HwModelProvider::~HwModelProvider() {
 
 }
 
-bool HwModelProvider::eventRelease(Message *msg) {
+bool HwModelProvider::onDestroy(Message *msg) {
     return true;
 }
 

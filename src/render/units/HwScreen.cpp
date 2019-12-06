@@ -20,8 +20,8 @@ HwScreen::HwScreen(string alias) : Unit(alias) {
 HwScreen::~HwScreen() {
 }
 
-bool HwScreen::eventRelease(Message *msg) {
-    Logcat::i(TAG, "Screen::eventRelease");
+bool HwScreen::onDestroy(Message *msg) {
+    Logcat::i(TAG, "Screen::onDestroy");
     if (egl) {
         egl->makeCurrent();
     }

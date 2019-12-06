@@ -18,7 +18,7 @@ public:
 
     virtual ~Image();
 
-    bool eventRelease(Message *msg) override;
+    bool onDestroy(Message *msg) override;
 
     bool eventPrepare(Message *msg);
 
