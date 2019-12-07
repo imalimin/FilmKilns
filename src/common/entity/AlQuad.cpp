@@ -34,9 +34,17 @@ void AlQuad::setLeftTop(float x, float y) {
     _leftTop.y = y;
 }
 
+void AlQuad::setLeftTop(AlVec2 vec2) {
+    setLeftTop(vec2.x, vec2.y);
+}
+
 void AlQuad::setLeftBottom(float x, float y) {
     _leftBottom.x = x;
     _leftBottom.y = y;
+}
+
+void AlQuad::setLeftBottom(AlVec2 vec2) {
+    setLeftBottom(vec2.x, vec2.y);
 }
 
 void AlQuad::setRightBottom(float x, float y) {
@@ -44,9 +52,17 @@ void AlQuad::setRightBottom(float x, float y) {
     _rightBottom.y = y;
 }
 
+void AlQuad::setRightBottom(AlVec2 vec2) {
+    setRightBottom(vec2.x, vec2.y);
+}
+
 void AlQuad::setRightTop(float x, float y) {
     _rightTop.x = x;
     _rightTop.y = y;
+}
+
+void AlQuad::setRightTop(AlVec2 vec2) {
+    setRightTop(vec2.x, vec2.y);
 }
 
 AlPointF AlQuad::leftTop() {

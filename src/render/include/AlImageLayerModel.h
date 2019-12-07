@@ -8,11 +8,14 @@
 #ifndef HWVC_ANDROID_ALIMAGELAYERMODEL_H
 #define HWVC_ANDROID_ALIMAGELAYERMODEL_H
 
+#include <vector>
 #include "Object.h"
 #include "AlVec2.h"
 #include "AlIdentityCreator.h"
 #include "AlQuad.h"
 #include "AlRational.h"
+#include "HwResult.h"
+#include "AlAbsOperateModel.h"
 
 al_class(AlImageLayerModel) {
 public:
@@ -55,6 +58,9 @@ public:
 
     void dump();
 
+public:
+    HwResult addOperator(AlAbsOperateModel *opt);
+
 private:
     std::string path;
     int32_t id = AlIdentityCreator::NONE_ID;
@@ -64,6 +70,7 @@ private:
     AlVec2 position;
     AlVec2 scale;
     AlQuad quad;
+    std::vector<AlAbsOperateModel *> operators;
 };
 
 

@@ -117,3 +117,8 @@ void AlImageLayerModel::dump() {
               quad.rightBottom().x, quad.rightBottom().y);
     Logcat::i(TAG, "+--------------------------+");
 }
+
+HwResult AlImageLayerModel::addOperator(AlAbsOperateModel *opt) {
+    operators.push_back(opt);
+    return Hw::SUCCESS;
+}

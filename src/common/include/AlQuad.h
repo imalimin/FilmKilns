@@ -21,11 +21,19 @@ public:
 
     void setLeftTop(float x, float y);
 
+    void setLeftTop(AlVec2 vec2);
+
     void setLeftBottom(float x, float y);
+
+    void setLeftBottom(AlVec2 vec2);
 
     void setRightBottom(float x, float y);
 
+    void setRightBottom(AlVec2 vec2);
+
     void setRightTop(float x, float y);
+
+    void setRightTop(AlVec2 vec2);
 
     AlPointF leftTop();
 

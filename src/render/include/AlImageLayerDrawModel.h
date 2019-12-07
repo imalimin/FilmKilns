@@ -13,6 +13,7 @@
 #include "AlMatrix.h"
 #include "AlRectF.h"
 #include "HwAbsTexture.h"
+#include "AlQuad.h"
 
 /// 用于存放图层绘制信息
 /// {@link AlCanvasDrawer}根据此信息可以准确在画布上绘制图层
@@ -33,6 +34,7 @@ public:
     float alpha = 1.0f;
     AlMatrix mat;
     AlRectF vertexRectF;
+    AlQuad cropQuad;
 };
 
 
