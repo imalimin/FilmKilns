@@ -256,7 +256,7 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 processor?.removeLayer(context.getCurrentLayer())
             }
             3 -> {
-                processor?.cropLayer(context.getCurrentLayer(), 0.25f, 0.75f, 0.75f, 0.25f)
+                processor?.cropLayer(context.getCurrentLayer(), 0.5f, 1f, 0.75f, 0f)
             }
         }
     }

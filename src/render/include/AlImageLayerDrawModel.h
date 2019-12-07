@@ -27,8 +27,13 @@ public:
 
     AlSize getCanvasSize();
 
+    void setLayerSize(int32_t width, int32_t height);
+
+    AlSize getLayerSize();
+
 private:
     AlSize canvasSize;
+    AlSize layerSize;
 public:
     HwAbsTexture *tex = nullptr;
     float alpha = 1.0f;

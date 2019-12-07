@@ -38,8 +38,14 @@ HwResult AlImageLayer::measure(AlImageLayerDrawModel &drawModel) {
     if (nullptr == model) {
         return Hw::FAILED;
     }
+    ///先把图层原始大小保存到AlImageLayerDrawModel，各种Operate中回用到
+    drawModel.setLayerSize(this->tex->getWidth(), this->tex->getHeight());
+    HwResult ret = _measureOperate(drawModel);
     AlSize canvasSize = drawModel.getCanvasSize();
-    AlSize src(this->tex->getWidth(), this->tex->getHeight());
+    ///经过各种各样的Operate后，layer size会被改变并更新到AlImageLayerDrawModel
+    ///这里需要获取最新的layer size，不然会出错
+    ///必须裁剪Operate会改变layer size，如果不更新则可能出现图像拉伸
+    AlSize src = drawModel.getLayerSize();
     /// 对图层和画布进行正交投影计算，转换坐标系，保证图像旋转缩放不会变形，并得到归一化的区域
     aMeasure.updateOrthogonal(src, canvasSize);
     aMeasure.setScale(model->getScale().x, model->getScale().y);
@@ -59,7 +65,7 @@ HwResult AlImageLayer::measure(AlImageLayerDrawModel &drawModel) {
     model->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
     model->getQuad().mirrorVertical();
-    return _measureOperate(drawModel);
+    return ret;
 }
 
 HwResult AlImageLayer::_measureOperate(AlImageLayerDrawModel &drawModel) {

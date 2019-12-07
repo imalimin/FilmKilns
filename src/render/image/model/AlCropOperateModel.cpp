@@ -40,5 +40,8 @@ HwResult AlCropOperateModel::measure(AlImageLayerDrawModel &drawModel) {
     drawModel.cropQuad.setLeftBottom(lb.multiply(mat).xy());
     drawModel.cropQuad.setRightBottom(rb.multiply(mat).xy());
     drawModel.cropQuad.setRightTop(rt.multiply(mat).xy());
+    AlSize layerSize = drawModel.getLayerSize();
+    drawModel.setLayerSize(static_cast<int32_t>(layerSize.width * rectF.getWidth()),
+                           static_cast<int32_t>(layerSize.width * rectF.getHeight()));
     return Hw::SUCCESS;
 }

@@ -192,6 +192,15 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
+    /**
+     * 对图层进行裁剪
+     * @param id      图层id
+     * @param left   左, left∈[0, 1]
+     * @param top    上, top∈[0, 1]
+     * @param right  右, right∈[0, 1]
+     * @param bottom 下, bottom∈[0, 1]
+     * @return       {@link AlResult}
+     */
     fun cropLayer(id: Int, left: Float, top: Float, right: Float, bottom: Float): Int {
         if (!isNativeNull()) {
             return cropLayer(handler, id, left, top, right, bottom)

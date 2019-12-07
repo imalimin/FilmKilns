@@ -28,3 +28,12 @@ AlImageLayerDrawModel::~AlImageLayerDrawModel() {
 AlSize AlImageLayerDrawModel::getCanvasSize() {
     return canvasSize;
 }
+
+void AlImageLayerDrawModel::setLayerSize(int32_t width, int32_t height) {
+    layerSize.width = width;
+    layerSize.height = height;
+}
+
+AlSize AlImageLayerDrawModel::getLayerSize() {
+    return layerSize;
+}
