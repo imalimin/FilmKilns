@@ -33,3 +33,7 @@ void AlVec2::set(AlVec2 vec) {
     x = vec.x;
     y = vec.y;
 }
+
+bool AlVec2::isZero() {
+    return 0 == x && 0 == y;
+}

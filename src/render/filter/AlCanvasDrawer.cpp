@@ -12,7 +12,7 @@
 #define TAG "AlCanvasDrawer"
 
 AlCanvasDrawer::AlCanvasDrawer() : HwAbsFilter() {
-
+    _resetUV();
 }
 
 AlCanvasDrawer::~AlCanvasDrawer() {
@@ -42,7 +42,7 @@ void AlCanvasDrawer::drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTextu
     HwAbsFilter::drawStart(program, src, dest);
     auto *m = HwMatrix::fromArray(matrix.data());
     program->updateMatrix(m);
-    program->updateLocation(nullptr, vertex);
+    program->updateLocation(uv, vertex);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
@@ -73,6 +73,28 @@ void AlCanvasDrawer::setVertexRectF(AlRectF &rectF) {
     this->vertex[7] = rectF.top;
 }
 
-void AlCanvasDrawer::setPositionRectF(AlRectF &rectF) {
+void AlCanvasDrawer::setPositionQuad(AlQuad &quad) {
+    if (!quad.isZero()) {
+        this->uv[0] = quad.leftBottom().x;
+        this->uv[1] = quad.leftBottom().y;
+        this->uv[2] = quad.rightBottom().x;
+        this->uv[3] = quad.rightBottom().y;
+        this->uv[4] = quad.leftTop().x;
+        this->uv[5] = quad.leftTop().y;
+        this->uv[6] = quad.rightTop().x;
+        this->uv[7] = quad.rightTop().y;
+    } else {
+        _resetUV();
+    }
+}
 
+void AlCanvasDrawer::_resetUV() {
+    this->uv[0] = 0.0f;
+    this->uv[1] = 0.0f;
+    this->uv[2] = 1.0f;
+    this->uv[3] = 0.0f;
+    this->uv[4] = 0.0f;
+    this->uv[5] = 1.0f;
+    this->uv[6] = 1.0f;
+    this->uv[7] = 1.0f;
 }

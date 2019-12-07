@@ -110,3 +110,8 @@ AlQuad &AlQuad::mirrorVertical() {
 AlQuad &AlQuad::mirrorHorizontal() {
     return *this;
 }
+
+bool AlQuad::isZero() {
+    return _leftTop.isZero() && _leftBottom.isZero()
+           && _rightBottom.isZero() && _rightTop.isZero();
+}

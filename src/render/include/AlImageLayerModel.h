@@ -17,6 +17,8 @@
 #include "HwResult.h"
 #include "AlAbsOperateModel.h"
 
+class AlImageLayer;
+
 al_class(AlImageLayerModel) {
 public:
     static AlImageLayerModel *create(AlIdentityCreator *creator, const std::string path);
@@ -62,6 +64,7 @@ public:
     HwResult addOperator(AlAbsOperateModel *opt);
 
 private:
+    friend AlImageLayer;
     std::string path;
     int32_t id = AlIdentityCreator::NONE_ID;
     float alpha = 1.0f;

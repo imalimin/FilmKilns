@@ -44,6 +44,11 @@ private:
     /// \return {@link HwResult}
     HwResult measure(AlImageLayerDrawModel &drawModel);
 
+    /// Measure all operate`s params for canvas
+    /// \param drawModel
+    /// \return {@link HwResult}
+    HwResult _measureOperate(AlImageLayerDrawModel &drawModel);
+
 private:
     AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.

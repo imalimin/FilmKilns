@@ -13,6 +13,7 @@
 #include "AlOrthMatrix.h"
 #include "AlRectF.h"
 #include "AlSize.h"
+#include "AlQuad.h"
 
 class AlCanvasDrawer : public HwAbsFilter {
 public:
@@ -26,7 +27,7 @@ public:
 
     void setVertexRectF(AlRectF &rectF);
 
-    void setPositionRectF(AlRectF &rectF);
+    void setPositionQuad(AlQuad &quad);
 
 private:
     HwProgram *createProgram() override;
@@ -35,10 +36,13 @@ private:
 
     void drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
+    void _resetUV();
+
 private:
     AlRectF sRectF;
     AlRectF dRectF;
     float vertex[8];
+    float uv[8];
     AlMatrix matrix;
     float alpha = 0.0;
 };

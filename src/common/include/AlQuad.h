@@ -54,6 +54,8 @@ public:
 
     AlQuad &mirrorHorizontal();
 
+    bool isZero();
+
 private:
     AlPointF _leftTop;
     AlPointF _leftBottom;

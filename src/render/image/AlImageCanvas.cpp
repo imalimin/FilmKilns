@@ -95,6 +95,7 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel &model) {
     mCanvasDrawer->setMatrix(model.mat);
     ///设置纹理顶点
     mCanvasDrawer->setVertexRectF(model.vertexRectF);
+    mCanvasDrawer->setPositionQuad(model.cropQuad);
     glViewport(0, 0, model.getCanvasSize().width, model.getCanvasSize().height);
     ///Draw layer
     mCanvasDrawer->draw(model.tex, mCanvasTex);

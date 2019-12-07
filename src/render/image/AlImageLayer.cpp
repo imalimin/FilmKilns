@@ -35,6 +35,9 @@ int32_t AlImageLayer::getHeight() {
 }
 
 HwResult AlImageLayer::measure(AlImageLayerDrawModel &drawModel) {
+    if (nullptr == model) {
+        return Hw::FAILED;
+    }
     AlSize canvasSize = drawModel.getCanvasSize();
     AlSize src(this->tex->getWidth(), this->tex->getHeight());
     /// 对图层和画布进行正交投影计算，转换坐标系，保证图像旋转缩放不会变形，并得到归一化的区域
@@ -56,5 +59,17 @@ HwResult AlImageLayer::measure(AlImageLayerDrawModel &drawModel) {
     model->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
     model->getQuad().mirrorVertical();
+    return _measureOperate(drawModel);
+}
+
+HwResult AlImageLayer::_measureOperate(AlImageLayerDrawModel &drawModel) {
+    if (nullptr == model) {
+        return Hw::FAILED;
+    }
+    for (auto *opt : model->operators) {
+        if (opt) {
+            opt->measure(drawModel);
+        }
+    }
     return Hw::SUCCESS;
 }
