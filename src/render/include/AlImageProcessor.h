@@ -60,6 +60,8 @@ public:
     /// \return 对应的图层id，否则-1
     int32_t getLayer(float x, float y);
 
+    HwResult cropLayer(int32_t id, float left, float top, float right, float bottom);
+
     HwResult save(std::string path);
 
     void setOnSaveListener(AlImage::OnSaveListener listener);

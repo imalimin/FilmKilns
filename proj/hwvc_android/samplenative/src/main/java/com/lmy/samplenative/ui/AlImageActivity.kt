@@ -231,7 +231,8 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
     private val OPTS = arrayListOf<BottomSheetItem>(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
             BottomSheetItem(1, R.mipmap.ic_launcher, "Rest Layer"),
-            BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer")
+            BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer"),
+            BottomSheetItem(3, R.mipmap.ic_launcher, "Crop Layer")
     )
 
     override fun show(): BottomSheetDialog {
@@ -253,6 +254,9 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
             }
             2 -> {
                 processor?.removeLayer(context.getCurrentLayer())
+            }
+            3 -> {
+                processor?.cropLayer(context.getCurrentLayer(), 0.25f, 0.75f, 0.75f, 0.25f)
             }
         }
     }

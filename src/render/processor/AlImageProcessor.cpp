@@ -10,6 +10,7 @@
 #include "HwRender.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
+#include "AlOperateFactory.h"
 
 #define TAG "AlImageProcessor"
 
@@ -234,6 +235,17 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
         }
     }
     return Hw::FAILED.code;
+}
+
+HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float right, float bottom) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer) {
+        layer->addOperator(AlOperateFactory::crop(left, top, right, bottom));
+        invalidate();
+        return Hw::SUCCESS;
+    }
+    return Hw::FAILED;
 }
 
 HwResult AlImageProcessor::save(std::string path) {
