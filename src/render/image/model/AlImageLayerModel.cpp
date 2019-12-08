@@ -37,7 +37,12 @@ AlImageLayerModel::AlImageLayerModel(const AlImageLayerModel &o)
 }
 
 AlImageLayerModel::~AlImageLayerModel() {
-
+    auto itr = operators.begin();
+    while (operators.end() != itr) {
+        delete *itr;
+        ++itr;
+    }
+    operators.clear();
 }
 
 std::string AlImageLayerModel::getPath() {

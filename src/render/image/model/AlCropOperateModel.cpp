@@ -30,8 +30,10 @@ void AlCropOperateModel::setRotation(AlRational &r) {
     this->rotation.den = r.den;
 }
 
-HwResult AlCropOperateModel::measure(AlImageLayerDrawModel &drawModel) {
+HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
+                                     AlImageLayerDrawModel &drawModel) {
     AlMatrix mat;
+    mat.setRotation(rotation.toFloat());
     AlVec4 lt(rectF.left, rectF.top);
     AlVec4 lb(rectF.left, rectF.bottom);
     AlVec4 rb(rectF.right, rectF.bottom);

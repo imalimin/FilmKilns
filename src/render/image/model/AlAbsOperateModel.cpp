@@ -7,6 +7,19 @@
 
 #include "AlAbsOperateModel.h"
 
+AlAbsOperateModel::AlLayerDesc::AlLayerDesc() : Object() {
+
+}
+
+AlAbsOperateModel::AlLayerDesc::AlLayerDesc(const AlAbsOperateModel::AlLayerDesc &o)
+        : Object(), rotation(o.rotation) {
+
+}
+
+AlAbsOperateModel::AlLayerDesc::~AlLayerDesc() {
+
+}
+
 AlAbsOperateModel::AlAbsOperateModel() : Object() {
 
 }

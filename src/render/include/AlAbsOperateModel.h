@@ -10,9 +10,23 @@
 
 #include "Object.h"
 #include "HwResult.h"
+#include "AlRational.h"
 #include "AlImageLayerDrawModel.h"
 
 al_class(AlAbsOperateModel) {
+public:
+    al_class(AlLayerDesc) {
+    public:
+        AlLayerDesc();
+
+        AlLayerDesc(const AlLayerDesc &o);
+
+        virtual ~AlLayerDesc();
+
+    public:
+        AlRational rotation = AlRational();
+    };
+
 public:
     AlAbsOperateModel();
 
@@ -20,7 +34,8 @@ public:
 
     virtual ~AlAbsOperateModel();
 
-    virtual HwResult measure(AlImageLayerDrawModel &drawModel) = 0;
+    virtual HwResult measure(AlAbsOperateModel::AlLayerDesc desc,
+                             AlImageLayerDrawModel &drawModel) = 0;
 };
 
 

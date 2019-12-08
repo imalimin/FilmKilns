@@ -6,8 +6,9 @@
 */
 
 #include "AlOperateFactory.h"
+#include "AlCropOperateModel.h"
 
-AlCropOperateModel *AlOperateFactory::crop(float left, float top, float right, float bottom) {
+AlAbsOperateModel *AlOperateFactory::crop(float left, float top, float right, float bottom) {
     auto *opt = new AlCropOperateModel();
     opt->setRect(left, top, right, bottom);
     return opt;

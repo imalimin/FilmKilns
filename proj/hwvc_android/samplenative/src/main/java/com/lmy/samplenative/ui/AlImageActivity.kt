@@ -138,6 +138,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                         setCurLayer(layerId)
                         Log.i("HWVC", "addLayer $layerId")
                     }
+                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
                 }
             }
         }
@@ -256,7 +257,7 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 processor?.removeLayer(context.getCurrentLayer())
             }
             3 -> {
-                processor?.cropLayer(context.getCurrentLayer(), 0.5f, 1f, 0.75f, 0f)
+                processor?.cropLayer(context.getCurrentLayer(), 0.25f, 0.75f, 0.75f, 0f)
             }
         }
     }

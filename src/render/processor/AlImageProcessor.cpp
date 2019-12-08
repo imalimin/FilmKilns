@@ -11,6 +11,7 @@
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "AlOperateFactory.h"
+#include "AlCropOperateModel.h"
 
 #define TAG "AlImageProcessor"
 
@@ -241,7 +242,13 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        layer->addOperator(AlOperateFactory::crop(left, top, right, bottom));
+        auto *opt = AlOperateFactory::crop(left, top, right, bottom);
+        AlRational r = layer->getRotation();
+        r.num = -r.num;
+        ((AlCropOperateModel *) opt)->setRotation(r);
+        layer->addOperator(opt);
+        AlRational nr = AlRational();
+        layer->setRotation(nr);
         invalidate();
         return Hw::SUCCESS;
     }

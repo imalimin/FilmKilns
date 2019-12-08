@@ -72,9 +72,11 @@ HwResult AlImageLayer::_measureOperate(AlImageLayerDrawModel &drawModel) {
     if (nullptr == model) {
         return Hw::FAILED;
     }
+    AlAbsOperateModel::AlLayerDesc desc;
+    desc.rotation = model->rotation;
     for (auto *opt : model->operators) {
         if (opt) {
-            opt->measure(drawModel);
+            opt->measure(desc, drawModel);
         }
     }
     return Hw::SUCCESS;
