@@ -12,6 +12,7 @@
 #include "AlBuffer.h"
 #include "HwResult.h"
 #include "AlBitmapInfo.h"
+#include "AlExif.h"
 
 al_interface(AlAbsEncoder) {
 public:

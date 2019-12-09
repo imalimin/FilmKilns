@@ -94,11 +94,11 @@ AlBitmapInfo JpegDecoder::getInfo() {
 
     int orientation = _getOrientation(cinfo.marker_list);
     switch (orientation) {
-        case 6: {
+        case AlExif::EXIF_ORIENTATION_90CW: {
             info.rotation = AlRational(1, 2);
             break;
         }
-        case 8: {
+        case AlExif::EXIF_ORIENTATION_270CW: {
             info.rotation = AlRational(3, 2);
             break;
         }
