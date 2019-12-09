@@ -32,8 +32,11 @@ void AlCropOperateModel::setRotation(AlRational &r) {
 
 HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
                                      AlImageLayerDrawModel &drawModel) {
-    AlMatrix mat;
-    mat.setRotation(rotation.toFloat());
+    AlMatrix rMat, t1Mat, t2Mat;
+    t1Mat.setTranslate(-0.5f,-0.5f);
+    rMat.setRotation(rotation.toFloat());
+    t2Mat.setTranslate(0.5f,0.5f);
+    AlMatrix mat = t1Mat * rMat * t2Mat;
     AlVec4 lt(rectF.left, rectF.top);
     AlVec4 lb(rectF.left, rectF.bottom);
     AlVec4 rb(rectF.right, rectF.bottom);
