@@ -9,6 +9,11 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="false" />
 
+    <com.lmy.hwvcnative.widget.AlCropView
+        android:id="@+id/cropView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
