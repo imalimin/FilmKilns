@@ -71,7 +71,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         if (null == processor) {
             processor = AlImageProcessor.create()
         }
-        processor?.setCanvas(1080, 1920)
+//        processor?.setCanvas(1080, 1920)
         processor?.setOnSaveListener(this)
         pickImage()
     }
@@ -138,7 +138,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                         setCurLayer(layerId)
                         Log.i("HWVC", "addLayer $layerId")
                     }
-                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
+//                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
                 }
             }
         }
@@ -257,7 +257,10 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 processor?.removeLayer(context.getCurrentLayer())
             }
             3 -> {
-                processor?.cropLayer(context.getCurrentLayer(), 0.25f, 0.75f, 0.75f, 0f)
+                val rectF = context.cropView.getCropRectF()
+                processor?.cropLayer(context.getCurrentLayer(),
+                        rectF.left, rectF.top,
+                        rectF.right, rectF.bottom)
             }
         }
     }

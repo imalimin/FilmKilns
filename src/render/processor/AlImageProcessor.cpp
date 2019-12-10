@@ -242,6 +242,15 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
+        Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
+        calculatePosition(left, top);
+        calculatePosition(right, bottom);
+        Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
+        left = (left + 1.0f) / 2.0f;
+        top = (top + 1.0f) / 2.0f;
+        right = (right + 1.0f) / 2.0f;
+        bottom = (bottom + 1.0f) / 2.0f;
+        Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
         auto *opt = AlOperateFactory::crop(left, top, right, bottom);
         AlRational r = layer->getRotation();
         r.num = -r.num;

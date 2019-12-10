@@ -166,8 +166,8 @@ class AlCropView : View {
     }
 
     fun getCropRectF(): RectF = RectF(
-            lt.x / measuredWidth,
-            lt.y / measuredHeight,
-            rb.x / measuredWidth,
-            rb.y / measuredHeight)
+            lt.x / (measuredWidth / 2f) - 1f,
+            1f - lt.y / (measuredHeight / 2f),
+            rb.x / (measuredWidth / 2f) - 1f,
+            1f - rb.y / (measuredHeight / 2f))
 }
