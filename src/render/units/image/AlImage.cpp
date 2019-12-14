@@ -59,7 +59,7 @@ void AlImage::_notifyAll() {
 }
 
 void AlImage::_notifyDescriptor(AlImageLayer *layer) {
-    Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
+    Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer), Message::QUEUE_MODE_FIRST_ALWAYS);
     postEvent(msg);
 }
 
