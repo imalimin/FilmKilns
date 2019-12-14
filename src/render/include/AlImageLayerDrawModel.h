@@ -19,20 +19,17 @@
 /// {@link AlCanvasDrawer}根据此信息可以准确在画布上绘制图层
 al_class(AlImageLayerDrawModel) {
 public:
-    AlImageLayerDrawModel(AlSize canvasSize);
+    AlImageLayerDrawModel();
 
     AlImageLayerDrawModel(const AlImageLayerDrawModel &o);
 
     virtual ~AlImageLayerDrawModel();
-
-    AlSize getCanvasSize();
 
     void setLayerSize(int32_t width, int32_t height);
 
     AlSize getLayerSize();
 
 private:
-    AlSize canvasSize;
     AlSize layerSize;
 public:
     HwAbsTexture *tex = nullptr;

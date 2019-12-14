@@ -48,6 +48,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/drawer/*.cpp
             ${PROJECT_SOURCE_DIR}/egl/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/image/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
             ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
@@ -75,6 +76,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/drawer/*.cpp
             ${PROJECT_SOURCE_DIR}/egl/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/image/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
             ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp

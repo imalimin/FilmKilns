@@ -36,14 +36,14 @@ public:
 
     int32_t getHeight();
 
-    HwResult draw(AlImageLayer *layer);
+    HwResult draw(AlImageLayerDrawModel *description);
 
     HwResult read(AlBuffer *buf);
 
 private:
     AlImageCanvas(const AlImageCanvas &e) : Object() {};
 
-    void _draw(AlImageLayerDrawModel &model);
+    void _draw(AlImageLayerDrawModel *description);
 
 private:
     HwAbsFBObject *fbo = nullptr;

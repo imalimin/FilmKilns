@@ -26,6 +26,9 @@ public:
     void recycle(HwAbsTexture **tex);
 
 private:
+    TextureAllocator(const TextureAllocator &o) : Object() {};
+
+private:
     vector<HwAbsTexture *> textures;
 
     void clear();

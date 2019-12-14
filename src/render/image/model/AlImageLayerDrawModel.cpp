@@ -7,13 +7,13 @@
 
 #include "AlImageLayerDrawModel.h"
 
-AlImageLayerDrawModel::AlImageLayerDrawModel(AlSize canvasSize)
-        : Object(), canvasSize(canvasSize) {
+AlImageLayerDrawModel::AlImageLayerDrawModel()
+        : Object() {
 
 }
 
 AlImageLayerDrawModel::AlImageLayerDrawModel(const AlImageLayerDrawModel &o)
-        : Object(), canvasSize(o.canvasSize),
+        : Object(),
           tex(o.tex),
           alpha(o.alpha),
           mat(o.mat),
@@ -23,10 +23,6 @@ AlImageLayerDrawModel::AlImageLayerDrawModel(const AlImageLayerDrawModel &o)
 
 AlImageLayerDrawModel::~AlImageLayerDrawModel() {
 
-}
-
-AlSize AlImageLayerDrawModel::getCanvasSize() {
-    return canvasSize;
 }
 
 void AlImageLayerDrawModel::setLayerSize(int32_t width, int32_t height) {

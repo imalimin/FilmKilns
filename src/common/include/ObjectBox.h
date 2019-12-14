@@ -7,15 +7,23 @@
 
 #include "Object.h"
 
-class ObjectBox : public Object {
+al_class(ObjectBox) {
 public:
     static ObjectBox *box(void *ptr);
 
-    void *ptr;
+    static ObjectBox *wrap(Object *obj);
+
+    void *ptr = nullptr;
+    Object *obj = nullptr;
 
     ObjectBox(void *ptr);
 
     virtual ~ObjectBox();
+
+    template<class T>
+    T unWrap() {
+        return dynamic_cast<T>(obj);
+    }
 };
 
 

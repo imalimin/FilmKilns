@@ -127,3 +127,7 @@ HwResult AlImageLayerModel::addOperator(AlAbsOperateModel *opt) {
     operators.push_back(opt);
     return Hw::SUCCESS;
 }
+
+std::vector<AlAbsOperateModel *> *AlImageLayerModel::getAllOperators() {
+    return &operators;
+}

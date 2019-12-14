@@ -58,6 +58,8 @@ public:
 
     AlQuad &getQuad();
 
+    std::vector<AlAbsOperateModel *> *getAllOperators();
+
     void dump();
 
 public:

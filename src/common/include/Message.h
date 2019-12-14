@@ -34,6 +34,11 @@ public:
 
     void *tyrUnBox();
 
+    template<class T>
+    T getObj() {
+        return dynamic_cast<T>(obj);
+    }
+
 public:
     static constexpr int16_t QUEUE_MODE_NORMAL = 0x00;
     static constexpr int16_t QUEUE_MODE_UNIQUE = 0x01;

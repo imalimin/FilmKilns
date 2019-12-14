@@ -16,7 +16,8 @@
 #include "AlImageLayerModel.h"
 #include "AlSize.h"
 #include "AlRational.h"
-#include "AlImage.h"
+#include "AlLayerRender.h"
+#include "AlAbsContext.h"
 
 class AlImageProcessor : public HwAbsProcessor {
 public:
@@ -64,7 +65,7 @@ public:
 
     HwResult save(std::string path);
 
-    void setOnSaveListener(AlImage::OnSaveListener listener);
+    void setOnSaveListener(AlLayerRender::OnSaveListener listener);
 
 private:
     void _notifyCanvasUpdate();
@@ -75,14 +76,18 @@ private:
 
 private:
     const string ALIAS_OF_IMAGE = "IMAGE";
+    const string ALIAS_OF_DESCRIPTOR = "LAYER_DESCRIPTOR";
+    const string ALIAS_OF_LAYER_RENDER = "LAYER_RENDER";
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
+
+    AlGLContext *context = nullptr;
     AlImageCanvasModel mCanvasModel;
     std::vector<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;
     std::mutex mLayerMtx;
     AlSize mWinSize;
-    AlImage::OnSaveListener onSaveListener = nullptr;
+    AlLayerRender::OnSaveListener onSaveListener = nullptr;
 };
 
 

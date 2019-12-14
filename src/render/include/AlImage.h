@@ -11,14 +11,10 @@
 #include "Unit.h"
 #include "TextureAllocator.h"
 #include "HwAbsTexture.h"
-#include "AlImageCanvas.h"
-#include "AlImageCanvasModel.h"
 #include "AlImageLayerManager.h"
+#include "AlGLContext.h"
 
 class AlImage : public Unit {
-public:
-    ///code, msg, path
-    typedef function<void(int32_t, const char *, const char *)> OnSaveListener;
 public:
     AlImage(string alias);
 
@@ -50,49 +46,21 @@ public:
     /// \return
     bool onInvalidate(Message *m);
 
-    /// 更新画布
-    /// FORMAT:
-    /// +--------------------------------------+
-    /// | msg::obj     | msg::arg1 | msg::arg2 |
-    /// +--------------------------------------+
-    /// | none         | none      | none      |
-    /// +--------------------------------------+
-    /// \param msg
-    /// \return
-    bool onUpdateCanvas(Message *m);
-
-    /// 保存图片
-    /// FORMAT:
-    /// +--------------------------------------+
-    /// | msg::obj     | msg::arg1 | msg::arg2 |
-    /// +--------------------------------------+
-    /// | none         | none      | none      |
-    /// +--------------------------------------+
-    /// \param msg
-    /// \return
-    bool onSave(Message *m);
-
-    void setOnSaveListener(OnSaveListener listener);
-
 private:
-    void _newDefaultCanvas();
+    void _notifyAll();
 
-    void _drawAllLayer(bool transparent = false);
+    void _notifyDescriptor(AlImageLayer *layer);
+
+    AlGLContext *_getContext();
 
 private:
     TextureAllocator *texAllocator = nullptr;
-
-    /*+------------------+*/
-    /*|     Model        |*/
-    /*+------------------+*/
-private:
-    AlImageCanvasModel *getCanvas();
-
+    /// +------------------+
+    /// |     Model        |
+    /// +------------------+
     std::vector<AlImageLayerModel *> *getLayers();
 
-    AlImageCanvas mCanvas;
     AlImageLayerManager mLayerManager;
-    OnSaveListener onSaveListener = nullptr;
 };
 
 

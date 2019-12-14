@@ -7,23 +7,34 @@
 
 #include "AlImageProcessor.h"
 #include "AlImage.h"
+#include "AlLayerDescriptor.h"
 #include "HwRender.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "AlOperateFactory.h"
 #include "AlCropOperateModel.h"
+#include "AlGLContext.h"
 
 #define TAG "AlImageProcessor"
 
 AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
-    auto aImage = new AlImage(ALIAS_OF_IMAGE);
-    registerAnUnit(aImage);
+    registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
+    registerAnUnit(new AlLayerDescriptor(ALIAS_OF_DESCRIPTOR));
+    AlLayerRender *layerRender=new AlLayerRender(ALIAS_OF_LAYER_RENDER);
+    registerAnUnit(layerRender);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
+    putObject("canvas", &mCanvasModel).to({ALIAS_OF_LAYER_RENDER});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
+    post([this] {
+        Logcat::i(TAG, "currentContext %p", Egl::currentContext());
+        this->context = new AlGLContext();
+        this->putObject("AL_CONTEXT", this->context)
+                .to({ALIAS_OF_IMAGE, ALIAS_OF_DESCRIPTOR, ALIAS_OF_LAYER_RENDER,
+                     ALIAS_OF_RENDER, ALIAS_OF_SCREEN});
+    });
     prepare();
-    aImage->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
+    layerRender->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
         if (this->onSaveListener) {
             this->onSaveListener(code, msg, path);
         }
@@ -31,6 +42,10 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
 }
 
 AlImageProcessor::~AlImageProcessor() {
+    post([this] {
+        delete this->context;
+        this->context = nullptr;
+    });
     this->onSaveListener = nullptr;
 }
 
@@ -57,7 +72,7 @@ void AlImageProcessor::invalidate() {
 
 void AlImageProcessor::_notifyCanvasUpdate() {
     putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_AIMAGE_UPDATE_CANVAS));
+    postEvent(new Message(EVENT_LAYER_RENDER_UPDATE_CANVAS));
 }
 
 void AlImageProcessor::_notifyLayerUpdate() {
@@ -265,12 +280,11 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
 }
 
 HwResult AlImageProcessor::save(std::string path) {
-    putString("output_path", path).to({ALIAS_OF_IMAGE});
-    Message *msg = new Message(EVENT_AIMAGE_SAVE);
-    postEvent(msg);
+    putString("output_path", path).to({ALIAS_OF_LAYER_RENDER});
+    postEvent(new Message(EVENT_LAYER_RENDER_SAVE));
     return Hw::SUCCESS;
 }
 
-void AlImageProcessor::setOnSaveListener(AlImage::OnSaveListener listener) {
+void AlImageProcessor::setOnSaveListener(AlLayerRender::OnSaveListener listener) {
     this->onSaveListener = listener;
 }

@@ -76,29 +76,28 @@ int32_t AlImageCanvas::getHeight() {
     return nullptr != mCanvasTex ? mCanvasTex->getHeight() : 0;
 }
 
-HwResult AlImageCanvas::draw(AlImageLayer *layer) {
+HwResult AlImageCanvas::draw(AlImageLayerDrawModel *description) {
     if (nullptr == mCanvasDrawer) {
         mCanvasDrawer = new AlCanvasDrawer();
         mCanvasDrawer->prepare();
     }
-    AlImageLayerDrawModel model(AlSize(getWidth(), getHeight()));
-    if (mCanvasTex && layer && Hw::SUCCESS == layer->measure(model)) {
-        _draw(model);
+    if (mCanvasTex && description) {
+        _draw(description);
         return Hw::SUCCESS;
     }
     return Hw::FAILED;
 }
 
-void AlImageCanvas::_draw(AlImageLayerDrawModel &model) {
-    mCanvasDrawer->setAlpha(model.alpha);
+void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
+    mCanvasDrawer->setAlpha(description->alpha);
     ///设置Drawer的变换矩阵
-    mCanvasDrawer->setMatrix(model.mat);
+    mCanvasDrawer->setMatrix(description->mat);
     ///设置纹理顶点
-    mCanvasDrawer->setVertexRectF(model.vertexRectF);
-    mCanvasDrawer->setPositionQuad(model.cropQuad);
-    glViewport(0, 0, model.getCanvasSize().width, model.getCanvasSize().height);
+    mCanvasDrawer->setVertexRectF(description->vertexRectF);
+    mCanvasDrawer->setPositionQuad(description->cropQuad);
+    glViewport(0, 0, getWidth(), getHeight());
     ///Draw layer
-    mCanvasDrawer->draw(model.tex, mCanvasTex);
+    mCanvasDrawer->draw(description->tex, mCanvasTex);
 }
 
 HwResult AlImageCanvas::read(AlBuffer *buf) {

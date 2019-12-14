@@ -12,8 +12,6 @@
 #include "HwResult.h"
 #include "HwAbsTexture.h"
 #include "AlImageLayerModel.h"
-#include "AlLayerMeasure.h"
-#include "AlImageLayerDrawModel.h"
 
 class AlImageCanvas;
 
@@ -25,11 +23,15 @@ public:
     static AlImageLayer *create(AlImageLayerModel *model, HwAbsTexture *tex);
 
 public:
+    AlImageLayerModel *model = nullptr;
+
     ~AlImageLayer();
 
     int32_t getWidth();
 
     int32_t getHeight();
+
+    HwAbsTexture *getTexture();
 
 private:
     AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex);
@@ -37,24 +39,9 @@ private:
     AlImageLayer(const AlImageLayer &e) : Object() {};
 
 private:
-    friend AlImageCanvas;
-
-    /// Measure all params for canvas
-    /// \param drawModel
-    /// \return {@link HwResult}
-    HwResult measure(AlImageLayerDrawModel &drawModel);
-
-    /// Measure all operate`s params for canvas
-    /// \param drawModel
-    /// \return {@link HwResult}
-    HwResult _measureOperate(AlImageLayerDrawModel &drawModel);
-
-private:
-    AlImageLayerModel *model = nullptr;
     //Manager by TextureAllocator. DON`T delete here.
     friend AlImageLayerManager;
     HwAbsTexture *tex = nullptr;
-    AlLayerMeasure aMeasure;
 };
 
 
