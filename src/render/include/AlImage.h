@@ -47,7 +47,7 @@ public:
     bool onInvalidate(Message *m);
 
 private:
-    void _notifyAll();
+    void _notifyAll(int32_t flag = 0);
 
     void _notifyDescriptor(AlImageLayer *layer);
 

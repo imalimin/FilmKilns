@@ -38,7 +38,7 @@ bool AlImage::onUpdateLayer(Message *msg) {
 }
 
 bool AlImage::onInvalidate(Message *m) {
-    _notifyAll();
+    _notifyAll(m->arg1);
     return true;
 }
 
@@ -47,19 +47,24 @@ std::vector<AlImageLayerModel *> *AlImage::getLayers() {
     return static_cast<vector<AlImageLayerModel *> *>(obj->ptr);
 }
 
-void AlImage::_notifyAll() {
+void AlImage::_notifyAll(int32_t flag) {
     if (!mLayerManager.empty()) {
-        postEvent(new Message(EVENT_LAYER_RENDER_CLEAR));
+        Message *msg = new Message(EVENT_LAYER_RENDER_CLEAR);
+        msg->arg1 = (0 != (flag & 0x2));
+        postEvent(msg);
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
             _notifyDescriptor(mLayerManager.getLayer(i));
         }
-        postEvent(new Message(EVENT_LAYER_RENDER_SHOW, nullptr, Message::QUEUE_MODE_UNIQUE));
+        if (0 == (flag & 0x1)) {
+            postEvent(new Message(EVENT_LAYER_RENDER_SHOW, nullptr, Message::QUEUE_MODE_UNIQUE));
+        }
     }
 }
 
 void AlImage::_notifyDescriptor(AlImageLayer *layer) {
-    Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer), Message::QUEUE_MODE_FIRST_ALWAYS);
+    Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer),
+                               Message::QUEUE_MODE_FIRST_ALWAYS);
     postEvent(msg);
 }
 

@@ -20,7 +20,7 @@
 AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
     registerAnUnit(new AlLayerDescriptor(ALIAS_OF_DESCRIPTOR));
-    AlLayerRender *layerRender=new AlLayerRender(ALIAS_OF_LAYER_RENDER);
+    AlLayerRender *layerRender = new AlLayerRender(ALIAS_OF_LAYER_RENDER);
     registerAnUnit(layerRender);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
@@ -66,8 +66,10 @@ void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
     _notifyCanvasUpdate();
 }
 
-void AlImageProcessor::invalidate() {
-    postEvent(new Message(EVENT_COMMON_INVALIDATE, nullptr, Message::QUEUE_MODE_UNIQUE));
+void AlImageProcessor::invalidate(int32_t flag) {
+    Message *msg = new Message(EVENT_COMMON_INVALIDATE, nullptr, Message::QUEUE_MODE_UNIQUE);
+    msg->arg1 = flag;
+    postEvent(msg);
 }
 
 void AlImageProcessor::_notifyCanvasUpdate() {
@@ -280,6 +282,7 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
 }
 
 HwResult AlImageProcessor::save(std::string path) {
+    invalidate(3);
     putString("output_path", path).to({ALIAS_OF_LAYER_RENDER});
     postEvent(new Message(EVENT_LAYER_RENDER_SAVE));
     return Hw::SUCCESS;

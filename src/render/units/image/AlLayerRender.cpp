@@ -55,7 +55,7 @@ bool AlLayerRender::onUpdateCanvas(Message *m) {
 
 bool AlLayerRender::onClear(Message *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    mCanvas.clear(static_cast<bool>(m->arg1));
+    mCanvas.clear(1 == m->arg1);
     return false;
 }
 

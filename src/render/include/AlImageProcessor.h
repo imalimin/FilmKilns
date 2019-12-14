@@ -31,7 +31,18 @@ public:
 
     void setCanvas(int32_t w, int32_t h, int32_t color);
 
-    void invalidate();
+    /// 通知所有单元进行绘制操作
+    /// flag:
+    /// +------------------------------------------------------------+
+    /// | index     | value 0                 | value 1              |
+    /// +------------------------------------------------------------+
+    /// | 0         | Draw to screen          | Don`t draw to screen |
+    /// +------------------------------------------------------------+
+    /// | 1         | default canvas bg       | transparent canvas   |
+    /// +------------------------------------------------------------+
+    /// \param msg
+    /// \return
+    void invalidate(int32_t flag = 0);
 
     int32_t addLayer(const char *path);
 
