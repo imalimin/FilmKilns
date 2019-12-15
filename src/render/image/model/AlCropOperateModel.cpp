@@ -47,6 +47,6 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
     description->cropQuad.setRightTop(rt.multiply(mat).xy());
     AlSize layerSize = description->getLayerSize();
     description->setLayerSize(static_cast<int32_t>(layerSize.width * rectF.getWidth()),
-                              static_cast<int32_t>(layerSize.width * rectF.getHeight()));
+                              static_cast<int32_t>(layerSize.height * rectF.getHeight()));
     return Hw::SUCCESS;
 }
