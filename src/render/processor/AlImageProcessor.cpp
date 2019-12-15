@@ -64,6 +64,7 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
     mCanvasModel.set(w, h, color);
     _notifyCanvasUpdate();
+    invalidate();
 }
 
 void AlImageProcessor::invalidate(int32_t flag) {
@@ -91,6 +92,7 @@ int32_t AlImageProcessor::addLayer(const char *path) {
     }
     mLayers.push_back(layer);
     _notifyLayerUpdate();
+    invalidate();
     return layer->getId();
 }
 
@@ -108,6 +110,7 @@ HwResult AlImageProcessor::removeLayer(int32_t id) {
             mLayers.erase(itr);
             delete it;
             _notifyLayerUpdate();
+            invalidate();
             return Hw::SUCCESS;
         }
     }

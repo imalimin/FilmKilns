@@ -33,7 +33,6 @@ bool AlImage::onDestroy(Message *msg) {
 
 bool AlImage::onUpdateLayer(Message *msg) {
     mLayerManager.update(getLayers(), texAllocator);
-    _notifyAll();
     return true;
 }
 
@@ -48,20 +47,20 @@ std::vector<AlImageLayerModel *> *AlImage::getLayers() {
 }
 
 void AlImage::_notifyAll(int32_t flag) {
+    Message *msg = new Message(EVENT_LAYER_RENDER_CLEAR);
+    msg->arg1 = (0 != (flag & 0x2));
+    msg->desc = "clear";
+    postEvent(msg);
     if (!mLayerManager.empty()) {
-        Message *msg = new Message(EVENT_LAYER_RENDER_CLEAR);
-        msg->arg1 = (0 != (flag & 0x2));
-        msg->desc = "clear";
-        postEvent(msg);
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
             _notifyDescriptor(mLayerManager.getLayer(i));
         }
-        if (0 == (flag & 0x1)) {
-            Message *sMsg = new Message(EVENT_LAYER_RENDER_SHOW);
-            sMsg->desc = "show";
-            postEvent(sMsg);
-        }
+    }
+    if (0 == (flag & 0x1)) {
+        Message *sMsg = new Message(EVENT_LAYER_RENDER_SHOW);
+        sMsg->desc = "show";
+        postEvent(sMsg);
     }
 }
 
