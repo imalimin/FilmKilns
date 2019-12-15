@@ -37,3 +37,23 @@ void AlVec2::set(AlVec2 vec) {
 bool AlVec2::isZero() {
     return 0 == x && 0 == y;
 }
+
+AlVec2 &AlVec2::operator+(float value) {
+    static AlVec2 *vec2;
+    if (vec2 == nullptr) {
+        vec2 = new AlVec2();
+    }
+    vec2->x = x + value;
+    vec2->y = y + value;
+    return *vec2;
+}
+
+AlVec2 &AlVec2::operator/(float value) {
+    static AlVec2 *vec2;
+    if (vec2 == nullptr) {
+        vec2 = new AlVec2();
+    }
+    vec2->x = x / value;
+    vec2->y = y / value;
+    return *vec2;
+}

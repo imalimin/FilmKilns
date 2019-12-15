@@ -27,6 +27,10 @@ public:
 
     bool isZero();
 
+    AlVec2 &operator+(float value);
+
+    AlVec2 &operator/(float value);
+
 public:
     float x = 0.0f;
     float y = 0.0f;

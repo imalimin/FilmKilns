@@ -138,7 +138,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                         setCurLayer(layerId)
                         Log.i("HWVC", "addLayer $layerId")
                     }
-//                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
+                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
                 }
             }
         }
