@@ -42,7 +42,9 @@ void UnitPipeline::postEvent(Message *msg) {
     if (mHandler) {
         simpleLock.lock();
         if (available) {
-            mHandler->sendMessage(AlMessage::obtain(msg->what, msg, msg->queueMode));
+            AlMessage *aMsg = AlMessage::obtain(msg->what, msg, msg->queueMode);
+            aMsg->desc = msg->desc;
+            mHandler->sendMessage(aMsg);
         } else {
             Logcat::i("HWVC", "UnitPipeline skip message %p", msg);
             delete msg;

@@ -51,18 +51,22 @@ void AlImage::_notifyAll(int32_t flag) {
     if (!mLayerManager.empty()) {
         Message *msg = new Message(EVENT_LAYER_RENDER_CLEAR);
         msg->arg1 = (0 != (flag & 0x2));
+        msg->desc = "clear";
         postEvent(msg);
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
             _notifyDescriptor(mLayerManager.getLayer(i));
         }
         if (0 == (flag & 0x1)) {
-            postEvent(new Message(EVENT_LAYER_RENDER_SHOW, nullptr, Message::QUEUE_MODE_UNIQUE));
+            Message *sMsg = new Message(EVENT_LAYER_RENDER_SHOW);
+            sMsg->desc = "show";
+            postEvent(sMsg);
         }
     }
 }
 
 void AlImage::_notifyDescriptor(AlImageLayer *layer) {
     Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
+    msg->desc = "measure";
     postEvent(msg);
 }

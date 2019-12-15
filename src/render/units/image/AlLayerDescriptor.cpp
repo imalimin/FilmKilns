@@ -98,6 +98,7 @@ AlLayerDescriptor::_measureOperate(AlImageLayer *layer, AlImageLayerDrawModel *d
 }
 
 void AlLayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description) {
-    Message *msg = new Message(EVENT_LAYER_RENDER_DRAW, description);
+    Message *msg = new Message(EVENT_LAYER_RENDER_DRAW, description,
+                               Message::QUEUE_MODE_FIRST_ALWAYS);
     postEvent(msg);
 }

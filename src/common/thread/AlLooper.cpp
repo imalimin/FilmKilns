@@ -89,6 +89,7 @@ void AlLooper::_loop() {
     if (looping || exiting || exited) return;
     looping = true;
     for (;;) {
+        queue.dump();
         AlMessage *msg = queue.take();
         if (msg) {
             if (msg->target) {

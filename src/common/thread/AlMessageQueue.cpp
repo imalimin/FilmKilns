@@ -8,6 +8,8 @@
 #include "AlMessageQueue.h"
 #include <sstream>
 
+#define TAG "AlMessageQueue"
+
 AlMessageQueue::AlMessageQueue() {
     pthread_mutex_init(&mutex, nullptr);
     pthread_cond_init(&cond, nullptr);
@@ -124,7 +126,7 @@ void AlMessageQueue::removeAllMessage(const int what) {
 }
 
 void AlMessageQueue::dump() {
-#if 1
+#if 0
     std::ostringstream os;
     list<AlMessage *>::iterator itr = queue.begin();
     while (itr != queue.end()) {
@@ -132,6 +134,6 @@ void AlMessageQueue::dump() {
         os << e->desc << "(" << e << "),";
         ++itr;
     }
-    Logcat::i("HWVC", "MessageQueue(%s)", os.str().c_str());
+    Logcat::i(TAG, "%s", os.str().c_str());
 #endif
 }

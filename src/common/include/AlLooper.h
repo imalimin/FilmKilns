@@ -41,6 +41,8 @@ public:
 
     void quit(bool safely);
 
+    void dump();
+
 private:
     friend AlLooperManager;
 
