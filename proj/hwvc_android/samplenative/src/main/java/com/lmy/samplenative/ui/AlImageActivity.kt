@@ -257,10 +257,15 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 processor?.removeLayer(context.getCurrentLayer())
             }
             3 -> {
-                val rectF = context.cropView.getCropRectF()
-                processor?.cropLayer(context.getCurrentLayer(),
-                        rectF.left, rectF.top,
-                        rectF.right, rectF.bottom)
+                if (View.VISIBLE != context.cropView.visibility) {
+                    context.cropView.visibility = View.VISIBLE
+                } else {
+                    context.cropView.visibility = View.GONE
+                    val rectF = context.cropView.getCropRectF()
+                    processor?.cropLayer(context.getCurrentLayer(),
+                            rectF.left, rectF.top,
+                            rectF.right, rectF.bottom)
+                }
             }
         }
     }
