@@ -64,9 +64,9 @@ bool AlLayerRender::onDraw(Message *m) {
         return true;
     }
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    AlImageLayerDrawModel *desc = dynamic_cast<AlImageLayerDrawModel *>(m->obj);
-    _newDefaultCanvas(desc->getLayerSize());
-    _draw(desc);
+    AlImageLayerDrawModel *description = dynamic_cast<AlImageLayerDrawModel *>(m->obj);
+    _newDefaultCanvas(description->getLayerSize());
+    _draw(description);
 //    onShow(nullptr);
     return true;
 }

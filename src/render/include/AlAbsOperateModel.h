@@ -35,7 +35,7 @@ public:
     virtual ~AlAbsOperateModel();
 
     virtual HwResult measure(AlAbsOperateModel::AlLayerDesc desc,
-                             AlImageLayerDrawModel &drawModel) = 0;
+                             AlImageLayerDrawModel *description) = 0;
 };
 
 

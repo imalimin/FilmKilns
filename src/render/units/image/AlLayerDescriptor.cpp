@@ -91,7 +91,7 @@ AlLayerDescriptor::_measureOperate(AlImageLayer *layer, AlImageLayerDrawModel *d
     desc.rotation = layer->model->getRotation();
     for (auto *opt : *layer->model->getAllOperators()) {
         if (opt) {
-            opt->measure(desc, *description);
+            opt->measure(desc, description);
         }
     }
     return Hw::SUCCESS;
