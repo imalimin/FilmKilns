@@ -13,7 +13,7 @@
 #include "ObjectBox.h"
 #include "AlOperateFactory.h"
 #include "AlCropOperateModel.h"
-#include "AlGLContext.h"
+#include "AlContext.h"
 
 #define TAG "AlImageProcessor"
 
@@ -28,7 +28,7 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
     post([this] {
         Logcat::i(TAG, "currentContext %p", Egl::currentContext());
-        this->context = new AlGLContext();
+        this->context = new AlContext();
         this->putObject("AL_CONTEXT", this->context)
                 .to({ALIAS_OF_IMAGE, ALIAS_OF_DESCRIPTOR, ALIAS_OF_LAYER_RENDER,
                      ALIAS_OF_RENDER, ALIAS_OF_SCREEN});

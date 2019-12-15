@@ -63,11 +63,6 @@ void AlImage::_notifyAll(int32_t flag) {
 }
 
 void AlImage::_notifyDescriptor(AlImageLayer *layer) {
-    Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer),
-                               Message::QUEUE_MODE_FIRST_ALWAYS);
+    Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
     postEvent(msg);
-}
-
-AlGLContext *AlImage::_getContext() {
-    return dynamic_cast<AlGLContext *>(getObject("AL_CONTEXT"));
 }

@@ -14,7 +14,7 @@ al_class_ex(AlContext, AlAbsContext) {
 public:
     AlContext();
 
-    ~AlContext();
+    virtual ~AlContext();
 };
 
 

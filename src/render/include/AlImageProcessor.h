@@ -92,7 +92,7 @@ private:
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
 
-    AlGLContext *context = nullptr;
+    AlAbsContext *context = nullptr;
     AlImageCanvasModel mCanvasModel;
     std::vector<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;

@@ -12,7 +12,6 @@
 #include "TextureAllocator.h"
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
-#include "AlGLContext.h"
 
 class AlImage : public Unit {
 public:
@@ -50,8 +49,6 @@ private:
     void _notifyAll(int32_t flag = 0);
 
     void _notifyDescriptor(AlImageLayer *layer);
-
-    AlGLContext *_getContext();
 
 private:
     TextureAllocator *texAllocator = nullptr;

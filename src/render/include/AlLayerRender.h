@@ -11,7 +11,6 @@
 #include "Unit.h"
 #include "AlImageCanvas.h"
 #include "AlImageCanvasModel.h"
-#include "AlGLContext.h"
 
 class AlLayerRender : public Unit {
 public:
@@ -89,8 +88,6 @@ private:
     void _newDefaultCanvas(AlSize size);
 
     void _draw(AlImageLayerDrawModel *description);
-
-    AlGLContext *_getContext();
 
 private:
     TextureAllocator *texAllocator = nullptr;

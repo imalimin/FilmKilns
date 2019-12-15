@@ -133,10 +133,6 @@ void AlLayerRender::_draw(AlImageLayerDrawModel *description) {
     mCanvas.draw(description);
 }
 
-AlGLContext *AlLayerRender::_getContext() {
-    return dynamic_cast<AlGLContext *>(getObject("AL_CONTEXT"));
-}
-
 void AlLayerRender::setOnSaveListener(AlLayerRender::OnSaveListener listener) {
     this->onSaveListener = listener;
 }
