@@ -20,8 +20,8 @@ AlLayerMeasure::~AlLayerMeasure() {
 
 }
 
-void AlLayerMeasure::updateOrthogonal(AlSize &src, AlSize &dest) {
-    _calculateRect(src, dest, lRectF, cRectF);
+void AlLayerMeasure::updateOrthogonal(AlSize &src, AlSize &target) {
+    _calculateRect(src, target, lRectF, cRectF);
     oMat.update(cRectF.left, cRectF.right, cRectF.bottom, cRectF.top, -1.0f, 1.0f);
 }
 
@@ -38,42 +38,42 @@ void AlLayerMeasure::setTranslate(float x, float y) {
 }
 
 
-void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &dest,
-                                    AlRectF &srcRectF, AlRectF &destRectF) {
-    float aspectRatio = dest.width > dest.height ?
-                        (float) dest.width / (float) dest.height :
-                        (float) dest.height / (float) dest.width;
+void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &target,
+                                    AlRectF &srcRectF, AlRectF &targetRectF) {
+    float aspectRatio = target.width > target.height ?
+                        (float) target.width / (float) target.height :
+                        (float) target.height / (float) target.width;
 
     /// 计算正交矩阵，小边为1，大边>1
-    if (dest.width > dest.height) {
-        destRectF.left = -aspectRatio;
-        destRectF.right = -destRectF.left;
-        destRectF.bottom = -1.0f;
-        destRectF.top = -destRectF.bottom;
+    if (target.width > target.height) {
+        targetRectF.left = -aspectRatio;
+        targetRectF.right = -targetRectF.left;
+        targetRectF.bottom = -1.0f;
+        targetRectF.top = -targetRectF.bottom;
     } else {
-        destRectF.left = -1.0f;
-        destRectF.right = -destRectF.left;
-        destRectF.bottom = -aspectRatio;
-        destRectF.top = -destRectF.bottom;
+        targetRectF.left = -1.0f;
+        targetRectF.right = -targetRectF.left;
+        targetRectF.bottom = -aspectRatio;
+        targetRectF.top = -targetRectF.bottom;
     }
     /// 根据Canvas大小计算纹理顶点
     /// 保证图片总是完整填充到Canvas
     /// 并保证至Layer和Canvas至少有一边相等
     /// 此时layer model的scale=1为默认状态
-    if (src.width / (float) src.height > dest.width / (float) dest.height) {
-        srcRectF.left = destRectF.left;
+    if (src.width / (float) src.height > target.width / (float) target.height) {
+        srcRectF.left = targetRectF.left;
         srcRectF.right = -srcRectF.left;
         srcRectF.bottom = srcRectF.left * src.height / (float) src.width;
         srcRectF.top = -srcRectF.bottom;
     } else {
-        srcRectF.bottom = destRectF.bottom;
+        srcRectF.bottom = targetRectF.bottom;
         srcRectF.top = -srcRectF.bottom;
         srcRectF.left = srcRectF.bottom * src.width / (float) src.height;
         srcRectF.right = -srcRectF.left;
     }
 }
 
-void AlLayerMeasure::getTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
+void AlLayerMeasure::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
                                      AlVec2 &rightBottom, AlVec2 &rightTop) {
     AlMatrix mat = oMat * tMat;
     AlVec4 lt(lRectF.left, lRectF.top);
@@ -90,4 +90,12 @@ HwResult AlLayerMeasure::measure(AlImageLayerDrawModel &drawModel) {
     drawModel.mat = oMat * tMat;
     drawModel.vertexRectF = lRectF;
     return Hw::SUCCESS;
+}
+
+AlRectF AlLayerMeasure::getSrcPosRectF() {
+    return lRectF;
+}
+
+AlRectF AlLayerMeasure::getTargetPosRectF() {
+    return cRectF;
 }

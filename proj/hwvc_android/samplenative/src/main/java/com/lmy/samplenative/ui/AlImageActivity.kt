@@ -46,7 +46,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     override fun getLayoutResource(): Int = R.layout.activity_al_image
 
     override fun initView() {
-        optLayout.visibility = View.GONE
+        showOptLayer(false)
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
         surfaceView?.setOnClickListener { v, x, y ->
@@ -55,10 +55,10 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
-            processor?.postTranslate(mCurrentLayer, dx, dy)
+            //            processor?.postTranslate(mCurrentLayer, dx, dy)
         }
         surfaceView?.setOnScaleListener { v, ds ->
-            processor?.postScale(mCurrentLayer, ds)
+            //            processor?.postScale(mCurrentLayer, ds)
         }
         surfaceView?.setOnRotateListener { v, dr ->
             processor?.postRotation(mCurrentLayer, dr)
@@ -138,7 +138,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                         setCurLayer(layerId)
                         Log.i("HWVC", "addLayer $layerId")
                     }
-                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
+//                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
                 }
             }
         }
@@ -166,6 +166,10 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                 sendBroadcast(mediaScanIntent)
             }
         }
+    }
+
+    fun showOptLayer(show: Boolean) {
+        optLayout.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     companion object {
@@ -260,6 +264,7 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 if (View.VISIBLE != context.cropView.visibility) {
                     context.cropView.visibility = View.VISIBLE
                 } else {
+                    context.showOptLayer(false)
                     context.cropView.visibility = View.GONE
                     val rectF = context.cropView.getCropRectF()
                     processor?.cropLayer(context.getCurrentLayer(),

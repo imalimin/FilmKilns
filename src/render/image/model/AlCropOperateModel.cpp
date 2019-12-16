@@ -40,60 +40,31 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
     AlSize layerSize = description->getLayerSize();
     AlSize cropSize(layerSize.width * rectF.getWidth() / 2.0f,
                     layerSize.height * rectF.getHeight() / 2.0f);
-    AlRectF cropRectF, layerRectF;
-    _calculateRect(cropSize, layerSize, cropRectF, layerRectF);
+    aMeasure.updateOrthogonal(cropSize, layerSize);
 
-    AlOrthMatrix oMat;
-    oMat.update(layerRectF.left, layerRectF.right, layerRectF.bottom, layerRectF.top, -1.0f, 1.0f);
+    AlRectF targetRectF = aMeasure.getTargetPosRectF();
+    float tx = (rectF.left + rectF.right) / 2.0f;
+    float ty = (rectF.top + rectF.bottom) / 2.0f;
+    Logcat::i(TAG, "tx=%f, ty=%f", tx, ty);
 
-    AlMatrix tMat;
-    tMat.setScale(rectF.getHeight() / 2.0f, rectF.getHeight() / 2.0f);
-    tMat.setRotation(AlMath::PI * rotation.toFloat());
-    float tx = (rectF.left + rectF.right) * layerRectF.getWidth() / 4.0f;
-    float ty = (rectF.top + rectF.bottom) * layerRectF.getHeight() / 4.0f;
-    Logcat::i(TAG, "tx=%f, ty=%f", tx, -ty);
-    tMat.setTranslate(tx, -ty);
-    AlMatrix mat = oMat * tMat;
+    if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
+        aMeasure.setScale(rectF.getWidth() / 2.0f, rectF.getWidth() / 2.0f);
+    } else {
+        aMeasure.setScale(rectF.getHeight() / 2.0f, rectF.getHeight() / 2.0f);
+    }
+    aMeasure.setRotation(AlMath::PI * rotation.toFloat());
+    aMeasure.setTranslate(tx, ty);
 
-    AlVec4 lt(cropRectF.left, cropRectF.top);
-    AlVec4 lb(cropRectF.left, cropRectF.bottom);
-    AlVec4 rb(cropRectF.right, cropRectF.bottom);
-    AlVec4 rt(cropRectF.right, cropRectF.top);
-    description->cropQuad.setLeftTop((lt.multiply(mat).xy() + 1.0f) / 2.0f);
-    description->cropQuad.setLeftBottom((lb.multiply(mat).xy() + 1.0f) / 2.0f);
-    description->cropQuad.setRightBottom((rb.multiply(mat).xy() + 1.0f) / 2.0f);
-    description->cropQuad.setRightTop((rt.multiply(mat).xy() + 1.0f) / 2.0f);
+    AlVec2 lt;
+    AlVec2 lb;
+    AlVec2 rb;
+    AlVec2 rt;
+    aMeasure.measureTransLORectF(lt, lb, rb, rt);
+    description->cropQuad.setLeftTop((lt + 1.0f) / 2.0f);
+    description->cropQuad.setLeftBottom((lb + 1.0f) / 2.0f);
+    description->cropQuad.setRightBottom((rb + 1.0f) / 2.0f);
+    description->cropQuad.setRightTop((rt + 1.0f) / 2.0f);
+    description->cropQuad.mirrorVertical();
     description->setLayerSize(cropSize.width, cropSize.height);
     return Hw::SUCCESS;
-}
-
-void AlCropOperateModel::_calculateRect(AlSize &src, AlSize &dest,
-                                        AlRectF &srcRectF, AlRectF &destRectF) {
-    float aspectRatio = dest.width > dest.height ?
-                        (float) dest.width / (float) dest.height :
-                        (float) dest.height / (float) dest.width;
-
-    /// 计算正交矩阵，小边为1，大边>1
-    if (dest.width > dest.height) {
-        destRectF.left = -aspectRatio;
-        destRectF.right = -destRectF.left;
-        destRectF.bottom = -1.0f;
-        destRectF.top = -destRectF.bottom;
-    } else {
-        destRectF.left = -1.0f;
-        destRectF.right = -destRectF.left;
-        destRectF.bottom = -aspectRatio;
-        destRectF.top = -destRectF.bottom;
-    }
-    if (src.width / (float) src.height > dest.width / (float) dest.height) {
-        srcRectF.left = destRectF.left;
-        srcRectF.right = -srcRectF.left;
-        srcRectF.bottom = srcRectF.left * src.height / (float) src.width;
-        srcRectF.top = -srcRectF.bottom;
-    } else {
-        srcRectF.bottom = destRectF.bottom;
-        srcRectF.top = -srcRectF.bottom;
-        srcRectF.left = srcRectF.bottom * src.width / (float) src.height;
-        srcRectF.right = -srcRectF.left;
-    }
 }

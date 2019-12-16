@@ -62,6 +62,7 @@ HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel 
     AlSize src = description->getLayerSize();
     /// 对图层和画布进行正交投影计算，转换坐标系，保证图像旋转缩放不会变形，并得到归一化的区域
     aMeasure.updateOrthogonal(src, canvasSize);
+    /// 缩放旋转位移顺序不能乱
     aMeasure.setScale(layer->model->getScale().x, layer->model->getScale().y);
     aMeasure.setRotation(static_cast<float>(layer->model->getRotation().toFloat() * AlMath::PI));
     ///TODO 矩阵Y轴与正常坐标系Y轴相反
@@ -75,7 +76,7 @@ HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel 
     AlVec2 rb;
     AlVec2 rt;
     ///获得经过位移旋转缩放变换后图像的位置坐标
-    aMeasure.getTransLORectF(lt, lb, rb, rt);
+    aMeasure.measureTransLORectF(lt, lb, rb, rt);
     layer->model->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
     layer->model->getQuad().mirrorVertical();

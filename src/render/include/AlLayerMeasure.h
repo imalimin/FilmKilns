@@ -31,10 +31,11 @@ public:
 
     ~AlLayerMeasure();
 
-    /// 对图层和画布进行正交投影变化
+    /// 对target size进行归一化，并把src size正交变换到target坐标范围
+    /// 比如对图层和画布进行正交投影变化
     /// \param src 图层大小
     /// \param dest 画布大小
-    void updateOrthogonal(AlSize &src, AlSize &dest);
+    void updateOrthogonal(AlSize &src, AlSize &target);
 
     void setScale(float scaleX, float scaleY);
 
@@ -48,7 +49,7 @@ public:
     /// \param leftBottom
     /// \param rightBottom
     /// \param rightTop
-    void getTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
+    void measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
                          AlVec2 &rightBottom, AlVec2 &rightTop);
 
     /// 测量图层运用正交投影，缩放旋转位移后的一些信息，比如最终的变换矩阵，用于绘制图层
@@ -56,16 +57,24 @@ public:
     /// \return
     HwResult measure(AlImageLayerDrawModel &drawModel);
 
+    /// 获取经过正交变换后，src size的四个顶点坐标
+    /// 比如图层在画布坐标系中四个顶点的值
+    AlRectF getSrcPosRectF();
+
+    /// 获取经过正交变换后，坐标系的四个顶点
+    /// 比如画布的四个顶点范围
+    AlRectF getTargetPosRectF();
+
 private:
     /// 计算正交矩阵
     /// \param src 图层大小
     /// \param dest 窗口大小
-    void _calculateRect(AlSize &src, AlSize &dest, AlRectF &srcRectF, AlRectF &destRectF);
+    void _calculateRect(AlSize &src, AlSize &target, AlRectF &srcRectF, AlRectF &targetRectF);
 
 private:
-    ///正交投影变换后图层归一化后的位置坐标，没有进行缩放旋转位移
+    ///src,正交投影变换后图层归一化后的位置坐标，没有进行缩放旋转位移
     AlRectF lRectF;
-    ///正交投影变换后画布归一化后的可视位置坐标
+    ///target,正交投影变换后画布归一化后的可视位置坐标
     AlRectF cRectF;
     ///用于变换操作的矩阵
     ///Orthogonal matrix
