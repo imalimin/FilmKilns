@@ -42,7 +42,6 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
                     layerSize.height * rectF.getHeight() / 2.0f);
     aMeasure.updateOrthogonal(cropSize, layerSize);
 
-    AlRectF targetRectF = aMeasure.getTargetPosRectF();
     float tx = (rectF.left + rectF.right) / 2.0f;
     float ty = (rectF.top + rectF.bottom) / 2.0f;
     Logcat::i(TAG, "tx=%f, ty=%f", tx, ty);
