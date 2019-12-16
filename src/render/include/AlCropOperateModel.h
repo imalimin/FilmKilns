@@ -28,6 +28,12 @@ public:
     void setRotation(AlRational &r);
 
 private:
+    /// 计算正交矩阵
+    /// \param src 图层大小
+    /// \param dest 窗口大小
+    void _calculateRect(AlSize &src, AlSize &dest, AlRectF &srcRectF, AlRectF &destRectF);
+
+private:
     AlRectF rectF;
     AlRational rotation;
 };
