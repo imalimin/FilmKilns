@@ -191,7 +191,7 @@ HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        calculatePosition(x, y);
+        transToCanvasPos(x, y);
         layer->setPosition(x, y);
         invalidate();
         return Hw::SUCCESS;
@@ -203,7 +203,7 @@ HwResult AlImageProcessor::postTranslate(int32_t id, float dx, float dy) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        calculatePosition(dx, dy);
+        transToCanvasPos(dx, dy);
         layer->setPosition(layer->getPosition().x + dx, layer->getPosition().y + dy);
         invalidate();
         return Hw::SUCCESS;
@@ -231,7 +231,7 @@ AlImageLayerModel *AlImageProcessor::_getLayer(int32_t id) {
     return nullptr;
 }
 
-void AlImageProcessor::calculatePosition(float &x, float &y) {
+void AlImageProcessor::transToCanvasPos(float &x, float &y) {
     float winRatio = mWinSize.ratio();
     float cRatio = mCanvasModel.getWidth() / (float) mCanvasModel.getHeight();
     if (winRatio > cRatio) {
@@ -245,7 +245,7 @@ void AlImageProcessor::calculatePosition(float &x, float &y) {
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    calculatePosition(x, y);
+    transToCanvasPos(x, y);
     size_t size = mLayers.size();
     for (int i = size - 1; i >= 0; --i) {
         auto *it = mLayers.at(static_cast<unsigned int>(i));
@@ -263,13 +263,8 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     auto *layer = _getLayer(id);
     if (layer) {
         Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
-        calculatePosition(left, top);
-        calculatePosition(right, bottom);
-        Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
-//        left = (left + 1.0f) / 2.0f;
-//        top = (top + 1.0f) / 2.0f;
-//        right = (right + 1.0f) / 2.0f;
-//        bottom = (bottom + 1.0f) / 2.0f;
+        transToCanvasPos(left, top);
+        transToCanvasPos(right, bottom);
         Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
         auto *opt = AlOperateFactory::crop(left, top, right, bottom);
         AlRational r = layer->getRotation();

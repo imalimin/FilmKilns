@@ -44,7 +44,7 @@ void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &dest,
                         (float) dest.width / (float) dest.height :
                         (float) dest.height / (float) dest.width;
 
-    //计算正交矩阵
+    /// 计算正交矩阵，小边为1，大边>1
     if (dest.width > dest.height) {
         destRectF.left = -aspectRatio;
         destRectF.right = -destRectF.left;
