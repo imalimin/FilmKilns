@@ -47,8 +47,6 @@ class AlCropView : View {
         val height = 9f
         hRectF.set(0f, 0f, width, height)
         vRectF.set(0f, 0f, height, width)
-        hRectF.offset(-height / 2f, -height / 2f)
-        vRectF.offset(-height / 2f, -height / 2f)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -140,25 +138,33 @@ class AlCropView : View {
         drawLine(canvas, rb, rt, paint)
         drawLine(canvas, rt, lt, paint)
 
-        canvas?.drawRect(lt.x + hRectF.left, lt.y + hRectF.top,
-                lt.x + hRectF.right, lt.y + hRectF.bottom, paint)
-        canvas?.drawRect(lt.x + vRectF.left, lt.y + vRectF.top,
-                lt.x + vRectF.right, lt.y + vRectF.bottom, paint)
+        //水平
+        canvas?.drawRect(lt.x + hRectF.left - vRectF.width(), lt.y + hRectF.top - hRectF.height(),
+                lt.x + hRectF.right - vRectF.width(), lt.y + hRectF.bottom - hRectF.height(), paint)
+        //垂直
+        canvas?.drawRect(lt.x + vRectF.left - vRectF.width(), lt.y + vRectF.top - hRectF.height(),
+                lt.x + vRectF.right - vRectF.width(), lt.y + vRectF.bottom - hRectF.height(), paint)
 
-        canvas?.drawRect(lb.x + hRectF.left, lb.y + hRectF.top,
-                lb.x + hRectF.right, lb.y + hRectF.bottom, paint)
-        canvas?.drawRect(lb.x + vRectF.left, lb.y - vRectF.bottom,
-                lb.x + vRectF.right, lb.y + vRectF.top, paint)
+        //水平
+        canvas?.drawRect(lb.x + hRectF.left - vRectF.width(), lb.y + hRectF.top,
+                lb.x + hRectF.right - vRectF.width(), lb.y + hRectF.bottom, paint)
+        //垂直
+        canvas?.drawRect(lb.x + vRectF.left - vRectF.width(), lb.y - vRectF.height() + hRectF.height(),
+                lb.x + vRectF.right - vRectF.width(), lb.y + hRectF.height(), paint)
 
-        canvas?.drawRect(rb.x - hRectF.right, rb.y + hRectF.top,
-                rb.x - hRectF.left, rb.y + hRectF.bottom, paint)
-        canvas?.drawRect(rb.x + vRectF.left, rb.y - vRectF.bottom,
-                rb.x + vRectF.right, rb.y - vRectF.top, paint)
+        //水平
+        canvas?.drawRect(rb.x - hRectF.width() + vRectF.width(), rb.y,
+                rb.x + vRectF.width(), rb.y + hRectF.height(), paint)
+        //垂直
+        canvas?.drawRect(rb.x, rb.y - vRectF.height() + hRectF.height(),
+                rb.x + vRectF.width(), rb.y + hRectF.height(), paint)
 
-        canvas?.drawRect(rt.x - hRectF.right, rt.y + hRectF.top,
-                rt.x + hRectF.left, rt.y + hRectF.bottom, paint)
-        canvas?.drawRect(rt.x + vRectF.left, rt.y + vRectF.top,
-                rt.x + vRectF.right, rt.y + vRectF.bottom, paint)
+        //水平
+        canvas?.drawRect(rt.x + hRectF.left - hRectF.width() + vRectF.width(), rt.y + hRectF.top - hRectF.height(),
+                rt.x + hRectF.right - hRectF.width() + vRectF.width(), rt.y + hRectF.bottom - hRectF.height(), paint)
+        //垂直
+        canvas?.drawRect(rt.x + vRectF.left, rt.y + vRectF.top - hRectF.height(),
+                rt.x + vRectF.right, rt.y + vRectF.bottom - hRectF.height(), paint)
     }
 
     private fun drawLine(canvas: Canvas?, start: PointF, end: PointF, paint: Paint) {
