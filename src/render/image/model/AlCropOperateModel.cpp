@@ -37,6 +37,7 @@ void AlCropOperateModel::setRotation(AlRational &r) {
 
 HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
                                      AlImageLayerDrawModel *description) {
+    double r = AlMath::PI * rotation.num / rotation.den;
     AlSize layerSize = description->getLayerSize();
     AlSize cropSize(layerSize.width * rectF.getWidth() / 2.0f,
                     layerSize.height * rectF.getHeight() / 2.0f);
@@ -51,8 +52,25 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
     } else {
         aMeasure.setScale(rectF.getHeight() / 2.0f, rectF.getHeight() / 2.0f);
     }
-    aMeasure.setRotation(AlMath::PI * rotation.toFloat());
-    aMeasure.setTranslate(tx, ty);
+    aMeasure.setRotation(r);
+//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), -tx * cos(r) - ty * sin(r));
+//    aMeasure.setTranslate(-tx * sin(r) + ty * cos(r), -tx * cos(r) - ty * sin(r));
+//    aMeasure.setTranslate(tx * sin(r) - ty * cos(r), -tx * cos(r) - ty * sin(r));
+//    aMeasure.setTranslate(-tx * sin(r) - ty * cos(r), -tx * cos(r) - ty * sin(r));
+
+
+//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), -tx * cos(r) - ty * sin(r));
+//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), tx * cos(r) - ty * sin(r));
+//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), -tx * cos(r) + ty * sin(r));
+//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), tx * cos(r) + ty * sin(r));
+
+//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), -tx * sin(r) - ty * cos(r));
+//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), tx * sin(r) - ty * cos(r));
+//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), -tx * sin(r) + ty * cos(r));
+//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), tx * sin(r) + ty * cos(r));
+
+//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), tx * cos(r) - ty * sin(r));
+    aMeasure.setTranslate(tx * cos(r) - ty * sin(r), tx * sin(r) - ty * cos(r));
 
     AlVec2 lt;
     AlVec2 lb;
@@ -63,7 +81,7 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
     description->cropQuad.setLeftBottom((lb + 1.0f) / 2.0f);
     description->cropQuad.setRightBottom((rb + 1.0f) / 2.0f);
     description->cropQuad.setRightTop((rt + 1.0f) / 2.0f);
-    description->cropQuad.mirrorVertical();
+//    description->cropQuad.mirrorVertical();
     description->setLayerSize(cropSize.width, cropSize.height);
     return Hw::SUCCESS;
 }
