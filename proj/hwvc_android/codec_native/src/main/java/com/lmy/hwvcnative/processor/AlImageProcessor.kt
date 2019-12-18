@@ -193,7 +193,8 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
-     * 对图层进行裁剪
+     * 对图层进行裁剪，目前一个图层只能有一个裁剪操作
+     * 如果要更新裁剪区域，请先进行cancelCropLayer
      * @param id      图层id
      * @param left   左, left∈[0, 1]
      * @param top    上, top∈[0, 1]
@@ -204,6 +205,18 @@ class AlImageProcessor private constructor() : CPPObject() {
     fun cropLayer(id: Int, left: Float, top: Float, right: Float, bottom: Float): Int {
         if (!isNativeNull()) {
             return cropLayer(handler, id, left, top, right, bottom)
+        }
+        return AlResult.FAILED
+    }
+
+    /**
+     * 取消图层裁剪
+     * @param id      图层id
+     * @return       {@link AlResult}
+     */
+    fun cancelCropLayer(id: Int): Int {
+        if (!isNativeNull()) {
+            return cancelCropLayer(handler, id)
         }
         return AlResult.FAILED
     }
@@ -237,6 +250,8 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun getLayer(handler: Long, x: Float, y: Float): Int
     private external fun cropLayer(handler: Long, id: Int, left: Float, top: Float,
                                    right: Float, bottom: Float): Int
+
+    private external fun cancelCropLayer(handler: Long, id: Int): Int
 
     private external fun save(handler: Long, path: String): Int
 

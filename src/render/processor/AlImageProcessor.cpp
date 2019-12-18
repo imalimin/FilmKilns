@@ -279,6 +279,16 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     return Hw::FAILED;
 }
 
+HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer && layer->removeCropOperator()) {
+        invalidate();
+        return Hw::SUCCESS;
+    }
+    return Hw::FAILED;
+}
+
 HwResult AlImageProcessor::save(std::string path) {
     invalidate(3);
     putString("output_path", path).to({ALIAS_OF_LAYER_RENDER});

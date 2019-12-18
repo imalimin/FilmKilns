@@ -237,7 +237,8 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
             BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
             BottomSheetItem(1, R.mipmap.ic_launcher, "Rest Layer"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer"),
-            BottomSheetItem(3, R.mipmap.ic_launcher, "Crop Layer")
+            BottomSheetItem(3, R.mipmap.ic_launcher, "Crop Layer"),
+            BottomSheetItem(4, R.mipmap.ic_launcher, "Clear Crop Layer")
     )
 
     override fun show(): BottomSheetDialog {
@@ -271,6 +272,9 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                             rectF.left, rectF.top,
                             rectF.right, rectF.bottom)
                 }
+            }
+            4 -> {
+                processor?.cancelCropLayer(context.getCurrentLayer())
             }
         }
     }

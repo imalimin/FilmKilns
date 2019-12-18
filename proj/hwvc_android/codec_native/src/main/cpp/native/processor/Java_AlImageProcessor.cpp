@@ -186,6 +186,14 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_cropLa
     return Hw::FAILED.code;
 }
 
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_cancelCropLayer
+        (JNIEnv *env, jobject thiz, jlong handler, jint id) {
+    if (handler) {
+        return getHandler(handler)->cancelCropLayer(id).code;
+    }
+    return Hw::FAILED.code;
+}
+
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_save
         (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
     HwResult ret = Hw::FAILED.code;

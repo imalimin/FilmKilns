@@ -74,6 +74,8 @@ public:
 
     HwResult cropLayer(int32_t id, float left, float top, float right, float bottom);
 
+    HwResult cancelCropLayer(int32_t id);
+
     HwResult save(std::string path);
 
     void setOnSaveListener(AlLayerRender::OnSaveListener listener);

@@ -6,6 +6,7 @@
 */
 
 #include "AlImageLayerModel.h"
+#include "AlCropOperateModel.h"
 #include "Logcat.h"
 
 #define TAG "AlImageLayerModel"
@@ -130,4 +131,19 @@ HwResult AlImageLayerModel::addOperator(AlAbsOperateModel *opt) {
 
 std::vector<AlAbsOperateModel *> *AlImageLayerModel::getAllOperators() {
     return &operators;
+}
+
+bool AlImageLayerModel::removeCropOperator() {
+    bool ret = false;
+    auto itr = operators.begin();
+    while (itr != operators.end()) {
+        AlAbsOperateModel *it = *itr;
+        if (typeid(AlCropOperateModel) == typeid(*it)) {
+            itr = operators.erase(itr);
+            ret = true;
+            continue;
+        }
+        ++itr;
+    }
+    return ret;
 }

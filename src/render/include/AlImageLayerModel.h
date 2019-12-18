@@ -60,6 +60,8 @@ public:
 
     std::vector<AlAbsOperateModel *> *getAllOperators();
 
+    bool removeCropOperator();
+
     void dump();
 
 public:
