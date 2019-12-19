@@ -17,6 +17,10 @@
 #include "TextureAllocator.h"
 #include "AlColorGridFilter.h"
 #include "AlImageLayerDrawModel.h"
+#ifdef ENABLE_CROP_DEBUG
+#include "AlQuadDrawer.h"
+#include "HwNormalFilter.h"
+#endif
 
 al_class(AlImageCanvas) {
 public:
@@ -51,6 +55,11 @@ private:
     HwAbsTexture *mCanvasTex = nullptr;
     AlColorGridFilter *mBgDrawer = nullptr;
     AlCanvasDrawer *mCanvasDrawer = nullptr;
+#ifdef ENABLE_CROP_DEBUG
+    HwAbsTexture *mLayerTex = nullptr;
+    HwNormalFilter *mCopyDrawer = nullptr;
+    AlQuadDrawer *mAlQuadDrawer = nullptr;
+#endif
 };
 
 

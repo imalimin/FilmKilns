@@ -41,7 +41,20 @@ public:
 
     void setRotation(float rotation);
 
+    /// 设置矩阵偏移量
+    /// \param x      x轴偏移量
+    /// \param y      y轴偏移量
     void setTranslate(float x, float y);
+
+    /// 设置矩阵偏移量
+    /// 由于在做角度转换之前，需要先乘以cRectF，此时需要使用该方法
+    /// \param x      x轴偏移量
+    /// \param y      y轴偏移量
+    /// \param alpha  坐标轴旋转角度，负数为CW
+    /// \param scaleX x轴偏移量放大系数，目前只用于正负转换
+    /// \param scaleY y轴偏移量放大系数，目前只用于正负转换
+    ///
+    void setTranslate(float x, float y, float alpha, float scaleX = 1.0f, float scaleY = 1.0f);
 
     /// 获取图层变换后的归一化坐标
     /// 与Shader中的uTextureMatrix * aPosition一致

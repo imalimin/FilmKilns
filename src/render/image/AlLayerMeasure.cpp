@@ -7,6 +7,7 @@
 
 #include "AlLayerMeasure.h"
 #include "AlVec4.h"
+#include "AlMath.h"
 
 AlLayerMeasure::AlLayerMeasure() : Object() {
 
@@ -34,7 +35,16 @@ void AlLayerMeasure::setRotation(float rotation) {
 }
 
 void AlLayerMeasure::setTranslate(float x, float y) {
-    tMat.setTranslate(x * cRectF.getWidth() / 2.0f, y * cRectF.getHeight() / 2.0f);
+    setTranslate(x, y, 0.0f);
+}
+
+void AlLayerMeasure::setTranslate(float x, float y, float alpha, float scaleX, float scaleY) {
+    float nx = x * cRectF.getWidth() / 2.0f;
+    float ny = y * cRectF.getHeight() / 2.0f;
+    ///x = dx * cos(alpha) + dy * sin(alpha)
+    ///y = -dx * sin(alpha) + dy * cos(alpha)
+    tMat.setTranslate((nx * cos(alpha) + ny * sin(alpha)) * scaleX,
+                      (-nx * sin(alpha) + ny * cos(alpha)) * scaleY);
 }
 
 
@@ -74,7 +84,7 @@ void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &target,
 }
 
 void AlLayerMeasure::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
-                                     AlVec2 &rightBottom, AlVec2 &rightTop) {
+                                         AlVec2 &rightBottom, AlVec2 &rightTop) {
     AlMatrix mat = oMat * tMat;
     AlVec4 lt(lRectF.left, lRectF.top);
     AlVec4 lb(lRectF.left, lRectF.bottom);

@@ -26,6 +26,12 @@ void AlImageCanvas::release() {
     delete mCanvasDrawer;
     mCanvasDrawer = nullptr;
     mCanvasTex = nullptr;
+#ifdef ENABLE_CROP_DEBUG
+    delete mCopyDrawer;
+    delete mAlQuadDrawer;
+    mCopyDrawer = nullptr;
+    mAlQuadDrawer = nullptr;
+#endif
 }
 
 HwAbsTexture *AlImageCanvas::getOutput() {
@@ -43,6 +49,13 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator
         fbo->bindTex(mCanvasTex);
         mBgDrawer = AlColorGridFilter::create();
         mBgDrawer->prepare(texAllocator);
+#ifdef ENABLE_CROP_DEBUG
+        mLayerTex = texAllocator->alloc(nullptr, w, h, GL_RGBA);
+        mCopyDrawer = new HwNormalFilter();
+        mCopyDrawer->prepare();
+        mAlQuadDrawer = new AlQuadDrawer();
+        mAlQuadDrawer->prepare(texAllocator);
+#endif
     } else {
         mCanvasTex->update(nullptr, w, h, GL_RGBA);
     }
@@ -94,10 +107,22 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
     mCanvasDrawer->setMatrix(description->mat);
     ///设置纹理顶点
     mCanvasDrawer->setVertexRectF(description->vertexRectF);
+#ifdef ENABLE_CROP_DEBUG
+    glViewport(0, 0, description->getLayerSize().width, description->getLayerSize().height);
+    mLayerTex->update(nullptr, description->getLayerSize().width, description->getLayerSize().height, GL_RGBA);
+    mCopyDrawer->draw(description->tex, mLayerTex);
+    if (!description->cropQuad.isZero()) {
+        mAlQuadDrawer->setQuad(description->cropQuad);
+        mAlQuadDrawer->draw(mLayerTex);
+    }
+    glViewport(0, 0, getWidth(), getHeight());
+    mCanvasDrawer->draw(mLayerTex, mCanvasTex);
+#else
     mCanvasDrawer->setPositionQuad(description->cropQuad);
     glViewport(0, 0, getWidth(), getHeight());
     ///Draw layer
     mCanvasDrawer->draw(description->tex, mCanvasTex);
+#endif
 }
 
 HwResult AlImageCanvas::read(AlBuffer *buf) {

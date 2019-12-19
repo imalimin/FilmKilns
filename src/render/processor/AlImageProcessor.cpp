@@ -270,8 +270,10 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
         r.num = -r.num;
         ((AlCropOperateModel *) opt)->setRotation(r);
         layer->addOperator(opt);
+#ifndef ENABLE_CROP_DEBUG
         AlRational nr = AlRational();
         layer->setRotation(nr);
+#endif
         invalidate();
         return Hw::SUCCESS;
     }

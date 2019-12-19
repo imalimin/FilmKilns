@@ -53,9 +53,7 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
         aMeasure.setScale(rectF.getHeight() / 2.0f, rectF.getHeight() / 2.0f);
     }
     aMeasure.setRotation(alpha);
-    ///x = dx * cos(alpha) + dy * sin(alpha)
-    ///y = -dx * sin(alpha) + dy * cos(alpha)
-    aMeasure.setTranslate(dx * cos(alpha) + dy * sin(alpha), dx * sin(alpha) - dy * cos(alpha));
+    aMeasure.setTranslate(dx, dy, alpha, 1, -1);
 
     AlVec2 lt;
     AlVec2 lb;
@@ -67,7 +65,9 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
     description->cropQuad.setRightBottom((rb + 1.0f) / 2.0f);
     description->cropQuad.setRightTop((rt + 1.0f) / 2.0f);
 //    description->cropQuad.mirrorVertical();
+#ifndef ENABLE_CROP_DEBUG
     description->setLayerSize(cropSize.width, cropSize.height);
+#endif
     Logcat::i(TAG, "[%f,%f], [%f,%f]",
               description->cropQuad.leftTop().x, description->cropQuad.leftTop().y,
               description->cropQuad.rightTop().x, description->cropQuad.rightTop().y);

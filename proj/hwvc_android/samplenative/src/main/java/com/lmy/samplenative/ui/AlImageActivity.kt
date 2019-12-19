@@ -74,6 +74,14 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 //        processor?.setCanvas(1080, 1920)
         processor?.setOnSaveListener(this)
         pickImage()
+        //For crop debug
+//        cropView.setOnChangeListener {
+//            processor?.cancelCropLayer(getCurrentLayer())
+//            val rectF = cropView.getCropRectF()
+//            processor?.cropLayer(getCurrentLayer(),
+//                    rectF.left, rectF.top,
+//                    rectF.right, rectF.bottom)
+//        }
     }
 
     override fun onClick(v: View?) {
