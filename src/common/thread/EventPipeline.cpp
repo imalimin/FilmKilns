@@ -4,45 +4,47 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-#include "../include/EventPipeline.h"
+#include "EventPipeline.h"
+#include "AlRunnable.h"
 
 EventPipeline::EventPipeline(string name) {
-    this->handlerThread = new HandlerThread(name);
+    this->mThread = AlHandlerThread::create(name);
     this->shouldQuitThread = true;
 }
 
-EventPipeline::EventPipeline(HandlerThread *handlerThread) {
-    this->handlerThread = handlerThread;
+EventPipeline::EventPipeline(AlLooper *looper) {
+    this->mLooper = looper;
     this->shouldQuitThread = false;
 }
 
 EventPipeline::~EventPipeline() {
     simpleLock.lock();
-    if (shouldQuitThread && handlerThread) {
-        delete handlerThread;
+    if (shouldQuitThread && mThread) {
+        delete mThread;
     }
-    handlerThread = nullptr;
+    mThread = nullptr;
+    mLooper = nullptr;
     simpleLock.unlock();
 }
 
 void EventPipeline::queueEvent(function<void()> event) {
     simpleLock.lock();
-    if (handlerThread) {
-        handlerThread->sendMessage(new Message(0, [event](Message *msg) {
+    if (mLooper) {
+        mLooper->sendMessage(AlMessage::obtain(0, new AlRunnable([event](Object *o) {
             event();
-        }));
+        })));
     }
     simpleLock.unlock();
 }
 
 void EventPipeline::quit() {
     simpleLock.lock();
-    if (handlerThread) {
-        handlerThread->sendMessage(new Message(0, nullptr, Message::QUEUE_MODE_CLEAR, nullptr));
+    if (mLooper) {
+        mLooper->sendMessage(AlMessage::obtain(0, nullptr, AlMessage::QUEUE_MODE_CLEAR));
         if (shouldQuitThread) {
-            delete handlerThread;
+            delete mThread;
         }
     }
-    handlerThread = nullptr;
+    mThread = nullptr;
     simpleLock.unlock();
 }

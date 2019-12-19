@@ -24,11 +24,11 @@ HwModelProvider::~HwModelProvider() {
 
 }
 
-bool HwModelProvider::onDestroy(Message *msg) {
+bool HwModelProvider::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool HwModelProvider::eventPutInt32(Message *msg) {
+bool HwModelProvider::eventPutInt32(AlMessage *msg) {
     HwPair<string, int32_t> *p = static_cast<HwPair<string, int32_t> *>(msg->obj);
     if (p) {
         bundle.putInt32(p->key(), p->value());
@@ -36,7 +36,7 @@ bool HwModelProvider::eventPutInt32(Message *msg) {
     return true;
 }
 
-bool HwModelProvider::eventPutInt64(Message *msg) {
+bool HwModelProvider::eventPutInt64(AlMessage *msg) {
     HwPair<string, int64_t> *p = static_cast<HwPair<string, int64_t> *>(msg->obj);
     if (p) {
         bundle.putInt64(p->key(), p->value());
@@ -44,7 +44,7 @@ bool HwModelProvider::eventPutInt64(Message *msg) {
     return true;
 }
 
-bool HwModelProvider::eventPutString(Message *msg) {
+bool HwModelProvider::eventPutString(AlMessage *msg) {
     HwPair<string, string> *p = static_cast<HwPair<string, string> *>(msg->obj);
     if (p) {
         bundle.putString(p->key(), p->value());
@@ -52,7 +52,7 @@ bool HwModelProvider::eventPutString(Message *msg) {
     return true;
 }
 
-bool HwModelProvider::eventPutObject(Message *msg) {
+bool HwModelProvider::eventPutObject(AlMessage *msg) {
     HwPair<string, Object *> *p = static_cast<HwPair<string, Object *> *>(msg->obj);
     if (p) {
         bundle.putObject(p->key(), p->value());
@@ -76,6 +76,6 @@ Object *HwModelProvider::getObject(string key) {
     return bundle.getObject(key);
 }
 
-bool HwModelProvider::onCreate(Message *msg) {
+bool HwModelProvider::onCreate(AlMessage *msg) {
     return true;
 }

@@ -2,18 +2,20 @@
 // Created by mingyi.li on 2018/12/25.
 //
 
-#include "../include/UnitPipeline.h"
-#include "../include/Unit.h"
+#include "UnitPipeline.h"
+#include "AlRunnable.h"
+#include "Unit.h"
+#include "AlMessage.h"
 
 UnitPipeline::UnitPipeline(string name) {
     available = true;
     mThread = AlHandlerThread::create(name);
     mHandler = new AlHandler(mThread->getLooper(), [this](AlMessage *msg) {
-        Message *m = dynamic_cast<Message *>(msg->obj);
-        if (m && m->runnable) {
-            m->runnable(m);
+        if (msg && msg->obj && typeid(AlRunnable) == typeid(*msg->obj)) {
+            AlRunnable *run = dynamic_cast<AlRunnable *>(msg->obj);
+            (*run)(msg);
         }
-        this->dispatch(m);
+        this->dispatch(msg);
     });
 }
 
@@ -30,7 +32,7 @@ void UnitPipeline::release() {
     if (available) {
         simpleLock.lock();
         available = false;
-        Message *msg = new Message(EVENT_COMMON_RELEASE, nullptr);
+        AlMessage *msg = AlMessage::obtain(EVENT_COMMON_RELEASE);
         if (mHandler) {
             mHandler->sendMessage(AlMessage::obtain(EVENT_COMMON_RELEASE, msg));
         }
@@ -38,13 +40,11 @@ void UnitPipeline::release() {
     }
 }
 
-void UnitPipeline::postEvent(Message *msg) {
+void UnitPipeline::postEvent(AlMessage *msg) {
     if (mHandler) {
         simpleLock.lock();
         if (available) {
-            AlMessage *aMsg = AlMessage::obtain(msg->what, msg, msg->queueMode);
-            aMsg->desc = msg->desc;
-            mHandler->sendMessage(aMsg);
+            mHandler->sendMessage(msg);
         } else {
             Logcat::i("HWVC", "UnitPipeline skip message %p", msg);
             delete msg;
@@ -55,7 +55,7 @@ void UnitPipeline::postEvent(Message *msg) {
     }
 }
 
-void UnitPipeline::dispatch(Message *msg) {
+void UnitPipeline::dispatch(AlMessage *msg) {
     for (auto itr = units.cbegin(); itr != units.cend(); itr++) {
         bool ret = (*itr)->dispatch(msg);
     }

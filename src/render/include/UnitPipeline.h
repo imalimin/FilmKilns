@@ -6,7 +6,6 @@
 #define HARDWAREVIDEOCODEC_MAINPIPELINE_H
 
 #include "Object.h"
-#include "Message.h"
 #include "AlHandlerThread.h"
 #include "AlHandler.h"
 #include "SimpleLock.h"
@@ -22,16 +21,16 @@ public:
 
     virtual ~UnitPipeline();
 
-    void postEvent(Message *msg);
+    void postEvent(AlMessage *msg);
 
     int registerAnUnit(Unit *unit);
 
     void release();
 
 private:
-    void postEvent(Message *msg, bool front);
+    void postEvent(AlMessage *msg, bool front);
 
-    void dispatch(Message *msg);
+    void dispatch(AlMessage *msg);
 
     void clear();
 

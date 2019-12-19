@@ -73,7 +73,7 @@ protected:
 
     void registerAnUnit(Unit *unit);
 
-    void postEvent(Message *msg);
+    void postEvent(AlMessage *msg);
 
     HwPairBuilder<int32_t> putInt32(string key, int32_t value);
 

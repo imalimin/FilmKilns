@@ -5,7 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwAbsProcessor.h"
+#include "HwAbsProcessor.h"
+#include "AlRunnable.h"
 #include "HwPair.h"
 
 HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
@@ -29,7 +30,7 @@ void HwAbsProcessor::onDestroy() {
 }
 
 void HwAbsProcessor::prepare() {
-    Message *msg = new Message(EVENT_COMMON_PREPARE);
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE);
     postEvent(msg);
 }
 
@@ -47,7 +48,7 @@ void HwAbsProcessor::registerAnUnit(Unit *unit) {
     }
 }
 
-void HwAbsProcessor::postEvent(Message *msg) {
+void HwAbsProcessor::postEvent(AlMessage *msg) {
     if (pipeline) {
         pipeline->postEvent(msg);
     } else {
@@ -58,10 +59,9 @@ void HwAbsProcessor::postEvent(Message *msg) {
 
 void HwAbsProcessor::post(function<void()> runnable) {
     if (runnable) {
-        Message *msg = new Message(0, [runnable](Message *msg2) {
-            msg2->runnable = nullptr;
+        AlMessage *msg = AlMessage::obtain(0, new AlRunnable([runnable](Object *o) {
             runnable();
-        });
+        }));
         postEvent(msg);
     }
 }

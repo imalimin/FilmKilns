@@ -10,7 +10,7 @@
 #include "Object.h"
 #include "UnitPipeline.h"
 #include "EventPipeline.h"
-#include "Message.h"
+#include "AlMessage.h"
 #include "HwBundle.h"
 #include <map>
 //#include "HwModelProvider.h"
@@ -88,7 +88,7 @@ static constexpr int EVENT_LAYER_RENDER_SAVE = KID('A', 'L', 'R', 0x04);
  */
 class HwModelProvider;
 
-typedef bool (Unit::*EventFunc)(Message *);
+typedef bool (Unit::*EventFunc)(AlMessage *);
 
 class Event : public Object {
 public:
@@ -96,7 +96,7 @@ public:
 
     virtual ~Event();
 
-    bool dispatch(Unit *unit, Message *msg);
+    bool dispatch(Unit *unit, AlMessage *msg);
 
 protected:
     int what = 0;
@@ -119,7 +119,7 @@ public:
 
     bool registerEvent(int what, EventFunc handler);
 
-    virtual bool onCreate(Message *msg) = 0;
+    virtual bool onCreate(AlMessage *msg) = 0;
 
     /// 该函数会接收到一个pipeline实例即将销毁的消息
     /// 请在此释放跟opengl相关的资源，或其它
@@ -131,7 +131,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    virtual bool onDestroy(Message *msg) = 0;
+    virtual bool onDestroy(AlMessage *msg) = 0;
 
     /** Model Provider START */
     void setModelProvider(HwModelProvider *provider);
@@ -148,14 +148,14 @@ public:
     /** Model Provider END */
 
 protected:
-    void postEvent(Message *msg);
+    void postEvent(AlMessage *msg);
 
 private:
     /**
      * @msg 事件消息
      * @return true:我可以处理这个事件，false:无法处理这个事件
      */
-    bool dispatch(Message *msg);
+    bool dispatch(AlMessage *msg);
 
 private:
     string alias;
@@ -170,17 +170,17 @@ public:
 
     virtual ~HwModelProvider();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool eventPutInt32(Message *msg);
+    bool eventPutInt32(AlMessage *msg);
 
-    bool eventPutInt64(Message *msg);
+    bool eventPutInt64(AlMessage *msg);
 
-    bool eventPutString(Message *msg);
+    bool eventPutString(AlMessage *msg);
 
-    bool eventPutObject(Message *msg);
+    bool eventPutObject(AlMessage *msg);
 
     const int32_t &getInt32(string key);
 

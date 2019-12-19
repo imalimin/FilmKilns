@@ -16,7 +16,7 @@ Event::~Event() {
     this->handler = nullptr;
 }
 
-bool Event::dispatch(Unit *unit, Message *msg) {
+bool Event::dispatch(Unit *unit, AlMessage *msg) {
     return (unit->*handler)(msg);
 }
 
@@ -43,7 +43,7 @@ void Unit::setController(UnitPipeline *pipeline) {
     this->pipeline = pipeline;
 }
 
-void Unit::postEvent(Message *msg) {
+void Unit::postEvent(AlMessage *msg) {
     if (pipeline) {
         pipeline->postEvent(msg);
     } else {
@@ -51,7 +51,7 @@ void Unit::postEvent(Message *msg) {
     }
 }
 
-bool Unit::dispatch(Message *msg) {
+bool Unit::dispatch(AlMessage *msg) {
     auto itr = eventMap.find(msg->what);
     if (eventMap.end() != itr) {
         return itr->second->dispatch(this, msg);
