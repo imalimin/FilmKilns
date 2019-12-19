@@ -162,7 +162,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     fun ensureCropLayer() {
         processor?.cancelCropLayer(getCurrentLayer())
         val rectF = cropView.getCropRectF()
-        processor?.cropLayer(getCurrentLayer(),
+        processor?.ensureCropLayer(getCurrentLayer(),
                 rectF.left, rectF.top,
                 rectF.right, rectF.bottom)
     }

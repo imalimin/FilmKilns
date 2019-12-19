@@ -203,9 +203,9 @@ class AlImageProcessor private constructor() : CPPObject() {
      * @param bottom 下, bottom∈[0, 1]
      * @return       {@link AlResult}
      */
-    fun cropLayer(id: Int, left: Float, top: Float, right: Float, bottom: Float): Int {
+    fun ensureCropLayer(id: Int, left: Float, top: Float, right: Float, bottom: Float): Int {
         if (!isNativeNull()) {
-            return cropLayer(handler, id, left, top, right, bottom)
+            return ensureCropLayer(handler, id, left, top, right, bottom)
         }
         return AlResult.FAILED
     }
@@ -249,7 +249,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
     private external fun getLayer(handler: Long, x: Float, y: Float): Int
-    private external fun cropLayer(handler: Long, id: Int, left: Float, top: Float,
+    private external fun ensureCropLayer(handler: Long, id: Int, left: Float, top: Float,
                                    right: Float, bottom: Float): Int
 
     private external fun cancelCropLayer(handler: Long, id: Int): Int
