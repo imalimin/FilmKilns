@@ -20,6 +20,7 @@ class AlCropView : View {
     private val vRectF = RectF()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var strokeWidth: Float = 1f
+    private var onChangeListener: OnChangeListener? = null;
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -121,6 +122,7 @@ class AlCropView : View {
                         }
                     }
                     lastTouchPointF.set(event.x, event.y)
+                    onChangeListener?.onChange(this)
                     postInvalidate()
                     return true
                 }
@@ -176,4 +178,21 @@ class AlCropView : View {
             1f - lt.y / (measuredHeight / 2f),
             rb.x / (measuredWidth / 2f) - 1f,
             1f - rb.y / (measuredHeight / 2f))
+
+    fun setOnChangeListener(listener: OnChangeListener) {
+        this.onChangeListener = listener
+    }
+
+    fun setOnChangeListener(listener: (view: View) -> Unit) {
+        setOnChangeListener(object : OnChangeListener {
+            override fun onChange(view: View) {
+                listener(view)
+            }
+        })
+    }
+
+
+    interface OnChangeListener {
+        fun onChange(view: View)
+    }
 }
