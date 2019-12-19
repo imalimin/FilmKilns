@@ -195,6 +195,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     /**
      * 对图层进行裁剪，目前一个图层只能有一个裁剪操作
      * 如果要更新裁剪区域，请先进行cancelCropLayer
+     * 该操作会重置图层的缩放旋转位移
      * @param id      图层id
      * @param left   左, left∈[0, 1]
      * @param top    上, top∈[0, 1]

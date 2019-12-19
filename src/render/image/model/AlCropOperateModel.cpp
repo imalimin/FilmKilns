@@ -37,40 +37,25 @@ void AlCropOperateModel::setRotation(AlRational &r) {
 
 HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
                                      AlImageLayerDrawModel *description) {
-    double r = AlMath::PI * rotation.num / rotation.den;
+    double alpha = AlMath::PI * rotation.num / rotation.den;
     AlSize layerSize = description->getLayerSize();
     AlSize cropSize(layerSize.width * rectF.getWidth() / 2.0f,
                     layerSize.height * rectF.getHeight() / 2.0f);
     aMeasure.updateOrthogonal(cropSize, layerSize);
 
-    float tx = (rectF.left + rectF.right) / 2.0f;
-    float ty = (rectF.top + rectF.bottom) / 2.0f;
-    Logcat::i(TAG, "tx=%f, ty=%f", tx, ty);
+    float dx = (rectF.left + rectF.right) / 2.0f;
+    float dy = (rectF.top + rectF.bottom) / 2.0f;
+    Logcat::i(TAG, "dx=%f, dy=%f", dx, dy);
 
     if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
         aMeasure.setScale(rectF.getWidth() / 2.0f, rectF.getWidth() / 2.0f);
     } else {
         aMeasure.setScale(rectF.getHeight() / 2.0f, rectF.getHeight() / 2.0f);
     }
-    aMeasure.setRotation(r);
-//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), -tx * cos(r) - ty * sin(r));
-//    aMeasure.setTranslate(-tx * sin(r) + ty * cos(r), -tx * cos(r) - ty * sin(r));
-//    aMeasure.setTranslate(tx * sin(r) - ty * cos(r), -tx * cos(r) - ty * sin(r));
-//    aMeasure.setTranslate(-tx * sin(r) - ty * cos(r), -tx * cos(r) - ty * sin(r));
-
-
-//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), -tx * cos(r) - ty * sin(r));
-//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), tx * cos(r) - ty * sin(r));
-//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), -tx * cos(r) + ty * sin(r));
-//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), tx * cos(r) + ty * sin(r));
-
-//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), -tx * sin(r) - ty * cos(r));
-//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), tx * sin(r) - ty * cos(r));
-//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), -tx * sin(r) + ty * cos(r));
-//    aMeasure.setTranslate(tx * cos(r) + ty * sin(r), tx * sin(r) + ty * cos(r));
-
-//    aMeasure.setTranslate(tx * sin(r) + ty * cos(r), tx * cos(r) - ty * sin(r));
-    aMeasure.setTranslate(tx * cos(r) - ty * sin(r), tx * sin(r) - ty * cos(r));
+    aMeasure.setRotation(alpha);
+    ///x = dx * cos(alpha) + dy * sin(alpha)
+    ///y = -dx * sin(alpha) + dy * cos(alpha)
+    aMeasure.setTranslate(dx * cos(alpha) + dy * sin(alpha), dx * sin(alpha) - dy * cos(alpha));
 
     AlVec2 lt;
     AlVec2 lb;
@@ -83,5 +68,11 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
     description->cropQuad.setRightTop((rt + 1.0f) / 2.0f);
 //    description->cropQuad.mirrorVertical();
     description->setLayerSize(cropSize.width, cropSize.height);
+    Logcat::i(TAG, "[%f,%f], [%f,%f]",
+              description->cropQuad.leftTop().x, description->cropQuad.leftTop().y,
+              description->cropQuad.rightTop().x, description->cropQuad.rightTop().y);
+    Logcat::i(TAG, "[%f,%f], [%f,%f]",
+              description->cropQuad.leftBottom().x, description->cropQuad.leftBottom().y,
+              description->cropQuad.rightBottom().x, description->cropQuad.rightBottom().y);
     return Hw::SUCCESS;
 }
