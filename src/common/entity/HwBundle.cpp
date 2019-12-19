@@ -35,21 +35,21 @@ void HwBundle::putObject(string key, Object *value) {
     objMap.insert(pair<string, Object *>(key, value));
 }
 
-const int32_t &HwBundle::getInt32(string key) {
+const int32_t HwBundle::getInt32(string key) {
     if (int32Map.end() == int32Map.find(key)) {
         return VALUE_NONE;
     }
     return int32Map[key];
 }
 
-const int64_t &HwBundle::getInt64(string key) {
+const int64_t HwBundle::getInt64(string key) {
     if (int64Map.end() == int64Map.find(key)) {
         return VALUE_NONE;
     }
     return int64Map[key];
 }
 
-const string &HwBundle::getString(string key) {
+const string HwBundle::getString(string key) {
     if (strMap.end() == strMap.find(key)) {
         return std::string();
     }

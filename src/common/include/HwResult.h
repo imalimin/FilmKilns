@@ -12,7 +12,7 @@
 
 class HwResult : public Object {
 public:
-    int code = 0;
+    int code;
 
     HwResult(int code);
 

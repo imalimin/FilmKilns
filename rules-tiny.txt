@@ -1,0 +1,11 @@
+{
+    global:
+        JNI_OnLoad;
+        JNI_OnUnload;
+        Java_*;
+        extern "C++" {
+            *Processor::*;
+        };
+
+    local: *;
+};

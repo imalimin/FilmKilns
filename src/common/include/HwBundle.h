@@ -29,11 +29,11 @@ public:
 
     void putObject(string key, Object *value);
 
-    const int32_t &getInt32(string key);
+    const int32_t getInt32(string key);
 
-    const int64_t &getInt64(string key);
+    const int64_t getInt64(string key);
 
-    const string &getString(string key);
+    const string getString(string key);
 
     Object *getObject(string key);
 

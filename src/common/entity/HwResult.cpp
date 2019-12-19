@@ -7,12 +7,10 @@
 
 #include "../include/HwResult.h"
 
-HwResult::HwResult(int code) : Object() {
-    this->code = code;
+HwResult::HwResult(int code) : Object(),code(code) {
 }
 
-HwResult::HwResult(const HwResult &value) : Object() {
-    this->code = value.code;
+HwResult::HwResult(const HwResult &value) : Object(), code(value.code) {
 }
 
 HwResult::~HwResult() {

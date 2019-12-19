@@ -22,33 +22,32 @@ include_directories(
 #        ${PREBUILD_STATIC}/libpng/include
 #)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O3 -Wall -ffast-math -funroll-loops")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -ffast-math -funroll-loops")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math -funroll-loops ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} O3 -ffast-math -funroll-loops ")
 else ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++11 -O0 -Wall -g -ggdb ")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -Wall -g -ggdb ")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -ggdb ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -ggdb ")
 endif ()
-message(STATUS "hwcommom CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    if (${ENABLE_TINY})
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffunction-sections -fdata-sections")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffunction-sections -fdata-sections")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--exclude-libs,ALL,--gc-sections")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/rules-tiny.txt")
+    endif ()
+endif ()
 #将Warning视为Error
-list(APPEND warningConfigs
-        -Werror
-        -Wmost
-        -Wno-pragmas
-        -Wno-unused-function
-        -Wno-unused-label
-        -Wno-unused-value
-        -Wno-unused-variable
-        -Wno-c99-extensions
-        -Wno-reorder
-        -Wno-unused-private-field
-        -Wno-deprecated-declarations
-        -Wno-unknown-pragmas
-        )
-foreach(var ${warningConfigs})
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
-    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
-endforeach(var)
+if (${ENABLE_BAN_WARNING})
+    foreach (var ${WARNING_CONFIGS})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
+    endforeach (var)
+endif ()
+message(STATUS "al_common CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 file(
         GLOB

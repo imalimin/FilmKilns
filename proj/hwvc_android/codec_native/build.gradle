@@ -11,7 +11,7 @@ android {
         versionName rootProject.ext.versionName
         externalNativeBuild {
             cmake {
-//                cppFlags "--std=c++11"
+//                cppFlags "-std=c++11 -frtti"
 //                arguments "-DANDROID_ALLOW_UNDEFINED_SYMBOLS=TRUE"
                 arguments "-DANDROID_ARM_NEON=TRUE",
                         "-DANDROID_CPP_FEATURES=rtti exceptions"
