@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwNormalFilter.h"
+#include "HwNormalFilter.h"
 
 static const string VERTEX = HW_SHADER(
         attribute vec4 aPosition;
@@ -22,7 +22,7 @@ static const string FRAGMENT = HW_SHADER(
         varying mediump vec2 vTextureCoord;
         uniform sampler2D uTexture;
         void main() {
-            vec4 color = vec4(texture2D(uTexture, vTextureCoord).rgb, 1.0);
+            vec4 color = texture2D(uTexture, vTextureCoord).rgba;
             gl_FragColor = color;
         }
 );
