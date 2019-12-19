@@ -30,9 +30,19 @@ void AlCropOperateModel::setRect(float left, float top, float right, float botto
     this->rectF.set(left, top, right, bottom);
 }
 
+void AlCropOperateModel::setScale(float scaleX, float scaleY) {
+    this->scale.x = scaleX;
+    this->scale.y = scaleY;
+}
+
 void AlCropOperateModel::setRotation(AlRational &r) {
     this->rotation.num = r.num;
     this->rotation.den = r.den;
+}
+
+void AlCropOperateModel::setPosition(AlVec2 &position) {
+    this->position.x = position.x;
+    this->position.y = position.y;
 }
 
 HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
@@ -43,8 +53,8 @@ HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
                     layerSize.height * rectF.getHeight() / 2.0f);
     aMeasure.updateOrthogonal(cropSize, layerSize);
 
-    float dx = (rectF.left + rectF.right) / 2.0f;
-    float dy = (rectF.top + rectF.bottom) / 2.0f;
+    float dx = (rectF.left + rectF.right) / 2.0f + position.x;
+    float dy = (rectF.top + rectF.bottom) / 2.0f + position.y;
     Logcat::i(TAG, "dx=%f, dy=%f", dx, dy);
 
     if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {

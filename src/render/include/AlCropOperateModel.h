@@ -26,11 +26,17 @@ public:
 
     void setRect(float left, float top, float right, float bottom);
 
+    void setScale(float scaleX, float scaleY);
+
     void setRotation(AlRational &r);
+
+    void setPosition(AlVec2 &position);
 
 private:
     AlRectF rectF;
     AlRational rotation;
+    AlVec2 position;
+    AlVec2 scale;
     AlLayerMeasure aMeasure;
 };
 

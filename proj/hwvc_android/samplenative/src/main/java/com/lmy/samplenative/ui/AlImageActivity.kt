@@ -55,7 +55,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
-            //            processor?.postTranslate(mCurrentLayer, dx, dy)
+            processor?.postTranslate(mCurrentLayer, dx, dy)
         }
         surfaceView?.setOnScaleListener { v, ds ->
             //            processor?.postScale(mCurrentLayer, ds)
@@ -76,11 +76,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         pickImage()
         //For crop debug
 //        cropView.setOnChangeListener {
-//            processor?.cancelCropLayer(getCurrentLayer())
-//            val rectF = cropView.getCropRectF()
-//            processor?.cropLayer(getCurrentLayer(),
-//                    rectF.left, rectF.top,
-//                    rectF.right, rectF.bottom)
+//            ensureCropLayer()
 //        }
     }
 
@@ -162,6 +158,14 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     }
 
     fun getCurrentLayer(): Int = mCurrentLayer
+
+    fun ensureCropLayer() {
+        processor?.cancelCropLayer(getCurrentLayer())
+        val rectF = cropView.getCropRectF()
+        processor?.cropLayer(getCurrentLayer(),
+                rectF.left, rectF.top,
+                rectF.right, rectF.bottom)
+    }
 
     override fun onSave(code: Int, msg: String?, path: String?) {
         Toast.makeText(this@AlImageActivity,
@@ -275,10 +279,7 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 } else {
                     context.showOptLayer(false)
                     context.cropView.visibility = View.GONE
-                    val rectF = context.cropView.getCropRectF()
-                    processor?.cropLayer(context.getCurrentLayer(),
-                            rectF.left, rectF.top,
-                            rectF.right, rectF.bottom)
+                    context.ensureCropLayer()
                 }
             }
             4 -> {

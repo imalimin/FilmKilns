@@ -67,7 +67,8 @@ void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
 }
 
 void AlImageProcessor::invalidate(int32_t flag) {
-    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr, AlMessage::QUEUE_MODE_UNIQUE);
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr,
+                                       AlMessage::QUEUE_MODE_UNIQUE);
     msg->arg1 = flag;
     postEvent(msg);
 }
@@ -268,11 +269,16 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
         auto *opt = AlOperateFactory::crop(left, top, right, bottom);
         AlRational r = layer->getRotation();
         r.num = -r.num;
+        AlVec2 pos = layer->getPosition();
+        pos.x = -pos.x;
+        pos.y = -pos.y;
         ((AlCropOperateModel *) opt)->setRotation(r);
+        ((AlCropOperateModel *) opt)->setPosition(pos);
         layer->addOperator(opt);
 #ifndef ENABLE_CROP_DEBUG
         AlRational nr = AlRational();
         layer->setRotation(nr);
+        layer->setPosition(0, 0);
 #endif
         invalidate();
         return Hw::SUCCESS;
