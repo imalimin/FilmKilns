@@ -36,6 +36,25 @@ if (ANDROID)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEGL_EGLEXT_PROTOTYPES -DGL_GLEXT_PROTOTYPES")
 endif ()
 message(STATUS "hwrender CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+#将Warning视为Error
+list(APPEND warningConfigs
+        -Werror
+        -Wmost
+        -Wno-pragmas
+        -Wno-unused-function
+        -Wno-unused-label
+        -Wno-unused-value
+        -Wno-unused-variable
+        -Wno-c99-extensions
+        -Wno-reorder
+        -Wno-unused-private-field
+        -Wno-deprecated-declarations
+        -Wno-unknown-pragmas
+        )
+foreach(var ${warningConfigs})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
+    set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
+endforeach(var)
 
 if (ANDROID)
     message(STATUS "hwrender android platform.")
