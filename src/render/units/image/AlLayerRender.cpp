@@ -27,12 +27,12 @@ AlLayerRender::~AlLayerRender() {
     this->onSaveListener = nullptr;
 }
 
-bool AlLayerRender::onCreate(Message *msg) {
+bool AlLayerRender::onCreate(AlMessage *msg) {
     texAllocator = new TextureAllocator();
     return true;
 }
 
-bool AlLayerRender::onDestroy(Message *msg) {
+bool AlLayerRender::onDestroy(AlMessage *msg) {
     mCanvas.release();
     if (texAllocator) {
         delete texAllocator;
@@ -41,25 +41,25 @@ bool AlLayerRender::onDestroy(Message *msg) {
     return true;
 }
 
-bool AlLayerRender::onUpdateCanvas(Message *m) {
+bool AlLayerRender::onUpdateCanvas(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     auto model = _getCanvas();
     mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(),
                    texAllocator);
-    Message *msg = new Message(EVENT_LAYER_MEASURE_CANVAS_SIZE);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE);
     msg->arg1 = model->getWidth();
     msg->arg2 = model->getHeight();
     postEvent(msg);
     return true;
 }
 
-bool AlLayerRender::onClear(Message *m) {
+bool AlLayerRender::onClear(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     mCanvas.clear(1 == m->arg1);
     return false;
 }
 
-bool AlLayerRender::onDraw(Message *m) {
+bool AlLayerRender::onDraw(AlMessage *m) {
     if (nullptr == m->obj) {
         return true;
     }
@@ -71,9 +71,9 @@ bool AlLayerRender::onDraw(Message *m) {
     return true;
 }
 
-bool AlLayerRender::onShow(Message *m) {
+bool AlLayerRender::onShow(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
     auto tex = mCanvas.getOutput();
     if (nullptr == tex) {
         Logcat::e(TAG, "%s(%d): Empty canvas", __FUNCTION__, __LINE__);
@@ -87,7 +87,7 @@ bool AlLayerRender::onShow(Message *m) {
     return true;
 }
 
-bool AlLayerRender::onSave(Message *m) {
+bool AlLayerRender::onSave(AlMessage *m) {
     std::string path = getString("output_path");
     if (path.empty()) {
         if (onSaveListener) {
@@ -118,8 +118,8 @@ void AlLayerRender::_newDefaultCanvas(AlSize size) {
     model->set(size.width, size.height, 0);
     mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(),
                    texAllocator);
-    Message *msg = new Message(EVENT_LAYER_MEASURE_CANVAS_SIZE, nullptr,
-                               Message::QUEUE_MODE_FIRST_ALWAYS);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE, nullptr,
+                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
     msg->arg1 = model->getWidth();
     msg->arg2 = model->getHeight();
     postEvent(msg);

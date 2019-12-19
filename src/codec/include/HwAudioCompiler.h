@@ -18,11 +18,11 @@ public:
 
     virtual ~HwAudioCompiler();
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool eventReceiveData(Message *msg);
+    bool eventReceiveData(AlMessage *msg);
 
 private:
     HwFFAudioEncoder *encoder = nullptr;

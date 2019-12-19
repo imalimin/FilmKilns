@@ -16,19 +16,19 @@ public:
 
     virtual ~HwStreamMedia();
 
-    virtual bool onCreate(Message *msg) = 0;
+    virtual bool onCreate(AlMessage *msg) = 0;
 
-    virtual bool onDestroy(Message *msg) = 0;
+    virtual bool onDestroy(AlMessage *msg) = 0;
 
-    virtual bool eventStart(Message *msg) = 0;
+    virtual bool eventStart(AlMessage *msg) = 0;
 
-    virtual bool eventPause(Message *msg) = 0;
+    virtual bool eventPause(AlMessage *msg) = 0;
 
-    virtual bool eventSeek(Message *msg) = 0;
+    virtual bool eventSeek(AlMessage *msg) = 0;
 
-    virtual bool eventStop(Message *msg) = 0;
+    virtual bool eventStop(AlMessage *msg) = 0;
 
-    virtual bool eventSetSource(Message *msg) = 0;
+    virtual bool eventSetSource(AlMessage *msg) = 0;
 
 };
 

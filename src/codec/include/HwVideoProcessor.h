@@ -43,8 +43,6 @@ private:
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
     const string ALIAS_OF_SPEAKER = "SPEAKER";
-    HandlerThread *unitHandler = nullptr;
-    HandlerThread *screenHandler = nullptr;
 
     function<void(int64_t, int64_t)> playProgressListener = nullptr;
 };

@@ -24,15 +24,15 @@ HwSpeaker::~HwSpeaker() {
     }
 }
 
-bool HwSpeaker::onCreate(Message *msg) {
+bool HwSpeaker::onCreate(AlMessage *msg) {
     return false;
 }
 
-bool HwSpeaker::onDestroy(Message *msg) {
+bool HwSpeaker::onDestroy(AlMessage *msg) {
     return false;
 }
 
-bool HwSpeaker::eventFeed(Message *msg) {
+bool HwSpeaker::eventFeed(AlMessage *msg) {
     if (msg->obj) {
         HwAudioFrame *frame = dynamic_cast<HwAudioFrame *>(msg->obj);
         createFromAudioFrame(frame);

@@ -33,12 +33,12 @@ HwRender::HwRender(string alias) : Unit(alias) {
 HwRender::~HwRender() {
 }
 
-bool HwRender::onCreate(Message *msg) {
+bool HwRender::onCreate(AlMessage *msg) {
     Logcat::i("HWVC", "Render::eventPrepare");
     return true;
 }
 
-bool HwRender::onDestroy(Message *msg) {
+bool HwRender::onDestroy(AlMessage *msg) {
     Logcat::i("HWVC", "Render::onDestroy");
     if (yuvReadFilter) {
         delete yuvReadFilter;
@@ -68,7 +68,7 @@ bool HwRender::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwRender::eventReadPixels(Message *msg) {
+bool HwRender::eventReadPixels(AlMessage *msg) {
     bool read = false;
     if (yuvReadFilter) {
         glViewport(0, 0, yuvTarget->getWidth(), yuvTarget->getHeight());
@@ -81,7 +81,7 @@ bool HwRender::eventReadPixels(Message *msg) {
         read = true;
     }
     if (read) {
-        Message *msg1 = new Message(EVENT_COMMON_PIXELS, nullptr);
+        AlMessage *msg1 = AlMessage::obtain(EVENT_COMMON_PIXELS);
         msg1->obj = HwBuffer::wrap(buf->data(), buf->size());
         msg1->arg2 = tsInNs;
         postEvent(msg1);
@@ -89,7 +89,7 @@ bool HwRender::eventReadPixels(Message *msg) {
     return true;
 }
 
-bool HwRender::eventRenderFilter(Message *msg) {
+bool HwRender::eventRenderFilter(AlMessage *msg) {
     Logcat::i("HWVC", "Render::eventFilter");
     HwAbsTexture *tex = static_cast<HwAbsTexture *>(msg->obj);
     tsInNs = msg->arg2;
@@ -101,9 +101,9 @@ bool HwRender::eventRenderFilter(Message *msg) {
     return true;
 }
 
-bool HwRender::eventSetFilter(Message *msg) {
-    Logcat::i("HWVC", "Render::eventSetFilter");
-    HwAbsFilter *newFilter = static_cast<HwAbsFilter *>(msg->tyrUnBox());
+bool HwRender::eventSetFilter(AlMessage *msg) {
+    Logcat::i("HWVC", "Render::eventSetFilter");;
+    HwAbsFilter *newFilter = msg->getObj<ObjectBox *>()->unWrap<HwAbsFilter *>();
     if (filter) {
         delete filter;
         filter = nullptr;
@@ -114,8 +114,8 @@ bool HwRender::eventSetFilter(Message *msg) {
 
 void HwRender::renderScreen() {
     Logcat::i("HWVC", "Render::renderScreen");
-    Message *msg = new Message(EVENT_SCREEN_DRAW, nullptr);
-    msg->obj = new ObjectBox(new Size(target->getWidth(), target->getHeight()));
+    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_DRAW);
+    msg->obj = ObjectBox::wrap(new Size(target->getWidth(), target->getHeight()));
     msg->arg1 = target->texId();
     postEvent(msg);
 }
@@ -153,6 +153,6 @@ void HwRender::renderFilter(HwAbsTexture *tex) {
 }
 
 void HwRender::notifyPixelsReady() {
-    postEvent(new Message(EVENT_COMMON_PIXELS_READY, nullptr, Message::QUEUE_MODE_FIRST_ALWAYS,
-                          nullptr));
+    postEvent(AlMessage::obtain(EVENT_COMMON_PIXELS_READY, nullptr,
+                                AlMessage::QUEUE_MODE_FIRST_ALWAYS));
 }

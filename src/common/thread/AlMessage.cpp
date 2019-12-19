@@ -98,11 +98,6 @@ AlMessage::~AlMessage() {
     }
 }
 
-void *AlMessage::tyrUnBox() {
-    ObjectBox *ob = dynamic_cast<ObjectBox *>(obj);
-    return ob->ptr;
-}
-
 AlMessageManager *AlMessageManager::instance = new AlMessageManager();
 
 AlMessageManager *AlMessageManager::getInstance() {

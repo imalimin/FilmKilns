@@ -19,9 +19,9 @@ public:
 
     virtual ~AlImage();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
     /// 表示图层有更新，比如新增或删除图层
     /// FORMAT:
@@ -32,7 +32,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onUpdateLayer(Message *msg);
+    bool onUpdateLayer(AlMessage *msg);
 
     /// 重绘所有图层，并绘制到窗口
     /// FORMAT:
@@ -43,7 +43,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onInvalidate(Message *m);
+    bool onInvalidate(AlMessage *m);
 
 private:
     void _notifyAll(int32_t flag = 0);

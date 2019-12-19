@@ -20,15 +20,15 @@ public:
 
     virtual ~HwRender();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool eventRenderFilter(Message *msg);
+    bool eventRenderFilter(AlMessage *msg);
 
-    bool eventSetFilter(Message *msg);
+    bool eventSetFilter(AlMessage *msg);
 
-    bool eventReadPixels(Message *msg);
+    bool eventReadPixels(AlMessage *msg);
 
 private:
     void checkEnv(int width, int height);

@@ -25,21 +25,21 @@ public:
 
     virtual ~HwVideoInput();
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool eventStart(Message *msg) override;
+    bool eventStart(AlMessage *msg) override;
 
-    bool eventPause(Message *msg) override;
+    bool eventPause(AlMessage *msg) override;
 
-    bool eventSeek(Message *msg) override;
+    bool eventSeek(AlMessage *msg) override;
 
-    bool eventStop(Message *msg) override;
+    bool eventStop(AlMessage *msg) override;
 
-    bool eventSetSource(Message *msg) override;
+    bool eventSetSource(AlMessage *msg) override;
 
-    bool eventLoop(Message *msg);
+    bool eventLoop(AlMessage *msg);
 
     void setPlayListener(function<void(int64_t, int64_t)> listener);
 

@@ -20,13 +20,13 @@ public:
 
     virtual ~AlLayerDescriptor();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool onMeasure(Message *msg);
+    bool onMeasure(AlMessage *msg);
 
-    bool onCanvasSizeUpdate(Message *msg);
+    bool onCanvasSizeUpdate(AlMessage *msg);
 
 private:
     /// Measure all params for canvas

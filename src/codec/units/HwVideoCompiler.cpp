@@ -38,7 +38,7 @@ int HwVideoCompiler::getHeight() {
     return getInt32("height");
 }
 
-bool HwVideoCompiler::onCreate(Message *msg) {
+bool HwVideoCompiler::onCreate(AlMessage *msg) {
     recording = false;
     int32_t width = getInt32("width");
     int32_t height = getInt32("height");
@@ -59,7 +59,7 @@ bool HwVideoCompiler::onCreate(Message *msg) {
     return true;
 }
 
-bool HwVideoCompiler::onDestroy(Message *msg) {
+bool HwVideoCompiler::onDestroy(AlMessage *msg) {
     eventPause(nullptr);
     if (encoder) {
         encoder->stop();
@@ -82,15 +82,15 @@ bool HwVideoCompiler::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwVideoCompiler::eventResponsePixels(Message *msg) {
+bool HwVideoCompiler::eventResponsePixels(AlMessage *msg) {
     if (recording) {
-        postEvent(new Message(EVENT_COMMON_PIXELS_READ, nullptr,
-                              Message::QUEUE_MODE_FIRST_ALWAYS, nullptr));
+        postEvent(AlMessage::obtain(EVENT_COMMON_PIXELS_READ, nullptr,
+                                    AlMessage::QUEUE_MODE_FIRST_ALWAYS));
     }
     return true;
 }
 
-bool HwVideoCompiler::eventWrite(Message *msg) {
+bool HwVideoCompiler::eventWrite(AlMessage *msg) {
     if (!recording) {
         return true;
     }
@@ -99,12 +99,12 @@ bool HwVideoCompiler::eventWrite(Message *msg) {
     return true;
 }
 
-bool HwVideoCompiler::eventStart(Message *msg) {
+bool HwVideoCompiler::eventStart(AlMessage *msg) {
     recording = true;
     return true;
 }
 
-bool HwVideoCompiler::eventPause(Message *msg) {
+bool HwVideoCompiler::eventPause(AlMessage *msg) {
     recording = false;
     if (!clip.empty()) {
         track.put(clip.start, clip.end);
@@ -115,7 +115,7 @@ bool HwVideoCompiler::eventPause(Message *msg) {
     return true;
 }
 
-bool HwVideoCompiler::eventBackward(Message *msg) {
+bool HwVideoCompiler::eventBackward(AlMessage *msg) {
     if (recording) {
         Logcat::e("HWVC", "HwVideoCompiler::eventBackward failed. Recording now.");
         return true;
@@ -170,7 +170,7 @@ void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
     }
 }
 
-bool HwVideoCompiler::eventSamples(Message *msg) {
+bool HwVideoCompiler::eventSamples(AlMessage *msg) {
     if (!recording) {
         return true;
     }
@@ -283,6 +283,7 @@ int64_t HwVideoCompiler::HwTrack::duration() {
     std::lock_guard<std::mutex> guard(mtx);
     return durationInUs;
 }
+
 int64_t HwVideoCompiler::HwTrack::lastTrimOut() {
     std::lock_guard<std::mutex> guard(mtx);
     return lastTrimOutInUs;

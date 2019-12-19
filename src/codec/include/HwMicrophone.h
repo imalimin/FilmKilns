@@ -18,15 +18,15 @@ public:
 
     virtual ~HwMicrophone();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool eventLoop(Message *msg);
+    bool eventLoop(AlMessage *msg);
 
-    bool eventStart(Message *msg);
+    bool eventStart(AlMessage *msg);
 
-    bool eventPause(Message *msg);
+    bool eventPause(AlMessage *msg);
 
 private:
     void loop();

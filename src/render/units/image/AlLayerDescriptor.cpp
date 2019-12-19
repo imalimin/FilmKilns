@@ -21,15 +21,15 @@ AlLayerDescriptor::~AlLayerDescriptor() {
 
 }
 
-bool AlLayerDescriptor::onCreate(Message *msg) {
+bool AlLayerDescriptor::onCreate(AlMessage *msg) {
     return true;
 }
 
-bool AlLayerDescriptor::onDestroy(Message *msg) {
+bool AlLayerDescriptor::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool AlLayerDescriptor::onMeasure(Message *msg) {
+bool AlLayerDescriptor::onMeasure(AlMessage *msg) {
     AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
     AlImageLayerDrawModel *description = new AlImageLayerDrawModel();
     _measure(layer, description);
@@ -37,7 +37,7 @@ bool AlLayerDescriptor::onMeasure(Message *msg) {
     return true;
 }
 
-bool AlLayerDescriptor::onCanvasSizeUpdate(Message *msg) {
+bool AlLayerDescriptor::onCanvasSizeUpdate(AlMessage *msg) {
     aCanvasSize.width = msg->arg1;
     aCanvasSize.height = static_cast<int>(msg->arg2);
     return true;
@@ -99,7 +99,7 @@ AlLayerDescriptor::_measureOperate(AlImageLayer *layer, AlImageLayerDrawModel *d
 }
 
 void AlLayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description) {
-    Message *msg = new Message(EVENT_LAYER_RENDER_DRAW, description,
-                               Message::QUEUE_MODE_FIRST_ALWAYS);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_DRAW, description,
+                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
     postEvent(msg);
 }

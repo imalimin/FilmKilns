@@ -9,7 +9,6 @@
 
 #include "Object.h"
 #include "UnitPipeline.h"
-#include "EventPipeline.h"
 #include "AlMessage.h"
 #include "HwBundle.h"
 #include <map>

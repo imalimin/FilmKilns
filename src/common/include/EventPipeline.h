@@ -7,7 +7,7 @@
 #include <functional>
 #include <string>
 #include "Object.h"
-#include "AlHandlerThread.h"
+#include "HandlerThread.h"
 #include "SimpleLock.h"
 
 #ifndef HARDWAREVIDEOCODEC_EVENTPIPELINE_H
@@ -17,7 +17,7 @@ class EventPipeline : public Object {
 public:
     EventPipeline(string name);
 
-    EventPipeline(AlLooper *mLooper);
+    EventPipeline(HandlerThread *handlerThread);
 
     virtual ~EventPipeline();
 
@@ -26,8 +26,7 @@ public:
     void quit();
 
 private:
-    AlHandlerThread *mThread = nullptr;
-    AlLooper *mLooper = nullptr;
+    HandlerThread *handlerThread = nullptr;
     SimpleLock simpleLock;
     bool shouldQuitThread = false;
 };

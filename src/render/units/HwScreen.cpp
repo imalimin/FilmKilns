@@ -6,6 +6,7 @@
 #include "NormalDrawer.h"
 #include "HwProgram.h"
 #include "Size.h"
+#include "ObjectBox.h"
 #include "Logcat.h"
 
 #define TAG "HwScreen"
@@ -19,7 +20,7 @@ HwScreen::HwScreen(string alias) : Unit(alias) {
 HwScreen::~HwScreen() {
 }
 
-bool HwScreen::onDestroy(Message *msg) {
+bool HwScreen::onDestroy(AlMessage *msg) {
     Logcat::i(TAG, "Screen::onDestroy");
     if (egl) {
         egl->makeCurrent();
@@ -35,10 +36,11 @@ bool HwScreen::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwScreen::onCreate(Message *msg) {
+bool HwScreen::onCreate(AlMessage *msg) {
     Logcat::i(TAG, "Screen::onCreate");
     if (msg->obj) {
-        NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
+        ///这里不要delete NativeWindow，别的模块可能会用到
+        NativeWindow *nw = msg->getObj<NativeWindow *>();
         this->width = nw->win->getWidth();
         this->height = nw->win->getHeight();
         initWindow(nw);
@@ -48,8 +50,8 @@ bool HwScreen::onCreate(Message *msg) {
     return true;
 }
 
-bool HwScreen::eventUpdateWindow(Message *msg) {
-    NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
+bool HwScreen::eventUpdateWindow(AlMessage *msg) {
+    NativeWindow *nw = msg->getObj<NativeWindow *>();
     if (egl && egl->updateWindow(nw->win)) {
         this->width = nw->win->getWidth();
         this->height = nw->win->getHeight();
@@ -58,8 +60,8 @@ bool HwScreen::eventUpdateWindow(Message *msg) {
     return true;
 }
 
-bool HwScreen::eventDraw(Message *msg) {
-    Size *size = static_cast<Size *>(msg->tyrUnBox());
+bool HwScreen::eventDraw(AlMessage *msg) {
+    Size *size = msg->getObj<ObjectBox *>()->unWrap<Size *>();
     GLuint tex = static_cast<GLuint>(msg->arg1);
     egl->makeCurrent();
     if (egl->isAttachWindow()) {

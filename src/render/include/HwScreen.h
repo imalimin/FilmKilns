@@ -26,7 +26,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
     /// 该函数会接收到一个pipeline实例初始化的消息
     /// 请在此准备该Unit所需的资源
@@ -38,7 +38,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
     /// 更新Window，用于App从后台切到前台，eglSurface需要
     /// FORMAT:
@@ -49,7 +49,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool eventUpdateWindow(Message *msg);
+    bool eventUpdateWindow(AlMessage *msg);
 
     /// 渲染一张纹理到屏幕
     /// format:
@@ -60,7 +60,7 @@ public:
     /// +----------------------------------+
     /// \param msg
     /// \return
-    bool eventDraw(Message *msg);
+    bool eventDraw(AlMessage *msg);
 
 private:
     Egl *egl = nullptr;

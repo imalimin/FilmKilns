@@ -28,7 +28,7 @@ HwAudioInput::~HwAudioInput() {
     simpleLock.unlock();
 }
 
-bool HwAudioInput::onCreate(Message *msg) {
+bool HwAudioInput::onCreate(AlMessage *msg) {
     playState = PAUSE;
     string path = getPath();
     if (!decoder->prepare(path)) {
@@ -38,17 +38,17 @@ bool HwAudioInput::onCreate(Message *msg) {
     return false;
 }
 
-bool HwAudioInput::onDestroy(Message *msg) {
+bool HwAudioInput::onDestroy(AlMessage *msg) {
     LOGI("HwAudioInput::onDestroy");
     eventStop(nullptr);
     return false;
 }
 
-bool HwAudioInput::eventSetSource(Message *msg) {
+bool HwAudioInput::eventSetSource(AlMessage *msg) {
     return true;
 }
 
-bool HwAudioInput::eventStart(Message *msg) {
+bool HwAudioInput::eventStart(AlMessage *msg) {
     LOGI("HwAudioInput::eventStart");
     if (PAUSE == playState) {
         playState = PLAYING;
@@ -60,7 +60,7 @@ bool HwAudioInput::eventStart(Message *msg) {
     return false;
 }
 
-bool HwAudioInput::eventPause(Message *msg) {
+bool HwAudioInput::eventPause(AlMessage *msg) {
     if (PLAYING == playState) {
         playState = PAUSE;
         if (decoder) {
@@ -70,7 +70,7 @@ bool HwAudioInput::eventPause(Message *msg) {
     return false;
 }
 
-bool HwAudioInput::eventStop(Message *msg) {
+bool HwAudioInput::eventStop(AlMessage *msg) {
     if (STOP != playState) {
         playState = STOP;
         if (decoder) {
@@ -80,13 +80,13 @@ bool HwAudioInput::eventStop(Message *msg) {
     return false;
 }
 
-bool HwAudioInput::eventSeek(Message *msg) {
+bool HwAudioInput::eventSeek(AlMessage *msg) {
     int64_t us = msg->arg2;
     decoder->seek(us);
     return true;
 }
 
-bool HwAudioInput::eventLoop(Message *msg) {
+bool HwAudioInput::eventLoop(AlMessage *msg) {
     if (PLAYING != playState) {
         return false;
     }
@@ -110,7 +110,7 @@ bool HwAudioInput::eventLoop(Message *msg) {
 }
 
 void HwAudioInput::loop() {
-    postEvent(new Message(EVENT_AUDIO_LOOP, nullptr));
+    postEvent(AlMessage::obtain(EVENT_AUDIO_LOOP));
 }
 
 HwResult HwAudioInput::grab() {
@@ -131,7 +131,7 @@ HwResult HwAudioInput::grab() {
 }
 
 void HwAudioInput::playFrame(HwAudioFrame *frame) {
-    Message *msg = new Message(EVENT_SPEAKER_FEED, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_SPEAKER_FEED);
     msg->obj = frame;
     postEvent(msg);
 }

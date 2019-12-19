@@ -22,13 +22,13 @@ void HwMicrophoneProcessor::prepare(string filePath, HwSampleFormat format) {
     this->format = format;
     putString("path", filePath).to({ALIAS_OF_COMPILER});
     putObject("format", &this->format).to({ALIAS_OF_COMPILER});
-    postEvent(new Message(EVENT_COMMON_PREPARE, nullptr));
+    postEvent(AlMessage::obtain(EVENT_COMMON_PREPARE));
 }
 
 void HwMicrophoneProcessor::start() {
-    postEvent(new Message(EVENT_COMMON_START, nullptr));
+    postEvent(AlMessage::obtain(EVENT_COMMON_START));
 }
 
 void HwMicrophoneProcessor::pause() {
-    postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
+    postEvent(AlMessage::obtain(EVENT_COMMON_PAUSE));
 }

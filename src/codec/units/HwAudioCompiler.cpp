@@ -17,7 +17,7 @@ HwAudioCompiler::~HwAudioCompiler() {
 
 }
 
-bool HwAudioCompiler::onDestroy(Message *msg) {
+bool HwAudioCompiler::onDestroy(AlMessage *msg) {
     if (muxer) {
         delete muxer;
         muxer = nullptr;
@@ -25,7 +25,7 @@ bool HwAudioCompiler::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwAudioCompiler::onCreate(Message *msg) {
+bool HwAudioCompiler::onCreate(AlMessage *msg) {
     Object *f = getObject("format");
     HwSampleFormat *format = reinterpret_cast<HwSampleFormat *>(f);
     string path = getString("path");
@@ -33,7 +33,7 @@ bool HwAudioCompiler::onCreate(Message *msg) {
     return true;
 }
 
-bool HwAudioCompiler::eventReceiveData(Message *msg) {
+bool HwAudioCompiler::eventReceiveData(AlMessage *msg) {
     HwBuffer *buf = dynamic_cast<HwBuffer *>(msg->obj);
     if (buf && muxer) {
         muxer->write(buf);

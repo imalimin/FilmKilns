@@ -27,36 +27,35 @@ PictureProcessor::~PictureProcessor() {
 
 void PictureProcessor::prepare(HwWindow *win) {
     if (pipeline) {
-        Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
-        msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+        AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE, new NativeWindow(win, nullptr));
         pipeline->postEvent(msg);
     }
 }
 
 void PictureProcessor::updateWindow(HwWindow *win) {
     if (pipeline) {
-        Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
-        msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+        AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW,
+                                           new NativeWindow(win, nullptr));
         pipeline->postEvent(msg);
     }
 }
 
 void PictureProcessor::show(const string file) {
     if (!pipeline) return;
-    Message *msg = new Message(EVENT_IMAGE_SHOW, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_IMAGE_SHOW);
     msg->obj = new ObjectBox(new string(file));
     pipeline->postEvent(msg);
 }
 
 
 void PictureProcessor::setFilter(HwAbsFilter *filter) {
-    Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
-    msg->obj = new ObjectBox(filter);
+    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_SET_FILTER);
+    msg->obj = ObjectBox::wrap(filter);
     pipeline->postEvent(msg);
 }
 
 void PictureProcessor::invalidate() {
     if (!pipeline) return;
-    Message *invalidateMsg = new Message(EVENT_COMMON_INVALIDATE, nullptr);
+    AlMessage *invalidateMsg = AlMessage::obtain(EVENT_COMMON_INVALIDATE);
     pipeline->postEvent(invalidateMsg);
 }

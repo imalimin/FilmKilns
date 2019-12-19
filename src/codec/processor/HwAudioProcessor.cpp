@@ -31,28 +31,28 @@ void HwAudioProcessor::setSource(const string path) {
 }
 
 void HwAudioProcessor::prepare() {
-    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE);
     msg->obj = new ObjectBox(nullptr);
     postEvent(msg);
 }
 
 void HwAudioProcessor::start() {
-    Message *msg = new Message(EVENT_AUDIO_START, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_AUDIO_START);
     postEvent(msg);
 }
 
 void HwAudioProcessor::pause() {
-    Message *msg = new Message(EVENT_AUDIO_PAUSE, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_AUDIO_PAUSE);
     postEvent(msg);
 }
 
 void HwAudioProcessor::stop() {
-    Message *msg = new Message(EVENT_AUDIO_STOP, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_AUDIO_STOP);
     postEvent(msg);
 }
 
 void HwAudioProcessor::seek(int64_t us) {
-    Message *msg = new Message(EVENT_AUDIO_SEEK, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_AUDIO_SEEK);
     msg->arg2 = us;
     msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);

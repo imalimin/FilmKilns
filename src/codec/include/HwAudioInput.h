@@ -18,21 +18,21 @@ public:
 
     virtual ~HwAudioInput();
 
-    bool onDestroy(Message *msg);
+    bool onDestroy(AlMessage *msg);
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool eventSetSource(Message *msg);
+    bool eventSetSource(AlMessage *msg);
 
-    bool eventStart(Message *msg);
+    bool eventStart(AlMessage *msg);
 
-    bool eventPause(Message *msg);
+    bool eventPause(AlMessage *msg);
 
-    bool eventStop(Message *msg);
+    bool eventStop(AlMessage *msg);
 
-    bool eventSeek(Message *msg);
+    bool eventSeek(AlMessage *msg);
 
-    bool eventLoop(Message *msg);
+    bool eventLoop(AlMessage *msg);
 
     void setPlayListener(function<void(int64_t, int64_t)> listener);
 

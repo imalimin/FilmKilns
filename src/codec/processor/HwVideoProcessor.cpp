@@ -29,62 +29,53 @@ HwVideoProcessor::~HwVideoProcessor() {
 
 void HwVideoProcessor::onDestroy() {
     HwAbsProcessor::onDestroy();
-    if (unitHandler) {
-        delete unitHandler;
-        unitHandler = nullptr;
-    }
-    if (screenHandler) {
-        delete screenHandler;
-        screenHandler = nullptr;
-    }
     playProgressListener = nullptr;
 }
 
 void HwVideoProcessor::setSource(const string path) {
-    Message *msg = new Message(EVENT_VIDEO_SET_SOURCE, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_VIDEO_SET_SOURCE);
     msg->obj = new ObjectBox(new string(path));
     postEvent(msg);
 }
 
 void HwVideoProcessor::prepare(HwWindow *win) {
-    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
-    msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE);
+    msg->obj = new NativeWindow(win, nullptr);
     postEvent(msg);
 }
 
 void HwVideoProcessor::start() {
-    Message *msg = new Message(EVENT_VIDEO_START, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_VIDEO_START);
     postEvent(msg);
 }
 
 void HwVideoProcessor::pause() {
-    Message *msg = new Message(EVENT_VIDEO_PAUSE, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_VIDEO_PAUSE);
     msg->queueMode = Message::QUEUE_MODE_FIRST_ALWAYS;
     postEvent(msg);
 }
 
 void HwVideoProcessor::stop() {
-    Message *msg = new Message(EVENT_VIDEO_STOP, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_VIDEO_STOP);
     msg->queueMode = Message::QUEUE_MODE_FIRST_ALWAYS;
     postEvent(msg);
 }
 
 void HwVideoProcessor::seek(int64_t us) {
-    Message *msg = new Message(EVENT_VIDEO_SEEK, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_VIDEO_SEEK);
     msg->arg2 = us;
     msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 
 void HwVideoProcessor::setFilter(HwAbsFilter *filter) {
-    Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
-    msg->obj = new ObjectBox(filter);
+    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_SET_FILTER);
+    msg->obj = ObjectBox::wrap(filter);
     postEvent(msg);
 }
 
 void HwVideoProcessor::updateWindow(HwWindow *win) {
-    Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
-    msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
 }
 

@@ -4,47 +4,45 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-#include "EventPipeline.h"
-#include "AlRunnable.h"
+#include "../include/EventPipeline.h"
 
 EventPipeline::EventPipeline(string name) {
-    this->mThread = AlHandlerThread::create(name);
+    this->handlerThread = new HandlerThread(name);
     this->shouldQuitThread = true;
 }
 
-EventPipeline::EventPipeline(AlLooper *looper) {
-    this->mLooper = looper;
+EventPipeline::EventPipeline(HandlerThread *handlerThread) {
+    this->handlerThread = handlerThread;
     this->shouldQuitThread = false;
 }
 
 EventPipeline::~EventPipeline() {
     simpleLock.lock();
-    if (shouldQuitThread && mThread) {
-        delete mThread;
+    if (shouldQuitThread && handlerThread) {
+        delete handlerThread;
     }
-    mThread = nullptr;
-    mLooper = nullptr;
+    handlerThread = nullptr;
     simpleLock.unlock();
 }
 
 void EventPipeline::queueEvent(function<void()> event) {
     simpleLock.lock();
-    if (mLooper) {
-        mLooper->sendMessage(AlMessage::obtain(0, new AlRunnable([event](Object *o) {
+    if (handlerThread) {
+        handlerThread->sendMessage(new Message(0, [event](Message *msg) {
             event();
-        })));
+        }));
     }
     simpleLock.unlock();
 }
 
 void EventPipeline::quit() {
     simpleLock.lock();
-    if (mLooper) {
-        mLooper->sendMessage(AlMessage::obtain(0, nullptr, AlMessage::QUEUE_MODE_CLEAR));
+    if (handlerThread) {
+        handlerThread->sendMessage(new Message(0, nullptr, Message::QUEUE_MODE_CLEAR, nullptr));
         if (shouldQuitThread) {
-            delete mThread;
+            delete handlerThread;
         }
     }
-    mThread = nullptr;
+    handlerThread = nullptr;
     simpleLock.unlock();
 }

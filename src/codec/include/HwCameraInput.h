@@ -20,11 +20,11 @@ public:
 
     virtual ~HwCameraInput();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool eventInvalidate(Message *msg);
+    bool eventInvalidate(AlMessage *msg);
 
     uint32_t getTex();
 

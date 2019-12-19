@@ -22,24 +22,24 @@ public:
 
     virtual ~HwVideoCompiler();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
     /**
      * Response read pixels message.
      */
-    bool eventResponsePixels(Message *msg);
+    bool eventResponsePixels(AlMessage *msg);
 
-    bool eventSamples(Message *msg);
+    bool eventSamples(AlMessage *msg);
 
-    bool eventWrite(Message *msg);
+    bool eventWrite(AlMessage *msg);
 
-    bool eventStart(Message *msg);
+    bool eventStart(AlMessage *msg);
 
-    bool eventPause(Message *msg);
+    bool eventPause(AlMessage *msg);
 
-    bool eventBackward(Message *msg);
+    bool eventBackward(AlMessage *msg);
 
     void setRecordListener(function<void(int64_t)> listener);
 

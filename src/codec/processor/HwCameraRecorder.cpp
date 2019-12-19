@@ -42,27 +42,25 @@ void HwCameraRecorder::onDestroy() {
 }
 
 void HwCameraRecorder::prepare(HwWindow *win) {
-    Message *msg = new Message(EVENT_COMMON_PREPARE, nullptr);
-    msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE, new NativeWindow(win, nullptr));
     postEvent(msg);
 }
 
 void HwCameraRecorder::updateWindow(HwWindow *win) {
-    Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW, nullptr);
-    msg->obj = new ObjectBox(new NativeWindow(win, nullptr));
+    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
 }
 
 void HwCameraRecorder::start() {
-    postEvent(new Message(EVENT_COMMON_START, nullptr));
+    postEvent(AlMessage::obtain(EVENT_COMMON_START));
 }
 
 void HwCameraRecorder::pause() {
-    postEvent(new Message(EVENT_COMMON_PAUSE, nullptr));
+    postEvent(AlMessage::obtain(EVENT_COMMON_PAUSE));
 }
 
 void HwCameraRecorder::invalidate(HwMatrix *matrix, int w, int h, int64_t tsInNs) {
-    Message *msg = new Message(EVENT_CAMERA_INVALIDATE, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_CAMERA_INVALIDATE);
     int32_t size = 0;
     size |= w;
     size = size << 16;
@@ -89,8 +87,8 @@ void HwCameraRecorder::setFormat(int width, int height, HwSampleFormat format) {
 }
 
 void HwCameraRecorder::setFilter(HwAbsFilter *filter) {
-    Message *msg = new Message(EVENT_RENDER_SET_FILTER, nullptr);
-    msg->obj = new ObjectBox(filter);
+    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_SET_FILTER);
+    msg->obj = ObjectBox::wrap(filter);
     postEvent(msg);
 }
 
@@ -110,7 +108,7 @@ void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
 }
 
 void HwCameraRecorder::backward() {
-    postEvent(new Message(EVENT_VIDEO_COMPILER_BACKWARD, nullptr));
+    postEvent(AlMessage::obtain(EVENT_VIDEO_COMPILER_BACKWARD));
 }
 
 void HwCameraRecorder::setRecordListener(function<void(int64_t)> listener) {

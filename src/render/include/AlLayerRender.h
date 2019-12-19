@@ -21,9 +21,9 @@ public:
 
     virtual ~AlLayerRender();
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
     /// 更新画布
     /// FORMAT:
@@ -34,7 +34,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onUpdateCanvas(Message *m);
+    bool onUpdateCanvas(AlMessage *m);
 
     /// 清空画布
     /// FORMAT:
@@ -45,7 +45,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onClear(Message *m);
+    bool onClear(AlMessage *m);
 
     /// 绘制图层到画布上
     /// FORMAT:
@@ -56,7 +56,7 @@ public:
     /// +------------------------------------------------+
     /// \param msg
     /// \return
-    bool onDraw(Message *m);
+    bool onDraw(AlMessage *m);
 
     /// 上屏
     /// FORMAT:
@@ -67,7 +67,7 @@ public:
     /// +----------------------------------+
     /// \param msg
     /// \return
-    bool onShow(Message *m);
+    bool onShow(AlMessage *m);
 
     /// 保存图片到文件
     /// FORMAT:
@@ -78,7 +78,7 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onSave(Message *m);
+    bool onSave(AlMessage *m);
 
     void setOnSaveListener(OnSaveListener listener);
 

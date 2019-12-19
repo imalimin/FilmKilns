@@ -16,8 +16,12 @@ al_class(AlEventPipeline) {
 public:
     static AlEventPipeline *create(std::string name);
 
+    static AlEventPipeline *create(AlLooper *looper);
+
 private:
     AlEventPipeline(std::string name);
+
+    AlEventPipeline(AlLooper *looper);
 
     AlEventPipeline(AlEventPipeline &e) : Object() {}
 

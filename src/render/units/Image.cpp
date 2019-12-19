@@ -17,7 +17,7 @@ Image::Image(string alias) : Unit(alias) {
 Image::~Image() {
 }
 
-bool Image::onDestroy(Message *msg) {
+bool Image::onDestroy(AlMessage *msg) {
     Logcat::i("HWVC", "Image::onDestroy");
     if (texAllocator) {
         delete texAllocator;
@@ -58,21 +58,23 @@ bool Image::decode(string path) {
     return true;
 }
 
-bool Image::onCreate(Message *msg) {
+bool Image::onCreate(AlMessage *msg) {
     texAllocator = new TextureAllocator();
     return true;
 }
 
-bool Image::eventShow(Message *msg) {
-    string *path = static_cast<string *>(msg->tyrUnBox());
-    show(*path);
-    delete path;
+bool Image::eventShow(AlMessage *msg) {
+    if (msg->obj) {
+        string *path = static_cast<string *>(msg->getObj<ObjectBox *>()->ptr);
+        show(*path);
+        delete path;
+    }
     return true;
 }
 
-bool Image::eventInvalidate(Message *m) {
+bool Image::eventInvalidate(AlMessage *m) {
     if (GL_NONE != tex) {
-        Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
+        AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
         msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
                                    tex->getWidth(),
                                    tex->getHeight(),

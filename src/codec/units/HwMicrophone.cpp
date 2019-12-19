@@ -20,7 +20,7 @@ HwMicrophone::~HwMicrophone() {
 
 }
 
-bool HwMicrophone::onCreate(Message *msg) {
+bool HwMicrophone::onCreate(AlMessage *msg) {
     frame = new HwAudioFrame(nullptr, HwFrameFormat::HW_SAMPLE_S32, 2, 44100, 1024);
     recorder = new HwAudioRecorder(2, 44100, 0x0020, 1024);
     recorder->start();
@@ -28,7 +28,7 @@ bool HwMicrophone::onCreate(Message *msg) {
     return true;
 }
 
-bool HwMicrophone::onDestroy(Message *msg) {
+bool HwMicrophone::onDestroy(AlMessage *msg) {
     if (recorder) {
         recorder->stop();
         delete recorder;
@@ -41,18 +41,18 @@ bool HwMicrophone::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwMicrophone::eventStart(Message *msg) {
+bool HwMicrophone::eventStart(AlMessage *msg) {
     looping = true;
     loop();
     return true;
 }
 
-bool HwMicrophone::eventPause(Message *msg) {
+bool HwMicrophone::eventPause(AlMessage *msg) {
     looping = false;
     return true;
 }
 
-bool HwMicrophone::eventLoop(Message *msg) {
+bool HwMicrophone::eventLoop(AlMessage *msg) {
     if (recorder && looping) {
         HwBuffer *buf = recorder->read(8192);
         if (buf) {
@@ -64,13 +64,13 @@ bool HwMicrophone::eventLoop(Message *msg) {
 }
 
 void HwMicrophone::loop() {
-    postEvent(new Message(EVENT_MICROPHONE_LOOP, nullptr, Message::QUEUE_MODE_UNIQUE, nullptr));
+    postEvent(AlMessage::obtain(EVENT_MICROPHONE_LOOP, nullptr, Message::QUEUE_MODE_UNIQUE));
 }
 
 void HwMicrophone::send(HwBuffer *buf) {
     if (buf && frame) {
         memcpy(frame->data(), buf->data(), buf->size());
-        Message *msg = new Message(EVENT_MICROPHONE_OUT_SAMPLES, nullptr);
+        AlMessage *msg = AlMessage::obtain(EVENT_MICROPHONE_OUT_SAMPLES);
         msg->arg1 = 1;
         msg->arg2 = TimeUtils::getCurrentTimeUS() * 1000;
         msg->obj = HwBuffer::wrap(frame->data(), frame->size());

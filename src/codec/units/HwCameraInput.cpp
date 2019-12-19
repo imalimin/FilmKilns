@@ -20,7 +20,7 @@ HwCameraInput::~HwCameraInput() {
 
 }
 
-bool HwCameraInput::onCreate(Message *msg) {
+bool HwCameraInput::onCreate(AlMessage *msg) {
     Logcat::i("HWVC", "HwCameraInput::eventPrepare");
     egl = new Egl();
     srcTex = HwTexture::allocOES();
@@ -42,12 +42,12 @@ bool HwCameraInput::onCreate(Message *msg) {
                     "            gl_FragColor = color;\n"
                     "        }");
     program = HwProgram::create(&vertex, &fragment);
-    NativeWindow *nw = static_cast<NativeWindow *>(msg->tyrUnBox());
+    NativeWindow *nw = msg->getObj<NativeWindow *>();
     nw->context = egl->getContext();
     return true;
 }
 
-bool HwCameraInput::onDestroy(Message *msg) {
+bool HwCameraInput::onDestroy(AlMessage *msg) {
     Logcat::i("HWVC", "HwCameraInput::onDestroy");
     egl->makeCurrent();
     if (fbo) {
@@ -73,7 +73,7 @@ bool HwCameraInput::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwCameraInput::eventInvalidate(Message *msg) {
+bool HwCameraInput::eventInvalidate(AlMessage *msg) {
     int32_t size = msg->arg1;
     int64_t tsInNs = msg->arg2;
     int32_t h = size & 0xFFFF;
@@ -105,10 +105,10 @@ void HwCameraInput::draw(int w, int h) {
 }
 
 void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
-    Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
     msg->obj = HwTexture::wrap(destTex->target(), destTex->texId(), w, h, destTex->fmt());
     msg->arg2 = tsInNs;
-    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
+    msg->queueMode = AlMessage::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 

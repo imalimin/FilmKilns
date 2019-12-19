@@ -34,7 +34,7 @@ HwVideoInput::~HwVideoInput() {
     playListener = nullptr;
 }
 
-bool HwVideoInput::onDestroy(Message *msg) {
+bool HwVideoInput::onDestroy(AlMessage *msg) {
     LOGI("HwVideoInput::onDestroy");
     eventStop(nullptr);
     if (yuvFilter) {
@@ -48,7 +48,7 @@ bool HwVideoInput::onDestroy(Message *msg) {
     return true;
 }
 
-bool HwVideoInput::onCreate(Message *msg) {
+bool HwVideoInput::onCreate(AlMessage *msg) {
     playState = PAUSE;
     if (!decoder->prepare(path)) {
         LOGE("HwVideoInput::open %s failed", path.c_str());
@@ -61,7 +61,7 @@ bool HwVideoInput::onCreate(Message *msg) {
     return true;
 }
 
-bool HwVideoInput::eventStart(Message *msg) {
+bool HwVideoInput::eventStart(AlMessage *msg) {
     LOGI("HwVideoInput::eventStart");
     if (PAUSE == playState) {
         playState = PLAYING;
@@ -73,14 +73,14 @@ bool HwVideoInput::eventStart(Message *msg) {
     return true;
 }
 
-bool HwVideoInput::eventPause(Message *msg) {
+bool HwVideoInput::eventPause(AlMessage *msg) {
     if (STOP != playState) {
         playState = PAUSE;
     }
     return true;
 }
 
-bool HwVideoInput::eventSeek(Message *msg) {
+bool HwVideoInput::eventSeek(AlMessage *msg) {
     int64_t us = msg->arg2;
     lastPts = -1;
     lastShowTime = -1;
@@ -88,24 +88,24 @@ bool HwVideoInput::eventSeek(Message *msg) {
     return true;
 }
 
-bool HwVideoInput::eventStop(Message *msg) {
+bool HwVideoInput::eventStop(AlMessage *msg) {
     playState = STOP;
     Logcat::i("HWVC", "HwVideoInput::eventStop");
     return true;
 }
 
-bool HwVideoInput::eventSetSource(Message *msg) {
-    string *str = static_cast<string *>(msg->tyrUnBox());
+bool HwVideoInput::eventSetSource(AlMessage *msg) {
+    string *str = static_cast<string *>(msg->getObj<ObjectBox *>()->ptr);
     this->path = string(str->c_str());
     delete str;
     return true;
 }
 
 void HwVideoInput::loop() {
-    postEvent(new Message(EVENT_VIDEO_LOOP, nullptr, Message::QUEUE_MODE_UNIQUE, nullptr));
+    postEvent(AlMessage::obtain(EVENT_VIDEO_LOOP, nullptr, Message::QUEUE_MODE_UNIQUE));
 }
 
-bool HwVideoInput::eventLoop(Message *msg) {
+bool HwVideoInput::eventLoop(AlMessage *msg) {
     if (PLAYING != playState) {
         return true;
     }
@@ -201,7 +201,7 @@ HwResult HwVideoInput::grab() {
 }
 
 bool HwVideoInput::invalidate(HwAbsTexture *tex) {
-    Message *msg = new Message(EVENT_RENDER_FILTER, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
     msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
                                tex->getWidth(), tex->getHeight(), tex->fmt());
     msg->desc = "RENDER";
@@ -210,7 +210,7 @@ bool HwVideoInput::invalidate(HwAbsTexture *tex) {
 }
 
 void HwVideoInput::playAudioFrame(HwAudioFrame *frame) {
-    Message *msg = new Message(EVENT_SPEAKER_FEED, nullptr);
+    AlMessage *msg = AlMessage::obtain(EVENT_SPEAKER_FEED);
     msg->obj = frame;
     postEvent(msg);
 }

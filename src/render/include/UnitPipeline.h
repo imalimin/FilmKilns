@@ -28,8 +28,6 @@ public:
     void release();
 
 private:
-    void postEvent(AlMessage *msg, bool front);
-
     void dispatch(AlMessage *msg);
 
     void clear();

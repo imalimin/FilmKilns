@@ -18,13 +18,13 @@ public:
 
     virtual ~Image();
 
-    bool onDestroy(Message *msg) override;
+    bool onDestroy(AlMessage *msg) override;
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool eventShow(Message *msg);
+    bool eventShow(AlMessage *msg);
 
-    bool eventInvalidate(Message *msg);
+    bool eventInvalidate(AlMessage *msg);
 
 private:
     TextureAllocator *texAllocator = nullptr;

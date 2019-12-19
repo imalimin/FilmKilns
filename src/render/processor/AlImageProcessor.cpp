@@ -56,8 +56,7 @@ void AlImageProcessor::onDestroy() {
 void AlImageProcessor::updateWindow(HwWindow *win) {
     mWinSize.width = win->getWidth();
     mWinSize.height = win->getHeight();
-    Message *msg = new Message(EVENT_SCREEN_UPDATE_WINDOW);
-    msg->obj = ObjectBox::box(new NativeWindow(win, nullptr));
+    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
 }
 
@@ -68,19 +67,19 @@ void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
 }
 
 void AlImageProcessor::invalidate(int32_t flag) {
-    Message *msg = new Message(EVENT_COMMON_INVALIDATE, nullptr, Message::QUEUE_MODE_UNIQUE);
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr, AlMessage::QUEUE_MODE_UNIQUE);
     msg->arg1 = flag;
     postEvent(msg);
 }
 
 void AlImageProcessor::_notifyCanvasUpdate() {
     putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_LAYER_RENDER_UPDATE_CANVAS));
+    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS));
 }
 
 void AlImageProcessor::_notifyLayerUpdate() {
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
-    postEvent(new Message(EVENT_AIMAGE_UPDATE_LAYER));
+    postEvent(AlMessage::obtain(EVENT_AIMAGE_UPDATE_LAYER));
 }
 
 int32_t AlImageProcessor::addLayer(const char *path) {
@@ -292,7 +291,7 @@ HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
 HwResult AlImageProcessor::save(std::string path) {
     invalidate(3);
     putString("output_path", path).to({ALIAS_OF_LAYER_RENDER});
-    postEvent(new Message(EVENT_LAYER_RENDER_SAVE));
+    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_SAVE));
     return Hw::SUCCESS;
 }
 

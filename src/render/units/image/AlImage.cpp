@@ -17,12 +17,12 @@ AlImage::AlImage(string alias) : Unit(alias) {
 AlImage::~AlImage() {
 }
 
-bool AlImage::onCreate(Message *msg) {
+bool AlImage::onCreate(AlMessage *msg) {
     texAllocator = new TextureAllocator();
     return true;
 }
 
-bool AlImage::onDestroy(Message *msg) {
+bool AlImage::onDestroy(AlMessage *msg) {
     mLayerManager.release();
     if (texAllocator) {
         delete texAllocator;
@@ -31,12 +31,12 @@ bool AlImage::onDestroy(Message *msg) {
     return true;
 }
 
-bool AlImage::onUpdateLayer(Message *msg) {
+bool AlImage::onUpdateLayer(AlMessage *msg) {
     mLayerManager.update(getLayers(), texAllocator);
     return true;
 }
 
-bool AlImage::onInvalidate(Message *m) {
+bool AlImage::onInvalidate(AlMessage *m) {
     _notifyAll(m->arg1);
     return true;
 }
@@ -47,7 +47,7 @@ std::vector<AlImageLayerModel *> *AlImage::getLayers() {
 }
 
 void AlImage::_notifyAll(int32_t flag) {
-    Message *msg = new Message(EVENT_LAYER_RENDER_CLEAR);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
     msg->arg1 = (0 != (flag & 0x2));
     msg->desc = "clear";
     postEvent(msg);
@@ -58,14 +58,14 @@ void AlImage::_notifyAll(int32_t flag) {
         }
     }
     if (0 == (flag & 0x1)) {
-        Message *sMsg = new Message(EVENT_LAYER_RENDER_SHOW);
+        AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
         sMsg->desc = "show";
         postEvent(sMsg);
     }
 }
 
 void AlImage::_notifyDescriptor(AlImageLayer *layer) {
-    Message *msg = new Message(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
     msg->desc = "measure";
     postEvent(msg);
 }

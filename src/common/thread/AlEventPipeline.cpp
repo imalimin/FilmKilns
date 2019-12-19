@@ -12,10 +12,24 @@ AlEventPipeline *AlEventPipeline::create(std::string name) {
     return new AlEventPipeline(name);
 }
 
+AlEventPipeline *AlEventPipeline::create(AlLooper *looper) {
+    return new AlEventPipeline(looper);
+}
+
 AlEventPipeline::AlEventPipeline(std::string name) : Object() {
     exited = false;
     mThread = AlHandlerThread::create(name);
     mHandler = new AlHandler(mThread->getLooper(), [](AlMessage *msg) {
+        if (msg->obj) {
+            AlFuncWrapper *func = dynamic_cast<AlFuncWrapper *>(msg->obj);
+            func->invoke();
+        }
+    });
+}
+
+AlEventPipeline::AlEventPipeline(AlLooper *looper) {
+    exited = false;
+    mHandler = new AlHandler(looper, [](AlMessage *msg) {
         if (msg->obj) {
             AlFuncWrapper *func = dynamic_cast<AlFuncWrapper *>(msg->obj);
             func->invoke();

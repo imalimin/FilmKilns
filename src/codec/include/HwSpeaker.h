@@ -20,11 +20,11 @@ public:
 
     virtual ~HwSpeaker();
 
-    bool onDestroy(Message *msg);
+    bool onDestroy(AlMessage *msg);
 
-    bool onCreate(Message *msg) override;
+    bool onCreate(AlMessage *msg) override;
 
-    bool eventFeed(Message *msg);
+    bool eventFeed(AlMessage *msg);
 
 private:
     void createFromAudioFrame(HwAudioFrame *frame);
