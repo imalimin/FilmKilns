@@ -137,13 +137,13 @@ public:
 
     HwModelProvider *getModelProvider();
 
-    const int32_t &getInt32(string key);
+    virtual const int32_t getInt32(string key);
 
-    const int64_t &getInt64(string key);
+    virtual const int64_t getInt64(string key);
 
-    const string &getString(string key);
+    virtual const string getString(string key);
 
-    Object *getObject(string key);
+    virtual Object *getObject(string key);
     /** Model Provider END */
 
 protected:
@@ -181,11 +181,11 @@ public:
 
     bool eventPutObject(AlMessage *msg);
 
-    const int32_t &getInt32(string key);
+    const int32_t getInt32(string key);
 
-    const int64_t &getInt64(string key);
+    const int64_t getInt64(string key);
 
-    const string &getString(string key);
+    const string getString(string key);
 
     Object *getObject(string key);
 

@@ -89,7 +89,7 @@ bool AlLayerRender::onShow(AlMessage *m) {
 
 bool AlLayerRender::onSave(AlMessage *m) {
     std::string path = getString("output_path");
-    if (path.empty()) {
+    if ("" == path || path.empty()) {
         if (onSaveListener) {
             onSaveListener(Hw::FAILED.code, "Failed", path.c_str());
         }

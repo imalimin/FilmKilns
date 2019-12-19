@@ -60,15 +60,15 @@ bool HwModelProvider::eventPutObject(AlMessage *msg) {
     return true;
 }
 
-const int32_t &HwModelProvider::getInt32(string key) {
+const int32_t HwModelProvider::getInt32(string key) {
     return bundle.getInt32(key);
 }
 
-const int64_t &HwModelProvider::getInt64(string key) {
+const int64_t HwModelProvider::getInt64(string key) {
     return bundle.getInt64(key);
 }
 
-const string &HwModelProvider::getString(string key) {
+const string HwModelProvider::getString(string key) {
     return bundle.getString(key);
 }
 
