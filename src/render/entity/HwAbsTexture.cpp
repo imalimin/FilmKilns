@@ -34,7 +34,7 @@ uint32_t HwAbsTexture::target() {
     return desc.target;
 }
 
-void HwAbsTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
+void HwAbsTexture::update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
     desc.size.width = w;
     desc.size.height = h;
     desc.fmt = fmt;

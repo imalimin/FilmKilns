@@ -145,14 +145,14 @@ void HwVideoInput::bindTex(HwVideoFrame *frame) {
         v = texAllocator->alloc();
     }
     int size = frame->getWidth() * frame->getHeight();
-    HwBuffer *buf = HwBuffer::wrap(frame->data(), size);
+    AlBuffer *buf = AlBuffer::wrap(frame->data(), size);
     y->update(buf, frame->getWidth(), frame->getHeight(), GL_LUMINANCE);
     delete buf;
 
-    buf = HwBuffer::wrap(frame->data() + size, size / 4);
+    buf = AlBuffer::wrap(frame->data() + size, size / 4);
     u->update(buf, frame->getWidth() / 2, frame->getHeight() / 2, GL_LUMINANCE);
     delete buf;
-    buf = HwBuffer::wrap(frame->data() + size + size / 4, size / 4);
+    buf = AlBuffer::wrap(frame->data() + size + size / 4, size / 4);
     v->update(buf, frame->getWidth() / 2, frame->getHeight() / 2, GL_LUMINANCE);
     delete buf;
 }

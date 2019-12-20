@@ -28,12 +28,7 @@ HwAbsTexture *AlTexAllocator::alloc(AlTexDescription &desc, AlBuffer *buf) {
     }
     textures.push_back(tex);
     if (desc.size.width > 0 && desc.size.height > 0) {
-        HwBuffer *bufTmp = nullptr;
-        if (buf) {
-            bufTmp = HwBuffer::wrap(buf->data(), buf->size());
-        }
-        tex->update(bufTmp, desc.size.width, desc.size.height, desc.fmt);
-        delete bufTmp;
+        tex->update(buf, desc.size.width, desc.size.height, desc.fmt);
     }
     return tex;
 }

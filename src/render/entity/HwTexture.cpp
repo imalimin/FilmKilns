@@ -90,7 +90,7 @@ void HwTexture::unbind() {
     glBindTexture(desc.target, GL_NONE);
 }
 
-void HwTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
+void HwTexture::update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
     HwAbsTexture::update(buf, w, h, fmt);
     bind();
     if (applied && buf && getWidth() == w && getHeight() == h && fmt == this->fmt()) {

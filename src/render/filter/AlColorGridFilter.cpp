@@ -6,7 +6,6 @@
 */
 
 #include "AlColorGridFilter.h"
-#include "HwBuffer.h"
 
 AlColorGridFilter *AlColorGridFilter::create() {
     return new AlColorGridFilter();
@@ -47,7 +46,7 @@ void AlColorGridFilter::update(AlSize &canvasSize) {
     if (0 != this->size % 2) {
         size += 1;
     }
-    auto *buf = HwBuffer::alloc(size * size * 4);
+    auto *buf = AlBuffer::alloc(size * size * 4);
     auto *bmp = buf->data();
     for (int i = 0; i < size; ++i) {
         if (i < size / 2) {

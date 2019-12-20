@@ -10,7 +10,7 @@
 
 #include "Object.h"
 #include "AlSize.h"
-#include "HwBuffer.h"
+#include "AlBuffer.h"
 #include "HwAbsFBObject.h"
 #include "GLES2/gl2.h"
 
@@ -68,7 +68,7 @@ public:
 
     uint32_t fmt();
 
-    virtual void update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt = GL_RGBA);
+    virtual void update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt = GL_RGBA);
 
 public:
     /**

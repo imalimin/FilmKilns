@@ -21,7 +21,7 @@ public:
 
     virtual void unbind() override;
 
-    virtual void update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt = GL_RGBA) override;
+    virtual void update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt = GL_RGBA) override;
 
 public:
     virtual bool read(uint8_t *pixels) override;

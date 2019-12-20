@@ -62,7 +62,7 @@ void HwAndroidTexture::unbind() {
     }
 }
 
-void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
+void HwAndroidTexture::update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
     if (GL_RGBA != fmt || w <= 0 || h <= 0) {
         Logcat::e(TAG, "HwAndroidTexture::update Only support RGBA fmt.");
         return;
