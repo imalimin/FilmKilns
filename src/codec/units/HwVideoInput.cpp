@@ -132,7 +132,8 @@ void HwVideoInput::checkEnv(int32_t w, int32_t h) {
     if (!yuvFilter) {
         yuvFilter = new HwYV122RGBAFilter();
         yuvFilter->prepare();
-        target = HwTexture::alloc();
+        AlTexDescription desc;
+        target = HwTexture::alloc(desc);
         target->update(nullptr, w, h, GL_RGBA);
     }
 }
@@ -202,8 +203,7 @@ HwResult HwVideoInput::grab() {
 
 bool HwVideoInput::invalidate(HwAbsTexture *tex) {
     AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
-    msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
-                               tex->getWidth(), tex->getHeight(), tex->fmt());
+    msg->obj = HwTexture::wrap(dynamic_cast<HwTexture *>(tex));
     msg->desc = "RENDER";
     postEvent(msg);
     return true;

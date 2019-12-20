@@ -2,10 +2,10 @@
 // Created by mingyi.li on 2018/12/27.
 //
 
-#include "../include/TextureAllocator.h"
+#include "TextureAllocator.h"
 #include "ObjectBox.h"
 #include "log.h"
-#include "../include/HwTexture.h"
+#include "HwTexture.h"
 
 #define TAG "TextureAllocator"
 
@@ -17,26 +17,24 @@ TextureAllocator::~TextureAllocator() {
 }
 
 HwAbsTexture *TextureAllocator::alloc() {
-    HwAbsTexture *tex = HwTexture::alloc();
+    AlTexDescription desc;
+    return alloc(desc);
+}
+
+HwAbsTexture *TextureAllocator::alloc(AlTexDescription &desc, AlBuffer *buf) {
+    HwAbsTexture *tex = HwTexture::alloc(desc);
     if (nullptr == tex) {
         return nullptr;
     }
     textures.push_back(tex);
-    return tex;
-}
-
-HwAbsTexture *TextureAllocator::alloc(int width, int height, uint32_t fmt) {
-    return alloc(nullptr, width, height, fmt);
-}
-
-HwAbsTexture *TextureAllocator::alloc(uint8_t *rgba, int width, int height, uint32_t fmt) {
-    HwAbsTexture *tex = alloc();
-    if (nullptr == tex) {
-        return nullptr;
+    if (desc.size.width > 0 && desc.size.height > 0) {
+        HwBuffer *bufTmp = nullptr;
+        if (buf) {
+            bufTmp = HwBuffer::wrap(buf->data(), buf->size());
+        }
+        tex->update(bufTmp, desc.size.width, desc.size.height, desc.fmt);
+        delete bufTmp;
     }
-    HwBuffer *buf = HwBuffer::wrap(rgba, width * height * 4);
-    tex->update(buf, width, height, fmt);
-    delete buf;
     return tex;
 }
 
@@ -64,3 +62,14 @@ void TextureAllocator::clear() {
     }
     textures.clear();
 }
+
+//HwAbsTexture *TextureAllocator::alloc(HwBitmap *bmp) {
+//    AlTexDescription desc;
+//    desc.size.width = bmp->getWidth();
+//    desc.size.height = bmp->getHeight();
+//    desc.fmt = GL_RGBA;
+//    AlBuffer *buf = AlBuffer::wrap(bmp->getPixels(), bmp->getByteSize());
+//    auto *tex = alloc(desc, buf);
+//    delete buf;
+//    return tex;
+//}

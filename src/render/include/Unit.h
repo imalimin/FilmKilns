@@ -181,13 +181,13 @@ public:
 
     bool eventPutObject(AlMessage *msg);
 
-    const int32_t getInt32(string key);
+    const int32_t getInt32(string key) override;
 
-    const int64_t getInt64(string key);
+    const int64_t getInt64(string key) override;
 
-    const string getString(string key);
+    const string getString(string key) override;
 
-    Object *getObject(string key);
+    Object *getObject(string key) override;
 
 public:
     static const int EVENT_PUT_INT32;

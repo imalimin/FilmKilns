@@ -79,10 +79,7 @@ bool AlLayerRender::onShow(AlMessage *m) {
         Logcat::e(TAG, "%s(%d): Empty canvas", __FUNCTION__, __LINE__);
         return true;
     }
-    msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
-                               tex->getWidth(),
-                               tex->getHeight(),
-                               tex->fmt());
+    msg->obj = tex;
     postEvent(msg);
     return true;
 }

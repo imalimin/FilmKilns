@@ -9,10 +9,38 @@
 #define HWVC_ANDROID_HWABSTEXTURE_H
 
 #include "Object.h"
-#include "Size.h"
+#include "AlSize.h"
 #include "HwBuffer.h"
 #include "HwAbsFBObject.h"
 #include "GLES2/gl2.h"
+
+al_class(AlTexDescription) {
+public:
+    enum WrapMode : int {
+        REPEAT = 0,
+        EDGE,
+        BORDER,
+    };
+public:
+    AlTexDescription();
+
+    AlTexDescription(uint32_t target, uint32_t fmt);
+
+    ~AlTexDescription();
+
+    AlTexDescription(const AlTexDescription &o);
+
+public:
+    /// GL_TEXTURE_2D,GL_TEXTURE_EXTERNAL_OES
+    uint32_t target;
+    /// GL_REPEAT,GL_CLAMP_TO_EDGE,GL_CLAMP_TO_BORDER_EXT
+    WrapMode wrapMode;
+    /// GL_CLAMP_TO_BORDER_EXT mode color
+    float borderColor[4];
+    AlSize size;
+    /// GL_RGBA
+    uint32_t fmt;
+};
 
 /**
  * Use with HwAbsFBObject
@@ -22,7 +50,7 @@ private:
     friend class HwAbsFBObject;
 
 public:
-    HwAbsTexture(uint32_t target);
+    HwAbsTexture(AlTexDescription desc);
 
     virtual ~HwAbsTexture();
 
@@ -32,9 +60,9 @@ public:
 
     int getHeight();
 
-    virtual void bind()=0;
+    virtual void bind() = 0;
 
-    virtual void unbind()=0;
+    virtual void unbind() = 0;
 
     uint32_t target();
 
@@ -46,13 +74,11 @@ public:
     /**
      * Call by HwAbsFBObject
      */
-    virtual bool read(uint8_t *pixels)=0;
+    virtual bool read(uint8_t *pixels) = 0;
 
 protected:
-    uint32_t tar;
+    AlTexDescription desc;
     uint32_t tex;
-    uint32_t _fmt;
-    Size size;
 };
 
 

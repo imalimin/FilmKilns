@@ -34,10 +34,13 @@ void Image::show(string path) {
     if (!decode(path)) {
         return;
     }
-    tex = texAllocator->alloc(hwBitmap->getPixels(),
-                              hwBitmap->getWidth(),
-                              hwBitmap->getHeight(),
-                              GL_RGBA);
+    AlTexDescription desc;
+    desc.size.width = hwBitmap->getWidth();
+    desc.size.height = hwBitmap->getHeight();
+    desc.fmt = GL_RGBA;
+    AlBuffer *buf = AlBuffer::wrap(hwBitmap->getPixels(), hwBitmap->getByteSize());
+    tex = texAllocator->alloc(desc, buf);
+    delete buf;
     eventInvalidate(nullptr);
 }
 
@@ -75,10 +78,7 @@ bool Image::eventShow(AlMessage *msg) {
 bool Image::eventInvalidate(AlMessage *m) {
     if (GL_NONE != tex) {
         AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
-        msg->obj = HwTexture::wrap(tex->target(), tex->texId(),
-                                   tex->getWidth(),
-                                   tex->getHeight(),
-                                   tex->fmt());
+        msg->obj = HwTexture::wrap(dynamic_cast<HwTexture *>(tex));
         postEvent(msg);
     }
     return true;

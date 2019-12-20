@@ -13,18 +13,21 @@
 #include "../../../include/HwTexture.h"
 #include <GLES2/gl2.h>
 
-HwAndroidTexture::HwAndroidTexture(uint32_t target) : HwAbsTexture(target) {
+#define TAG "HwAndroidTexture"
+
+HwAndroidTexture::HwAndroidTexture(uint32_t target) : HwAbsTexture(
+        AlTexDescription(target, GL_RGBA)) {
     sdk = HwAndroidUtils::getAndroidApi();
     if (support()) {
         glGenTextures(1, &tex);
         bind();
-        glTexParameterf(tar, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(tar, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(tar, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(tar, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameterf(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         unbind();
     } else {
-        texCompat = HwTexture::alloc(tar);
+        texCompat = HwTexture::alloc(desc);
         tex = texCompat->texId();
     }
 }
@@ -47,7 +50,7 @@ void HwAndroidTexture::bind() {
     if (texCompat) {
         texCompat->bind();
     } else {
-        glBindTexture(tar, tex);
+        glBindTexture(desc.target, tex);
     }
 }
 
@@ -55,13 +58,13 @@ void HwAndroidTexture::unbind() {
     if (texCompat) {
         texCompat->unbind();
     } else {
-        glBindTexture(tar, GL_NONE);
+        glBindTexture(desc.target, GL_NONE);
     }
 }
 
 void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
-    if (GL_RGBA != fmt) {
-        Logcat::e("hwvc", "HwAndroidTexture::update Only support RGBA fmt.");
+    if (GL_RGBA != fmt || w <= 0 || h <= 0) {
+        Logcat::e(TAG, "HwAndroidTexture::update Only support RGBA fmt.");
         return;
     }
     HwAbsTexture::update(buf, w, h, fmt);
@@ -72,7 +75,7 @@ void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt)
      * sdk <= 23: GraphicBuffer.
      */
     if (!texCompat) {
-        glBindTexture(tar, tex);
+        glBindTexture(desc.target, tex);
         if (sdk >= 26) {
             graphicBuffer = new HwAHardwareBuffer(w, h);
         } else if (sdk <= 23) {
@@ -81,7 +84,7 @@ void HwAndroidTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt)
             return;
         }
         graphicBuffer->bind();
-        glBindTexture(tar, GL_NONE);
+        glBindTexture(desc.target, GL_NONE);
     } else {
         texCompat->update(buf, w, h);
     }

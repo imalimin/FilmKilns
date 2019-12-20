@@ -20,14 +20,9 @@ public:
     static HwTexture *allocOES();
 
 #endif
-
-    static HwTexture *alloc();
-
-    static HwTexture *alloc(uint32_t target);
+    static HwTexture *alloc(AlTexDescription &desc);
 
     static HwTexture *wrap(HwTexture *tex);
-
-    static HwTexture *wrap(uint32_t target, uint32_t tex, int w, int h, uint32_t fmt);
 
 public:
     virtual ~HwTexture();
@@ -42,9 +37,7 @@ public:
     virtual bool read(uint8_t *pixels) override;
 
 private:
-    HwTexture(uint32_t target);
-
-    HwTexture(uint32_t target, uint32_t tex, int w, int h);
+    HwTexture(AlTexDescription &desc);
 
 private:
     bool applied = false;

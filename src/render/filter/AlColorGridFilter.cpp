@@ -25,7 +25,11 @@ void AlColorGridFilter::release(TextureAllocator *texAllocator) {
 }
 
 bool AlColorGridFilter::prepare(TextureAllocator *texAllocator) {
-    this->srcTex = texAllocator->alloc(size, size, GL_RGBA);
+    AlTexDescription desc;
+    desc.size.width = size;
+    desc.size.height = size;
+    desc.fmt = GL_RGBA;
+    this->srcTex = texAllocator->alloc(desc);
     return prepare();
 }
 

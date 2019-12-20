@@ -7,14 +7,15 @@
 
 #include "../include/HwAbsTexture.h"
 
-HwAbsTexture::HwAbsTexture(uint32_t target) : Object(),
-                                              tar(target) {
+HwAbsTexture::HwAbsTexture(AlTexDescription desc) : Object(),
+                                                    desc(desc) {
 
 }
 
 HwAbsTexture::~HwAbsTexture() {
-    size.width = 0;
-    size.height = 0;
+    desc.target = GL_NONE;
+    desc.size.width = 0;
+    desc.size.height = 0;
 }
 
 uint32_t HwAbsTexture::texId() {
@@ -22,21 +23,55 @@ uint32_t HwAbsTexture::texId() {
 }
 
 int HwAbsTexture::getWidth() {
-    return size.width;
+    return desc.size.width;
 }
 
 int HwAbsTexture::getHeight() {
-    return size.height;
+    return desc.size.height;
 }
 
 uint32_t HwAbsTexture::target() {
-    return tar;
+    return desc.target;
 }
 
 void HwAbsTexture::update(HwBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
-    size.width = w;
-    size.height = h;
-    _fmt = fmt;
+    desc.size.width = w;
+    desc.size.height = h;
+    desc.fmt = fmt;
 }
 
-uint32_t HwAbsTexture::fmt() { return _fmt; }
+uint32_t HwAbsTexture::fmt() { return desc.fmt; }
+
+AlTexDescription::AlTexDescription()
+        : AlTexDescription(GL_TEXTURE_2D, GL_RGBA) {
+}
+
+AlTexDescription::AlTexDescription(uint32_t target, uint32_t fmt)
+        : Object(),
+          target(target),
+          wrapMode(AlTexDescription::WrapMode::REPEAT),
+          fmt(fmt) {
+    borderColor[0] = 1.0f;
+    borderColor[1] = 1.0f;
+    borderColor[2] = 1.0f;
+    borderColor[3] = 1.0f;
+    size.width = 0;
+    size.height = 0;
+}
+
+AlTexDescription::~AlTexDescription() {
+
+}
+
+AlTexDescription::AlTexDescription(const AlTexDescription &o)
+        : Object(),
+          target(o.target),
+          wrapMode(o.wrapMode),
+          size(o.size),
+          fmt(o.fmt) {
+    borderColor[0] = o.borderColor[0];
+    borderColor[1] = o.borderColor[1];
+    borderColor[2] = o.borderColor[2];
+    borderColor[3] = o.borderColor[3];
+
+}

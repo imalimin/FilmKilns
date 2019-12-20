@@ -64,10 +64,14 @@ bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
         return true;
     }
     auto rotation = bmp->getRotation();
-    auto *srcTex = texAllocator->alloc(bmp->getPixels(),
-                                       bmp->getWidth(),
-                                       bmp->getHeight(),
-                                       GL_RGBA);
+    AlTexDescription desc;
+    desc.size.width = bmp->getWidth();
+    desc.size.height = bmp->getHeight();
+    desc.wrapMode = AlTexDescription::WrapMode::BORDER;
+    desc.fmt = GL_RGBA;
+    AlBuffer *buf = AlBuffer::wrap(bmp->getPixels(), bmp->getByteSize());
+    auto *srcTex = texAllocator->alloc(desc, buf);
+    delete buf;
     delete bmp;
     _correctAngle(texAllocator, &srcTex, rotation);
     AlImageLayer *layer = AlImageLayer::create(model, srcTex);
@@ -81,15 +85,16 @@ void AlImageLayerManager::_correctAngle(TextureAllocator *texAllocator,
     HwAbsTexture *destTex = nullptr;
     auto rFloat = fmod(std::abs(radian.toFloat()), 2.0);
     if (0 != rFloat) {
+        AlTexDescription desc;
+        desc.fmt = (*tex)->fmt();
         if (0.5 == rFloat || 1.5 == rFloat) {///宽高对换
-            destTex = texAllocator->alloc((*tex)->getHeight(),
-                                          (*tex)->getWidth(),
-                                          GL_RGBA);
+            desc.size.width = (*tex)->getHeight();
+            desc.size.height = (*tex)->getWidth();
         } else {
-            destTex = texAllocator->alloc((*tex)->getWidth(),
-                                          (*tex)->getHeight(),
-                                          GL_RGBA);
+            desc.size.width = (*tex)->getWidth();
+            desc.size.height = (*tex)->getHeight();
         }
+        destTex = texAllocator->alloc(desc);
         AlRotateFilter filter;
         filter.prepare();
         filter.setRotation(radian);

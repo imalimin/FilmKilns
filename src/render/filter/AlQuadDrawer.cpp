@@ -26,7 +26,13 @@ bool AlQuadDrawer::prepare(TextureAllocator *texAllocator) {
     data[7] = 128;
     data[11] = 128;
     data[15] = 128;
-    cover = texAllocator->alloc(data, size, size, GL_RGBA);
+    AlTexDescription desc;
+    desc.size.width = size;
+    desc.size.height = size;
+    desc.fmt = GL_RGBA;
+    AlBuffer *buf = AlBuffer::wrap(data, size * size * 4);
+    cover = texAllocator->alloc(desc, buf);
+    delete buf;
     return HwNormalFilter::prepare();
 }
 

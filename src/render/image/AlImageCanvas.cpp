@@ -36,15 +36,16 @@ void AlImageCanvas::release() {
 
 HwAbsTexture *AlImageCanvas::getOutput() {
     if (nullptr == mCanvasTex) return nullptr;
-    return HwTexture::wrap(mCanvasTex->target(), mCanvasTex->texId(),
-                           mCanvasTex->getWidth(),
-                           mCanvasTex->getHeight(),
-                           mCanvasTex->fmt());
+    return HwTexture::wrap(dynamic_cast<HwTexture *>(mCanvasTex));
 }
 
 void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator *texAllocator) {
     if (nullptr == mCanvasTex) {
-        mCanvasTex = texAllocator->alloc(nullptr, w, h, GL_RGBA);
+        AlTexDescription desc;
+        desc.size.width = w;
+        desc.size.height = h;
+        desc.fmt = GL_RGBA;
+        mCanvasTex = texAllocator->alloc(desc);
         fbo = HwFBObject::alloc();
         fbo->bindTex(mCanvasTex);
         mBgDrawer = AlColorGridFilter::create();

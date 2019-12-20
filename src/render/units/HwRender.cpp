@@ -124,7 +124,9 @@ void HwRender::checkEnv(int width, int height) {
     if (filter) {
         bool ret = filter->prepare();
         if (ret) {
-            target = HwTexture::alloc(GL_TEXTURE_2D);
+            AlTexDescription desc;
+            desc.target = GL_TEXTURE_2D;
+            target = HwTexture::alloc(desc);
             target->update(nullptr, width, height);
         }
     }
@@ -134,7 +136,9 @@ void HwRender::checkEnv(int width, int height) {
     if (yuvReadFilter) {
         bool ret = yuvReadFilter->prepare();
         if (ret) {
-            yuvTarget = HwTexture::alloc(GL_TEXTURE_2D);
+            AlTexDescription desc;
+            desc.target = GL_TEXTURE_2D;
+            yuvTarget = HwTexture::alloc(desc);
             yuvTarget->update(nullptr, width / 4, height * 3 / 2);
             fbo = HwFBObject::alloc();
             fbo->bindTex(yuvTarget);

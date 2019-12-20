@@ -8,6 +8,7 @@
 #include "Object.h"
 #include <vector>
 #include "HwAbsTexture.h"
+#include "AlBuffer.h"
 
 using namespace std;
 
@@ -19,9 +20,7 @@ public:
 
     HwAbsTexture *alloc();
 
-    HwAbsTexture *alloc(int width, int height, uint32_t fmt);
-
-    HwAbsTexture *alloc(uint8_t *rgba, int width, int height, uint32_t fmt);
+    HwAbsTexture *alloc(AlTexDescription &desc, AlBuffer *buf = nullptr);
 
     void recycle(HwAbsTexture **tex);
 

@@ -24,7 +24,8 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
     Logcat::i("HWVC", "HwCameraInput::eventPrepare");
     egl = new Egl();
     srcTex = HwTexture::allocOES();
-    destTex = HwTexture::alloc();
+    AlTexDescription desc;
+    destTex = HwTexture::alloc(desc);
     string vertex("        attribute vec4 aPosition;\n"
                   "        attribute vec4 aTextureCoord;\n"
                   "        uniform mat4 uTextureMatrix;\n"
@@ -106,7 +107,7 @@ void HwCameraInput::draw(int w, int h) {
 
 void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
     AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
-    msg->obj = HwTexture::wrap(destTex->target(), destTex->texId(), w, h, destTex->fmt());
+    msg->obj = HwTexture::wrap(destTex);
     msg->arg2 = tsInNs;
     msg->queueMode = AlMessage::QUEUE_MODE_UNIQUE;
     postEvent(msg);
