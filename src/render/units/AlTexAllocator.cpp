@@ -2,26 +2,26 @@
 // Created by mingyi.li on 2018/12/27.
 //
 
-#include "TextureAllocator.h"
+#include "AlTexAllocator.h"
 #include "ObjectBox.h"
 #include "log.h"
 #include "HwTexture.h"
 
 #define TAG "TextureAllocator"
 
-TextureAllocator::TextureAllocator() {
+AlTexAllocator::AlTexAllocator() {
 }
 
-TextureAllocator::~TextureAllocator() {
+AlTexAllocator::~AlTexAllocator() {
     clear();
 }
 
-HwAbsTexture *TextureAllocator::alloc() {
+HwAbsTexture *AlTexAllocator::alloc() {
     AlTexDescription desc;
     return alloc(desc);
 }
 
-HwAbsTexture *TextureAllocator::alloc(AlTexDescription &desc, AlBuffer *buf) {
+HwAbsTexture *AlTexAllocator::alloc(AlTexDescription &desc, AlBuffer *buf) {
     HwAbsTexture *tex = HwTexture::alloc(desc);
     if (nullptr == tex) {
         return nullptr;
@@ -38,7 +38,7 @@ HwAbsTexture *TextureAllocator::alloc(AlTexDescription &desc, AlBuffer *buf) {
     return tex;
 }
 
-void TextureAllocator::recycle(HwAbsTexture **tex) {
+void AlTexAllocator::recycle(HwAbsTexture **tex) {
     if (nullptr == tex || nullptr == *tex) {
         return;
     }
@@ -54,7 +54,7 @@ void TextureAllocator::recycle(HwAbsTexture **tex) {
     }
 }
 
-void TextureAllocator::clear() {
+void AlTexAllocator::clear() {
     for (auto it:textures) {
         if (nullptr != it) {
             delete it;
@@ -63,7 +63,7 @@ void TextureAllocator::clear() {
     textures.clear();
 }
 
-//HwAbsTexture *TextureAllocator::alloc(HwBitmap *bmp) {
+//HwAbsTexture *AlTexAllocator::alloc(HwBitmap *bmp) {
 //    AlTexDescription desc;
 //    desc.size.width = bmp->getWidth();
 //    desc.size.height = bmp->getHeight();

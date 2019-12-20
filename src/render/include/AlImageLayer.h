@@ -39,7 +39,7 @@ private:
     AlImageLayer(const AlImageLayer &e) : Object() {};
 
 private:
-    //Manager by TextureAllocator. DON`T delete here.
+    /// Manager by AlTexAllocator. DON`T delete here.
     friend AlImageLayerManager;
     HwAbsTexture *tex = nullptr;
 };

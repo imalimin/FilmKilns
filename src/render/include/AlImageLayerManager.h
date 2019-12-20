@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlImageLayer.h"
 #include "AlImageLayerModel.h"
-#include "TextureAllocator.h"
+#include "AlTexAllocator.h"
 #include <vector>
 #include <map>
 
@@ -23,7 +23,7 @@ public:
 
     void release();
 
-    void update(std::vector<AlImageLayerModel *> *list, TextureAllocator *texAllocator);
+    void update(std::vector<AlImageLayerModel *> *list, AlTexAllocator *texAllocator);
 
     int32_t size();
 
@@ -34,11 +34,11 @@ public:
 private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};
 
-    bool _newLayer(AlImageLayerModel *model, TextureAllocator *texAllocator);
+    bool _newLayer(AlImageLayerModel *model, AlTexAllocator *texAllocator);
 
     bool _found(int32_t id);
 
-    void _correctAngle(TextureAllocator *texAllocator, HwAbsTexture **tex, AlRational radian);
+    void _correctAngle(AlTexAllocator *texAllocator, HwAbsTexture **tex, AlRational radian);
 
 private:
     /**

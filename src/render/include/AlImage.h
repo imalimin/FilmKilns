@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_ALIMAGE_H
 
 #include "Unit.h"
-#include "TextureAllocator.h"
+#include "AlTexAllocator.h"
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
 
@@ -51,7 +51,7 @@ private:
     void _notifyDescriptor(AlImageLayer *layer);
 
 private:
-    TextureAllocator *texAllocator = nullptr;
+    AlTexAllocator *texAllocator = nullptr;
     /// +------------------+
     /// |     Model        |
     /// +------------------+

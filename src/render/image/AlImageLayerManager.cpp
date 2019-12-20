@@ -30,7 +30,7 @@ void AlImageLayerManager::release() {
 }
 
 void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
-                                 TextureAllocator *texAllocator) {
+                                 AlTexAllocator *texAllocator) {
     this->models = list;
     std::vector<int32_t> ids;
     unsigned int size = list->size();
@@ -56,7 +56,7 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
 }
 
 bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
-                                    TextureAllocator *texAllocator) {
+                                    AlTexAllocator *texAllocator) {
     HwBitmap *bmp = HwBitmapFactory::decodeFile(model->getPath());
     if (nullptr == bmp) {
         Logcat::e("AlImageLayerManager", "%s(%d): decode %s failed", __FUNCTION__, __LINE__,
@@ -79,7 +79,7 @@ bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
     return true;
 }
 
-void AlImageLayerManager::_correctAngle(TextureAllocator *texAllocator,
+void AlImageLayerManager::_correctAngle(AlTexAllocator *texAllocator,
                                         HwAbsTexture **tex,
                                         AlRational radian) {
     HwAbsTexture *destTex = nullptr;

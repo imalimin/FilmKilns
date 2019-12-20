@@ -56,7 +56,7 @@ bool HwVideoInput::onCreate(AlMessage *msg) {
         return true;
     }
     if (!texAllocator) {
-        texAllocator = new TextureAllocator();
+        texAllocator = new AlTexAllocator();
     }
     return true;
 }

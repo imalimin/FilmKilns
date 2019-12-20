@@ -39,7 +39,7 @@ HwAbsTexture *AlImageCanvas::getOutput() {
     return HwTexture::wrap(dynamic_cast<HwTexture *>(mCanvasTex));
 }
 
-void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, TextureAllocator *texAllocator) {
+void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, AlTexAllocator *texAllocator) {
     if (nullptr == mCanvasTex) {
         AlTexDescription desc;
         desc.size.width = w;

@@ -15,7 +15,7 @@ AlQuadDrawer::~AlQuadDrawer() {
 
 }
 
-bool AlQuadDrawer::prepare(TextureAllocator *texAllocator) {
+bool AlQuadDrawer::prepare(AlTexAllocator *texAllocator) {
     if (cover) {
         texAllocator->recycle(&cover);
     }

@@ -90,7 +90,7 @@ private:
     void _draw(AlImageLayerDrawModel *description);
 
 private:
-    TextureAllocator *texAllocator = nullptr;
+    AlTexAllocator *texAllocator = nullptr;
     AlImageCanvas mCanvas;
     OnSaveListener onSaveListener = nullptr;
 };

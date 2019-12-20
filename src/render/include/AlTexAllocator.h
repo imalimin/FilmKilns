@@ -12,11 +12,11 @@
 
 using namespace std;
 
-class TextureAllocator : public Object {
+class AlTexAllocator : public Object {
 public:
-    TextureAllocator();
+    AlTexAllocator();
 
-    virtual ~TextureAllocator();
+    virtual ~AlTexAllocator();
 
     HwAbsTexture *alloc();
 
@@ -25,7 +25,7 @@ public:
     void recycle(HwAbsTexture **tex);
 
 private:
-    TextureAllocator(const TextureAllocator &o) : Object() {};
+    AlTexAllocator(const AlTexAllocator &o) : Object() {};
 
 private:
     vector<HwAbsTexture *> textures;

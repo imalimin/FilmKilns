@@ -14,7 +14,7 @@
 #include "HwAbsTexture.h"
 #include "AlImageLayer.h"
 #include "AlCanvasDrawer.h"
-#include "TextureAllocator.h"
+#include "AlTexAllocator.h"
 #include "AlColorGridFilter.h"
 #include "AlImageLayerDrawModel.h"
 #ifdef ENABLE_CROP_DEBUG
@@ -30,7 +30,7 @@ public:
 
     void release();
 
-    void update(int32_t w, int32_t h, int32_t color, TextureAllocator *texAllocator);
+    void update(int32_t w, int32_t h, int32_t color, AlTexAllocator *texAllocator);
 
     void clear(bool transparent = false);
 
@@ -51,7 +51,7 @@ private:
 
 private:
     HwAbsFBObject *fbo = nullptr;
-    //Manager by TextureAllocator. DON`T delete here.
+    /// Manager by AlTexAllocator. DON`T delete here.
     HwAbsTexture *mCanvasTex = nullptr;
     AlColorGridFilter *mBgDrawer = nullptr;
     AlCanvasDrawer *mCanvasDrawer = nullptr;

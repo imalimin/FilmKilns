@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_ALQUADDRAWER_H
 
 #include "HwNormalFilter.h"
-#include "TextureAllocator.h"
+#include "AlTexAllocator.h"
 #include "AlQuad.h"
 
 al_class_ex(AlQuadDrawer, HwNormalFilter) {
@@ -18,7 +18,7 @@ public:
 
     virtual ~AlQuadDrawer();
 
-    bool prepare(TextureAllocator *texAllocator);
+    bool prepare(AlTexAllocator *texAllocator);
 
     void setQuad(AlQuad &quad);
 

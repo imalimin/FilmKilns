@@ -62,7 +62,7 @@ bool Image::decode(string path) {
 }
 
 bool Image::onCreate(AlMessage *msg) {
-    texAllocator = new TextureAllocator();
+    texAllocator = new AlTexAllocator();
     return true;
 }
 

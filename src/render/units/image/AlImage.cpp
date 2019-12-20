@@ -18,7 +18,7 @@ AlImage::~AlImage() {
 }
 
 bool AlImage::onCreate(AlMessage *msg) {
-    texAllocator = new TextureAllocator();
+    texAllocator = new AlTexAllocator();
     return true;
 }
 

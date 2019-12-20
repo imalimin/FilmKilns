@@ -9,7 +9,7 @@
 
 #include "Unit.h"
 #include "BaseDrawer.h"
-#include "TextureAllocator.h"
+#include "AlTexAllocator.h"
 #include "HwBitmapFactory.h"
 
 class Image : public Unit {
@@ -27,7 +27,7 @@ public:
     bool eventInvalidate(AlMessage *msg);
 
 private:
-    TextureAllocator *texAllocator = nullptr;
+    AlTexAllocator *texAllocator = nullptr;
     HwBitmap *hwBitmap = nullptr;
     HwAbsTexture *tex = nullptr;
 

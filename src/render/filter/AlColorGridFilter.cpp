@@ -20,11 +20,11 @@ AlColorGridFilter::~AlColorGridFilter() {
     srcTex = nullptr;
 }
 
-void AlColorGridFilter::release(TextureAllocator *texAllocator) {
+void AlColorGridFilter::release(AlTexAllocator *texAllocator) {
     texAllocator->recycle(&this->srcTex);
 }
 
-bool AlColorGridFilter::prepare(TextureAllocator *texAllocator) {
+bool AlColorGridFilter::prepare(AlTexAllocator *texAllocator) {
     AlTexDescription desc;
     desc.size.width = size;
     desc.size.height = size;

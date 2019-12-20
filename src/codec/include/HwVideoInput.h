@@ -8,7 +8,7 @@
 #define HARDWAREVIDEOCODEC_VIDEO_H
 
 #include "HwStreamMedia.h"
-#include "TextureAllocator.h"
+#include "AlTexAllocator.h"
 #include "../include/AsynVideoDecoder.h"
 #include "HwYV122RGBAFilter.h"
 #include "HwAbsTexture.h"
@@ -61,7 +61,7 @@ private:
 
 private:
     const int INTERVAL_PROGRESS = 1000000;
-    TextureAllocator *texAllocator = nullptr;
+    AlTexAllocator *texAllocator = nullptr;
     AbsVideoDecoder *decoder = nullptr;
     HwYV122RGBAFilter *yuvFilter = nullptr;
     HwAbsTexture *y = nullptr;
