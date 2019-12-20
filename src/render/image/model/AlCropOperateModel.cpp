@@ -10,6 +10,7 @@
 #include "AlVec4.h"
 #include "AlOrthMatrix.h"
 #include "Logcat.h"
+#include "AlPositionTranslator.h"
 
 #define TAG "AlCropOperateModel"
 
@@ -45,22 +46,27 @@ void AlCropOperateModel::setPosition(AlVec2 &position) {
     this->position.y = position.y;
 }
 
-HwResult AlCropOperateModel::measure(AlAbsOperateModel::AlLayerDesc desc,
-                                     AlImageLayerDrawModel *description) {
-    double alpha = AlMath::PI * rotation.num / rotation.den;
+HwResult AlCropOperateModel::measure(AlSize canvasSize, AlImageLayerDrawModel *description) {
     AlSize layerSize = description->getLayerSize();
-    AlSize cropSize(layerSize.width * rectF.getWidth() / 2.0f,
-                    layerSize.height * rectF.getHeight() / 2.0f);
+    AlRectF cropRectF = rectF;
+    AlPointF layerPos = position;
+    AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
+    AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
+    AlPositionTranslator::translate(canvasSize, layerSize, layerPos.x, layerPos.y);
+
+    double alpha = AlMath::PI * rotation.num / rotation.den;
+    AlSize cropSize(layerSize.width * cropRectF.getWidth() / 2.0f,
+                    layerSize.height * cropRectF.getHeight() / 2.0f);
     aMeasure.updateOrthogonal(cropSize, layerSize);
 
-    float dx = (rectF.left + rectF.right) / 2.0f + position.x;
-    float dy = (rectF.top + rectF.bottom) / 2.0f + position.y;
+    float dx = (cropRectF.left + cropRectF.right) / 2.0f + layerPos.x;
+    float dy = (cropRectF.top + cropRectF.bottom) / 2.0f + layerPos.y;
     Logcat::i(TAG, "dx=%f, dy=%f", dx, dy);
 
     if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
-        aMeasure.setScale(rectF.getWidth() / 2.0f, rectF.getWidth() / 2.0f);
+        aMeasure.setScale(cropRectF.getWidth() / 2.0f, cropRectF.getWidth() / 2.0f);
     } else {
-        aMeasure.setScale(rectF.getHeight() / 2.0f, rectF.getHeight() / 2.0f);
+        aMeasure.setScale(cropRectF.getHeight() / 2.0f, cropRectF.getHeight() / 2.0f);
     }
     aMeasure.setRotation(alpha);
     aMeasure.setTranslate(dx, dy, alpha, 1, -1);

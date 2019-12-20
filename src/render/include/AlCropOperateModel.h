@@ -21,8 +21,7 @@ public:
 
     virtual ~AlCropOperateModel();
 
-    virtual HwResult measure(AlAbsOperateModel::AlLayerDesc desc,
-                             AlImageLayerDrawModel *description) override;
+    virtual HwResult measure(AlSize canvasSize, AlImageLayerDrawModel *description) override;
 
     void setRect(float left, float top, float right, float bottom);
 
@@ -33,8 +32,10 @@ public:
     void setPosition(AlVec2 &position);
 
 private:
+    /// 裁剪框区域，相对于画布坐标系
     AlRectF rectF;
     AlRational rotation;
+    /// 图层坐标，相对于画布坐标系
     AlVec2 position;
     AlVec2 scale;
     AlLayerMeasure aMeasure;

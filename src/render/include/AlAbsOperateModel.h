@@ -15,27 +15,13 @@
 
 al_class(AlAbsOperateModel) {
 public:
-    al_class(AlLayerDesc) {
-    public:
-        AlLayerDesc();
-
-        AlLayerDesc(const AlLayerDesc &o);
-
-        virtual ~AlLayerDesc();
-
-    public:
-        AlRational rotation = AlRational();
-    };
-
-public:
     AlAbsOperateModel();
 
     AlAbsOperateModel(const AlAbsOperateModel &o);
 
     virtual ~AlAbsOperateModel();
 
-    virtual HwResult measure(AlAbsOperateModel::AlLayerDesc desc,
-                             AlImageLayerDrawModel *description) = 0;
+    virtual HwResult measure(AlSize canvasSize, AlImageLayerDrawModel *description) = 0;
 };
 
 

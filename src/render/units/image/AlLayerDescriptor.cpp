@@ -88,11 +88,9 @@ AlLayerDescriptor::_measureOperate(AlImageLayer *layer, AlImageLayerDrawModel *d
     if (nullptr == layer || nullptr == description) {
         return Hw::FAILED;
     }
-    AlAbsOperateModel::AlLayerDesc desc;
-    desc.rotation = layer->model->getRotation();
     for (auto *opt : *layer->model->getAllOperators()) {
         if (opt) {
-            opt->measure(desc, description);
+            opt->measure(aCanvasSize, description);
         }
     }
     return Hw::SUCCESS;

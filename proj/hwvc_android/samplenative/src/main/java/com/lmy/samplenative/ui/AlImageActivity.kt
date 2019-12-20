@@ -56,6 +56,8 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
             processor?.postTranslate(mCurrentLayer, dx, dy)
+            //For crop debug
+//            ensureCropLayer()
         }
         surfaceView?.setOnScaleListener { v, ds ->
             //            processor?.postScale(mCurrentLayer, ds)

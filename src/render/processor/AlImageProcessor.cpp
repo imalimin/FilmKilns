@@ -14,6 +14,7 @@
 #include "AlOperateFactory.h"
 #include "AlCropOperateModel.h"
 #include "AlContext.h"
+#include "AlPositionTranslator.h"
 
 #define TAG "AlImageProcessor"
 
@@ -232,15 +233,8 @@ AlImageLayerModel *AlImageProcessor::_getLayer(int32_t id) {
 }
 
 void AlImageProcessor::transToCanvasPos(float &x, float &y) {
-    float winRatio = mWinSize.ratio();
-    float cRatio = mCanvasModel.getWidth() / (float) mCanvasModel.getHeight();
-    if (winRatio > cRatio) {
-        float scale = cRatio / winRatio;
-        x = x / scale;
-    } else {
-        float scale = winRatio / cRatio;
-        y = y / scale;
-    }
+    AlSize canvasSize(mCanvasModel.getWidth(), mCanvasModel.getHeight());
+    AlPositionTranslator::translate(mWinSize, canvasSize, x, y);
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
