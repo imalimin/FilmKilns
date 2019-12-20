@@ -61,12 +61,16 @@ HwResult AlCropOperateModel::measure(AlSize canvasSize, AlImageLayerDrawModel *d
 
     float dx = (cropRectF.left + cropRectF.right) / 2.0f + layerPos.x;
     float dy = (cropRectF.top + cropRectF.bottom) / 2.0f + layerPos.y;
+    dx /= scale.x;
+    dy /= scale.y;
     Logcat::i(TAG, "dx=%f, dy=%f", dx, dy);
 
     if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
-        aMeasure.setScale(cropRectF.getWidth() / 2.0f, cropRectF.getWidth() / 2.0f);
+        aMeasure.setScale(cropRectF.getWidth() / 2.0f / scale.x,
+                          cropRectF.getWidth() / 2.0f / scale.y);
     } else {
-        aMeasure.setScale(cropRectF.getHeight() / 2.0f, cropRectF.getHeight() / 2.0f);
+        aMeasure.setScale(cropRectF.getHeight() / 2.0f / scale.x,
+                          cropRectF.getHeight() / 2.0f / scale.y);
     }
     aMeasure.setRotation(alpha);
     aMeasure.setTranslate(dx, dy, alpha, 1, -1);

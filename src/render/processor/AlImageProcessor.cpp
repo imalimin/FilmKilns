@@ -266,11 +266,13 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
         AlVec2 pos = layer->getPosition();
         pos.x = -pos.x;
         pos.y = -pos.y;
+        ((AlCropOperateModel *) opt)->setScale(layer->getScale().x, layer->getScale().y);
         ((AlCropOperateModel *) opt)->setRotation(r);
         ((AlCropOperateModel *) opt)->setPosition(pos);
         layer->addOperator(opt);
 #ifndef ENABLE_CROP_DEBUG
         AlRational nr = AlRational();
+        layer->setScale(1, 1);
         layer->setRotation(nr);
         layer->setPosition(0, 0);
 #endif

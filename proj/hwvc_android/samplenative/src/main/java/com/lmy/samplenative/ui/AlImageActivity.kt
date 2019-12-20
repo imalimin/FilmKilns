@@ -55,15 +55,17 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
-            processor?.postTranslate(mCurrentLayer, dx, dy)
+            processor?.postTranslate(getCurrentLayer(), dx, dy)
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnScaleListener { v, ds ->
-            //            processor?.postScale(mCurrentLayer, ds)
+            processor?.postScale(getCurrentLayer(), ds)
+            //For crop debug
+//            ensureCropLayer()
         }
         surfaceView?.setOnRotateListener { v, dr ->
-            processor?.postRotation(mCurrentLayer, dr)
+            processor?.postRotation(getCurrentLayer(), dr)
         }
         optBtn.setOnClickListener(this)
         fileBtn.setOnClickListener(this)
@@ -144,7 +146,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                         setCurLayer(layerId)
                         Log.i("HWVC", "addLayer $layerId")
                     }
-//                    processor?.setRotation(mCurrentLayer, AlRational(1,4))
                 }
             }
         }
@@ -152,7 +153,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 
     private fun setCurLayer(layer: Int) {
         mCurrentLayer = layer
-        layerView.text = mCurrentLayer.toString()
+        layerView.text = layer.toString()
     }
 
     fun pickImage() {
