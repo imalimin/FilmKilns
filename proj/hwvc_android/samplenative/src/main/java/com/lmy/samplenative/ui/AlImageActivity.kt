@@ -29,6 +29,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     private var processor: AlImageProcessor? = null
     private val mLayers = ArrayList<Int>()
     private var mCurrentLayer = -1
+    private var alpha: Double = 0.0
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
             processor?.updateWindow(holder.surface)
@@ -55,17 +56,29 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
-            processor?.postTranslate(getCurrentLayer(), dx, dy)
+            if (!alignCropBox.isChecked) {
+                processor?.postTranslate(getCurrentLayer(), dx, dy)
+            }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnScaleListener { v, ds ->
-            processor?.postScale(getCurrentLayer(), ds)
+            if (!alignCropBox.isChecked) {
+                processor?.postScale(getCurrentLayer(), ds)
+            }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnRotateListener { v, dr ->
-            processor?.postRotation(getCurrentLayer(), dr)
+            if (!alignCropBox.isChecked) {
+                processor?.postRotation(getCurrentLayer(), dr)
+            } else {
+                alpha += (dr.num / dr.den.toDouble())
+                processor?.setRotation(getCurrentLayer(), AlRational((alpha * 100000).toInt(), 100000))
+                ///scale = (h / w / tan(PI / 2 - alpha) + 1) * cos(alpha)
+                val scale = (960 / 540f / Math.abs(Math.tan(Math.PI / 2f - alpha * Math.PI)) + 1) * Math.abs(Math.cos(alpha * Math.PI))
+                processor?.setScale(getCurrentLayer(), AlRational((scale * 100000).toInt(), 100000))
+            }
         }
         optBtn.setOnClickListener(this)
         fileBtn.setOnClickListener(this)
@@ -78,6 +91,14 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 //        processor?.setCanvas(1080, 1920)
         processor?.setOnSaveListener(this)
         pickImage()
+        alignCropBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                alpha = 0.0
+                processor?.setScale(getCurrentLayer(), AlRational(1, 1))
+                processor?.setRotation(getCurrentLayer(), AlRational(0, 1))
+                processor?.setTranslate(getCurrentLayer(), 0f, 0f)
+            }
+        }
         //For crop debug
 //        cropView.setOnChangeListener {
 //            ensureCropLayer()
