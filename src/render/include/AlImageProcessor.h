@@ -76,6 +76,10 @@ public:
 
     HwResult cancelCropLayer(int32_t id);
 
+    HwResult ensureAlignCrop(int32_t id, AlRational r);
+
+    HwResult cancelAlignCrop(int32_t id);
+
     HwResult save(std::string path);
 
     void setOnSaveListener(AlLayerRender::OnSaveListener listener);

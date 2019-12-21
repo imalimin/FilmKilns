@@ -18,3 +18,8 @@ AlAbsOperateModel::AlAbsOperateModel(const AlAbsOperateModel &o) : Object() {
 AlAbsOperateModel::~AlAbsOperateModel() {
 
 }
+
+void AlAbsOperateModel::setCanvasSize(AlSize size) {
+    canvasSize.width = size.width;
+    canvasSize.height = size.height;
+}

@@ -13,6 +13,7 @@
 #include "AlLayerMeasure.h"
 #include "HwResult.h"
 #include "AlSize.h"
+#include "AlImgLayerDescription.h"
 
 class AlLayerDescriptor : public Unit {
 public:
@@ -35,9 +36,12 @@ private:
     HwResult _measure(AlImageLayer *layer, AlImageLayerDrawModel *description);
 
     /// Measure all operate`s params for canvas
-    /// \param drawModel
+    /// \param model
+    /// \param description
     /// \return {@link HwResult}
-    HwResult _measureOperate(AlImageLayer *layer, AlImageLayerDrawModel *description);
+    HwResult _measureOperate(std::vector<AlAbsOperateModel *> *opts,
+                             AlImgLayerDescription &model,
+                             AlImageLayerDrawModel *description);
 
     void notifyCanvas(AlImageLayerDrawModel *description);
 

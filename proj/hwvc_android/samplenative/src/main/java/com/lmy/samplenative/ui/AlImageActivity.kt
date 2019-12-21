@@ -74,10 +74,9 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                 processor?.postRotation(getCurrentLayer(), dr)
             } else {
                 alpha += (dr.num / dr.den.toDouble())
-                processor?.setRotation(getCurrentLayer(), AlRational((alpha * 100000).toInt(), 100000))
-                ///scale = (h / w / tan(PI / 2 - alpha) + 1) * cos(alpha)
-                val scale = (960 / 540f / Math.abs(Math.tan(Math.PI / 2f - alpha * Math.PI)) + 1) * Math.abs(Math.cos(alpha * Math.PI))
-                processor?.setScale(getCurrentLayer(), AlRational((scale * 100000).toInt(), 100000))
+                processor?.cancelAlignCrop(getCurrentLayer())
+                processor?.ensureAlignCrop(getCurrentLayer(),
+                        AlRational((alpha * 100000).toInt(), 100000))
             }
         }
         optBtn.setOnClickListener(this)
@@ -94,9 +93,9 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         alignCropBox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 alpha = 0.0
-                processor?.setScale(getCurrentLayer(), AlRational(1, 1))
-                processor?.setRotation(getCurrentLayer(), AlRational(0, 1))
-                processor?.setTranslate(getCurrentLayer(), 0f, 0f)
+                processor?.ensureAlignCrop(getCurrentLayer(), AlRational(0, 100000))
+            } else {
+                processor?.cancelAlignCrop(getCurrentLayer())
             }
         }
         //For crop debug

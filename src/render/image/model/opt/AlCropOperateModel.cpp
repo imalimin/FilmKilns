@@ -46,7 +46,8 @@ void AlCropOperateModel::setPosition(AlVec2 &position) {
     this->position.y = position.y;
 }
 
-HwResult AlCropOperateModel::measure(AlSize canvasSize, AlImageLayerDrawModel *description) {
+HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
+                                     AlImageLayerDrawModel *description) {
     AlSize layerSize = description->getLayerSize();
     AlRectF cropRectF = rectF;
     AlPointF layerPos = position;
@@ -86,7 +87,7 @@ HwResult AlCropOperateModel::measure(AlSize canvasSize, AlImageLayerDrawModel *d
     description->cropQuad.setRightTop((rt + 1.0f) / 2.0f);
 //    description->cropQuad.mirrorVertical();
 #ifndef ENABLE_CROP_DEBUG
-    description->setLayerSize(cropSize.width, cropSize.height);
+    layer.setSize(cropSize);
 #endif
     Logcat::i(TAG, "[%f,%f], [%f,%f]",
               description->cropQuad.leftTop().x, description->cropQuad.leftTop().y,

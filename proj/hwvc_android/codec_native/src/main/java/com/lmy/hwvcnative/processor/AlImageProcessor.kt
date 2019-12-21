@@ -223,6 +223,31 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
+     * 校直裁剪
+     * @param id 图层id
+     * @param r  旋转角度
+     * @return   {@link AlResult}
+     */
+    fun ensureAlignCrop(id: Int, r: AlRational): Int {
+        if (!isNativeNull()) {
+            return ensureAlignCrop(handler, id, r.num, r.den)
+        }
+        return AlResult.FAILED
+    }
+
+    /**
+     * 取消校直裁剪
+     * @param id 图层id
+     * @return   {@link AlResult}
+     */
+    fun cancelAlignCrop(id: Int): Int {
+        if (!isNativeNull()) {
+            return cancelAlignCrop(handler, id)
+        }
+        return AlResult.FAILED
+    }
+
+    /**
      * 保存图片
      * @return {@link AlResult}
      */
@@ -250,9 +275,13 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
     private external fun getLayer(handler: Long, x: Float, y: Float): Int
     private external fun ensureCropLayer(handler: Long, id: Int, left: Float, top: Float,
-                                   right: Float, bottom: Float): Int
+                                         right: Float, bottom: Float): Int
 
     private external fun cancelCropLayer(handler: Long, id: Int): Int
+
+    private external fun ensureAlignCrop(handler: Long, id: Int, rNum: Int, rDen: Int): Int
+
+    private external fun cancelAlignCrop(handler: Long, id: Int): Int
 
     private external fun save(handler: Long, path: String): Int
 

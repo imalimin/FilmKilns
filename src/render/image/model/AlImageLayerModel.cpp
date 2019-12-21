@@ -7,6 +7,7 @@
 
 #include "AlImageLayerModel.h"
 #include "AlCropOperateModel.h"
+#include "AlAlignCropOperateModel.h"
 #include "Logcat.h"
 
 #define TAG "AlImageLayerModel"
@@ -139,6 +140,36 @@ bool AlImageLayerModel::removeCropOperator() {
     while (itr != operators.end()) {
         AlAbsOperateModel *it = *itr;
         if (typeid(AlCropOperateModel) == typeid(*it)) {
+            itr = operators.erase(itr);
+            ret = true;
+            continue;
+        }
+        ++itr;
+    }
+    return ret;
+}
+
+bool AlImageLayerModel::removeAlignCropOperator() {
+    bool ret = false;
+    auto itr = operators.begin();
+    while (itr != operators.end()) {
+        AlAbsOperateModel *it = *itr;
+        if (typeid(AlAlignCropOperateModel) == typeid(*it)) {
+            itr = operators.erase(itr);
+            ret = true;
+            continue;
+        }
+        ++itr;
+    }
+    return ret;
+}
+
+bool AlImageLayerModel::_removeOperator(type_info type) {
+    bool ret = false;
+    auto itr = operators.begin();
+    while (itr != operators.end()) {
+        AlAbsOperateModel *it = *itr;
+        if (type == typeid(*it)) {
             itr = operators.erase(itr);
             ret = true;
             continue;

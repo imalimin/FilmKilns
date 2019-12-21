@@ -42,3 +42,10 @@ float AlRational::toFloat() {
     }
     return num / (float) den;
 }
+
+double AlRational::toDouble() {
+    if (0 == den) {
+        return 0.0;
+    }
+    return num / (double) den;
+}

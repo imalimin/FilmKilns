@@ -10,6 +10,8 @@
 #include "AlMath.h"
 #include "HwTexture.h"
 #include "ObjectBox.h"
+#include "AlImgLayerDescription.h"
+#include "AlAbsOperateModel.h"
 
 AlLayerDescriptor::AlLayerDescriptor(const string &alias) : Unit(alias) {
     registerEvent(EVENT_LAYER_MEASURE, reinterpret_cast<EventFunc>(&AlLayerDescriptor::onMeasure));
@@ -47,15 +49,18 @@ HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel 
     if (nullptr == layer || nullptr == layer->model || nullptr == description) {
         return Hw::FAILED;
     }
-    ///先把图层原始大小保存到AlImageLayerDrawModel，各种Operate中回用到
-    description->setLayerSize(layer->getWidth(), layer->getHeight());
-    HwResult ret = _measureOperate(layer, description);
+    AlSize layerSize(layer->getWidth(), layer->getHeight());
     AlSize canvasSize = aCanvasSize;
     ///默认画布大小为最先添加的图层的大小
     if (canvasSize.width <= 0 || canvasSize.height <= 0) {
-        canvasSize.width = layer->getWidth();
-        canvasSize.height = layer->getHeight();
+        canvasSize.width = layerSize.width;
+        canvasSize.height = layerSize.height;
     }
+    ///Copy一份layer model送入opt进行测量，在测量过程中opt可能会改变model数据
+    AlImgLayerDescription model(*(layer->model));
+    model.setSize(layerSize);
+    HwResult ret = _measureOperate(layer->model->getAllOperators(), model, description);
+    description->setLayerSize(model.getSize());
     ///经过各种各样的Operate后，layer size会被改变并更新到AlImageLayerDrawModel
     ///这里需要获取最新的layer size，不然会出错
     ///必须裁剪Operate会改变layer size，如果不更新则可能出现图像拉伸
@@ -63,13 +68,13 @@ HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel 
     /// 对图层和画布进行正交投影计算，转换坐标系，保证图像旋转缩放不会变形，并得到归一化的区域
     aMeasure.updateOrthogonal(src, canvasSize);
     /// 缩放旋转位移顺序不能乱
-    aMeasure.setScale(layer->model->getScale().x, layer->model->getScale().y);
-    aMeasure.setRotation(static_cast<float>(layer->model->getRotation().toFloat() * AlMath::PI));
+    aMeasure.setScale(model.getScale().x, model.getScale().y);
+    aMeasure.setRotation(static_cast<float>(model.getRotation().toFloat() * AlMath::PI));
     ///TODO 矩阵Y轴与正常坐标系Y轴相反
-    aMeasure.setTranslate(layer->model->getPosition().x, -layer->model->getPosition().y);
+    aMeasure.setTranslate(model.getPosition().x, -model.getPosition().y);
     aMeasure.measure(*description);
     description->tex = HwTexture::wrap(dynamic_cast<HwTexture *>(layer->getTexture()));
-    description->alpha = layer->model->getAlpha();
+    description->alpha = model.getAlpha();
     ///Update quad.
     AlVec2 lt;
     AlVec2 lb;
@@ -83,14 +88,16 @@ HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel 
     return ret;
 }
 
-HwResult
-AlLayerDescriptor::_measureOperate(AlImageLayer *layer, AlImageLayerDrawModel *description) {
-    if (nullptr == layer || nullptr == description) {
+HwResult AlLayerDescriptor::_measureOperate(std::vector<AlAbsOperateModel *> *opts,
+                                            AlImgLayerDescription &model,
+                                            AlImageLayerDrawModel *description) {
+    if (nullptr == description) {
         return Hw::FAILED;
     }
-    for (auto *opt : *layer->model->getAllOperators()) {
+    for (auto *opt : *opts) {
         if (opt) {
-            opt->measure(aCanvasSize, description);
+            opt->setCanvasSize(aCanvasSize);
+            opt->measure(model, description);
         }
     }
     return Hw::SUCCESS;

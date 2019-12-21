@@ -30,6 +30,11 @@ void AlImageLayerDrawModel::setLayerSize(int32_t width, int32_t height) {
     layerSize.height = height;
 }
 
+void AlImageLayerDrawModel::setLayerSize(AlSize size) {
+    layerSize.width = size.width;
+    layerSize.height = size.height;
+}
+
 AlSize AlImageLayerDrawModel::getLayerSize() {
     return layerSize;
 }

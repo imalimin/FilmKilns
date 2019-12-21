@@ -14,6 +14,8 @@ al_class(AlOperateFactory) {
 public:
     static AlAbsOperateModel *crop(float left, float top, float right, float bottom);
 
+    static AlAbsOperateModel *alignCrop(AlRational &r);
+
 private:
     AlOperateFactory() : Object() {};
 

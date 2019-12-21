@@ -302,3 +302,25 @@ HwResult AlImageProcessor::save(std::string path) {
 void AlImageProcessor::setOnSaveListener(AlLayerRender::OnSaveListener listener) {
     this->onSaveListener = listener;
 }
+
+HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer) {
+        layer->addOperator(AlOperateFactory::alignCrop(r));
+        invalidate();
+        return Hw::SUCCESS;
+    }
+    return Hw::FAILED;
+}
+
+HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer) {
+        layer->removeAlignCropOperator();
+        invalidate();
+        return Hw::SUCCESS;
+    }
+    return Hw::FAILED;
+}

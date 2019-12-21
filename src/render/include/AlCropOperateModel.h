@@ -21,7 +21,8 @@ public:
 
     virtual ~AlCropOperateModel();
 
-    virtual HwResult measure(AlSize canvasSize, AlImageLayerDrawModel *description) override;
+    virtual HwResult measure(AlImgLayerDescription &layer,
+                             AlImageLayerDrawModel *description) override;
 
     void setRect(float left, float top, float right, float bottom);
 

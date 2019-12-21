@@ -205,6 +205,22 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_save
     return ret.code;
 }
 
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_ensureAlignCrop
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jint rNum, jint rDen) {
+    if (handler) {
+        return getHandler(handler)->ensureAlignCrop(id, AlRational(rNum, rDen)).code;
+    }
+    return Hw::FAILED.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_cancelAlignCrop
+        (JNIEnv *env, jobject thiz, jlong handler, jint id) {
+    if (handler) {
+        return getHandler(handler)->cancelAlignCrop(id).code;
+    }
+    return Hw::FAILED.code;
+}
+
 #ifdef __cplusplus
 }
 #endif

@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "HwResult.h"
 #include "AlRational.h"
+#include "AlImgLayerDescription.h"
 #include "AlImageLayerDrawModel.h"
 
 al_class(AlAbsOperateModel) {
@@ -21,7 +22,12 @@ public:
 
     virtual ~AlAbsOperateModel();
 
-    virtual HwResult measure(AlSize canvasSize, AlImageLayerDrawModel *description) = 0;
+    void setCanvasSize(AlSize size);
+
+    virtual HwResult measure(AlImgLayerDescription &layer, AlImageLayerDrawModel *description) = 0;
+
+protected:
+    AlSize canvasSize;
 };
 
 

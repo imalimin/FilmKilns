@@ -15,9 +15,9 @@
 #include "AlQuad.h"
 #include "AlRational.h"
 #include "HwResult.h"
-#include "AlAbsOperateModel.h"
 
 class AlImageLayer;
+class AlAbsOperateModel;
 
 al_class(AlImageLayerModel) {
 public:
@@ -30,7 +30,7 @@ public:
 
     AlImageLayerModel(const AlImageLayerModel &o);
 
-    ~AlImageLayerModel();
+    virtual ~AlImageLayerModel();
 
     std::string getPath();
 
@@ -58,14 +58,18 @@ public:
 
     AlQuad &getQuad();
 
+    HwResult addOperator(AlAbsOperateModel *opt);
+
     std::vector<AlAbsOperateModel *> *getAllOperators();
 
     bool removeCropOperator();
 
+    bool removeAlignCropOperator();
+
     void dump();
 
-public:
-    HwResult addOperator(AlAbsOperateModel *opt);
+private:
+    bool _removeOperator(type_info type);
 
 private:
     friend AlImageLayer;
