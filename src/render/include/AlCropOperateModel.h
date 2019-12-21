@@ -33,6 +33,7 @@ public:
     void setPosition(AlVec2 &position);
 
 private:
+    bool invalidate = false;
     /// 裁剪框区域，相对于画布坐标系
     AlRectF rectF;
     /// 图层旋转弧度

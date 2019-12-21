@@ -29,26 +29,30 @@ AlCropOperateModel::~AlCropOperateModel() {
 
 void AlCropOperateModel::setRect(float left, float top, float right, float bottom) {
     this->rectF.set(left, top, right, bottom);
+    invalidate = true;
 }
 
 void AlCropOperateModel::setScale(float scaleX, float scaleY) {
     this->scale.x = scaleX;
     this->scale.y = scaleY;
+    invalidate = true;
 }
 
 void AlCropOperateModel::setRotation(AlRational &r) {
     this->rotation.num = r.num;
     this->rotation.den = r.den;
+    invalidate = true;
 }
 
 void AlCropOperateModel::setPosition(AlVec2 &position) {
     this->position.x = position.x;
     this->position.y = position.y;
+    invalidate = true;
 }
 
 HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
                                      AlImageLayerDrawModel *description) {
-    AlSize layerSize = description->getLayerSize();
+    AlSize layerSize = layer.getSize();
     AlRectF cropRectF = rectF;
     AlPointF layerPos = position;
     AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
@@ -88,6 +92,14 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
 //    description->cropQuad.mirrorVertical();
 #ifndef ENABLE_CROP_DEBUG
     layer.setSize(cropSize);
+//    ///TODO 精度损失
+//    AlRational nr;
+//    nr.den = 100000;
+//    ///rotation和layer.getRotation()反向
+//    nr.den = static_cast<int32_t>((layer.getRotation().toDouble() + rotation.toDouble()) * nr.den);
+//    layer.setScale(layer.getScale().x / scale.x, layer.getScale().y / scale.y);
+//    layer.setRotation(nr);
+//    layer.setPosition(layer.getPosition().x - position.x, layer.getPosition().y - position.y);
 #endif
     Logcat::i(TAG, "[%f,%f], [%f,%f]",
               description->cropQuad.leftTop().x, description->cropQuad.leftTop().y,
