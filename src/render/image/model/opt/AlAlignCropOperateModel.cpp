@@ -26,9 +26,14 @@ HwResult AlAlignCropOperateModel::measure(AlImgLayerDescription &layer,
     ///scale = (h / w / tan(PI / 2 - alpha) + 1) * cos(alpha)
     AlSize size = layer.getSize();
     double alpha = rotation.toDouble();
-    double scale =
-            (size.height / (double) size.width / abs(tan(AlMath::PI / 2.0f - alpha * AlMath::PI))
-             + 1.0f) * abs(cos(alpha * AlMath::PI));
+    double scale = (size.height / (double) size.width
+                    / abs(tan(AlMath::PI / 2.0f - alpha * AlMath::PI))
+                    + 1.0f) * abs(cos(alpha * AlMath::PI));
+    if (size.width > size.height) {
+        scale = (size.width / (double) size.height
+                 / abs(tan(AlMath::PI / 2.0f - alpha * AlMath::PI))
+                 + 1.0f) * abs(cos(alpha * AlMath::PI));
+    }
     layer.setScale(static_cast<float>(scale), static_cast<float>(scale));
     layer.setRotation(rotation);
     layer.setPosition(0.0f, 0.0f);
