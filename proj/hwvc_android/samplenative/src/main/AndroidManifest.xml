@@ -52,7 +52,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".ImageActivity" />
-        <activity android:name=".ui.AlImageActivity" />
+        <activity android:name=".ui.AlImageActivity">
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+                <action android:name="android.intent.action.SEND" />
+            </intent-filter>
+        </activity>
         <activity android:name=".AudioPlayerActivity" />
         <activity android:name=".TestMemFIFOActivity" />
         <activity android:name=".EchoActivity" />

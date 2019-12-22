@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
+import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
@@ -14,6 +15,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import com.lmy.common.ui.GallerySelectActivity
 import com.lmy.hwvcnative.entity.AlRational
+import com.lmy.hwvcnative.entity.AlResult
 import com.lmy.hwvcnative.processor.AlImageProcessor
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
@@ -24,12 +26,12 @@ import java.io.File
 
 class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         View.OnClickListener, AlImageProcessor.OnSaveListener {
-
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
     private val mLayers = ArrayList<Int>()
     private var mCurrentLayer = -1
     private var alpha: Double = 0.0
+    private var outputName: String? = null
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
             processor?.updateWindow(holder.surface)
@@ -89,7 +91,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         }
 //        processor?.setCanvas(1080, 1920)
         processor?.setOnSaveListener(this)
-        pickImage()
         alignCropBox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
                 alpha = 0.0
@@ -102,6 +103,24 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 //        cropView.setOnChangeListener {
 //            ensureCropLayer()
 //        }
+        openDefaultImage()
+    }
+
+    private fun openDefaultImage() {
+        var uri = intent.data
+        if (uri == null) {
+            uri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
+        }
+        if (null == uri) {
+            pickImage()
+            return
+        }
+        val path = getRealFilePath(uri)
+        if (TextUtils.isEmpty(path)) {
+            Toast.makeText(this, "没有找到该文件", Toast.LENGTH_SHORT).show()
+            return
+        }
+        addLayer(path!!)
     }
 
     override fun onClick(v: View?) {
@@ -160,14 +179,21 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
             REQUEST_IMAGE -> {
                 val result = GallerySelectActivity.getResultDtata(data)
                 if (null != result && result.isNotEmpty()) {
-                    val layerId = processor?.addLayer(result[0])
-                    if (null != layerId && layerId >= 0) {
-                        mLayers.add(layerId)
-                        setCurLayer(layerId)
-                        Log.i("HWVC", "addLayer $layerId")
-                    }
+                    addLayer(result[0])
                 }
             }
+        }
+    }
+
+    private fun addLayer(file: String) {
+        val layerId = processor?.addLayer(file)
+        if (null == outputName) {
+            outputName = File(file).name
+        }
+        if (null != layerId && layerId >= 0) {
+            mLayers.add(layerId)
+            setCurLayer(layerId)
+            Log.i("HWVC", "addLayer $layerId")
         }
     }
 
@@ -182,6 +208,8 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 
     fun getCurrentLayer(): Int = mCurrentLayer
 
+    fun getOutputName(): String? = outputName
+
     fun ensureCropLayer() {
         processor?.cancelCropLayer(getCurrentLayer())
         val rectF = cropView.getCropRectF()
@@ -194,8 +222,8 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         Toast.makeText(this@AlImageActivity,
                 "Save finish: $code",
                 Toast.LENGTH_LONG).show()
-        if (null != path) {
-            MediaScannerConnection.scanFile(this, Array<String>(1) { path }, null) { _: String, uri: Uri ->
+        if (null != path || code != AlResult.SUCCESS) {
+            MediaScannerConnection.scanFile(this, Array<String>(1) { path!! }, null) { _: String, uri: Uri ->
                 val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
                 mediaScanIntent.data = uri
                 sendBroadcast(mediaScanIntent)
@@ -216,7 +244,7 @@ interface IOptDialog {
     fun show(): BottomSheetDialog
 }
 
-class FileOptDialog(private var context: Context, private var processor: AlImageProcessor?)
+class FileOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf<BottomSheetItem>(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Save"),
@@ -234,8 +262,15 @@ class FileOptDialog(private var context: Context, private var processor: AlImage
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
         when (item.id) {
             0 -> {
-                processor?.save("${File(Environment.getExternalStorageDirectory(),
-                        "alimage.jpg").absoluteFile}")
+                val outputName = context.getOutputName()
+                if (null != outputName) {
+                    processor?.save("${File(Environment.getExternalStorageDirectory(),
+                            "Pictures/al_${outputName}").absoluteFile}")
+                } else {
+                    Toast.makeText(context,
+                            "Save finish failed. Add a layer first. Pls",
+                            Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
