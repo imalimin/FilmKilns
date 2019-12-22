@@ -256,6 +256,7 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
+        layer->removeCropOperator();
         Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
         transToCanvasPos(left, top);
         transToCanvasPos(right, bottom);
@@ -307,6 +308,7 @@ HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
+        layer->removeAlignCropOperator();
         layer->addOperator(AlOperateFactory::alignCrop(r));
         invalidate();
         return Hw::SUCCESS;
@@ -317,8 +319,7 @@ HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
 HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
-    if (layer) {
-        layer->removeAlignCropOperator();
+    if (layer && layer->removeAlignCropOperator()) {
         invalidate();
         return Hw::SUCCESS;
     }
