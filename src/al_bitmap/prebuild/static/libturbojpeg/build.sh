@@ -14,12 +14,12 @@ build() {
         echo "+--------------------------------+"
         echo "|----jpeg-turbo build arm64 -----|"
         echo "+--------------------------------+"
-        ABI=arm64-v8a
+        ABI="arm64-v8a"
     elif [[ "$ARCH" = "x86" ]]; then
         echo "+--------------------------------+"
         echo "|---- jpeg-turbo build x86  -----|"
         echo "+--------------------------------+"
-        ABI=x86
+        ABI="x86"
     else
         echo "Need a arch param"
         exit 1

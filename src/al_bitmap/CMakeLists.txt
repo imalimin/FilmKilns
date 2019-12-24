@@ -10,11 +10,13 @@ endif ()
 set(PREBUILD_STATIC ${PROJECT_SOURCE_DIR}/prebuild/static)
 set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
 set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
+set(WEBP ${PREBUILD_STATIC}/libwebp/libs/${ANDROID_ABI})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/../common/include)
 include_directories(${PREBUILD_STATIC}/libturbojpeg/include)
 include_directories(${PREBUILD_STATIC}/libpng/include)
+include_directories(${PREBUILD_STATIC}/libwebp/include)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
@@ -74,6 +76,16 @@ set_target_properties(
         PROPERTIES IMPORTED_LOCATION
         "${PNG}/libpng16.a")
 
+#libwebp
+add_library(
+        libwebp
+        STATIC
+        IMPORTED)
+set_target_properties(
+        libwebp
+        PROPERTIES IMPORTED_LOCATION
+        "${WEBP}/libwebp.a")
+
 #------------------STATIC END----------------------
 
 file(
@@ -104,5 +116,6 @@ target_link_libraries(
         #        libjpeg
         libturbojpeg
         libpng16
+        libwebp
         ${log-lib}
 )

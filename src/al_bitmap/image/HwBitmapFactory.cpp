@@ -11,6 +11,7 @@
 #include "Logcat.h"
 #include "AlJpegEncoder.h"
 #include "AlPngEncoder.h"
+#include "AlWebpDecoder.h"
 
 HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     AlBitmapInfo info;
@@ -24,6 +25,12 @@ HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     delete decoder;
     if (Hw::SUCCESS != ret) {//解码失败则使用jpeg解码
         decoder = new JpegDecoder(file);
+        info = decoder->getInfo();
+        ret = decoder->process(&buf, &info);
+        delete decoder;
+    }
+    if (Hw::SUCCESS != ret) {//解码失败则使用jpeg解码
+        decoder = new AlWebpDecoder(file);
         info = decoder->getInfo();
         ret = decoder->process(&buf, &info);
         delete decoder;

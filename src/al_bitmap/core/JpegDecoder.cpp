@@ -118,15 +118,18 @@ HwResult JpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     uint8_t *buffer = nullptr;
     unsigned long length = readFile(path, &buffer);
     if (0 == length) {
-        return 0;
+        return Hw::FAILED;
     }
 
     int subsample, colorspace;
     int flags = 0;
     int fmt = TJPF_RGBA;
     int channels = 4;
-    tjDecompressHeader3(handle, buffer, length, &info->width, &info->height, &subsample,
+    int ret = tjDecompressHeader3(handle, buffer, length, &info->width, &info->height, &subsample,
                         &colorspace);
+    if (0 != ret) {
+        return Hw::FAILED;
+    }
 
     flags |= 0;
     *buf = AlBuffer::alloc(info->width * info->height * channels);
