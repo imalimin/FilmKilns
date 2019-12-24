@@ -10,7 +10,7 @@
 #include "Unit.h"
 #include "BaseDrawer.h"
 #include "AlTexAllocator.h"
-#include "HwBitmapFactory.h"
+#include "AlBitmapFactory.h"
 
 class Image : public Unit {
 public:

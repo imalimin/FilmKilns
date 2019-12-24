@@ -49,7 +49,7 @@ bool Image::decode(string path) {
         delete[]hwBitmap;
         hwBitmap = nullptr;
     }
-    hwBitmap = HwBitmapFactory::decodeFile(path);
+    hwBitmap = AlBitmapFactory::decodeFile(path);
     if (!hwBitmap) {
         Logcat::i("HWVC", "Image decode %s failed", path.c_str());
         return false;

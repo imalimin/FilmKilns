@@ -7,7 +7,7 @@
 #include <cassert>
 #include "../include/BaseMultipleSamplerFilter.h"
 #include "../include/NormalDrawer.h"
-#include "HwBitmapFactory.h"
+#include "AlBitmapFactory.h"
 #include "log.h"
 
 BaseMultipleSamplerFilter::BaseMultipleSamplerFilter(char **names, char **samplers, int size) {
@@ -48,7 +48,7 @@ bool BaseMultipleSamplerFilter::init(int w, int h) {
 }
 
 GLuint BaseMultipleSamplerFilter::loadTexture(string path) {
-    HwBitmap *bmp = HwBitmapFactory::decodeFile(path);
+    HwBitmap *bmp = AlBitmapFactory::decodeFile(path);
     if (nullptr == bmp) {
         LOGE("Read image failed");
         return GL_NONE;

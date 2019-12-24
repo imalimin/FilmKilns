@@ -7,7 +7,7 @@
 
 #include "AlLayerRender.h"
 #include "HwTexture.h"
-#include "HwBitmapFactory.h"
+#include "AlBitmapFactory.h"
 
 #define TAG "AlLayerRender"
 
@@ -96,7 +96,7 @@ bool AlLayerRender::onSave(AlMessage *m) {
     size_t size = static_cast<size_t>(output->getWidth() * output->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
     mCanvas.read(buf);
-    HwBitmapFactory::save(output->getWidth(), output->getHeight(), buf, path);
+    AlBitmapFactory::save(output->getWidth(), output->getHeight(), buf, path);
     delete buf;
     if (onSaveListener) {
         onSaveListener(Hw::SUCCESS.code, "Success", path.c_str());

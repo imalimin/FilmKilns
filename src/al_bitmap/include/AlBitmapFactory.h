@@ -13,7 +13,7 @@
 #include "AlBuffer.h"
 #include "string"
 
-class HwBitmapFactory : public Object {
+class AlBitmapFactory : public Object {
 public:
     static HwBitmap *decodeFile(std::string file);
 

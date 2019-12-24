@@ -7,7 +7,7 @@
 #include "../include/HwvcFilter.h"
 #include "../include/NormalDrawer.h"
 #include "../entity/FilterEntity.h"
-#include "HwBitmapFactory.h"
+#include "AlBitmapFactory.h"
 #include "log.h"
 
 HwvcFilter::HwvcFilter(char *path) : HwAbsFilter() {
@@ -95,7 +95,7 @@ void HwvcFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *
 }
 
 GLuint HwvcFilter::loadTexture(string pngBuf) {
-    HwBitmap *bmp = HwBitmapFactory::decodeBuffer(
+    HwBitmap *bmp = AlBitmapFactory::decodeBuffer(
             AlBuffer::wrap((uint8_t *) pngBuf.data(), pngBuf.size()));
     if (nullptr == bmp) {
         LOGE("Read image failed");

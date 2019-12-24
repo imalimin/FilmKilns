@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "HwBitmapFactory.h"
+#include "AlBitmapFactory.h"
 #include "AlJpegDecoder.h"
 #include "AlPngDecoder.h"
 #include "Logcat.h"
@@ -16,9 +16,9 @@
 #include "StringUtils.h"
 #include "AlObjectGuard.h"
 
-#define TAG "HwBitmapFactory"
+#define TAG "AlBitmapFactory"
 
-HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
+HwBitmap *AlBitmapFactory::decodeFile(std::string file) {
     int32_t format = _guessFormat(file);
     AlBitmapInfo info;
     AlBuffer *buf = nullptr;
@@ -58,11 +58,11 @@ HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     return bitmap;
 }
 
-HwBitmap *HwBitmapFactory::decodeFile(std::string file, HwBitmap *recycleBitmap) {
+HwBitmap *AlBitmapFactory::decodeFile(std::string file, HwBitmap *recycleBitmap) {
     return nullptr;
 }
 
-HwBitmap *HwBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
+HwBitmap *AlBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
     int32_t format = _guessFormat(srcBuf->data());
     AlBitmapInfo info;
     AlBuffer *buf = nullptr;
@@ -96,11 +96,11 @@ HwBitmap *HwBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
     return bitmap;
 }
 
-HwResult HwBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf, std::string path) {
+HwResult AlBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf, std::string path) {
     return save(w, h, buf, 80, path);
 }
 
-HwResult HwBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf,
+HwResult AlBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf,
                                int32_t quality, std::string path) {
     if (path.empty()) return Hw::FAILED;
     AlBitmapInfo info;
@@ -128,7 +128,7 @@ static WEBP_INLINE uint32_t GetBE32(const uint8_t buf[]) {
     return ((uint32_t) buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
 }
 
-int32_t HwBitmapFactory::_guessFormat(std::string path) {
+int32_t AlBitmapFactory::_guessFormat(std::string path) {
     FILE *in = fopen(path.c_str(), "rb");
     if (nullptr == in) {
         Logcat::i(TAG, "%s(%d): failed", __FUNCTION__, __LINE__);
@@ -142,7 +142,7 @@ int32_t HwBitmapFactory::_guessFormat(std::string path) {
     return format;
 }
 
-int32_t HwBitmapFactory::_guessFormat(uint8_t *buf) {
+int32_t AlBitmapFactory::_guessFormat(uint8_t *buf) {
     int32_t format = FORMAT_UNSUPPORTED;
     const uint32_t magic1 = GetBE32(buf + 0);
     const uint32_t magic2 = GetBE32(buf + 8);
