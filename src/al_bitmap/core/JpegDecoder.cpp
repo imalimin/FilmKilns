@@ -10,6 +10,8 @@
 #include "Logcat.h"
 #include <csetjmp>
 
+#define TAG "JpegDecoder"
+
 #define JPEG_EXIF_MARKER JPEG_APP0 + 1
 #define JPEG_ICC_MARKER JPEG_APP0 + 2
 #define G_LITTLE_ENDIAN     1234
@@ -65,6 +67,7 @@ JpegDecoder::JpegDecoder(std::string path) : AlAbsDecoder(), path(path) {
 
 JpegDecoder::~JpegDecoder() {
     tjDestroy(handle);
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
 }
 
 AlBitmapInfo JpegDecoder::getInfo() {
@@ -126,7 +129,7 @@ HwResult JpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     int fmt = TJPF_RGBA;
     int channels = 4;
     int ret = tjDecompressHeader3(handle, buffer, length, &info->width, &info->height, &subsample,
-                        &colorspace);
+                                  &colorspace);
     if (0 != ret) {
         return Hw::FAILED;
     }

@@ -31,6 +31,17 @@ public:
     static HwResult save(int32_t w, int32_t h, AlBuffer *buf,
                          int32_t quality, std::string path);
 
+private:
+    static int32_t _guessFormat(std::string path);
+
+    static int32_t _guessFormat(uint8_t *buf);
+
+private:
+    static constexpr int32_t FORMAT_UNSUPPORTED = -1;
+    static constexpr int32_t FORMAT_JPEG = 0;
+    static constexpr int32_t FORMAT_PNG = 1;
+    static constexpr int32_t FORMAT_WEBP = 2;
+
 };
 
 
