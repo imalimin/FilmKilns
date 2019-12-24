@@ -13,16 +13,16 @@
 #include "decode.h"
 #include "AlBuffer.h"
 
-class AlWebpDecoder : public AlAbsDecoder {
+al_class_ex(AlWebPDecoder, AlAbsDecoder) {
 public:
-    AlWebpDecoder(std::string path);
+    AlWebPDecoder(std::string path);
 
     AlBitmapInfo getInfo() override;
 
     HwResult process(AlBuffer **buf, AlBitmapInfo *info) override;
 
 private:
-    AlWebpDecoder(const AlWebpDecoder &e) : AlAbsDecoder() {}
+    AlWebPDecoder(const AlWebPDecoder &e) : AlAbsDecoder() {}
 
     bool _readFile(AlBuffer **buf);
 

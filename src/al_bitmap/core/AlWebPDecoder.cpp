@@ -5,15 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "AlWebpDecoder.h"
+#include "AlWebPDecoder.h"
 #include "Logcat.h"
 
 #define TAG "AlWebpDecoder"
 
-AlWebpDecoder::AlWebpDecoder(std::string path) : AlAbsDecoder(), path(path) {
+AlWebPDecoder::AlWebPDecoder(std::string path) : AlAbsDecoder(), path(path) {
 }
 
-AlBitmapInfo AlWebpDecoder::getInfo() {
+AlBitmapInfo AlWebPDecoder::getInfo() {
     AlBitmapInfo info;
     AlBuffer *fBuf = nullptr;
     if (!_readFile(&fBuf)) {
@@ -36,7 +36,7 @@ AlBitmapInfo AlWebpDecoder::getInfo() {
     return info;
 }
 
-HwResult AlWebpDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
+HwResult AlWebPDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     AlBuffer *fBuf = nullptr;
     if (!_readFile(&fBuf)) {
         Logcat::i(TAG, "%s(%d): failed", __FUNCTION__, __LINE__);
@@ -53,7 +53,7 @@ HwResult AlWebpDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     return Hw::SUCCESS;
 }
 
-bool AlWebpDecoder::_readFile(AlBuffer **buf) {
+bool AlWebPDecoder::_readFile(AlBuffer **buf) {
     *buf = nullptr;
     size_t size;
     FILE *in = fopen(path.c_str(), "rb");

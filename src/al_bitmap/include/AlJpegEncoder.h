@@ -22,7 +22,7 @@ public:
 
     HwResult process(AlBuffer *buf, AlBitmapInfo *info, int quality, std::string path);
 
-public:
+private:
     std::string path;
 };
 

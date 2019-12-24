@@ -11,7 +11,8 @@
 #include "Logcat.h"
 #include "AlJpegEncoder.h"
 #include "AlPngEncoder.h"
-#include "AlWebpDecoder.h"
+#include "AlWebPDecoder.h"
+#include "AlWebPEncoder.h"
 
 HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     AlBitmapInfo info;
@@ -30,7 +31,7 @@ HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
         delete decoder;
     }
     if (Hw::SUCCESS != ret) {//解码失败则使用jpeg解码
-        decoder = new AlWebpDecoder(file);
+        decoder = new AlWebPDecoder(file);
         info = decoder->getInfo();
         ret = decoder->process(&buf, &info);
         delete decoder;
@@ -84,11 +85,19 @@ HwResult HwBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf,
     bool png = 'p' == path.data()[path.size() - 3]
                && 'n' == path.data()[path.size() - 2]
                && 'g' == path.data()[path.size() - 1];
+    bool webp = 'w' == path.data()[path.size() - 4]
+                && 'e' == path.data()[path.size() - 3]
+                && 'b' == path.data()[path.size() - 2]
+                && 'p' == path.data()[path.size() - 1];
     AlAbsEncoder *encoder = nullptr;
     if (png) {
         encoder = new AlPngEncoder(path);
     } else {
-        encoder = new AlJpegEncoder(path);
+        if (webp) {
+            encoder = new AlWebPEncoder(path);
+        } else {
+            encoder = new AlJpegEncoder(path);
+        }
     }
     HwResult ret = encoder->process(buf, &info, path);
     delete encoder;
