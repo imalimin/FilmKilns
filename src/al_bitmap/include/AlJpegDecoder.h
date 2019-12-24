@@ -23,13 +23,13 @@ struct error_mgr {
 void error_exit(j_common_ptr cinfo);
 };
 
-class JpegDecoder : public AlAbsDecoder {
+class AlJpegDecoder : public AlAbsDecoder {
 public:
-    JpegDecoder(std::string path);
+    AlJpegDecoder(std::string path);
 
-    JpegDecoder(const JpegDecoder &e) : AlAbsDecoder() {}
+    AlJpegDecoder(const AlJpegDecoder &e) : AlAbsDecoder() {}
 
-    virtual ~JpegDecoder();
+    virtual ~AlJpegDecoder();
 
     AlBitmapInfo getInfo() override;
 

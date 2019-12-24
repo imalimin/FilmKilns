@@ -5,38 +5,38 @@
  * LICENSE file in the root directory of this source tree.
  */
 #include <zconf.h>
-#include "../include/PngDecoder.h"
-#include "../include/log.h"
+#include "AlPngDecoder.h"
+#include "log.h"
 
 #define PNG_CHECK_BYTES 8
 
-PngDecoder::PngDecoder(std::string path) : AlAbsDecoder(), path(path) {
+AlPngDecoder::AlPngDecoder(std::string path) : AlAbsDecoder(), path(path) {
     handler = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp) NULL, NULL, NULL);
     if (!handler) {
         release();
-        LOGE("PngDecoder init failed");
+        LOGE("AlPngDecoder init failed");
     }
     infoHandler = png_create_info_struct(handler);
     if (!infoHandler) {
         release();
-        LOGE("PngDecoder init failed");
+        LOGE("AlPngDecoder init failed");
     }
 }
 
-PngDecoder::PngDecoder(AlBuffer *buf) : AlAbsDecoder(), buf(buf) {
+AlPngDecoder::AlPngDecoder(AlBuffer *buf) : AlAbsDecoder(), buf(buf) {
     handler = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp) NULL, NULL, NULL);
     if (!handler) {
         release();
-        LOGE("PngDecoder init failed");
+        LOGE("AlPngDecoder init failed");
     }
     infoHandler = png_create_info_struct(handler);
     if (!infoHandler) {
         release();
-        LOGE("PngDecoder init failed");
+        LOGE("AlPngDecoder init failed");
     }
 }
 
-PngDecoder::~PngDecoder() {
+AlPngDecoder::~AlPngDecoder() {
     release();
 }
 
@@ -69,7 +69,7 @@ static void fillBuffer(uint8_t *rgba, int w, int h, png_bytep *row,
     }
 }
 
-void PngDecoder::release() {
+void AlPngDecoder::release() {
     if (infoHandler) {
         png_destroy_info_struct(handler, &infoHandler);
     }
@@ -78,7 +78,7 @@ void PngDecoder::release() {
     }
 }
 
-AlBitmapInfo PngDecoder::getInfo() {
+AlBitmapInfo AlPngDecoder::getInfo() {
     AlBitmapInfo info;
     if (buf) {
         getInfo(info, buf);
@@ -89,7 +89,7 @@ AlBitmapInfo PngDecoder::getInfo() {
     return info;
 }
 
-HwResult PngDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
+HwResult AlPngDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     if (this->info.width <= 0 || this->info.height <= 0) {
         this->info = getInfo();
         if (this->info.width <= 0 || this->info.height <= 0) {
@@ -109,7 +109,7 @@ HwResult PngDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     return Hw::SUCCESS;
 }
 
-void PngDecoder::getInfo(AlBitmapInfo &info, std::string &path) {
+void AlPngDecoder::getInfo(AlBitmapInfo &info, std::string &path) {
     FILE *file = fopen(path.c_str(), "rb");
     if (nullptr == file) {
         return;
@@ -122,7 +122,7 @@ void PngDecoder::getInfo(AlBitmapInfo &info, std::string &path) {
     int ret = png_sig_cmp(buf, (png_size_t) 0, PNG_CHECK_BYTES);
     if (0 != ret) {
         fclose(file);
-        Logcat::i("PngDecoder", "%s(%d): Invalid png file", __FUNCTION__, __LINE__);
+        Logcat::i("AlPngDecoder", "%s(%d): Invalid png file", __FUNCTION__, __LINE__);
         return;//不是png文件
     }
     rewind(file);
@@ -136,7 +136,7 @@ void PngDecoder::getInfo(AlBitmapInfo &info, std::string &path) {
 }
 
 static void readFunc(png_structp handler, png_bytep data, png_size_t length) {
-    PngDecoder::AlImageSource *src = (PngDecoder::AlImageSource *) png_get_io_ptr(handler);
+    AlPngDecoder::AlImageSource *src = (AlPngDecoder::AlImageSource *) png_get_io_ptr(handler);
     if (src->offset + length <= src->size) {
         memcpy(data, src->data + src->offset, length);
         src->offset += length;
@@ -146,7 +146,7 @@ static void readFunc(png_structp handler, png_bytep data, png_size_t length) {
     }
 }
 
-void PngDecoder::getInfo(AlBitmapInfo &info, AlBuffer *buf) {
+void AlPngDecoder::getInfo(AlBitmapInfo &info, AlBuffer *buf) {
     if (setjmp(png_jmpbuf(handler))) {
         return;
     }
@@ -156,7 +156,7 @@ void PngDecoder::getInfo(AlBitmapInfo &info, AlBuffer *buf) {
     src.offset = 0;
     int ret = png_sig_cmp(src.data, (png_size_t) 0, PNG_CHECK_BYTES);
     if (0 != ret) {
-        Logcat::i("PngDecoder", "%s(%d): Invalid png file", __FUNCTION__, __LINE__);
+        Logcat::i("AlPngDecoder", "%s(%d): Invalid png file", __FUNCTION__, __LINE__);
         return;//不是png文件
     }
     png_set_read_fn(handler, &src, readFunc);

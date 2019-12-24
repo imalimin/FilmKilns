@@ -6,8 +6,8 @@
  */
 
 #include "HwBitmapFactory.h"
-#include "JpegDecoder.h"
-#include "PngDecoder.h"
+#include "AlJpegDecoder.h"
+#include "AlPngDecoder.h"
 #include "Logcat.h"
 #include "AlJpegEncoder.h"
 #include "AlPngEncoder.h"
@@ -26,10 +26,10 @@ HwBitmap *HwBitmapFactory::decodeFile(std::string file) {
     AlObjectGuard guard((Object **) &decoder);
     switch (format) {
         case FORMAT_JPEG:
-            decoder = new JpegDecoder(file);
+            decoder = new AlJpegDecoder(file);
             break;
         case FORMAT_PNG:
-            decoder = new PngDecoder(file);
+            decoder = new AlPngDecoder(file);
             break;
         case FORMAT_WEBP:
             decoder = new AlWebPDecoder(file);
@@ -70,7 +70,7 @@ HwBitmap *HwBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
     AlObjectGuard guard((Object **) &decoder);
     switch (format) {
         case FORMAT_PNG:
-            decoder = new PngDecoder(srcBuf);
+            decoder = new AlPngDecoder(srcBuf);
             break;
         default:
             decoder = nullptr;

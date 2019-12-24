@@ -11,7 +11,7 @@
 #include "FileUtils.h"
 #include "../prebuild/static/libpng/include/png.h"
 
-class PngDecoder : public AlAbsDecoder {
+class AlPngDecoder : public AlAbsDecoder {
 public:
     typedef struct {
         uint8_t *data;
@@ -19,13 +19,13 @@ public:
         int offset;
     } AlImageSource;
 public:
-    PngDecoder(std::string path);
+    AlPngDecoder(std::string path);
 
-    PngDecoder(AlBuffer *buf);
+    AlPngDecoder(AlBuffer *buf);
 
-    PngDecoder(const PngDecoder &e) : AlAbsDecoder(), path("") {};
+    AlPngDecoder(const AlPngDecoder &e) : AlAbsDecoder(), path("") {};
 
-    virtual ~PngDecoder();
+    virtual ~AlPngDecoder();
 
     AlBitmapInfo getInfo() override;
 

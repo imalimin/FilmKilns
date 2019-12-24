@@ -4,13 +4,13 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-#include "JpegDecoder.h"
+#include "AlJpegDecoder.h"
 #include "jpeglib.h"
 #include "AlMath.h"
 #include "Logcat.h"
 #include <csetjmp>
 
-#define TAG "JpegDecoder"
+#define TAG "AlJpegDecoder"
 
 #define JPEG_EXIF_MARKER JPEG_APP0 + 1
 #define JPEG_ICC_MARKER JPEG_APP0 + 2
@@ -61,16 +61,16 @@ void error_exit(j_common_ptr cinfo) {
     longjmp(errorMgr->jmpBuf, 1);
 }
 
-JpegDecoder::JpegDecoder(std::string path) : AlAbsDecoder(), path(path) {
+AlJpegDecoder::AlJpegDecoder(std::string path) : AlAbsDecoder(), path(path) {
     handle = tjInitDecompress();
 }
 
-JpegDecoder::~JpegDecoder() {
+AlJpegDecoder::~AlJpegDecoder() {
     tjDestroy(handle);
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
 }
 
-AlBitmapInfo JpegDecoder::getInfo() {
+AlBitmapInfo AlJpegDecoder::getInfo() {
     AlBitmapInfo info;
     FILE *file = fopen(path.c_str(), "rb");
     if (nullptr == file) {
@@ -117,7 +117,7 @@ AlBitmapInfo JpegDecoder::getInfo() {
     return info;
 }
 
-HwResult JpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
+HwResult AlJpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     uint8_t *buffer = nullptr;
     unsigned long length = readFile(path, &buffer);
     if (0 == length) {
@@ -152,7 +152,7 @@ HwResult JpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
  * the GdkPixbuf library, licensed under LGPLv2+.
  *   Copyright (C) 1999 Michael Zucchi, The Free Software Foundation
 */
-int JpegDecoder::_getOrientation(jpeg_saved_marker_ptr make_list) {
+int AlJpegDecoder::_getOrientation(jpeg_saved_marker_ptr make_list) {
     uint i;                    /* index into working buffer */
     uint16_t tag_type;           /* endianed tag type extracted from tiff header */
     uint ret;                  /* Return value */

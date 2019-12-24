@@ -8,7 +8,7 @@
 #define HARDWAREVIDEOCODEC_BASEMULTIPLESAMPLERFILTER_H
 
 #include "Filter.h"
-#include "PngDecoder.h"
+#include "AlPngDecoder.h"
 #include <string>
 
 using namespace std;

@@ -8,7 +8,7 @@
 #define HARDWAREVIDEOCODEC_HWVCFILTER_H
 
 #include "HwAbsFilter.h"
-#include "PngDecoder.h"
+#include "AlPngDecoder.h"
 #include <string>
 #include "../tinyxml/FilterReader.h"
 
