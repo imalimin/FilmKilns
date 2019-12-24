@@ -13,23 +13,23 @@
 #include "AlBitmapInfo.h"
 #include "HwResult.h"
 
-al_class(HwBitmap) {
+al_class(AlBitmap) {
 public:
-    static HwBitmap *create(AlBitmapInfo info);
+    static AlBitmap *create(AlBitmapInfo info);
 
-    static HwBitmap *create(int width, int height, AlColorSpace format);
+    static AlBitmap *create(int width, int height, AlColorSpace format);
 
     static float getImageFormatBytes(AlColorSpace format);
 
 private:
-    HwBitmap(AlBitmapInfo &info);
+    AlBitmap(AlBitmapInfo &info);
 
-    HwBitmap(int width, int height, uint32_t depth, AlColorSpace format);
+    AlBitmap(int width, int height, uint32_t depth, AlColorSpace format);
 
-    HwBitmap(const HwBitmap &e) : Object() {};
+    AlBitmap(const AlBitmap &e) : Object() {};
 
 public:
-    virtual ~HwBitmap();
+    virtual ~AlBitmap();
 
     int getWidth();
 

@@ -18,7 +18,7 @@
 
 #define TAG "AlBitmapFactory"
 
-HwBitmap *AlBitmapFactory::decodeFile(std::string file) {
+AlBitmap *AlBitmapFactory::decodeFile(std::string file) {
     int32_t format = _guessFormat(file);
     AlBitmapInfo info;
     AlBuffer *buf = nullptr;
@@ -51,18 +51,18 @@ HwBitmap *AlBitmapFactory::decodeFile(std::string file) {
         Logcat::i(TAG, "%s(%d): failed(%s)", __FUNCTION__, __LINE__, file.c_str());
         return nullptr;
     }
-    HwBitmap *bitmap = HwBitmap::create(info);
+    AlBitmap *bitmap = AlBitmap::create(info);
     memcpy(bitmap->getPixels(), buf->data(), static_cast<size_t>(bitmap->getByteSize()));
     bitmap->dump();
     delete buf;
     return bitmap;
 }
 
-HwBitmap *AlBitmapFactory::decodeFile(std::string file, HwBitmap *recycleBitmap) {
+AlBitmap *AlBitmapFactory::decodeFile(std::string file, AlBitmap *recycleBitmap) {
     return nullptr;
 }
 
-HwBitmap *AlBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
+AlBitmap *AlBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
     int32_t format = _guessFormat(srcBuf->data());
     AlBitmapInfo info;
     AlBuffer *buf = nullptr;
@@ -89,7 +89,7 @@ HwBitmap *AlBitmapFactory::decodeBuffer(AlBuffer *srcBuf) {
         Logcat::i(TAG, "%s(%d): failed", __FUNCTION__, __LINE__);
         return nullptr;
     }
-    HwBitmap *bitmap = HwBitmap::create(info);
+    AlBitmap *bitmap = AlBitmap::create(info);
     memcpy(bitmap->getPixels(), buf->data(), static_cast<size_t>(bitmap->getByteSize()));
     bitmap->dump();
     delete buf;

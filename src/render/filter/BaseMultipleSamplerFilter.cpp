@@ -48,7 +48,7 @@ bool BaseMultipleSamplerFilter::init(int w, int h) {
 }
 
 GLuint BaseMultipleSamplerFilter::loadTexture(string path) {
-    HwBitmap *bmp = AlBitmapFactory::decodeFile(path);
+    AlBitmap *bmp = AlBitmapFactory::decodeFile(path);
     if (nullptr == bmp) {
         LOGE("Read image failed");
         return GL_NONE;

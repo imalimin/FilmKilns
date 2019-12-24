@@ -58,7 +58,7 @@ void AlTexAllocator::clear() {
     textures.clear();
 }
 
-//HwAbsTexture *AlTexAllocator::alloc(HwBitmap *bmp) {
+//HwAbsTexture *AlTexAllocator::alloc(AlBitmap *bmp) {
 //    AlTexDescription desc;
 //    desc.size.width = bmp->getWidth();
 //    desc.size.height = bmp->getHeight();

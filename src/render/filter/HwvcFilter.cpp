@@ -95,7 +95,7 @@ void HwvcFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *
 }
 
 GLuint HwvcFilter::loadTexture(string pngBuf) {
-    HwBitmap *bmp = AlBitmapFactory::decodeBuffer(
+    AlBitmap *bmp = AlBitmapFactory::decodeBuffer(
             AlBuffer::wrap((uint8_t *) pngBuf.data(), pngBuf.size()));
     if (nullptr == bmp) {
         LOGE("Read image failed");

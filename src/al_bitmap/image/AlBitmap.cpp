@@ -5,26 +5,26 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwBitmap.h"
-#include "../include/Logcat.h"
+#include "AlBitmap.h"
+#include "Logcat.h"
 
-HwBitmap *HwBitmap::create(AlBitmapInfo info) {
+AlBitmap *AlBitmap::create(AlBitmapInfo info) {
     if (AlColorSpace::NONE == info.colorSpace) {
         Logcat::e("HWVC", "Invalid image color space!");
         return nullptr;
     }
-    return new HwBitmap(info);
+    return new AlBitmap(info);
 }
 
-HwBitmap *HwBitmap::create(int width, int height, AlColorSpace colorSpace) {
+AlBitmap *AlBitmap::create(int width, int height, AlColorSpace colorSpace) {
     if (AlColorSpace::NONE == colorSpace) {
         Logcat::e("HWVC", "Invalid image color space!");
         return nullptr;
     }
-    return new HwBitmap(width, height, 8, colorSpace);
+    return new AlBitmap(width, height, 8, colorSpace);
 }
 
-float HwBitmap::getImageFormatBytes(AlColorSpace format) {
+float AlBitmap::getImageFormatBytes(AlColorSpace format) {
     switch (format) {
         case AlColorSpace::RGB:
             return 3;
@@ -40,12 +40,12 @@ float HwBitmap::getImageFormatBytes(AlColorSpace format) {
     }
 }
 
-HwBitmap::HwBitmap(AlBitmapInfo &info) {
+AlBitmap::AlBitmap(AlBitmapInfo &info) {
     this->info = info;
     config();
 }
 
-HwBitmap::HwBitmap(int width, int height, uint32_t depth, AlColorSpace colorSpace) {
+AlBitmap::AlBitmap(int width, int height, uint32_t depth, AlColorSpace colorSpace) {
     this->info.width = width;
     this->info.height = height;
     this->info.depth = depth;
@@ -53,7 +53,7 @@ HwBitmap::HwBitmap(int width, int height, uint32_t depth, AlColorSpace colorSpac
     config();
 }
 
-void HwBitmap::config() {
+void AlBitmap::config() {
     if (AlColorSpace::NONE == info.colorSpace) {
         Logcat::e("HWVC", "Invalid image format!");
         return;
@@ -62,7 +62,7 @@ void HwBitmap::config() {
     pixels = new uint8_t[byteSize];
 }
 
-HwBitmap::~HwBitmap() {
+AlBitmap::~AlBitmap() {
     if (pixels) {
         delete[]pixels;
         pixels = nullptr;
@@ -73,11 +73,11 @@ HwBitmap::~HwBitmap() {
     info.colorSpace = AlColorSpace::NONE;
 }
 
-int HwBitmap::getWidth() { return info.width; }
+int AlBitmap::getWidth() { return info.width; }
 
-int HwBitmap::getHeight() { return info.height; }
+int AlBitmap::getHeight() { return info.height; }
 
-HwResult HwBitmap::resize(int width, int height, AlColorSpace colorSpace) {
+HwResult AlBitmap::resize(int width, int height, AlColorSpace colorSpace) {
     if (AlColorSpace::NONE == colorSpace) {
         Logcat::e("HWVC", "Invalid image format!");
         return Hw::FAILED;
@@ -96,16 +96,16 @@ HwResult HwBitmap::resize(int width, int height, AlColorSpace colorSpace) {
     return Hw::SUCCESS;
 }
 
-uint8_t *HwBitmap::getPixels() { return pixels; }
+uint8_t *AlBitmap::getPixels() { return pixels; }
 
-uint64_t HwBitmap::getByteSize() {
+uint64_t AlBitmap::getByteSize() {
     return static_cast<uint64_t>(info.width * info.height * getImageFormatBytes(info.colorSpace));
 }
 
-AlRational HwBitmap::getRotation() {
+AlRational AlBitmap::getRotation() {
     return info.rotation;
 }
 
-void HwBitmap::dump() {
+void AlBitmap::dump() {
     info.dump();
 }

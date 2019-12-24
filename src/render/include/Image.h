@@ -28,7 +28,7 @@ public:
 
 private:
     AlTexAllocator *texAllocator = nullptr;
-    HwBitmap *hwBitmap = nullptr;
+    AlBitmap *hwBitmap = nullptr;
     HwAbsTexture *tex = nullptr;
 
     void show(string path);

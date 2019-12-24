@@ -9,22 +9,22 @@
 #define HARDWAREVIDEOCODEC_HWBITMAPFACTORY_H
 
 #include "Object.h"
-#include "HwBitmap.h"
+#include "AlBitmap.h"
 #include "AlBuffer.h"
 #include "string"
 
 class AlBitmapFactory : public Object {
 public:
-    static HwBitmap *decodeFile(std::string file);
+    static AlBitmap *decodeFile(std::string file);
 
     /**
      * @param  file          文件路径
      * @param  recycleBitmap 复用bitmap
      * @return HwBitmap
      */
-    static HwBitmap *decodeFile(std::string file, HwBitmap *recycleBitmap);
+    static AlBitmap *decodeFile(std::string file, AlBitmap *recycleBitmap);
 
-    static HwBitmap *decodeBuffer(AlBuffer *srcBuf);
+    static AlBitmap *decodeBuffer(AlBuffer *srcBuf);
 
     static HwResult save(int32_t w, int32_t h, AlBuffer *buf, std::string path);
 

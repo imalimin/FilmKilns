@@ -57,7 +57,7 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
 
 bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
                                     AlTexAllocator *texAllocator) {
-    HwBitmap *bmp = AlBitmapFactory::decodeFile(model->getPath());
+    AlBitmap *bmp = AlBitmapFactory::decodeFile(model->getPath());
     if (nullptr == bmp) {
         Logcat::e("AlImageLayerManager", "%s(%d): decode %s failed", __FUNCTION__, __LINE__,
                   model->getPath().c_str());
