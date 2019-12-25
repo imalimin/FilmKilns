@@ -71,10 +71,10 @@ AlMatrix &AlMatrix::operator*(AlMatrix m) {
     }
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            mat->_set(j, i, get(0, i) * m.get(j, 0) +
-                            get(1, i) * m.get(j, 1) +
-                            get(2, i) * m.get(j, 2) +
-                            get(3, i) * m.get(j, 3));
+            mat->_set(i, j, get(i, 0) * m.get(0, j) +
+                            get(i, 1) * m.get(1, j) +
+                            get(i, 2) * m.get(2, j) +
+                            get(i, 3) * m.get(3, j));
         }
     }
     return *mat;

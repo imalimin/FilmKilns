@@ -8,6 +8,7 @@
 #include "AlLayerMeasure.h"
 #include "AlVec4.h"
 #include "AlMath.h"
+#include "Logcat.h"
 
 AlLayerMeasure::AlLayerMeasure() : Object() {
 
@@ -85,7 +86,7 @@ void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &target,
 
 void AlLayerMeasure::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
                                          AlVec2 &rightBottom, AlVec2 &rightTop) {
-    AlMatrix mat = oMat * tMat;
+    AlMatrix mat = tMat * oMat;
     AlVec4 lt(lRectF.left, lRectF.top);
     AlVec4 lb(lRectF.left, lRectF.bottom);
     AlVec4 rb(lRectF.right, lRectF.bottom);
@@ -97,7 +98,7 @@ void AlLayerMeasure::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
 }
 
 HwResult AlLayerMeasure::measure(AlImageLayerDrawModel &drawModel) {
-    drawModel.mat = oMat * tMat;
+    drawModel.mat = tMat * oMat;
     drawModel.vertexRectF = lRectF;
     return Hw::SUCCESS;
 }
