@@ -76,7 +76,6 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                 processor?.postRotation(getCurrentLayer(), dr)
             } else {
                 alpha += (dr.num / dr.den.toDouble())
-                processor?.cancelAlignCrop(getCurrentLayer())
                 processor?.ensureAlignCrop(getCurrentLayer(),
                         AlRational((alpha * 100000).toInt(), 100000))
             }

@@ -257,26 +257,9 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     auto *layer = _getLayer(id);
     if (layer) {
         layer->removeCropOperator();
-        Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
         transToCanvasPos(left, top);
         transToCanvasPos(right, bottom);
-        Logcat::i(TAG, "[%f, %f], [%f, %f]", left, top, right, bottom);
-        auto *opt = AlOperateFactory::crop(left, top, right, bottom);
-        AlRational r = layer->getRotation();
-        r.num = -r.num;
-        AlVec2 pos = layer->getPosition();
-        pos.x = -pos.x;
-        pos.y = -pos.y;
-        ((AlCropOperateModel *) opt)->setScale(layer->getScale().x, layer->getScale().y);
-        ((AlCropOperateModel *) opt)->setRotation(r);
-        ((AlCropOperateModel *) opt)->setPosition(pos);
-        layer->addOperator(opt);
-#ifndef ENABLE_CROP_DEBUG
-        AlRational nr = AlRational();
-        layer->setScale(1, 1);
-        layer->setRotation(nr);
-        layer->setPosition(0, 0);
-#endif
+        layer->addOperator(AlOperateFactory::crop(left, top, right, bottom));
         invalidate();
         return Hw::SUCCESS;
     }

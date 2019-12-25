@@ -15,7 +15,7 @@
 #define TAG "AlCropOperateModel"
 
 AlCropOperateModel::AlCropOperateModel() : AlAbsOperateModel() {
-
+    invalidate = true;
 }
 
 AlCropOperateModel::AlCropOperateModel(const AlCropOperateModel &o)
@@ -24,7 +24,7 @@ AlCropOperateModel::AlCropOperateModel(const AlCropOperateModel &o)
 }
 
 AlCropOperateModel::~AlCropOperateModel() {
-
+    invalidate = false;
 }
 
 void AlCropOperateModel::setRect(float left, float top, float right, float bottom) {
@@ -32,80 +32,64 @@ void AlCropOperateModel::setRect(float left, float top, float right, float botto
     invalidate = true;
 }
 
-void AlCropOperateModel::setScale(float scaleX, float scaleY) {
-    this->scale.x = scaleX;
-    this->scale.y = scaleY;
-    invalidate = true;
-}
-
-void AlCropOperateModel::setRotation(AlRational &r) {
-    this->rotation.num = r.num;
-    this->rotation.den = r.den;
-    invalidate = true;
-}
-
-void AlCropOperateModel::setPosition(AlVec2 &position) {
-    this->position.x = position.x;
-    this->position.y = position.y;
-    invalidate = true;
-}
-
 HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
                                      AlImageLayerDrawModel *description) {
-    AlSize layerSize = layer.getSize();
-    AlRectF cropRectF = rectF;
-    AlPointF layerPos = position;
-    AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
-    AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
-    AlPositionTranslator::translate(canvasSize, layerSize, layerPos.x, layerPos.y);
+    if (invalidate) {
+        invalidate = false;
+        AlSize layerSize = layer.getSize();
+        AlRectF cropRectF = rectF;
+        AlVec2 scale = layer.getScale();
+        AlRational rotation = layer.getRotation();
+        AlPointF layerPos = layer.getPosition();
+        rotation.num = rotation.num;
+        layerPos.x = -layerPos.x;
+        layerPos.y = -layerPos.y;
+        AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
+        AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
+        AlPositionTranslator::translate(canvasSize, layerSize, layerPos.x, layerPos.y);
 
-    double alpha = AlMath::PI * rotation.num / rotation.den;
-    AlSize cropSize(layerSize.width * cropRectF.getWidth() / 2.0f,
-                    layerSize.height * cropRectF.getHeight() / 2.0f);
-    aMeasure.updateOrthogonal(cropSize, layerSize);
+        double alpha = -AlMath::PI * rotation.num / rotation.den;
+        cropSize = AlSize(layerSize.width * cropRectF.getWidth() / 2.0f,
+                          layerSize.height * cropRectF.getHeight() / 2.0f);
+        aMeasure.updateOrthogonal(cropSize, layerSize);
 
-    float dx = (cropRectF.left + cropRectF.right) / 2.0f + layerPos.x;
-    float dy = (cropRectF.top + cropRectF.bottom) / 2.0f + layerPos.y;
-    dx /= scale.x;
-    dy /= scale.y;
-    Logcat::i(TAG, "dx=%f, dy=%f", dx, dy);
+        float dx = (cropRectF.left + cropRectF.right) / 2.0f + layerPos.x;
+        float dy = (cropRectF.top + cropRectF.bottom) / 2.0f + layerPos.y;
+        dx /= scale.x;
+        dy /= scale.y;
 
-    if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
-        aMeasure.setScale(cropRectF.getWidth() / 2.0f / scale.x,
-                          cropRectF.getWidth() / 2.0f / scale.y);
-    } else {
-        aMeasure.setScale(cropRectF.getHeight() / 2.0f / scale.x,
-                          cropRectF.getHeight() / 2.0f / scale.y);
+        if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
+            aMeasure.setScale(cropRectF.getWidth() / 2.0f / scale.x,
+                              cropRectF.getWidth() / 2.0f / scale.y);
+        } else {
+            aMeasure.setScale(cropRectF.getHeight() / 2.0f / scale.x,
+                              cropRectF.getHeight() / 2.0f / scale.y);
+        }
+        aMeasure.setRotation(alpha);
+        aMeasure.setTranslate(dx, dy, alpha, 1, -1);
+
+        AlVec2 lt;
+        AlVec2 lb;
+        AlVec2 rb;
+        AlVec2 rt;
+        aMeasure.measureTransLORectF(lt, lb, rb, rt);
+        quad.setLeftTop((lt + 1.0f) / 2.0f);
+        quad.setLeftBottom((lb + 1.0f) / 2.0f);
+        quad.setRightBottom((rb + 1.0f) / 2.0f);
+        quad.setRightTop((rt + 1.0f) / 2.0f);
+#ifndef ENABLE_CROP_DEBUG
+        AlRational nr = AlRational();
+        layer.setScale(1, 1);
+        layer.setRotation(nr);
+        layer.setPosition(0, 0);
+#endif
     }
-    aMeasure.setRotation(alpha);
-    aMeasure.setTranslate(dx, dy, alpha, 1, -1);
-
-    AlVec2 lt;
-    AlVec2 lb;
-    AlVec2 rb;
-    AlVec2 rt;
-    aMeasure.measureTransLORectF(lt, lb, rb, rt);
-    description->cropQuad.setLeftTop((lt + 1.0f) / 2.0f);
-    description->cropQuad.setLeftBottom((lb + 1.0f) / 2.0f);
-    description->cropQuad.setRightBottom((rb + 1.0f) / 2.0f);
-    description->cropQuad.setRightTop((rt + 1.0f) / 2.0f);
-//    description->cropQuad.mirrorVertical();
 #ifndef ENABLE_CROP_DEBUG
     layer.setSize(cropSize);
-//    ///TODO 精度损失
-//    AlRational nr;
-//    nr.den = 100000;
-//    ///rotation和layer.getRotation()反向
-//    nr.den = static_cast<int32_t>((layer.getRotation().toDouble() + rotation.toDouble()) * nr.den);
-//    layer.setScale(layer.getScale().x / scale.x, layer.getScale().y / scale.y);
-//    layer.setRotation(nr);
-//    layer.setPosition(layer.getPosition().x - position.x, layer.getPosition().y - position.y);
 #endif
-    Logcat::i(TAG, "[%f,%f], [%f,%f]",
-              description->cropQuad.leftTop().x, description->cropQuad.leftTop().y,
-              description->cropQuad.rightTop().x, description->cropQuad.rightTop().y);
-    Logcat::i(TAG, "[%f,%f], [%f,%f]",
-              description->cropQuad.leftBottom().x, description->cropQuad.leftBottom().y,
-              description->cropQuad.rightBottom().x, description->cropQuad.rightBottom().y);
+    description->cropQuad.setLeftTop(quad.leftTop());
+    description->cropQuad.setLeftBottom(quad.leftBottom());
+    description->cropQuad.setRightBottom(quad.rightBottom());
+    description->cropQuad.setRightTop(quad.rightTop());
     return Hw::SUCCESS;
 }

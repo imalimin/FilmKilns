@@ -26,22 +26,12 @@ public:
 
     void setRect(float left, float top, float right, float bottom);
 
-    void setScale(float scaleX, float scaleY);
-
-    void setRotation(AlRational &r);
-
-    void setPosition(AlVec2 &position);
-
 private:
     bool invalidate = false;
     /// 裁剪框区域，相对于画布坐标系
     AlRectF rectF;
-    /// 图层旋转弧度
-    AlRational rotation;
-    /// 图层坐标，相对于画布坐标系
-    AlVec2 position;
-    /// 图层缩放系数
-    AlVec2 scale;
+    AlSize cropSize;
+    AlQuad quad;
     AlLayerMeasure aMeasure;
 };
 
