@@ -6,6 +6,7 @@
 #define HWVC_ANDROID_ALMATRIX_H
 
 #include "Object.h"
+#include "AlVec4.h"
 
 al_class(AlMatrix) {
 public:
@@ -28,6 +29,8 @@ public:
     virtual void setTranslate(float x, float y);
 
     AlMatrix &operator*(AlMatrix m);
+
+    AlVec4 &operator*(AlVec4 v);
 
     /// 根据下标取矩阵的值
     /// \param row 行

@@ -9,7 +9,6 @@
 #define HWVC_ANDROID_ALVEC4_H
 
 #include "Object.h"
-#include "AlMatrix.h"
 #include "AlVec2.h"
 
 al_class(AlVec4) {
@@ -24,11 +23,6 @@ public:
     /// \param i 下标，0为x，1为y，以此类推
     /// \param val 值
     void set(int32_t i, float val);
-
-    /// 向量于矩阵相乘
-    /// \param mat 矩阵
-    /// \param pre 前乘或后乘，默认true表示前乘
-    AlVec4 &multiply(AlMatrix mat, bool pre = true);
 
     AlVec2 xy();
 

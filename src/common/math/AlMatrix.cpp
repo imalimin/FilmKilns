@@ -80,6 +80,20 @@ AlMatrix &AlMatrix::operator*(AlMatrix m) {
     return *mat;
 }
 
+AlVec4 &AlMatrix::operator*(AlVec4 v) {
+    static AlVec4 *vec;
+    if (vec == nullptr) {
+        vec = new AlVec4();
+    }
+    for (int i = 0; i < 4; i++) {
+        vec->set(i, get(i, 0) * v.x +
+                    get(i, 1) * v.y +
+                    get(i, 2) * v.z +
+                    get(i, 3) * v.w);
+    }
+    return *vec;
+}
+
 void AlMatrix::dump() {
     Logcat::i(TAG, "1: {%f, %f, %f, %f}", get(0, 0), get(0, 1), get(0, 2), get(0, 3));
     Logcat::i(TAG, "2: {%f, %f, %f, %f}", get(1, 0), get(1, 1), get(1, 2), get(1, 3));
