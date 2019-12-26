@@ -3,10 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion target_version
     defaultConfig {
-        minSdkVersion 22
-        targetSdkVersion 26
+        minSdkVersion min_version
+        targetSdkVersion target_version
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
         externalNativeBuild {

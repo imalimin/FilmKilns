@@ -42,5 +42,6 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation project(':OfficeUIFabric')
     implementation project(':codec_native')
+    implementation project(':alcore')
     implementation project(':hwcommon')
 }
