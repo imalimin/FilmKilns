@@ -10,8 +10,9 @@ class HWVC {
             System.loadLibrary("yuv")
             System.loadLibrary("hwvcom")
             System.loadLibrary("albitmap")
-            System.loadLibrary("hwvc_codec")
             System.loadLibrary("hwvc_render")
+            System.loadLibrary("hwvc_codec")
+            System.loadLibrary("alimage")
             System.loadLibrary("hwvc_native")
         }
     }

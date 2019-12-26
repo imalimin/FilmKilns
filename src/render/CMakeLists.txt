@@ -74,7 +74,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
             ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
-            ${PROJECT_SOURCE_DIR}/platform/*.cp
+            ${PROJECT_SOURCE_DIR}/platform/*.cpp
             # Android platform
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/*.cpp

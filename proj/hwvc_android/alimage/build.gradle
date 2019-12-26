@@ -8,16 +8,16 @@ android {
         targetSdkVersion target_version
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
-        externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_ARM_NEON=TRUE",
-                        "-DANDROID_CPP_FEATURES=rtti exceptions"
-            }
-        }
-        ndk {
-            stl "libstdc++"
-            abiFilters "armeabi-v7a", "arm64-v8a"
-        }
+//        externalNativeBuild {
+//            cmake {
+//                arguments "-DANDROID_ARM_NEON=TRUE",
+//                        "-DANDROID_CPP_FEATURES=rtti exceptions"
+//            }
+//        }
+//        ndk {
+//            stl "libstdc++"
+//            abiFilters "armeabi-v7a", "arm64-v8a"
+//        }
     }
 
     buildTypes {
@@ -26,11 +26,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    externalNativeBuild {
-        cmake {
-            path "../../../src/al_image/CMakeLists.txt"
-        }
-    }
+//    externalNativeBuild {
+//        cmake {
+//            path "../../../src/al_image/CMakeLists.txt"
+//        }
+//    }
 }
 
 dependencies {

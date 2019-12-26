@@ -5,6 +5,7 @@ include_directories(
         ${PROJECT_SOURCE_DIR}/include
         ${HWVC_PATH}/common/include
         ${HWVC_PATH}/al_bitmap/include
+        ${HWVC_PATH}/al_image/include
         ${HWVC_PATH}/codec/include
         ${HWVC_PATH}/render/include
 )
@@ -68,6 +69,7 @@ target_link_libraries( # Specifies the target library.
         hwvc_native
         albitmap
         hwvcom
+        alimage
         hwvc_codec
         hwvc_render
         android

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(al_image LANGUAGES C CXX)
+project(alimage LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}/include
@@ -39,12 +39,12 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     endif ()
 endif ()
 #将Warning视为Error
-#if (${ENABLE_BAN_WARNING})
-#    foreach (var ${WARNING_CONFIGS})
-#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
-#        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
-#    endforeach (var)
-#endif ()
+if (${ENABLE_BAN_WARNING})
+    foreach (var ${WARNING_CONFIGS})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${var}")
+    endforeach (var)
+endif ()
 message(STATUS "al_render CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 if (ANDROID)
@@ -60,8 +60,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/units/*.cpp
     )
 else ()
-    # TODO other platform
-    message(STATUS "hwrender IOS platform.")
+    #TODO other platform
     file(
             GLOB
             SOURCES
@@ -74,32 +73,27 @@ else ()
     )
 endif ()
 message(STATUS "${SOURCES}")
-add_library( # Sets the name of the library.
-        al_image
-
-        # Sets the library as a shared library.
+add_library(
+        alimage
         SHARED
-
-        # Provides a relative path to your source file(s).
         ${SOURCES}
-        )
+)
 
 if (ANDROID)
-    find_library( # Sets the name of the path variable.
+    find_library(
             log-lib
-
-            # Specifies the name of the NDK library that
-            # you want CMake to locate.
             log)
-    target_link_libraries( # Specifies the target library.
-            al_image
-            albitmap
+    target_link_libraries(
+            alimage
             hwvcom
+            albitmap
+            hwvc_render
             ${log-lib})
 else ()
     # TODO other platform
-    target_link_libraries( # Specifies the target library.
-            al_image
+    target_link_libraries(
+            alimage
+            hwvcom
             albitmap
-            hwvcom)
+            hwvc_render)
 endif ()

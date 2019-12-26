@@ -78,7 +78,6 @@ private:
     AlMatrix matrix;
     bool requestUpdateLocation = false;
     uint32_t vbo = 0;
-    int rotation = 0;
 };
 
 
