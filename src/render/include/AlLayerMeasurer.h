@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALLAYERMEASURE_H
-#define HWVC_ANDROID_ALLAYERMEASURE_H
+#ifndef HWVC_ANDROID_ALLAYERMEASURER_H
+#define HWVC_ANDROID_ALLAYERMEASURER_H
 
 #include "Object.h"
 #include "AlOrthMatrix.h"
@@ -23,13 +23,13 @@
 /// 3.GL变换矩阵
 /// 4.GL顶点
 /// 5.变换后新图像的四个位置坐标
-al_class(AlLayerMeasure) {
+al_class(AlLayerMeasurer) {
 public:
-    AlLayerMeasure();
+    AlLayerMeasurer();
 
-    AlLayerMeasure(const AlLayerMeasure &o);
+    AlLayerMeasurer(const AlLayerMeasurer &o);
 
-    ~AlLayerMeasure();
+    ~AlLayerMeasurer();
 
     /// 对target size进行归一化，并把src size正交变换到target坐标范围
     /// 比如对图层和画布进行正交投影变化
@@ -97,4 +97,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALLAYERMEASURE_H
+#endif //HWVC_ANDROID_ALLAYERMEASURER_H

@@ -10,7 +10,7 @@
 
 #include "Unit.h"
 #include "AlImageLayer.h"
-#include "AlLayerMeasure.h"
+#include "AlLayerMeasurer.h"
 #include "HwResult.h"
 #include "AlSize.h"
 #include "AlImgLayerDescription.h"
@@ -46,7 +46,7 @@ private:
     void notifyCanvas(AlImageLayerDrawModel *description);
 
 private:
-    AlLayerMeasure aMeasure;
+    AlLayerMeasurer aMeasurer;
     AlSize aCanvasSize;
 };
 

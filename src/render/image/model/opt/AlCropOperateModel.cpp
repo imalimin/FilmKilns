@@ -51,7 +51,7 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
         double alpha = -AlMath::PI * rotation.num / rotation.den;
         cropSize = AlSize(layerSize.width * cropRectF.getWidth() / 2.0f,
                           layerSize.height * cropRectF.getHeight() / 2.0f);
-        aMeasure.updateOrthogonal(cropSize, layerSize);
+        aMeasurer.updateOrthogonal(cropSize, layerSize);
 
         float dx = (cropRectF.left + cropRectF.right) / 2.0f + layerPos.x;
         float dy = (cropRectF.top + cropRectF.bottom) / 2.0f + layerPos.y;
@@ -59,20 +59,20 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
         dy /= scale.y;
 
         if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
-            aMeasure.setScale(cropRectF.getWidth() / 2.0f / scale.x,
+            aMeasurer.setScale(cropRectF.getWidth() / 2.0f / scale.x,
                               cropRectF.getWidth() / 2.0f / scale.y);
         } else {
-            aMeasure.setScale(cropRectF.getHeight() / 2.0f / scale.x,
+            aMeasurer.setScale(cropRectF.getHeight() / 2.0f / scale.x,
                               cropRectF.getHeight() / 2.0f / scale.y);
         }
-        aMeasure.setRotation(alpha);
-        aMeasure.setTranslate(dx, dy, alpha, 1, -1);
+        aMeasurer.setRotation(alpha);
+        aMeasurer.setTranslate(dx, dy, alpha, 1, -1);
 
         AlVec2 lt;
         AlVec2 lb;
         AlVec2 rb;
         AlVec2 rt;
-        aMeasure.measureTransLORectF(lt, lb, rb, rt);
+        aMeasurer.measureTransLORectF(lt, lb, rb, rt);
         quad.setLeftTop((lt + 1.0f) / 2.0f);
         quad.setLeftBottom((lb + 1.0f) / 2.0f);
         quad.setRightBottom((rb + 1.0f) / 2.0f);

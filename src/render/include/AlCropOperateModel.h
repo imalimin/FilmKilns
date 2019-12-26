@@ -11,7 +11,7 @@
 #include "AlAbsOperateModel.h"
 #include "AlRectF.h"
 #include "AlRational.h"
-#include "AlLayerMeasure.h"
+#include "AlLayerMeasurer.h"
 
 al_class_ex(AlCropOperateModel, AlAbsOperateModel) {
 public:
@@ -32,7 +32,7 @@ private:
     AlRectF rectF;
     AlSize cropSize;
     AlQuad quad;
-    AlLayerMeasure aMeasure;
+    AlLayerMeasurer aMeasurer;
     AlVec2 scale;
     AlRational rotation;
     AlVec2 position;

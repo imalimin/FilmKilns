@@ -5,41 +5,41 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlLayerMeasure.h"
+#include "AlLayerMeasurer.h"
 #include "AlVec4.h"
 #include "AlMath.h"
 #include "Logcat.h"
 
-AlLayerMeasure::AlLayerMeasure() : Object() {
+AlLayerMeasurer::AlLayerMeasurer() : Object() {
 
 }
 
-AlLayerMeasure::AlLayerMeasure(const AlLayerMeasure &o) : Object() {
+AlLayerMeasurer::AlLayerMeasurer(const AlLayerMeasurer &o) : Object() {
 
 }
 
-AlLayerMeasure::~AlLayerMeasure() {
+AlLayerMeasurer::~AlLayerMeasurer() {
 
 }
 
-void AlLayerMeasure::updateOrthogonal(AlSize &src, AlSize &target) {
+void AlLayerMeasurer::updateOrthogonal(AlSize &src, AlSize &target) {
     _calculateRect(src, target, lRectF, cRectF);
     oMat.update(cRectF.left, cRectF.right, cRectF.bottom, cRectF.top, -1.0f, 1.0f);
 }
 
-void AlLayerMeasure::setScale(float scaleX, float scaleY) {
+void AlLayerMeasurer::setScale(float scaleX, float scaleY) {
     tMat.setScale(scaleX, scaleY);
 }
 
-void AlLayerMeasure::setRotation(float rotation) {
+void AlLayerMeasurer::setRotation(float rotation) {
     tMat.setRotation(rotation);
 }
 
-void AlLayerMeasure::setTranslate(float x, float y) {
+void AlLayerMeasurer::setTranslate(float x, float y) {
     setTranslate(x, y, 0.0f);
 }
 
-void AlLayerMeasure::setTranslate(float x, float y, float alpha, float scaleX, float scaleY) {
+void AlLayerMeasurer::setTranslate(float x, float y, float alpha, float scaleX, float scaleY) {
     float nx = x * cRectF.getWidth() / 2.0f;
     float ny = y * cRectF.getHeight() / 2.0f;
     ///x = dx * cos(alpha) + dy * sin(alpha)
@@ -49,7 +49,7 @@ void AlLayerMeasure::setTranslate(float x, float y, float alpha, float scaleX, f
 }
 
 
-void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &target,
+void AlLayerMeasurer::_calculateRect(AlSize &src, AlSize &target,
                                     AlRectF &srcRectF, AlRectF &targetRectF) {
     float aspectRatio = target.width > target.height ?
                         (float) target.width / (float) target.height :
@@ -84,7 +84,7 @@ void AlLayerMeasure::_calculateRect(AlSize &src, AlSize &target,
     }
 }
 
-void AlLayerMeasure::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
+void AlLayerMeasurer::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
                                          AlVec2 &rightBottom, AlVec2 &rightTop) {
     AlMatrix mat = tMat * oMat;
     AlVec4 lt(lRectF.left, lRectF.top);
@@ -97,16 +97,16 @@ void AlLayerMeasure::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
     rightTop.set((rt * mat).xy());
 }
 
-HwResult AlLayerMeasure::measure(AlImageLayerDrawModel &drawModel) {
+HwResult AlLayerMeasurer::measure(AlImageLayerDrawModel &drawModel) {
     drawModel.mat = tMat * oMat;
     drawModel.vertexRectF = lRectF;
     return Hw::SUCCESS;
 }
 
-AlRectF AlLayerMeasure::getSrcPosRectF() {
+AlRectF AlLayerMeasurer::getSrcPosRectF() {
     return lRectF;
 }
 
-AlRectF AlLayerMeasure::getTargetPosRectF() {
+AlRectF AlLayerMeasurer::getTargetPosRectF() {
     return cRectF;
 }
