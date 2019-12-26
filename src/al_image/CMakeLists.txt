@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(alimage LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
+            ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../common/include
             ${PROJECT_SOURCE_DIR}/../render/include
@@ -58,6 +59,8 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/model/*.cpp
             ${PROJECT_SOURCE_DIR}/model/opt/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
+            #Header
+            ${PROJECT_SOURCE_DIR}/include/*.h
     )
 else ()
     #TODO other platform

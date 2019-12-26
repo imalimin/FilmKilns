@@ -6,6 +6,7 @@ set(YUV ${PREBUILD_SHARED}/yuv)
 if (ANDROID)
     include_directories(
             # common
+            ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/../common/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
             ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
@@ -97,6 +98,8 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/translator/*.cpp
             ${PROJECT_SOURCE_DIR}/muxer/*.cpp
             ${PROJECT_SOURCE_DIR}/core/*.cpp
+            #Header
+            ${PROJECT_SOURCE_DIR}/include/*.h
             # android
             ${PROJECT_SOURCE_DIR}/platform/android/decoder/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/encoder/*.cpp

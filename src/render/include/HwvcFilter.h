@@ -10,7 +10,7 @@
 #include "HwAbsFilter.h"
 #include "AlPngDecoder.h"
 #include <string>
-#include "../tinyxml/FilterReader.h"
+#include "../xml/FilterReader.h"
 
 using namespace std;
 

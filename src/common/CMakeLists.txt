@@ -14,6 +14,7 @@ set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 # 引入cpufeatures模块
 include_directories(
         ${ANDROID_NDK}/sources/android/cpufeatures
+        ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
 )
 
@@ -61,7 +62,8 @@ file(
         ${PROJECT_SOURCE_DIR}/media/sles/*.cpp
         ${PROJECT_SOURCE_DIR}/sources/*.cpp
         ${PROJECT_SOURCE_DIR}/math/*.cpp
-
+        ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
+        #Header
         ${PROJECT_SOURCE_DIR}/include/*.h
 )
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")

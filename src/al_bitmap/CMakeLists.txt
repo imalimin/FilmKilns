@@ -12,11 +12,14 @@ set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
 set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 set(WEBP ${PREBUILD_STATIC}/libwebp/libs/${ANDROID_ABI})
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/../common/include)
-include_directories(${PREBUILD_STATIC}/libturbojpeg/include)
-include_directories(${PREBUILD_STATIC}/libpng/include)
-include_directories(${PREBUILD_STATIC}/libwebp/include)
+include_directories(
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/../common/include
+        ${PREBUILD_STATIC}/libturbojpeg/include
+        ${PREBUILD_STATIC}/libpng/include
+        ${PREBUILD_STATIC}/libwebp/include
+)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
@@ -93,6 +96,8 @@ file(
         SOURCES
         ${PROJECT_SOURCE_DIR}/core/*.cpp
         ${PROJECT_SOURCE_DIR}/image/*.cpp
+        #Header
+        ${PROJECT_SOURCE_DIR}/include/*.h
 )
 
 add_library(

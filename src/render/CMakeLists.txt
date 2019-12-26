@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(hwvc_render LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
+            ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../common/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
@@ -12,6 +13,7 @@ if (ANDROID)
     )
 else ()
     include_directories(
+            ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../common/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
@@ -73,7 +75,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/units/image/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
+            ${PROJECT_SOURCE_DIR}/xml/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
             # Android platform
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
@@ -83,6 +85,8 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/texture/HwAbsFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwAndroidFrameBuffer.cpp
+            #Header
+            ${PROJECT_SOURCE_DIR}/include/*.h
     )
 else ()
     # TODO other platform
@@ -99,7 +103,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/units/image/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/tinyxml/*.cpp
+            ${PROJECT_SOURCE_DIR}/xml/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
     )
 endif ()
