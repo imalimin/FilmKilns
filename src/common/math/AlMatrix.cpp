@@ -1,6 +1,9 @@
-//
-// Created by mingyi.li on 2019-11-27.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
 #include "AlMatrix.h"
 #include "Logcat.h"
@@ -64,6 +67,19 @@ void AlMatrix::setTranslate(float x, float y) {
     _set(3, 1, y);
 }
 
+AlMatrix &AlMatrix::T() {
+    static AlMatrix *mat;
+    if (mat == nullptr) {
+        mat = new AlMatrix();
+    }
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            mat->_set(i, j, get(j, i));
+        }
+    }
+    return *mat;
+}
+
 AlMatrix &AlMatrix::operator*(AlMatrix m) {
     static AlMatrix *mat;
     if (mat == nullptr) {
@@ -80,19 +96,19 @@ AlMatrix &AlMatrix::operator*(AlMatrix m) {
     return *mat;
 }
 
-AlVec4 &AlMatrix::operator*(AlVec4 v) {
-    static AlVec4 *vec;
-    if (vec == nullptr) {
-        vec = new AlVec4();
-    }
-    for (int i = 0; i < 4; i++) {
-        vec->set(i, get(i, 0) * v.x +
-                    get(i, 1) * v.y +
-                    get(i, 2) * v.z +
-                    get(i, 3) * v.w);
-    }
-    return *vec;
-}
+//AlVec4 &AlMatrix::operator*(AlVec4 v) {
+//    static AlVec4 *vec;
+//    if (vec == nullptr) {
+//        vec = new AlVec4();
+//    }
+//    for (int i = 0; i < 4; i++) {
+//        vec->set(i, get(i, 0) * v.x +
+//                    get(i, 1) * v.y +
+//                    get(i, 2) * v.z +
+//                    get(i, 3) * v.w);
+//    }
+//    return *vec;
+//}
 
 void AlMatrix::dump() {
     Logcat::i(TAG, "1: {%f, %f, %f, %f}", get(0, 0), get(0, 1), get(0, 2), get(0, 3));

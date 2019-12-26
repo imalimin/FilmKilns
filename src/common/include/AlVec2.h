@@ -12,6 +12,7 @@
 /**
  * position or scale params
  */
+/// [x,y]
 al_class(AlVec2) {
 public:
     static void swap(AlVec2 *vec1, AlVec2 *vec2);

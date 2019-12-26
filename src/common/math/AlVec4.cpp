@@ -48,6 +48,20 @@ void AlVec4::set(int32_t i, float val) {
     }
 }
 
+AlVec4 &AlVec4::operator*(AlMatrix &m) {
+    static AlVec4 *vec;
+    if (vec == nullptr) {
+        vec = new AlVec4();
+    }
+    for (int i = 0; i < 4; i++) {
+        vec->set(i, x * m.get(0, i) +
+                    y * m.get(1, i) +
+                    z * m.get(2, i) +
+                    w * m.get(3, i));
+    }
+    return *vec;
+}
+
 AlVec2 AlVec4::xy() {
     return AlVec2(x, y);
 }

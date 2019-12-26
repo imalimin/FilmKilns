@@ -91,10 +91,10 @@ void AlLayerMeasure::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
     AlVec4 lb(lRectF.left, lRectF.bottom);
     AlVec4 rb(lRectF.right, lRectF.bottom);
     AlVec4 rt(lRectF.right, lRectF.top);
-    leftTop.set((mat * lt).xy());
-    leftBottom.set((mat * lb).xy());
-    rightBottom.set((mat * rb).xy());
-    rightTop.set((mat * rt).xy());
+    leftTop.set((lt * mat).xy());
+    leftBottom.set((lb * mat).xy());
+    rightBottom.set((rb * mat).xy());
+    rightTop.set((rt * mat).xy());
 }
 
 HwResult AlLayerMeasure::measure(AlImageLayerDrawModel &drawModel) {

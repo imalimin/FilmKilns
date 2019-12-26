@@ -1,6 +1,9 @@
-//
-// Created by mingyi.li on 2019-11-27.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
 #ifndef HWVC_ANDROID_ALMATRIX_H
 #define HWVC_ANDROID_ALMATRIX_H
@@ -8,6 +11,9 @@
 #include "Object.h"
 #include "AlVec4.h"
 
+class AlVec4;
+
+/// [4x4] matrix
 al_class(AlMatrix) {
 public:
     static AlMatrix &fromArray(float *array);
@@ -20,17 +26,20 @@ public:
 
     virtual void setScale(float scaleX, float scaleY);
 
-    /**
-     * 旋转
-     * @param rotation 旋转弧度
-     */
     virtual void setRotation(float rotation);
 
     virtual void setTranslate(float x, float y);
 
+    /// 求转置矩阵
+    /// \return 转置矩阵
+    AlMatrix &T();
+
     AlMatrix &operator*(AlMatrix m);
 
-    AlVec4 &operator*(AlVec4 v);
+    /// [4x4] x [4x1]
+    /// \param v
+    /// \return
+//    AlVec4 &operator*(AlVec4 v);
 
     /// 根据下标取矩阵的值
     /// \param row 行
