@@ -33,6 +33,9 @@ private:
     AlSize cropSize;
     AlQuad quad;
     AlLayerMeasure aMeasure;
+    AlVec2 scale;
+    AlRational rotation;
+    AlVec2 position;
 };
 
 

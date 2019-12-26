@@ -36,12 +36,12 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
                                      AlImageLayerDrawModel *description) {
     if (invalidate) {
         invalidate = false;
+        this->scale = layer.getScale();
+        this->rotation = layer.getRotation();
+        this->position = layer.getPosition();
         AlSize layerSize = layer.getSize();
         AlRectF cropRectF = rectF;
-        AlVec2 scale = layer.getScale();
-        AlRational rotation = layer.getRotation();
-        AlPointF layerPos = layer.getPosition();
-        rotation.num = rotation.num;
+        AlPointF layerPos = this->position;
         layerPos.x = -layerPos.x;
         layerPos.y = -layerPos.y;
         AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
@@ -77,14 +77,15 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
         quad.setLeftBottom((lb + 1.0f) / 2.0f);
         quad.setRightBottom((rb + 1.0f) / 2.0f);
         quad.setRightTop((rt + 1.0f) / 2.0f);
-#ifndef ENABLE_CROP_DEBUG
-        AlRational nr = AlRational();
-        layer.setScale(1, 1);
-        layer.setRotation(nr);
-        layer.setPosition(0, 0);
-#endif
     }
 #ifndef ENABLE_CROP_DEBUG
+    AlRational nr = AlRational();
+    nr.den = 100000;
+    nr.num = static_cast<int32_t>((layer.getRotation().toFloat() - this->rotation.toFloat()) *
+                                  nr.den);
+    layer.setScale(layer.getScale().x / scale.x, layer.getScale().y / scale.y);
+    layer.setRotation(nr);
+    layer.setPosition(layer.getPosition().x - position.x, layer.getPosition().y - position.y);
     layer.setSize(cropSize);
 #endif
     description->cropQuad.setLeftTop(quad.leftTop());
