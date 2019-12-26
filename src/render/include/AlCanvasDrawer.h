@@ -9,7 +9,6 @@
 #define HWVC_ANDROID_ALCANVASDRAWER_H
 
 #include "HwAbsFilter.h"
-#include "HwMatrix.h"
 #include "AlOrthMatrix.h"
 #include "AlRectF.h"
 #include "AlSize.h"

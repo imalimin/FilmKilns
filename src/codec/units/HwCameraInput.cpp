@@ -9,7 +9,8 @@
 #include <GLES2/gl2.h>
 #include "Egl.h"
 #include "NativeWindow.h"
-#include "../include/HwFBObject.h"
+#include "HwFBObject.h"
+#include "AlMath.h"
 
 HwCameraInput::HwCameraInput(string alias) : Unit(alias) {
     registerEvent(EVENT_CAMERA_INVALIDATE,
@@ -75,16 +76,15 @@ bool HwCameraInput::onDestroy(AlMessage *msg) {
 }
 
 bool HwCameraInput::eventInvalidate(AlMessage *msg) {
-    int32_t size = msg->arg1;
     int64_t tsInNs = msg->arg2;
-    int32_t h = size & 0xFFFF;
-    int32_t w = size >> 16;
+    int width = getInt32("width");
+    int height = getInt32("height");
     if (msg->obj) {
-        HwMatrix *matrix = dynamic_cast<HwMatrix *>(msg->obj);
-        updateMatrix(w, h, matrix);
+        AlMatrix *m = msg->getObj<AlMatrix *>();
+        updateMatrix(width, height, m);
     }
-    draw(w, h);
-    notify(tsInNs, w, h);
+    draw(width, height);
+    notify(tsInNs, width, height);
     return true;
 }
 
@@ -126,17 +126,15 @@ void HwCameraInput::mackCurrent() {
     }
 }
 
-void HwCameraInput::updateMatrix(int32_t w, int32_t h, HwMatrix *matrix) {
-    HwMatrix scale;
-    float ratio = getInt32("camera_width") / (float) getInt32("camera_height");
-    if (ratio > w / (float) h) {
-        scale.scale(w / (h * ratio), 1.0f, 1.0f);
+void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
+    AlMatrix scale;
+    float vRatio = w / (float) h;
+    float cRatio = getInt32("camera_width") / (float) getInt32("camera_height");
+    if (cRatio > vRatio) {
+        scale.setScale(vRatio / cRatio, -1.0f);
     } else {
-        scale.scale(1.0f, h / (w / ratio), 1.0f);
+        scale.setScale(1.0f, -cRatio / vRatio);
     }
-    HwMatrix trans;
-    trans.rotate(0.0f, HwMatrix::PI, 0.0f);
-    matrix->multiplyBy(&trans);
-    scale.multiplyBy(matrix);
-    program->updateMatrix(&scale);
+    AlMatrix trans = scale * (*matrix);
+    program->updateMatrix(&trans);
 }

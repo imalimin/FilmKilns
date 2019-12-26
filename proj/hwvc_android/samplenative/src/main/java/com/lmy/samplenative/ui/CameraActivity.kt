@@ -30,7 +30,7 @@ class CameraActivity : BaseActivity() {
         surfaceView.keepScreenOn = true
         path = "${externalCacheDir.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
-        recorder?.setFormat(CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT)
+        recorder?.setFormat(544, 960)
         recorder?.prepare(surfaceView)
         recorder?.setOnRecordProgressListener {
             timeView.text = formator.format(Date(it / 1000))

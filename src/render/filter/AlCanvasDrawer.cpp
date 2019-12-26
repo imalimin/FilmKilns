@@ -40,13 +40,11 @@ HwProgram *AlCanvasDrawer::createProgram() {
 
 void AlCanvasDrawer::drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawStart(program, src, dest);
-    auto *m = HwMatrix::fromArray(matrix.data());
-    program->updateMatrix(m);
+    program->updateMatrix(&matrix);
     program->updateLocation(uv, vertex);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
-    delete m;
 }
 
 void AlCanvasDrawer::drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {

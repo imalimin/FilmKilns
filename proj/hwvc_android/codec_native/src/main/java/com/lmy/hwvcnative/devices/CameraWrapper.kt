@@ -9,22 +9,27 @@ package com.lmy.hwvcnative.devices
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
 import android.util.Log
+import java.lang.RuntimeException
 
 /**
  * Created by aliminabc@gmail.com on 2018/3/21.
  */
 class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
+                                        private val reqWidth: Int,
+                                        private val reqHeight: Int,
                                         private val tex: Int,
                                         private var onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener) {
     enum class CameraIndex { BACK, FRONT }
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
-        const val VIDEO_WIDTH = 544
-        const val VIDEO_HEIGHT = 960
-        fun open(index: CameraWrapper.CameraIndex, tex: Int, onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
+        fun open(index: CameraWrapper.CameraIndex, width: Int, height: Int, tex: Int,
+                 onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
                 : CameraWrapper {
-            return CameraWrapper(index, tex, onFrameAvailableListener)
+            if (width <= 0 || width <= 0) {
+                throw RuntimeException("Preview size must greater than 0")
+            }
+            return CameraWrapper(index, width, height, tex, onFrameAvailableListener)
         }
     }
 
@@ -88,7 +93,7 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
             return false
         }
         val cameraParam = mCamera!!.parameters
-        CameraHelper.setPreviewSize(cameraParam, VIDEO_WIDTH, VIDEO_HEIGHT)
+        CameraHelper.setPreviewSize(cameraParam, reqWidth, reqHeight)
         CameraHelper.setColorFormat(cameraParam)
         CameraHelper.setFocusMode(cameraParam)
         CameraHelper.setFps(cameraParam, 30)

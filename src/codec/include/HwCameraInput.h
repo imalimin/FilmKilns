@@ -35,7 +35,7 @@ private:
 
     void notify(int64_t tsInNs, int w, int h);
 
-    void updateMatrix(int32_t w, int32_t h, HwMatrix *matrix);
+    void updateMatrix(int32_t w, int32_t h, AlMatrix *matrix);
 
 private:
     Egl *egl = nullptr;

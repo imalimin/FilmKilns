@@ -11,6 +11,7 @@ import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.devices.CameraWrapper
 import com.lmy.hwvcnative.filter.Filter
+import java.lang.RuntimeException
 
 class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvailableListener {
     private var filter: Filter? = null
@@ -19,6 +20,8 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     private var onRecordProgressListener: ((Long) -> Unit)? = null
     private val mHandler = Handler(Looper.getMainLooper())
     private var mCameraIndex = CameraWrapper.CameraIndex.FRONT
+    private var videoWidth = 544
+    private var videoHeight = 960
 
     init {
         handler = create()
@@ -32,7 +35,9 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     fun setFormat(width: Int, height: Int, sampleFormat: Int = 102,
                   channels: Int = 2, sampleRate: Int = 44100) {
         if (0L == handler) return
-        setFormat(handler, width, height, sampleFormat, channels, sampleRate)
+        videoWidth = width
+        videoHeight = height
+        setFormat(handler, videoWidth, videoHeight, sampleFormat, channels, sampleRate)
     }
 
     private fun prepare(surface: Surface) {
@@ -93,7 +98,8 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     fun onHandleMessage(what: Int, arg1: Int) {
 //        Log.i("CameraActivity", "onHandleMessage $what")
         when (what) {
-            1 -> camera = CameraWrapper.open(mCameraIndex, arg1, this)
+            1 -> camera = CameraWrapper.open(mCameraIndex, videoWidth, videoHeight,
+                    arg1, this)
             2 -> camera?.release()
             4 -> {
                 mCameraIndex = if (CameraWrapper.CameraIndex.FRONT == mCameraIndex)
@@ -107,7 +113,6 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
                 camera?.draw()
                 if (0L != handler) {
                     invalidate(handler, camera!!.getMatrix(), camera!!.timestamp(),
-                            CameraWrapper.VIDEO_WIDTH, CameraWrapper.VIDEO_HEIGHT,
                             camera!!.cameraHeight, camera!!.cameraWidth)
                 }
             }
@@ -154,7 +159,7 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
     private external fun invalidate(handler: Long, matrix: FloatArray, tsInNs: Long,
-                                    w: Int, h: Int, cw: Int, ch: Int)
+                                    cw: Int, ch: Int)
 
     private external fun setOutputFilePath(handler: Long, filePath: String)
     private external fun setFormat(handler: Long, width: Int, height: Int, sampleFormat: Int,

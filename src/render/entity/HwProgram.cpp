@@ -223,6 +223,6 @@ int32_t HwProgram::getUniformLocation(string name) {
     return glGetUniformLocation(program, name.c_str());
 }
 
-void HwProgram::updateMatrix(HwMatrix *matrix) {
+void HwProgram::updateMatrix(AlMatrix *matrix) {
     this->matrix = *matrix;
 }

@@ -139,16 +139,14 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invalidate
-        (JNIEnv *env, jobject thiz, jlong handler, jfloatArray matrix, jlong tsInNs,
-         jint w, jint h, jint cw, jint ch) {
+        (JNIEnv *env, jobject thiz, jlong handler, jfloatArray matrix, jlong tsInNs, jint cw, jint ch) {
     if (handler) {
         if (matrix) {
             jfloat *pMatrix = env->GetFloatArrayElements(matrix, JNI_FALSE);
-            HwMatrix *m = HwMatrix::fromArray(pMatrix);
+            AlMatrix m = AlMatrix::fromArray(pMatrix);
             env->ReleaseFloatArrayElements(matrix, pMatrix, 0);
             getHandler(handler)->setCameraSize(cw, ch);
-            getHandler(handler)->invalidate(m, w, h, tsInNs);
-            delete m;
+            getHandler(handler)->invalidate(&m, tsInNs);
         }
     }
 }

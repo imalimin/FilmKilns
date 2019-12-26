@@ -52,7 +52,12 @@ public:
 
     void pause();
 
-    void invalidate(HwMatrix *matrix, int w, int h, int64_t tsInNs);
+    ///
+    /// \param matrix
+    /// \param w 视频宽度
+    /// \param h 视频高度
+    /// \param tsInNs 视频pts
+    void invalidate(AlMatrix *matrix, int64_t tsInNs);
 
     void setOutputFilePath(string filePath);
 

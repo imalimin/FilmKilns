@@ -59,14 +59,9 @@ void HwCameraRecorder::pause() {
     postEvent(AlMessage::obtain(EVENT_COMMON_PAUSE));
 }
 
-void HwCameraRecorder::invalidate(HwMatrix *matrix, int w, int h, int64_t tsInNs) {
+void HwCameraRecorder::invalidate(AlMatrix *matrix, int64_t tsInNs) {
     AlMessage *msg = AlMessage::obtain(EVENT_CAMERA_INVALIDATE);
-    int32_t size = 0;
-    size |= w;
-    size = size << 16;
-    size |= h;
-    msg->obj = new HwMatrix(*matrix);
-    msg->arg1 = size;
+    msg->obj = new AlMatrix(*matrix);
     msg->arg2 = tsInNs;
     msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
@@ -81,8 +76,8 @@ void HwCameraRecorder::setFormat(int width, int height, HwSampleFormat format) {
         delete audioFormat;
     }
     audioFormat = new HwSampleFormat(format);
-    putInt32("width", width).to({ALIAS_OF_COMPILER});
-    putInt32("height", height).to({ALIAS_OF_COMPILER});
+    putInt32("width", width).to({ALIAS_OF_CAMERA, ALIAS_OF_COMPILER});
+    putInt32("height", height).to({ALIAS_OF_CAMERA, ALIAS_OF_COMPILER});
     putObject("audioFormat", audioFormat).to({ALIAS_OF_MIC, ALIAS_OF_COMPILER});
 }
 

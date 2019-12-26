@@ -10,7 +10,7 @@
 
 #include "Object.h"
 #include "HwAbsTexture.h"
-#include "HwMatrix.h"
+#include "AlMatrix.h"
 
 #define HW_SHADER(...) #__VA_ARGS__
 
@@ -40,7 +40,7 @@ public:
 
     void setUniform1i(int32_t location, int32_t value);
 
-    void updateMatrix(HwMatrix *matrix);
+    void updateMatrix(AlMatrix *matrix);
 
     void bind();
 
@@ -75,7 +75,7 @@ private:
     int32_t uTextureMatrix = 0;
     float position[8] = {0.0f};
     float texCoordinate[8] = {0.0f};
-    HwMatrix matrix;
+    AlMatrix matrix;
     bool requestUpdateLocation = false;
     uint32_t vbo = 0;
     int rotation = 0;
