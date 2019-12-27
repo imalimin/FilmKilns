@@ -55,6 +55,7 @@ if (ANDROID)
             SOURCES
             ${PROJECT_SOURCE_DIR}/*.cpp
             ${PROJECT_SOURCE_DIR}/core/*.cpp
+            ${PROJECT_SOURCE_DIR}/core/file/*.cpp
             ${PROJECT_SOURCE_DIR}/drawer/*.cpp
             ${PROJECT_SOURCE_DIR}/model/*.cpp
             ${PROJECT_SOURCE_DIR}/model/opt/*.cpp
@@ -69,6 +70,7 @@ else ()
             SOURCES
             ${PROJECT_SOURCE_DIR}/*.cpp
             ${PROJECT_SOURCE_DIR}/core/*.cpp
+            ${PROJECT_SOURCE_DIR}/core/file/*.cpp
             ${PROJECT_SOURCE_DIR}/drawer/*.cpp
             ${PROJECT_SOURCE_DIR}/model/*.cpp
             ${PROJECT_SOURCE_DIR}/model/opt/*.cpp
