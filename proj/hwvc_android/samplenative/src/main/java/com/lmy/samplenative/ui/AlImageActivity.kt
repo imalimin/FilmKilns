@@ -1,8 +1,10 @@
 package com.lmy.samplenative.ui
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
@@ -181,7 +183,41 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                     addLayer(result[0])
                 }
             }
+            REQUEST_FILE -> {
+                if (null == data || null == data.data) {
+                    return
+                }
+                val path = getPath(this, data.data)
+                if (null != path) {
+                    Log.i("test123", path)
+                    processor?.import(path)
+                }
+            }
         }
+    }
+
+    private fun getPath(context: Context, uri: Uri?): String? {
+        if (null == uri) {
+            return null
+        }
+        var path: String? = null
+        if ("content".equals(uri.scheme!!, true)) {
+            val projection = arrayOf("_data")
+            var cursor: Cursor? = null
+            try {
+                cursor = context.contentResolver.query(uri, projection, null, null, null)
+                val index = cursor!!.getColumnIndexOrThrow("_data")
+                if (cursor.moveToFirst()) {
+                    path = cursor.getString(index)
+                }
+                cursor.close()
+            } catch (e: Exception) {
+            }
+
+        } else if ("file".equals(uri.scheme!!, true)) {
+            return uri.path
+        }
+        return path
     }
 
     private fun addLayer(file: String) {
@@ -203,6 +239,18 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 
     fun pickImage() {
         GallerySelectActivity.request(this, REQUEST_IMAGE, 1)
+    }
+
+    fun pickFile() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*/*"
+        try {
+            startActivityForResult(intent, REQUEST_FILE)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT)
+                    .show()
+        }
     }
 
     fun getCurrentLayer(): Int = mCurrentLayer
@@ -236,6 +284,7 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
 
     companion object {
         const val REQUEST_IMAGE = 100
+        const val REQUEST_FILE = 200
     }
 }
 
@@ -246,9 +295,9 @@ interface IOptDialog {
 class FileOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf<BottomSheetItem>(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Save origin"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Save as .qua"),
-            BottomSheetItem(2, R.mipmap.ic_launcher, "None")
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Save"),
+            BottomSheetItem(1, R.mipmap.ic_launcher, "Export"),
+            BottomSheetItem(2, R.mipmap.ic_launcher, "Import")
     )
 
     override fun show(): BottomSheetDialog {
@@ -274,14 +323,17 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
             1 -> {
                 val outputName = context.getOutputName()
                 if (null != outputName) {
-                    val name = outputName.substring(0, outputName.lastIndexOf('.') - 1)
-                    processor?.saveAsQuad("${File(Environment.getExternalStorageDirectory(),
-                            "Pictures/${name}.xml").absoluteFile}")
+                    val name = outputName.substring(0, outputName.lastIndexOf('.'))
+                    processor?.export("${File(Environment.getExternalStorageDirectory(),
+                            "Pictures/${name}.alx").absoluteFile}")
                 } else {
                     Toast.makeText(context,
                             "Save finish failed. Add a layer first. Pls",
                             Toast.LENGTH_LONG).show()
                 }
+            }
+            2 -> {
+                context.pickFile()
             }
         }
     }

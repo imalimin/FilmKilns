@@ -42,7 +42,7 @@ HwResult AlFileImporter::importFromFile(std::string inFile, AlImageCanvasModel *
         return Hw::FAILED;
     }
     const char *version = root->Attribute(VAL_VERSION);
-    Logcat::i(TAG, "%s(%d) .qua version ", __FUNCTION__, __LINE__, version);
+    Logcat::i(TAG, "%s(%d) .alx version ", __FUNCTION__, __LINE__, version);
     for (TiXmlElement *elem = root->FirstChildElement();
          elem != NULL; elem = elem->NextSiblingElement()) {
         if (Hw::SUCCESS != _parseElement(elem, canvas, layers)) {

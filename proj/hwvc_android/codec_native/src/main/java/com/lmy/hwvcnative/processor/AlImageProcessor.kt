@@ -259,7 +259,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
-     * 导出到.qua文件
+     * 导出到.alx文件
      */
     fun export(path: String): Int {
         if (!isNativeNull()) {
@@ -269,7 +269,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
-     * 从.qua文件导入
+     * 从.alx文件导入
      */
     fun import(path: String): Int {
         if (!isNativeNull()) {
