@@ -76,5 +76,5 @@ std::string StringUtils::valueOf(double value) {
 }
 
 bool StringUtils::isEmpty(std::string *str) {
-    return nullptr == str || "" == *str;
+    return nullptr == str || "" == *str || str->empty();
 }

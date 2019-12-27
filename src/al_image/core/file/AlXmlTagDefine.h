@@ -18,6 +18,8 @@
 #define VAL_HEIGHT                          "height"
 #define VAL_COLOR                           "color"
 
+#define TAG_ROOT                            "image"
+#define VAL_VERSION                         "version"
 #define TAG_LAYER                           "layer"
 #define VAL_PATH                            "path"
 #define VAL_ID                              "id"

@@ -11,6 +11,7 @@
 #include "Logcat.h"
 
 #define TAG "AlFileExporter"
+#define Attr std::pair<std::string, std::string>
 
 AlFileExporter::AlFileExporter() : Object() {
 
@@ -20,33 +21,20 @@ AlFileExporter::~AlFileExporter() {
 
 }
 
-HwResult AlFileExporter::export(AlImageCanvasModel *canvas,
-                                std::vector<AlImageLayerModel *> *layers) {
-    return _exportFile(canvas, layers);
-}
-
-HwResult AlFileExporter::_exportXml(AlImageCanvasModel *canvas,
-                                    std::vector<AlImageLayerModel *> *layers,
-                                    std::string *outStr) {
-    if (nullptr == canvas || nullptr == layers || layers->empty() || nullptr == outStr) {
+HwResult AlFileExporter::exportAsFile(AlImageCanvasModel *canvas,
+                                      std::vector<AlImageLayerModel *> *layers,
+                                      std::string outPath) {
+    if (StringUtils::isEmpty(&outPath)) {
         Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
         return Hw::FAILED;
     }
-    _writeHeader(outStr);
-    _writeCanvas(outStr, canvas);
-    _writeFooter(outStr);
-    return Hw::SUCCESS;
-}
-
-HwResult AlFileExporter::_exportFile(AlImageCanvasModel *canvas,
-                                     std::vector<AlImageLayerModel *> *layers) {
     std::string xmlStr;
-    HwResult ret = _exportXml(canvas, layers, &xmlStr);
+    HwResult ret = exportAsStr(canvas, layers, &xmlStr);
     if (Hw::SUCCESS != ret) {
         Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
         return Hw::FAILED;
     }
-    FILE *out = fopen("/sdcard/000.xml", "wb");
+    FILE *out = fopen(outPath.c_str(), "wb");
     if (nullptr == out) {
         Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
         return Hw::FAILED;
@@ -56,48 +44,54 @@ HwResult AlFileExporter::_exportFile(AlImageCanvasModel *canvas,
     return Hw::SUCCESS;
 }
 
-void AlFileExporter::_writeHeader(std::string *str) {
-    str->append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    str->append("<image version=\"");
-    str->append(XML_VERSION);
-    str->append("\">");
-}
-
-void AlFileExporter::_writeFooter(std::string *str) {
-    str->append("</image>");
+HwResult AlFileExporter::exportAsStr(AlImageCanvasModel *canvas,
+                                     vector<AlImageLayerModel *> *layers,
+                                     std::string *outStr) {
+    if (nullptr == canvas || nullptr == layers || layers->empty() || nullptr == outStr) {
+        Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+        return Hw::FAILED;
+    }
+    outStr->append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    std::map<std::string, std::string> attrs;
+    attrs.insert(Attr(VAL_VERSION, XML_VERSION));
+    _writeTagStart(outStr, TAG_ROOT, &attrs);
+    ///Write content
+    _writeCanvas(outStr, canvas);
+    for (int i = 0; i < layers->size(); ++i) {
+        _writeLayer(outStr, (*layers)[i]);
+    }
+    ///Write content end
+    _writeTagEnd(outStr, TAG_ROOT);
+    return Hw::SUCCESS;
 }
 
 void AlFileExporter::_writeCanvas(std::string *str, AlImageCanvasModel *canvas) {
-    std::string attr;
-    ///Width
-    attr.append(VAL_WIDTH);
-    attr.append("=");
-    attr.append("\"");
-    attr.append(StringUtils::valueOf(canvas->getWidth()));
-    attr.append("\"");
-    ///Height
-    attr.append(VAL_HEIGHT);
-    attr.append("=");
-    attr.append("\"");
-    attr.append(StringUtils::valueOf(canvas->getHeight()));
-    attr.append("\"");
-    ///Color
-    attr.append(VAL_COLOR);
-    attr.append("=");
-    attr.append("\"");
-    attr.append(StringUtils::valueOf(canvas->getColor()));
-    attr.append("\"");
-    _writeTagStart(str, TAG_CANVAS);
-
+    std::map<std::string, std::string> attrs;
+    attrs.insert(Attr(VAL_WIDTH, StringUtils::valueOf(canvas->getWidth())));
+    attrs.insert(Attr(VAL_HEIGHT, StringUtils::valueOf(canvas->getHeight())));
+    attrs.insert(Attr(VAL_COLOR, StringUtils::valueOf(canvas->getColor())));
+    _writeTagStart(str, TAG_CANVAS, &attrs);
     _writeTagEnd(str, TAG_CANVAS);
 }
 
-void AlFileExporter::_writeTagStart(std::string *str, const char *tag, const char *attr) {
+void AlFileExporter::_writeTagStart(std::string *str, const char *tag,
+                                    std::map<std::string, std::string> *attrs) {
+    std::string attrsStr;
+    auto itr = attrs->begin();
+    while (attrs->end() != itr) {
+        attrsStr.append(itr->first);
+        attrsStr.append("=");
+        attrsStr.append("\"");
+        attrsStr.append(itr->second);
+        attrsStr.append("\"");
+        attrsStr.append("\n");
+        ++itr;
+    }
     str->append("<");
     str->append(tag);
-    if (attr) {
+    if (!attrsStr.empty()) {
         str->append(" ");
-        str->append(attr);
+        str->append(attrsStr, 0, attrsStr.size() - 1);
     }
     str->append(">");
 }
@@ -106,4 +100,35 @@ void AlFileExporter::_writeTagEnd(std::string *str, const char *tag) {
     str->append("</");
     str->append(tag);
     str->append(">");
+}
+
+void AlFileExporter::_writeLayer(std::string *str, AlImageLayerModel *layer) {
+    std::map<std::string, std::string> attrs;
+    attrs.insert(Attr(VAL_PATH, layer->getPath()));
+    attrs.insert(Attr(VAL_ID, StringUtils::valueOf(layer->getId())));
+    attrs.insert(Attr(VAL_ALPHA, StringUtils::valueOf(layer->getAlpha())));
+    _writeTagStart(str, TAG_LAYER, &attrs);
+    ///Scale
+    attrs.clear();
+    AlVec2 scale = layer->getScale();
+    attrs.insert(Attr(VAL_VEC2_X, StringUtils::valueOf(scale.x)));
+    attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(scale.y)));
+    _writeTagStart(str, TAG_SCALE, &attrs);
+    _writeTagEnd(str, TAG_SCALE);
+    ///Rotation
+    attrs.clear();
+    AlRational rotation = layer->getRotation();
+    attrs.insert(Attr(VAL_RATIONAL_NUM, StringUtils::valueOf(rotation.num)));
+    attrs.insert(Attr(VAL_RATIONAL_DEN, StringUtils::valueOf(rotation.den)));
+    _writeTagStart(str, TAG_ROTATION, &attrs);
+    _writeTagEnd(str, TAG_ROTATION);
+    ///Position
+    attrs.clear();
+    AlVec2 pos = layer->getPosition();
+    attrs.insert(Attr(VAL_VEC2_X, StringUtils::valueOf(pos.x)));
+    attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(pos.y)));
+    _writeTagStart(str, TAG_POSITION, &attrs);
+    _writeTagEnd(str, TAG_POSITION);
+
+    _writeTagEnd(str, TAG_LAYER);
 }

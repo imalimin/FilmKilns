@@ -258,33 +258,26 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
-    private external fun create(): Long
-    private external fun release(handler: Long)
-    private external fun updateWindow(handler: Long, surface: Surface)
-    private external fun invalidate(handler: Long)
-    private external fun setCanvas(handler: Long, w: Int, h: Int, color: Int)
-    private external fun addLayer(handler: Long, path: String): Int
-    private external fun moveLayerIndex(handler: Long, id: Int, index: Int): Int
-    private external fun removeLayer(handler: Long, id: Int): Int
-    private external fun setScale(handler: Long, id: Int, scaleNum: Int, scaleDen: Int): Int
-    private external fun postScale(handler: Long, id: Int, dsNum: Int, dsDen: Int): Int
-    private external fun setRotation(handler: Long, id: Int, rNum: Int, rDen: Int): Int
-    private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int): Int
-    private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
-    private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
-    private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
-    private external fun getLayer(handler: Long, x: Float, y: Float): Int
-    private external fun ensureCropLayer(handler: Long, id: Int, left: Float, top: Float,
-                                         right: Float, bottom: Float): Int
+    fun saveAsQuad(path: String): Int {
+        if (!isNativeNull()) {
+            return saveAsQua(handler, path)
+        }
+        return AlResult.FAILED
+    }
 
-    private external fun cancelCropLayer(handler: Long, id: Int): Int
+    fun redo(): Int {
+        if (!isNativeNull()) {
+            return redo(handler)
+        }
+        return AlResult.FAILED
+    }
 
-    private external fun ensureAlignCrop(handler: Long, id: Int, rNum: Int, rDen: Int): Int
-
-    private external fun cancelAlignCrop(handler: Long, id: Int): Int
-
-    private external fun save(handler: Long, path: String): Int
-
+    fun undo(): Int {
+        if (!isNativeNull()) {
+            return undo(handler)
+        }
+        return AlResult.FAILED
+    }
 
     /***************************/
     /**      Listener         **/
@@ -325,4 +318,34 @@ class AlImageProcessor private constructor() : CPPObject() {
     companion object {
         fun create(): AlImageProcessor = AlImageProcessor()
     }
+
+    private external fun create(): Long
+    private external fun release(handler: Long)
+    private external fun updateWindow(handler: Long, surface: Surface)
+    private external fun invalidate(handler: Long)
+    private external fun setCanvas(handler: Long, w: Int, h: Int, color: Int)
+    private external fun addLayer(handler: Long, path: String): Int
+    private external fun moveLayerIndex(handler: Long, id: Int, index: Int): Int
+    private external fun removeLayer(handler: Long, id: Int): Int
+    private external fun setScale(handler: Long, id: Int, scaleNum: Int, scaleDen: Int): Int
+    private external fun postScale(handler: Long, id: Int, dsNum: Int, dsDen: Int): Int
+    private external fun setRotation(handler: Long, id: Int, rNum: Int, rDen: Int): Int
+    private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int): Int
+    private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
+    private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
+    private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
+    private external fun getLayer(handler: Long, x: Float, y: Float): Int
+    private external fun ensureCropLayer(handler: Long, id: Int, left: Float, top: Float,
+                                         right: Float, bottom: Float): Int
+
+    private external fun cancelCropLayer(handler: Long, id: Int): Int
+
+    private external fun ensureAlignCrop(handler: Long, id: Int, rNum: Int, rDen: Int): Int
+
+    private external fun cancelAlignCrop(handler: Long, id: Int): Int
+
+    private external fun save(handler: Long, path: String): Int
+    private external fun saveAsQua(handler: Long, path: String): Int
+    private external fun redo(handler: Long): Int
+    private external fun undo(handler: Long): Int
 }

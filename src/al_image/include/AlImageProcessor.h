@@ -82,6 +82,12 @@ public:
 
     HwResult save(std::string path);
 
+    HwResult saveAsQua(std::string path);
+
+    HwResult redo();
+
+    HwResult undo();
+
     void setOnSaveListener(AlLayerRender::OnSaveListener listener);
 
 private:

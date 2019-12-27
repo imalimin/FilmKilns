@@ -15,6 +15,7 @@
 #include "AlCropOperateModel.h"
 #include "AlContext.h"
 #include "AlPositionTranslator.h"
+#include "core/file/AlFileExporter.h"
 
 #define TAG "AlImageProcessor"
 
@@ -283,6 +284,11 @@ HwResult AlImageProcessor::save(std::string path) {
     return Hw::SUCCESS;
 }
 
+HwResult AlImageProcessor::saveAsQua(std::string path) {
+    AlFileExporter exporter;
+    return exporter.exportAsFile(&mCanvasModel, &mLayers, path);
+}
+
 void AlImageProcessor::setOnSaveListener(AlLayerRender::OnSaveListener listener) {
     this->onSaveListener = listener;
 }
@@ -307,4 +313,12 @@ HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
         return Hw::SUCCESS;
     }
     return Hw::FAILED;
+}
+
+HwResult AlImageProcessor::redo() {
+    return HwResult(0);
+}
+
+HwResult AlImageProcessor::undo() {
+    return HwResult(0);
 }

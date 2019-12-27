@@ -246,8 +246,8 @@ interface IOptDialog {
 class FileOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf<BottomSheetItem>(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Save"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Save origin"),
+            BottomSheetItem(1, R.mipmap.ic_launcher, "Save as .qua"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "None")
     )
 
@@ -265,6 +265,18 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
                 if (null != outputName) {
                     processor?.save("${File(Environment.getExternalStorageDirectory(),
                             "Pictures/al_${outputName}").absoluteFile}")
+                } else {
+                    Toast.makeText(context,
+                            "Save finish failed. Add a layer first. Pls",
+                            Toast.LENGTH_LONG).show()
+                }
+            }
+            1 -> {
+                val outputName = context.getOutputName()
+                if (null != outputName) {
+                    val name = outputName.substring(0, outputName.lastIndexOf('.') - 1)
+                    processor?.saveAsQuad("${File(Environment.getExternalStorageDirectory(),
+                            "Pictures/${name}.xml").absoluteFile}")
                 } else {
                     Toast.makeText(context,
                             "Save finish failed. Add a layer first. Pls",

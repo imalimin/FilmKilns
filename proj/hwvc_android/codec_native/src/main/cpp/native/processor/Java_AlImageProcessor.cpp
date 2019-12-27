@@ -205,6 +205,17 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_save
     return ret.code;
 }
 
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_saveAsQua
+        (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
+    HwResult ret = Hw::FAILED.code;
+    if (handler) {
+        const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
+        ret = getHandler(handler)->saveAsQua(std::string(pPath));
+        env->ReleaseStringUTFChars(path, pPath);
+    }
+    return ret.code;
+}
+
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_ensureAlignCrop
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jint rNum, jint rDen) {
     if (handler) {
@@ -217,6 +228,22 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_cancel
         (JNIEnv *env, jobject thiz, jlong handler, jint id) {
     if (handler) {
         return getHandler(handler)->cancelAlignCrop(id).code;
+    }
+    return Hw::FAILED.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_redo
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        return getHandler(handler)->redo().code;
+    }
+    return Hw::FAILED.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_undo
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        return getHandler(handler)->undo().code;
     }
     return Hw::FAILED.code;
 }
