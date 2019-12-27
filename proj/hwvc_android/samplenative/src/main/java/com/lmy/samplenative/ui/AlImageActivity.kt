@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -202,11 +203,11 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
         }
         var path: String? = null
         if ("content".equals(uri.scheme!!, true)) {
-            val projection = arrayOf("_data")
             var cursor: Cursor? = null
             try {
-                cursor = context.contentResolver.query(uri, projection, null, null, null)
-                val index = cursor!!.getColumnIndexOrThrow("_data")
+                cursor = context.contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA),
+                        null, null, null)
+                val index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                 if (cursor.moveToFirst()) {
                     path = cursor.getString(index)
                 }
