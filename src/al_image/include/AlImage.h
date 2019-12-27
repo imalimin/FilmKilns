@@ -45,6 +45,17 @@ public:
     /// \return
     bool onInvalidate(AlMessage *m);
 
+    /// 把所有图层清楚，并导入.qua文件
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | none      | none      | .qua file |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onImport(AlMessage *m);
+
 private:
     void _notifyAll(int32_t flag = 0);
 

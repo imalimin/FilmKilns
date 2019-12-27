@@ -6,6 +6,7 @@
  */
 
 #include "AlWebPDecoder.h"
+#include "AlIOUtils.h"
 #include "Logcat.h"
 
 #define TAG "AlWebpDecoder"
@@ -54,23 +55,5 @@ HwResult AlWebPDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
 }
 
 bool AlWebPDecoder::_readFile(AlBuffer **buf) {
-    *buf = nullptr;
-    size_t size;
-    FILE *in = fopen(path.c_str(), "rb");
-    if (nullptr == in) {
-        return false;
-    }
-    fseek(in, 0, SEEK_END);
-    size = ftell(in);
-    fseek(in, 0, SEEK_SET);
-    *buf = AlBuffer::alloc(size);
-
-    bool ok = (fread((*buf)->data(), size, 1, in) == 1);
-    fclose(in);
-    if (!ok) {
-        delete *buf;
-        *buf = nullptr;
-        return false;
-    }
-    return true;
+    return Hw::SUCCESS == AlIOUtils::readFile(&path, buf);
 }

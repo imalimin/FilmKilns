@@ -121,11 +121,41 @@ bool AlImageLayerManager::empty() {
 }
 
 AlImageLayer *AlImageLayerManager::getLayer(int32_t index) {
-    if (0 == size()) return nullptr;
+    if (empty()) return nullptr;
     int32_t id = models->at(index)->getId();
     auto itr = mLayers.find(id);
     if (mLayers.end() == itr) {
         return nullptr;
     }
     return itr->second;
+}
+
+void AlImageLayerManager::replaceAll(AlTexAllocator *texAllocator,
+                                     std::vector<AlImageLayerModel *> *list) {
+    if (nullptr == list || list->empty()) {
+        return;
+    }
+    ///Clear all layer model.
+    size_t size = models->size();
+    for (int i = 0; i < size; ++i) {
+        AlImageLayerModel *it = (*models)[i];
+        delete it;
+    }
+    models->clear();
+    ///Clear all layer.
+    auto itr = mLayers.begin();
+    while (mLayers.end() != itr) {
+        AlImageLayer *layer = itr->second;
+        texAllocator->recycle(&(itr->second->tex));
+        delete layer;
+        ++itr;
+    }
+    mLayers.clear();
+    ///Replace layer model.
+    size = list->size();
+    for (int i = 0; i < size; ++i) {
+        models->push_back((*list)[i]);
+    }
+    ///Update layer model.
+    update(models, texAllocator);
 }

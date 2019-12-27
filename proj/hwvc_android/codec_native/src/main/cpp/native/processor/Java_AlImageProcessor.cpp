@@ -205,12 +205,23 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_save
     return ret.code;
 }
 
-JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_saveAsQua
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_export
         (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
     HwResult ret = Hw::FAILED.code;
     if (handler) {
         const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
-        ret = getHandler(handler)->saveAsQua(std::string(pPath));
+        ret = getHandler(handler)->exportFile(std::string(pPath));
+        env->ReleaseStringUTFChars(path, pPath);
+    }
+    return ret.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_import
+        (JNIEnv *env, jobject thiz, jlong handler, jstring path) {
+    HwResult ret = Hw::FAILED.code;
+    if (handler) {
+        const char *pPath = env->GetStringUTFChars(path, JNI_FALSE);
+        ret = getHandler(handler)->importFile(std::string(pPath));
         env->ReleaseStringUTFChars(path, pPath);
     }
     return ret.code;

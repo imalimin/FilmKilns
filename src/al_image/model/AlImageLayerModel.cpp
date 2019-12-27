@@ -13,7 +13,11 @@
 #define TAG "AlImageLayerModel"
 
 AlImageLayerModel *AlImageLayerModel::create(AlIdentityCreator *creator, const std::string path) {
-    return new AlImageLayerModel(creator->generate(), path);
+    return create(creator->generate(), path);
+}
+
+AlImageLayerModel *AlImageLayerModel::create(int32_t id, const std::string path) {
+    return new AlImageLayerModel(id, path);
 }
 
 AlImageLayerModel::AlImageLayerModel(int32_t id, const std::string &path)

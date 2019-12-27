@@ -26,7 +26,7 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(layerRender);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    putObject("canvas", &mCanvasModel).to({ALIAS_OF_LAYER_RENDER});
+    putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_LAYER_RENDER});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
     post([this] {
         Logcat::i(TAG, "currentContext %p", Egl::currentContext());
@@ -48,6 +48,12 @@ AlImageProcessor::~AlImageProcessor() {
         delete this->context;
         this->context = nullptr;
     });
+    size_t size = mLayers.size();
+    for (int i = 0; i < size; ++i) {
+        AlImageLayerModel *it = mLayers[i];
+        delete it;
+    }
+    mLayers.clear();
     this->onSaveListener = nullptr;
 }
 
@@ -63,7 +69,8 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 }
 
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
-    mCanvasModel.set(w, h, color);
+    mCanvasSize.width = w;
+    mCanvasSize.height = h;
     _notifyCanvasUpdate();
     invalidate();
 }
@@ -76,8 +83,10 @@ void AlImageProcessor::invalidate(int32_t flag) {
 }
 
 void AlImageProcessor::_notifyCanvasUpdate() {
-    putObject("canvas", &mCanvasModel).to({ALIAS_OF_IMAGE});
-    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS));
+    putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_LAYER_RENDER});
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS);
+    msg->obj = new AlSize(mCanvasSize.width, mCanvasSize.height);
+    postEvent(msg);
 }
 
 void AlImageProcessor::_notifyLayerUpdate() {
@@ -234,8 +243,7 @@ AlImageLayerModel *AlImageProcessor::_getLayer(int32_t id) {
 }
 
 void AlImageProcessor::transToCanvasPos(float &x, float &y) {
-    AlSize canvasSize(mCanvasModel.getWidth(), mCanvasModel.getHeight());
-    AlPositionTranslator::translate(mWinSize, canvasSize, x, y);
+    AlPositionTranslator::translate(mWinSize, mCanvasSize, x, y);
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
@@ -284,9 +292,19 @@ HwResult AlImageProcessor::save(std::string path) {
     return Hw::SUCCESS;
 }
 
-HwResult AlImageProcessor::saveAsQua(std::string path) {
+HwResult AlImageProcessor::exportFile(std::string path) {
     AlFileExporter exporter;
-    return exporter.exportAsFile(&mCanvasModel, &mLayers, path);
+    AlImageCanvasModel canvas;
+    canvas.set(mCanvasSize.width, mCanvasSize.height, 0);
+    return exporter.exportAsFile(&canvas, &mLayers, path);
+}
+
+HwResult AlImageProcessor::importFile(std::string path) {
+    AlMessage *msg = AlMessage::obtain(EVENT_AIMAGE_IMPORT);
+    msg->desc = path;
+    postEvent(msg);
+    invalidate();
+    return Hw::SUCCESS;
 }
 
 void AlImageProcessor::setOnSaveListener(AlLayerRender::OnSaveListener listener) {

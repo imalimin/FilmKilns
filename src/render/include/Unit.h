@@ -72,6 +72,7 @@ static constexpr int EVENT_CAMERA_INVALIDATE = KID('C', 'A', 'M', 0x00);
 static constexpr int EVENT_VIDEO_COMPILER_BACKWARD = KID('H', 'V', 'C', 0x00);
 
 static constexpr int EVENT_AIMAGE_UPDATE_LAYER = KID('A', 'I', 'G', 0x00);
+static constexpr int EVENT_AIMAGE_IMPORT = KID('A', 'I', 'G', 0x01);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
 static constexpr int EVENT_LAYER_MEASURE_CANVAS_SIZE = KID('A', 'L', 'M', 0x01);

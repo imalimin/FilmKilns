@@ -43,13 +43,8 @@ bool AlLayerRender::onDestroy(AlMessage *msg) {
 
 bool AlLayerRender::onUpdateCanvas(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    auto model = _getCanvas();
-    mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(),
-                   texAllocator);
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE);
-    msg->arg1 = model->getWidth();
-    msg->arg2 = model->getHeight();
-    postEvent(msg);
+    AlSize *size = m->getObj<AlSize *>();
+    _update(size->width, size->height, 0);
     return true;
 }
 
@@ -108,22 +103,10 @@ void AlLayerRender::_newDefaultCanvas(AlSize size) {
     if (size.width <= 0 || size.height <= 0) {
         return;
     }
-    auto model = _getCanvas();
-    if (model->getWidth() > 0 && model->getHeight() > 0) {
+    if (mCanvas.getWidth() > 0 && mCanvas.getHeight() > 0) {
         return;
     }
-    model->set(size.width, size.height, 0);
-    mCanvas.update(model->getWidth(), model->getHeight(), model->getColor(),
-                   texAllocator);
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE, nullptr,
-                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
-    msg->arg1 = model->getWidth();
-    msg->arg2 = model->getHeight();
-    postEvent(msg);
-}
-
-AlImageCanvasModel *AlLayerRender::_getCanvas() {
-    return dynamic_cast<AlImageCanvasModel *>(getObject("canvas"));
+    _update(size.width, size.height, 0);
 }
 
 void AlLayerRender::_draw(AlImageLayerDrawModel *description) {
@@ -132,4 +115,15 @@ void AlLayerRender::_draw(AlImageLayerDrawModel *description) {
 
 void AlLayerRender::setOnSaveListener(AlLayerRender::OnSaveListener listener) {
     this->onSaveListener = listener;
+}
+
+void AlLayerRender::_update(int32_t width, int32_t height, int32_t color) {
+    AlSize *size = dynamic_cast<AlSize *>(getObject("canvas_size"));
+    size->width = width;
+    size->height = height;
+    mCanvas.update(width, height, color, texAllocator);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE);
+    msg->arg1 = mCanvas.getWidth();
+    msg->arg2 = mCanvas.getHeight();
+    postEvent(msg);
 }

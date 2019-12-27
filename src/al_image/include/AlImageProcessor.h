@@ -82,7 +82,15 @@ public:
 
     HwResult save(std::string path);
 
-    HwResult saveAsQua(std::string path);
+    /// 导出到.qua文件
+    /// \param path
+    /// \return
+    HwResult exportFile(std::string path);
+
+    /// 从.qua文件导入
+    /// \param path
+    /// \return
+    HwResult importFile(std::string path);
 
     HwResult redo();
 
@@ -105,11 +113,11 @@ private:
     const string ALIAS_OF_SCREEN = "SCREEN";
 
     AlAbsContext *context = nullptr;
-    AlImageCanvasModel mCanvasModel;
     std::vector<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;
     std::mutex mLayerMtx;
     AlSize mWinSize;
+    AlSize mCanvasSize;
     AlLayerRender::OnSaveListener onSaveListener = nullptr;
 };
 

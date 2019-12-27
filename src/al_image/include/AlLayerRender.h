@@ -30,7 +30,7 @@ public:
     /// +--------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 |
     /// +--------------------------------------+
-    /// | none         | none      | none      |
+    /// | AlSize       | none      | none      |
     /// +--------------------------------------+
     /// \param msg
     /// \return
@@ -83,11 +83,11 @@ public:
     void setOnSaveListener(OnSaveListener listener);
 
 private:
-    AlImageCanvasModel *_getCanvas();
-
     void _newDefaultCanvas(AlSize size);
 
     void _draw(AlImageLayerDrawModel *description);
+
+    void _update(int32_t width, int32_t height, int32_t color);
 
 private:
     AlTexAllocator *texAllocator = nullptr;

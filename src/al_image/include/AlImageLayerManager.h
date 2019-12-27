@@ -31,6 +31,8 @@ public:
 
     AlImageLayer *getLayer(int32_t index);
 
+    void replaceAll(AlTexAllocator *texAllocator, std::vector<AlImageLayerModel *> *list);
+
 private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};
 

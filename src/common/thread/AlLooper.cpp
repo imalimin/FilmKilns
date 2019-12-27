@@ -55,24 +55,20 @@ void AlLooper::sendMessage(AlMessage *msg) {
 }
 
 void AlLooper::_enqueueMessage(AlMessage *msg) {
-    switch (msg->queueMode) {
-        case AlMessage::QUEUE_MODE_UNIQUE: {
-            queue.removeAllMessage(msg->what);
-            queue.offer(msg);
-            break;
-        }
-        case AlMessage::QUEUE_MODE_FIRST_ALWAYS: {
+//    if (msg->queueMode & AlMessage::QUEUE_MODE_CLEAR_ALL) {
+//        queue.clear();
+//    }
+    if (msg->queueMode & AlMessage::QUEUE_MODE_UNIQUE) {
+        queue.removeAllMessage(msg->what);
+    }
+    if (msg->queueMode & AlMessage::QUEUE_MODE_CLEAR) {
+        queue.removeAllMessage(msg->what);
+        delete msg;
+    } else {
+        if (msg->queueMode & AlMessage::QUEUE_MODE_FIRST_ALWAYS) {
             queue.offerAtFront(msg);
-            break;
-        }
-        case AlMessage::QUEUE_MODE_CLEAR: {
-            queue.removeAllMessage(msg->what);
-            delete msg;
-            break;
-        }
-        default: {
+        } else {
             queue.offer(msg);
-            break;
         }
     }
 }

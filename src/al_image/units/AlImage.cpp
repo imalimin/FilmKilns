@@ -8,10 +8,12 @@
 #include "AlImage.h"
 #include "HwTexture.h"
 #include "ObjectBox.h"
+#include "core/file/AlFileImporter.h"
 
 AlImage::AlImage(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlImage::onInvalidate));
     registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlImage::onUpdateLayer));
+    registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlImage::onImport));
 }
 
 AlImage::~AlImage() {
@@ -19,6 +21,7 @@ AlImage::~AlImage() {
 
 bool AlImage::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
+    mLayerManager.update(getLayers(), texAllocator);
     return true;
 }
 
@@ -68,4 +71,23 @@ void AlImage::_notifyDescriptor(AlImageLayer *layer) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
     msg->desc = "measure";
     postEvent(msg);
+}
+
+bool AlImage::onImport(AlMessage *m) {
+    std::string path = m->desc;
+    AlImageCanvasModel canvas;
+    std::vector<AlImageLayerModel *> layers;
+    AlFileImporter importer;
+    if (Hw::SUCCESS != importer.importFromFile(path, &canvas, &layers)
+        || layers.empty() || canvas.getWidth() <= 0 || canvas.getHeight() <= 0) {
+        return true;
+    }
+    mLayerManager.replaceAll(texAllocator, &layers);
+    layers.clear();
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS, nullptr,
+                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+    msg->obj = new AlSize(canvas.getWidth(), canvas.getHeight());
+    postEvent(msg);
+    _notifyAll();
+    return true;
 }

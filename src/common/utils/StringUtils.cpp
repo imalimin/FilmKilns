@@ -78,3 +78,31 @@ std::string StringUtils::valueOf(double value) {
 bool StringUtils::isEmpty(std::string *str) {
     return nullptr == str || "" == *str || str->empty();
 }
+
+int32_t StringUtils::toInt(const char *str) {
+    if (nullptr == str) {
+        return INT32_MIN;
+    }
+    return atoi(str);
+}
+
+int64_t StringUtils::toLong(const char *str) {
+    if (nullptr == str) {
+        return INT64_MIN;
+    }
+    return atoll(str);
+}
+
+float StringUtils::toFloat(const char *str) {
+    if (nullptr == str) {
+        return MAXFLOAT;
+    }
+    return static_cast<float>(atof(str));
+}
+
+double StringUtils::toDouble(const char *str) {
+    if (nullptr == str) {
+        return MAXFLOAT;
+    }
+    return atof(str);
+}

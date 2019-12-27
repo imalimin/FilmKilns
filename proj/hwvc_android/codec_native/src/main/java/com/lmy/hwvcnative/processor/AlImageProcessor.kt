@@ -258,9 +258,22 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
-    fun saveAsQuad(path: String): Int {
+    /**
+     * 导出到.qua文件
+     */
+    fun export(path: String): Int {
         if (!isNativeNull()) {
-            return saveAsQua(handler, path)
+            return export(handler, path)
+        }
+        return AlResult.FAILED
+    }
+
+    /**
+     * 从.qua文件导入
+     */
+    fun import(path: String): Int {
+        if (!isNativeNull()) {
+            return import(handler, path)
         }
         return AlResult.FAILED
     }
@@ -345,7 +358,8 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun cancelAlignCrop(handler: Long, id: Int): Int
 
     private external fun save(handler: Long, path: String): Int
-    private external fun saveAsQua(handler: Long, path: String): Int
+    private external fun export(handler: Long, path: String): Int
+    private external fun import(handler: Long, path: String): Int
     private external fun redo(handler: Long): Int
     private external fun undo(handler: Long): Int
 }

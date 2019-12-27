@@ -17,13 +17,20 @@
 #include "HwResult.h"
 
 class AlImageLayer;
+
 class AlAbsOperateModel;
+
+class AlFileImporter;
 
 al_class(AlImageLayerModel) {
 public:
     static AlImageLayerModel *create(AlIdentityCreator *creator, const std::string path);
 
 private:
+    friend AlFileImporter;
+
+    static AlImageLayerModel *create(int32_t id, const std::string path);
+
     AlImageLayerModel(int32_t id, const std::string &path);
 
 public:
