@@ -1,14 +1,12 @@
 package com.lmy.samplenative.ui
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -17,17 +15,20 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
 import com.lmy.common.ui.GallerySelectActivity
+import com.lmy.common.ui.fragment.BaseLazyFragment
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.entity.AlResult
 import com.lmy.hwvcnative.processor.AlImageProcessor
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
+import com.lmy.file.ui.dialog.FileDialog
 import com.microsoft.officeuifabric.bottomsheet.BottomSheetDialog
 import com.microsoft.officeuifabric.bottomsheet.BottomSheetItem
 import kotlinx.android.synthetic.main.activity_al_image.*
 import java.io.File
 
-class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
+class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionListener,
+        SeekBar.OnSeekBarChangeListener,
         View.OnClickListener, AlImageProcessor.OnSaveListener {
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
@@ -184,41 +185,19 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
                     addLayer(result[0])
                 }
             }
-            REQUEST_FILE -> {
-                if (null == data || null == data.data) {
-                    return
-                }
-                val path = getPath(this, data.data)
-                if (null != path) {
-                    Log.i("test123", path)
-                    processor?.import(path)
-                }
-            }
         }
     }
 
-    private fun getPath(context: Context, uri: Uri?): String? {
-        if (null == uri) {
-            return null
-        }
-        var path: String? = null
-        if ("content".equals(uri.scheme!!, true)) {
-            var cursor: Cursor? = null
-            try {
-                cursor = context.contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA),
-                        null, null, null)
-                val index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                if (cursor.moveToFirst()) {
-                    path = cursor.getString(index)
+    override fun onFragmentInteraction(what: Int, data: Bundle) {
+        when (what) {
+            REQUEST_FILE -> {
+                Toast.makeText(this, data.getString("path"), Toast.LENGTH_LONG).show()
+                val path = data.getString("path")
+                if (!TextUtils.isEmpty(path)) {
+                    processor?.import(path!!)
                 }
-                cursor.close()
-            } catch (e: Exception) {
             }
-
-        } else if ("file".equals(uri.scheme!!, true)) {
-            return uri.path
         }
-        return path
     }
 
     private fun addLayer(file: String) {
@@ -243,15 +222,8 @@ class AlImageActivity : BaseActivity(), SeekBar.OnSeekBarChangeListener,
     }
 
     fun pickFile() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*"
-        try {
-            startActivityForResult(intent, REQUEST_FILE)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(this, "Please install a File Manager.", Toast.LENGTH_SHORT)
-                    .show()
-        }
+        val selector = FileDialog.newInstance(REQUEST_FILE)
+        selector.show(supportFragmentManager, "SELECTOR")
     }
 
     fun getCurrentLayer(): Int = mCurrentLayer

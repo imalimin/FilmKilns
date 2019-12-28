@@ -28,6 +28,8 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
     implementation "com.android.support:support-v4:$support_version"
     implementation "com.android.support:appcompat-v7:$support_version"
     implementation "com.android.support:design:$support_version"
@@ -44,4 +46,5 @@ dependencies {
     implementation project(':codec_native')
     implementation project(':alcore')
     implementation project(':hwcommon')
+    implementation project(':alfile')
 }
