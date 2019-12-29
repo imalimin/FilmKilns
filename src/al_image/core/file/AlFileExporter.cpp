@@ -61,14 +61,7 @@ HwResult AlFileExporter::exportAsStr(AlImageCanvasModel *canvas,
     _writeCanvas(outStr, canvas);
     size_t layerSize = layers->size();
     for (int i = 0; i < layerSize; ++i) {
-        auto *layer = (*layers)[i];
-        _writeLayer(outStr, layer);
-        auto *opts = layer->getAllOperators();
-        size_t optSize = opts->size();
-        for (int j = 0; j < optSize; ++j) {
-            auto *opt = (*opts)[i];
-            _writeOpt(outStr, opt);
-        }
+        _writeLayer(outStr, (*layers)[i]);
     }
     ///Write content end
     _writeTagEnd(outStr, TAG_ROOT);
@@ -142,6 +135,13 @@ void AlFileExporter::_writeLayer(std::string *str, AlImageLayerModel *layer) {
     attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(pos.y)));
     _writeTagStart(str, TAG_POSITION, &attrs);
     _writeTagEnd(str, TAG_POSITION);
+
+    auto *opts = layer->getAllOperators();
+    size_t optSize = opts->size();
+    for (int i = 0; i < optSize; ++i) {
+        auto *opt = (*opts)[i];
+        _writeOpt(str, opt);
+    }
 
     _writeTagEnd(str, TAG_LAYER);
 }
