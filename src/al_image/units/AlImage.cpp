@@ -14,6 +14,8 @@ AlImage::AlImage(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlImage::onInvalidate));
     registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlImage::onUpdateLayer));
     registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlImage::onImport));
+    registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlImage::onRedo));
+    registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlImage::onUndo));
 }
 
 AlImage::~AlImage() {
@@ -90,4 +92,16 @@ bool AlImage::onImport(AlMessage *m) {
     postEvent(msg);
     _notifyAll();
     return true;
+}
+
+bool AlImage::onRedo(AlMessage *m) {
+    return true;
+}
+
+bool AlImage::onUndo(AlMessage *m) {
+    return true;
+}
+
+void AlImage::_saveStep() {
+
 }

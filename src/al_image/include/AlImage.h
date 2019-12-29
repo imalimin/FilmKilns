@@ -12,6 +12,7 @@
 #include "AlTexAllocator.h"
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
+#include <deque>
 
 class AlImage : public Unit {
 public:
@@ -56,19 +57,27 @@ public:
     /// \return
     bool onImport(AlMessage *m);
 
+    bool onRedo(AlMessage *m);
+
+    bool onUndo(AlMessage *m);
+
 private:
     void _notifyAll(int32_t flag = 0);
 
     void _notifyDescriptor(AlImageLayer *layer);
 
+    void _saveStep();
+
 private:
     AlTexAllocator *texAllocator = nullptr;
+
     /// +------------------+
     /// |     Model        |
     /// +------------------+
     std::vector<AlImageLayerModel *> *getLayers();
 
     AlImageLayerManager mLayerManager;
+    std::deque<std::string *> steps;
 };
 
 

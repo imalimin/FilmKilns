@@ -334,9 +334,11 @@ HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
 }
 
 HwResult AlImageProcessor::redo() {
-    return HwResult(0);
+    postEvent(AlMessage::obtain(EVENT_AIMAGE_REDO));
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::undo() {
-    return HwResult(0);
+    postEvent(AlMessage::obtain(EVENT_AIMAGE_UNDO));
+    return Hw::SUCCESS;
 }
