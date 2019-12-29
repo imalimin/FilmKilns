@@ -23,6 +23,8 @@ public:
 
     void setRotation(AlRational &r);
 
+    AlRational getRotation();
+
 private:
     AlRational rotation;
 };

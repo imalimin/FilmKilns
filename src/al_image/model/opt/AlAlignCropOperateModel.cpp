@@ -8,12 +8,12 @@
 #include "AlAlignCropOperateModel.h"
 #include "AlMath.h"
 
-AlAlignCropOperateModel::AlAlignCropOperateModel() : AlAbsOperateModel() {
+AlAlignCropOperateModel::AlAlignCropOperateModel() : AlAbsOperateModel(TYPE_ALIGN_CROP) {
 
 }
 
 AlAlignCropOperateModel::AlAlignCropOperateModel(const AlAlignCropOperateModel &o)
-        : AlAbsOperateModel(), rotation(o.rotation) {
+        : AlAbsOperateModel(o), rotation(o.rotation) {
 
 }
 
@@ -54,4 +54,8 @@ HwResult AlAlignCropOperateModel::measure(AlImgLayerDescription &layer,
 void AlAlignCropOperateModel::setRotation(AlRational &r) {
     rotation.num = r.num;
     rotation.den = r.den;
+}
+
+AlRational AlAlignCropOperateModel::getRotation() {
+    return rotation;
 }

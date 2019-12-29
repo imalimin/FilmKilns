@@ -16,7 +16,10 @@
 
 al_class(AlAbsOperateModel) {
 public:
-    AlAbsOperateModel();
+    static const std::string TYPE_CROP;
+    static const std::string TYPE_ALIGN_CROP;
+public:
+    AlAbsOperateModel(std::string type);
 
     AlAbsOperateModel(const AlAbsOperateModel &o);
 
@@ -24,9 +27,14 @@ public:
 
     void setCanvasSize(AlSize size);
 
+    AlSize getCanvasSize();
+
+    std::string getType();
+
     virtual HwResult measure(AlImgLayerDescription &layer, AlImageLayerDrawModel *description) = 0;
 
 protected:
+    std::string type;
     AlSize canvasSize;
 };
 

@@ -36,7 +36,7 @@ HwResult AlFileImporter::importFromFile(std::string inFile, AlImageCanvasModel *
         return Hw::FAILED;
     }
     string rootTag = root->Value();
-    if (!StringUtils::endsWith(TAG_ROOT, rootTag)) {
+    if (!StringUtils::equalsIgnoreCase(TAG_ROOT, rootTag)) {
         doc.Clear();
         Logcat::i(TAG, "%s(%d) invalid qua file.", __FUNCTION__, __LINE__);
         return Hw::FAILED;

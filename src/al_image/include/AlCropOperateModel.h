@@ -26,16 +26,25 @@ public:
 
     void setRect(float left, float top, float right, float bottom);
 
+    AlRectF getRect();
+
+    AlVec2 getScale();
+
+    AlRational getRotation();
+
+    AlVec2 getPosition();
+
 private:
     bool invalidate = false;
     /// 裁剪框区域，相对于画布坐标系
     AlRectF rectF;
-    AlSize cropSize;
-    AlQuad quad;
-    AlLayerMeasurer aMeasurer;
     AlVec2 scale;
     AlRational rotation;
     AlVec2 position;
+
+    AlSize cropSize;
+    AlQuad quad;
+    AlLayerMeasurer aMeasurer;
 };
 
 

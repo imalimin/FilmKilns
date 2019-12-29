@@ -18,7 +18,7 @@
 #define VAL_HEIGHT                          "height"
 #define VAL_COLOR                           "color"
 
-#define TAG_ROOT                            "image"
+#define TAG_ROOT                            "alx"
 #define VAL_VERSION                         "version"
 #define TAG_LAYER                           "layer"
 #define VAL_PATH                            "path"
@@ -27,6 +27,15 @@
 #define TAG_SCALE                           "scale"
 #define TAG_ROTATION                        "rotation"
 #define TAG_POSITION                        "position"
+#define TAG_OPT                             "opt"
+#define VAL_TYPE                            "type"
+#define VAL_CANVAS_WIDTH                    "canvas_width"
+#define VAL_CANVAS_HEIGHT                   "canvas_height"
+#define TAG_RECTF                           "rectf"
+#define VAL_LEFT                            "left"
+#define VAL_TOP                             "top"
+#define VAL_RIGHT                           "right"
+#define VAL_BOTTOM                          "bottom"
 
 #define TAG_CANVAS                           "canvas"
 

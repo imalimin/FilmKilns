@@ -14,12 +14,16 @@
 
 #define TAG "AlCropOperateModel"
 
-AlCropOperateModel::AlCropOperateModel() : AlAbsOperateModel() {
+AlCropOperateModel::AlCropOperateModel() : AlAbsOperateModel(TYPE_CROP) {
     invalidate = true;
 }
 
 AlCropOperateModel::AlCropOperateModel(const AlCropOperateModel &o)
-        : AlAbsOperateModel(o), rectF(o.rectF) {
+        : AlAbsOperateModel(o),
+          rectF(o.rectF),
+          scale(o.scale),
+          rotation(o.rotation),
+          position(o.position) {
 
 }
 
@@ -60,10 +64,10 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
 
         if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
             aMeasurer.setScale(cropRectF.getWidth() / 2.0f / scale.x,
-                              cropRectF.getWidth() / 2.0f / scale.y);
+                               cropRectF.getWidth() / 2.0f / scale.y);
         } else {
             aMeasurer.setScale(cropRectF.getHeight() / 2.0f / scale.x,
-                              cropRectF.getHeight() / 2.0f / scale.y);
+                               cropRectF.getHeight() / 2.0f / scale.y);
         }
         aMeasurer.setRotation(alpha);
         aMeasurer.setTranslate(dx, dy, alpha, 1, -1);
@@ -93,4 +97,20 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
     description->cropQuad.setRightBottom(quad.rightBottom());
     description->cropQuad.setRightTop(quad.rightTop());
     return Hw::SUCCESS;
+}
+
+AlRectF AlCropOperateModel::getRect() {
+    return rectF;
+}
+
+AlVec2 AlCropOperateModel::getScale() {
+    return scale;
+}
+
+AlRational AlCropOperateModel::getRotation() {
+    return rotation;
+}
+
+AlVec2 AlCropOperateModel::getPosition() {
+    return position;
 }
