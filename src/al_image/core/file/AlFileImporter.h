@@ -32,6 +32,10 @@ private:
 
     HwResult _parseElement(void *e, AlImageCanvasModel *canvas,
                            std::vector<AlImageLayerModel *> *layers);
+
+    HwResult _parseLayer(void *e, std::vector<AlImageLayerModel *> *layers);
+
+    HwResult _parseOpt(void *e, AlImageLayerModel *layer);
 };
 
 

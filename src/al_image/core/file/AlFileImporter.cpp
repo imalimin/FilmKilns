@@ -7,6 +7,7 @@
 
 #include "AlFileImporter.h"
 #include "AlXmlTagDefine.h"
+#include "AlOperateFactory.h"
 #include "StringUtils.h"
 #include "Logcat.h"
 #include "tinyxml.h"
@@ -81,51 +82,147 @@ HwResult AlFileImporter::_parseElement(void *e, AlImageCanvasModel *canvas,
         }
         canvas->set(width, height, color);
     } else if (StringUtils::endsWith(TAG_LAYER, name)) {
-        const char *str = elm->Attribute(VAL_PATH);
-        std::string path = str;
-        str = elm->Attribute(VAL_ID);
-        int32_t id = StringUtils::toInt(str);
-        str = elm->Attribute(VAL_ALPHA);
-        float alpha = StringUtils::toFloat(str);
-        if (StringUtils::isEmpty(&path) || alpha > 1 || alpha < -1) {
+        if (Hw::SUCCESS != _parseLayer(elm, layers)) {
             Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
             return Hw::FAILED;
         }
-        auto *layer = AlImageLayerModel::create(id, path);
-        layer->setAlpha(alpha);
-        layers->push_back(layer);
+    }
 
+    return Hw::SUCCESS;
+}
+
+HwResult AlFileImporter::_parseLayer(void *e, std::vector<AlImageLayerModel *> *layers) {
+    TiXmlElement *elm = static_cast<TiXmlElement *>(e);
+    const char *str = elm->Attribute(VAL_PATH);
+    std::string path = str;
+    str = elm->Attribute(VAL_ID);
+    int32_t id = StringUtils::toInt(str);
+    str = elm->Attribute(VAL_ALPHA);
+    float alpha = StringUtils::toFloat(str);
+    if (StringUtils::isEmpty(&path) || alpha > 1 || alpha < -1) {
+        Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+        return Hw::FAILED;
+    }
+    auto *layer = AlImageLayerModel::create(id, path);
+    layer->setAlpha(alpha);
+    layers->push_back(layer);
+
+    for (TiXmlElement *elem = elm->FirstChildElement();
+         elem != NULL; elem = elem->NextSiblingElement()) {
+        std::string tagName = elem->Value();
+        if (StringUtils::endsWith(TAG_SCALE, tagName)) {
+            str = elem->Attribute(VAL_VEC2_X);
+            float x = StringUtils::toFloat(str);
+            str = elem->Attribute(VAL_VEC2_Y);
+            float y = StringUtils::toFloat(str);
+            if (MAXFLOAT != x && MAXFLOAT != y) {
+                layer->setScale(x, y);
+            }
+        } else if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
+            str = elem->Attribute(VAL_RATIONAL_NUM);
+            int32_t num = StringUtils::toInt(str);
+            str = elem->Attribute(VAL_RATIONAL_DEN);
+            int32_t den = StringUtils::toInt(str);
+            if (INT32_MIN != num && INT32_MIN != den) {
+                AlRational r(num, den);
+                layer->setRotation(r);
+            }
+        } else if (StringUtils::endsWith(TAG_POSITION, tagName)) {
+            str = elem->Attribute(VAL_VEC2_X);
+            float x = StringUtils::toFloat(str);
+            str = elem->Attribute(VAL_VEC2_Y);
+            float y = StringUtils::toFloat(str);
+            if (MAXFLOAT != x && MAXFLOAT != y) {
+                layer->setPosition(x, y);
+            }
+        } else if (StringUtils::equalsIgnoreCase(TAG_OPT, tagName)) {
+            _parseOpt(elem, layer);
+        }
+    }
+    return Hw::SUCCESS;
+}
+
+HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
+    TiXmlElement *elm = static_cast<TiXmlElement *>(e);
+    const char *str = elm->Attribute(VAL_TYPE);
+    std::string type = str;
+    str = elm->Attribute(VAL_CANVAS_WIDTH);
+    int canvasWidth = StringUtils::toInt(str);
+    str = elm->Attribute(VAL_CANVAS_HEIGHT);
+    int canvasHeight = StringUtils::toInt(str);
+    if (INT32_MIN == canvasWidth || INT32_MIN == canvasHeight
+        || StringUtils::isEmpty(&type)) {
+        return Hw::FAILED;
+    }
+    AlAbsOperateModel *model = nullptr;
+    if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_CROP, type)) {
+        AlRectF rectF(MAXFLOAT, MAXFLOAT, MAXFLOAT, MAXFLOAT);
+        AlVec2 scale;
+        AlRational rotation;
+        AlVec2 pos;
         for (TiXmlElement *elem = elm->FirstChildElement();
              elem != NULL; elem = elem->NextSiblingElement()) {
             std::string tagName = elem->Value();
-            if (StringUtils::endsWith(TAG_SCALE, tagName)) {
-                str = elem->Attribute(VAL_VEC2_X);
-                float x = StringUtils::toFloat(str);
-                str = elem->Attribute(VAL_VEC2_Y);
-                float y = StringUtils::toFloat(str);
-                if (MAXFLOAT != x || MAXFLOAT != y) {
-                    layer->setScale(x, y);
-                }
-            } else if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
+            if (StringUtils::equalsIgnoreCase(TAG_RECTF, tagName)) {
+                str = elem->Attribute(VAL_LEFT);
+                rectF.left = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_TOP);
+                rectF.top = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_RIGHT);
+                rectF.right = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_BOTTOM);
+                rectF.bottom = StringUtils::toFloat(str);
+            }
+//            else if (StringUtils::endsWith(TAG_SCALE, tagName)) {
+//                str = elem->Attribute(VAL_VEC2_X);
+//                scale.x = StringUtils::toFloat(str);
+//                str = elem->Attribute(VAL_VEC2_Y);
+//                scale.y = StringUtils::toFloat(str);
+//            } else if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
+//                str = elem->Attribute(VAL_RATIONAL_NUM);
+//                rotation.num = StringUtils::toInt(str);
+//                str = elem->Attribute(VAL_RATIONAL_DEN);
+//                rotation.den = StringUtils::toInt(str);
+//            } else if (StringUtils::endsWith(TAG_POSITION, tagName)) {
+//                str = elem->Attribute(VAL_VEC2_X);
+//                pos.x = StringUtils::toFloat(str);
+//                str = elem->Attribute(VAL_VEC2_Y);
+//                pos.y = StringUtils::toFloat(str);
+//            }
+        }
+//        if (MAXFLOAT == rectF.left || MAXFLOAT == rectF.top
+//            || MAXFLOAT == rectF.right || MAXFLOAT == rectF.bottom
+//            || MAXFLOAT == scale.x || MAXFLOAT == scale.y
+//            || INT32_MIN == rotation.num || INT32_MIN == rotation.den
+//            || MAXFLOAT == pos.x || MAXFLOAT == pos.y) {
+//            return Hw::FAILED;
+//        }
+
+        if (MAXFLOAT == rectF.left || MAXFLOAT == rectF.top
+            || MAXFLOAT == rectF.right || MAXFLOAT == rectF.bottom) {
+            return Hw::FAILED;
+        }
+        model = AlOperateFactory::crop(rectF.left, rectF.top, rectF.right, rectF.bottom);
+    } else if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_ALIGN_CROP, type)) {
+        AlRational rotation;
+        for (TiXmlElement *elem = elm->FirstChildElement();
+             elem != NULL; elem = elem->NextSiblingElement()) {
+            std::string tagName = elem->Value();
+            if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
                 str = elem->Attribute(VAL_RATIONAL_NUM);
-                int32_t num = StringUtils::toInt(str);
+                rotation.num = StringUtils::toInt(str);
                 str = elem->Attribute(VAL_RATIONAL_DEN);
-                int32_t den = StringUtils::toInt(str);
-                if (INT32_MIN != num || INT32_MIN != den) {
-                    AlRational r(num, den);
-                    layer->setRotation(r);
-                }
-            } else if (StringUtils::endsWith(TAG_POSITION, tagName)) {
-                str = elem->Attribute(VAL_VEC2_X);
-                float x = StringUtils::toFloat(str);
-                str = elem->Attribute(VAL_VEC2_Y);
-                float y = StringUtils::toFloat(str);
-                if (MAXFLOAT != x || MAXFLOAT != y) {
-                    layer->setPosition(x, y);
-                }
+                rotation.den = StringUtils::toInt(str);
             }
         }
+        if (INT32_MIN == rotation.num || INT32_MIN == rotation.den) {
+            return Hw::FAILED;
+        }
+        model = AlOperateFactory::alignCrop(rotation);
     }
-
+    if (model) {
+        model->setCanvasSize(AlSize(canvasWidth, canvasHeight));
+        layer->addOperator(model);
+    }
     return Hw::SUCCESS;
 }
