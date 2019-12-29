@@ -54,6 +54,7 @@ HwResult AlFileExporter::exportAsStr(AlImageCanvasModel *canvas,
         return Hw::FAILED;
     }
     outStr->append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    outStr->append("\n");
     std::map<std::string, std::string> attrs;
     attrs.insert(Attr(VAL_VERSION, XML_VERSION));
     _writeTagStart(outStr, TAG_ROOT, &attrs);
@@ -86,8 +87,7 @@ void AlFileExporter::_writeTagStart(std::string *str, const char *tag,
         attrsStr.append("=");
         attrsStr.append("\"");
         attrsStr.append(itr->second);
-        attrsStr.append("\"");
-        attrsStr.append("\n");
+        attrsStr.append("\"\n");
         ++itr;
     }
     str->append("<");
@@ -103,6 +103,7 @@ void AlFileExporter::_writeTagEnd(std::string *str, const char *tag) {
     str->append("</");
     str->append(tag);
     str->append(">");
+    str->append("\n");
 }
 
 void AlFileExporter::_writeLayer(std::string *str, AlImageLayerModel *layer) {
@@ -154,8 +155,6 @@ void AlFileExporter::_writeOpt(std::string *str, AlAbsOperateModel *opt) {
     AlSize canvasSize = opt->getCanvasSize();
     std::map<std::string, std::string> attrs;
     attrs.insert(Attr(VAL_TYPE, opt->getType()));
-    attrs.insert(Attr(VAL_CANVAS_WIDTH, StringUtils::valueOf(canvasSize.width)));
-    attrs.insert(Attr(VAL_CANVAS_HEIGHT, StringUtils::valueOf(canvasSize.height)));
     _writeTagStart(str, TAG_OPT, &attrs);
     if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_CROP, type)) {
         AlCropOperateModel *model = dynamic_cast<AlCropOperateModel *>(opt);
@@ -189,6 +188,32 @@ void AlFileExporter::_writeOpt(std::string *str, AlAbsOperateModel *opt) {
         attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(pos.y)));
         _writeTagStart(str, TAG_POSITION, &attrs);
         _writeTagEnd(str, TAG_POSITION);
+        ///Crop size
+        attrs.clear();
+        AlSize cropSize = model->getCropSize();
+        attrs.insert(Attr(VAL_WIDTH, StringUtils::valueOf(cropSize.width)));
+        attrs.insert(Attr(VAL_HEIGHT, StringUtils::valueOf(cropSize.height)));
+        _writeTagStart(str, TAG_SIZE, &attrs);
+        _writeTagEnd(str, TAG_SIZE);
+        ///Quad
+        attrs.clear();
+        AlQuad quad = model->getQuad();
+        attrs.insert(Attr(VAL_LT_X, StringUtils::valueOf(quad.leftTop().x)));
+        attrs.insert(Attr(VAL_LT_Y, StringUtils::valueOf(quad.leftTop().y)));
+        attrs.insert(Attr(VAL_RT_X, StringUtils::valueOf(quad.rightTop().x)));
+        attrs.insert(Attr(VAL_RT_Y, StringUtils::valueOf(quad.rightTop().y)));
+        attrs.insert(Attr(VAL_LB_X, StringUtils::valueOf(quad.leftBottom().x)));
+        attrs.insert(Attr(VAL_LB_X, StringUtils::valueOf(quad.leftBottom().y)));
+        attrs.insert(Attr(VAL_RB_X, StringUtils::valueOf(quad.rightBottom().x)));
+        attrs.insert(Attr(VAL_RB_Y, StringUtils::valueOf(quad.rightBottom().y)));
+        _writeTagStart(str, TAG_QUAD, &attrs);
+        _writeTagEnd(str, TAG_QUAD);
+        ///Invalidate
+        attrs.clear();
+        bool invalidate = model->getInvalidate();
+        attrs.insert(Attr(VAL_INVALIDATE, StringUtils::valueOf((int) invalidate)));
+        _writeTagStart(str, TAG_BOOL, &attrs);
+        _writeTagEnd(str, TAG_BOOL);
     } else if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_ALIGN_CROP, type)) {
         AlAlignCropOperateModel *model = dynamic_cast<AlAlignCropOperateModel *>(opt);
         ///Rotation

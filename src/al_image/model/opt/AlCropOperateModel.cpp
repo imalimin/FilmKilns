@@ -114,3 +114,43 @@ AlRational AlCropOperateModel::getRotation() {
 AlVec2 AlCropOperateModel::getPosition() {
     return position;
 }
+
+AlSize AlCropOperateModel::getCropSize() {
+    return cropSize;
+}
+
+AlQuad AlCropOperateModel::getQuad() {
+    return quad;
+}
+
+bool AlCropOperateModel::getInvalidate() {
+    return invalidate;
+}
+
+void AlCropOperateModel::setScale(AlVec2 scale) {
+    this->scale.x = scale.x;
+    this->scale.y = scale.y;
+}
+
+void AlCropOperateModel::setRotation(AlRational rotation) {
+    this->rotation.num = rotation.num;
+    this->rotation.den = rotation.den;
+}
+
+void AlCropOperateModel::setPosition(AlVec2 position) {
+    this->position.x = position.x;
+    this->position.y = position.y;
+}
+
+void AlCropOperateModel::setCropSize(AlSize size) {
+    this->cropSize.width = cropSize.width;
+    this->cropSize.height = cropSize.height;
+}
+
+void AlCropOperateModel::setQuad(AlQuad quad) {
+    this->quad = quad;
+}
+
+void AlCropOperateModel::setInvalidate(bool invalidate) {
+    this->invalidate = invalidate;
+}

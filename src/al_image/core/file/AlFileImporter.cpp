@@ -8,6 +8,7 @@
 #include "AlFileImporter.h"
 #include "AlXmlTagDefine.h"
 #include "AlOperateFactory.h"
+#include "AlCropOperateModel.h"
 #include "StringUtils.h"
 #include "Logcat.h"
 #include "tinyxml.h"
@@ -146,12 +147,7 @@ HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
     TiXmlElement *elm = static_cast<TiXmlElement *>(e);
     const char *str = elm->Attribute(VAL_TYPE);
     std::string type = str;
-    str = elm->Attribute(VAL_CANVAS_WIDTH);
-    int canvasWidth = StringUtils::toInt(str);
-    str = elm->Attribute(VAL_CANVAS_HEIGHT);
-    int canvasHeight = StringUtils::toInt(str);
-    if (INT32_MIN == canvasWidth || INT32_MIN == canvasHeight
-        || StringUtils::isEmpty(&type)) {
+    if (StringUtils::isEmpty(&type)) {
         return Hw::FAILED;
     }
     AlAbsOperateModel *model = nullptr;
@@ -160,6 +156,9 @@ HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
         AlVec2 scale;
         AlRational rotation;
         AlVec2 pos;
+        AlSize cropSize;
+        AlQuad quad;
+        bool invalidate = true;
         for (TiXmlElement *elem = elm->FirstChildElement();
              elem != NULL; elem = elem->NextSiblingElement()) {
             std::string tagName = elem->Value();
@@ -172,37 +171,73 @@ HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
                 rectF.right = StringUtils::toFloat(str);
                 str = elem->Attribute(VAL_BOTTOM);
                 rectF.bottom = StringUtils::toFloat(str);
-            }
-//            else if (StringUtils::endsWith(TAG_SCALE, tagName)) {
-//                str = elem->Attribute(VAL_VEC2_X);
-//                scale.x = StringUtils::toFloat(str);
-//                str = elem->Attribute(VAL_VEC2_Y);
-//                scale.y = StringUtils::toFloat(str);
-//            } else if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
-//                str = elem->Attribute(VAL_RATIONAL_NUM);
-//                rotation.num = StringUtils::toInt(str);
-//                str = elem->Attribute(VAL_RATIONAL_DEN);
-//                rotation.den = StringUtils::toInt(str);
-//            } else if (StringUtils::endsWith(TAG_POSITION, tagName)) {
-//                str = elem->Attribute(VAL_VEC2_X);
-//                pos.x = StringUtils::toFloat(str);
-//                str = elem->Attribute(VAL_VEC2_Y);
-//                pos.y = StringUtils::toFloat(str);
-//            }
-        }
-//        if (MAXFLOAT == rectF.left || MAXFLOAT == rectF.top
-//            || MAXFLOAT == rectF.right || MAXFLOAT == rectF.bottom
-//            || MAXFLOAT == scale.x || MAXFLOAT == scale.y
-//            || INT32_MIN == rotation.num || INT32_MIN == rotation.den
-//            || MAXFLOAT == pos.x || MAXFLOAT == pos.y) {
-//            return Hw::FAILED;
-//        }
+            } else if (StringUtils::endsWith(TAG_SCALE, tagName)) {
+                str = elem->Attribute(VAL_VEC2_X);
+                scale.x = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_VEC2_Y);
+                scale.y = StringUtils::toFloat(str);
+            } else if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
+                str = elem->Attribute(VAL_RATIONAL_NUM);
+                rotation.num = StringUtils::toInt(str);
+                str = elem->Attribute(VAL_RATIONAL_DEN);
+                rotation.den = StringUtils::toInt(str);
+            } else if (StringUtils::endsWith(TAG_POSITION, tagName)) {
+                str = elem->Attribute(VAL_VEC2_X);
+                pos.x = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_VEC2_Y);
+                pos.y = StringUtils::toFloat(str);
+            } else if (StringUtils::endsWith(TAG_SIZE, tagName)) {
+                str = elem->Attribute(VAL_WIDTH);
+                cropSize.width = StringUtils::toInt(str);
+                str = elem->Attribute(VAL_HEIGHT);
+                cropSize.height = StringUtils::toInt(str);
+            } else if (StringUtils::endsWith(TAG_QUAD, tagName)) {
+                AlPointF lt, rt, lb, rb;
+                str = elem->Attribute(VAL_LT_X);
+                lt.x = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_LT_Y);
+                lt.y = StringUtils::toFloat(str);
 
+                str = elem->Attribute(VAL_RT_X);
+                rt.x = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_RT_Y);
+                rt.y = StringUtils::toFloat(str);
+
+                str = elem->Attribute(VAL_LB_X);
+                lb.x = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_LB_Y);
+                lb.y = StringUtils::toFloat(str);
+
+                str = elem->Attribute(VAL_RB_X);
+                rb.x = StringUtils::toFloat(str);
+                str = elem->Attribute(VAL_RB_Y);
+                rb.y = StringUtils::toFloat(str);
+                quad.setLeftTop(lt);
+                quad.setRightTop(rt);
+                quad.setLeftBottom(lb);
+                quad.setRightBottom(rb);
+            } else if (StringUtils::endsWith(TAG_BOOL, tagName)) {
+                AlPointF lt, rt, lb, rb;
+                str = elem->Attribute(VAL_INVALIDATE);
+                invalidate = static_cast<bool>(StringUtils::toInt(str));
+            }
+        }
         if (MAXFLOAT == rectF.left || MAXFLOAT == rectF.top
-            || MAXFLOAT == rectF.right || MAXFLOAT == rectF.bottom) {
+            || MAXFLOAT == rectF.right || MAXFLOAT == rectF.bottom
+            || MAXFLOAT == scale.x || MAXFLOAT == scale.y
+            || INT32_MIN == rotation.num || INT32_MIN == rotation.den
+            || MAXFLOAT == pos.x || MAXFLOAT == pos.y) {
             return Hw::FAILED;
         }
+
         model = AlOperateFactory::crop(rectF.left, rectF.top, rectF.right, rectF.bottom);
+        AlCropOperateModel *m = dynamic_cast<AlCropOperateModel *>(model);
+        m->setScale(scale);
+        m->setRotation(rotation);
+        m->setPosition(pos);
+        m->setCropSize(cropSize);
+        m->setQuad(quad);
+        m->setInvalidate(invalidate);
     } else if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_ALIGN_CROP, type)) {
         AlRational rotation;
         for (TiXmlElement *elem = elm->FirstChildElement();
@@ -221,7 +256,6 @@ HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
         model = AlOperateFactory::alignCrop(rotation);
     }
     if (model) {
-        model->setCanvasSize(AlSize(canvasWidth, canvasHeight));
         layer->addOperator(model);
     }
     return Hw::SUCCESS;

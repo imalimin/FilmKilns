@@ -34,6 +34,36 @@ public:
 
     AlVec2 getPosition();
 
+    AlSize getCropSize();
+
+    AlQuad getQuad();
+
+    bool getInvalidate();
+
+    /// Do not call this func. Just for restore.
+    /// \param scale
+    void setScale(AlVec2 scale);
+
+    /// Do not call this func. Just for restore.
+    /// \param rotation
+    void setRotation(AlRational rotation);
+
+    /// Do not call this func. Just for restore.
+    /// \param position
+    void setPosition(AlVec2 position);
+
+    /// Do not call this func. Just for restore.
+    /// \param size
+    void setCropSize(AlSize size);
+
+    /// Do not call this func. Just for restore.
+    /// \param quad
+    void setQuad(AlQuad quad);
+
+    /// Do not call this func. Just for restore.
+    /// \param invalidate
+    void setInvalidate(bool invalidate);
+
 private:
     bool invalidate = false;
     /// 裁剪框区域，相对于画布坐标系
