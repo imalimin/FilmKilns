@@ -38,7 +38,7 @@ void AlCropOperateModel::setRect(float left, float top, float right, float botto
 
 HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
                                      AlImageLayerDrawModel *description) {
-    if (invalidate) {
+    if (invalidate && canvasSize.width > 0 && canvasSize.height > 0) {
         invalidate = false;
         this->scale = layer.getScale();
         this->rotation = layer.getRotation();
