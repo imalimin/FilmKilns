@@ -143,8 +143,8 @@ void AlCropOperateModel::setPosition(AlVec2 position) {
 }
 
 void AlCropOperateModel::setCropSize(AlSize size) {
-    this->cropSize.width = cropSize.width;
-    this->cropSize.height = cropSize.height;
+    this->cropSize.width = size.width;
+    this->cropSize.height = size.height;
 }
 
 void AlCropOperateModel::setQuad(AlQuad quad) {

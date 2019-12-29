@@ -97,6 +97,7 @@ void AlFileExporter::_writeTagStart(std::string *str, const char *tag,
         str->append(attrsStr, 0, attrsStr.size() - 1);
     }
     str->append(">");
+    str->append("\n");
 }
 
 void AlFileExporter::_writeTagEnd(std::string *str, const char *tag) {
@@ -203,7 +204,7 @@ void AlFileExporter::_writeOpt(std::string *str, AlAbsOperateModel *opt) {
         attrs.insert(Attr(VAL_RT_X, StringUtils::valueOf(quad.rightTop().x)));
         attrs.insert(Attr(VAL_RT_Y, StringUtils::valueOf(quad.rightTop().y)));
         attrs.insert(Attr(VAL_LB_X, StringUtils::valueOf(quad.leftBottom().x)));
-        attrs.insert(Attr(VAL_LB_X, StringUtils::valueOf(quad.leftBottom().y)));
+        attrs.insert(Attr(VAL_LB_Y, StringUtils::valueOf(quad.leftBottom().y)));
         attrs.insert(Attr(VAL_RB_X, StringUtils::valueOf(quad.rightBottom().x)));
         attrs.insert(Attr(VAL_RB_Y, StringUtils::valueOf(quad.rightBottom().y)));
         _writeTagStart(str, TAG_QUAD, &attrs);

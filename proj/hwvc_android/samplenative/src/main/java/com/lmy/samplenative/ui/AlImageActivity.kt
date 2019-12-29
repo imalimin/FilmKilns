@@ -252,7 +252,8 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
     }
 
     fun showOptLayer(show: Boolean) {
-        optLayout.visibility = if (show) View.VISIBLE else View.GONE
+//        optLayout.visibility = if (show) View.VISIBLE else View.GONE
+        optLayout.visibility = View.VISIBLE
     }
 
     companion object {

@@ -70,7 +70,7 @@ HwResult AlFileImporter::_parseElement(void *e, AlImageCanvasModel *canvas,
     }
     TiXmlElement *elm = static_cast<TiXmlElement *>(e);
     std::string name = elm->Value();
-    if (StringUtils::endsWith(TAG_CANVAS, name)) {
+    if (StringUtils::equalsIgnoreCase(TAG_CANVAS, name)) {
         const char *str = elm->Attribute(VAL_WIDTH);
         int32_t width = StringUtils::toInt(str);
         str = elm->Attribute(VAL_HEIGHT);
@@ -82,7 +82,7 @@ HwResult AlFileImporter::_parseElement(void *e, AlImageCanvasModel *canvas,
             return Hw::FAILED;
         }
         canvas->set(width, height, color);
-    } else if (StringUtils::endsWith(TAG_LAYER, name)) {
+    } else if (StringUtils::equalsIgnoreCase(TAG_LAYER, name)) {
         if (Hw::SUCCESS != _parseLayer(elm, layers)) {
             Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
             return Hw::FAILED;
@@ -111,7 +111,7 @@ HwResult AlFileImporter::_parseLayer(void *e, std::vector<AlImageLayerModel *> *
     for (TiXmlElement *elem = elm->FirstChildElement();
          elem != NULL; elem = elem->NextSiblingElement()) {
         std::string tagName = elem->Value();
-        if (StringUtils::endsWith(TAG_SCALE, tagName)) {
+        if (StringUtils::equalsIgnoreCase(TAG_SCALE, tagName)) {
             str = elem->Attribute(VAL_VEC2_X);
             float x = StringUtils::toFloat(str);
             str = elem->Attribute(VAL_VEC2_Y);
@@ -119,7 +119,7 @@ HwResult AlFileImporter::_parseLayer(void *e, std::vector<AlImageLayerModel *> *
             if (MAXFLOAT != x && MAXFLOAT != y) {
                 layer->setScale(x, y);
             }
-        } else if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
+        } else if (StringUtils::equalsIgnoreCase(TAG_ROTATION, tagName)) {
             str = elem->Attribute(VAL_RATIONAL_NUM);
             int32_t num = StringUtils::toInt(str);
             str = elem->Attribute(VAL_RATIONAL_DEN);
@@ -128,7 +128,7 @@ HwResult AlFileImporter::_parseLayer(void *e, std::vector<AlImageLayerModel *> *
                 AlRational r(num, den);
                 layer->setRotation(r);
             }
-        } else if (StringUtils::endsWith(TAG_POSITION, tagName)) {
+        } else if (StringUtils::equalsIgnoreCase(TAG_POSITION, tagName)) {
             str = elem->Attribute(VAL_VEC2_X);
             float x = StringUtils::toFloat(str);
             str = elem->Attribute(VAL_VEC2_Y);
@@ -171,27 +171,27 @@ HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
                 rectF.right = StringUtils::toFloat(str);
                 str = elem->Attribute(VAL_BOTTOM);
                 rectF.bottom = StringUtils::toFloat(str);
-            } else if (StringUtils::endsWith(TAG_SCALE, tagName)) {
+            } else if (StringUtils::equalsIgnoreCase(TAG_SCALE, tagName)) {
                 str = elem->Attribute(VAL_VEC2_X);
                 scale.x = StringUtils::toFloat(str);
                 str = elem->Attribute(VAL_VEC2_Y);
                 scale.y = StringUtils::toFloat(str);
-            } else if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
+            } else if (StringUtils::equalsIgnoreCase(TAG_ROTATION, tagName)) {
                 str = elem->Attribute(VAL_RATIONAL_NUM);
                 rotation.num = StringUtils::toInt(str);
                 str = elem->Attribute(VAL_RATIONAL_DEN);
                 rotation.den = StringUtils::toInt(str);
-            } else if (StringUtils::endsWith(TAG_POSITION, tagName)) {
+            } else if (StringUtils::equalsIgnoreCase(TAG_POSITION, tagName)) {
                 str = elem->Attribute(VAL_VEC2_X);
                 pos.x = StringUtils::toFloat(str);
                 str = elem->Attribute(VAL_VEC2_Y);
                 pos.y = StringUtils::toFloat(str);
-            } else if (StringUtils::endsWith(TAG_SIZE, tagName)) {
+            } else if (StringUtils::equalsIgnoreCase(TAG_SIZE, tagName)) {
                 str = elem->Attribute(VAL_WIDTH);
                 cropSize.width = StringUtils::toInt(str);
                 str = elem->Attribute(VAL_HEIGHT);
                 cropSize.height = StringUtils::toInt(str);
-            } else if (StringUtils::endsWith(TAG_QUAD, tagName)) {
+            } else if (StringUtils::equalsIgnoreCase(TAG_QUAD, tagName)) {
                 AlPointF lt, rt, lb, rb;
                 str = elem->Attribute(VAL_LT_X);
                 lt.x = StringUtils::toFloat(str);
@@ -216,7 +216,7 @@ HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
                 quad.setRightTop(rt);
                 quad.setLeftBottom(lb);
                 quad.setRightBottom(rb);
-            } else if (StringUtils::endsWith(TAG_BOOL, tagName)) {
+            } else if (StringUtils::equalsIgnoreCase(TAG_BOOL, tagName)) {
                 AlPointF lt, rt, lb, rb;
                 str = elem->Attribute(VAL_INVALIDATE);
                 invalidate = static_cast<bool>(StringUtils::toInt(str));
@@ -243,7 +243,7 @@ HwResult AlFileImporter::_parseOpt(void *e, AlImageLayerModel *layer) {
         for (TiXmlElement *elem = elm->FirstChildElement();
              elem != NULL; elem = elem->NextSiblingElement()) {
             std::string tagName = elem->Value();
-            if (StringUtils::endsWith(TAG_ROTATION, tagName)) {
+            if (StringUtils::equalsIgnoreCase(TAG_ROTATION, tagName)) {
                 str = elem->Attribute(VAL_RATIONAL_NUM);
                 rotation.num = StringUtils::toInt(str);
                 str = elem->Attribute(VAL_RATIONAL_DEN);
