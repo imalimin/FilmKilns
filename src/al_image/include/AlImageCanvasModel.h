@@ -9,8 +9,9 @@
 #define HWVC_ANDROID_ALIMAGECANVASMODEL_H
 
 #include "Object.h"
+#include "AlAbsElemented.h"
 
-al_class(AlImageCanvasModel) {
+al_class_ex(AlImageCanvasModel, AlAbsElemented) {
 public:
     AlImageCanvasModel();
 
@@ -27,6 +28,10 @@ public:
     int32_t getHeight();
 
     int32_t getColor();
+
+    virtual HwResult fromElement(AlElement *element) override;
+
+    virtual HwResult toElement(AlElement **element) override;
 
 private:
     int32_t width = 0;

@@ -7,6 +7,10 @@
 
 #include "AlAlignCropOperateModel.h"
 #include "AlMath.h"
+#include "StringUtils.h"
+
+#define VAL_RATIONAL_NUM                    "num"
+#define VAL_RATIONAL_DEN                    "den"
 
 AlAlignCropOperateModel::AlAlignCropOperateModel() : AlAbsOperateModel(TYPE_ALIGN_CROP) {
 
@@ -58,4 +62,21 @@ void AlAlignCropOperateModel::setRotation(AlRational &r) {
 
 AlRational AlAlignCropOperateModel::getRotation() {
     return rotation;
+}
+
+HwResult AlAlignCropOperateModel::fromElement(AlElement *element) {
+    return Hw::SUCCESS;
+}
+
+HwResult AlAlignCropOperateModel::toElement(AlElement **element) {
+    AlElement *root = new AlElement(TAG_OPT);
+    root->addAttr(VAL_TYPE, type);
+    *element = root;
+
+    AlElement *rotation = new AlElement(TAG_OPT);
+    rotation->addAttr(VAL_RATIONAL_NUM, StringUtils::valueOf(this->rotation.num));
+    rotation->addAttr(VAL_RATIONAL_DEN, StringUtils::valueOf(this->rotation.den));
+
+    root->addChild(rotation);
+    return Hw::SUCCESS;
 }

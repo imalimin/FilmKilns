@@ -8,9 +8,22 @@
 #include "AlImageLayerModel.h"
 #include "AlCropOperateModel.h"
 #include "AlAlignCropOperateModel.h"
+#include "StringUtils.h"
 #include "Logcat.h"
 
 #define TAG "AlImageLayerModel"
+#define TAG_LAYER                           "layer"
+#define TAG_SCALE                           "scale"
+#define TAG_ROTATION                        "rotation"
+#define TAG_POSITION                        "position"
+
+#define VAL_PATH                            "path"
+#define VAL_ID                              "id"
+#define VAL_ALPHA                           "alpha"
+#define VAL_RATIONAL_NUM                    "num"
+#define VAL_RATIONAL_DEN                    "den"
+#define VAL_VEC2_X                          "x"
+#define VAL_VEC2_Y                          "y"
 
 AlImageLayerModel *AlImageLayerModel::create(AlIdentityCreator *creator, const std::string path) {
     return create(creator->generate(), path);
@@ -21,7 +34,7 @@ AlImageLayerModel *AlImageLayerModel::create(int32_t id, const std::string path)
 }
 
 AlImageLayerModel::AlImageLayerModel(int32_t id, const std::string &path)
-        : Object(),
+        : AlAbsElemented(),
           path(path),
           id(id),
           alpha(1.0f),
@@ -32,7 +45,7 @@ AlImageLayerModel::AlImageLayerModel(int32_t id, const std::string &path)
 }
 
 AlImageLayerModel::AlImageLayerModel(const AlImageLayerModel &o)
-        : Object(),
+        : AlAbsElemented(),
           id(o.id),
           path(o.path),
           alpha(o.alpha),
@@ -181,4 +194,42 @@ bool AlImageLayerModel::_removeOperator(type_info type) {
         ++itr;
     }
     return ret;
+}
+
+HwResult AlImageLayerModel::fromElement(AlElement *element) {
+    return Hw::SUCCESS;
+}
+
+HwResult AlImageLayerModel::toElement(AlElement **element) {
+    AlElement *root = new AlElement(TAG_LAYER);
+    root->addAttr(VAL_PATH, path);
+    root->addAttr(VAL_ID, StringUtils::valueOf(id));
+    root->addAttr(VAL_ALPHA, StringUtils::valueOf(alpha));
+    *element = root;
+
+    AlElement *scale = new AlElement(TAG_SCALE);
+    scale->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->scale.x));
+    scale->addAttr(VAL_VEC2_Y, StringUtils::valueOf(this->scale.y));
+
+    AlElement *rotation = new AlElement(TAG_ROTATION);
+    rotation->addAttr(VAL_RATIONAL_NUM, StringUtils::valueOf(this->rotation.num));
+    rotation->addAttr(VAL_RATIONAL_DEN, StringUtils::valueOf(this->rotation.den));
+
+    AlElement *pos = new AlElement(TAG_POSITION);
+    pos->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->position.x));
+    pos->addAttr(VAL_VEC2_Y, StringUtils::valueOf(this->position.y));
+
+    root->addChild(scale);
+    root->addChild(rotation);
+    root->addChild(pos);
+
+    size_t size = operators.size();
+    for (int i = 0; i < size; ++i) {
+        AlElement *opt = nullptr;
+        operators[i]->toElement(&opt);
+        if (opt) {
+            root->addChild(opt);
+        }
+    }
+    return Hw::SUCCESS;
 }

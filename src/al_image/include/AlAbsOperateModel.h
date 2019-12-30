@@ -14,8 +14,12 @@
 #include "AlImgLayerDescription.h"
 #include "AlImageLayerDrawModel.h"
 #include "AlElement.h"
+#include "AlAbsElemented.h"
 
-al_class(AlAbsOperateModel) {
+#define TAG_OPT                             "opt"
+#define VAL_TYPE                            "type"
+
+al_class_ex(AlAbsOperateModel, AlAbsElemented) {
 public:
     static const std::string TYPE_CROP;
     static const std::string TYPE_ALIGN_CROP;
@@ -33,10 +37,6 @@ public:
     std::string getType();
 
     virtual HwResult measure(AlImgLayerDescription &layer, AlImageLayerDrawModel *description) = 0;
-
-    virtual HwResult fromElement(AlElement *element) = 0;
-
-    virtual HwResult toElement(AlElement **element) = 0;
 
 protected:
     std::string type;

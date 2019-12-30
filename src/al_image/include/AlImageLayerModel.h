@@ -15,6 +15,7 @@
 #include "AlQuad.h"
 #include "AlRational.h"
 #include "HwResult.h"
+#include "AlAbsElemented.h"
 
 class AlImageLayer;
 
@@ -22,7 +23,7 @@ class AlAbsOperateModel;
 
 class AlFileImporter;
 
-al_class(AlImageLayerModel) {
+al_class_ex(AlImageLayerModel, AlAbsElemented) {
 public:
     static AlImageLayerModel *create(AlIdentityCreator *creator, const std::string path);
 
@@ -74,6 +75,10 @@ public:
     bool removeAlignCropOperator();
 
     void dump();
+
+    virtual HwResult fromElement(AlElement *element) override;
+
+    virtual HwResult toElement(AlElement **element) override;
 
 private:
     bool _removeOperator(type_info type);

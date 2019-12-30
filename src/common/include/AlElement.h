@@ -33,6 +33,8 @@ public:
 
     bool contains(AlElement *e);
 
+    virtual std::string toString() override ;
+
 private:
     AlElement(const AlElement &o) : Object() {};
 private:

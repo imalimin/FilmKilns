@@ -40,17 +40,6 @@ public:
 
 private:
     AlFileExporter(const AlFileExporter &o) : Object() {}
-
-    void _writeCanvas(std::string *str, AlImageCanvasModel *canvas);
-
-    void _writeLayer(std::string *str, AlImageLayerModel *layer);
-
-    void _writeOpt(std::string *str, AlAbsOperateModel *opt);
-
-    void _writeTagStart(std::string *str, const char *tag,
-                        std::map<std::string, std::string> *attrs = nullptr);
-
-    void _writeTagEnd(std::string *str, const char *tag);
 };
 
 

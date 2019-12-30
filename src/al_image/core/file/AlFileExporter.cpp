@@ -10,6 +10,8 @@
 #include "StringUtils.h"
 #include "AlCropOperateModel.h"
 #include "AlAlignCropOperateModel.h"
+#include "AlElement.h"
+#include "AlObjectGuard.h"
 #include "Logcat.h"
 
 #define TAG "AlFileExporter"
@@ -55,175 +57,28 @@ HwResult AlFileExporter::exportAsStr(AlImageCanvasModel *canvas,
     }
     outStr->append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     outStr->append("\n");
-    std::map<std::string, std::string> attrs;
-    attrs.insert(Attr(VAL_VERSION, XML_VERSION));
-    _writeTagStart(outStr, TAG_ROOT, &attrs);
-    ///Write content
-    _writeCanvas(outStr, canvas);
-    size_t layerSize = layers->size();
-    for (int i = 0; i < layerSize; ++i) {
-        _writeLayer(outStr, (*layers)[i]);
+
+    AlElement *root = new AlElement(TAG_ROOT);
+    AlObjectGuard guard((Object **) &root);
+    root->addAttr(VAL_VERSION, XML_VERSION);
+    AlElement *cEle = nullptr;
+    canvas->toElement(&cEle);
+    if (nullptr == cEle) {
+        Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+        return Hw::FAILED;
     }
-    ///Write content end
-    _writeTagEnd(outStr, TAG_ROOT);
+    root->addChild(cEle);
+
+    size_t size = layers->size();
+    for (int i = 0; i < size; ++i) {
+        AlElement *e = nullptr;
+        (*layers)[i]->toElement(&e);
+        if (nullptr == e) {
+            Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+            return Hw::FAILED;
+        }
+        root->addChild(e);
+    }
+    outStr->append(root->toString());
     return Hw::SUCCESS;
-}
-
-void AlFileExporter::_writeCanvas(std::string *str, AlImageCanvasModel *canvas) {
-    std::map<std::string, std::string> attrs;
-    attrs.insert(Attr(VAL_WIDTH, StringUtils::valueOf(canvas->getWidth())));
-    attrs.insert(Attr(VAL_HEIGHT, StringUtils::valueOf(canvas->getHeight())));
-    attrs.insert(Attr(VAL_COLOR, StringUtils::valueOf(canvas->getColor())));
-    _writeTagStart(str, TAG_CANVAS, &attrs);
-    _writeTagEnd(str, TAG_CANVAS);
-}
-
-void AlFileExporter::_writeTagStart(std::string *str, const char *tag,
-                                    std::map<std::string, std::string> *attrs) {
-    std::string attrsStr;
-    auto itr = attrs->begin();
-    while (attrs->end() != itr) {
-        attrsStr.append(itr->first);
-        attrsStr.append("=");
-        attrsStr.append("\"");
-        attrsStr.append(itr->second);
-        attrsStr.append("\"\n");
-        ++itr;
-    }
-    str->append("<");
-    str->append(tag);
-    if (!attrsStr.empty()) {
-        str->append(" ");
-        str->append(attrsStr, 0, attrsStr.size() - 1);
-    }
-    str->append(">");
-    str->append("\n");
-}
-
-void AlFileExporter::_writeTagEnd(std::string *str, const char *tag) {
-    str->append("</");
-    str->append(tag);
-    str->append(">");
-    str->append("\n");
-}
-
-void AlFileExporter::_writeLayer(std::string *str, AlImageLayerModel *layer) {
-    if (nullptr == layer) {
-        return;
-    }
-    std::map<std::string, std::string> attrs;
-    attrs.insert(Attr(VAL_PATH, layer->getPath()));
-    attrs.insert(Attr(VAL_ID, StringUtils::valueOf(layer->getId())));
-    attrs.insert(Attr(VAL_ALPHA, StringUtils::valueOf(layer->getAlpha())));
-    _writeTagStart(str, TAG_LAYER, &attrs);
-    ///Scale
-    attrs.clear();
-    AlVec2 scale = layer->getScale();
-    attrs.insert(Attr(VAL_VEC2_X, StringUtils::valueOf(scale.x)));
-    attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(scale.y)));
-    _writeTagStart(str, TAG_SCALE, &attrs);
-    _writeTagEnd(str, TAG_SCALE);
-    ///Rotation
-    attrs.clear();
-    AlRational rotation = layer->getRotation();
-    attrs.insert(Attr(VAL_RATIONAL_NUM, StringUtils::valueOf(rotation.num)));
-    attrs.insert(Attr(VAL_RATIONAL_DEN, StringUtils::valueOf(rotation.den)));
-    _writeTagStart(str, TAG_ROTATION, &attrs);
-    _writeTagEnd(str, TAG_ROTATION);
-    ///Position
-    attrs.clear();
-    AlVec2 pos = layer->getPosition();
-    attrs.insert(Attr(VAL_VEC2_X, StringUtils::valueOf(pos.x)));
-    attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(pos.y)));
-    _writeTagStart(str, TAG_POSITION, &attrs);
-    _writeTagEnd(str, TAG_POSITION);
-
-    auto *opts = layer->getAllOperators();
-    size_t optSize = opts->size();
-    for (int i = 0; i < optSize; ++i) {
-        auto *opt = (*opts)[i];
-        _writeOpt(str, opt);
-    }
-
-    _writeTagEnd(str, TAG_LAYER);
-}
-
-void AlFileExporter::_writeOpt(std::string *str, AlAbsOperateModel *opt) {
-    if (nullptr == opt) {
-        return;
-    }
-    std::string type = opt->getType();
-    AlSize canvasSize = opt->getCanvasSize();
-    std::map<std::string, std::string> attrs;
-    attrs.insert(Attr(VAL_TYPE, opt->getType()));
-    _writeTagStart(str, TAG_OPT, &attrs);
-    if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_CROP, type)) {
-        AlCropOperateModel *model = dynamic_cast<AlCropOperateModel *>(opt);
-        AlRectF rectF = model->getRect();
-        ///Rect
-        attrs.clear();
-        attrs.insert(Attr(VAL_LEFT, StringUtils::valueOf(rectF.left)));
-        attrs.insert(Attr(VAL_TOP, StringUtils::valueOf(rectF.top)));
-        attrs.insert(Attr(VAL_RIGHT, StringUtils::valueOf(rectF.right)));
-        attrs.insert(Attr(VAL_BOTTOM, StringUtils::valueOf(rectF.bottom)));
-        _writeTagStart(str, TAG_RECTF, &attrs);
-        _writeTagEnd(str, TAG_RECTF);
-        ///Scale
-        attrs.clear();
-        AlVec2 scale = model->getScale();
-        attrs.insert(Attr(VAL_VEC2_X, StringUtils::valueOf(scale.x)));
-        attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(scale.y)));
-        _writeTagStart(str, TAG_SCALE, &attrs);
-        _writeTagEnd(str, TAG_SCALE);
-        ///Rotation
-        attrs.clear();
-        AlRational rotation = model->getRotation();
-        attrs.insert(Attr(VAL_RATIONAL_NUM, StringUtils::valueOf(rotation.num)));
-        attrs.insert(Attr(VAL_RATIONAL_DEN, StringUtils::valueOf(rotation.den)));
-        _writeTagStart(str, TAG_ROTATION, &attrs);
-        _writeTagEnd(str, TAG_ROTATION);
-        ///Position
-        attrs.clear();
-        AlVec2 pos = model->getPosition();
-        attrs.insert(Attr(VAL_VEC2_X, StringUtils::valueOf(pos.x)));
-        attrs.insert(Attr(VAL_VEC2_Y, StringUtils::valueOf(pos.y)));
-        _writeTagStart(str, TAG_POSITION, &attrs);
-        _writeTagEnd(str, TAG_POSITION);
-        ///Crop size
-        attrs.clear();
-        AlSize cropSize = model->getCropSize();
-        attrs.insert(Attr(VAL_WIDTH, StringUtils::valueOf(cropSize.width)));
-        attrs.insert(Attr(VAL_HEIGHT, StringUtils::valueOf(cropSize.height)));
-        _writeTagStart(str, TAG_SIZE, &attrs);
-        _writeTagEnd(str, TAG_SIZE);
-        ///Quad
-        attrs.clear();
-        AlQuad quad = model->getQuad();
-        attrs.insert(Attr(VAL_LT_X, StringUtils::valueOf(quad.leftTop().x)));
-        attrs.insert(Attr(VAL_LT_Y, StringUtils::valueOf(quad.leftTop().y)));
-        attrs.insert(Attr(VAL_RT_X, StringUtils::valueOf(quad.rightTop().x)));
-        attrs.insert(Attr(VAL_RT_Y, StringUtils::valueOf(quad.rightTop().y)));
-        attrs.insert(Attr(VAL_LB_X, StringUtils::valueOf(quad.leftBottom().x)));
-        attrs.insert(Attr(VAL_LB_Y, StringUtils::valueOf(quad.leftBottom().y)));
-        attrs.insert(Attr(VAL_RB_X, StringUtils::valueOf(quad.rightBottom().x)));
-        attrs.insert(Attr(VAL_RB_Y, StringUtils::valueOf(quad.rightBottom().y)));
-        _writeTagStart(str, TAG_QUAD, &attrs);
-        _writeTagEnd(str, TAG_QUAD);
-        ///Invalidate
-        attrs.clear();
-        bool invalidate = model->getInvalidate();
-        attrs.insert(Attr(VAL_INVALIDATE, StringUtils::valueOf((int) invalidate)));
-        _writeTagStart(str, TAG_BOOL, &attrs);
-        _writeTagEnd(str, TAG_BOOL);
-    } else if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_ALIGN_CROP, type)) {
-        AlAlignCropOperateModel *model = dynamic_cast<AlAlignCropOperateModel *>(opt);
-        ///Rotation
-        attrs.clear();
-        AlRational rotation = model->getRotation();
-        attrs.insert(Attr(VAL_RATIONAL_NUM, StringUtils::valueOf(rotation.num)));
-        attrs.insert(Attr(VAL_RATIONAL_DEN, StringUtils::valueOf(rotation.den)));
-        _writeTagStart(str, TAG_ROTATION, &attrs);
-        _writeTagEnd(str, TAG_ROTATION);
-    }
-    _writeTagEnd(str, TAG_OPT);
 }

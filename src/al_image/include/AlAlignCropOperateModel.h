@@ -21,6 +21,10 @@ public:
     virtual HwResult measure(AlImgLayerDescription &layer,
                              AlImageLayerDrawModel *description) override;
 
+    virtual HwResult fromElement(AlElement *element) override;
+
+    virtual HwResult toElement(AlElement **element) override;
+
     void setRotation(AlRational &r);
 
     AlRational getRotation();

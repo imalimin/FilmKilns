@@ -10,12 +10,12 @@
 const std::string AlAbsOperateModel::TYPE_CROP = "crop";
 const std::string AlAbsOperateModel::TYPE_ALIGN_CROP = "align_crop";
 
-AlAbsOperateModel::AlAbsOperateModel(std::string type) : Object(), type(type) {
+AlAbsOperateModel::AlAbsOperateModel(std::string type) : AlAbsElemented(), type(type) {
 
 }
 
 AlAbsOperateModel::AlAbsOperateModel(const AlAbsOperateModel &o)
-        : Object(), type(o.type), canvasSize(o.canvasSize) {
+        : AlAbsElemented(), type(o.type), canvasSize(o.canvasSize) {
 
 }
 

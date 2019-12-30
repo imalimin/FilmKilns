@@ -14,6 +14,8 @@
 #include "StringUtils.h"
 
 #define TAG "AlCropOperateModel"
+#define VAL_WIDTH                           "width"
+#define VAL_HEIGHT                          "height"
 #define TAG_SCALE                           "scale"
 #define TAG_ROTATION                        "rotation"
 #define TAG_POSITION                        "position"
@@ -21,8 +23,6 @@
 #define VAL_RATIONAL_DEN                    "den"
 #define VAL_VEC2_X                          "x"
 #define VAL_VEC2_Y                          "y"
-#define TAG_OPT                             "opt"
-#define VAL_TYPE                            "type"
 #define TAG_RECTF                           "rectf"
 #define VAL_LEFT                            "left"
 #define VAL_TOP                             "top"
@@ -142,7 +142,7 @@ HwResult AlCropOperateModel::toElement(AlElement **element) {
 
     AlElement *scale = new AlElement(TAG_SCALE);
     scale->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->scale.x));
-    scale->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->scale.y));
+    scale->addAttr(VAL_VEC2_Y, StringUtils::valueOf(this->scale.y));
 
     AlElement *rotation = new AlElement(TAG_ROTATION);
     rotation->addAttr(VAL_RATIONAL_NUM, StringUtils::valueOf(this->rotation.num));
@@ -150,11 +150,87 @@ HwResult AlCropOperateModel::toElement(AlElement **element) {
 
     AlElement *pos = new AlElement(TAG_POSITION);
     pos->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->position.x));
-    pos->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->position.y));
+    pos->addAttr(VAL_VEC2_Y, StringUtils::valueOf(this->position.y));
+
+    AlElement *cropSize = new AlElement(TAG_SIZE);
+    cropSize->addAttr(VAL_WIDTH, StringUtils::valueOf(this->cropSize.width));
+    cropSize->addAttr(VAL_HEIGHT, StringUtils::valueOf(this->cropSize.height));
+
+    AlElement *quad = new AlElement(TAG_QUAD);
+    quad->addAttr(VAL_LT_X, StringUtils::valueOf(this->quad.leftTop().x));
+    quad->addAttr(VAL_LT_Y, StringUtils::valueOf(this->quad.leftTop().y));
+    quad->addAttr(VAL_RT_X, StringUtils::valueOf(this->quad.rightTop().x));
+    quad->addAttr(VAL_RT_Y, StringUtils::valueOf(this->quad.rightTop().y));
+    quad->addAttr(VAL_LB_X, StringUtils::valueOf(this->quad.leftBottom().x));
+    quad->addAttr(VAL_LB_Y, StringUtils::valueOf(this->quad.leftBottom().y));
+    quad->addAttr(VAL_RB_X, StringUtils::valueOf(this->quad.rightBottom().x));
+    quad->addAttr(VAL_RB_Y, StringUtils::valueOf(this->quad.rightBottom().y));
+
+    AlElement *invalidate = new AlElement(TAG_BOOL);
+    invalidate->addAttr(VAL_INVALIDATE, StringUtils::valueOf((int) this->invalidate));
 
     root->addChild(rect);
     root->addChild(scale);
     root->addChild(rotation);
     root->addChild(pos);
+    root->addChild(cropSize);
+    root->addChild(quad);
+    root->addChild(invalidate);
     return Hw::FAILED;
+}
+
+AlRectF AlCropOperateModel::getRect() {
+    return rectF;
+}
+
+AlVec2 AlCropOperateModel::getScale() {
+    return scale;
+}
+
+AlRational AlCropOperateModel::getRotation() {
+    return rotation;
+}
+
+AlVec2 AlCropOperateModel::getPosition() {
+    return position;
+}
+
+AlSize AlCropOperateModel::getCropSize() {
+    return cropSize;
+}
+
+AlQuad AlCropOperateModel::getQuad() {
+    return quad;
+}
+
+bool AlCropOperateModel::getInvalidate() {
+    return invalidate;
+}
+
+void AlCropOperateModel::setScale(AlVec2 scale) {
+    this->scale.x = scale.x;
+    this->scale.y = scale.y;
+}
+
+void AlCropOperateModel::setRotation(AlRational rotation) {
+    this->rotation.num = rotation.num;
+    this->rotation.den = rotation.den;
+}
+
+void AlCropOperateModel::setPosition(AlVec2 position) {
+    this->position.x = position.x;
+    this->position.y = position.y;
+}
+
+void AlCropOperateModel::setCropSize(AlSize size) {
+    this->cropSize.width = size.width;
+    this->cropSize.height = size.height;
+}
+
+void AlCropOperateModel::setQuad(AlQuad quad) {
+    this->quad = quad;
+}
+
+void AlCropOperateModel::setInvalidate(bool invalidate) {
+    this->invalidate = invalidate;
 }
