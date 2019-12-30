@@ -11,6 +11,7 @@
 #include "AlCropOperateModel.h"
 #include "StringUtils.h"
 #include "AlObjectGuard.h"
+#include "AlXMLDocument.h"
 #include "Logcat.h"
 
 #define TAG "AlFileImporter"
@@ -25,20 +26,13 @@ AlFileImporter::~AlFileImporter() {
 
 HwResult AlFileImporter::importFromFile(std::string inFile, AlImageCanvasModel *canvas,
                                         std::vector<AlImageLayerModel *> *layers) {
-    TiXmlDocument doc;
-    if (!doc.LoadFile(inFile.c_str(), TiXmlEncoding::TIXML_ENCODING_UTF8)) {
-        doc.Clear();
+    AlXMLDocument *doc = AlXMLDocument::fromFile(inFile);
+    AlObjectGuard guard((Object **) &doc);
+    if (nullptr == doc) {
         Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
         return Hw::FAILED;
     }
-    AlElement *root = nullptr;
-    _read(&doc, &root);
-    doc.Clear();
-    if (nullptr == root) {
-        Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
-        return Hw::FAILED;
-    }
-    AlObjectGuard guard((Object **) &root);
+    AlElement *root = doc->root();
     if (!root->nameIs(TAG_ROOT)) {
         Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
         return Hw::FAILED;
@@ -62,43 +56,4 @@ HwResult AlFileImporter::importFromFile(std::string inFile, AlImageCanvasModel *
         }
     }
     return Hw::SUCCESS;
-}
-
-void AlFileImporter::_read(TiXmlDocument *doc, AlElement **element) {
-    TiXmlElement *tiRoot = doc->FirstChildElement();
-    if (nullptr == tiRoot) {
-        Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
-        return;
-    }
-    string rootName = tiRoot->Value();
-    if (!StringUtils::equalsIgnoreCase(TAG_ROOT, rootName)) {
-        Logcat::e(TAG, "%s(%d) invalid qua file.", __FUNCTION__, __LINE__);
-        return;
-    }
-    AlElement *root = _parseElement(tiRoot);
-    *element = root;
-}
-
-HwResult AlFileImporter::importFromStr(std::string *inStr, AlImageCanvasModel *canvas,
-                                       std::vector<AlImageLayerModel *> *layers) {
-    return Hw::SUCCESS;
-}
-
-AlElement *AlFileImporter::_parseElement(TiXmlElement *elm) {
-    string name = elm->Value();
-    if (StringUtils::isEmpty(&name)) {
-        Logcat::e(TAG, "%s(%d) invalid qua file.", __FUNCTION__, __LINE__);
-        return nullptr;
-    }
-    AlElement *e = new AlElement(name);
-    for (TiXmlAttribute *attr = elm->FirstAttribute(); NULL != attr; attr = attr->Next()) {
-        e->addAttr(attr->Name(), attr->Value());
-    }
-    for (TiXmlElement *ee = elm->FirstChildElement(); NULL != ee; ee = ee->NextSiblingElement()) {
-        AlElement *child = _parseElement(ee);
-        if (child) {
-            e->addChild(child);
-        }
-    }
-    return e;
 }

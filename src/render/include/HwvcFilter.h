@@ -10,7 +10,6 @@
 #include "HwAbsFilter.h"
 #include "AlPngDecoder.h"
 #include <string>
-#include "../xml/FilterReader.h"
 
 using namespace std;
 
@@ -25,7 +24,7 @@ public:
     virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
-    FilterReader *reader = nullptr;
+    std::string path;
     char **names = nullptr;
     char **samplers = nullptr;
     int size = 0;

@@ -10,8 +10,7 @@
 #include "AlBitmapFactory.h"
 #include "log.h"
 
-HwvcFilter::HwvcFilter(char *path) : HwAbsFilter() {
-    reader = new FilterReader(path);
+HwvcFilter::HwvcFilter(char *path) : HwAbsFilter(), path(path) {
 }
 
 HwvcFilter::~HwvcFilter() {
@@ -32,16 +31,12 @@ HwvcFilter::~HwvcFilter() {
         delete[]textureLocations;
         textureLocations = nullptr;
     }
-    if (reader) {
-        delete reader;
-        reader = nullptr;
-    }
 }
 
 HwProgram *HwvcFilter::createProgram() {
     struct timeval start, end;
     gettimeofday(&start, NULL);
-    FilterEntity *entity = reader->read();
+    FilterEntity *entity = FilterEntity::fromFile(path);
     gettimeofday(&end, NULL);
     long time = end.tv_usec - start.tv_usec;
     HwProgram *program = HwProgram::create(&entity->vertex, &entity->fragment);

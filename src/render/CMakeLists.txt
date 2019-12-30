@@ -75,7 +75,6 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/units/image/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/xml/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
             # Android platform
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
@@ -103,7 +102,6 @@ else ()
             ${PROJECT_SOURCE_DIR}/units/image/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/*.cpp
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/xml/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
     )
 endif ()

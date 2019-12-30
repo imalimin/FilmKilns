@@ -15,6 +15,9 @@ using namespace std;
 
 class FilterEntity : public Object {
 public:
+    static FilterEntity *fromFile(std::string file);
+
+public:
     int version = 1;
     string name;
     string vertex;

@@ -104,6 +104,14 @@ std::string AlElement::name() {
     return _name;
 }
 
+std::string AlElement::text() {
+    return _text;
+}
+
+void AlElement::setText(std::string text) {
+    this->_text = text;
+}
+
 std::string AlElement::attr(const char *name) {
     auto itr = attrs.find(name);
     if (attrs.end() == itr) {

@@ -23,6 +23,10 @@ public:
 
     std::string name();
 
+    std::string text();
+
+    void setText(std::string text);
+
     bool nameIs(const char *name);
 
     void addAttr(std::string &name, std::string &value);
@@ -49,6 +53,7 @@ private:
     AlElement(const AlElement &o) : Object() {};
 private:
     std::string _name;
+    std::string _text;
     std::map<std::string, AlAttribute> attrs;
     std::vector<AlElement *> childes;
 };
