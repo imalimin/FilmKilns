@@ -13,6 +13,7 @@
 #include "AlRational.h"
 #include "AlImgLayerDescription.h"
 #include "AlImageLayerDrawModel.h"
+#include "AlElement.h"
 
 al_class(AlAbsOperateModel) {
 public:
@@ -32,6 +33,10 @@ public:
     std::string getType();
 
     virtual HwResult measure(AlImgLayerDescription &layer, AlImageLayerDrawModel *description) = 0;
+
+    virtual HwResult fromElement(AlElement *element) = 0;
+
+    virtual HwResult toElement(AlElement **element) = 0;
 
 protected:
     std::string type;

@@ -11,8 +11,35 @@
 #include "AlOrthMatrix.h"
 #include "Logcat.h"
 #include "AlPositionTranslator.h"
+#include "StringUtils.h"
 
 #define TAG "AlCropOperateModel"
+#define TAG_SCALE                           "scale"
+#define TAG_ROTATION                        "rotation"
+#define TAG_POSITION                        "position"
+#define VAL_RATIONAL_NUM                    "num"
+#define VAL_RATIONAL_DEN                    "den"
+#define VAL_VEC2_X                          "x"
+#define VAL_VEC2_Y                          "y"
+#define TAG_OPT                             "opt"
+#define VAL_TYPE                            "type"
+#define TAG_RECTF                           "rectf"
+#define VAL_LEFT                            "left"
+#define VAL_TOP                             "top"
+#define VAL_RIGHT                           "right"
+#define VAL_BOTTOM                          "bottom"
+#define TAG_SIZE                            "size"
+#define TAG_QUAD                            "quad"
+#define VAL_LT_X                            "lt_x"
+#define VAL_LT_Y                            "lt_y"
+#define VAL_RT_X                            "rt_x"
+#define VAL_RT_Y                            "rt_y"
+#define VAL_LB_X                            "lb_x"
+#define VAL_LB_Y                            "lb_y"
+#define VAL_RB_X                            "rb_x"
+#define VAL_RB_Y                            "rb_y"
+#define TAG_BOOL                            "bool"
+#define VAL_INVALIDATE                      "invalidate"
 
 AlCropOperateModel::AlCropOperateModel() : AlAbsOperateModel(TYPE_CROP) {
     invalidate = true;
@@ -99,58 +126,35 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
     return Hw::SUCCESS;
 }
 
-AlRectF AlCropOperateModel::getRect() {
-    return rectF;
+HwResult AlCropOperateModel::fromElement(AlElement *element) {
+    return Hw::FAILED;
 }
 
-AlVec2 AlCropOperateModel::getScale() {
-    return scale;
-}
+HwResult AlCropOperateModel::toElement(AlElement **element) {
+    AlElement *root = new AlElement(TAG_OPT);
+    root->addAttr(VAL_TYPE, type);
+    *element = root;
+    AlElement *rect = new AlElement(TAG_RECTF);
+    rect->addAttr(VAL_LEFT, StringUtils::valueOf(rectF.left));
+    rect->addAttr(VAL_TOP, StringUtils::valueOf(rectF.top));
+    rect->addAttr(VAL_RIGHT, StringUtils::valueOf(rectF.right));
+    rect->addAttr(VAL_BOTTOM, StringUtils::valueOf(rectF.bottom));
 
-AlRational AlCropOperateModel::getRotation() {
-    return rotation;
-}
+    AlElement *scale = new AlElement(TAG_SCALE);
+    scale->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->scale.x));
+    scale->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->scale.y));
 
-AlVec2 AlCropOperateModel::getPosition() {
-    return position;
-}
+    AlElement *rotation = new AlElement(TAG_ROTATION);
+    rotation->addAttr(VAL_RATIONAL_NUM, StringUtils::valueOf(this->rotation.num));
+    rotation->addAttr(VAL_RATIONAL_DEN, StringUtils::valueOf(this->rotation.den));
 
-AlSize AlCropOperateModel::getCropSize() {
-    return cropSize;
-}
+    AlElement *pos = new AlElement(TAG_POSITION);
+    pos->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->position.x));
+    pos->addAttr(VAL_VEC2_X, StringUtils::valueOf(this->position.y));
 
-AlQuad AlCropOperateModel::getQuad() {
-    return quad;
-}
-
-bool AlCropOperateModel::getInvalidate() {
-    return invalidate;
-}
-
-void AlCropOperateModel::setScale(AlVec2 scale) {
-    this->scale.x = scale.x;
-    this->scale.y = scale.y;
-}
-
-void AlCropOperateModel::setRotation(AlRational rotation) {
-    this->rotation.num = rotation.num;
-    this->rotation.den = rotation.den;
-}
-
-void AlCropOperateModel::setPosition(AlVec2 position) {
-    this->position.x = position.x;
-    this->position.y = position.y;
-}
-
-void AlCropOperateModel::setCropSize(AlSize size) {
-    this->cropSize.width = size.width;
-    this->cropSize.height = size.height;
-}
-
-void AlCropOperateModel::setQuad(AlQuad quad) {
-    this->quad = quad;
-}
-
-void AlCropOperateModel::setInvalidate(bool invalidate) {
-    this->invalidate = invalidate;
+    root->addChild(rect);
+    root->addChild(scale);
+    root->addChild(rotation);
+    root->addChild(pos);
+    return Hw::FAILED;
 }
