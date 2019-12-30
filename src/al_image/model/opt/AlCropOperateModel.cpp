@@ -127,7 +127,54 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
 }
 
 HwResult AlCropOperateModel::fromElement(AlElement *element) {
-    return Hw::FAILED;
+    if (nullptr == element) {
+        return Hw::FAILED;
+    }
+    std::string name = element->name();
+    if (!element->nameIs(TAG_OPT)) {
+        return Hw::FAILED;
+    }
+    type = element->attr(VAL_TYPE);
+    this->rotation.num = INT32_MIN;
+    this->rotation.den = INT32_MIN;
+    this->rectF.set(MAXFLOAT, MAXFLOAT, MAXFLOAT, MAXFLOAT);
+    size_t size = element->size();
+    for (int i = 0; i < size; ++i) {
+        AlElement *child = element->childAt(i);
+        if (child->nameIs(TAG_RECTF)) {
+            this->rectF.left = child->attrFloat(VAL_LEFT);
+            this->rectF.top = child->attrFloat(VAL_TOP);
+            this->rectF.right = child->attrFloat(VAL_RIGHT);
+            this->rectF.bottom = child->attrFloat(VAL_BOTTOM);
+        } else if (child->nameIs(TAG_SCALE)) {
+            this->scale.x = child->attrFloat(VAL_VEC2_X);
+            this->scale.y = child->attrFloat(VAL_VEC2_Y);
+        } else if (child->nameIs(TAG_ROTATION)) {
+            this->rotation.num = child->attrInt(VAL_RATIONAL_NUM);
+            this->rotation.den = child->attrInt(VAL_RATIONAL_DEN);
+        } else if (child->nameIs(TAG_POSITION)) {
+            this->position.x = child->attrFloat(VAL_VEC2_X);
+            this->position.y = child->attrFloat(VAL_VEC2_Y);
+        } else if (child->nameIs(TAG_SIZE)) {
+            this->cropSize.width = child->attrInt(VAL_WIDTH);
+            this->cropSize.height = child->attrInt(VAL_HEIGHT);
+        } else if (child->nameIs(TAG_QUAD)) {
+            this->quad.setLeftTop(child->attrFloat(VAL_LT_X), child->attrFloat(VAL_LT_Y));
+            this->quad.setRightTop(child->attrFloat(VAL_RT_X), child->attrFloat(VAL_RT_Y));
+            this->quad.setRightBottom(child->attrFloat(VAL_RB_X), child->attrFloat(VAL_RB_Y));
+            this->quad.setLeftBottom(child->attrFloat(VAL_LB_X), child->attrFloat(VAL_LB_Y));
+        } else if (child->nameIs(TAG_BOOL)) {
+            this->invalidate = static_cast<bool>(child->attrInt(VAL_INVALIDATE));
+        }
+    }
+    if (MAXFLOAT == rectF.left || MAXFLOAT == rectF.top
+        || MAXFLOAT == rectF.right || MAXFLOAT == rectF.bottom
+        || MAXFLOAT == scale.x || MAXFLOAT == scale.y
+        || INT32_MIN == rotation.num || INT32_MIN == rotation.den
+        || MAXFLOAT == position.x || MAXFLOAT == position.y) {
+        return Hw::FAILED;
+    }
+    return Hw::SUCCESS;
 }
 
 HwResult AlCropOperateModel::toElement(AlElement **element) {
@@ -177,60 +224,4 @@ HwResult AlCropOperateModel::toElement(AlElement **element) {
     root->addChild(quad);
     root->addChild(invalidate);
     return Hw::FAILED;
-}
-
-AlRectF AlCropOperateModel::getRect() {
-    return rectF;
-}
-
-AlVec2 AlCropOperateModel::getScale() {
-    return scale;
-}
-
-AlRational AlCropOperateModel::getRotation() {
-    return rotation;
-}
-
-AlVec2 AlCropOperateModel::getPosition() {
-    return position;
-}
-
-AlSize AlCropOperateModel::getCropSize() {
-    return cropSize;
-}
-
-AlQuad AlCropOperateModel::getQuad() {
-    return quad;
-}
-
-bool AlCropOperateModel::getInvalidate() {
-    return invalidate;
-}
-
-void AlCropOperateModel::setScale(AlVec2 scale) {
-    this->scale.x = scale.x;
-    this->scale.y = scale.y;
-}
-
-void AlCropOperateModel::setRotation(AlRational rotation) {
-    this->rotation.num = rotation.num;
-    this->rotation.den = rotation.den;
-}
-
-void AlCropOperateModel::setPosition(AlVec2 position) {
-    this->position.x = position.x;
-    this->position.y = position.y;
-}
-
-void AlCropOperateModel::setCropSize(AlSize size) {
-    this->cropSize.width = size.width;
-    this->cropSize.height = size.height;
-}
-
-void AlCropOperateModel::setQuad(AlQuad quad) {
-    this->quad = quad;
-}
-
-void AlCropOperateModel::setInvalidate(bool invalidate) {
-    this->invalidate = invalidate;
 }

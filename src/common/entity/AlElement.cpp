@@ -6,15 +6,16 @@
 */
 
 #include "AlElement.h"
+#include "StringUtils.h"
 #include "Logcat.h"
 
 #define TAG "AlElement"
 
-AlElement::AlElement(std::string name) : Object(), name(name) {
+AlElement::AlElement(std::string name) : Object(), _name(name) {
 
 }
 
-AlElement::AlElement(std::string name, std::vector<AlAttribute> &attrs) : Object(), name(name) {
+AlElement::AlElement(std::string name, std::vector<AlAttribute> &attrs) : Object(), _name(name) {
     size_t size = attrs.size();
     for (int i = 0; i < size; ++i) {
         this->attrs.insert(pair<std::string, AlAttribute>(attrs[i].name(), attrs[i]));
@@ -22,11 +23,11 @@ AlElement::AlElement(std::string name, std::vector<AlAttribute> &attrs) : Object
 }
 
 AlElement::~AlElement() {
-    size_t size = childs.size();
+    size_t size = childes.size();
     for (int i = 0; i < size; ++i) {
-        delete childs[i];
+        delete childes[i];
     }
-    childs.clear();
+    childes.clear();
     this->attrs.clear();
 }
 
@@ -44,7 +45,7 @@ void AlElement::addAttr(const char *name, std::string value) {
 }
 
 size_t AlElement::size() {
-    return childs.size();
+    return childes.size();
 }
 
 void AlElement::addChild(AlElement *e) {
@@ -52,18 +53,18 @@ void AlElement::addChild(AlElement *e) {
         Logcat::w(TAG, "%s(%d) addChild failed.", __FUNCTION__, __LINE__);
         return;;
     }
-    childs.push_back(e);
+    childes.push_back(e);
 }
 
 AlElement *AlElement::childAt(int32_t index) {
     if (index >= size()) return nullptr;
-    return childs[index];
+    return childes[index];
 }
 
 bool AlElement::contains(AlElement *e) {
-    size_t size = childs.size();
+    size_t size = childes.size();
     for (int i = 0; i < size; ++i) {
-        if (childs[i]->contains(e)) {
+        if (childes[i]->contains(e)) {
             return true;
         }
     }
@@ -73,7 +74,7 @@ bool AlElement::contains(AlElement *e) {
 std::string AlElement::toString() {
     std::string xml;
     xml.append("<");
-    xml.append(name);
+    xml.append(_name);
     xml.append(" ");
     auto itr = attrs.begin();
     while (attrs.end() != itr) {
@@ -85,16 +86,40 @@ std::string AlElement::toString() {
         ++itr;
     }
     xml.append(">");
-    size_t len = childs.size();
+    size_t len = childes.size();
     if (len > 0) {
         xml.append("\n");
     }
     for (int i = 0; i < len; ++i) {
 //        xml.append("    ");
-        xml.append(childs[i]->toString());
+        xml.append(childes[i]->toString());
     }
     xml.append("</");
-    xml.append(name);
+    xml.append(_name);
     xml.append(">\n");
     return xml;
+}
+
+std::string AlElement::name() {
+    return _name;
+}
+
+std::string AlElement::attr(const char *name) {
+    auto itr = attrs.find(name);
+    if (attrs.end() == itr) {
+        return "";
+    }
+    return itr->second.value();
+}
+
+bool AlElement::nameIs(const char *name) {
+    return StringUtils::equalsIgnoreCase(name, _name);
+}
+
+int32_t AlElement::attrInt(const char *name) {
+    return StringUtils::toInt(attr(name).c_str());
+}
+
+float AlElement::attrFloat(const char *name) {
+    return StringUtils::toFloat(attr(name).c_str());
 }

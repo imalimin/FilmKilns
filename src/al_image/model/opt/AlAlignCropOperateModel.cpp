@@ -9,6 +9,7 @@
 #include "AlMath.h"
 #include "StringUtils.h"
 
+#define TAG_ROTATION                        "rotation"
 #define VAL_RATIONAL_NUM                    "num"
 #define VAL_RATIONAL_DEN                    "den"
 
@@ -65,6 +66,27 @@ AlRational AlAlignCropOperateModel::getRotation() {
 }
 
 HwResult AlAlignCropOperateModel::fromElement(AlElement *element) {
+    if (nullptr == element) {
+        return Hw::FAILED;
+    }
+    std::string name = element->name();
+    if (!element->nameIs(TAG_OPT)) {
+        return Hw::FAILED;
+    }
+    type = element->attr(VAL_TYPE);
+    this->rotation.num = INT32_MIN;
+    this->rotation.den = INT32_MIN;
+    size_t size = element->size();
+    for (int i = 0; i < size; ++i) {
+        AlElement *child = element->childAt(i);
+        if (child->nameIs(TAG_ROTATION)) {
+            this->rotation.num = child->attrInt(VAL_RATIONAL_NUM);
+            this->rotation.den = child->attrInt(VAL_RATIONAL_DEN);
+        }
+    }
+    if (INT32_MIN == this->rotation.num || INT32_MIN == this->rotation.den) {
+        return Hw::FAILED;
+    }
     return Hw::SUCCESS;
 }
 
@@ -73,7 +95,7 @@ HwResult AlAlignCropOperateModel::toElement(AlElement **element) {
     root->addAttr(VAL_TYPE, type);
     *element = root;
 
-    AlElement *rotation = new AlElement(TAG_OPT);
+    AlElement *rotation = new AlElement(TAG_ROTATION);
     rotation->addAttr(VAL_RATIONAL_NUM, StringUtils::valueOf(this->rotation.num));
     rotation->addAttr(VAL_RATIONAL_DEN, StringUtils::valueOf(this->rotation.den));
 

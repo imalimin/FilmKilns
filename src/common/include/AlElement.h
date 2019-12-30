@@ -21,9 +21,19 @@ public:
 
     virtual ~AlElement();
 
+    std::string name();
+
+    bool nameIs(const char *name);
+
     void addAttr(std::string &name, std::string &value);
 
     void addAttr(const char *name, std::string value);
+
+    std::string attr(const char *name);
+
+    int32_t attrInt(const char *name);
+
+    float attrFloat(const char *name);
 
     size_t size();
 
@@ -33,14 +43,14 @@ public:
 
     bool contains(AlElement *e);
 
-    virtual std::string toString() override ;
+    virtual std::string toString() override;
 
 private:
     AlElement(const AlElement &o) : Object() {};
 private:
-    std::string name;
+    std::string _name;
     std::map<std::string, AlAttribute> attrs;
-    std::vector<AlElement *> childs;
+    std::vector<AlElement *> childes;
 };
 
 

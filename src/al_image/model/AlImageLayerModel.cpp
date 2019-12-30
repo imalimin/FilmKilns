@@ -8,6 +8,7 @@
 #include "AlImageLayerModel.h"
 #include "AlCropOperateModel.h"
 #include "AlAlignCropOperateModel.h"
+#include "AlOperateFactory.h"
 #include "StringUtils.h"
 #include "Logcat.h"
 
@@ -197,6 +198,47 @@ bool AlImageLayerModel::_removeOperator(type_info type) {
 }
 
 HwResult AlImageLayerModel::fromElement(AlElement *element) {
+    if (nullptr == element) {
+        return Hw::FAILED;
+    }
+    std::string name = element->name();
+    if (!element->nameIs(TAG_LAYER)) {
+        return Hw::FAILED;
+    }
+    path = element->attr(VAL_PATH);
+    id = element->attrInt(VAL_ID);
+    alpha = element->attrFloat(VAL_ALPHA);
+    if (StringUtils::isEmpty(&path) || alpha > 1 || alpha < -1) {
+        Logcat::i(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+        return Hw::FAILED;
+    }
+    size_t size = element->size();
+    for (int i = 0; i < size; ++i) {
+        AlElement *child = element->childAt(i);
+        if (child->nameIs(TAG_SCALE)) {
+            this->scale.x = child->attrFloat(VAL_VEC2_X);
+            this->scale.y = child->attrFloat(VAL_VEC2_Y);
+        } else if (child->nameIs(TAG_ROTATION)) {
+            this->rotation.num = child->attrInt(VAL_RATIONAL_NUM);
+            this->rotation.den = child->attrInt(VAL_RATIONAL_DEN);
+        } else if (child->nameIs(TAG_POSITION)) {
+            this->position.x = child->attrFloat(VAL_VEC2_X);
+            this->position.y = child->attrFloat(VAL_VEC2_Y);
+        } else if (child->nameIs(TAG_OPT)) {
+            std::string type = child->attr(VAL_TYPE);
+            AlAbsOperateModel *model = nullptr;
+            if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_CROP, type)) {
+                model = AlOperateFactory::crop(MAXFLOAT, MAXFLOAT, MAXFLOAT, MAXFLOAT);
+            } else if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_ALIGN_CROP, type)) {
+                AlRational r(INT32_MIN, INT32_MIN);
+                model = AlOperateFactory::alignCrop(r);
+            }
+            if (model) {
+                model->fromElement(child);
+                addOperator(model);
+            }
+        }
+    }
     return Hw::SUCCESS;
 }
 

@@ -12,6 +12,7 @@
 #include "AlImageLayerModel.h"
 #include "AlImageCanvasModel.h"
 #include "AlAbsOperateModel.h"
+#include "tinyxml.h"
 
 al_class(AlFileImporter) {
 public:
@@ -30,12 +31,9 @@ public:
 private:
     AlFileImporter(const AlFileImporter &o) : Object() {}
 
-    HwResult _parseElement(void *e, AlImageCanvasModel *canvas,
-                           std::vector<AlImageLayerModel *> *layers);
+    void _read(TiXmlDocument *doc, AlElement **element);
 
-    HwResult _parseLayer(void *e, std::vector<AlImageLayerModel *> *layers);
-
-    HwResult _parseOpt(void *e, AlImageLayerModel *layer);
+    AlElement *_parseElement(TiXmlElement *elm);
 };
 
 

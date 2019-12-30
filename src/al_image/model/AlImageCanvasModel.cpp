@@ -48,6 +48,19 @@ int32_t AlImageCanvasModel::getColor() {
 }
 
 HwResult AlImageCanvasModel::fromElement(AlElement *element) {
+    if (nullptr == element) {
+        return Hw::FAILED;
+    }
+    std::string name = element->name();
+    if (!element->nameIs(TAG_CANVAS)) {
+        return Hw::FAILED;
+    }
+    width = element->attrInt(VAL_WIDTH);
+    height = element->attrInt(VAL_HEIGHT);
+    color = element->attrInt(VAL_COLOR);
+    if (width <= 0 || height <= 0) {
+        return Hw::FAILED;
+    }
     return Hw::SUCCESS;
 }
 
