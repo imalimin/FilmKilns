@@ -233,9 +233,10 @@ HwResult AlImageLayerModel::fromElement(AlElement *element) {
                 AlRational r(INT32_MIN, INT32_MIN);
                 model = AlOperateFactory::alignCrop(r);
             }
-            if (model) {
-                model->fromElement(child);
+            if (model && Hw::SUCCESS == model->fromElement(child)) {
                 addOperator(model);
+            } else {
+                delete model;
             }
         }
     }

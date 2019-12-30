@@ -10,6 +10,7 @@
 #include "AlOperateFactory.h"
 #include "AlCropOperateModel.h"
 #include "StringUtils.h"
+#include "AlObjectGuard.h"
 #include "Logcat.h"
 
 #define TAG "AlFileImporter"
@@ -37,7 +38,7 @@ HwResult AlFileImporter::importFromFile(std::string inFile, AlImageCanvasModel *
         Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
         return Hw::FAILED;
     }
-
+    AlObjectGuard guard((Object **) &root);
     if (!root->nameIs(TAG_ROOT)) {
         Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
         return Hw::FAILED;
@@ -54,6 +55,7 @@ HwResult AlFileImporter::importFromFile(std::string inFile, AlImageCanvasModel *
             auto *layer = AlImageLayerModel::create(0, "");
             if (Hw::SUCCESS != layer->fromElement(child)) {
                 Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+                delete layer;
                 return Hw::FAILED;
             }
             layers->push_back(layer);
