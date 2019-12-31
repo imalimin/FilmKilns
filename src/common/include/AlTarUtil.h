@@ -100,6 +100,8 @@ struct tar_t {
     struct tar_t * next;
 };
 
+int tar_read_file(const char *file, struct tar_t ** archive);
+
 // core functions //////////////////////////////////////////////////////////////
 // read a tar file
 // archive should be address to null pointer

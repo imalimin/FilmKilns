@@ -64,6 +64,7 @@ file(
         ${PROJECT_SOURCE_DIR}/math/*.cpp
         ${PROJECT_SOURCE_DIR}/doc/*.cpp
         ${PROJECT_SOURCE_DIR}/doc/tinyxml/*.cpp
+        ${PROJECT_SOURCE_DIR}/file/*.cpp
         #Header
         ${PROJECT_SOURCE_DIR}/include/*.h
 )

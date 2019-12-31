@@ -26,6 +26,84 @@ static int iszeroed(char *buf, size_t size);
 // make directory recursively
 static int recursive_mkdir(const char *dir, const unsigned int mode, const char verbosity);
 
+int tar_read_file(const char *file, struct tar_t **archive) {
+    if (NULL == file) {
+        ERROR("Bad file path");
+    }
+    FILE *in = fopen(file, "rb");
+    if (NULL == in) {
+        ERROR("Bad file");
+    }
+
+    if (!archive || *archive) {
+        ERROR("Bad archive");
+    }
+
+    unsigned int offset = 0;
+    int count = 0;
+
+    struct tar_t **tar = archive;
+    char update = 1;
+
+    for (count = 0;; count++) {
+        *tar = static_cast<tar_t *>(malloc(sizeof(struct tar_t)));
+        memset(*tar, 0, sizeof(struct tar_t));
+        size_t size  = fread((*tar)->block, 512, 1, in);
+        if (update && size != 512) {
+            ERROR("Error: Bad read. Stopping");
+            tar_free(*tar);
+            *tar = NULL;
+            break;
+        }
+
+        update = 1;
+        // if current block is all zeros
+        if (iszeroed((*tar)->block, 512)) {
+            if (fread((*tar)->block, 512, 1, in) != 512) {
+                ERROR("Error: Bad read. Stopping");
+                tar_free(*tar);
+                *tar = NULL;
+                break;
+            }
+
+            // check if next block is all zeros as well
+            if (iszeroed((*tar)->block, 512)) {
+                tar_free(*tar);
+                *tar = NULL;
+
+                // skip to end of record
+                if (fseek(in, RECORDSIZE - (offset % RECORDSIZE), SEEK_CUR) == (off_t) (-1)) {
+                    RC_ERROR("Unable to seek file: %s", strerror(rc));
+                }
+
+                break;
+            }
+
+            update = 0;
+        }
+
+        // set current entry's file offset
+        (*tar)->begin = offset;
+
+        // skip over data and unfilled block
+        unsigned int jump = oct2uint((*tar)->size, 11);
+        if (jump % 512) {
+            jump += 512 - (jump % 512);
+        }
+
+        // move file descriptor
+        offset += 512 + jump;
+        if (fseek(in, jump, SEEK_CUR) == (off_t) (-1)) {
+            RC_ERROR("Unable to seek file: %s", strerror(rc));
+        }
+
+        // ready next value
+        tar = &((*tar)->next);
+    }
+    fclose(in);
+    return count;
+}
+
 int tar_read(const int fd, struct tar_t **archive, const char verbosity) {
     if (fd < 0) {
         ERROR("Bad file descriptor");
