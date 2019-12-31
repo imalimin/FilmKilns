@@ -16,10 +16,23 @@
 #include "AlContext.h"
 #include "AlPositionTranslator.h"
 #include "core/file/AlFileExporter.h"
+#include "AlTarUtil.h"
 
 #define TAG "AlImageProcessor"
 
 AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
+//    int fd = -1;
+//    if ((fd = open("/sdcard/test.tar", O_RDWR)) != -1) {
+//        tar_t *archive = nullptr;
+//        int count = tar_read(fd, &archive, 0);
+//        if (archive) {
+//            for (int i = 0; i < count; ++i) {
+//                Logcat::i(TAG, "%s", archive[i].name);
+//            }
+//            tar_free(archive);
+//        }
+//        close(fd);
+//    }
     registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
     registerAnUnit(new AlLayerDescriptor(ALIAS_OF_DESCRIPTOR));
     AlLayerRender *layerRender = new AlLayerRender(ALIAS_OF_LAYER_RENDER);
