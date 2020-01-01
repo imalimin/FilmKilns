@@ -16,6 +16,8 @@
 
 class AlImage : public Unit {
 public:
+    typedef function<void(int32_t)> OnAlxLoadListener;
+public:
     AlImage(string alias);
 
     virtual ~AlImage();
@@ -61,6 +63,8 @@ public:
 
     bool onUndo(AlMessage *m);
 
+    void setOnAlxLoadListener(OnAlxLoadListener listener);
+
 private:
     void _notifyAll(int32_t flag = 0);
 
@@ -78,6 +82,7 @@ private:
 
     AlImageLayerManager mLayerManager;
     std::deque<std::string *> steps;
+    OnAlxLoadListener onAlxLoadListener = nullptr;
 };
 
 

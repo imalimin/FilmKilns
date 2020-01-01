@@ -19,6 +19,7 @@ AlImage::AlImage(string alias) : Unit(alias) {
 }
 
 AlImage::~AlImage() {
+    this->onAlxLoadListener = nullptr;
 }
 
 bool AlImage::onCreate(AlMessage *msg) {
@@ -91,6 +92,9 @@ bool AlImage::onImport(AlMessage *m) {
     msg->obj = new AlSize(canvas.getWidth(), canvas.getHeight());
     postEvent(msg);
     _notifyAll();
+    if (onAlxLoadListener) {
+        onAlxLoadListener(mLayerManager.getMaxId());
+    }
     return true;
 }
 
@@ -104,4 +108,8 @@ bool AlImage::onUndo(AlMessage *m) {
 
 void AlImage::_saveStep() {
 
+}
+
+void AlImage::setOnAlxLoadListener(AlImage::OnAlxLoadListener listener) {
+    this->onAlxLoadListener = listener;
 }

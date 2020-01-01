@@ -33,6 +33,8 @@ public:
 
     void replaceAll(AlTexAllocator *texAllocator, std::vector<AlImageLayerModel *> *list);
 
+    int32_t getMaxId();
+
 private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};
 

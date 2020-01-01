@@ -23,3 +23,8 @@ int32_t AlIdentityCreator::generate() {
     ++this->cur;
     return this->cur;
 }
+
+void AlIdentityCreator::reset(int32_t cur) {
+    std::lock_guard<std::mutex> guard(mtx);
+    this->cur = cur;
+}

@@ -21,6 +21,8 @@ public:
 
     int32_t generate();
 
+    void reset(int32_t cur = 0);
+
 private:
     AlIdentityCreator(const AlIdentityCreator &o);
 

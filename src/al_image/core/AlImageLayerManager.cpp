@@ -159,3 +159,14 @@ void AlImageLayerManager::replaceAll(AlTexAllocator *texAllocator,
     ///Update layer model.
     update(models, texAllocator);
 }
+
+int32_t AlImageLayerManager::getMaxId() {
+    if (empty()) return 0;
+    int32_t id = 0;
+    size_t size = models->size();
+    for (int i = 0; i < size; ++i) {
+        int32_t tmp = (*models)[i]->getId();
+        id = max(tmp, id);
+    }
+    return id;
+}

@@ -29,9 +29,10 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
         }
         tar_free(archive);
     }
-    registerAnUnit(new AlImage(ALIAS_OF_IMAGE));
-    registerAnUnit(new AlLayerDescriptor(ALIAS_OF_DESCRIPTOR));
+    AlImage *image = new AlImage(ALIAS_OF_IMAGE);
     AlLayerRender *layerRender = new AlLayerRender(ALIAS_OF_LAYER_RENDER);
+    registerAnUnit(image);
+    registerAnUnit(new AlLayerDescriptor(ALIAS_OF_DESCRIPTOR));
     registerAnUnit(layerRender);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
@@ -49,6 +50,9 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
         if (this->onSaveListener) {
             this->onSaveListener(code, msg, path);
         }
+    });
+    image->setOnAlxLoadListener([this](int32_t id) {
+        mLayerIdCreator.reset(id);
     });
 }
 
