@@ -33,10 +33,10 @@ void AlRotateFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
     } else if (1.0 == r) {
         ///TODO 待验证
         vertex = new float[8]{
-                -1.0f, 1.0f,//LEFT,TOP
                 1.0f, 1.0f,//RIGHT,TOP
-                -1.0f, -1.0f,//LEFT,BOTTOM
+                -1.0f, 1.0f,//LEFT,TOP
                 1.0f, -1.0f,//RIGHT,BOTTOM
+                -1.0f, -1.0f,//LEFT,BOTTOM
         };
     } else if (1.5 == r) {
         vertex = new float[8]{
@@ -49,6 +49,7 @@ void AlRotateFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
         Logcat::w(TAG, "%s(%d): Not support this angle yet.", __FUNCTION__, __LINE__);
     }
     program->updateLocation(nullptr, vertex);
+    delete[] vertex;
 }
 
 void AlRotateFilter::setRotation(AlRational &r) {

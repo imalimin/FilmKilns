@@ -101,6 +101,10 @@ AlBitmapInfo AlJpegDecoder::getInfo() {
             info.rotation = AlRational(1, 2);
             break;
         }
+        case AlExif::EXIF_ORIENTATION_180: {
+            info.rotation = AlRational(1, 1);
+            break;
+        }
         case AlExif::EXIF_ORIENTATION_270CW: {
             info.rotation = AlRational(3, 2);
             break;
