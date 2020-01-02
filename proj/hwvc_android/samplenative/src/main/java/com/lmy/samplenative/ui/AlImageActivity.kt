@@ -3,6 +3,7 @@ package com.lmy.samplenative.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.RectF
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
@@ -86,6 +87,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         optBtn.setOnClickListener(this)
         fileBtn.setOnClickListener(this)
+        editBtn.setOnClickListener(this)
         canvasBtn.setOnClickListener(this)
         layerBtn.setOnClickListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
@@ -133,6 +135,9 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
             }
             R.id.canvasBtn -> {
                 bottomSheetDialog = CanvasOptDialog(this, processor).show()
+            }
+            R.id.editBtn -> {
+                bottomSheetDialog = EditOptDialog(this, processor).show()
             }
             R.id.layerBtn -> {
                 bottomSheetDialog = LayerOptDialog(this, processor).show()
@@ -230,14 +235,6 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
 
     fun getOutputName(): String? = outputName
 
-    fun ensureCropLayer() {
-        processor?.cancelCropLayer(getCurrentLayer())
-        val rectF = cropView.getCropRectF()
-        processor?.ensureCropLayer(getCurrentLayer(),
-                rectF.left, rectF.top,
-                rectF.right, rectF.bottom)
-    }
-
     override fun onSave(code: Int, msg: String?, path: String?) {
         Toast.makeText(this@AlImageActivity,
                 "Save finish: $code",
@@ -254,6 +251,16 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
     fun showOptLayer(show: Boolean) {
 //        optLayout.visibility = if (show) View.VISIBLE else View.GONE
         optLayout.visibility = View.VISIBLE
+    }
+
+    fun showSelector(show: Boolean) {
+        cropView.visibility = if (show) View.VISIBLE else View.GONE
+        cropView.reset()
+    }
+
+    fun getSelectRect(): RectF? {
+        if (View.VISIBLE != cropView.visibility) return null
+        return cropView.getCropRectF()
     }
 
     companion object {
@@ -314,10 +321,10 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
 
 }
 
-class CanvasOptDialog(private var context: Context, private var processor: AlImageProcessor?)
+class EditOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf<BottomSheetItem>(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Change Canvas"),
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Select"),
             BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "None")
     )
@@ -332,7 +339,37 @@ class CanvasOptDialog(private var context: Context, private var processor: AlIma
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
         when (item.id) {
             0 -> {
-                processor?.setCanvas(1080, 1080)
+                context.showSelector(context.cropView.visibility != View.VISIBLE)
+            }
+        }
+    }
+
+}
+
+class CanvasOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
+    : IOptDialog, BottomSheetItem.OnClickListener {
+    private val OPTS = arrayListOf<BottomSheetItem>(
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Crop Canvas"),
+            BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
+            BottomSheetItem(2, R.mipmap.ic_launcher, "None")
+    )
+
+    override fun show(): BottomSheetDialog {
+        val dialog = BottomSheetDialog(context, OPTS)
+        dialog.onItemClickListener = this
+        dialog.show()
+        return dialog
+    }
+
+    override fun onBottomSheetItemClick(item: BottomSheetItem) {
+        when (item.id) {
+            0 -> {
+                val rectF = context.getSelectRect()
+                if (null != rectF) {
+                    processor?.cropCanvas(rectF.left, rectF.top,
+                            rectF.right, rectF.bottom)
+                }
+                context.showSelector(false)
             }
         }
     }
@@ -369,13 +406,14 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 processor?.removeLayer(context.getCurrentLayer())
             }
             3 -> {
-                if (View.VISIBLE != context.cropView.visibility) {
-                    context.cropView.visibility = View.VISIBLE
-                } else {
-                    context.showOptLayer(false)
-                    context.cropView.visibility = View.GONE
-                    context.ensureCropLayer()
+                processor?.cancelCropLayer(context.getCurrentLayer())
+                val rectF = context.getSelectRect()
+                if (null != rectF) {
+                    processor?.ensureCropLayer(context.getCurrentLayer(),
+                            rectF.left, rectF.top,
+                            rectF.right, rectF.bottom)
                 }
+                context.showSelector(false)
             }
             4 -> {
                 processor?.cancelCropLayer(context.getCurrentLayer())

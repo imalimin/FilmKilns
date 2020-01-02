@@ -121,6 +121,14 @@
                     android:textColor="@color/colorAccent" />
 
                 <TextView
+                    android:id="@+id/editBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="Edit"
+                    android:textColor="@color/colorAccent" />
+
+                <TextView
                     android:id="@+id/canvasBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

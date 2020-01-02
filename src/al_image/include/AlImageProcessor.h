@@ -74,6 +74,8 @@ public:
 
     HwResult cropLayer(int32_t id, float left, float top, float right, float bottom);
 
+    HwResult cropCanvas(float left, float top, float right, float bottom, int mode);
+
     HwResult cancelCropLayer(int32_t id);
 
     HwResult ensureAlignCrop(int32_t id, AlRational r);

@@ -211,6 +211,20 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
+     * 裁剪画布，图层不会被裁剪
+     * @param left   左, left∈[0, 1]
+     * @param top    上, top∈[0, 1]
+     * @param right  右, right∈[0, 1]
+     * @param bottom 下, bottom∈[0, 1]
+     * @param mode   裁剪后图层对齐模式
+     */
+    fun cropCanvas(left: Float, top: Float, right: Float, bottom: Float, mode: Int = 0) {
+        if (!isNativeNull()) {
+            cropCanvas(handler, left, top, right, bottom, mode)
+        }
+    }
+
+    /**
      * 取消图层裁剪
      * @param id      图层id
      * @return       {@link AlResult}
@@ -350,6 +364,9 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun getLayer(handler: Long, x: Float, y: Float): Int
     private external fun ensureCropLayer(handler: Long, id: Int, left: Float, top: Float,
                                          right: Float, bottom: Float): Int
+
+    private external fun cropCanvas(handler: Long, left: Float, top: Float,
+                                    right: Float, bottom: Float, mode: Int)
 
     private external fun cancelCropLayer(handler: Long, id: Int): Int
 

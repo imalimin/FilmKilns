@@ -96,7 +96,6 @@ void AlImageProcessor::invalidate(int32_t flag) {
 }
 
 void AlImageProcessor::_notifyCanvasUpdate() {
-    putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_LAYER_RENDER});
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS);
     msg->obj = new AlSize(mCanvasSize.width, mCanvasSize.height);
     postEvent(msg);
@@ -286,6 +285,13 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
         return Hw::SUCCESS;
     }
     return Hw::FAILED;
+}
+
+HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom, int mode) {
+//    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_CROP_CANVAS,
+//                                new AlRectF(left, top, right, bottom)));
+    invalidate();
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::cancelCropLayer(int32_t id) {

@@ -84,6 +84,7 @@ static constexpr int EVENT_LAYER_RENDER_CLEAR = KID('A', 'L', 'R', 0x01);
 static constexpr int EVENT_LAYER_RENDER_DRAW = KID('A', 'L', 'R', 0x02);
 static constexpr int EVENT_LAYER_RENDER_SHOW = KID('A', 'L', 'R', 0x03);
 static constexpr int EVENT_LAYER_RENDER_SAVE = KID('A', 'L', 'R', 0x04);
+static constexpr int EVENT_LAYER_RENDER_CROP_CANVAS = KID('A', 'L', 'R', 0x05);
 
 /**
  * Define class HwModelProvider.

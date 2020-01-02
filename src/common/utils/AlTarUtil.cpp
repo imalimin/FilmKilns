@@ -48,7 +48,7 @@ int tar_read_file(const char *file, struct tar_t **archive) {
     for (count = 0;; count++) {
         *tar = static_cast<tar_t *>(malloc(sizeof(struct tar_t)));
         memset(*tar, 0, sizeof(struct tar_t));
-        size_t size  = fread((*tar)->block, 512, 1, in);
+        size_t size  = fread((*tar)->block, 1, 512, in);
         if (update && size != 512) {
             ERROR("Error: Bad read. Stopping");
             tar_free(*tar);
@@ -59,7 +59,7 @@ int tar_read_file(const char *file, struct tar_t **archive) {
         update = 1;
         // if current block is all zeros
         if (iszeroed((*tar)->block, 512)) {
-            if (fread((*tar)->block, 512, 1, in) != 512) {
+            if (fread((*tar)->block, 1, 512, in) != 512) {
                 ERROR("Error: Bad read. Stopping");
                 tar_free(*tar);
                 *tar = NULL;

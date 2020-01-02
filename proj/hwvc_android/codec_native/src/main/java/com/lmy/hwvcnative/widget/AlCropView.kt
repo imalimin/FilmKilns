@@ -179,6 +179,13 @@ class AlCropView : View {
             rb.x / (measuredWidth / 2f) - 1f,
             1f - rb.y / (measuredHeight / 2f))
 
+    fun reset() {
+        lt.x = measuredWidth / 4f
+        lt.y = measuredHeight / 4f
+        rb.x = measuredWidth * 3 / 4f
+        rb.y = measuredHeight * 3 / 4f
+    }
+
     fun setOnChangeListener(listener: OnChangeListener) {
         this.onChangeListener = listener
     }

@@ -21,6 +21,8 @@ AlLayerRender::AlLayerRender(const string &alias) : Unit(alias) {
     registerEvent(EVENT_LAYER_RENDER_SHOW,
                   reinterpret_cast<EventFunc>(&AlLayerRender::onShow));
     registerEvent(EVENT_LAYER_RENDER_SAVE, reinterpret_cast<EventFunc>(&AlLayerRender::onSave));
+    registerEvent(EVENT_LAYER_RENDER_CROP_CANVAS,
+                  reinterpret_cast<EventFunc>(&AlLayerRender::onCropCanvas));
 }
 
 AlLayerRender::~AlLayerRender() {
@@ -45,6 +47,18 @@ bool AlLayerRender::onUpdateCanvas(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     AlSize *size = m->getObj<AlSize *>();
     _update(size->width, size->height, 0);
+    return true;
+}
+
+bool AlLayerRender::onCropCanvas(AlMessage *m) {
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlRectF *rectF = m->getObj<AlRectF *>();
+    if (nullptr == rectF) {
+        return false;
+    }
+    Logcat::i(TAG, "(%f,%f), (%f,%f)", rectF->left, rectF->top, rectF->right, rectF->bottom);
+    _update(static_cast<int32_t>(mCanvas.getWidth() * rectF->getWidth()),
+            static_cast<int32_t>(mCanvas.getHeight() * rectF->getHeight()), 0);
     return true;
 }
 

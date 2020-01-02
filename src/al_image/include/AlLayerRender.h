@@ -36,6 +36,17 @@ public:
     /// \return
     bool onUpdateCanvas(AlMessage *m);
 
+    /// 裁剪画布
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | RectF∈[0, 1]| none      | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
+    bool onCropCanvas(AlMessage *m);
+
     /// 清空画布
     /// FORMAT:
     /// +--------------------------------------+
