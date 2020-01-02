@@ -100,10 +100,10 @@ void AlColorGridFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTe
     float top = dest->getHeight() / (float) size;
     float bottom = 0.0f;
     float *texCoordinate = new float[8]{
+            left, top,//LEFT,TOP
+            right, top,//RIGHT,TOP
             left, bottom,//LEFT,BOTTOM
             right, bottom,//RIGHT,BOTTOM
-            left, top,//LEFT,TOP
-            right, top//RIGHT,TOP
     };
     program->updateLocation(texCoordinate, nullptr);
 }

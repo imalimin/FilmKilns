@@ -62,25 +62,25 @@ void AlCanvasDrawer::setMatrix(AlMatrix &matrix) {
 
 void AlCanvasDrawer::setVertexRectF(AlRectF &rectF) {
     this->vertex[0] = rectF.left;
-    this->vertex[1] = rectF.bottom;
+    this->vertex[1] = rectF.top;
     this->vertex[2] = rectF.right;
-    this->vertex[3] = rectF.bottom;
+    this->vertex[3] = rectF.top;
     this->vertex[4] = rectF.left;
-    this->vertex[5] = rectF.top;
+    this->vertex[5] = rectF.bottom;
     this->vertex[6] = rectF.right;
-    this->vertex[7] = rectF.top;
+    this->vertex[7] = rectF.bottom;
 }
 
 void AlCanvasDrawer::setPositionQuad(AlQuad &quad) {
     if (!quad.isZero()) {
-        this->uv[0] = quad.leftBottom().x;
-        this->uv[1] = quad.leftBottom().y;
-        this->uv[2] = quad.rightBottom().x;
-        this->uv[3] = quad.rightBottom().y;
-        this->uv[4] = quad.leftTop().x;
-        this->uv[5] = quad.leftTop().y;
-        this->uv[6] = quad.rightTop().x;
-        this->uv[7] = quad.rightTop().y;
+        this->uv[0] = quad.leftTop().x;
+        this->uv[1] = quad.leftTop().y;
+        this->uv[2] = quad.rightTop().x;
+        this->uv[3] = quad.rightTop().y;
+        this->uv[4] = quad.leftBottom().x;
+        this->uv[5] = quad.leftBottom().y;
+        this->uv[6] = quad.rightBottom().x;
+        this->uv[7] = quad.rightBottom().y;
     } else {
         _resetUV();
     }
@@ -88,11 +88,11 @@ void AlCanvasDrawer::setPositionQuad(AlQuad &quad) {
 
 void AlCanvasDrawer::_resetUV() {
     this->uv[0] = 0.0f;
-    this->uv[1] = 0.0f;
+    this->uv[1] = 1.0f;
     this->uv[2] = 1.0f;
-    this->uv[3] = 0.0f;
+    this->uv[3] = 1.0f;
     this->uv[4] = 0.0f;
-    this->uv[5] = 1.0f;
+    this->uv[5] = 0.0f;
     this->uv[6] = 1.0f;
-    this->uv[7] = 1.0f;
+    this->uv[7] = 0.0f;
 }

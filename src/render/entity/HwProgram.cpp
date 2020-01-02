@@ -59,17 +59,17 @@ HwProgram::HwProgram(string *vertex, string *fragment) : Object() {
     aTextureCoordinateLocation = getAttribLocation("aTextureCoord");
     // xy
     float *texCoordinate = new float[8]{
+            0.0f, 1.0f,//LEFT,TOP
+            1.0f, 1.0f,//RIGHT,TOP
             0.0f, 0.0f,//LEFT,BOTTOM
             1.0f, 0.0f,//RIGHT,BOTTOM
-            0.0f, 1.0f,//LEFT,TOP
-            1.0f, 1.0f//RIGHT,TOP
     };
     // st
     float *position = new float[8]{
+            -1.0f, 1.0f,//LEFT,TOP
+            1.0f, 1.0f,//RIGHT,TOP
             -1.0f, -1.0f,//LEFT,BOTTOM
             1.0f, -1.0f,//RIGHT,BOTTOM
-            -1.0f, 1.0f,//LEFT,TOP
-            1.0f, 1.0f//RIGHT,TOP
     };
     updateLocation(texCoordinate, position);
     delete[]texCoordinate;

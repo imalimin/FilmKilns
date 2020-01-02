@@ -37,14 +37,14 @@ bool AlQuadDrawer::prepare(AlTexAllocator *texAllocator) {
 }
 
 void AlQuadDrawer::setQuad(AlQuad &quad) {
-    this->vertex[0] = quad.leftBottom().x * 2.0f - 1.0f;
-    this->vertex[1] = quad.leftBottom().y * 2.0f - 1.0f;
-    this->vertex[2] = quad.rightBottom().x * 2.0f - 1.0f;
-    this->vertex[3] = quad.rightBottom().y * 2.0f - 1.0f;
-    this->vertex[4] = quad.leftTop().x * 2.0f - 1.0f;
-    this->vertex[5] = quad.leftTop().y * 2.0f - 1.0f;
-    this->vertex[6] = quad.rightTop().x * 2.0f - 1.0f;
-    this->vertex[7] = quad.rightTop().y * 2.0f - 1.0f;
+    this->vertex[0] = quad.leftTop().x * 2.0f - 1.0f;
+    this->vertex[1] = quad.leftTop().y * 2.0f - 1.0f;
+    this->vertex[2] = quad.rightTop().x * 2.0f - 1.0f;
+    this->vertex[3] = quad.rightTop().y * 2.0f - 1.0f;
+    this->vertex[4] = quad.leftBottom().x * 2.0f - 1.0f;
+    this->vertex[5] = quad.leftBottom().y * 2.0f - 1.0f;
+    this->vertex[6] = quad.rightBottom().x * 2.0f - 1.0f;
+    this->vertex[7] = quad.rightBottom().y * 2.0f - 1.0f;
 }
 
 void AlQuadDrawer::drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
