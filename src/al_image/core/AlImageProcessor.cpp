@@ -21,14 +21,14 @@
 #define TAG "AlImageProcessor"
 
 AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
-    tar_t *archive = nullptr;
-    int count = tar_read_file("/sdcard/test.tar", &archive);
-    if (archive) {
-        for (int i = 0; i < count; ++i) {
-            Logcat::i(TAG, "%s", archive[i].name);
-        }
-        tar_free(archive);
-    }
+//    tar_t *archive = nullptr;
+//    int count = tar_read_file("/sdcard/test.tar", &archive);
+//    if (archive) {
+//        for (int i = 0; i < count; ++i) {
+//            Logcat::i(TAG, "%s", archive[i].name);
+//        }
+//        tar_free(archive);
+//    }
     AlImage *image = new AlImage(ALIAS_OF_IMAGE);
     AlLayerRender *layerRender = new AlLayerRender(ALIAS_OF_LAYER_RENDER);
     registerAnUnit(image);
@@ -39,7 +39,6 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_LAYER_RENDER});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
     post([this] {
-        Logcat::i(TAG, "currentContext %p", Egl::currentContext());
         this->context = new AlContext();
         this->putObject("AL_CONTEXT", this->context)
                 .to({ALIAS_OF_IMAGE, ALIAS_OF_DESCRIPTOR, ALIAS_OF_LAYER_RENDER,
@@ -263,11 +262,9 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
     transToCanvasPos(x, y);
     size_t size = mLayers.size();
     for (int i = size - 1; i >= 0; --i) {
-        auto *it = mLayers.at(static_cast<unsigned int>(i));
-//        Logcat::i(TAG, "%s(%d): %f, %f", __FUNCTION__, __LINE__, x, y);
-        if (it && it->getQuad().inside(AlPointF(x, y))) {
-//            it->dump();
-            return it->getId();
+        auto *layer = mLayers[i];
+        if (layer && layer->getQuad().inside(AlPointF(x, y))) {
+            return layer->getId();
         }
     }
     return Hw::FAILED.code;
@@ -290,6 +287,27 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
 HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom, int mode) {
 //    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_CROP_CANVAS,
 //                                new AlRectF(left, top, right, bottom)));
+    float srcRatio = mCanvasSize.width / (float) mCanvasSize.height;
+    transToCanvasPos(left, top);
+    transToCanvasPos(right, bottom);
+    AlRectF rectF(left, top, right, bottom);
+    mCanvasSize.width *= (rectF.getWidth() / 2.0f);
+    mCanvasSize.height *= (rectF.getHeight() / 2.0f);
+    float scale = std::min<float>(rectF.getWidth(), rectF.getHeight()) / 2.0f;
+    size_t size = mLayers.size();
+    for (int i = 0; i < size; ++i) {
+        auto *layer = mLayers[i];
+        AlRational rat;
+        rat.den = 100000;
+        rat.num = static_cast<int32_t>(rat.den * 1.0f / scale);
+        postScale(layer->getId(), rat);
+        postTranslate(layer->getId(),
+                      -(rectF.right + rectF.left),
+                      -(rectF.top + rectF.bottom));
+        Logcat::i(TAG, "%f, %f", (rectF.right + rectF.left) / 2.0f,
+                  (rectF.top + rectF.bottom) / 2.0f);
+    }
+    _notifyCanvasUpdate();
     invalidate();
     return Hw::SUCCESS;
 }
