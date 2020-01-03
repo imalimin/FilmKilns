@@ -52,7 +52,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ImageActivity" />
-        <activity android:name=".ui.AlImageActivity">
+        <activity
+            android:name=".ui.AlImageActivity"
+            android:theme="@style/AppTransTheme">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
 
