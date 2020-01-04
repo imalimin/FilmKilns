@@ -63,7 +63,7 @@ public:
     /// \param rightBottom
     /// \param rightTop
     void measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
-                         AlVec2 &rightBottom, AlVec2 &rightTop);
+                             AlVec2 &rightBottom, AlVec2 &rightTop);
 
     /// 测量图层运用正交投影，缩放旋转位移后的一些信息，比如最终的变换矩阵，用于绘制图层
     /// \param drawModel 图层绘制信息
@@ -85,6 +85,7 @@ private:
     void _calculateRect(AlSize &src, AlSize &target, AlRectF &srcRectF, AlRectF &targetRectF);
 
 private:
+    bool fitOriginalPixels = false;
     ///src,正交投影变换后图层归一化后的位置坐标，没有进行缩放旋转位移
     AlRectF lRectF;
     ///target,正交投影变换后画布归一化后的可视位置坐标

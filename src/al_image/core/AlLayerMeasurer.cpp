@@ -11,7 +11,7 @@
 #include "Logcat.h"
 
 AlLayerMeasurer::AlLayerMeasurer() : Object() {
-
+    fitOriginalPixels = true;
 }
 
 AlLayerMeasurer::AlLayerMeasurer(const AlLayerMeasurer &o) : Object() {
@@ -50,7 +50,7 @@ void AlLayerMeasurer::setTranslate(float x, float y, float alpha, float scaleX, 
 
 
 void AlLayerMeasurer::_calculateRect(AlSize &src, AlSize &target,
-                                    AlRectF &srcRectF, AlRectF &targetRectF) {
+                                     AlRectF &srcRectF, AlRectF &targetRectF) {
     float aspectRatio = target.width > target.height ?
                         (float) target.width / (float) target.height :
                         (float) target.height / (float) target.width;
@@ -67,25 +67,40 @@ void AlLayerMeasurer::_calculateRect(AlSize &src, AlSize &target,
         targetRectF.bottom = -aspectRatio;
         targetRectF.top = -targetRectF.bottom;
     }
-    /// 根据Canvas大小计算纹理顶点
-    /// 保证图片总是完整填充到Canvas
-    /// 并保证至Layer和Canvas至少有一边相等
-    /// 此时layer model的scale=1为默认状态
-    if (src.width / (float) src.height > target.width / (float) target.height) {
-        srcRectF.left = targetRectF.left;
-        srcRectF.right = -srcRectF.left;
-        srcRectF.bottom = srcRectF.left * src.height / (float) src.width;
-        srcRectF.top = -srcRectF.bottom;
+    if (fitOriginalPixels) {
+        /// 保证图层和画布pixel to pixel
+        if (src.width / (float) src.height > target.width / (float) target.height) {
+            srcRectF.left = targetRectF.left * src.width / target.width;
+            srcRectF.right = -srcRectF.left;
+            srcRectF.bottom = targetRectF.left * src.height / target.width;
+            srcRectF.top = -srcRectF.bottom;
+        } else {
+            srcRectF.bottom = targetRectF.bottom * src.height / target.height;
+            srcRectF.top = -srcRectF.bottom;
+            srcRectF.left = targetRectF.bottom * src.width / target.height;
+            srcRectF.right = -srcRectF.left;
+        }
     } else {
-        srcRectF.bottom = targetRectF.bottom;
-        srcRectF.top = -srcRectF.bottom;
-        srcRectF.left = srcRectF.bottom * src.width / (float) src.height;
-        srcRectF.right = -srcRectF.left;
+        /// 根据Canvas大小计算纹理顶点
+        /// 保证图片总是完整填充到Canvas
+        /// 并保证至Layer和Canvas至少有一边相等
+        /// 此时layer model的scale=1为默认状态
+        if (src.width / (float) src.height > target.width / (float) target.height) {
+            srcRectF.left = targetRectF.left;
+            srcRectF.right = -srcRectF.left;
+            srcRectF.bottom = targetRectF.left * src.height / (float) src.width;
+            srcRectF.top = -srcRectF.bottom;
+        } else {
+            srcRectF.bottom = targetRectF.bottom;
+            srcRectF.top = -srcRectF.bottom;
+            srcRectF.left = targetRectF.bottom * src.width / (float) src.height;
+            srcRectF.right = -srcRectF.left;
+        }
     }
 }
 
 void AlLayerMeasurer::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
-                                         AlVec2 &rightBottom, AlVec2 &rightTop) {
+                                          AlVec2 &rightBottom, AlVec2 &rightTop) {
     AlMatrix mat = tMat * oMat;
     AlVec4 lt(lRectF.left, lRectF.top);
     AlVec4 lb(lRectF.left, lRectF.bottom);
