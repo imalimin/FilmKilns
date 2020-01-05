@@ -1,15 +1,18 @@
 package com.lmy.samplenative
 
 import android.content.ContentResolver
-import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import com.lmy.samplenative.helper.PermissionHelper
+import java.util.*
 
 /**
  * Created by aliminabc@gmail.com on 2018/9/21.
@@ -61,6 +64,8 @@ open abstract class BaseActivity : AppCompatActivity() {
 
     fun getRealFilePath(uri: Uri?): String? {
         if (null == uri) return null
+        Log.i("BaseActivity", uri.toString())
+        Log.i("BaseActivity", uri.path)
         val scheme = uri.scheme
         var data: String? = null
         if (scheme == null)
@@ -68,12 +73,20 @@ open abstract class BaseActivity : AppCompatActivity() {
         else if (ContentResolver.SCHEME_FILE == scheme) {
             data = uri.path
         } else if (ContentResolver.SCHEME_CONTENT == scheme) {
-            val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.ImageColumns.DATA), null, null, null)
+            val cursor = contentResolver.query(uri, null, null, null, null)
             if (null != cursor) {
                 if (cursor.moveToFirst()) {
-                    val index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+                    val columns = cursor.columnNames
+                    Log.i("BaseActivity", Arrays.toString(columns))
+                    val index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA)
+                    val name = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                    val size = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE))
                     if (index > -1) {
                         data = cursor.getString(index)
+                    } else if (!TextUtils.isEmpty(uri.path) && uri.path!!.contains(name)) {
+                        //投机处理
+                        val path = uri.path!!.substring(1)
+                        data = "${Environment.getExternalStorageDirectory().path}${path.substring(path.indexOf("/"), path.length)}"
                     }
                 }
                 cursor.close()
