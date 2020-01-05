@@ -16,7 +16,7 @@
 #include "AlImageLayerModel.h"
 #include "AlSize.h"
 #include "AlRational.h"
-#include "AlLayerRender.h"
+#include "AlLayerCanvas.h"
 #include "AlAbsContext.h"
 
 class AlImageProcessor : public HwAbsProcessor {
@@ -98,7 +98,7 @@ public:
 
     HwResult undo();
 
-    void setOnSaveListener(AlLayerRender::OnSaveListener listener);
+    void setOnSaveListener(AlLayerCanvas::OnSaveListener listener);
 
 private:
     void _notifyCanvasUpdate();
@@ -120,7 +120,7 @@ private:
     std::mutex mLayerMtx;
     AlSize mWinSize;
     AlSize mCanvasSize;
-    AlLayerRender::OnSaveListener onSaveListener = nullptr;
+    AlLayerCanvas::OnSaveListener onSaveListener = nullptr;
 };
 
 

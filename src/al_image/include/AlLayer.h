@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALIMAGE_H
-#define HWVC_ANDROID_ALIMAGE_H
+#ifndef HWVC_ANDROID_ALLAYER_H
+#define HWVC_ANDROID_ALLAYER_H
 
 #include "Unit.h"
 #include "AlTexAllocator.h"
@@ -14,13 +14,13 @@
 #include "AlImageLayerManager.h"
 #include <deque>
 
-class AlImage : public Unit {
+class AlLayer : public Unit {
 public:
     typedef function<void(int32_t)> OnAlxLoadListener;
 public:
-    AlImage(string alias);
+    AlLayer(string alias);
 
-    virtual ~AlImage();
+    virtual ~AlLayer();
 
     bool onCreate(AlMessage *msg) override;
 
@@ -86,4 +86,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALIMAGE_H
+#endif //HWVC_ANDROID_ALLAYER_H

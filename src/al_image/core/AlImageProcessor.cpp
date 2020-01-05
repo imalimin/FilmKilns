@@ -6,7 +6,7 @@
 */
 
 #include "AlImageProcessor.h"
-#include "AlImage.h"
+#include "AlLayer.h"
 #include "AlLayerDescriptor.h"
 #include "HwRender.h"
 #include "HwScreen.h"
@@ -29,11 +29,11 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
 //        }
 //        tar_free(archive);
 //    }
-    AlImage *image = new AlImage(ALIAS_OF_IMAGE);
-    AlLayerRender *layerRender = new AlLayerRender(ALIAS_OF_LAYER_RENDER);
-    registerAnUnit(image);
+    AlLayer *layer = new AlLayer(ALIAS_OF_IMAGE);
+    AlLayerCanvas *layerCanvas = new AlLayerCanvas(ALIAS_OF_LAYER_RENDER);
+    registerAnUnit(layer);
     registerAnUnit(new AlLayerDescriptor(ALIAS_OF_DESCRIPTOR));
-    registerAnUnit(layerRender);
+    registerAnUnit(layerCanvas);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_LAYER_RENDER});
@@ -45,12 +45,12 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
                      ALIAS_OF_RENDER, ALIAS_OF_SCREEN});
     });
     prepare();
-    layerRender->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
+    layerCanvas->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
         if (this->onSaveListener) {
             this->onSaveListener(code, msg, path);
         }
     });
-    image->setOnAlxLoadListener([this](int32_t id) {
+    layer->setOnAlxLoadListener([this](int32_t id) {
         mLayerIdCreator.reset(id);
     });
 }
@@ -344,7 +344,7 @@ HwResult AlImageProcessor::importFile(std::string path) {
     return Hw::SUCCESS;
 }
 
-void AlImageProcessor::setOnSaveListener(AlLayerRender::OnSaveListener listener) {
+void AlImageProcessor::setOnSaveListener(AlLayerCanvas::OnSaveListener listener) {
     this->onSaveListener = listener;
 }
 
