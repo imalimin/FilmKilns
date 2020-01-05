@@ -40,7 +40,7 @@ private:
 
     AlSize cropSize;
     AlQuad quad;
-    AlLayerMeasurer aMeasurer;
+    AlLayerMeasurer aMeasurer = AlLayerMeasurer::centerInside();
 };
 
 

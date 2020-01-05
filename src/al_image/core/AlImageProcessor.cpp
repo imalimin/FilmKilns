@@ -299,7 +299,7 @@ HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float 
         AlSize posPixels(static_cast<int>(mCanvasSize.width * pos.x),
                          static_cast<int>(mCanvasSize.height * pos.y));
         AlPointF nPos(posPixels.width / (float) dw, posPixels.height / (float) dh);
-        postTranslate(layer->getId(), nPos.x, nPos.y);
+        layer->setPosition(layer->getPosition().x + nPos.x, layer->getPosition().y + nPos.y);
         Logcat::i(TAG, "(%f,%f), (%f,%f)",
                   -(rectF.right + rectF.left) / rectF.getWidth(),
                   -(rectF.top + rectF.bottom) / rectF.getHeight(),

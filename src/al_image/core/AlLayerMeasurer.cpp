@@ -12,11 +12,36 @@
 
 #define TAG "AlLayerMeasurer"
 
-AlLayerMeasurer::AlLayerMeasurer() : Object() {
-    fitOriginalPixels = true;
+const int32_t AlLayerMeasurer::SCALE_TYPE_ORIGINAL = 0;
+const int32_t AlLayerMeasurer::SCALE_TYPE_CENTER_INSIDE = 1;
+const int32_t AlLayerMeasurer::SCALE_TYPE_CENTER_CROP = 2;
+
+AlLayerMeasurer &AlLayerMeasurer::original() {
+    static AlLayerMeasurer *m;
+    if (m == nullptr) {
+        m = new AlLayerMeasurer(SCALE_TYPE_ORIGINAL);
+    }
+    return *m;
 }
 
-AlLayerMeasurer::AlLayerMeasurer(const AlLayerMeasurer &o) : Object() {
+AlLayerMeasurer &AlLayerMeasurer::centerInside() {
+    static AlLayerMeasurer *m;
+    if (m == nullptr) {
+        m = new AlLayerMeasurer(SCALE_TYPE_CENTER_INSIDE);
+    }
+    return *m;
+}
+
+AlLayerMeasurer::AlLayerMeasurer(int32_t scaleType) : Object(), scaleType(scaleType) {
+}
+
+AlLayerMeasurer::AlLayerMeasurer(const AlLayerMeasurer &o)
+        : Object(),
+          scaleType(o.scaleType),
+          lRectF(o.lRectF),
+          cRectF(o.cRectF),
+          oMat(o.oMat),
+          tMat(o.tMat) {
 
 }
 
@@ -70,34 +95,39 @@ void AlLayerMeasurer::_calculateRect(AlSize &src, AlSize &target,
         targetRectF.bottom = -aspectRatio;
         targetRectF.top = -targetRectF.bottom;
     }
-    if (fitOriginalPixels) {
-        /// 保证图层和画布pixel to pixel
-        if (src.width / (float) src.height > target.width / (float) target.height) {
-            srcRectF.left = targetRectF.left * src.width / target.width;
-            srcRectF.right = -srcRectF.left;
-            srcRectF.bottom = targetRectF.left * src.height / target.width;
-            srcRectF.top = -srcRectF.bottom;
-        } else {
-            srcRectF.bottom = targetRectF.bottom * src.height / target.height;
-            srcRectF.top = -srcRectF.bottom;
-            srcRectF.left = targetRectF.bottom * src.width / target.height;
-            srcRectF.right = -srcRectF.left;
+    switch (scaleType) {
+        case SCALE_TYPE_CENTER_INSIDE: {
+            /// 根据Canvas大小计算纹理顶点
+            /// 保证图片总是完整填充到Canvas
+            /// 并保证至Layer和Canvas至少有一边相等
+            /// 此时layer model的scale=1为默认状态
+            if (src.width / (float) src.height > target.width / (float) target.height) {
+                srcRectF.left = targetRectF.left;
+                srcRectF.right = -srcRectF.left;
+                srcRectF.bottom = targetRectF.left * src.height / (float) src.width;
+                srcRectF.top = -srcRectF.bottom;
+            } else {
+                srcRectF.bottom = targetRectF.bottom;
+                srcRectF.top = -srcRectF.bottom;
+                srcRectF.left = targetRectF.bottom * src.width / (float) src.height;
+                srcRectF.right = -srcRectF.left;
+            }
+            break;
         }
-    } else {
-        /// 根据Canvas大小计算纹理顶点
-        /// 保证图片总是完整填充到Canvas
-        /// 并保证至Layer和Canvas至少有一边相等
-        /// 此时layer model的scale=1为默认状态
-        if (src.width / (float) src.height > target.width / (float) target.height) {
-            srcRectF.left = targetRectF.left;
-            srcRectF.right = -srcRectF.left;
-            srcRectF.bottom = targetRectF.left * src.height / (float) src.width;
-            srcRectF.top = -srcRectF.bottom;
-        } else {
-            srcRectF.bottom = targetRectF.bottom;
-            srcRectF.top = -srcRectF.bottom;
-            srcRectF.left = targetRectF.bottom * src.width / (float) src.height;
-            srcRectF.right = -srcRectF.left;
+        case SCALE_TYPE_ORIGINAL:
+        default: {
+            /// 保证图层和画布pixel to pixel
+            if (src.width / (float) src.height > target.width / (float) target.height) {
+                srcRectF.left = targetRectF.left * src.width / target.width;
+                srcRectF.right = -srcRectF.left;
+                srcRectF.bottom = targetRectF.left * src.height / target.width;
+                srcRectF.top = -srcRectF.bottom;
+            } else {
+                srcRectF.bottom = targetRectF.bottom * src.height / target.height;
+                srcRectF.top = -srcRectF.bottom;
+                srcRectF.left = targetRectF.bottom * src.width / target.height;
+                srcRectF.right = -srcRectF.left;
+            }
         }
     }
 }

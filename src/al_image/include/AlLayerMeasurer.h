@@ -25,7 +25,9 @@
 /// 5.变换后新图像的四个位置坐标
 al_class(AlLayerMeasurer) {
 public:
-    AlLayerMeasurer();
+    static AlLayerMeasurer &original();
+
+    static AlLayerMeasurer &centerInside();
 
     AlLayerMeasurer(const AlLayerMeasurer &o);
 
@@ -79,13 +81,19 @@ public:
     AlRectF getTargetPosRectF();
 
 private:
+    AlLayerMeasurer(int32_t scaleType);
+
     /// 计算正交矩阵
     /// \param src 图层大小
     /// \param dest 窗口大小
     void _calculateRect(AlSize &src, AlSize &target, AlRectF &srcRectF, AlRectF &targetRectF);
 
 private:
-    bool fitOriginalPixels = false;
+    static const int32_t SCALE_TYPE_ORIGINAL;
+    static const int32_t SCALE_TYPE_CENTER_INSIDE;
+    static const int32_t SCALE_TYPE_CENTER_CROP;
+
+    int32_t scaleType = SCALE_TYPE_ORIGINAL;
     ///src,正交投影变换后图层归一化后的位置坐标，没有进行缩放旋转位移
     AlRectF lRectF;
     ///target,正交投影变换后画布归一化后的可视位置坐标

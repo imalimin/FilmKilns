@@ -51,7 +51,11 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, AlTexAllocator *
         mBgDrawer = AlColorGridFilter::create();
         mBgDrawer->prepare(texAllocator);
 #ifdef ENABLE_CROP_DEBUG
-        mLayerTex = texAllocator->alloc(nullptr, w, h, GL_RGBA);
+        AlTexDescription d;
+        d.size.width = w;
+        d.size.height = h;
+        d.fmt = GL_RGBA;
+        mLayerTex = texAllocator->alloc(d);
         mCopyDrawer = new HwNormalFilter();
         mCopyDrawer->prepare();
         mAlQuadDrawer = new AlQuadDrawer();
@@ -110,7 +114,8 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
     mCanvasDrawer->setVertexRectF(description->vertexRectF);
 #ifdef ENABLE_CROP_DEBUG
     glViewport(0, 0, description->getLayerSize().width, description->getLayerSize().height);
-    mLayerTex->update(nullptr, description->getLayerSize().width, description->getLayerSize().height, GL_RGBA);
+    mLayerTex->update(nullptr, description->getLayerSize().width,
+                      description->getLayerSize().height, GL_RGBA);
     mCopyDrawer->draw(description->tex, mLayerTex);
     if (!description->cropQuad.isZero()) {
         mAlQuadDrawer->setQuad(description->cropQuad);

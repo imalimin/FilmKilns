@@ -46,7 +46,7 @@ private:
     void notifyCanvas(AlImageLayerDrawModel *description);
 
 private:
-    AlLayerMeasurer aMeasurer;
+    AlLayerMeasurer aMeasurer = AlLayerMeasurer::original();
     AlSize aCanvasSize;
 };
 

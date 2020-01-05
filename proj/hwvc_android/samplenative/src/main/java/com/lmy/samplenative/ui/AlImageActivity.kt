@@ -102,7 +102,13 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         processor?.setOnSaveListener(this)
         //For crop debug
 //        cropView.setOnChangeListener {
-//            ensureCropLayer()
+//            processor?.cancelCropLayer(getCurrentLayer())
+//            val rectF = getSelectRect()
+//            if (null != rectF) {
+//                processor?.ensureCropLayer(getCurrentLayer(),
+//                        rectF.left, rectF.top,
+//                        rectF.right, rectF.bottom)
+//            }
 //        }
         openDefaultImage()
     }
