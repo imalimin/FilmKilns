@@ -5,36 +5,36 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlLayerCanvas.h"
+#include "AlUCanvas.h"
 #include "HwTexture.h"
 #include "AlBitmapFactory.h"
 
-#define TAG "AlLayerRender"
+#define TAG "AlUCanvas"
 
-AlLayerCanvas::AlLayerCanvas(const string &alias) : Unit(alias) {
+AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
     registerEvent(EVENT_LAYER_RENDER_UPDATE_CANVAS,
-                  reinterpret_cast<EventFunc>(&AlLayerCanvas::onUpdateCanvas));
+                  reinterpret_cast<EventFunc>(&AlUCanvas::onUpdateCanvas));
     registerEvent(EVENT_LAYER_RENDER_CLEAR,
-                  reinterpret_cast<EventFunc>(&AlLayerCanvas::onClear));
+                  reinterpret_cast<EventFunc>(&AlUCanvas::onClear));
     registerEvent(EVENT_LAYER_RENDER_DRAW,
-                  reinterpret_cast<EventFunc>(&AlLayerCanvas::onDraw));
+                  reinterpret_cast<EventFunc>(&AlUCanvas::onDraw));
     registerEvent(EVENT_LAYER_RENDER_SHOW,
-                  reinterpret_cast<EventFunc>(&AlLayerCanvas::onShow));
-    registerEvent(EVENT_LAYER_RENDER_SAVE, reinterpret_cast<EventFunc>(&AlLayerCanvas::onSave));
+                  reinterpret_cast<EventFunc>(&AlUCanvas::onShow));
+    registerEvent(EVENT_LAYER_RENDER_SAVE, reinterpret_cast<EventFunc>(&AlUCanvas::onSave));
     registerEvent(EVENT_LAYER_RENDER_CROP_CANVAS,
-                  reinterpret_cast<EventFunc>(&AlLayerCanvas::onCropCanvas));
+                  reinterpret_cast<EventFunc>(&AlUCanvas::onCropCanvas));
 }
 
-AlLayerCanvas::~AlLayerCanvas() {
+AlUCanvas::~AlUCanvas() {
     this->onSaveListener = nullptr;
 }
 
-bool AlLayerCanvas::onCreate(AlMessage *msg) {
+bool AlUCanvas::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
     return true;
 }
 
-bool AlLayerCanvas::onDestroy(AlMessage *msg) {
+bool AlUCanvas::onDestroy(AlMessage *msg) {
     mCanvas.release();
     if (texAllocator) {
         delete texAllocator;
@@ -43,14 +43,14 @@ bool AlLayerCanvas::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool AlLayerCanvas::onUpdateCanvas(AlMessage *m) {
+bool AlUCanvas::onUpdateCanvas(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     AlSize *size = m->getObj<AlSize *>();
     _update(size->width, size->height, 0);
     return true;
 }
 
-bool AlLayerCanvas::onCropCanvas(AlMessage *m) {
+bool AlUCanvas::onCropCanvas(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     AlRectF *rectF = m->getObj<AlRectF *>();
     if (nullptr == rectF) {
@@ -62,13 +62,13 @@ bool AlLayerCanvas::onCropCanvas(AlMessage *m) {
     return true;
 }
 
-bool AlLayerCanvas::onClear(AlMessage *m) {
+bool AlUCanvas::onClear(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     mCanvas.clear(1 == m->arg1);
     return false;
 }
 
-bool AlLayerCanvas::onDraw(AlMessage *m) {
+bool AlUCanvas::onDraw(AlMessage *m) {
     if (nullptr == m->obj) {
         return true;
     }
@@ -80,7 +80,7 @@ bool AlLayerCanvas::onDraw(AlMessage *m) {
     return true;
 }
 
-bool AlLayerCanvas::onShow(AlMessage *m) {
+bool AlUCanvas::onShow(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
     auto tex = mCanvas.getOutput();
@@ -93,7 +93,7 @@ bool AlLayerCanvas::onShow(AlMessage *m) {
     return true;
 }
 
-bool AlLayerCanvas::onSave(AlMessage *m) {
+bool AlUCanvas::onSave(AlMessage *m) {
     std::string path = getString("output_path");
     if ("" == path || path.empty()) {
         if (onSaveListener) {
@@ -113,7 +113,7 @@ bool AlLayerCanvas::onSave(AlMessage *m) {
     return true;
 }
 
-void AlLayerCanvas::_newDefaultCanvas(AlSize size) {
+void AlUCanvas::_newDefaultCanvas(AlSize size) {
     if (size.width <= 0 || size.height <= 0) {
         return;
     }
@@ -123,15 +123,15 @@ void AlLayerCanvas::_newDefaultCanvas(AlSize size) {
     _update(size.width, size.height, 0);
 }
 
-void AlLayerCanvas::_draw(AlImageLayerDrawModel *description) {
+void AlUCanvas::_draw(AlImageLayerDrawModel *description) {
     mCanvas.draw(description);
 }
 
-void AlLayerCanvas::setOnSaveListener(AlLayerCanvas::OnSaveListener listener) {
+void AlUCanvas::setOnSaveListener(AlUCanvas::OnSaveListener listener) {
     this->onSaveListener = listener;
 }
 
-void AlLayerCanvas::_update(int32_t width, int32_t height, int32_t color) {
+void AlUCanvas::_update(int32_t width, int32_t height, int32_t color) {
     AlSize *size = dynamic_cast<AlSize *>(getObject("canvas_size"));
     size->width = width;
     size->height = height;

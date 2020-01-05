@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlLayerDescriptor.h"
+#include "AlULayerDescriptor.h"
 #include "AlImageLayerDrawModel.h"
 #include "AlMath.h"
 #include "HwTexture.h"
@@ -13,27 +13,27 @@
 #include "AlImgLayerDescription.h"
 #include "AlAbsOperateModel.h"
 
-#define TAG "AlLayerDescriptor"
+#define TAG "AlULayerDescriptor"
 
-AlLayerDescriptor::AlLayerDescriptor(const string &alias) : Unit(alias) {
-    registerEvent(EVENT_LAYER_MEASURE, reinterpret_cast<EventFunc>(&AlLayerDescriptor::onMeasure));
+AlULayerDescriptor::AlULayerDescriptor(const string &alias) : Unit(alias) {
+    registerEvent(EVENT_LAYER_MEASURE, reinterpret_cast<EventFunc>(&AlULayerDescriptor::onMeasure));
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_SIZE,
-                  reinterpret_cast<EventFunc>(&AlLayerDescriptor::onCanvasSizeUpdate));
+                  reinterpret_cast<EventFunc>(&AlULayerDescriptor::onCanvasSizeUpdate));
 }
 
-AlLayerDescriptor::~AlLayerDescriptor() {
+AlULayerDescriptor::~AlULayerDescriptor() {
 
 }
 
-bool AlLayerDescriptor::onCreate(AlMessage *msg) {
+bool AlULayerDescriptor::onCreate(AlMessage *msg) {
     return true;
 }
 
-bool AlLayerDescriptor::onDestroy(AlMessage *msg) {
+bool AlULayerDescriptor::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool AlLayerDescriptor::onMeasure(AlMessage *msg) {
+bool AlULayerDescriptor::onMeasure(AlMessage *msg) {
     AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
     AlImageLayerDrawModel *description = new AlImageLayerDrawModel();
     _measure(layer, description);
@@ -41,13 +41,13 @@ bool AlLayerDescriptor::onMeasure(AlMessage *msg) {
     return true;
 }
 
-bool AlLayerDescriptor::onCanvasSizeUpdate(AlMessage *msg) {
+bool AlULayerDescriptor::onCanvasSizeUpdate(AlMessage *msg) {
     aCanvasSize.width = msg->arg1;
     aCanvasSize.height = static_cast<int>(msg->arg2);
     return true;
 }
 
-HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel *description) {
+HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel *description) {
     if (nullptr == layer || nullptr == layer->model || nullptr == description) {
         return Hw::FAILED;
     }
@@ -93,7 +93,7 @@ HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel 
     return ret;
 }
 
-HwResult AlLayerDescriptor::_measureOperate(std::vector<AlAbsOperateModel *> *opts,
+HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsOperateModel *> *opts,
                                             AlImgLayerDescription &model,
                                             AlImageLayerDrawModel *description) {
     if (nullptr == description) {
@@ -108,7 +108,7 @@ HwResult AlLayerDescriptor::_measureOperate(std::vector<AlAbsOperateModel *> *op
     return Hw::SUCCESS;
 }
 
-void AlLayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description) {
+void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_DRAW, description,
                                        AlMessage::QUEUE_MODE_FIRST_ALWAYS);
     postEvent(msg);

@@ -5,21 +5,21 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALLAYERCANVAS_H
-#define HWVC_ANDROID_ALLAYERCANVAS_H
+#ifndef HWVC_ANDROID_ALUCANVAS_H
+#define HWVC_ANDROID_ALUCANVAS_H
 
 #include "Unit.h"
 #include "AlImageCanvas.h"
 #include "AlImageCanvasModel.h"
 
-class AlLayerCanvas : public Unit {
+class AlUCanvas : public Unit {
 public:
     ///code, msg, path
     typedef function<void(int32_t, const char *, const char *)> OnSaveListener;
 public:
-    AlLayerCanvas(const string &alias);
+    AlUCanvas(const string &alias);
 
-    virtual ~AlLayerCanvas();
+    virtual ~AlUCanvas();
 
     bool onCreate(AlMessage *msg) override;
 
@@ -107,4 +107,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALLAYERCANVAS_H
+#endif //HWVC_ANDROID_ALUCANVAS_H

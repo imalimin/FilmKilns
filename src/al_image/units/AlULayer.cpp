@@ -5,30 +5,30 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlLayer.h"
+#include "AlULayer.h"
 #include "HwTexture.h"
 #include "ObjectBox.h"
 #include "core/file/AlFileImporter.h"
 
-AlLayer::AlLayer(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlLayer::onInvalidate));
-    registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlLayer::onUpdateLayer));
-    registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlLayer::onImport));
-    registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlLayer::onRedo));
-    registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlLayer::onUndo));
+AlULayer::AlULayer(string alias) : Unit(alias) {
+    registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlULayer::onInvalidate));
+    registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlULayer::onUpdateLayer));
+    registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
+    registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
+    registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
 }
 
-AlLayer::~AlLayer() {
+AlULayer::~AlULayer() {
     this->onAlxLoadListener = nullptr;
 }
 
-bool AlLayer::onCreate(AlMessage *msg) {
+bool AlULayer::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
     mLayerManager.update(getLayers(), texAllocator);
     return true;
 }
 
-bool AlLayer::onDestroy(AlMessage *msg) {
+bool AlULayer::onDestroy(AlMessage *msg) {
     mLayerManager.release();
     if (texAllocator) {
         delete texAllocator;
@@ -37,22 +37,22 @@ bool AlLayer::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool AlLayer::onUpdateLayer(AlMessage *msg) {
+bool AlULayer::onUpdateLayer(AlMessage *msg) {
     mLayerManager.update(getLayers(), texAllocator);
     return true;
 }
 
-bool AlLayer::onInvalidate(AlMessage *m) {
+bool AlULayer::onInvalidate(AlMessage *m) {
     _notifyAll(m->arg1);
     return true;
 }
 
-std::vector<AlImageLayerModel *> *AlLayer::getLayers() {
+std::vector<AlImageLayerModel *> *AlULayer::getLayers() {
     auto *obj = static_cast<ObjectBox *>(getObject("layers"));
     return static_cast<vector<AlImageLayerModel *> *>(obj->ptr);
 }
 
-void AlLayer::_notifyAll(int32_t flag) {
+void AlULayer::_notifyAll(int32_t flag) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
     msg->arg1 = (0 != (flag & 0x2));
     msg->desc = "clear";
@@ -70,13 +70,13 @@ void AlLayer::_notifyAll(int32_t flag) {
     }
 }
 
-void AlLayer::_notifyDescriptor(AlImageLayer *layer) {
+void AlULayer::_notifyDescriptor(AlImageLayer *layer) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
     msg->desc = "measure";
     postEvent(msg);
 }
 
-bool AlLayer::onImport(AlMessage *m) {
+bool AlULayer::onImport(AlMessage *m) {
     std::string path = m->desc;
     AlImageCanvasModel canvas;
     std::vector<AlImageLayerModel *> layers;
@@ -98,18 +98,18 @@ bool AlLayer::onImport(AlMessage *m) {
     return true;
 }
 
-bool AlLayer::onRedo(AlMessage *m) {
+bool AlULayer::onRedo(AlMessage *m) {
     return true;
 }
 
-bool AlLayer::onUndo(AlMessage *m) {
+bool AlULayer::onUndo(AlMessage *m) {
     return true;
 }
 
-void AlLayer::_saveStep() {
+void AlULayer::_saveStep() {
 
 }
 
-void AlLayer::setOnAlxLoadListener(AlLayer::OnAlxLoadListener listener) {
+void AlULayer::setOnAlxLoadListener(AlULayer::OnAlxLoadListener listener) {
     this->onAlxLoadListener = listener;
 }

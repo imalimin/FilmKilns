@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALLAYERDESCRIPTOR_H
-#define HWVC_ANDROID_ALLAYERDESCRIPTOR_H
+#ifndef HWVC_ANDROID_ALULAYERDESCRIPTOR_H
+#define HWVC_ANDROID_ALULAYERDESCRIPTOR_H
 
 #include "Unit.h"
 #include "AlImageLayer.h"
@@ -15,11 +15,11 @@
 #include "AlSize.h"
 #include "AlImgLayerDescription.h"
 
-class AlLayerDescriptor : public Unit {
+class AlULayerDescriptor : public Unit {
 public:
-    AlLayerDescriptor(const string &alias);
+    AlULayerDescriptor(const string &alias);
 
-    virtual ~AlLayerDescriptor();
+    virtual ~AlULayerDescriptor();
 
     bool onCreate(AlMessage *msg) override;
 
@@ -51,4 +51,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALLAYERDESCRIPTOR_H
+#endif //HWVC_ANDROID_ALULAYERDESCRIPTOR_H
