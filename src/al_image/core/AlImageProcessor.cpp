@@ -287,26 +287,26 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
 HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom, int mode) {
 //    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_CROP_CANVAS,
 //                                new AlRectF(left, top, right, bottom)));
-    float srcRatio = mCanvasSize.width / (float) mCanvasSize.height;
     transToCanvasPos(left, top);
     transToCanvasPos(right, bottom);
     AlRectF rectF(left, top, right, bottom);
-    mCanvasSize.width *= (rectF.getWidth() / 2.0f);
-    mCanvasSize.height *= (rectF.getHeight() / 2.0f);
-    float scale = std::min<float>(rectF.getWidth(), rectF.getHeight()) / 2.0f;
+    int dw = static_cast<int>(mCanvasSize.width * (rectF.getWidth() / 2.0f));
+    int dh = static_cast<int>(mCanvasSize.height * (rectF.getHeight() / 2.0f));
     size_t size = mLayers.size();
     for (int i = 0; i < size; ++i) {
         auto *layer = mLayers[i];
-        AlRational rat;
-        rat.den = 100000;
-        rat.num = static_cast<int32_t>(rat.den * 1.0f / scale);
-        postScale(layer->getId(), rat);
-        postTranslate(layer->getId(),
-                      -(rectF.right + rectF.left),
-                      -(rectF.top + rectF.bottom));
-        Logcat::i(TAG, "%f, %f", (rectF.right + rectF.left) / 2.0f,
-                  (rectF.top + rectF.bottom) / 2.0f);
+        AlPointF pos(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
+        AlSize posPixels(static_cast<int>(mCanvasSize.width * pos.x),
+                         static_cast<int>(mCanvasSize.height * pos.y));
+        AlPointF nPos(posPixels.width / (float) dw, posPixels.height / (float) dh);
+        postTranslate(layer->getId(), nPos.x, nPos.y);
+        Logcat::i(TAG, "(%f,%f), (%f,%f)",
+                  -(rectF.right + rectF.left) / rectF.getWidth(),
+                  -(rectF.top + rectF.bottom) / rectF.getHeight(),
+                  nPos.x, nPos.y);
     }
+    mCanvasSize.width = dw;
+    mCanvasSize.height = dh;
     _notifyCanvasUpdate();
     invalidate();
     return Hw::SUCCESS;

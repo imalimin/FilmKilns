@@ -55,9 +55,9 @@ class AlCropView : View {
         val width = View.MeasureSpec.getSize(widthMeasureSpec)
         val height = View.MeasureSpec.getSize(heightMeasureSpec)
         lt.x = width / 4f
-        lt.y = height / 4f
+        lt.y = height / 3f
         rb.x = width * 3 / 4f
-        rb.y = height * 3 / 4f
+        rb.y = height * 2 / 3f
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

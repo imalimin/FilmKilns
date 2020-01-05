@@ -13,6 +13,8 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
+import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.SeekBar
 import android.widget.Toast
 import com.lmy.common.ui.GallerySelectActivity
@@ -29,7 +31,7 @@ import kotlinx.android.synthetic.main.activity_al_image.*
 import java.io.File
 
 class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionListener,
-        SeekBar.OnSeekBarChangeListener,
+        SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener,
         View.OnClickListener, AlImageProcessor.OnSaveListener {
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
@@ -64,7 +66,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
             if (!alignCropBox.isChecked) {
-//                processor?.postTranslate(getCurrentLayer(), dx, dy)
+                processor?.postTranslate(getCurrentLayer(), dx, dy)
             }
             //For crop debug
 //            ensureCropLayer()
@@ -78,7 +80,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         surfaceView?.setOnRotateListener { v, dr ->
             if (!alignCropBox.isChecked) {
-//                processor?.postRotation(getCurrentLayer(), dr)
+                processor?.postRotation(getCurrentLayer(), dr)
             } else {
                 alpha += (dr.num / dr.den.toDouble())
                 processor?.ensureAlignCrop(getCurrentLayer(),
@@ -90,20 +92,14 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         editBtn.setOnClickListener(this)
         canvasBtn.setOnClickListener(this)
         layerBtn.setOnClickListener(this)
+        alignCropBox.setOnCheckedChangeListener(this)
+        selectBox.setOnCheckedChangeListener(this)
         processor = lastCustomNonConfigurationInstance as AlImageProcessor?
         if (null == processor) {
             processor = AlImageProcessor.create()
         }
 //        processor?.setCanvas(1080, 1920)
         processor?.setOnSaveListener(this)
-        alignCropBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (isChecked) {
-                alpha = 0.0
-                processor?.ensureAlignCrop(getCurrentLayer(), AlRational(0, 100000))
-            } else {
-                processor?.cancelAlignCrop(getCurrentLayer())
-            }
-        }
         //For crop debug
 //        cropView.setOnChangeListener {
 //            ensureCropLayer()
@@ -148,6 +144,23 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
                 } else {
                     View.VISIBLE
                 }
+            }
+        }
+    }
+
+    override fun onCheckedChanged(v: CompoundButton?, isChecked: Boolean) {
+
+        when (v?.id) {
+            R.id.alignCropBox -> {
+                if (isChecked) {
+                    alpha = 0.0
+                    processor?.ensureAlignCrop(getCurrentLayer(), AlRational(0, 100000))
+                } else {
+                    processor?.cancelAlignCrop(getCurrentLayer())
+                }
+            }
+            R.id.selectBox -> {
+                showSelector(v.isChecked)
             }
         }
     }
@@ -254,6 +267,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
     }
 
     fun showSelector(show: Boolean) {
+        selectBox.isChecked = show
         cropView.visibility = if (show) View.VISIBLE else View.GONE
         cropView.reset()
     }

@@ -87,6 +87,7 @@ HwResult AlLayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel 
     layer->model->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
     layer->model->getQuad().mirrorVertical();
+    Logcat::i(TAG, "tran %f, %f", model.getPosition().x, model.getPosition().y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lt.x, lt.y, rt.x, rt.y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lb.x, lb.y, rb.x, rb.y);
     return ret;

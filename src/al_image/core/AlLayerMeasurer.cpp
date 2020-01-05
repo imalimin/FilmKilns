@@ -10,6 +10,8 @@
 #include "AlMath.h"
 #include "Logcat.h"
 
+#define TAG "AlLayerMeasurer"
+
 AlLayerMeasurer::AlLayerMeasurer() : Object() {
     fitOriginalPixels = true;
 }
@@ -25,6 +27,7 @@ AlLayerMeasurer::~AlLayerMeasurer() {
 void AlLayerMeasurer::updateOrthogonal(AlSize &src, AlSize &target) {
     _calculateRect(src, target, lRectF, cRectF);
     oMat.update(cRectF.left, cRectF.right, cRectF.bottom, cRectF.top, -1.0f, 1.0f);
+    Logcat::i(TAG, "canvas coord %f, %f", cRectF.left, cRectF.top);
 }
 
 void AlLayerMeasurer::setScale(float scaleX, float scaleY) {

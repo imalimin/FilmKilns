@@ -80,6 +80,16 @@
 
                 <CheckBox android:id="@+id/alignCropBox" />
             </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:text="Select"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+
+                <CheckBox android:id="@+id/selectBox" />
+            </TableRow>
         </TableLayout>
 
         <ImageButton
