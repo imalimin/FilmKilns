@@ -5,24 +5,24 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALPOSITIONTRANSLATOR_H
-#define HWVC_ANDROID_ALPOSITIONTRANSLATOR_H
+#ifndef HWVC_ANDROID_ALCOORDSTRANSLATOR_H
+#define HWVC_ANDROID_ALCOORDSTRANSLATOR_H
 
 #include "Object.h"
 #include "AlSize.h"
 
-al_class(AlPositionTranslator) {
+al_class(AlCoordsTranslator) {
 public:
     static void translate(AlSize src, AlSize target, float &x, float &y);
 
 private:
-    AlPositionTranslator() : Object() {};
+    AlCoordsTranslator() : Object() {};
 
-    ~AlPositionTranslator() {};
+    ~AlCoordsTranslator() {};
 
-    AlPositionTranslator(const AlPositionTranslator &o) : Object() {};
+    AlCoordsTranslator(const AlCoordsTranslator &o) : Object() {};
 
 };
 
 
-#endif //HWVC_ANDROID_ALPOSITIONTRANSLATOR_H
+#endif //HWVC_ANDROID_ALCOORDSTRANSLATOR_H

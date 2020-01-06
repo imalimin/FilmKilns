@@ -10,7 +10,7 @@
 #include "AlVec4.h"
 #include "AlOrthMatrix.h"
 #include "Logcat.h"
-#include "AlPositionTranslator.h"
+#include "AlCoordsTranslator.h"
 #include "StringUtils.h"
 
 #define TAG "AlCropOperateModel"
@@ -75,9 +75,9 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
         AlPointF layerPos = this->position;
         layerPos.x = -layerPos.x;
         layerPos.y = -layerPos.y;
-        AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
-        AlPositionTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
-        AlPositionTranslator::translate(canvasSize, layerSize, layerPos.x, layerPos.y);
+        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
+        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
+        AlCoordsTranslator::translate(canvasSize, layerSize, layerPos.x, layerPos.y);
 
         double alpha = -AlMath::PI * rotation.num / rotation.den;
         cropSize = AlSize(layerSize.width * cropRectF.getWidth() / 2.0f,

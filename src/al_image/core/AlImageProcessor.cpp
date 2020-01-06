@@ -14,7 +14,7 @@
 #include "AlOperateFactory.h"
 #include "AlCropOperateModel.h"
 #include "AlContext.h"
-#include "AlPositionTranslator.h"
+#include "AlCoordsTranslator.h"
 #include "core/file/AlFileExporter.h"
 #include "AlTarUtil.h"
 
@@ -254,7 +254,7 @@ AlImageLayerModel *AlImageProcessor::_getLayer(int32_t id) {
 }
 
 void AlImageProcessor::transToCanvasPos(float &x, float &y) {
-    AlPositionTranslator::translate(mWinSize, mCanvasSize, x, y);
+    AlCoordsTranslator::translate(mWinSize, mCanvasSize, x, y);
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {

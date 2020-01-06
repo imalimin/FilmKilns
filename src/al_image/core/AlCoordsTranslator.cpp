@@ -5,9 +5,9 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlPositionTranslator.h"
+#include "AlCoordsTranslator.h"
 
-void AlPositionTranslator::translate(AlSize src, AlSize target, float &x, float &y) {
+void AlCoordsTranslator::translate(AlSize src, AlSize target, float &x, float &y) {
     float winRatio = src.width / (float) src.height;
     float cRatio = target.width / (float) target.height;
     if (winRatio > cRatio) {
