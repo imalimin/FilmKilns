@@ -218,6 +218,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
                 Toast.makeText(this, data.getString("path"), Toast.LENGTH_LONG).show()
                 val path = data.getString("path")
                 if (!TextUtils.isEmpty(path)) {
+                    outputName = path!!
                     processor?.import(path!!)
                 }
             }
@@ -309,12 +310,23 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
     }
 
     override fun onBottomSheetItemClick(item: BottomSheetItem) {
+        val parent = File(Environment.getExternalStorageDirectory(), "Pictures")
+        if (!parent.exists()) {
+            parent.mkdirs()
+        }
         when (item.id) {
             0 -> {
-                val outputName = context.getOutputName()
+                var outputName = context.getOutputName()
                 if (null != outputName) {
-                    processor?.save("${File(Environment.getExternalStorageDirectory(),
-                            "Pictures/al_${outputName}").absoluteFile}")
+                    while (true) {
+                        if (File(parent, "$outputName").exists()) {
+                            val suffix = outputName!!.substring(outputName.lastIndexOf("."), outputName.length)
+                            outputName = "${outputName.substring(0, outputName.lastIndexOf("."))}$suffix"
+                            continue
+                        }
+                        break
+                    }
+                    processor?.save(File(parent, "$outputName").absolutePath)
                 } else {
                     Toast.makeText(context,
                             "Save finish failed. Add a layer first. Pls",
@@ -325,8 +337,7 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
                 val outputName = context.getOutputName()
                 if (null != outputName) {
                     val name = outputName.substring(0, outputName.lastIndexOf('.'))
-                    processor?.export("${File(Environment.getExternalStorageDirectory(),
-                            "Pictures/${name}.alx").absoluteFile}")
+                    processor?.export("${File(parent, "${name}.alx").absoluteFile}")
                 } else {
                     Toast.makeText(context,
                             "Save finish failed. Add a layer first. Pls",
