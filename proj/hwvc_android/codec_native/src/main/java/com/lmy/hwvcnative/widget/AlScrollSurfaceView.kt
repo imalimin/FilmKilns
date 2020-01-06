@@ -78,11 +78,16 @@ class AlScrollSurfaceView : SurfaceView {
                 if (rotate) {
                     val spanX = event.getX(0) - event.getX(1)
                     val spanY = event.getY(0) - event.getY(1)
+                    val anchor = PointF((event.getX(0) + event.getX(1)) / 2.0f,
+                            (event.getY(0) + event.getY(1)) / 2.0f)
+                    anchor.x = anchor.x * 2 / measuredWidth.toFloat() - 1f
+                    anchor.y = -(anchor.y * 2 / measuredHeight.toFloat() - 1f)
                     val rotate = atan2(spanY, spanX).toDouble()
                     val delta = rotate - previousRotate
                     if (abs(delta) > minRotateVelocity) {
                         onRotateListener?.onRotate(this@AlScrollSurfaceView,
-                                AlRational((delta * PRECISIONS / Math.PI).toInt(), PRECISIONS))
+                                AlRational((delta * PRECISIONS / Math.PI).toInt(), PRECISIONS),
+                                anchor)
                         previousRotate = rotate
                     }
                 }
@@ -128,10 +133,10 @@ class AlScrollSurfaceView : SurfaceView {
         onScaleListener = listener
     }
 
-    fun setOnRotateListener(listener: (v: SurfaceView, dr: AlRational) -> Unit) {
+    fun setOnRotateListener(listener: (v: SurfaceView, dr: AlRational, anchor: PointF) -> Unit) {
         setOnRotateListener(object : OnRotateListener {
-            override fun onRotate(v: SurfaceView, dr: AlRational) {
-                listener(v, dr)
+            override fun onRotate(v: SurfaceView, dr: AlRational, anchor: PointF) {
+                listener(v, dr, anchor)
             }
         })
     }
@@ -157,7 +162,7 @@ class AlScrollSurfaceView : SurfaceView {
     }
 
     interface OnRotateListener {
-        fun onRotate(v: SurfaceView, dr: AlRational)
+        fun onRotate(v: SurfaceView, dr: AlRational, anchor: PointF)
     }
 
     /**

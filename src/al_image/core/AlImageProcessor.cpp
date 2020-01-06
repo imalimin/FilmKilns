@@ -17,6 +17,7 @@
 #include "AlCoordsTranslator.h"
 #include "core/file/AlFileExporter.h"
 #include "AlTarUtil.h"
+#include "AlMath.h"
 
 #define TAG "AlImageProcessor"
 
@@ -177,7 +178,6 @@ HwResult AlImageProcessor::postScale(int32_t id, AlRational ds, AlPointF anchor)
     auto *layer = _getLayer(id);
     if (layer) {
         transToCanvasPos(anchor.x, anchor.y);
-        Logcat::i(TAG, "anchor %f,%f", anchor.x, anchor.y);
         float scale = ds.toFloat();
         float dx = anchor.x - layer->getPosition().x;
         float dy = anchor.y - layer->getPosition().y;
@@ -203,10 +203,22 @@ HwResult AlImageProcessor::setRotation(int32_t id, AlRational r) {
     return Hw::FAILED;
 }
 
-HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr) {
+HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr, AlPointF anchor) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
+        transToCanvasPos(anchor.x, anchor.y);
+        Logcat::i(TAG, "anchor %f,%f", anchor.x, anchor.y);
+
+//        float alpha = dr.toFloat() * AlMath::PI;
+//        float dx = anchor.x - layer->getPosition().x;
+//        float dy = anchor.y - layer->getPosition().y;
+//
+//        float x = dx * cosf(alpha) - dy * sinf(alpha);
+//        float y = dx * sinf(alpha) + dy * cosf(alpha);
+//        layer->setPosition(anchor.x - x,
+//                           anchor.y - y);
+
         ///TODO 还可以提高精度
         auto nr = layer->getRotation().toFloat() + dr.toFloat();
         auto r = AlRational(static_cast<int32_t>(nr * 100000), 100000);

@@ -78,9 +78,9 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
             //For crop debug
 //            ensureCropLayer()
         }
-        surfaceView?.setOnRotateListener { v, dr ->
+        surfaceView?.setOnRotateListener { v, dr, anchor ->
             if (!alignCropBox.isChecked) {
-                processor?.postRotation(getCurrentLayer(), dr)
+                processor?.postRotation(getCurrentLayer(), dr, anchor)
             } else {
                 alpha += (dr.num / dr.den.toDouble())
                 processor?.ensureAlignCrop(getCurrentLayer(),

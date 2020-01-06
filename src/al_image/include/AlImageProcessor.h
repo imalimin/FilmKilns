@@ -56,7 +56,7 @@ public:
 
     HwResult setRotation(int32_t id, AlRational r);
 
-    HwResult postRotation(int32_t id, AlRational dr);
+    HwResult postRotation(int32_t id, AlRational dr, AlPointF anchor);
 
     HwResult setTranslate(int32_t id, float x, float y);
 

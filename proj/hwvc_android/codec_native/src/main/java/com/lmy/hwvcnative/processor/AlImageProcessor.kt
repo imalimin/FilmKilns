@@ -128,13 +128,14 @@ class AlImageProcessor private constructor() : CPPObject() {
 
     /**
      * 累加旋转图层
-     * @param id 图层id
-     * @param dr 旋转弧度，分数表示，没有乘以PI，顺时针方向为正向(CW)
-     * @return   {@link AlResult}
+     * @param id     图层id
+     * @param dr     旋转弧度，分数表示，没有乘以PI，顺时针方向为正向(CW)
+     * @param anchor 旋转锚点
+     * @return       {@link AlResult}
      */
-    fun postRotation(id: Int, dr: AlRational): Int {
+    fun postRotation(id: Int, dr: AlRational, anchor: PointF): Int {
         if (!isNativeNull()) {
-            return postRotation(handler, id, dr.num, dr.den)
+            return postRotation(handler, id, dr.num, dr.den, anchor.x, anchor.y)
         }
         return AlResult.FAILED
     }
@@ -360,7 +361,8 @@ class AlImageProcessor private constructor() : CPPObject() {
                                    anchorX: Float, anchorY: Float): Int
 
     private external fun setRotation(handler: Long, id: Int, rNum: Int, rDen: Int): Int
-    private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int): Int
+    private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int,
+                                      anchorX: Float, anchorY: Float): Int
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
