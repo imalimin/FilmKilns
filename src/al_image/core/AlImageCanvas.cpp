@@ -71,8 +71,6 @@ void AlImageCanvas::clear(bool transparent) {
     if (mCanvasTex) {
         glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
         if (!transparent && mBgDrawer) {
-            AlSize size(mCanvasTex->getWidth(), mCanvasTex->getHeight());
-            mBgDrawer->update(size);
             mBgDrawer->draw(mCanvasTex);
         } else {
             fbo->bind();

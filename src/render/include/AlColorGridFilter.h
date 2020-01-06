@@ -23,8 +23,6 @@ public:
 
     void release(AlTexAllocator *texAllocator);
 
-    void update(AlSize &canvasSize);
-
     void draw(HwAbsTexture *dest);
 
 private:
@@ -39,6 +37,8 @@ private:
     void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
     void draw(HwAbsTexture *src, HwAbsTexture *dest) override;
+
+    void _update(AlSize &canvasSize);
 
 private:
     HwAbsTexture *srcTex = nullptr;

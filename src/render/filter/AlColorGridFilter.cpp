@@ -36,7 +36,7 @@ bool AlColorGridFilter::prepare() {
     return HwAbsFilter::prepare();
 }
 
-void AlColorGridFilter::update(AlSize &canvasSize) {
+void AlColorGridFilter::_update(AlSize &canvasSize) {
     if (this->canvasSize == canvasSize) {
         return;
     }
@@ -109,6 +109,8 @@ void AlColorGridFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTe
 }
 
 void AlColorGridFilter::draw(HwAbsTexture *dest) {
+    AlSize size(dest->getWidth(), dest->getHeight());
+    _update(size);
     draw(this->srcTex, dest);
 }
 
