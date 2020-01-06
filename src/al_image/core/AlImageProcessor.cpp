@@ -296,14 +296,10 @@ HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float 
     for (int i = 0; i < size; ++i) {
         auto *layer = mLayers[i];
         AlPointF pos(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
-        AlSize posPixels(static_cast<int>(mCanvasSize.width * pos.x),
-                         static_cast<int>(mCanvasSize.height * pos.y));
+        AlSize posPixels(static_cast<int>(mCanvasSize.width * (layer->getPosition().x + pos.x)),
+                         static_cast<int>(mCanvasSize.height * (layer->getPosition().y + pos.y)));
         AlPointF nPos(posPixels.width / (float) dw, posPixels.height / (float) dh);
-        layer->setPosition(layer->getPosition().x + nPos.x, layer->getPosition().y + nPos.y);
-        Logcat::i(TAG, "(%f,%f), (%f,%f)",
-                  -(rectF.right + rectF.left) / rectF.getWidth(),
-                  -(rectF.top + rectF.bottom) / rectF.getHeight(),
-                  nPos.x, nPos.y);
+        layer->setPosition(nPos.x, nPos.y);
     }
     mCanvasSize.width = dw;
     mCanvasSize.height = dh;
