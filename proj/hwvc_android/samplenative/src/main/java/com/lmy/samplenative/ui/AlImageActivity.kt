@@ -318,10 +318,12 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
             0 -> {
                 var outputName = context.getOutputName()
                 if (null != outputName) {
+                    var count = 0
                     while (true) {
                         if (File(parent, "$outputName").exists()) {
+                            ++count
                             val suffix = outputName!!.substring(outputName.lastIndexOf("."), outputName.length)
-                            outputName = "${outputName.substring(0, outputName.lastIndexOf("."))}$suffix"
+                            outputName = "${outputName.substring(0, outputName.lastIndexOf("."))}-${count}$suffix"
                             continue
                         }
                         break
