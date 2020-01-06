@@ -21,3 +21,11 @@ void AlCoordsTranslator::translate(AlSize src, AlSize target, float &x, float &y
     }
 
 }
+
+void AlCoordsTranslator::changeCanvasStayLoc(AlSize *src, AlSize *dest, AlPointF *anchor,
+                                             AlImageLayerModel *layer) {
+    AlSize posPixels(static_cast<int>(src->width * (layer->getPosition().x + anchor->x)),
+                     static_cast<int>(src->height * (layer->getPosition().y + anchor->y)));
+    AlPointF nPos(posPixels.width / (float) dest->width, posPixels.height / (float) dest->height);
+    layer->setPosition(nPos.x, nPos.y);
+}

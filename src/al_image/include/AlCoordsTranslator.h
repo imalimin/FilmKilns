@@ -10,10 +10,14 @@
 
 #include "Object.h"
 #include "AlSize.h"
+#include "AlImageLayerModel.h"
 
 al_class(AlCoordsTranslator) {
 public:
     static void translate(AlSize src, AlSize target, float &x, float &y);
+
+    static void changeCanvasStayLoc(AlSize *src, AlSize *dest,
+                                    AlPointF *anchor, AlImageLayerModel *layer);
 
 private:
     AlCoordsTranslator() : Object() {};

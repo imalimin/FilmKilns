@@ -74,7 +74,13 @@ public:
 
     HwResult cropLayer(int32_t id, float left, float top, float right, float bottom);
 
-    HwResult cropCanvas(float left, float top, float right, float bottom, int mode);
+    /// 裁剪画布，并保持各图层在画布中的位置不变
+    /// \param left
+    /// \param top
+    /// \param right
+    /// \param bottom
+    /// \return
+    HwResult cropCanvas(float left, float top, float right, float bottom);
 
     HwResult cancelCropLayer(int32_t id);
 

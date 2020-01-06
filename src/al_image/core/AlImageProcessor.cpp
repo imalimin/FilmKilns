@@ -284,25 +284,22 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     return Hw::FAILED;
 }
 
-HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom, int mode) {
+HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom) {
 //    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_CROP_CANVAS,
 //                                new AlRectF(left, top, right, bottom)));
     transToCanvasPos(left, top);
     transToCanvasPos(right, bottom);
     AlRectF rectF(left, top, right, bottom);
-    int dw = static_cast<int>(mCanvasSize.width * (rectF.getWidth() / 2.0f));
-    int dh = static_cast<int>(mCanvasSize.height * (rectF.getHeight() / 2.0f));
+    AlSize dest(static_cast<int>(mCanvasSize.width * (rectF.getWidth() / 2.0f)),
+                static_cast<int>(mCanvasSize.height * (rectF.getHeight() / 2.0f)));
+    AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
     size_t size = mLayers.size();
     for (int i = 0; i < size; ++i) {
         auto *layer = mLayers[i];
-        AlPointF pos(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
-        AlSize posPixels(static_cast<int>(mCanvasSize.width * (layer->getPosition().x + pos.x)),
-                         static_cast<int>(mCanvasSize.height * (layer->getPosition().y + pos.y)));
-        AlPointF nPos(posPixels.width / (float) dw, posPixels.height / (float) dh);
-        layer->setPosition(nPos.x, nPos.y);
+        AlCoordsTranslator::changeCanvasStayLoc(&mCanvasSize, &dest, &anchor, layer);
     }
-    mCanvasSize.width = dw;
-    mCanvasSize.height = dh;
+    mCanvasSize.width = dest.width;
+    mCanvasSize.height = dest.height;
     _notifyCanvasUpdate();
     invalidate();
     return Hw::SUCCESS;
