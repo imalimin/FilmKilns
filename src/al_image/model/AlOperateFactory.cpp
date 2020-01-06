@@ -6,17 +6,17 @@
 */
 
 #include "AlOperateFactory.h"
-#include "AlCropOperateModel.h"
-#include "AlAlignCropOperateModel.h"
+#include "AlMCropAction.h"
+#include "AlMAlignCropAction.h"
 
-AlAbsOperateModel *AlOperateFactory::crop(float left, float top, float right, float bottom) {
-    auto *opt = new AlCropOperateModel();
+AlAbsMAction *AlOperateFactory::crop(float left, float top, float right, float bottom) {
+    auto *opt = new AlMCropAction();
     opt->setRect(left, top, right, bottom);
     return opt;
 }
 
-AlAbsOperateModel *AlOperateFactory::alignCrop(AlRational &r) {
-    auto *opt = new AlAlignCropOperateModel();
+AlAbsMAction *AlOperateFactory::alignCrop(AlRational &r) {
+    auto *opt = new AlMAlignCropAction();
     opt->setRotation(r);
     return opt;
 }

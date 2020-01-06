@@ -39,7 +39,7 @@ private:
     /// \param model
     /// \param description
     /// \return {@link HwResult}
-    HwResult _measureOperate(std::vector<AlAbsOperateModel *> *opts,
+    HwResult _measureOperate(std::vector<AlAbsMAction *> *opts,
                              AlImgLayerDescription &model,
                              AlImageLayerDrawModel *description);
 

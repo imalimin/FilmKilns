@@ -58,7 +58,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/core/file/*.cpp
             ${PROJECT_SOURCE_DIR}/drawer/*.cpp
             ${PROJECT_SOURCE_DIR}/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/opt/*.cpp
+            ${PROJECT_SOURCE_DIR}/model/action/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
             #Header
             ${PROJECT_SOURCE_DIR}/include/*.h
@@ -73,7 +73,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/core/file/*.cpp
             ${PROJECT_SOURCE_DIR}/drawer/*.cpp
             ${PROJECT_SOURCE_DIR}/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/opt/*.cpp
+            ${PROJECT_SOURCE_DIR}/model/action/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
     )
 endif ()

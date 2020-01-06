@@ -8,13 +8,13 @@
 #ifndef HWVC_ANDROID_ALOPERATEFACTORY_H
 #define HWVC_ANDROID_ALOPERATEFACTORY_H
 
-#include "AlAbsOperateModel.h"
+#include "AlAbsMAction.h"
 
 al_class(AlOperateFactory) {
 public:
-    static AlAbsOperateModel *crop(float left, float top, float right, float bottom);
+    static AlAbsMAction *crop(float left, float top, float right, float bottom);
 
-    static AlAbsOperateModel *alignCrop(AlRational &r);
+    static AlAbsMAction *alignCrop(AlRational &r);
 
 private:
     AlOperateFactory() : Object() {};

@@ -6,8 +6,8 @@
 */
 
 #include "AlImageLayerModel.h"
-#include "AlCropOperateModel.h"
-#include "AlAlignCropOperateModel.h"
+#include "AlMCropAction.h"
+#include "AlMAlignCropAction.h"
 #include "AlOperateFactory.h"
 #include "StringUtils.h"
 #include "Logcat.h"
@@ -143,12 +143,12 @@ void AlImageLayerModel::dump() {
     Logcat::i(TAG, "+--------------------------+");
 }
 
-HwResult AlImageLayerModel::addOperator(AlAbsOperateModel *opt) {
+HwResult AlImageLayerModel::addOperator(AlAbsMAction *opt) {
     operators.push_back(opt);
     return Hw::SUCCESS;
 }
 
-std::vector<AlAbsOperateModel *> *AlImageLayerModel::getAllOperators() {
+std::vector<AlAbsMAction *> *AlImageLayerModel::getAllOperators() {
     return &operators;
 }
 
@@ -156,8 +156,8 @@ bool AlImageLayerModel::removeCropOperator() {
     bool ret = false;
     auto itr = operators.begin();
     while (itr != operators.end()) {
-        AlAbsOperateModel *it = *itr;
-        if (typeid(AlCropOperateModel) == typeid(*it)) {
+        AlAbsMAction *it = *itr;
+        if (typeid(AlMCropAction) == typeid(*it)) {
             itr = operators.erase(itr);
             ret = true;
             continue;
@@ -171,8 +171,8 @@ bool AlImageLayerModel::removeAlignCropOperator() {
     bool ret = false;
     auto itr = operators.begin();
     while (itr != operators.end()) {
-        AlAbsOperateModel *it = *itr;
-        if (typeid(AlAlignCropOperateModel) == typeid(*it)) {
+        AlAbsMAction *it = *itr;
+        if (typeid(AlMAlignCropAction) == typeid(*it)) {
             itr = operators.erase(itr);
             ret = true;
             continue;
@@ -186,7 +186,7 @@ bool AlImageLayerModel::_removeOperator(type_info type) {
     bool ret = false;
     auto itr = operators.begin();
     while (itr != operators.end()) {
-        AlAbsOperateModel *it = *itr;
+        AlAbsMAction *it = *itr;
         if (type == typeid(*it)) {
             itr = operators.erase(itr);
             ret = true;
@@ -224,12 +224,12 @@ HwResult AlImageLayerModel::fromElement(AlElement *element) {
         } else if (child->nameIs(TAG_POSITION)) {
             this->position.x = child->attrFloat(VAL_VEC2_X);
             this->position.y = child->attrFloat(VAL_VEC2_Y);
-        } else if (child->nameIs(TAG_OPT)) {
+        } else if (child->nameIs(TAG_ACTION)) {
             std::string type = child->attr(VAL_TYPE);
-            AlAbsOperateModel *model = nullptr;
-            if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_CROP, type)) {
+            AlAbsMAction *model = nullptr;
+            if (StringUtils::equalsIgnoreCase(AlAbsMAction::TYPE_CROP, type)) {
                 model = AlOperateFactory::crop(MAXFLOAT, MAXFLOAT, MAXFLOAT, MAXFLOAT);
-            } else if (StringUtils::equalsIgnoreCase(AlAbsOperateModel::TYPE_ALIGN_CROP, type)) {
+            } else if (StringUtils::equalsIgnoreCase(AlAbsMAction::TYPE_ALIGN_CROP, type)) {
                 AlRational r(INT32_MIN, INT32_MIN);
                 model = AlOperateFactory::alignCrop(r);
             }

@@ -11,7 +11,7 @@
 #include "HwTexture.h"
 #include "ObjectBox.h"
 #include "AlImgLayerDescription.h"
-#include "AlAbsOperateModel.h"
+#include "AlAbsMAction.h"
 
 #define TAG "AlULayerDescriptor"
 
@@ -93,7 +93,7 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel
     return ret;
 }
 
-HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsOperateModel *> *opts,
+HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsMAction *> *opts,
                                             AlImgLayerDescription &model,
                                             AlImageLayerDrawModel *description) {
     if (nullptr == description) {

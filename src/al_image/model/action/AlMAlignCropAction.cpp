@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlAlignCropOperateModel.h"
+#include "AlMAlignCropAction.h"
 #include "AlMath.h"
 #include "StringUtils.h"
 
@@ -13,20 +13,20 @@
 #define VAL_RATIONAL_NUM                    "num"
 #define VAL_RATIONAL_DEN                    "den"
 
-AlAlignCropOperateModel::AlAlignCropOperateModel() : AlAbsOperateModel(TYPE_ALIGN_CROP) {
+AlMAlignCropAction::AlMAlignCropAction() : AlAbsMAction(TYPE_ALIGN_CROP) {
 
 }
 
-AlAlignCropOperateModel::AlAlignCropOperateModel(const AlAlignCropOperateModel &o)
-        : AlAbsOperateModel(o), rotation(o.rotation) {
+AlMAlignCropAction::AlMAlignCropAction(const AlMAlignCropAction &o)
+        : AlAbsMAction(o), rotation(o.rotation) {
 
 }
 
-AlAlignCropOperateModel::~AlAlignCropOperateModel() {
+AlMAlignCropAction::~AlMAlignCropAction() {
 
 }
 
-HwResult AlAlignCropOperateModel::measure(AlImgLayerDescription &layer,
+HwResult AlMAlignCropAction::measure(AlImgLayerDescription &layer,
                                           AlImageLayerDrawModel *description) {
     AlSize size = layer.getSize();
     float cRatio = canvasSize.width / (float) canvasSize.height;
@@ -56,21 +56,21 @@ HwResult AlAlignCropOperateModel::measure(AlImgLayerDescription &layer,
     return Hw::SUCCESS;
 }
 
-void AlAlignCropOperateModel::setRotation(AlRational &r) {
+void AlMAlignCropAction::setRotation(AlRational &r) {
     rotation.num = r.num;
     rotation.den = r.den;
 }
 
-AlRational AlAlignCropOperateModel::getRotation() {
+AlRational AlMAlignCropAction::getRotation() {
     return rotation;
 }
 
-HwResult AlAlignCropOperateModel::fromElement(AlElement *element) {
+HwResult AlMAlignCropAction::fromElement(AlElement *element) {
     if (nullptr == element) {
         return Hw::FAILED;
     }
     std::string name = element->name();
-    if (!element->nameIs(TAG_OPT)) {
+    if (!element->nameIs(TAG_ACTION)) {
         return Hw::FAILED;
     }
     type = element->attr(VAL_TYPE);
@@ -90,8 +90,8 @@ HwResult AlAlignCropOperateModel::fromElement(AlElement *element) {
     return Hw::SUCCESS;
 }
 
-HwResult AlAlignCropOperateModel::toElement(AlElement **element) {
-    AlElement *root = new AlElement(TAG_OPT);
+HwResult AlMAlignCropAction::toElement(AlElement **element) {
+    AlElement *root = new AlElement(TAG_ACTION);
     root->addAttr(VAL_TYPE, type);
     *element = root;
 

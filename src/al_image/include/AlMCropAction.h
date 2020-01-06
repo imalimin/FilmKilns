@@ -5,21 +5,21 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALCROPOPERATEMODEL_H
-#define HWVC_ANDROID_ALCROPOPERATEMODEL_H
+#ifndef HWVC_ANDROID_ALMCROPACTION_H
+#define HWVC_ANDROID_ALMCROPACTION_H
 
-#include "AlAbsOperateModel.h"
+#include "AlAbsMAction.h"
 #include "AlRectF.h"
 #include "AlRational.h"
 #include "AlLayerMeasurer.h"
 
-al_class_ex(AlCropOperateModel, AlAbsOperateModel) {
+al_class_ex(AlMCropAction, AlAbsMAction) {
 public:
-    AlCropOperateModel();
+    AlMCropAction();
 
-    AlCropOperateModel(const AlCropOperateModel &o);
+    AlMCropAction(const AlMCropAction &o);
 
-    virtual ~AlCropOperateModel();
+    virtual ~AlMCropAction();
 
     virtual HwResult measure(AlImgLayerDescription &layer,
                              AlImageLayerDrawModel *description) override;
@@ -44,4 +44,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALCROPOPERATEMODEL_H
+#endif //HWVC_ANDROID_ALMCROPACTION_H

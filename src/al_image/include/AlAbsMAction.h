@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALABSOPERATEMODEL_H
-#define HWVC_ANDROID_ALABSOPERATEMODEL_H
+#ifndef HWVC_ANDROID_ALABSMACTION_H
+#define HWVC_ANDROID_ALABSMACTION_H
 
 #include "Object.h"
 #include "HwResult.h"
@@ -16,19 +16,19 @@
 #include "AlElement.h"
 #include "AlAbsElemented.h"
 
-#define TAG_OPT                             "opt"
+#define TAG_ACTION                          "action"
 #define VAL_TYPE                            "type"
 
-al_class_ex(AlAbsOperateModel, AlAbsElemented) {
+al_class_ex(AlAbsMAction, AlAbsElemented) {
 public:
     static const std::string TYPE_CROP;
     static const std::string TYPE_ALIGN_CROP;
 public:
-    AlAbsOperateModel(std::string type);
+    AlAbsMAction(std::string type);
 
-    AlAbsOperateModel(const AlAbsOperateModel &o);
+    AlAbsMAction(const AlAbsMAction &o);
 
-    virtual ~AlAbsOperateModel();
+    virtual ~AlAbsMAction();
 
     void setCanvasSize(AlSize size);
 
@@ -44,4 +44,4 @@ protected:
 };
 
 
-#endif //HWVC_ANDROID_ALABSOPERATEMODEL_H
+#endif //HWVC_ANDROID_ALABSMACTION_H

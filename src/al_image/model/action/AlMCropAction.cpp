@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlCropOperateModel.h"
+#include "AlMCropAction.h"
 #include "AlMath.h"
 #include "AlVec4.h"
 #include "AlOrthMatrix.h"
@@ -41,12 +41,12 @@
 #define TAG_BOOL                            "bool"
 #define VAL_INVALIDATE                      "invalidate"
 
-AlCropOperateModel::AlCropOperateModel() : AlAbsOperateModel(TYPE_CROP) {
+AlMCropAction::AlMCropAction() : AlAbsMAction(TYPE_CROP) {
     invalidate = true;
 }
 
-AlCropOperateModel::AlCropOperateModel(const AlCropOperateModel &o)
-        : AlAbsOperateModel(o),
+AlMCropAction::AlMCropAction(const AlMCropAction &o)
+        : AlAbsMAction(o),
           rectF(o.rectF),
           scale(o.scale),
           rotation(o.rotation),
@@ -54,16 +54,16 @@ AlCropOperateModel::AlCropOperateModel(const AlCropOperateModel &o)
 
 }
 
-AlCropOperateModel::~AlCropOperateModel() {
+AlMCropAction::~AlMCropAction() {
     invalidate = false;
 }
 
-void AlCropOperateModel::setRect(float left, float top, float right, float bottom) {
+void AlMCropAction::setRect(float left, float top, float right, float bottom) {
     this->rectF.set(left, top, right, bottom);
     invalidate = true;
 }
 
-HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
+HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
                                      AlImageLayerDrawModel *description) {
     if (invalidate && canvasSize.width > 0 && canvasSize.height > 0) {
         invalidate = false;
@@ -126,12 +126,12 @@ HwResult AlCropOperateModel::measure(AlImgLayerDescription &layer,
     return Hw::SUCCESS;
 }
 
-HwResult AlCropOperateModel::fromElement(AlElement *element) {
+HwResult AlMCropAction::fromElement(AlElement *element) {
     if (nullptr == element) {
         return Hw::FAILED;
     }
     std::string name = element->name();
-    if (!element->nameIs(TAG_OPT)) {
+    if (!element->nameIs(TAG_ACTION)) {
         return Hw::FAILED;
     }
     type = element->attr(VAL_TYPE);
@@ -177,8 +177,8 @@ HwResult AlCropOperateModel::fromElement(AlElement *element) {
     return Hw::SUCCESS;
 }
 
-HwResult AlCropOperateModel::toElement(AlElement **element) {
-    AlElement *root = new AlElement(TAG_OPT);
+HwResult AlMCropAction::toElement(AlElement **element) {
+    AlElement *root = new AlElement(TAG_ACTION);
     root->addAttr(VAL_TYPE, type);
     *element = root;
     AlElement *rect = new AlElement(TAG_RECTF);

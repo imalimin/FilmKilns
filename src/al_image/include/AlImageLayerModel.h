@@ -19,7 +19,7 @@
 
 class AlImageLayer;
 
-class AlAbsOperateModel;
+class AlAbsMAction;
 
 class AlFileImporter;
 
@@ -66,9 +66,9 @@ public:
 
     AlQuad &getQuad();
 
-    HwResult addOperator(AlAbsOperateModel *opt);
+    HwResult addOperator(AlAbsMAction *opt);
 
-    std::vector<AlAbsOperateModel *> *getAllOperators();
+    std::vector<AlAbsMAction *> *getAllOperators();
 
     bool removeCropOperator();
 
@@ -93,7 +93,7 @@ private:
     AlVec2 position;
     AlVec2 scale;
     AlQuad quad;
-    std::vector<AlAbsOperateModel *> operators;
+    std::vector<AlAbsMAction *> operators;
 };
 
 

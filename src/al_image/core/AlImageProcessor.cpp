@@ -12,7 +12,7 @@
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "AlOperateFactory.h"
-#include "AlCropOperateModel.h"
+#include "AlMCropAction.h"
 #include "AlContext.h"
 #include "AlCoordsTranslator.h"
 #include "core/file/AlFileExporter.h"

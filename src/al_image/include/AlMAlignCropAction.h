@@ -5,18 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALALIGNCROPOPERATEMODEL_H
-#define HWVC_ANDROID_ALALIGNCROPOPERATEMODEL_H
+#ifndef HWVC_ANDROID_ALMALIGNCROPACTION_H
+#define HWVC_ANDROID_ALMALIGNCROPACTION_H
 
-#include "AlAbsOperateModel.h"
+#include "AlAbsMAction.h"
 
-al_class_ex(AlAlignCropOperateModel, AlAbsOperateModel) {
+al_class_ex(AlMAlignCropAction, AlAbsMAction) {
 public:
-    AlAlignCropOperateModel();
+    AlMAlignCropAction();
 
-    AlAlignCropOperateModel(const AlAlignCropOperateModel &o);
+    AlMAlignCropAction(const AlMAlignCropAction &o);
 
-    virtual ~AlAlignCropOperateModel();
+    virtual ~AlMAlignCropAction();
 
     virtual HwResult measure(AlImgLayerDescription &layer,
                              AlImageLayerDrawModel *description) override;
@@ -34,4 +34,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALALIGNCROPOPERATEMODEL_H
+#endif //HWVC_ANDROID_ALMALIGNCROPACTION_H
