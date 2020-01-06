@@ -18,6 +18,7 @@
 #include "core/file/AlFileExporter.h"
 #include "AlTarUtil.h"
 #include "AlMath.h"
+#include "AlMMosaicAction.h"
 
 #define TAG "AlImageProcessor"
 
@@ -390,5 +391,28 @@ HwResult AlImageProcessor::redo() {
 
 HwResult AlImageProcessor::undo() {
     postEvent(AlMessage::obtain(EVENT_AIMAGE_UNDO));
+    return Hw::SUCCESS;
+}
+
+HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
+    std::lock_guard<std::mutex> guard(mLayerMtx);
+    auto *layer = _getLayer(id);
+    if (layer) {
+        transToCanvasPos(pointF.x, pointF.y);
+        auto *actions = layer->getAllOperators();
+        size_t size = actions->size();
+        for (int i = 0; i < size; ++i) {
+            AlAbsMAction *action = (*actions)[i];
+            if (typeid(AlMMosaicAction) == typeid(*action)) {
+                dynamic_cast<AlMMosaicAction *>(action)->addPoint(pointF);
+                invalidate();
+                return Hw::SUCCESS;
+            }
+        }
+    }
+    AlAbsMAction *action = AlOperateFactory::mosaic(pointF);
+    dynamic_cast<AlMMosaicAction *>(action)->addPoint(pointF);
+    layer->addOperator(action);
+    invalidate();
     return Hw::SUCCESS;
 }

@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "HwAbsTexture.h"
 #include "AlMatrix.h"
+#include "vector"
 
 #define HW_SHADER(...) #__VA_ARGS__
 
@@ -37,6 +38,8 @@ public:
     void setUniform1f(int32_t location, float value);
 
     void setUniform2fv(int32_t location, AlVec2 &vec2);
+
+    void setUniform2fv(int32_t location, int32_t count, float *array);
 
     void setUniformMatrix4fv(int32_t location, float *value);
 

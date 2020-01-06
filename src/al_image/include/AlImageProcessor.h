@@ -104,6 +104,8 @@ public:
 
     HwResult undo();
 
+    HwResult addMosaic(int32_t id, AlPointF pointF);
+
     void setOnSaveListener(AlUCanvas::OnSaveListener listener);
 
 private:

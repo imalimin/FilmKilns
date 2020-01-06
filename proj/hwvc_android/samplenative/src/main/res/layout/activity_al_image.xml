@@ -90,6 +90,16 @@
 
                 <CheckBox android:id="@+id/selectBox" />
             </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    android:text="Paint"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+
+                <CheckBox android:id="@+id/paintBox" />
+            </TableRow>
         </TableLayout>
 
         <ImageButton

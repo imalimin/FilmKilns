@@ -16,6 +16,8 @@ public:
 
     static AlAbsMAction *alignCrop(AlRational &r);
 
+    static AlAbsMAction *mosaic(const AlPointF &pointF);
+
 private:
     AlOperateFactory() : Object() {};
 

@@ -12,6 +12,7 @@
 #include "ObjectBox.h"
 #include "AlImgLayerDescription.h"
 #include "AlAbsMAction.h"
+#include "AlMMosaicAction.h"
 
 #define TAG "AlULayerDescriptor"
 
@@ -90,6 +91,14 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel
     Logcat::i(TAG, "tran %f, %f", model.getPosition().x, model.getPosition().y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lt.x, lt.y, rt.x, rt.y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lb.x, lb.y, rb.x, rb.y);
+    auto *actions = layer->model->getAllOperators();
+    size_t size = actions->size();
+    for (int i = 0; i < size; ++i) {
+        AlAbsMAction *action = (*actions)[i];
+        if (typeid(AlMMosaicAction) == typeid(*action)) {
+            description->mosaicPath =dynamic_cast<AlMMosaicAction *>(action)->getPath();
+        }
+    }
     return ret;
 }
 

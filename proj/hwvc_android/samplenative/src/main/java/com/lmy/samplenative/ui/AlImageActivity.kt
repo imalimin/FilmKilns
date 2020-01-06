@@ -3,6 +3,7 @@ package com.lmy.samplenative.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.PointF
 import android.graphics.RectF
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -55,6 +56,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
 
     override fun getLayoutResource(): Int = R.layout.activity_al_image
 
+    private var lastTime = 0L
     override fun initView() {
         showOptLayer(false)
         surfaceView.keepScreenOn = true
@@ -65,21 +67,27 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy ->
-            if (!alignCropBox.isChecked) {
+            if (!alignCropBox.isChecked && !paintBox.isChecked) {
                 processor?.postTranslate(getCurrentLayer(), dx, dy)
+            }
+            if (paintBox.isChecked) {
+                if (System.currentTimeMillis() > lastTime + 1000) {
+                    lastTime = System.currentTimeMillis()
+                    processor?.addMosaic(getCurrentLayer(), PointF(x, y))
+                }
             }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnScaleListener { v, ds, anchor ->
-            if (!alignCropBox.isChecked) {
+            if (!alignCropBox.isChecked && !paintBox.isChecked) {
                 processor?.postScale(getCurrentLayer(), ds, anchor)
             }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnRotateListener { v, dr, anchor ->
-            if (!alignCropBox.isChecked) {
+            if (!alignCropBox.isChecked && !paintBox.isChecked) {
                 processor?.postRotation(getCurrentLayer(), dr, anchor)
             } else {
                 alpha += (dr.num / dr.den.toDouble())

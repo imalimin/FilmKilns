@@ -211,9 +211,13 @@ void HwProgram::setUniform1f(int32_t location, float value) {
 }
 
 void HwProgram::setUniform2fv(int32_t location, AlVec2 &vec2) {
-    float *value = new float[2]{vec2.x, vec2.y};
+    auto *value = new float[2]{vec2.x, vec2.y};
     glUniform2fv(location, 1, value);
     delete[] value;
+}
+
+void HwProgram::setUniform2fv(int32_t location, int32_t count, float *array) {
+    glUniform2fv(location, count, array);
 }
 
 void HwProgram::setUniformMatrix4fv(int32_t location, float *value) {

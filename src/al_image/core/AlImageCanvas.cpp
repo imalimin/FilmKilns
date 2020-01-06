@@ -131,9 +131,14 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
     mCanvasDrawer->setPositionQuad(description->cropQuad);
     glViewport(0, 0, getWidth(), getHeight());
     ///Draw layer
-    mFilterTex->update(nullptr, getWidth(), getHeight(), GL_RGBA);
-    mosaicFilter->draw(description->tex, mFilterTex);
-    mCanvasDrawer->draw(mFilterTex, mCanvasTex);
+    if(description->mosaicPath) {
+        mFilterTex->update(nullptr, getWidth(), getHeight(), GL_RGBA);
+        dynamic_cast<AlMosaicFilter *>(mosaicFilter)->updatePath(description->mosaicPath);
+        mosaicFilter->draw(description->tex, mFilterTex);
+        mCanvasDrawer->draw(mFilterTex, mCanvasTex);
+        return;
+    }
+    mCanvasDrawer->draw(description->tex, mCanvasTex);
 #endif
 }
 

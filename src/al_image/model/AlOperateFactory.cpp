@@ -8,6 +8,7 @@
 #include "AlOperateFactory.h"
 #include "AlMCropAction.h"
 #include "AlMAlignCropAction.h"
+#include "AlMMosaicAction.h"
 
 AlAbsMAction *AlOperateFactory::crop(float left, float top, float right, float bottom) {
     auto *opt = new AlMCropAction();
@@ -19,4 +20,10 @@ AlAbsMAction *AlOperateFactory::alignCrop(AlRational &r) {
     auto *opt = new AlMAlignCropAction();
     opt->setRotation(r);
     return opt;
+}
+
+AlAbsMAction *AlOperateFactory::mosaic(const AlPointF &pointF) {
+    auto *action = new AlMMosaicAction();
+    action->addPoint(pointF);
+    return action;
 }

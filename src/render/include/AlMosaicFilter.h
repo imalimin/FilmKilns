@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALMOSAICFILTER_H
 
 #include "HwAbsFilter.h"
+#include "AlPointF.h"
 
 ///马赛克
 al_class_ex(AlMosaicFilter, HwAbsFilter) {
@@ -16,6 +17,8 @@ public:
     AlMosaicFilter();
 
     ~AlMosaicFilter();
+
+    void updatePath(std::vector<AlPointF> *vec);
 
     HwProgram *createProgram() override;
 
@@ -28,8 +31,10 @@ private:
 
 private:
     int32_t uRadius = 0;
+    int32_t uPaintRadius = 0;
+    int32_t uPaths = 0;
     AlVec2 radius;
-
+    float *path = nullptr;
 };
 
 

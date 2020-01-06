@@ -308,6 +308,13 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
+    fun addMosaic(id: Int, point: PointF): Int {
+        if (!isNativeNull()) {
+            return addMosaic(handler, id, point.x, point.y)
+        }
+        return AlResult.FAILED
+    }
+
     /***************************/
     /**      Listener         **/
     /***************************/
@@ -363,6 +370,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun setRotation(handler: Long, id: Int, rNum: Int, rDen: Int): Int
     private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int,
                                       anchorX: Float, anchorY: Float): Int
+
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
     private external fun postTranslate(handler: Long, id: Int, dx: Float, dy: Float): Int
     private external fun setAlpha(handler: Long, id: Int, alpha: Float): Int
@@ -384,4 +392,5 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun import(handler: Long, path: String): Int
     private external fun redo(handler: Long): Int
     private external fun undo(handler: Long): Int
+    private external fun addMosaic(handler: Long, id: Int, x: Float, y: Float): Int
 }

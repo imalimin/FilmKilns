@@ -187,7 +187,7 @@ class AlScrollSurfaceView : SurfaceView {
             return true
         }
 
-        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+        override fun onScroll(e1: MotionEvent, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             //如果当前正在滚动，则停止滚动
             scroller.forceFinished(true)
             scroller.startScroll(scroller.currX, scroller.currY, distanceX.toInt(), distanceY.toInt())
@@ -195,8 +195,9 @@ class AlScrollSurfaceView : SurfaceView {
 //        mCurrentPosition.y = scroller.currY.toFloat()
             mCurrentPosition.x -= distanceX
             mCurrentPosition.y -= distanceY
-            onScrollListener?.onScroll(this@AlScrollSurfaceView,
-                    mCurrentPosition.x, mCurrentPosition.y,
+            val xy = PointF(e1.x * 2 / measuredWidth.toFloat() - 1f,
+                    -(e1.y * 2 / measuredHeight.toFloat() - 1f))
+            onScrollListener?.onScroll(this@AlScrollSurfaceView, xy.x, xy.y,
                     -distanceX / width.toFloat() * 2f, distanceY / height.toFloat() * 2f)
             return true
         }

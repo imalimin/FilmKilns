@@ -9,6 +9,7 @@
 
 const std::string AlAbsMAction::TYPE_CROP = "crop";
 const std::string AlAbsMAction::TYPE_ALIGN_CROP = "align_crop";
+const std::string AlAbsMAction::TYPE_MOSAIC = "mosaic";
 
 AlAbsMAction::AlAbsMAction(std::string type) : AlAbsElemented(), type(type) {
 
