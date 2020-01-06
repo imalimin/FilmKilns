@@ -55,6 +55,8 @@ private:
     HwAbsTexture *mCanvasTex = nullptr;
     AlColorGridFilter *mBgDrawer = nullptr;
     AlCanvasDrawer *mCanvasDrawer = nullptr;
+    HwAbsTexture *mFilterTex = nullptr;
+    HwAbsFilter *mosaicFilter = nullptr;
 #ifdef ENABLE_CROP_DEBUG
     HwAbsTexture *mLayerTex = nullptr;
     HwNormalFilter *mCopyDrawer = nullptr;

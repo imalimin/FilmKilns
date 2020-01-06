@@ -11,6 +11,8 @@
 #include "Logcat.h"
 #include "../include/Egl.h"
 
+#define TAG "HwProgram"
+
 void HwProgram::calculateFitWinVertex(float *vertex,
                                       Size texSize,
                                       Size winSize,
@@ -44,7 +46,7 @@ void HwProgram::calculateFitWinVertex(float *vertex,
 
 HwProgram *HwProgram::create(string *vertex, string *fragment) {
     if (EGL_NO_CONTEXT == Egl::currentContext()) {
-        Logcat::e("hwvc", "Please attach an egl context first.");
+        Logcat::e(TAG, "%s(%d) Please attach an egl context first.", __FUNCTION__, __LINE__);
         return nullptr;
     }
     return new HwProgram(vertex, fragment);
@@ -126,7 +128,7 @@ void HwProgram::updateVBOs() {
 uint32_t HwProgram::createShader(uint32_t type, string *shader) {
     GLuint shaderId = glCreateShader(type);
     if (shaderId == 0) {
-        Logcat::e("hwvc", "Create Shader Failed: %d", glGetError());
+        Logcat::e(TAG, "%s(%d) Create Shader Failed: %d", __FUNCTION__, __LINE__, glGetError());
         return 0;
     }
     //加载Shader代码
@@ -143,7 +145,8 @@ uint32_t HwProgram::createShader(uint32_t type, string *shader) {
         vector<char> log(static_cast<unsigned int>(len));
         glGetShaderInfoLog(shaderId, len, nullptr, log.data());
         string str(begin(log), end(log));
-        Logcat::e("HWVC", "BaseDrawer::createShader(%d) error:%s >>>>>>>>> Source: %s",
+        Logcat::e(TAG, "%s(%d) createShader(%d) error:%s >>>>>>>>> Source: %s",
+                  __FUNCTION__, __LINE__,
                   type,
                   str.c_str(),
                   shader->c_str());
@@ -157,7 +160,7 @@ uint32_t HwProgram::createShader(uint32_t type, string *shader) {
 uint32_t HwProgram::createProgram(string *vertex, string *fragment) {
     GLuint program = glCreateProgram();
     if (program == GL_NONE) {
-        Logcat::e("hwvc", "Create program failed: %d", glGetError());
+        Logcat::e(TAG, "%s(%d) Create program failed: %d", __FUNCTION__, __LINE__, glGetError());
         return GL_NONE;
     }
     GLuint vertexShader = createShader(GL_VERTEX_SHADER, vertex);
@@ -205,6 +208,12 @@ void HwProgram::unbind() {
 
 void HwProgram::setUniform1f(int32_t location, float value) {
     glUniform1f(location, value);
+}
+
+void HwProgram::setUniform2fv(int32_t location, AlVec2 &vec2) {
+    float *value = new float[2]{vec2.x, vec2.y};
+    glUniform2fv(location, 1, value);
+    delete[] value;
 }
 
 void HwProgram::setUniformMatrix4fv(int32_t location, float *value) {

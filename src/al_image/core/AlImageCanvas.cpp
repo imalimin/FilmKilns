@@ -9,6 +9,7 @@
 #include "HwFBObject.h"
 #include "HwTexture.h"
 #include "Logcat.h"
+#include "AlMosaicFilter.h"
 
 #define TAG "AlImageCanvas"
 
@@ -22,9 +23,11 @@ AlImageCanvas::~AlImageCanvas() {
 
 void AlImageCanvas::release() {
     delete fbo;
+    delete mosaicFilter;
     delete mBgDrawer;
     delete mCanvasDrawer;
     mCanvasDrawer = nullptr;
+    mosaicFilter = nullptr;
     mCanvasTex = nullptr;
 #ifdef ENABLE_CROP_DEBUG
     delete mCopyDrawer;
@@ -50,6 +53,9 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, AlTexAllocator *
         fbo->bindTex(mCanvasTex);
         mBgDrawer = AlColorGridFilter::create();
         mBgDrawer->prepare(texAllocator);
+        mosaicFilter = new AlMosaicFilter();
+        mosaicFilter->prepare();
+        mFilterTex = texAllocator->alloc();
 #ifdef ENABLE_CROP_DEBUG
         AlTexDescription d;
         d.size.width = w;
@@ -125,7 +131,9 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
     mCanvasDrawer->setPositionQuad(description->cropQuad);
     glViewport(0, 0, getWidth(), getHeight());
     ///Draw layer
-    mCanvasDrawer->draw(description->tex, mCanvasTex);
+    mFilterTex->update(nullptr, getWidth(), getHeight(), GL_RGBA);
+    mosaicFilter->draw(description->tex, mFilterTex);
+    mCanvasDrawer->draw(mFilterTex, mCanvasTex);
 #endif
 }
 

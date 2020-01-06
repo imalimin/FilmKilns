@@ -36,6 +36,8 @@ public:
 
     void setUniform1f(int32_t location, float value);
 
+    void setUniform2fv(int32_t location, AlVec2 &vec2);
+
     void setUniformMatrix4fv(int32_t location, float *value);
 
     void setUniform1i(int32_t location, int32_t value);
