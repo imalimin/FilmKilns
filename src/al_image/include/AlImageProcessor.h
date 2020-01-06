@@ -52,7 +52,7 @@ public:
 
     HwResult setScale(int32_t id, AlRational scale);
 
-    HwResult postScale(int32_t id, AlRational ds);
+    HwResult postScale(int32_t id, AlRational ds, AlPointF anchor);
 
     HwResult setRotation(int32_t id, AlRational r);
 

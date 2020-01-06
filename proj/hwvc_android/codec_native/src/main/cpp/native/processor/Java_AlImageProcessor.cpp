@@ -122,9 +122,11 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setSca
 }
 
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_postScale
-        (JNIEnv *env, jobject thiz, jlong handler, jint id, jint dsNum, jint dsDen) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jint dsNum, jint dsDen,
+         jfloat anchorX, jfloat anchorY) {
     if (handler) {
-        return getHandler(handler)->postScale(id, AlRational(dsNum, dsDen)).code;
+        return getHandler(handler)->postScale(id, AlRational(dsNum, dsDen),
+                                              AlPointF(anchorX, anchorY)).code;
     }
     return Hw::FAILED.code;
 }

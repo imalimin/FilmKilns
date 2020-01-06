@@ -172,12 +172,20 @@ HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
     return Hw::FAILED;
 }
 
-HwResult AlImageProcessor::postScale(int32_t id, AlRational ds) {
+HwResult AlImageProcessor::postScale(int32_t id, AlRational ds, AlPointF anchor) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        layer->setScale(layer->getScale().x * ds.toFloat(),
-                        layer->getScale().y * ds.toFloat());
+        transToCanvasPos(anchor.x, anchor.y);
+        Logcat::i(TAG, "anchor %f,%f", anchor.x, anchor.y);
+        float scale = ds.toFloat();
+        float dx = anchor.x - layer->getPosition().x;
+        float dy = anchor.y - layer->getPosition().y;
+        float x = dx * (1.0f - scale);
+        float y = dy * (1.0f - scale);
+        layer->setPosition(layer->getPosition().x + x, layer->getPosition().y + y);
+        layer->setScale(layer->getScale().x * scale,
+                        layer->getScale().y * scale);
         invalidate();
         return Hw::SUCCESS;
     }

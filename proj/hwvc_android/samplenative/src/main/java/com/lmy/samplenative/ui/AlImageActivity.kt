@@ -71,9 +71,9 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
             //For crop debug
 //            ensureCropLayer()
         }
-        surfaceView?.setOnScaleListener { v, ds ->
+        surfaceView?.setOnScaleListener { v, ds, anchor ->
             if (!alignCropBox.isChecked) {
-                processor?.postScale(getCurrentLayer(), ds)
+                processor?.postScale(getCurrentLayer(), ds, anchor)
             }
             //For crop debug
 //            ensureCropLayer()

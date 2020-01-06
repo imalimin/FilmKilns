@@ -116,10 +116,10 @@ class AlScrollSurfaceView : SurfaceView {
         onClickListener = listener
     }
 
-    fun setOnScaleListener(listener: (v: SurfaceView, ds: AlRational) -> Unit) {
+    fun setOnScaleListener(listener: (v: SurfaceView, ds: AlRational, anchor: PointF) -> Unit) {
         setOnScaleListener(object : OnScaleListener {
-            override fun onScale(v: SurfaceView, ds: AlRational) {
-                listener(v, ds)
+            override fun onScale(v: SurfaceView, ds: AlRational, anchor: PointF) {
+                listener(v, ds, anchor)
             }
         })
     }
@@ -153,7 +153,7 @@ class AlScrollSurfaceView : SurfaceView {
          * @param v SurfaceView
          * @param ds scale factor. currentSpan / previousSpan
          */
-        fun onScale(v: SurfaceView, ds: AlRational)
+        fun onScale(v: SurfaceView, ds: AlRational, anchor: PointF)
     }
 
     interface OnRotateListener {
@@ -212,7 +212,9 @@ class AlScrollSurfaceView : SurfaceView {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             val num = (detector.scaleFactor * PRECISIONS).toInt()
             val den = (previousScaleFactor * PRECISIONS).toInt()
-            onScaleListener?.onScale(this@AlScrollSurfaceView, AlRational(num, den))
+            val anchor = PointF(detector.focusX * 2 / measuredWidth.toFloat() - 1f,
+                    -(detector.focusY * 2 / measuredHeight.toFloat() - 1f))
+            onScaleListener?.onScale(this@AlScrollSurfaceView, AlRational(num, den), anchor)
             previousScaleFactor = detector.scaleFactor
             return super.onScale(detector)
         }

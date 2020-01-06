@@ -1,5 +1,6 @@
 package com.lmy.hwvcnative.processor
 
+import android.graphics.PointF
 import android.os.Handler
 import android.os.Looper
 import android.view.Surface
@@ -100,13 +101,14 @@ class AlImageProcessor private constructor() : CPPObject() {
 
     /**
      * 累乘缩放图层
-     * @param id 图层id
-     * @param ds 缩放因子
-     * @return   {@link AlResult}
+     * @param id     图层id
+     * @param ds     缩放因子
+     * @param anchor 缩放锚点
+     * @return       {@link AlResult}
      */
-    fun postScale(id: Int, ds: AlRational): Int {
+    fun postScale(id: Int, ds: AlRational, anchor: PointF): Int {
         if (!isNativeNull()) {
-            return postScale(handler, id, ds.num, ds.den)
+            return postScale(handler, id, ds.num, ds.den, anchor.x, anchor.y)
         }
         return AlResult.FAILED
     }
@@ -354,7 +356,9 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun moveLayerIndex(handler: Long, id: Int, index: Int): Int
     private external fun removeLayer(handler: Long, id: Int): Int
     private external fun setScale(handler: Long, id: Int, scaleNum: Int, scaleDen: Int): Int
-    private external fun postScale(handler: Long, id: Int, dsNum: Int, dsDen: Int): Int
+    private external fun postScale(handler: Long, id: Int, dsNum: Int, dsDen: Int,
+                                   anchorX: Float, anchorY: Float): Int
+
     private external fun setRotation(handler: Long, id: Int, rNum: Int, rDen: Int): Int
     private external fun postRotation(handler: Long, id: Int, drNum: Int, drDen: Int): Int
     private external fun setTranslate(handler: Long, id: Int, x: Float, y: Float): Int
