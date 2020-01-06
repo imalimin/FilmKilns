@@ -34,15 +34,11 @@ void HwAbsFBObject::bindTex(HwAbsTexture *tex) {
 }
 
 void HwAbsFBObject::unbindTex() {
-    if (this->tex) {
-        bind();
-        this->tex->bind();
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               tex->target(), GL_NONE, 0);
-        this->tex->unbind();
-        unbind();
-        this->tex = nullptr;
-    }
+    bind();
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           tex->target(), GL_NONE, 0);
+    unbind();
+    this->tex = nullptr;
 }
 
 void HwAbsFBObject::bind() {

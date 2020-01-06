@@ -100,8 +100,8 @@ void HwScreen::draw(GLuint texture) {
 //    LOGE("version: %s", glslVersion.c_str());
     Logcat::i(TAG, "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
     glViewport(0, 0, egl->width(), egl->height());
-    glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     drawer->draw(texture);
     egl->swapBuffers();
 }
