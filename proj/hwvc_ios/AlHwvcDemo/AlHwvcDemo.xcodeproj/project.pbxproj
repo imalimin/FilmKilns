@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EAC700C423C47FFF002CE4CC /* ImageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC700C323C47FFF002CE4CC /* ImageController.swift */; };
 		EAD7C81A23C1E3860074A554 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD7C81923C1E3860074A554 /* AppDelegate.swift */; };
 		EAD7C81C23C1E3860074A554 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD7C81B23C1E3860074A554 /* MainController.swift */; };
 		EAD7C81F23C1E3860074A554 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EAD7C81D23C1E3860074A554 /* Main.storyboard */; };
@@ -15,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EAC700C323C47FFF002CE4CC /* ImageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageController.swift; sourceTree = "<group>"; };
 		EAD7C81623C1E3860074A554 /* AlHwvcDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlHwvcDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAD7C81923C1E3860074A554 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EAD7C81B23C1E3860074A554 /* MainController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
@@ -35,6 +37,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EAC700C223C47FDB002CE4CC /* image */ = {
+			isa = PBXGroup;
+			children = (
+				EAC700C323C47FFF002CE4CC /* ImageController.swift */,
+			);
+			path = image;
+			sourceTree = "<group>";
+		};
 		EAD7C80D23C1E3860074A554 = {
 			isa = PBXGroup;
 			children = (
@@ -67,6 +77,7 @@
 		EAD7C82B23C1E39F0074A554 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				EAC700C223C47FDB002CE4CC /* image */,
 				EAD7C82C23C1E3A50074A554 /* main */,
 			);
 			path = ui;
@@ -153,6 +164,7 @@
 			files = (
 				EAD7C81C23C1E3860074A554 /* MainController.swift in Sources */,
 				EAD7C81A23C1E3860074A554 /* AppDelegate.swift in Sources */,
+				EAC700C423C47FFF002CE4CC /* ImageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
