@@ -1,38 +1,27 @@
 /*
- * Copyright (c) 2018-present, lmyooyo@gmail.com.
- *
- * This source code is licensed under the GPL license found in the
- * LICENSE file in the root directory of this source tree.
- */
-#ifndef HARDWAREVIDEOCODEC_EGL_H
-#define HARDWAREVIDEOCODEC_EGL_H
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
-#include <EGL/egl.h>
+#ifndef HWVC_ANDROID_ALEGL_H
+#define HWVC_ANDROID_ALEGL_H
+
 #include "Object.h"
 #include "HwWindow.h"
-#include <atomic>
+#include <EGL/egl.h>
 
-al_class(Egl) {
+al_class(AlEgl) {
 public:
     static EGLContext currentContext();
 
-    static Egl *create(EGLContext context, HwWindow *win, bool focusTypeWin = false);
+    static AlEgl *offScreen(EGLContext *context = nullptr);
 
-private:
-    Egl(EGLContext context, HwWindow *win, bool focusTypeWin);
-
-    Egl(const Egl &o) : Object() {};
+    static AlEgl *window(HwWindow *win, EGLContext *context = nullptr);
 
 public:
-    Egl();
-
-    Egl(EGLContext context);
-
-    Egl(HwWindow *win);
-
-    Egl(EGLContext context, HwWindow *win);
-
-    virtual ~Egl();
+    virtual ~AlEgl();
 
     void makeCurrent();
 
@@ -55,6 +44,10 @@ public:
 #endif
 
 private:
+    AlEgl();
+
+    AlEgl(const AlEgl &o) : Object() {};
+
     void init(EGLContext context, HwWindow *win);
 
     EGLDisplay createDisplay(EGLNativeDisplayType display_id);
@@ -76,7 +69,6 @@ private:
                                                                     EGLSurface surface,
                                                                     khronos_stime_nanoseconds_t time);
 
-    std::atomic_bool focusTypeWin;
     HwWindow *win = nullptr;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
     EGLConfig eglConfig = nullptr;
@@ -86,4 +78,4 @@ private:
 };
 
 
-#endif //HARDWAREVIDEOCODEC_EGL_H
+#endif //HWVC_ANDROID_ALEGL_H

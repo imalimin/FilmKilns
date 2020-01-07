@@ -1,14 +1,20 @@
 /*
- * Copyright (c) 2018-present, aliminabc@gmail.com.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-#include "../include/Egl.h"
-#include "log.h"
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
+
+#include "AlEgl.h"
+#include "Logcat.h"
+
+#ifdef __ANDROID__
+
 #include <android/native_window_jni.h>
 
-#define TAG "Egl"
+#endif
+
+#define TAG "AlEgl"
 
 const int CONFIG_WIN[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                           EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
@@ -29,64 +35,44 @@ const int CONFIG_BUFFER[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                              EGL_STENCIL_SIZE, 0,
                              EGL_NONE};
 
-//eglGetProcAddress( "eglPresentationTimeANDROID")
-/**
- * 1. eglGetConfigs
- * 2. eglBindAPI
- * 3. eglSwapInterval
- * 4. ANativeWindow_setBuffersGeometry
- */
-EGLContext Egl::currentContext() {
+EGLContext AlEgl::currentContext() {
     EGLContext context = eglGetCurrentContext();
     if (EGL_NO_CONTEXT == context) {
-        Logcat::i(TAG, "Egl: Current thread has non context.");
+        Logcat::w(TAG, "%s(%d): Current thread has non context.", __FUNCTION__, __LINE__);
     }
     return context;
 }
 
-Egl *Egl::create(EGLContext context, HwWindow *win, bool focusTypeWin) {
-    return new Egl(context, win, focusTypeWin);
+AlEgl *AlEgl::offScreen(EGLContext *context = nullptr) {
+    AlEgl *egl = new AlEgl();
+    egl->init(context, nullptr);
+    return egl;
 }
 
-Egl::Egl() : Object() {
-    focusTypeWin = false;
-    init(nullptr, nullptr);
+AlEgl *AlEgl::window(HwWindow *win, EGLContext *context) {
+    AlEgl *egl = new AlEgl();
+    egl->init(context, win);
+    return egl;
 }
 
-Egl::Egl(EGLContext context) : Object() {
-    focusTypeWin = false;
-    init(context, nullptr);
+AlEgl::AlEgl() : Object() {
+
 }
 
-Egl::Egl(HwWindow *win) : Object() {
-    focusTypeWin = nullptr != win;
-    init(nullptr, win);
-}
-
-Egl::Egl(EGLContext context, HwWindow *win) : Object() {
-    focusTypeWin = nullptr != win;
-    init(context, win);
-}
-
-Egl::Egl(EGLContext context, HwWindow *win, bool focusTypeWin) : Object() {
-    this->focusTypeWin = focusTypeWin || nullptr != win;
-    init(context, win);
-}
-
-Egl::~Egl() {
+AlEgl::~AlEgl() {
     if (eglDisplay != EGL_NO_DISPLAY) {
         if (!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
             checkError();
-            Logcat::e(TAG, "~Egl makeCurrent failed");
+            Logcat::e(TAG, "%s(%d): ~Egl makeCurrent failed", __FUNCTION__, __LINE__);
         }
         if (eglSurface == EGL_NO_SURFACE || EGL_TRUE != eglDestroySurface(eglDisplay, eglSurface)) {
-            Logcat::e(TAG, "~Egl eglDestroySurface failed");
+            Logcat::e(TAG, "%s(%d): ~Egl eglDestroySurface failed", __FUNCTION__, __LINE__);
         }
         if (eglContext == EGL_NO_CONTEXT || EGL_TRUE != eglDestroyContext(eglDisplay, eglContext)) {
-            Logcat::e(TAG, "~Egl eglDestroyContext failed");
+            Logcat::e(TAG, "%s(%d): ~Egl eglDestroyContext failed", __FUNCTION__, __LINE__);
         }
         if (EGL_TRUE != eglTerminate(eglDisplay)) {
-            Logcat::e(TAG, "~Egl eglTerminate failed");
+            Logcat::e(TAG, "%s(%d): ~Egl eglTerminate failed", __FUNCTION__, __LINE__);
         }
     }
     eglContext = EGL_NO_CONTEXT;
@@ -97,10 +83,11 @@ Egl::~Egl() {
         delete this->win;
         this->win = nullptr;
     }
-    Logcat::i(TAG, "Egl::~Egl");
+    Logcat::i(TAG, "%s(%d): ~Egl", __FUNCTION__, __LINE__);
 }
 
-void Egl::init(EGLContext context, HwWindow *win) {
+
+void AlEgl::init(EGLContext context, HwWindow *win) {
     if (EGL_NO_DISPLAY != eglDisplay
         || EGL_NO_SURFACE != eglContext
         || EGL_NO_SURFACE != eglSurface) {
@@ -113,7 +100,7 @@ void Egl::init(EGLContext context, HwWindow *win) {
         Logcat::e(TAG, "$s failed", __func__);
         return;
     }
-    if (focusTypeWin || (win && win->getANativeWindow())) {
+    if (win && win->getANativeWindow()) {
         createConfig(CONFIG_WIN);
     } else {
         createConfig(CONFIG_BUFFER);
@@ -155,7 +142,7 @@ void Egl::init(EGLContext context, HwWindow *win) {
 //    eglSwapInterval(eglDisplay, 0);
 }
 
-EGLDisplay Egl::createDisplay(EGLNativeDisplayType display_id) {
+EGLDisplay AlEgl::createDisplay(EGLNativeDisplayType display_id) {
     eglDisplay = eglGetDisplay(display_id);
     if (EGL_NO_DISPLAY == eglDisplay || !checkError()) {
         Logcat::e(TAG, "eglGetDisplay failed");
@@ -172,7 +159,7 @@ EGLDisplay Egl::createDisplay(EGLNativeDisplayType display_id) {
     return eglDisplay;
 }
 
-EGLConfig Egl::createConfig(const int *configSpec) {
+EGLConfig AlEgl::createConfig(const int *configSpec) {
     EGLint configsCount = 0;
     const EGLint maxConfigs = 2;
     EGLConfig configs[maxConfigs];
@@ -205,7 +192,7 @@ EGLConfig Egl::createConfig(const int *configSpec) {
     return configs[0];
 }
 
-EGLContext Egl::createContext(EGLContext context) {
+EGLContext AlEgl::createContext(EGLContext context) {
     int contextSpec[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
     eglContext = eglCreateContext(eglDisplay, eglConfig, context, contextSpec);
     if (EGL_NO_CONTEXT == eglContext || !checkError()) {
@@ -215,7 +202,7 @@ EGLContext Egl::createContext(EGLContext context) {
     return eglContext;
 }
 
-EGLSurface Egl::createPbufferSurface() {
+EGLSurface AlEgl::createPbufferSurface() {
 //    EGLint values;
 //    eglQueryContext(eglDisplay, eglContext, EGL_CONTEXT_CLIENT_VERSION, &values);
     int attrib_list[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
@@ -232,7 +219,7 @@ EGLSurface Egl::createPbufferSurface() {
     return eglSurface;
 }
 
-EGLSurface Egl::createWindowSurface(HwWindow *win) {
+EGLSurface AlEgl::createWindowSurface(HwWindow *win) {
 //    EGLint values;
 //    eglQueryContext(eglDisplay, eglContext, EGL_CONTEXT_CLIENT_VERSION, &values);
     int attrib_list[] = {EGL_NONE};
@@ -252,21 +239,21 @@ EGLSurface Egl::createWindowSurface(HwWindow *win) {
     return eglSurface;
 }
 
-int Egl::width() {
+int AlEgl::width() {
     return getParams(EGL_WIDTH);
 }
 
-int Egl::height() {
+int AlEgl::height() {
     return getParams(EGL_HEIGHT);
 }
 
-EGLint Egl::getParams(EGLint attribute) {
+EGLint AlEgl::getParams(EGLint attribute) {
     EGLint params;
     eglQuerySurface(eglDisplay, eglSurface, attribute, &params);
     return params;
 }
 
-void Egl::makeCurrent() {
+void AlEgl::makeCurrent() {
     if (EGL_NO_DISPLAY == eglDisplay) {
         Logcat::e(TAG, "name egl failed had release!");
         return;
@@ -276,13 +263,13 @@ void Egl::makeCurrent() {
     }
 }
 
-void Egl::swapBuffers() {
+void AlEgl::swapBuffers() {
     if (!eglSwapBuffers(eglDisplay, eglSurface)) {
         Logcat::e(TAG, "name swapBuffers failed!");
     }
 }
 
-bool Egl::checkError() {
+bool AlEgl::checkError() {
     EGLint error = eglGetError();
     if (EGL_SUCCESS != error) {
         Logcat::e(TAG, "Bad EGL environment: %d", error);
@@ -291,10 +278,7 @@ bool Egl::checkError() {
     return true;
 }
 
-bool Egl::updateWindow(HwWindow *win) {
-    if (!focusTypeWin) {
-        return false;
-    }
+bool AlEgl::updateWindow(HwWindow *win) {
     if (this->win) {
         delete this->win;
         this->win = nullptr;
@@ -310,15 +294,15 @@ bool Egl::updateWindow(HwWindow *win) {
     return true;
 }
 
-bool Egl::isAttachWindow() { return nullptr != win; }
+bool AlEgl::isAttachWindow() { return nullptr != win; }
 
-EGLContext Egl::getContext() {
+EGLContext AlEgl::getContext() {
     return eglContext;
 }
 
 #ifdef __ANDROID__
 
-bool Egl::setTimestamp(int64_t nsecs) {
+bool AlEgl::setTimestamp(int64_t nsecs) {
     if (nullptr == eglPresentationTimeANDROID || EGL_NO_DISPLAY == eglDisplay) {
         return false;
     }
