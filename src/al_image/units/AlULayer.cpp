@@ -26,6 +26,8 @@ AlULayer::~AlULayer() {
 
 bool AlULayer::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
+    /// Just for init models address.
+    mLayerManager.update(getLayers(), texAllocator);
     return true;
 }
 
