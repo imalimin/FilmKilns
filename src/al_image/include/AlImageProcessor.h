@@ -18,6 +18,7 @@
 #include "AlRational.h"
 #include "AlUCanvas.h"
 #include "AlAbsContext.h"
+#include "AlEgl.h"
 
 class AlImageProcessor : public HwAbsProcessor {
 public:
@@ -123,6 +124,7 @@ private:
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
 
+    AlEgl *aSharedContext = nullptr;
     AlAbsContext *context = nullptr;
     std::vector<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;

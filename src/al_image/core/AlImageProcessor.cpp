@@ -43,6 +43,7 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_CANVAS});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
     post([this] {
+        this->aSharedContext = AlEgl::offScreen();
         this->context = new AlContext();
         this->putObject("AL_CONTEXT", this->context)
                 .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS,
@@ -63,6 +64,8 @@ AlImageProcessor::~AlImageProcessor() {
     post([this] {
         delete this->context;
         this->context = nullptr;
+        delete this->aSharedContext;
+        this->aSharedContext = nullptr;
     });
     size_t size = mLayers.size();
     for (int i = 0; i < size; ++i) {

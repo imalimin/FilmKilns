@@ -26,7 +26,10 @@ AlULayerFilter::~AlULayerFilter() {
 bool AlULayerFilter::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
     mosaicFilter = new AlMosaicFilter();
+    mosaicFilter->prepare();
     mCopyFilter = new HwNormalFilter();
+    mCopyFilter->prepare();
+    mFilterTex = texAllocator->alloc();
     return true;
 }
 
@@ -45,27 +48,20 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
     auto *actions = layer->model->getAllActions();
     auto itr = actions->begin();
-//    while (actions->end() != itr) {
-//        AlAbsMFilterAction *action = dynamic_cast<AlAbsMFilterAction *>(*itr);
-//        if (typeid(AlMMosaicAction) == typeid(*action)) {
-//            if (nullptr == mFilterTex) {
-//                mosaicFilter->prepare();
-//                mCopyFilter->prepare();
-//                AlTexDescription desc;
-//                desc.size.width = layer->getWidth();
-//                desc.size.height = layer->getHeight();
-//                mFilterTex = texAllocator->alloc(desc);
-//            } else if (layer->getWidth() != mFilterTex->getWidth()
-//                       || layer->getHeight() != mFilterTex->getHeight()) {
-//                mFilterTex->update(nullptr, layer->getWidth(), layer->getHeight(), GL_RGBA);
-//            }
-//            dynamic_cast<AlMosaicFilter *>(mosaicFilter)->updatePath(
-//                    dynamic_cast<AlMMosaicAction *>(action)->getPath());
-//            mCopyFilter->draw(layer->getTexture(), mFilterTex);
-//            mosaicFilter->draw(mFilterTex, layer->getTexture());
-//        }
-//        ++itr;
-//    }
+    while (actions->end() != itr) {
+        AlAbsMFilterAction *action = dynamic_cast<AlAbsMFilterAction *>(*itr);
+        if (typeid(AlMMosaicAction) == typeid(*action)) {
+            if (layer->getWidth() != mFilterTex->getWidth()
+                || layer->getHeight() != mFilterTex->getHeight()) {
+                mFilterTex->update(nullptr, layer->getWidth(), layer->getHeight(), GL_RGBA);
+            }
+            dynamic_cast<AlMosaicFilter *>(mosaicFilter)->updatePath(
+                    dynamic_cast<AlMMosaicAction *>(action)->getPath());
+            mCopyFilter->draw(layer->getTexture(), mFilterTex);
+            mosaicFilter->draw(mFilterTex, layer->getTexture());
+        }
+        ++itr;
+    }
     _notifyDescriptor(layer);
     return true;
 }

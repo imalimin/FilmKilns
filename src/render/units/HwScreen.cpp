@@ -76,16 +76,16 @@ void HwScreen::initWindow(NativeWindow *nw) {
     if (!egl) {
         if (nw) {
             if (nw->hasContext()) {
-                egl = Egl::create(nw->context, nw->win, true);
+                egl = Egl::create(Egl::currentContext(), nw->win, true);
                 Logcat::i(TAG, "Screen::init EGL with context %d x %d", egl->width(),
                           egl->height());
             } else {
-                egl = Egl::create(nullptr, nw->win, true);
+                egl = Egl::create(Egl::currentContext(), nw->win, true);
                 nw->context = egl->getContext();
                 Logcat::i(TAG, "Screen::init EGL %d x %d", egl->width(), egl->height());
             }
         } else {
-            egl = Egl::create(nullptr, nullptr, true);
+            egl = Egl::create(Egl::currentContext(), nullptr, true);
         }
         egl->makeCurrent();
         drawer = new NormalDrawer();

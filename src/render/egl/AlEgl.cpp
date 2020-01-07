@@ -43,7 +43,7 @@ EGLContext AlEgl::currentContext() {
     return context;
 }
 
-AlEgl *AlEgl::offScreen(EGLContext *context = nullptr) {
+AlEgl *AlEgl::offScreen(EGLContext *context) {
     AlEgl *egl = new AlEgl();
     egl->init(context, nullptr);
     return egl;
