@@ -81,7 +81,7 @@ public:
     virtual HwResult toElement(AlElement **element) override;
 
 private:
-    bool _removeOperator(type_info type);
+    bool _removeOperator(const type_info &info);
 
 private:
     friend AlImageLayer;

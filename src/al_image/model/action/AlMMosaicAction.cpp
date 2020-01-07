@@ -10,7 +10,7 @@
 
 #define TAG "AlMMosaicAction"
 
-AlMMosaicAction::AlMMosaicAction() : AlAbsMAction(TYPE_MOSAIC) {
+AlMMosaicAction::AlMMosaicAction() : AlAbsMFilterAction(TYPE_MOSAIC) {
 
 }
 
@@ -21,9 +21,7 @@ void AlMMosaicAction::addPoint(const AlPointF &pointF) {
     Logcat::i(TAG, "%s(%d) addPoint %d", __FUNCTION__, __LINE__, points.size());
 }
 
-HwResult AlMMosaicAction::measure(AlImgLayerDescription &layer,
-                                  AlImageLayerDrawModel *description) {
-    description->mosaicPath = &points;
+HwResult AlMMosaicAction::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     return Hw::SUCCESS;
 }
 

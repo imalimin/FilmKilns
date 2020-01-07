@@ -7,6 +7,7 @@
 
 #include "AlImageProcessor.h"
 #include "AlULayer.h"
+#include "AlULayerFilter.h"
 #include "AlULayerDescriptor.h"
 #include "HwRender.h"
 #include "HwScreen.h"
@@ -31,19 +32,20 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
 //        }
 //        tar_free(archive);
 //    }
-    AlULayer *uLayer = new AlULayer(ALIAS_OF_IMAGE);
-    AlUCanvas *uCanvas = new AlUCanvas(ALIAS_OF_LAYER_RENDER);
+    AlULayer *uLayer = new AlULayer(ALIAS_OF_LAYER);
+    AlUCanvas *uCanvas = new AlUCanvas(ALIAS_OF_CANVAS);
     registerAnUnit(uLayer);
+    registerAnUnit(new AlULayerFilter(ALIAS_OF_FILTER));
     registerAnUnit(new AlULayerDescriptor(ALIAS_OF_DESCRIPTOR));
     registerAnUnit(uCanvas);
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_LAYER_RENDER});
-    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
+    putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_CANVAS});
+    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
     post([this] {
         this->context = new AlContext();
         this->putObject("AL_CONTEXT", this->context)
-                .to({ALIAS_OF_IMAGE, ALIAS_OF_DESCRIPTOR, ALIAS_OF_LAYER_RENDER,
+                .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS,
                      ALIAS_OF_RENDER, ALIAS_OF_SCREEN});
     });
     prepare();
@@ -103,7 +105,7 @@ void AlImageProcessor::_notifyCanvasUpdate() {
 }
 
 void AlImageProcessor::_notifyLayerUpdate() {
-    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_IMAGE});
+    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
     postEvent(AlMessage::obtain(EVENT_AIMAGE_UPDATE_LAYER));
 }
 
@@ -338,7 +340,7 @@ HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
 
 HwResult AlImageProcessor::save(std::string path) {
     invalidate(3);
-    putString("output_path", path).to({ALIAS_OF_LAYER_RENDER});
+    putString("output_path", path).to({ALIAS_OF_CANVAS});
     postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_SAVE));
     return Hw::SUCCESS;
 }

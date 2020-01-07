@@ -76,6 +76,10 @@ void AlULayer::_notifyDescriptor(AlImageLayer *layer) {
     postEvent(msg);
 }
 
+void AlULayer::_doFilter(AlImageLayer *layer) {
+
+}
+
 bool AlULayer::onImport(AlMessage *m) {
     std::string path = m->desc;
     AlImageCanvasModel canvas;

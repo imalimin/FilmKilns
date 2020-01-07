@@ -48,7 +48,7 @@ public:
     /// \return
     bool onInvalidate(AlMessage *m);
 
-    /// 把所有图层清楚，并导入.qua文件
+    /// 把所有图层清除，并导入.qua文件
     /// FORMAT:
     /// +--------------------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
@@ -69,6 +69,8 @@ private:
     void _notifyAll(int32_t flag = 0);
 
     void _notifyDescriptor(AlImageLayer *layer);
+
+    void _doFilter(AlImageLayer *layer);
 
     void _saveStep();
 

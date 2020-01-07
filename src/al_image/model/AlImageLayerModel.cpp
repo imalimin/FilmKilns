@@ -153,41 +153,21 @@ std::vector<AlAbsMAction *> *AlImageLayerModel::getAllOperators() {
 }
 
 bool AlImageLayerModel::removeCropOperator() {
-    bool ret = false;
-    auto itr = operators.begin();
-    while (itr != operators.end()) {
-        AlAbsMAction *it = *itr;
-        if (typeid(AlMCropAction) == typeid(*it)) {
-            itr = operators.erase(itr);
-            ret = true;
-            continue;
-        }
-        ++itr;
-    }
-    return ret;
+    const type_info &info = typeid(AlMCropAction);
+    return _removeOperator(info);
 }
 
 bool AlImageLayerModel::removeAlignCropOperator() {
-    bool ret = false;
-    auto itr = operators.begin();
-    while (itr != operators.end()) {
-        AlAbsMAction *it = *itr;
-        if (typeid(AlMAlignCropAction) == typeid(*it)) {
-            itr = operators.erase(itr);
-            ret = true;
-            continue;
-        }
-        ++itr;
-    }
-    return ret;
+    const type_info &info = typeid(AlMAlignCropAction);
+    return _removeOperator(info);
 }
 
-bool AlImageLayerModel::_removeOperator(type_info type) {
+bool AlImageLayerModel::_removeOperator(const type_info &info) {
     bool ret = false;
     auto itr = operators.begin();
     while (itr != operators.end()) {
         AlAbsMAction *it = *itr;
-        if (type == typeid(*it)) {
+        if (info == typeid(*it)) {
             itr = operators.erase(itr);
             ret = true;
             continue;

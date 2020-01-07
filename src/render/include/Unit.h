@@ -86,6 +86,8 @@ static constexpr int EVENT_LAYER_RENDER_SHOW = KID('A', 'L', 'R', 0x03);
 static constexpr int EVENT_LAYER_RENDER_SAVE = KID('A', 'L', 'R', 0x04);
 static constexpr int EVENT_LAYER_RENDER_CROP_CANVAS = KID('A', 'L', 'R', 0x05);
 
+static constexpr int EVENT_LAYER_FILTER_RENDER = KID('A', 'L', 'F', 0x00);
+
 /**
  * Define class HwModelProvider.
  */
@@ -154,6 +156,8 @@ protected:
     void postEvent(AlMessage *msg);
 
 private:
+    Unit(const Unit &o) : Object() {};
+
     /**
      * @msg 事件消息
      * @return true:我可以处理这个事件，false:无法处理这个事件

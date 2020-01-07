@@ -116,9 +116,10 @@ private:
     AlImageLayerModel *_getLayer(int32_t id);
 
 private:
-    const string ALIAS_OF_IMAGE = "IMAGE";
+    const string ALIAS_OF_LAYER = "LAYER";
+    const string ALIAS_OF_FILTER = "LAYER_FILTER";
     const string ALIAS_OF_DESCRIPTOR = "LAYER_DESCRIPTOR";
-    const string ALIAS_OF_LAYER_RENDER = "LAYER_RENDER";
+    const string ALIAS_OF_CANVAS = "LAYER_CANVAS";
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
 

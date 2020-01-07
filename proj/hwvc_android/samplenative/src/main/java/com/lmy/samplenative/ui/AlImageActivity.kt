@@ -1,7 +1,6 @@
 package com.lmy.samplenative.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.PointF
 import android.graphics.RectF
@@ -14,18 +13,17 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.view.View
-import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.SeekBar
 import android.widget.Toast
 import com.lmy.common.ui.GallerySelectActivity
 import com.lmy.common.ui.fragment.BaseLazyFragment
+import com.lmy.file.ui.dialog.FileDialog
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.entity.AlResult
 import com.lmy.hwvcnative.processor.AlImageProcessor
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
-import com.lmy.file.ui.dialog.FileDialog
 import com.microsoft.officeuifabric.bottomsheet.BottomSheetDialog
 import com.microsoft.officeuifabric.bottomsheet.BottomSheetItem
 import kotlinx.android.synthetic.main.activity_al_image.*
@@ -162,9 +160,8 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
     }
 
-    override fun onCheckedChanged(v: CompoundButton?, isChecked: Boolean) {
-
-        when (v?.id) {
+    override fun onCheckedChanged(v: CompoundButton, isChecked: Boolean) {
+        when (v.id) {
             R.id.alignCropBox -> {
                 if (isChecked) {
                     alpha = 0.0

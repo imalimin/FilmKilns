@@ -8,9 +8,9 @@
 #ifndef HWVC_ANDROID_ALMMOSAICACTION_H
 #define HWVC_ANDROID_ALMMOSAICACTION_H
 
-#include "AlAbsMAction.h"
+#include "AlAbsMFilterAction.h"
 
-al_class_ex(AlMMosaicAction, AlAbsMAction) {
+al_class_ex(AlMMosaicAction, AlAbsMFilterAction) {
 public:
     AlMMosaicAction();
 
@@ -20,14 +20,14 @@ public:
 
     std::vector<AlPointF> *getPath();
 
-    HwResult measure(AlImgLayerDescription &layer, AlImageLayerDrawModel *description) override;
+    virtual HwResult draw(HwAbsTexture *src, HwAbsTexture *dest) override;
 
     virtual HwResult fromElement(AlElement *element) override;
 
     virtual HwResult toElement(AlElement **element) override;
 
 private:
-    AlMMosaicAction(const AlMMosaicAction &o) : AlAbsMAction(o) {};
+    AlMMosaicAction(const AlMMosaicAction &o) : AlAbsMFilterAction(o) {};
 
 private:
     std::vector<AlPointF> points;
