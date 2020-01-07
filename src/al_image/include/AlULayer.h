@@ -70,7 +70,7 @@ private:
 
     void _notifyDescriptor(AlImageLayer *layer);
 
-    void _doFilter(AlImageLayer *layer);
+    void _notifyFilter(AlImageLayer *layer);
 
     void _saveStep();
 

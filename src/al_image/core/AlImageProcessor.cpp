@@ -12,7 +12,7 @@
 #include "HwRender.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
-#include "AlOperateFactory.h"
+#include "AlLayerActionFactory.h"
 #include "AlMCropAction.h"
 #include "AlContext.h"
 #include "AlCoordsTranslator.h"
@@ -297,10 +297,10 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        layer->removeCropOperator();
+        layer->removeCropAction();
         transToCanvasPos(left, top);
         transToCanvasPos(right, bottom);
-        layer->addOperator(AlOperateFactory::crop(left, top, right, bottom));
+        layer->addAction(AlLayerActionFactory::crop(left, top, right, bottom));
         invalidate();
         return Hw::SUCCESS;
     }
@@ -331,7 +331,7 @@ HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float 
 HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
-    if (layer && layer->removeCropOperator()) {
+    if (layer && layer->removeCropAction()) {
         invalidate();
         return Hw::SUCCESS;
     }
@@ -368,8 +368,8 @@ HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
-        layer->removeAlignCropOperator();
-        layer->addOperator(AlOperateFactory::alignCrop(r));
+        layer->removeAlignCropAction();
+        layer->addAction(AlLayerActionFactory::alignCrop(r));
         invalidate();
         return Hw::SUCCESS;
     }
@@ -379,7 +379,7 @@ HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
 HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
-    if (layer && layer->removeAlignCropOperator()) {
+    if (layer && layer->removeAlignCropAction()) {
         invalidate();
         return Hw::SUCCESS;
     }
@@ -401,7 +401,7 @@ HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
     auto *layer = _getLayer(id);
     if (layer) {
         transToCanvasPos(pointF.x, pointF.y);
-        auto *actions = layer->getAllOperators();
+        auto *actions = layer->getAllActions();
         size_t size = actions->size();
         for (int i = 0; i < size; ++i) {
             AlAbsMAction *action = (*actions)[i];
@@ -412,9 +412,9 @@ HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
             }
         }
     }
-    AlAbsMAction *action = AlOperateFactory::mosaic(pointF);
+    AlAbsMAction *action = AlLayerActionFactory::mosaic(pointF);
     dynamic_cast<AlMMosaicAction *>(action)->addPoint(pointF);
-    layer->addOperator(action);
+    layer->addAction(action);
     invalidate();
     return Hw::SUCCESS;
 }

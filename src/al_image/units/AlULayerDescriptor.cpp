@@ -12,7 +12,6 @@
 #include "ObjectBox.h"
 #include "AlImgLayerDescription.h"
 #include "AlAbsMAction.h"
-#include "AlMMosaicAction.h"
 
 #define TAG "AlULayerDescriptor"
 
@@ -62,7 +61,7 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel
     ///Copy一份layer model送入opt进行测量，在测量过程中opt可能会改变model数据
     AlImgLayerDescription model(*(layer->model));
     model.setSize(layerSize);
-    HwResult ret = _measureOperate(layer->model->getAllOperators(), model, description);
+    HwResult ret = _measureOperate(layer->model->getAllActions(), model, description);
     description->setLayerSize(model.getSize());
     ///经过各种各样的Operate后，layer size会被改变并更新到AlImageLayerDrawModel
     ///这里需要获取最新的layer size，不然会出错
@@ -91,14 +90,6 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel
     Logcat::i(TAG, "tran %f, %f", model.getPosition().x, model.getPosition().y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lt.x, lt.y, rt.x, rt.y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lb.x, lb.y, rb.x, rb.y);
-    auto *actions = layer->model->getAllOperators();
-    size_t size = actions->size();
-    for (int i = 0; i < size; ++i) {
-        AlAbsMAction *action = (*actions)[i];
-        if (typeid(AlMMosaicAction) == typeid(*action)) {
-            description->mosaicPath =dynamic_cast<AlMMosaicAction *>(action)->getPath();
-        }
-    }
     return ret;
 }
 

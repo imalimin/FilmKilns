@@ -41,6 +41,7 @@ private:
     AlTexAllocator *texAllocator = nullptr;
     HwAbsTexture *mFilterTex = nullptr;
     HwAbsFilter *mosaicFilter = nullptr;
+    HwAbsFilter *mCopyFilter = nullptr;
 };
 
 

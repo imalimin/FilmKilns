@@ -40,7 +40,6 @@ public:
     AlMatrix mat;
     AlRectF vertexRectF;
     AlQuad cropQuad;
-    std::vector<AlPointF> *mosaicPath = nullptr;
 };
 
 

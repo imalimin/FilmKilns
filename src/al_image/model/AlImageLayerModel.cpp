@@ -8,8 +8,9 @@
 #include "AlImageLayerModel.h"
 #include "AlMCropAction.h"
 #include "AlMAlignCropAction.h"
-#include "AlOperateFactory.h"
+#include "AlLayerActionFactory.h"
 #include "StringUtils.h"
+#include "AlAbsMFilterAction.h"
 #include "Logcat.h"
 
 #define TAG "AlImageLayerModel"
@@ -57,12 +58,12 @@ AlImageLayerModel::AlImageLayerModel(const AlImageLayerModel &o)
 }
 
 AlImageLayerModel::~AlImageLayerModel() {
-    auto itr = operators.begin();
-    while (operators.end() != itr) {
+    auto itr = actions.begin();
+    while (actions.end() != itr) {
         delete *itr;
         ++itr;
     }
-    operators.clear();
+    actions.clear();
 }
 
 std::string AlImageLayerModel::getPath() {
@@ -143,38 +144,51 @@ void AlImageLayerModel::dump() {
     Logcat::i(TAG, "+--------------------------+");
 }
 
-HwResult AlImageLayerModel::addOperator(AlAbsMAction *opt) {
-    operators.push_back(opt);
+HwResult AlImageLayerModel::addAction(AlAbsMAction *opt) {
+    actions.push_back(opt);
     return Hw::SUCCESS;
 }
 
-std::vector<AlAbsMAction *> *AlImageLayerModel::getAllOperators() {
-    return &operators;
+std::vector<AlAbsMAction *> *AlImageLayerModel::getAllActions() {
+    return &actions;
 }
 
-bool AlImageLayerModel::removeCropOperator() {
+bool AlImageLayerModel::removeCropAction() {
     const type_info &info = typeid(AlMCropAction);
-    return _removeOperator(info);
+    return _removeAction(info);
 }
 
-bool AlImageLayerModel::removeAlignCropOperator() {
+bool AlImageLayerModel::removeAlignCropAction() {
     const type_info &info = typeid(AlMAlignCropAction);
-    return _removeOperator(info);
+    return _removeAction(info);
 }
 
-bool AlImageLayerModel::_removeOperator(const type_info &info) {
+bool AlImageLayerModel::_removeAction(const type_info &info) {
     bool ret = false;
-    auto itr = operators.begin();
-    while (itr != operators.end()) {
+    auto itr = actions.begin();
+    while (itr != actions.end()) {
         AlAbsMAction *it = *itr;
         if (info == typeid(*it)) {
-            itr = operators.erase(itr);
+            itr = actions.erase(itr);
             ret = true;
             continue;
         }
         ++itr;
     }
     return ret;
+}
+
+int32_t AlImageLayerModel::countFilterAction() {
+    int32_t count = 0;
+    auto itr = actions.begin();
+    while (itr != actions.end()) {
+        AlAbsMAction *it = *itr;
+        if (nullptr != dynamic_cast<AlAbsMFilterAction *>(it)) {
+            ++count;
+        }
+        ++itr;
+    }
+    return count;
 }
 
 HwResult AlImageLayerModel::fromElement(AlElement *element) {
@@ -208,13 +222,13 @@ HwResult AlImageLayerModel::fromElement(AlElement *element) {
             std::string type = child->attr(VAL_TYPE);
             AlAbsMAction *model = nullptr;
             if (StringUtils::equalsIgnoreCase(AlAbsMAction::TYPE_CROP, type)) {
-                model = AlOperateFactory::crop(MAXFLOAT, MAXFLOAT, MAXFLOAT, MAXFLOAT);
+                model = AlLayerActionFactory::crop(MAXFLOAT, MAXFLOAT, MAXFLOAT, MAXFLOAT);
             } else if (StringUtils::equalsIgnoreCase(AlAbsMAction::TYPE_ALIGN_CROP, type)) {
                 AlRational r(INT32_MIN, INT32_MIN);
-                model = AlOperateFactory::alignCrop(r);
+                model = AlLayerActionFactory::alignCrop(r);
             }
             if (model && Hw::SUCCESS == model->fromElement(child)) {
-                addOperator(model);
+                addAction(model);
             } else {
                 delete model;
             }
@@ -246,10 +260,10 @@ HwResult AlImageLayerModel::toElement(AlElement **element) {
     root->addChild(rotation);
     root->addChild(pos);
 
-    size_t size = operators.size();
+    size_t size = actions.size();
     for (int i = 0; i < size; ++i) {
         AlElement *opt = nullptr;
-        operators[i]->toElement(&opt);
+        actions[i]->toElement(&opt);
         if (opt) {
             root->addChild(opt);
         }

@@ -66,13 +66,15 @@ public:
 
     AlQuad &getQuad();
 
-    HwResult addOperator(AlAbsMAction *opt);
+    HwResult addAction(AlAbsMAction *opt);
 
-    std::vector<AlAbsMAction *> *getAllOperators();
+    std::vector<AlAbsMAction *> *getAllActions();
 
-    bool removeCropOperator();
+    bool removeCropAction();
 
-    bool removeAlignCropOperator();
+    bool removeAlignCropAction();
+
+    int32_t countFilterAction();
 
     void dump();
 
@@ -81,7 +83,7 @@ public:
     virtual HwResult toElement(AlElement **element) override;
 
 private:
-    bool _removeOperator(const type_info &info);
+    bool _removeAction(const type_info &info);
 
 private:
     friend AlImageLayer;
@@ -93,7 +95,7 @@ private:
     AlVec2 position;
     AlVec2 scale;
     AlQuad quad;
-    std::vector<AlAbsMAction *> operators;
+    std::vector<AlAbsMAction *> actions;
 };
 
 

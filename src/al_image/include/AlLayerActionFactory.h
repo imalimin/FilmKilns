@@ -5,12 +5,12 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALOPERATEFACTORY_H
-#define HWVC_ANDROID_ALOPERATEFACTORY_H
+#ifndef HWVC_ANDROID_ALLAYERACTIONFACTORY_H
+#define HWVC_ANDROID_ALLAYERACTIONFACTORY_H
 
 #include "AlAbsMAction.h"
 
-al_class(AlOperateFactory) {
+al_class(AlLayerActionFactory) {
 public:
     static AlAbsMAction *crop(float left, float top, float right, float bottom);
 
@@ -19,12 +19,12 @@ public:
     static AlAbsMAction *mosaic(const AlPointF &pointF);
 
 private:
-    AlOperateFactory() : Object() {};
+    AlLayerActionFactory() : Object() {};
 
-    AlOperateFactory(const AlOperateFactory &o) : Object() {};
+    AlLayerActionFactory(const AlLayerActionFactory &o) : Object() {};
 
-    ~AlOperateFactory() {};
+    ~AlLayerActionFactory() {};
 };
 
 
-#endif //HWVC_ANDROID_ALOPERATEFACTORY_H
+#endif //HWVC_ANDROID_ALLAYERACTIONFACTORY_H

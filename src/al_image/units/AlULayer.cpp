@@ -10,6 +10,8 @@
 #include "ObjectBox.h"
 #include "core/file/AlFileImporter.h"
 
+#define TAG "AlULayer"
+
 AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlULayer::onInvalidate));
     registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlULayer::onUpdateLayer));
@@ -24,7 +26,6 @@ AlULayer::~AlULayer() {
 
 bool AlULayer::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
-    mLayerManager.update(getLayers(), texAllocator);
     return true;
 }
 
@@ -60,7 +61,12 @@ void AlULayer::_notifyAll(int32_t flag) {
     if (!mLayerManager.empty()) {
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
-            _notifyDescriptor(mLayerManager.getLayer(i));
+            AlImageLayer *layer = mLayerManager.getLayer(i);
+            if (layer->model->countFilterAction() > 0) {
+                _notifyFilter(layer);
+            } else {
+                _notifyDescriptor(layer);
+            }
         }
     }
     if (0 == (flag & 0x1)) {
@@ -76,8 +82,10 @@ void AlULayer::_notifyDescriptor(AlImageLayer *layer) {
     postEvent(msg);
 }
 
-void AlULayer::_doFilter(AlImageLayer *layer) {
-
+void AlULayer::_notifyFilter(AlImageLayer *layer) {
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_FILTER_RENDER, ObjectBox::wrap(layer));
+    msg->desc = "filter";
+    postEvent(msg);
 }
 
 bool AlULayer::onImport(AlMessage *m) {
