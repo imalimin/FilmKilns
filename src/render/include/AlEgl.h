@@ -16,9 +16,9 @@ al_class(AlEgl) {
 public:
     static EGLContext currentContext();
 
-    static AlEgl *offScreen(EGLContext *context = nullptr);
+    static AlEgl *offScreen(EGLContext context = nullptr);
 
-    static AlEgl *window(HwWindow *win, EGLContext *context = nullptr);
+    static AlEgl *window(HwWindow *win, EGLContext context = nullptr);
 
 public:
     virtual ~AlEgl();

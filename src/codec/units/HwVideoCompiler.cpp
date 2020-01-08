@@ -40,22 +40,6 @@ int HwVideoCompiler::getHeight() {
 
 bool HwVideoCompiler::onCreate(AlMessage *msg) {
     recording = false;
-    int32_t width = getInt32("width");
-    int32_t height = getInt32("height");
-    string path = getString("path");
-    HwSampleFormat *format = dynamic_cast<HwSampleFormat *>(getObject("audioFormat"));
-    if (StringUtils::isEmpty(&path) || !format || HwBundle::VALUE_NONE == width ||
-        HwBundle::VALUE_NONE == height) {
-        Logcat::e("HWVC", "HwVideoCompiler::eventPrepare failed.Invalid arguments.");
-        return true;
-    }
-    encoder = new HwAsyncEncoder();
-    if (!encoder->prepare(path, width, height, *format)) {
-        Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
-    }
-    videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, width, height);
-    audioFrame = new HwAudioFrame(nullptr, format->getFormat(), format->getChannels(),
-                                  format->getSampleRate(), 1024);
     return true;
 }
 
@@ -100,6 +84,7 @@ bool HwVideoCompiler::eventWrite(AlMessage *msg) {
 }
 
 bool HwVideoCompiler::eventStart(AlMessage *msg) {
+    _initialize();
     recording = true;
     return true;
 }
@@ -128,6 +113,28 @@ bool HwVideoCompiler::eventBackward(AlMessage *msg) {
         recordListener(getRecordTimeInUs());
     }
     return true;
+}
+
+void HwVideoCompiler::_initialize() {
+    if (!initialized) {
+        initialized = true;
+        int32_t width = getWidth();
+        int32_t height = getHeight();
+        string path = getString("path");
+        HwSampleFormat *format = dynamic_cast<HwSampleFormat *>(getObject("audioFormat"));
+        if (StringUtils::isEmpty(&path) || !format || HwBundle::VALUE_NONE == width ||
+            HwBundle::VALUE_NONE == height) {
+            Logcat::e("HWVC", "HwVideoCompiler::eventPrepare failed.Invalid arguments.");
+            return;
+        }
+        encoder = new HwAsyncEncoder();
+        if (!encoder->prepare(path, width, height, *format)) {
+            Logcat::e("HWVC", "HwVideoCompiler::eventPrepare encoder open failed.");
+        }
+        videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12, width, height);
+        audioFrame = new HwAudioFrame(nullptr, format->getFormat(), format->getChannels(),
+                                      format->getSampleRate(), 1024);
+    }
 }
 
 void HwVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {

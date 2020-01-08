@@ -6,7 +6,7 @@
 #define HARDWAREVIDEOCODEC_SCREEN_H
 
 #include "Unit.h"
-#include "Egl.h"
+#include "AlEgl.h"
 #include "BaseDrawer.h"
 #include "NativeWindow.h"
 
@@ -63,7 +63,7 @@ public:
     bool eventDraw(AlMessage *msg);
 
 private:
-    Egl *egl = nullptr;
+    AlEgl *egl = nullptr;
     BaseDrawer *drawer = nullptr;
     int width = 0;
     int height = 0;

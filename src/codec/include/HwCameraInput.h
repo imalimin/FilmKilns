@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWCAMERAINPUT_H
 
 #include "Unit.h"
-#include "Egl.h"
+#include "AlEgl.h"
 #include "HwTexture.h"
 #include "HwAbsFBObject.h"
 #include "HwProgram.h"
@@ -38,7 +38,7 @@ private:
     void updateMatrix(int32_t w, int32_t h, AlMatrix *matrix);
 
 private:
-    Egl *egl = nullptr;
+    AlEgl *egl = nullptr;
     HwTexture *srcTex = nullptr;
     HwTexture *destTex = nullptr;
     HwAbsFBObject *fbo = nullptr;

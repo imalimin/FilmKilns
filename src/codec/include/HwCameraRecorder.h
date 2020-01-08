@@ -13,6 +13,7 @@
 #include "HwAbsFilter.h"
 #include "HwSampleFormat.h"
 #include "HwCameraInput.h"
+#include "AlEgl.h"
 
 /**
  *    Controller                Unit                  Unit               Unit                 Unit
@@ -43,8 +44,6 @@ public:
     virtual ~HwCameraRecorder();
 
     virtual void onDestroy() override;
-
-    void prepare(HwWindow *win);
 
     void updateWindow(HwWindow *win);
 
@@ -84,6 +83,7 @@ private:
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
     const string ALIAS_OF_COMPILER = "COMPILER";
+    AlEgl *aSharedContext = nullptr;
     HwSampleFormat *audioFormat = nullptr;
     HwCameraInput *camera = nullptr;
     function<void(int64_t)> recordListener = nullptr;

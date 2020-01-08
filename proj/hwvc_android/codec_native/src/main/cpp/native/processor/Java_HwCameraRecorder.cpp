@@ -32,6 +32,19 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_creat
     });
     jlong handler = reinterpret_cast<jlong>(p);
     HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
+    ///Callback
+    getHandler(handler)->setRecordListener([handler](int64_t timeInUs) {
+        jobject jObject = nullptr;
+        JNIEnv *pEnv = nullptr;
+        jmethodID methodID = nullptr;
+        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                          vRecordProgressDesc,
+                                                          &methodID)) {
+            pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(timeInUs));
+        }
+    });
     return handler;
 }
 
@@ -82,26 +95,6 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setFor
     if (handler) {
         getHandler(handler)->setFormat(width, height, HwSampleFormat(
                 static_cast<HwFrameFormat>(sampleFormat), channels, sampleRate));
-    }
-}
-
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface, jstring path,
-         jint width, jint height) {
-    if (handler) {
-        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
-        getHandler(handler)->setRecordListener([handler](int64_t timeInUs) {
-            jobject jObject = nullptr;
-            JNIEnv *pEnv = nullptr;
-            jmethodID methodID = nullptr;
-            if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-                HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-                HwJavaNativeHelper::getInstance()->findMethod(handler,
-                                                              vRecordProgressDesc,
-                                                              &methodID)) {
-                pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(timeInUs));
-            }
-        });
     }
 }
 

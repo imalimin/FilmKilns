@@ -43,13 +43,13 @@ EGLContext AlEgl::currentContext() {
     return context;
 }
 
-AlEgl *AlEgl::offScreen(EGLContext *context) {
+AlEgl *AlEgl::offScreen(EGLContext context) {
     AlEgl *egl = new AlEgl();
     egl->init(context, nullptr);
     return egl;
 }
 
-AlEgl *AlEgl::window(HwWindow *win, EGLContext *context) {
+AlEgl *AlEgl::window(HwWindow *win, EGLContext context) {
     AlEgl *egl = new AlEgl();
     egl->init(context, win);
     return egl;
@@ -279,19 +279,21 @@ bool AlEgl::checkError() {
 }
 
 bool AlEgl::updateWindow(HwWindow *win) {
+    /// 只有初始化时带Surface的egl才能更新Surface
     if (this->win) {
         delete this->win;
         this->win = nullptr;
+        this->win = win;
+        if (EGL_NO_SURFACE != eglSurface) {
+            eglDestroySurface(eglDisplay, eglSurface);
+            eglSurface = EGL_NO_SURFACE;
+        }
+        createWindowSurface(this->win);
+        makeCurrent();
+        Logcat::e(TAG, "%s(%d) update window", __FUNCTION__, __LINE__);
+        return true;
     }
-    this->win = win;
-    if (EGL_NO_SURFACE != eglSurface) {
-        eglDestroySurface(eglDisplay, eglSurface);
-        eglSurface = EGL_NO_SURFACE;
-    }
-    createWindowSurface(this->win);
-    makeCurrent();
-    Logcat::e(TAG, "%s(%d) update window", __FUNCTION__, __LINE__);
-    return true;
+    return false;
 }
 
 bool AlEgl::isAttachWindow() { return nullptr != win; }

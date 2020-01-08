@@ -40,11 +40,6 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
         setFormat(handler, videoWidth, videoHeight, sampleFormat, channels, sampleRate)
     }
 
-    private fun prepare(surface: Surface) {
-        if (0L == handler) return
-        prepare(handler, surface)
-    }
-
     fun release() {
         if (0L == handler) return
         postEvent(handler, EVENT_RELEASE)
@@ -57,27 +52,9 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
         postEvent(handler, EVENT_SWAP)
     }
 
-    fun prepare(view: SurfaceView) {
-        view.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-                if (!prepared) {
-                    prepared = true
-                    prepare(holder.surface)
-                    postEvent(handler, EVENT_PREPARE)
-                } else {
-                    if (0L != handler) {
-                        updateWindow(handler, holder.surface)
-                    }
-                }
-            }
-
-            override fun surfaceDestroyed(p0: SurfaceHolder?) {
-                Log.i("HWVC", "surfaceDestroyed")
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder) {
-            }
-        })
+    fun prepare() {
+        if (0L == handler) return
+        postEvent(handler, EVENT_PREPARE)
     }
 
     fun start() {
@@ -125,6 +102,11 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
         setFilter(handler, filter.handler)
     }
 
+    fun updateWindow(surface: Surface) {
+        if (isNativeNull()) return
+        updateWindow(handler, surface)
+    }
+
     override fun getFilter(): Filter? {
         return this.filter
     }
@@ -152,7 +134,6 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     }
 
     private external fun create(): Long
-    private external fun prepare(handler: Long, surface: Surface)
     private external fun updateWindow(handler: Long, surface: Surface)
     private external fun start(handler: Long)
     private external fun pause(handler: Long)

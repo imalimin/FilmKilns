@@ -38,25 +38,20 @@ bool HwScreen::onDestroy(AlMessage *msg) {
 
 bool HwScreen::onCreate(AlMessage *msg) {
     Logcat::i(TAG, "Screen::onCreate");
-    if (msg->obj) {
-        ///这里不要delete NativeWindow，别的模块可能会用到
-        NativeWindow *nw = msg->getObj<NativeWindow *>();
-        this->width = nw->win->getWidth();
-        this->height = nw->win->getHeight();
-        initWindow(nw);
-    } else {
-        initWindow(nullptr);
-    }
     return true;
 }
 
 bool HwScreen::eventUpdateWindow(AlMessage *msg) {
     NativeWindow *nw = msg->getObj<NativeWindow *>();
-    if (egl && egl->updateWindow(nw->win)) {
-        this->width = nw->win->getWidth();
-        this->height = nw->win->getHeight();
-        Logcat::i("HwScreen", "%s(%d)", __FUNCTION__, __LINE__);
+    if (nullptr == egl) {
+        initWindow(nw);
+    } else {
+        if (egl->updateWindow(nw->win)) {
+            Logcat::i(TAG, "%s(%d): updateWindow failed", __FUNCTION__, __LINE__);
+        }
     }
+    this->width = nw->win->getWidth();
+    this->height = nw->win->getHeight();
     return true;
 }
 
@@ -75,17 +70,12 @@ bool HwScreen::eventDraw(AlMessage *msg) {
 void HwScreen::initWindow(NativeWindow *nw) {
     if (!egl) {
         if (nw) {
-            if (nw->hasContext()) {
-                egl = Egl::create(Egl::currentContext(), nw->win, true);
-                Logcat::i(TAG, "Screen::init EGL with context %d x %d", egl->width(),
-                          egl->height());
-            } else {
-                egl = Egl::create(Egl::currentContext(), nw->win, true);
-                nw->context = egl->getContext();
-                Logcat::i(TAG, "Screen::init EGL %d x %d", egl->width(), egl->height());
-            }
+            EGLContext c = AlEgl::currentContext();
+            egl = AlEgl::window(nw->win, c);
+            Logcat::i(TAG, "Screen::init EGL with context %p, size %d x %d",
+                      c, egl->width(), egl->height());
         } else {
-            egl = Egl::create(Egl::currentContext(), nullptr, true);
+            Logcat::e(TAG, "Screen::init EGL ERROR");
         }
         egl->makeCurrent();
         drawer = new NormalDrawer();
@@ -98,7 +88,7 @@ void HwScreen::initWindow(NativeWindow *nw) {
 void HwScreen::draw(GLuint texture) {
 //    string glslVersion = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
 //    LOGE("version: %s", glslVersion.c_str());
-    Logcat::i(TAG, "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
+//    Logcat::i(TAG, "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
     glViewport(0, 0, egl->width(), egl->height());
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

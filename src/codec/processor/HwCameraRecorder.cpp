@@ -22,13 +22,21 @@ HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     HwVideoCompiler *c = new HwVideoCompiler(ALIAS_OF_COMPILER);
+    registerAnUnit(c);
+    post([this] {
+        this->aSharedContext = AlEgl::offScreen();
+    });
+    prepare();
     c->setRecordListener([this](int64_t timeInUs) {
         this->recordListener(timeInUs);
     });
-    registerAnUnit(c);
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
+    post([this] {
+        delete this->aSharedContext;
+        this->aSharedContext = nullptr;
+    });
 }
 
 void HwCameraRecorder::onDestroy() {
@@ -39,11 +47,6 @@ void HwCameraRecorder::onDestroy() {
     }
     camera = nullptr;
     this->recordListener = nullptr;
-}
-
-void HwCameraRecorder::prepare(HwWindow *win) {
-    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE, new NativeWindow(win, nullptr));
-    postEvent(msg);
 }
 
 void HwCameraRecorder::updateWindow(HwWindow *win) {

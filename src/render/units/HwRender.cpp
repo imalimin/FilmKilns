@@ -90,7 +90,6 @@ bool HwRender::eventReadPixels(AlMessage *msg) {
 }
 
 bool HwRender::eventRenderFilter(AlMessage *msg) {
-    Logcat::i("HWVC", "Render::eventFilter");
     HwAbsTexture *tex = static_cast<HwAbsTexture *>(msg->obj);
     tsInNs = msg->arg2;
     checkEnv(tex->getWidth(), tex->getHeight());
@@ -113,7 +112,6 @@ bool HwRender::eventSetFilter(AlMessage *msg) {
 }
 
 void HwRender::renderScreen() {
-    Logcat::i("HWVC", "Render::renderScreen");
     AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_DRAW);
     msg->obj = ObjectBox::wrap(new Size(target->getWidth(), target->getHeight()));
     msg->arg1 = target->texId();
@@ -152,7 +150,6 @@ void HwRender::checkEnv(int width, int height) {
 }
 
 void HwRender::renderFilter(HwAbsTexture *tex) {
-    Logcat::i("HWVC", "Render::renderFilter %d", tex->texId());
     filter->draw(tex, target);
 }
 

@@ -4,13 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
-import com.lmy.hwvcnative.devices.CameraWrapper
+import android.util.Log
+import android.view.SurfaceHolder
 import com.lmy.hwvcnative.processor.HwCameraRecorder
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.FilterController
 import com.lmy.samplenative.R
 import com.lmy.samplenative.VideoActivity
 import kotlinx.android.synthetic.main.activity_camera.*
+import kotlinx.android.synthetic.main.activity_camera.surfaceView
+import kotlinx.android.synthetic.main.activity_camera.timeView
 import kotlinx.android.synthetic.main.view_filter.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -27,11 +30,10 @@ class CameraActivity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_camera
     override fun initView() {
         surfaceView.fitsSystemWindows = true
-        surfaceView.keepScreenOn = true
         path = "${externalCacheDir.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
         recorder?.setFormat(544, 960)
-        recorder?.prepare(surfaceView)
+        recorder?.prepare()
         recorder?.setOnRecordProgressListener {
             timeView.text = formator.format(Date(it / 1000))
         }
@@ -74,6 +76,19 @@ class CameraActivity : BaseActivity() {
         swapBtn.setOnClickListener {
             recorder?.swapCamera()
         }
+        surfaceView.keepScreenOn = true
+        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
+            override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
+                recorder?.updateWindow(holder.surface)
+            }
+
+            override fun surfaceDestroyed(p0: SurfaceHolder?) {
+                Log.i("HWVC", "surfaceDestroyed")
+            }
+
+            override fun surfaceCreated(holder: SurfaceHolder) {
+            }
+        })
     }
 
     override fun onDestroy() {

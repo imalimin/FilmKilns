@@ -54,6 +54,8 @@ private:
 
     int64_t getRecordTimeInUs();
 
+    void _initialize();
+
 private:
     HwAbsVideoEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
@@ -70,6 +72,7 @@ private:
      */
     function<void(int64_t)> recordListener = nullptr;
     bool requestReMux = false;
+    bool initialized = false;
 
 private:
     class HwClip : public Object {

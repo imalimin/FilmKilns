@@ -23,7 +23,7 @@ HwCameraInput::~HwCameraInput() {
 
 bool HwCameraInput::onCreate(AlMessage *msg) {
     Logcat::i("HWVC", "HwCameraInput::eventPrepare");
-    egl = new Egl();
+    egl = AlEgl::offScreen(AlEgl::currentContext());
     srcTex = HwTexture::allocOES();
     AlTexDescription desc;
     destTex = HwTexture::alloc(desc);
@@ -44,8 +44,6 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
                     "            gl_FragColor = color;\n"
                     "        }");
     program = HwProgram::create(&vertex, &fragment);
-    NativeWindow *nw = msg->getObj<NativeWindow *>();
-    nw->context = egl->getContext();
     return true;
 }
 
