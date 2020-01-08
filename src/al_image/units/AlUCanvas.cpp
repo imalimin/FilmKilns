@@ -74,14 +74,12 @@ bool AlUCanvas::onDraw(AlMessage *m) {
     if (nullptr == m->obj) {
         return true;
     }
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, m->arg1);
     AlImageLayerDrawModel *description = dynamic_cast<AlImageLayerDrawModel *>(m->obj);
     _newDefaultCanvas(description->getLayerSize());
     _draw(description);
     ++mDrawCount;
-    auto *msg = AlMessage::obtain(EVENT_CANVAS_DRAW_DONE);
-    msg->arg1 = mDrawCount;
-    postEvent(msg);
+    _notifyDrawDone();
     return true;
 }
 
@@ -99,6 +97,7 @@ bool AlUCanvas::onShow(AlMessage *m) {
 }
 
 bool AlUCanvas::onSave(AlMessage *m) {
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     std::string path = getString("output_path");
     if ("" == path || path.empty()) {
         if (onSaveListener) {
@@ -144,5 +143,11 @@ void AlUCanvas::_update(int32_t width, int32_t height, int32_t color) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE);
     msg->arg1 = mCanvas.getWidth();
     msg->arg2 = mCanvas.getHeight();
+    postEvent(msg);
+}
+
+void AlUCanvas::_notifyDrawDone() {
+    auto *msg = AlMessage::obtain(EVENT_CANVAS_DRAW_DONE);
+    msg->arg1 = mDrawCount;
     postEvent(msg);
 }

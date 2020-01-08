@@ -63,23 +63,18 @@ public:
 
     bool onUndo(AlMessage *m);
 
-    /// 来自AlUCanvas的通知，表示单个图层绘制完成
-    /// FORMAT:
-    /// +---------------------------------------------------+
-    /// | msg::obj | msg::arg1      | msg::arg2 | msg::desc |
-    /// +---------------------------------------------------+
-    /// | none     | 绘制完成的图层计数 | none      | none     |
-    /// +---------------------------------------------------+
-    /// \param msg
-    /// \return
-    bool onCanvasDrawDone(AlMessage *m);
-
     void setOnAlxLoadListener(OnAlxLoadListener listener);
 
 private:
-    void _notifyAll(int32_t flag = 0);
+    void _notifyAll(int32_t flags = 0);
 
-    void _notifyFilter(AlImageLayer *layer);
+    /// flags:
+    /// +------------------------------------------------------------+
+    /// | index     | value 0                 | value 1              |
+    /// +------------------------------------------------------------+
+    /// | 0         | none                    | Render to screen     |
+    /// +------------------------------------------------------------+
+    void _notifyFilter(AlImageLayer *layer, int32_t flags);
 
     void _saveStep();
 

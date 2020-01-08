@@ -100,6 +100,8 @@ private:
 
     void _update(int32_t width, int32_t height, int32_t color);
 
+    void _notifyDrawDone();
+
 private:
     AlTexAllocator *texAllocator = nullptr;
     AlImageCanvas mCanvas;

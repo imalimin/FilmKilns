@@ -37,7 +37,7 @@ bool AlULayerDescriptor::onMeasure(AlMessage *msg) {
     AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
     AlImageLayerDrawModel *description = new AlImageLayerDrawModel();
     _measure(layer, description);
-    notifyCanvas(description);
+    notifyCanvas(description, msg->arg1);
     return true;
 }
 
@@ -94,8 +94,8 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel
 }
 
 HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsMAction *> *opts,
-                                            AlImgLayerDescription &model,
-                                            AlImageLayerDrawModel *description) {
+                                             AlImgLayerDescription &model,
+                                             AlImageLayerDrawModel *description) {
     if (nullptr == description) {
         return Hw::FAILED;
     }
@@ -108,8 +108,18 @@ HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsMAction *> *opts,
     return Hw::SUCCESS;
 }
 
-void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description) {
+void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description, int32_t flags) {
+    Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, flags);
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_DRAW, description,
                                        AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+    msg->arg1 = flags;
     postEvent(msg);
+    if (!(flags & 0x1)) {
+        AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
+        sMsg->desc = "show";
+        postEvent(sMsg);
+    }
+    if (flags & 0x4) {
+        postEvent(AlMessage::obtain(EVENT_CANVAS_SAVE));
+    }
 }

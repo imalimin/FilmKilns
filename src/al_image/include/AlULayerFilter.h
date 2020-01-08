@@ -25,17 +25,17 @@ public:
 
     /// 进行filter action渲染操作
     /// FORMAT:
-    /// +-------------------------------------------------------------+
-    /// | msg::obj                | msg::arg1 | msg::arg2 | msg::desc |
-    /// +-------------------------------------------------------------+
-    /// | AlImageLayer ObjectBox | none      | none      | none     |
-    /// +-------------------------------------------------------------+
+    /// +--------------------------------------------------------------+
+    /// | msg::obj                | msg::arg1  | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------------------+
+    /// | AlImageLayer ObjectBox | flags.      | none      | none     |
+    /// +--------------------------------------------------------------+
     /// \param msg
     /// \return
     bool onDoFilterAction(AlMessage *msg);
 
 private:
-    void _notifyDescriptor(AlImageLayer *layer);
+    void _notifyDescriptor(AlImageLayer *layer, int32_t flags);
 
 private:
     AlTexAllocator *texAllocator = nullptr;

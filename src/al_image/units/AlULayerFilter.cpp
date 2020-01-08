@@ -44,7 +44,7 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d) onDoFilterAction", __FUNCTION__, __LINE__);
     AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
     if (layer->model->countFilterAction() <= 0) {
-        _notifyDescriptor(layer);
+        _notifyDescriptor(layer, msg->arg1);
         return true;
     }
     auto *actions = layer->model->getAllActions();
@@ -64,12 +64,13 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
         ++itr;
     }
     nLayer->model = layer->model;
-    _notifyDescriptor(nLayer);
+    _notifyDescriptor(nLayer, msg->arg1);
     return true;
 }
 
-void AlULayerFilter::_notifyDescriptor(AlImageLayer *layer) {
+void AlULayerFilter::_notifyDescriptor(AlImageLayer *layer, int32_t flags) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
+    msg->arg1 = flags;
     msg->desc = "measure";
     postEvent(msg);
 }

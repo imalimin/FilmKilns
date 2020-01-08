@@ -18,7 +18,6 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
     registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
     registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
-    registerEvent(EVENT_CANVAS_DRAW_DONE, reinterpret_cast<EventFunc>(&AlULayer::onCanvasDrawDone));
 }
 
 AlULayer::~AlULayer() {
@@ -51,38 +50,33 @@ bool AlULayer::onInvalidate(AlMessage *m) {
     return true;
 }
 
-bool AlULayer::onCanvasDrawDone(AlMessage *m) {
-    if (m->arg1 >= mLayerManager.size()) {
-        AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
-        sMsg->desc = "show";
-        postEvent(sMsg);
-    }
-    return true;
-}
-
 std::vector<AlImageLayerModel *> *AlULayer::getLayers() {
     auto *obj = static_cast<ObjectBox *>(getObject("layers"));
     return static_cast<vector<AlImageLayerModel *> *>(obj->ptr);
 }
 
-void AlULayer::_notifyAll(int32_t flag) {
+void AlULayer::_notifyAll(int32_t flags) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
-    msg->arg1 = (0 != (flag & 0x2));
+    msg->arg1 = (0 != (flags & 0x2));
     msg->desc = "clear";
     postEvent(msg);
     if (!mLayerManager.empty()) {
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
             AlImageLayer *layer = mLayerManager.getLayer(i);
-            _notifyFilter(layer);
+            int32_t tFlags = 0x1;
+            ///只有最后一个图层绘制完之后才上屏
+            if (i >= size - 1) {
+                tFlags = flags;
+            }
+            _notifyFilter(layer, tFlags);
         }
-    }
-    if (0 == (flag & 0x1)) {
     }
 }
 
-void AlULayer::_notifyFilter(AlImageLayer *layer) {
+void AlULayer::_notifyFilter(AlImageLayer *layer, int32_t flags) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_FILTER_RENDER, ObjectBox::wrap(layer));
+    msg->arg1 = flags;
     msg->desc = "filter";
     postEvent(msg);
 }

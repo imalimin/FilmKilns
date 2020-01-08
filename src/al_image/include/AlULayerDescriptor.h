@@ -25,6 +25,15 @@ public:
 
     bool onDestroy(AlMessage *msg) override;
 
+    /// 对Layer进行测量
+    /// FORMAT:
+    /// +------------------------------------------------------------------------+
+    /// | msg::obj                | msg::arg1            | msg::arg2 | msg::desc |
+    /// +------------------------------------------------------------------------+
+    /// | AlImageLayer ObjectBox | Just render to screen | none      | none     |
+    /// +------------------------------------------------------------------------+
+    /// \param msg
+    /// \return
     bool onMeasure(AlMessage *msg);
 
     bool onCanvasSizeUpdate(AlMessage *msg);
@@ -43,7 +52,7 @@ private:
                              AlImgLayerDescription &model,
                              AlImageLayerDrawModel *description);
 
-    void notifyCanvas(AlImageLayerDrawModel *description);
+    void notifyCanvas(AlImageLayerDrawModel *description, int32_t flags);
 
 private:
     AlLayerMeasurer aMeasurer = AlLayerMeasurer::original();
