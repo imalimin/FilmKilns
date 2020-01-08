@@ -344,7 +344,7 @@ HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
 HwResult AlImageProcessor::save(std::string path) {
     invalidate(3);
     putString("output_path", path).to({ALIAS_OF_CANVAS});
-    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_SAVE));
+    postEvent(AlMessage::obtain(EVENT_CANVAS_SAVE));
     return Hw::SUCCESS;
 }
 

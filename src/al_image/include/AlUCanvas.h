@@ -104,6 +104,7 @@ private:
     AlTexAllocator *texAllocator = nullptr;
     AlImageCanvas mCanvas;
     OnSaveListener onSaveListener = nullptr;
+    int32_t mDrawCount = 0;
 };
 
 

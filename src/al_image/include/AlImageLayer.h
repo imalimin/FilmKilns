@@ -19,7 +19,6 @@ class AlImageLayerManager;
 
 al_class(AlImageLayer) {
 public:
-public:
     static AlImageLayer *create(AlImageLayerModel *model, HwAbsTexture *tex);
 
 public:

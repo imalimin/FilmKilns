@@ -20,7 +20,7 @@ AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlUCanvas::onDraw));
     registerEvent(EVENT_LAYER_RENDER_SHOW,
                   reinterpret_cast<EventFunc>(&AlUCanvas::onShow));
-    registerEvent(EVENT_LAYER_RENDER_SAVE, reinterpret_cast<EventFunc>(&AlUCanvas::onSave));
+    registerEvent(EVENT_CANVAS_SAVE, reinterpret_cast<EventFunc>(&AlUCanvas::onSave));
     registerEvent(EVENT_LAYER_RENDER_CROP_CANVAS,
                   reinterpret_cast<EventFunc>(&AlUCanvas::onCropCanvas));
 }
@@ -65,6 +65,8 @@ bool AlUCanvas::onCropCanvas(AlMessage *m) {
 bool AlUCanvas::onClear(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     mCanvas.clear(1 == m->arg1);
+    mDrawCount = 0;
+    postEvent(AlMessage::obtain(EVENT_CANVAS_CLEAR_DONE));
     return false;
 }
 
@@ -76,7 +78,10 @@ bool AlUCanvas::onDraw(AlMessage *m) {
     AlImageLayerDrawModel *description = dynamic_cast<AlImageLayerDrawModel *>(m->obj);
     _newDefaultCanvas(description->getLayerSize());
     _draw(description);
-//    onShow(nullptr);
+    ++mDrawCount;
+    auto *msg = AlMessage::obtain(EVENT_CANVAS_DRAW_DONE);
+    msg->arg1 = mDrawCount;
+    postEvent(msg);
     return true;
 }
 

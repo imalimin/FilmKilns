@@ -9,7 +9,6 @@
 #include "AlMosaicFilter.h"
 #include "AlAbsMFilterAction.h"
 #include "AlMMosaicAction.h"
-#include "HwNormalFilter.h"
 #include "ObjectBox.h"
 
 #define TAG "AlULayerFilter"
@@ -27,17 +26,15 @@ bool AlULayerFilter::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
     mosaicFilter = new AlMosaicFilter();
     mosaicFilter->prepare();
-    mCopyFilter = new HwNormalFilter();
-    mCopyFilter->prepare();
-    mFilterTex = texAllocator->alloc();
+    nLayer = AlImageLayer::create(nullptr, texAllocator->alloc());
     return true;
 }
 
 bool AlULayerFilter::onDestroy(AlMessage *msg) {
-    delete mCopyFilter;
+    delete nLayer;
     delete mosaicFilter;
     delete texAllocator;
-    mCopyFilter = nullptr;
+    nLayer = nullptr;
     mosaicFilter = nullptr;
     texAllocator = nullptr;
     return true;
@@ -46,23 +43,28 @@ bool AlULayerFilter::onDestroy(AlMessage *msg) {
 bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d) onDoFilterAction", __FUNCTION__, __LINE__);
     AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
+    if (layer->model->countFilterAction() <= 0) {
+        _notifyDescriptor(layer);
+        return true;
+    }
     auto *actions = layer->model->getAllActions();
     auto itr = actions->begin();
     while (actions->end() != itr) {
         AlAbsMFilterAction *action = dynamic_cast<AlAbsMFilterAction *>(*itr);
         if (typeid(AlMMosaicAction) == typeid(*action)) {
-            if (layer->getWidth() != mFilterTex->getWidth()
-                || layer->getHeight() != mFilterTex->getHeight()) {
-                mFilterTex->update(nullptr, layer->getWidth(), layer->getHeight(), GL_RGBA);
+            if (layer->getWidth() != nLayer->getWidth()
+                || layer->getHeight() != nLayer->getHeight()) {
+                nLayer->getTexture()->update(nullptr, layer->getWidth(), layer->getHeight(),
+                                             GL_RGBA);
             }
             dynamic_cast<AlMosaicFilter *>(mosaicFilter)->updatePath(
                     dynamic_cast<AlMMosaicAction *>(action)->getPath());
-            mCopyFilter->draw(layer->getTexture(), mFilterTex);
-            mosaicFilter->draw(mFilterTex, layer->getTexture());
+            mosaicFilter->draw(layer->getTexture(), nLayer->getTexture());
         }
         ++itr;
     }
-    _notifyDescriptor(layer);
+    nLayer->model = layer->model;
+    _notifyDescriptor(nLayer);
     return true;
 }
 

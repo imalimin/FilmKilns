@@ -18,6 +18,7 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
     registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
     registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
+    registerEvent(EVENT_CANVAS_DRAW_DONE, reinterpret_cast<EventFunc>(&AlULayer::onCanvasDrawDone));
 }
 
 AlULayer::~AlULayer() {
@@ -50,6 +51,15 @@ bool AlULayer::onInvalidate(AlMessage *m) {
     return true;
 }
 
+bool AlULayer::onCanvasDrawDone(AlMessage *m) {
+    if (m->arg1 >= mLayerManager.size()) {
+        AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
+        sMsg->desc = "show";
+        postEvent(sMsg);
+    }
+    return true;
+}
+
 std::vector<AlImageLayerModel *> *AlULayer::getLayers() {
     auto *obj = static_cast<ObjectBox *>(getObject("layers"));
     return static_cast<vector<AlImageLayerModel *> *>(obj->ptr);
@@ -64,24 +74,11 @@ void AlULayer::_notifyAll(int32_t flag) {
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
             AlImageLayer *layer = mLayerManager.getLayer(i);
-            if (layer->model->countFilterAction() > 0) {
-                _notifyFilter(layer);
-            } else {
-                _notifyDescriptor(layer);
-            }
+            _notifyFilter(layer);
         }
     }
     if (0 == (flag & 0x1)) {
-        AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
-        sMsg->desc = "show";
-        postEvent(sMsg);
     }
-}
-
-void AlULayer::_notifyDescriptor(AlImageLayer *layer) {
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
-    msg->desc = "measure";
-    postEvent(msg);
 }
 
 void AlULayer::_notifyFilter(AlImageLayer *layer) {
