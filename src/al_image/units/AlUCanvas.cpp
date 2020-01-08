@@ -108,7 +108,9 @@ bool AlUCanvas::onSave(AlMessage *m) {
     auto output = mCanvas.getOutput();
     size_t size = static_cast<size_t>(output->getWidth() * output->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
-    mCanvas.read(buf);
+    if (Hw::SUCCESS != mCanvas.read(buf)) {
+        Logcat::w(TAG, "%s(%d) read pixels failed", __FUNCTION__, __LINE__);
+    }
     AlBitmapFactory::save(output->getWidth(), output->getHeight(), buf, path);
     delete buf;
     if (onSaveListener) {

@@ -103,6 +103,7 @@ void HwProgram::draw(HwAbsTexture *tex) {
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glDisableVertexAttribArray(aPositionLocation);
     glDisableVertexAttribArray(aTextureCoordinateLocation);
+    glFlush();
     tex->unbind();
     unbind();
 }
