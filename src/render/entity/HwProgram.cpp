@@ -82,10 +82,6 @@ HwProgram::~HwProgram() {
         glDeleteBuffers(1, &vbo);
         vbo = GL_NONE;
     }
-    if (GL_NONE != program) {
-        glDeleteProgram(program);
-        program = GL_NONE;
-    }
 }
 
 void HwProgram::draw(HwAbsTexture *tex) {

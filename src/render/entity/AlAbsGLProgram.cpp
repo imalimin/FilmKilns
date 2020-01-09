@@ -14,7 +14,10 @@ AlAbsGLProgram::AlAbsGLProgram(std::string *v, std::string *f) : Object() {
 }
 
 AlAbsGLProgram::~AlAbsGLProgram() {
-
+    if (GL_NONE != program) {
+        glDeleteProgram(program);
+        program = GL_NONE;
+    }
 }
 
 uint32_t AlAbsGLProgram::_createShader(uint32_t type, string *shader) {

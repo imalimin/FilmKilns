@@ -13,8 +13,6 @@
 #include "AlMatrix.h"
 #include "vector"
 
-#define HW_SHADER(...) #__VA_ARGS__
-
 al_class_ex(HwProgram, AlAbsGLProgram) {
 public:
     static void calculateFitWinVertex(float *vertex,

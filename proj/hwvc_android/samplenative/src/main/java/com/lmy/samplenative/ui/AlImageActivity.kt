@@ -54,7 +54,6 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
 
     override fun getLayoutResource(): Int = R.layout.activity_al_image
 
-    private var lastTime = 0L
     override fun initView() {
         showOptLayer(false)
         surfaceView.keepScreenOn = true
@@ -69,10 +68,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
                 processor?.postTranslate(getCurrentLayer(), dx, dy)
             }
             if (paintBox.isChecked) {
-                if (System.currentTimeMillis() > lastTime + 1000) {
-                    lastTime = System.currentTimeMillis()
-                    processor?.addMosaic(getCurrentLayer(), PointF(x, y))
-                }
+                processor?.addMosaic(getCurrentLayer(), PointF(x, y))
             }
             //For crop debug
 //            ensureCropLayer()

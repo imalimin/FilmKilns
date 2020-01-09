@@ -6,7 +6,7 @@
 */
 
 #include "AlULayerFilter.h"
-#include "AlMosaicFilter.h"
+#include "AlPaintFilter.h"
 #include "AlAbsMFilterAction.h"
 #include "AlMMosaicAction.h"
 #include "AlLayerPair.h"
@@ -24,7 +24,7 @@ AlULayerFilter::~AlULayerFilter() {
 
 bool AlULayerFilter::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
-    mosaicFilter = new AlMosaicFilter();
+    mosaicFilter = new AlPaintFilter();
     mosaicFilter->prepare();
     nLayer = AlImageLayer::create(texAllocator->alloc());
     return true;
@@ -59,13 +59,14 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
                                              pair->layer->getHeight(),
                                              GL_RGBA);
             }
-            dynamic_cast<AlMosaicFilter *>(mosaicFilter)->updatePath(
+            dynamic_cast<AlPaintFilter *>(mosaicFilter)->setPath(
                     dynamic_cast<AlMMosaicAction *>(action)->getPath());
-            mosaicFilter->draw(pair->layer->getTexture(), nLayer->getTexture());
+            glViewport(0, 0, nLayer->getWidth(), nLayer->getHeight());
+            mosaicFilter->draw(pair->layer->getTexture(), pair->layer->getTexture());
         }
         ++itr;
     }
-    _notifyDescriptor(nLayer, pair->model, msg->arg1);
+    _notifyDescriptor(pair->layer, pair->model, msg->arg1);
     return true;
 }
 

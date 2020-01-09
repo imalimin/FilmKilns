@@ -9,6 +9,8 @@
 #include "AlVec2.h"
 #include "HwAbsTexture.h"
 
+#define HW_SHADER(...) #__VA_ARGS__
+
 al_class(AlAbsGLProgram) {
 public:
     AlAbsGLProgram(std::string *v, std::string *f);

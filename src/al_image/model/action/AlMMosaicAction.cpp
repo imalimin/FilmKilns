@@ -16,17 +16,17 @@ AlMMosaicAction::AlMMosaicAction() : AlAbsMFilterAction(TYPE_MOSAIC) {
 
 AlMMosaicAction::~AlMMosaicAction() = default;
 
-void AlMMosaicAction::addPoint(const AlPointF &pointF) {
-    this->points.emplace_back(pointF);
-    Logcat::i(TAG, "%s(%d) addPoint %d", __FUNCTION__, __LINE__, points.size());
+void AlMMosaicAction::addPoint(const AlVec2 &pointF) {
+    this->path.emplace_back(pointF);
+    Logcat::i(TAG, "%s(%d) addPoint %d", __FUNCTION__, __LINE__, path.size());
 }
 
 HwResult AlMMosaicAction::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     return Hw::SUCCESS;
 }
 
-std::vector<AlPointF> *AlMMosaicAction::getPath() {
-    return &points;
+std::vector<AlVec2> *AlMMosaicAction::getPath() {
+    return &path;
 }
 
 HwResult AlMMosaicAction::fromElement(AlElement *element) {

@@ -411,6 +411,7 @@ HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
     auto *layer = _getLayer(id);
     if (layer) {
         transToCanvasPos(pointF.x, pointF.y);
+        pointF.y = -pointF.y;
         auto *actions = layer->getAllActions();
         size_t size = actions->size();
         for (int i = 0; i < size; ++i) {
