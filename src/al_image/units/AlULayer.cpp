@@ -75,6 +75,10 @@ void AlULayer::_notifyAll(int32_t flags) {
             }
             _notifyFilter(layer, model, tFlags);
         }
+    } else {
+        AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
+        sMsg->desc = "show";
+        postEvent(sMsg);
     }
 }
 
