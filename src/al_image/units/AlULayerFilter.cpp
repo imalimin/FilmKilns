@@ -9,7 +9,7 @@
 #include "AlMosaicFilter.h"
 #include "AlAbsMFilterAction.h"
 #include "AlMMosaicAction.h"
-#include "ObjectBox.h"
+#include "AlLayerPair.h"
 
 #define TAG "AlULayerFilter"
 
@@ -26,7 +26,7 @@ bool AlULayerFilter::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
     mosaicFilter = new AlMosaicFilter();
     mosaicFilter->prepare();
-    nLayer = AlImageLayer::create(nullptr, texAllocator->alloc());
+    nLayer = AlImageLayer::create(texAllocator->alloc());
     return true;
 }
 
@@ -42,34 +42,37 @@ bool AlULayerFilter::onDestroy(AlMessage *msg) {
 
 bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d) onDoFilterAction", __FUNCTION__, __LINE__);
-    AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
-    if (layer->model->countFilterAction() <= 0) {
-        _notifyDescriptor(layer, msg->arg1);
+    AlLayerPair *pair = msg->getObj<AlLayerPair *>();
+    if (pair->model->countFilterAction() <= 0) {
+        _notifyDescriptor(pair->layer, pair->model, msg->arg1);
         return true;
     }
-    auto *actions = layer->model->getAllActions();
+    auto *actions = pair->model->getAllActions();
     auto itr = actions->begin();
     while (actions->end() != itr) {
         AlAbsMFilterAction *action = dynamic_cast<AlAbsMFilterAction *>(*itr);
         if (typeid(AlMMosaicAction) == typeid(*action)) {
-            if (layer->getWidth() != nLayer->getWidth()
-                || layer->getHeight() != nLayer->getHeight()) {
-                nLayer->getTexture()->update(nullptr, layer->getWidth(), layer->getHeight(),
+            if (pair->layer->getWidth() != nLayer->getWidth()
+                || pair->layer->getHeight() != nLayer->getHeight()) {
+                nLayer->getTexture()->update(nullptr,
+                                             pair->layer->getWidth(),
+                                             pair->layer->getHeight(),
                                              GL_RGBA);
             }
             dynamic_cast<AlMosaicFilter *>(mosaicFilter)->updatePath(
                     dynamic_cast<AlMMosaicAction *>(action)->getPath());
-            mosaicFilter->draw(layer->getTexture(), nLayer->getTexture());
+            mosaicFilter->draw(pair->layer->getTexture(), nLayer->getTexture());
         }
         ++itr;
     }
-    nLayer->model = layer->model;
-    _notifyDescriptor(nLayer, msg->arg1);
+    _notifyDescriptor(nLayer, pair->model, msg->arg1);
     return true;
 }
 
-void AlULayerFilter::_notifyDescriptor(AlImageLayer *layer, int32_t flags) {
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE, ObjectBox::wrap(layer));
+void AlULayerFilter::_notifyDescriptor(AlImageLayer *layer,
+                                       AlImageLayerModel *model,
+                                       int32_t flags) {
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE, new AlLayerPair(layer, model));
     msg->arg1 = flags;
     msg->desc = "measure";
     postEvent(msg);

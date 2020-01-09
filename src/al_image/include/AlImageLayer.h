@@ -11,7 +11,6 @@
 #include "Object.h"
 #include "HwResult.h"
 #include "HwAbsTexture.h"
-#include "AlImageLayerModel.h"
 
 class AlImageCanvas;
 
@@ -19,11 +18,9 @@ class AlImageLayerManager;
 
 al_class(AlImageLayer) {
 public:
-    static AlImageLayer *create(AlImageLayerModel *model, HwAbsTexture *tex);
+    static AlImageLayer *create(HwAbsTexture *tex);
 
 public:
-    AlImageLayerModel *model = nullptr;
-
     ~AlImageLayer();
 
     int32_t getWidth();
@@ -33,7 +30,7 @@ public:
     HwAbsTexture *getTexture();
 
 private:
-    AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex);
+    AlImageLayer(HwAbsTexture *tex);
 
     AlImageLayer(const AlImageLayer &e) : Object() {};
 

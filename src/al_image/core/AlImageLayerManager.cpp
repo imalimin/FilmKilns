@@ -74,7 +74,7 @@ bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
     delete buf;
     delete bmp;
     _correctAngle(texAllocator, &srcTex, rotation);
-    AlImageLayer *layer = AlImageLayer::create(model, srcTex);
+    AlImageLayer *layer = AlImageLayer::create(srcTex);
     mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
     return true;
 }
@@ -109,7 +109,7 @@ bool AlImageLayerManager::_found(int32_t id) {
     return mLayers.end() != mLayers.find(id);
 }
 
-int32_t AlImageLayerManager::size() {
+size_t AlImageLayerManager::size() {
     if (empty()) {
         return 0;
     }
@@ -120,9 +120,13 @@ bool AlImageLayerManager::empty() {
     return nullptr == models || models->empty();
 }
 
-AlImageLayer *AlImageLayerManager::getLayer(int32_t index) {
+AlImageLayerModel *AlImageLayerManager::getLayer(int32_t index) {
     if (empty()) return nullptr;
-    int32_t id = models->at(index)->getId();
+    return models->at(index);
+}
+
+AlImageLayer *AlImageLayerManager::find(int32_t id) {
+    if (empty()) return nullptr;
     auto itr = mLayers.find(id);
     if (mLayers.end() == itr) {
         return nullptr;

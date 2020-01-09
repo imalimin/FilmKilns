@@ -74,7 +74,7 @@ private:
     /// +------------------------------------------------------------+
     /// | 0         | none                    | Render to screen     |
     /// +------------------------------------------------------------+
-    void _notifyFilter(AlImageLayer *layer, int32_t flags);
+    void _notifyFilter(AlImageLayer *layer, AlImageLayerModel *model, int32_t flags);
 
     void _saveStep();
 

@@ -25,11 +25,13 @@ public:
 
     void update(std::vector<AlImageLayerModel *> *list, AlTexAllocator *texAllocator);
 
-    int32_t size();
+    size_t size();
 
     bool empty();
 
-    AlImageLayer *getLayer(int32_t index);
+    AlImageLayerModel *getLayer(int32_t index);
+
+    AlImageLayer *find(int32_t id);
 
     void replaceAll(AlTexAllocator *texAllocator, std::vector<AlImageLayerModel *> *list);
 

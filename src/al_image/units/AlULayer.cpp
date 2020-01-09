@@ -8,6 +8,7 @@
 #include "AlULayer.h"
 #include "HwTexture.h"
 #include "ObjectBox.h"
+#include "AlLayerPair.h"
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
@@ -63,19 +64,22 @@ void AlULayer::_notifyAll(int32_t flags) {
     if (!mLayerManager.empty()) {
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
-            AlImageLayer *layer = mLayerManager.getLayer(i);
+            AlImageLayerModel *model = mLayerManager.getLayer(i);
+            if (nullptr == model) continue;
+            AlImageLayer *layer = mLayerManager.find(model->getId());
+            if (nullptr == layer) continue;
             int32_t tFlags = 0x1;
             ///只有最后一个图层绘制完之后才上屏
             if (i >= size - 1) {
                 tFlags = flags;
             }
-            _notifyFilter(layer, tFlags);
+            _notifyFilter(layer, model, tFlags);
         }
     }
 }
 
-void AlULayer::_notifyFilter(AlImageLayer *layer, int32_t flags) {
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_FILTER_RENDER, ObjectBox::wrap(layer));
+void AlULayer::_notifyFilter(AlImageLayer *layer, AlImageLayerModel *model, int32_t flags) {
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_FILTER_RENDER, new AlLayerPair(layer, model));
     msg->arg1 = flags;
     msg->desc = "filter";
     postEvent(msg);

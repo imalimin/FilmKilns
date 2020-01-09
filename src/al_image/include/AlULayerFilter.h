@@ -12,6 +12,7 @@
 #include "AlImageLayer.h"
 #include "HwAbsFilter.h"
 #include "AlTexAllocator.h"
+#include "AlImageLayerModel.h"
 
 al_class_ex(AlULayerFilter, Unit) {
 public:
@@ -35,7 +36,7 @@ public:
     bool onDoFilterAction(AlMessage *msg);
 
 private:
-    void _notifyDescriptor(AlImageLayer *layer, int32_t flags);
+    void _notifyDescriptor(AlImageLayer *layer, AlImageLayerModel *model, int32_t flags);
 
 private:
     AlTexAllocator *texAllocator = nullptr;

@@ -12,6 +12,7 @@
 #include "ObjectBox.h"
 #include "AlImgLayerDescription.h"
 #include "AlAbsMAction.h"
+#include "AlLayerPair.h"
 
 #define TAG "AlULayerDescriptor"
 
@@ -34,9 +35,9 @@ bool AlULayerDescriptor::onDestroy(AlMessage *msg) {
 }
 
 bool AlULayerDescriptor::onMeasure(AlMessage *msg) {
-    AlImageLayer *layer = msg->getObj<ObjectBox *>()->unWrap<AlImageLayer *>();
+    AlLayerPair *pair = msg->getObj<AlLayerPair *>();
     AlImageLayerDrawModel *description = new AlImageLayerDrawModel();
-    _measure(layer, description);
+    _measure(pair->layer, pair->model, description);
     notifyCanvas(description, msg->arg1);
     return true;
 }
@@ -47,8 +48,10 @@ bool AlULayerDescriptor::onCanvasSizeUpdate(AlMessage *msg) {
     return true;
 }
 
-HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel *description) {
-    if (nullptr == layer || nullptr == layer->model || nullptr == description) {
+HwResult AlULayerDescriptor::_measure(AlImageLayer *layer,
+                                      AlImageLayerModel *layerModel,
+                                      AlImageLayerDrawModel *description) {
+    if (nullptr == layer || nullptr == layerModel || nullptr == description) {
         return Hw::FAILED;
     }
     AlSize layerSize(layer->getWidth(), layer->getHeight());
@@ -59,9 +62,9 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel
         canvasSize.height = layerSize.height;
     }
     ///Copy一份layer model送入opt进行测量，在测量过程中opt可能会改变model数据
-    AlImgLayerDescription model(*(layer->model));
+    AlImgLayerDescription model(*(layerModel));
     model.setSize(layerSize);
-    HwResult ret = _measureOperate(layer->model->getAllActions(), model, description);
+    HwResult ret = _measureOperate(layerModel->getAllActions(), model, description);
     description->setLayerSize(model.getSize());
     ///经过各种各样的Operate后，layer size会被改变并更新到AlImageLayerDrawModel
     ///这里需要获取最新的layer size，不然会出错
@@ -84,9 +87,9 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer, AlImageLayerDrawModel
     AlVec2 rt;
     ///获得经过位移旋转缩放变换后图像的位置坐标
     aMeasurer.measureTransLORectF(lt, lb, rb, rt);
-    layer->model->setQuad(lt, lb, rb, rt);
+    layerModel->setQuad(lt, lb, rb, rt);
     ///TODO 这里需要把Y轴翻转一次
-    layer->model->getQuad().mirrorVertical();
+    layerModel->getQuad().mirrorVertical();
     Logcat::i(TAG, "tran %f, %f", model.getPosition().x, model.getPosition().y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lt.x, lt.y, rt.x, rt.y);
     Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lb.x, lb.y, rb.x, rb.y);

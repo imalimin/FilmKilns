@@ -42,7 +42,9 @@ private:
     /// Measure all params for canvas
     /// \param drawModel
     /// \return {@link HwResult}
-    HwResult _measure(AlImageLayer *layer, AlImageLayerDrawModel *description);
+    HwResult _measure(AlImageLayer *layer,
+                      AlImageLayerModel *layerModel,
+                      AlImageLayerDrawModel *description);
 
     /// Measure all operate`s params for canvas
     /// \param model

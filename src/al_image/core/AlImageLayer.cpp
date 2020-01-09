@@ -13,17 +13,15 @@
 
 #define TAG "AlImageLayer"
 
-AlImageLayer *AlImageLayer::create(AlImageLayerModel *model, HwAbsTexture *tex) {
-    return new AlImageLayer(model, tex);
+AlImageLayer *AlImageLayer::create(HwAbsTexture *tex) {
+    return new AlImageLayer(tex);
 }
 
-AlImageLayer::AlImageLayer(AlImageLayerModel *model, HwAbsTexture *tex) : Object() {
-    this->model = model;
+AlImageLayer::AlImageLayer(HwAbsTexture *tex) : Object() {
     this->tex = tex;
 }
 
 AlImageLayer::~AlImageLayer() {
-    model = nullptr;
 }
 
 int32_t AlImageLayer::getWidth() {

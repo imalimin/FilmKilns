@@ -24,6 +24,7 @@ public:
     int32_t arg1 = 0;
     int64_t arg2 = 0;
     string desc;
+    /// Will be delete after cycle.
     Object *obj = nullptr;
     int16_t queueMode = QUEUE_MODE_NORMAL;
 private:
