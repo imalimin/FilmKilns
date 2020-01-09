@@ -37,7 +37,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     }
 
     /**
-     * 设置画布大小
+     * 设置画布大小，图层也会等比例缩放
      * @param w     新的画布宽度
      * @param h     新的画布高度
      * @param color 画布颜色

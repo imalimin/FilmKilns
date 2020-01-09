@@ -388,7 +388,7 @@ class CanvasOptDialog(private var context: AlImageActivity, private var processo
     : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf<BottomSheetItem>(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Crop Canvas"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
+            BottomSheetItem(1, R.mipmap.ic_launcher, "Resize to 720p"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "None")
     )
 
@@ -408,6 +408,9 @@ class CanvasOptDialog(private var context: AlImageActivity, private var processo
                             rectF.right, rectF.bottom)
                 }
                 context.showSelector(false)
+            }
+            1 -> {
+                processor?.setCanvas(720, 1080, 0)
             }
         }
     }

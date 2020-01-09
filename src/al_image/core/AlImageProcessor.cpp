@@ -88,8 +88,16 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 }
 
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
-    mCanvasSize.width = w;
-    mCanvasSize.height = h;
+    float scale = w / (float) mCanvasSize.width;
+    AlSize dest(w, static_cast<int>(mCanvasSize.height * scale));
+    size_t size = mLayers.size();
+    for (int i = 0; i < size; ++i) {
+        auto *layer = mLayers[i];
+        layer->setScale(layer->getScale().x * scale, layer->getScale().y * scale);
+    }
+    mCanvasSize.width = dest.width;
+    mCanvasSize.height = dest.height;
+    Logcat::i(TAG, "%s(%d) %dx%d", __FUNCTION__, __LINE__, dest.width, dest.height);
     _notifyCanvasUpdate();
     invalidate();
 }
