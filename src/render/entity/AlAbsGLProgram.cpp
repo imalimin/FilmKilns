@@ -114,3 +114,11 @@ int32_t AlAbsGLProgram::getUniformLocation(string name) {
 bool AlAbsGLProgram::_checkProgram() {
     return GL_NONE != program;
 }
+
+int32_t AlAbsGLProgram::getError() {
+    GLenum error = glGetError();
+    if (GL_NO_ERROR != error) {
+        Logcat::i(TAG, "%s(%d) OpenGL ES throw an error: %x", __FUNCTION__, __LINE__, error);
+    }
+    return error;
+}

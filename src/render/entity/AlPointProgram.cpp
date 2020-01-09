@@ -22,9 +22,15 @@ AlPointProgram *AlPointProgram::create(std::string *v, std::string *f) {
 AlPointProgram::AlPointProgram(std::string *v, std::string *f) : AlAbsGLProgram(v, f) {
     aPosLoc = getAttribLocation("aPosition");
     uTexLoc = getUniformLocation("uTexture");
-    std::vector<AlVec2> positions;
-    positions.emplace_back(AlVec2(0.0f, 0.0f));
+    std::vector<AlVec2 *> positions;
+    positions.emplace_back(new AlVec2(0.0f, 0.0f));
     updatePosition(positions);
+    size_t size = positions.size();
+    for (int i = 0; i < size; ++i) {
+        AlVec2 *vec = positions[i];
+        delete vec;
+    }
+    positions.clear();
 }
 
 AlPointProgram::~AlPointProgram() {
@@ -36,6 +42,9 @@ AlPointProgram::~AlPointProgram() {
 }
 
 void AlPointProgram::draw(HwAbsTexture *tex) {
+    if (nullptr == positions || posCount <= 0){
+        return;
+    }
     bind();
     if (uTexLoc >= 0) {
         glActiveTexture(GL_TEXTURE0);
@@ -46,14 +55,14 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
     glVertexAttribPointer(aPosLoc, 2, GL_FLOAT, GL_FALSE, 0, positions);
     glDrawArrays(GL_POINTS, 0, posCount);
     glDisableVertexAttribArray(aPosLoc);
-    glFlush();
     if (uTexLoc >= 0) {
         tex->unbind();
     }
     unbind();
+    glFlush();
 }
 
-void AlPointProgram::updatePosition(std::vector<AlVec2> &position) {
+void AlPointProgram::updatePosition(std::vector<AlVec2 *> &position) {
     if (posCount != position.size()) {
         if (positions) {
             delete[] positions;
@@ -62,8 +71,8 @@ void AlPointProgram::updatePosition(std::vector<AlVec2> &position) {
         positions = new float[posCount];
     }
     for (int i = 0; i < posCount; ++i) {
-        AlVec2 vec = position[i];
-        positions[i * 2] = vec.x;
-        positions[i * 2 + 1] = vec.y;
+        AlVec2 *vec = position[i];
+        positions[i * 2] = vec->x;
+        positions[i * 2 + 1] = vec->y;
     }
 }

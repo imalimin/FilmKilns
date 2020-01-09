@@ -18,7 +18,7 @@ public:
 
     void addPoint(const AlVec2 &pointF);
 
-    std::vector<AlVec2> *getPath();
+    std::vector<AlVec2 *> *getPath();
 
     virtual HwResult draw(HwAbsTexture *src, HwAbsTexture *dest) override;
 
@@ -30,7 +30,7 @@ private:
     AlMMosaicAction(const AlMMosaicAction &o) : AlAbsMFilterAction(o) {};
 
 private:
-    std::vector<AlVec2> path;
+    std::vector<AlVec2 *> path;
 };
 
 

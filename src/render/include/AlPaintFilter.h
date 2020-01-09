@@ -18,7 +18,7 @@ public:
 
     ~AlPaintFilter();
 
-    void setPath(std::vector<AlVec2> *vec);
+    void setPath(std::vector<AlVec2 *> *vec);
 
     AlAbsGLProgram *createProgram() override;
 
@@ -30,7 +30,7 @@ private:
     void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
-    std::vector<AlVec2> *path;
+    std::vector<AlVec2 *> *path;
 };
 
 

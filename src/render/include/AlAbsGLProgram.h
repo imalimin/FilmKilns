@@ -25,6 +25,8 @@ public:
 
     void unbind();
 
+    int32_t getError();
+
     int32_t getAttribLocation(string name);
 
     int32_t getUniformLocation(string name);

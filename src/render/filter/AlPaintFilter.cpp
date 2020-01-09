@@ -19,7 +19,7 @@ AlPaintFilter::~AlPaintFilter() {
     path = nullptr;
 }
 
-void AlPaintFilter::setPath(std::vector<AlVec2> *vec) {
+void AlPaintFilter::setPath(std::vector<AlVec2 *> *vec) {
     path = vec;
 }
 

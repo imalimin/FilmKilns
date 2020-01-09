@@ -51,15 +51,15 @@ private:
     const int32_t HW_VERTEX_BYTE_SIZE = HW_SIZE_OF_VERTEX * HW_COUNT_PER_VERTEX * 4;
 
 private:
-    int32_t uTextureLocation = 0;
-    int32_t aPositionLocation = 0;
-    int32_t aTextureCoordinateLocation = 0;
-    int32_t uTextureMatrix = 0;
+    int32_t uTextureLocation = -1;
+    int32_t aPositionLocation = -1;
+    int32_t aTextureCoordinateLocation = -1;
+    int32_t uTextureMatrix = -1;
+    uint32_t vbo = 0;
     float position[8] = {0.0f};
     float texCoordinate[8] = {0.0f};
     AlMatrix matrix;
     bool requestUpdateLocation = false;
-    uint32_t vbo = 0;
 };
 
 

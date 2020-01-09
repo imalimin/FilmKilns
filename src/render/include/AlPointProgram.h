@@ -22,7 +22,7 @@ public:
 
     virtual void draw(HwAbsTexture *tex) override;
 
-    void updatePosition(std::vector<AlVec2> &position);
+    void updatePosition(std::vector<AlVec2 *> &position);
 
 private:
     AlPointProgram(std::string *v, std::string *f);
@@ -30,8 +30,8 @@ private:
     AlPointProgram(const AlPointProgram &o) : AlAbsGLProgram(o) {};
 
 private:
-    int32_t aPosLoc = 0;
-    int32_t uTexLoc = 0;
+    int32_t aPosLoc = -1;
+    int32_t uTexLoc = -1;
 
     float *positions = nullptr;
     int32_t posCount = 0;

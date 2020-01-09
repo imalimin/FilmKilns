@@ -59,7 +59,7 @@ void BaseDrawer::draw(GLuint texture) {
     glBindTexture(GL_TEXTURE_2D, GL_NONE);
     glUseProgram(GL_NONE);
     programUsed = false;
-//    glFlush();
+    glFlush();
 }
 
 void BaseDrawer::useProgram() {
