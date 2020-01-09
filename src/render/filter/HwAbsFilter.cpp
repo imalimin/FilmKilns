@@ -35,15 +35,15 @@ bool HwAbsFilter::prepare() {
     return true;
 }
 
-void HwAbsFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void HwAbsFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     drawStart(program, src, dest);
 }
 
-void HwAbsFilter::drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void HwAbsFilter::drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
 
 }
 
-void HwAbsFilter::drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void HwAbsFilter::drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
 
 }
 

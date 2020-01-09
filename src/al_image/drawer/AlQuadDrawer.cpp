@@ -6,6 +6,7 @@
 */
 
 #include "AlQuadDrawer.h"
+#include "HwProgram.h"
 
 AlQuadDrawer::AlQuadDrawer() : HwNormalFilter() {
 
@@ -47,15 +48,15 @@ void AlQuadDrawer::setQuad(AlQuad &quad) {
     this->vertex[7] = quad.rightBottom().y * 2.0f - 1.0f;
 }
 
-void AlQuadDrawer::drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlQuadDrawer::drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawStart(program, src, dest);
-    program->updateLocation(nullptr, vertex);
+    dynamic_cast<HwProgram *>(program)->updateLocation(nullptr, vertex);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
 }
 
-void AlQuadDrawer::drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlQuadDrawer::drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawEnd(program, src, dest);
     glDisable(GL_BLEND);
 }

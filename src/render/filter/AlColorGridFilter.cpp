@@ -6,6 +6,7 @@
 */
 
 #include "AlColorGridFilter.h"
+#include "HwProgram.h"
 
 AlColorGridFilter *AlColorGridFilter::create() {
     return new AlColorGridFilter();
@@ -75,7 +76,7 @@ void AlColorGridFilter::_update(AlSize &canvasSize) {
     delete buf;
 }
 
-HwProgram *AlColorGridFilter::createProgram() {
+AlAbsGLProgram *AlColorGridFilter::createProgram() {
     string vertex("attribute vec4 aPosition;\n"
                   "attribute vec4 aTextureCoord;\n"
                   "varying vec2 vTextureCoord;\n"
@@ -93,7 +94,7 @@ HwProgram *AlColorGridFilter::createProgram() {
     return HwProgram::create(&vertex, &fragment);
 }
 
-void AlColorGridFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlColorGridFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     float left = 0.0f;
     float right = dest->getWidth() / (float) size;
@@ -105,7 +106,7 @@ void AlColorGridFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTe
             left, bottom,//LEFT,BOTTOM
             right, bottom,//RIGHT,BOTTOM
     };
-    program->updateLocation(texCoordinate, nullptr);
+    dynamic_cast<HwProgram *>(program)->updateLocation(texCoordinate, nullptr);
 }
 
 void AlColorGridFilter::draw(HwAbsTexture *dest) {

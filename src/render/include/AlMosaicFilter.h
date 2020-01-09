@@ -10,6 +10,7 @@
 
 #include "HwAbsFilter.h"
 #include "AlPointF.h"
+#include <vector>
 
 ///马赛克
 al_class_ex(AlMosaicFilter, HwAbsFilter) {
@@ -20,14 +21,14 @@ public:
 
     void updatePath(std::vector<AlPointF> *vec);
 
-    HwProgram *createProgram() override;
+    AlAbsGLProgram *createProgram() override;
 
     void draw(HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
     AlMosaicFilter(const AlMosaicFilter &o) : HwAbsFilter() {}
 
-    void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
     int32_t uRadius = 0;

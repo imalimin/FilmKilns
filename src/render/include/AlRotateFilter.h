@@ -18,7 +18,7 @@ public:
 
     virtual ~AlRotateFilter();
 
-    virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    virtual void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
     void setRotation(AlRational &r);
 

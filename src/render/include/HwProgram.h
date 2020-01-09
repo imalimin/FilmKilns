@@ -8,14 +8,14 @@
 #ifndef HWVC_ANDROID_HWPROGRAM_H
 #define HWVC_ANDROID_HWPROGRAM_H
 
-#include "Object.h"
+#include "AlAbsGLProgram.h"
 #include "HwAbsTexture.h"
 #include "AlMatrix.h"
 #include "vector"
 
 #define HW_SHADER(...) #__VA_ARGS__
 
-class HwProgram : public Object {
+al_class_ex(HwProgram, AlAbsGLProgram) {
 public:
     static void calculateFitWinVertex(float *vertex,
                                       Size texSize,
@@ -27,40 +27,20 @@ public:
 public:
     virtual ~HwProgram();
 
-    void draw(HwAbsTexture *tex);
+    virtual void draw(HwAbsTexture *tex) override;
 
     void updateLocation(float *texCoordinate, float *position);
 
-    int32_t getAttribLocation(string name);
-
-    int32_t getUniformLocation(string name);
-
-    void setUniform1f(int32_t location, float value);
-
-    void setUniform2fv(int32_t location, AlVec2 &vec2);
-
-    void setUniform2fv(int32_t location, int32_t count, float *array);
-
-    void setUniformMatrix4fv(int32_t location, float *value);
-
-    void setUniform1i(int32_t location, int32_t value);
-
     void updateMatrix(AlMatrix *matrix);
-
-    void bind();
-
-    void unbind();
 
 private:
     HwProgram(string *vertex, string *fragment);
 
+    HwProgram(const HwProgram &o) : AlAbsGLProgram(o) {};
+
     void updateVBOs();
 
     uint32_t createVBOs();
-
-    uint32_t createShader(uint32_t type, string *shader);
-
-    uint32_t createProgram(string *vertex, string *fragment);
 
     void enableVertex(uint32_t posLoc, uint32_t texLoc);
 
@@ -73,7 +53,6 @@ private:
     const int32_t HW_VERTEX_BYTE_SIZE = HW_SIZE_OF_VERTEX * HW_COUNT_PER_VERTEX * 4;
 
 private:
-    uint32_t program = 0;
     int32_t uTextureLocation = 0;
     int32_t aPositionLocation = 0;
     int32_t aTextureCoordinateLocation = 0;

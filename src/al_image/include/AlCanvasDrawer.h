@@ -29,11 +29,11 @@ public:
     void setPositionQuad(AlQuad &quad);
 
 private:
-    HwProgram *createProgram() override;
+    AlAbsGLProgram *createProgram() override;
 
-    void drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    void drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
-    void drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    void drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
     void _resetUV();
 

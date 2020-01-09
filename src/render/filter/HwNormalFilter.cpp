@@ -6,6 +6,7 @@
  */
 
 #include "HwNormalFilter.h"
+#include "HwProgram.h"
 
 static const string VERTEX = HW_SHADER(
         attribute vec4 aPosition;
@@ -35,7 +36,7 @@ HwNormalFilter::~HwNormalFilter() {
 
 }
 
-HwProgram *HwNormalFilter::createProgram() {
+AlAbsGLProgram *HwNormalFilter::createProgram() {
     string vertex = string(VERTEX);
     string fragment = string(FRAGMENT);
     return HwProgram::create(&vertex, &fragment);;

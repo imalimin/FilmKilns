@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwRGBA2NV12Filter.h"
+#include "HwRGBA2NV12Filter.h"
+#include "HwProgram.h"
 
 static const string VERTEX = HW_SHADER(
         attribute vec4 aPosition;
@@ -72,7 +73,7 @@ HwRGBA2NV12Filter::~HwRGBA2NV12Filter() {
 
 }
 
-HwProgram *HwRGBA2NV12Filter::createProgram() {
+AlAbsGLProgram *HwRGBA2NV12Filter::createProgram() {
     string vertex = string(VERTEX);
     string fragment = string(FRAGMENT);
     HwProgram *program = HwProgram::create(&vertex, &fragment);
@@ -80,7 +81,7 @@ HwProgram *HwRGBA2NV12Filter::createProgram() {
     return program;
 }
 
-void HwRGBA2NV12Filter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void HwRGBA2NV12Filter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     program->bind();
     program->setUniform1i(this->widthLocation, dest->getWidth() * 4);

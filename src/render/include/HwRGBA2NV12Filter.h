@@ -16,9 +16,9 @@ public:
 
     virtual ~HwRGBA2NV12Filter();
 
-    virtual HwProgram *createProgram() override;
+    virtual AlAbsGLProgram *createProgram() override;
 
-    virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    virtual void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
     int32_t widthLocation = 0;

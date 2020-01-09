@@ -16,9 +16,9 @@ public:
 
     virtual ~HwYV122RGBAFilter();
 
-    virtual HwProgram *createProgram() override;
+    virtual AlAbsGLProgram *createProgram() override;
 
-    virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    virtual void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
     virtual void draw(HwAbsTexture *y, HwAbsTexture *u, HwAbsTexture *v, HwAbsTexture *dest);
 

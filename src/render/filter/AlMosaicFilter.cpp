@@ -6,6 +6,7 @@
 */
 
 #include "AlMosaicFilter.h"
+#include "HwProgram.h"
 
 constexpr int SIZE_POINT = 10;
 
@@ -17,7 +18,7 @@ AlMosaicFilter::~AlMosaicFilter() {
     delete[] path;
 };
 
-HwProgram *AlMosaicFilter::createProgram() {
+AlAbsGLProgram *AlMosaicFilter::createProgram() {
     string vertex("attribute vec4 aPosition;\n"
                   "attribute vec4 aTextureCoord;\n"
                   "varying vec2 vTextureCoord;\n"
@@ -60,7 +61,7 @@ HwProgram *AlMosaicFilter::createProgram() {
     return program;
 }
 
-void AlMosaicFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlMosaicFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     program->bind();
     float size = dest->getWidth() * 0.05f / 2.0f;

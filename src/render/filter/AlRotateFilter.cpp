@@ -5,8 +5,9 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include <cmath>
 #include "AlRotateFilter.h"
+#include "HwProgram.h"
+#include "AlMath.h"
 #include "Logcat.h"
 
 #define TAG "AlRotateFilter"
@@ -19,7 +20,7 @@ AlRotateFilter::~AlRotateFilter() {
 
 }
 
-void AlRotateFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlRotateFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     auto r = fmod(abs(rotation.toFloat()), 2.0);
     float *vertex = nullptr;
@@ -47,7 +48,7 @@ void AlRotateFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTextu
     } else {
         Logcat::w(TAG, "%s(%d): Not support this angle yet.", __FUNCTION__, __LINE__);
     }
-    program->updateLocation(nullptr, vertex);
+    dynamic_cast<HwProgram *>(program)->updateLocation(nullptr, vertex);
     delete[] vertex;
 }
 

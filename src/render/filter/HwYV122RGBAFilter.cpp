@@ -5,7 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwYV122RGBAFilter.h"
+#include "HwYV122RGBAFilter.h"
+#include "HwProgram.h"
 #include <GLES2/gl2.h>
 
 static const string VERTEX = HW_SHADER(
@@ -44,7 +45,7 @@ HwYV122RGBAFilter::~HwYV122RGBAFilter() {
 
 }
 
-HwProgram *HwYV122RGBAFilter::createProgram() {
+AlAbsGLProgram *HwYV122RGBAFilter::createProgram() {
     string vertex = string(VERTEX);
     string fragment = string(FRAGMENT);
     HwProgram *p = HwProgram::create(&vertex, &fragment);
@@ -53,7 +54,7 @@ HwProgram *HwYV122RGBAFilter::createProgram() {
     return p;
 }
 
-void HwYV122RGBAFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void HwYV122RGBAFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     program->bind();
     glActiveTexture(GL_TEXTURE1);

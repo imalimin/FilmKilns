@@ -19,9 +19,9 @@ public:
 
     virtual ~HwvcFilter();
 
-    virtual HwProgram *createProgram() override;
+    virtual AlAbsGLProgram *createProgram() override;
 
-    virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    virtual void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
     std::string path;

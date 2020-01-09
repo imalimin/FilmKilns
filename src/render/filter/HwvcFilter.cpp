@@ -4,10 +4,11 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-#include "../include/HwvcFilter.h"
-#include "../include/NormalDrawer.h"
-#include "../entity/FilterEntity.h"
+#include "HwvcFilter.h"
+#include "NormalDrawer.h"
+#include "entity/FilterEntity.h"
 #include "AlBitmapFactory.h"
+#include "HwProgram.h"
 #include "log.h"
 
 HwvcFilter::HwvcFilter(char *path) : HwAbsFilter(), path(path) {
@@ -33,7 +34,7 @@ HwvcFilter::~HwvcFilter() {
     }
 }
 
-HwProgram *HwvcFilter::createProgram() {
+AlAbsGLProgram *HwvcFilter::createProgram() {
     struct timeval start, end;
     gettimeofday(&start, NULL);
     FilterEntity *entity = FilterEntity::fromFile(path);
@@ -71,7 +72,7 @@ HwProgram *HwvcFilter::createProgram() {
     return program;
 }
 
-void HwvcFilter::drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void HwvcFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawFirst(program, src, dest);
     program->bind();
     /**

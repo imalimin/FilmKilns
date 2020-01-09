@@ -6,6 +6,7 @@
 */
 
 #include "AlCanvasDrawer.h"
+#include "HwProgram.h"
 #include "Logcat.h"
 #include "AlVec4.h"
 
@@ -19,7 +20,7 @@ AlCanvasDrawer::~AlCanvasDrawer() {
 
 }
 
-HwProgram *AlCanvasDrawer::createProgram() {
+AlAbsGLProgram *AlCanvasDrawer::createProgram() {
     string vertex("attribute vec4 aPosition;\n"
                   "attribute vec4 aTextureCoord;\n"
                   "uniform mat4 uTextureMatrix;\n"
@@ -38,16 +39,16 @@ HwProgram *AlCanvasDrawer::createProgram() {
     return HwProgram::create(&vertex, &fragment);
 }
 
-void AlCanvasDrawer::drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlCanvasDrawer::drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawStart(program, src, dest);
-    program->updateMatrix(&matrix);
-    program->updateLocation(uv, vertex);
+    dynamic_cast<HwProgram *>(program)->updateMatrix(&matrix);
+    dynamic_cast<HwProgram *>(program)->updateLocation(uv, vertex);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
 }
 
-void AlCanvasDrawer::drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+void AlCanvasDrawer::drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawEnd(program, src, dest);
     glDisable(GL_BLEND);
 }

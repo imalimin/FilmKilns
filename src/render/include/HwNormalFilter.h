@@ -16,7 +16,7 @@ public:
 
     virtual ~HwNormalFilter();
 
-    virtual HwProgram *createProgram() override;
+    virtual AlAbsGLProgram *createProgram() override;
 
 };
 

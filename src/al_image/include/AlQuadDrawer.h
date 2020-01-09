@@ -27,9 +27,9 @@ public:
 private:
     AlQuadDrawer(const AlQuadDrawer &o) : HwNormalFilter() {};
 
-    void drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    void drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
-    void drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    void drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
     HwAbsTexture *cover = nullptr;

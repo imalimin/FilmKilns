@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWABSFILTER_H
 
 #include "Object.h"
-#include "HwProgram.h"
+#include "AlAbsGLProgram.h"
 #include "HwAbsTexture.h"
 #include "HwAbsFBObject.h"
 
@@ -32,17 +32,17 @@ public:
 
     virtual void setParam(int key, int value);
 
-    virtual HwProgram *createProgram() = 0;
+    virtual AlAbsGLProgram *createProgram() = 0;
 
-    virtual void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
+    virtual void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
 
-    virtual void drawStart(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
+    virtual void drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
 
-    virtual void drawEnd(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
+    virtual void drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest);
 
 private:
     HwAbsFBObject *fbo = nullptr;
-    HwProgram *program = nullptr;
+    AlAbsGLProgram *program = nullptr;
     bool initialized = false;
 };
 

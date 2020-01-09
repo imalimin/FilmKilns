@@ -32,9 +32,9 @@ private:
 
     bool prepare() override;
 
-    HwProgram *createProgram() override;
+    AlAbsGLProgram *createProgram() override;
 
-    void drawFirst(HwProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+    void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
     void draw(HwAbsTexture *src, HwAbsTexture *dest) override;
 
