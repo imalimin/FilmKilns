@@ -28,9 +28,15 @@ public:
 
     bool isZero();
 
-    AlVec2 &operator+(float value);
+    AlVec2 &operator+(const float value);
 
-    AlVec2 &operator/(float value);
+    AlVec2 &operator+(const AlVec2 vec);
+
+    AlVec2 &operator-(const AlVec2 vec);
+
+    bool operator<(const AlVec2 vec);
+
+    AlVec2 &operator/(const float value);
 
 public:
     float x = 0.0f;

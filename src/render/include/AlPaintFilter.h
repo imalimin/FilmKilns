@@ -39,7 +39,7 @@ private:
     int32_t uColor = -1;
     float paintSize = 0.0f;
     AlColor color = AlColor(0xffffff);
-    std::vector<float> *path;
+    std::vector<float> path;
 };
 
 
