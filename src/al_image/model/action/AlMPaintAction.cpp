@@ -11,16 +11,21 @@
 #define TAG "AlMMosaicAction"
 
 AlMPaintAction::AlMPaintAction() : AlAbsMFilterAction(TYPE_MOSAIC) {
-
+    newPath();
 }
 
 AlMPaintAction::~AlMPaintAction() {
     path.clear();
 };
 
-void AlMPaintAction::addPoint(const AlVec2 &pointF) {
-    this->path.emplace_back(pointF.x);
-    this->path.emplace_back(pointF.y);
+void AlMPaintAction::newPath() {
+    path.emplace_back(new AlPointPath());
+}
+
+void AlMPaintAction::paint(const AlVec2 &pointF) {
+    if (!path.empty()) {
+        path[path.size() - 1]->paintTo(pointF);
+    }
     Logcat::i(TAG, "%s(%d) addPoint %d", __FUNCTION__, __LINE__, path.size());
 }
 
@@ -28,8 +33,13 @@ HwResult AlMPaintAction::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     return Hw::SUCCESS;
 }
 
-std::vector<float> *AlMPaintAction::getPath() {
-    return &path;
+void AlMPaintAction::getPath(std::vector<float> &path) {
+    for (AlPointPath *p:this->path) {
+        auto *temp = p->path();
+        for (float it:*temp) {
+            path.emplace_back(it);
+        }
+    }
 }
 
 void AlMPaintAction::setPaintSize(float size) {

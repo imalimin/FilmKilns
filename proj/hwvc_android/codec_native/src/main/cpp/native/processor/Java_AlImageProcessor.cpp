@@ -273,9 +273,9 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_undo
 }
 
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_addMosaic
-        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y, jboolean painting) {
     if (handler) {
-        return getHandler(handler)->addMosaic(id, AlPointF(x, y)).code;
+        return getHandler(handler)->addMosaic(id, AlPointF(x, y),JNI_TRUE == painting).code;
     }
     return Hw::FAILED.code;
 }

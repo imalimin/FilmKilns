@@ -308,9 +308,9 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
-    fun addMosaic(id: Int, point: PointF): Int {
+    fun addMosaic(id: Int, point: PointF, painting: Boolean): Int {
         if (!isNativeNull()) {
-            return addMosaic(handler, id, point.x, point.y)
+            return addMosaic(handler, id, point.x, point.y, painting)
         }
         return AlResult.FAILED
     }
@@ -392,5 +392,5 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun import(handler: Long, path: String): Int
     private external fun redo(handler: Long): Int
     private external fun undo(handler: Long): Int
-    private external fun addMosaic(handler: Long, id: Int, x: Float, y: Float): Int
+    private external fun addMosaic(handler: Long, id: Int, x: Float, y: Float, painting: Boolean): Int
 }

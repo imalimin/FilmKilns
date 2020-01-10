@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALMPAINTACTION_H
 
 #include "AlAbsMFilterAction.h"
+#include "AlPointPath.h"
 #include "AlColor.h"
 
 al_class_ex(AlMPaintAction, AlAbsMFilterAction) {
@@ -17,7 +18,9 @@ public:
 
     ~AlMPaintAction();
 
-    void addPoint(const AlVec2 &pointF);
+    void newPath();
+
+    void paint(const AlVec2 &pointF);
 
     void setPaintSize(float size);
 
@@ -27,7 +30,7 @@ public:
 
     AlColor getColor();
 
-    std::vector<float> *getPath();
+    void getPath(std::vector<float> &path);
 
     virtual HwResult draw(HwAbsTexture *src, HwAbsTexture *dest) override;
 
@@ -39,7 +42,7 @@ private:
     AlMPaintAction(const AlMPaintAction &o) : AlAbsMFilterAction(o) {};
 
 private:
-    std::vector<float> path;
+    std::vector<AlPointPath *> path;
     float paintSize = 0.0f;
     AlColor color = AlColor(0xffffff);
 };

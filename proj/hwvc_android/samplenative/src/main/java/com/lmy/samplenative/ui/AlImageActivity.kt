@@ -63,12 +63,12 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
                 setCurLayer(processor!!.getLayer(x, y))
             }
         }
-        surfaceView.setOnScrollListener { v, x, y, dx, dy ->
+        surfaceView.setOnScrollListener { v, x, y, dx, dy, s ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
                 processor?.postTranslate(getCurrentLayer(), dx, dy)
             }
             if (paintBox.isChecked) {
-                processor?.addMosaic(getCurrentLayer(), PointF(x, y))
+                processor?.addMosaic(getCurrentLayer(), PointF(x, y), 1 == s)
             }
             //For crop debug
 //            ensureCropLayer()

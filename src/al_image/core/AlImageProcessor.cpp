@@ -406,7 +406,7 @@ HwResult AlImageProcessor::undo() {
     return Hw::SUCCESS;
 }
 
-HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
+HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF, bool painting) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {
@@ -426,7 +426,10 @@ HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
             action = AlLayerActionFactory::paint(0.01f, AlColor(0xff0000));
             layer->addAction(action);
         }
-        dynamic_cast<AlMPaintAction *>(action)->addPoint(pointF);
+        dynamic_cast<AlMPaintAction *>(action)->paint(pointF);
+        if (!painting) {
+            dynamic_cast<AlMPaintAction *>(action)->newPath();
+        }
         invalidate();
         return Hw::SUCCESS;
     }

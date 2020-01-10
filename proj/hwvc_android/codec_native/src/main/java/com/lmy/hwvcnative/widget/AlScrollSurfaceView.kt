@@ -73,6 +73,10 @@ class AlScrollSurfaceView : SurfaceView {
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 rotate = false
+                val xy = PointF(event.x * 2 / measuredWidth.toFloat() - 1f,
+                        -(event.y * 2 / measuredHeight.toFloat() - 1f))
+                onScrollListener?.onScroll(this@AlScrollSurfaceView, xy.x, xy.y,
+                        0f, 0f, 0)
             }
             MotionEvent.ACTION_MOVE -> {
                 if (rotate) {
@@ -97,10 +101,11 @@ class AlScrollSurfaceView : SurfaceView {
     }
 
     fun setOnScrollListener(listener: (v: SurfaceView, x: Float, y: Float,
-                                       dx: Float, dy: Float) -> Unit) {
+                                       dx: Float, dy: Float, status: Int) -> Unit) {
         setOnScrollListener(object : OnScrollListener {
-            override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float) {
-                listener(v, x, y, dx, dy)
+            override fun onScroll(v: SurfaceView, x: Float, y: Float,
+                                  dx: Float, dy: Float, status: Int) {
+                listener(v, x, y, dx, dy, status)
             }
         })
     }
@@ -146,7 +151,10 @@ class AlScrollSurfaceView : SurfaceView {
     }
 
     interface OnScrollListener {
-        fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float)
+        /**
+         * @param status 0:IDL,1:SCROLL
+         */
+        fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float, status: Int)
     }
 
     interface OnClickListener {
@@ -198,7 +206,7 @@ class AlScrollSurfaceView : SurfaceView {
             val xy = PointF(e2.x * 2 / measuredWidth.toFloat() - 1f,
                     -(e2.y * 2 / measuredHeight.toFloat() - 1f))
             onScrollListener?.onScroll(this@AlScrollSurfaceView, xy.x, xy.y,
-                    -distanceX / width.toFloat() * 2f, distanceY / height.toFloat() * 2f)
+                    -distanceX / width.toFloat() * 2f, distanceY / height.toFloat() * 2f, 1)
             return true
         }
     }
