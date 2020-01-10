@@ -34,7 +34,7 @@ private:
     int32_t uTexLoc = -1;
 
     float *positions = nullptr;
-    int32_t posCount = 0;
+    size_t posCount = 0;
 };
 
 
