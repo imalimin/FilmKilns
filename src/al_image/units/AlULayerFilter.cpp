@@ -8,7 +8,7 @@
 #include "AlULayerFilter.h"
 #include "AlPaintFilter.h"
 #include "AlAbsMFilterAction.h"
-#include "AlMMosaicAction.h"
+#include "AlMPaintAction.h"
 #include "AlLayerPair.h"
 
 #define TAG "AlULayerFilter"
@@ -51,7 +51,7 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     auto itr = actions->begin();
     while (actions->end() != itr) {
         AlAbsMFilterAction *action = dynamic_cast<AlAbsMFilterAction *>(*itr);
-        if (typeid(AlMMosaicAction) == typeid(*action)) {
+        if (typeid(AlMPaintAction) == typeid(*action)) {
             if (pair->layer->getWidth() != nLayer->getWidth()
                 || pair->layer->getHeight() != nLayer->getHeight()) {
                 nLayer->getTexture()->update(nullptr,
@@ -60,7 +60,7 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
                                              GL_RGBA);
             }
             dynamic_cast<AlPaintFilter *>(mosaicFilter)->setPath(
-                    dynamic_cast<AlMMosaicAction *>(action)->getPath());
+                    dynamic_cast<AlMPaintAction *>(action)->getPath());
             glViewport(0, 0, nLayer->getWidth(), nLayer->getHeight());
             mosaicFilter->draw(pair->layer->getTexture(), pair->layer->getTexture());
         }

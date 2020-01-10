@@ -16,7 +16,7 @@ public:
 
     static AlAbsMAction *alignCrop(AlRational &r);
 
-    static AlAbsMAction *mosaic(const AlPointF &pointF);
+    static AlAbsMAction *paint(const AlPointF &pointF);
 
 private:
     AlLayerActionFactory() : Object() {};

@@ -19,7 +19,7 @@ AlPaintFilter::~AlPaintFilter() {
     path = nullptr;
 }
 
-void AlPaintFilter::setPath(std::vector<AlVec2 *> *vec) {
+void AlPaintFilter::setPath(std::vector<float> *vec) {
     path = vec;
 }
 
@@ -40,7 +40,7 @@ void AlPaintFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsT
     HwAbsFilter::drawFirst(program, src, dest);
     if (path) {
         program->bind();
-        dynamic_cast<AlPointProgram *>(program)->updatePosition(*path);
+        dynamic_cast<AlPointProgram *>(program)->setVertex(*path, 2, path->size() / 2);
     }
 }
 

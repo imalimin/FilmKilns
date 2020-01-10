@@ -19,7 +19,7 @@
 #include "core/file/AlFileExporter.h"
 #include "AlTarUtil.h"
 #include "AlMath.h"
-#include "AlMMosaicAction.h"
+#include "AlMPaintAction.h"
 
 #define TAG "AlImageProcessor"
 
@@ -416,14 +416,14 @@ HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
         size_t size = actions->size();
         for (int i = 0; i < size; ++i) {
             AlAbsMAction *action = (*actions)[i];
-            if (typeid(AlMMosaicAction) == typeid(*action)) {
-                dynamic_cast<AlMMosaicAction *>(action)->addPoint(pointF);
+            if (typeid(AlMPaintAction) == typeid(*action)) {
+                dynamic_cast<AlMPaintAction *>(action)->addPoint(pointF);
                 invalidate();
                 return Hw::SUCCESS;
             }
         }
-        AlAbsMAction *action = AlLayerActionFactory::mosaic(pointF);
-        dynamic_cast<AlMMosaicAction *>(action)->addPoint(pointF);
+        AlAbsMAction *action = AlLayerActionFactory::paint(pointF);
+        dynamic_cast<AlMPaintAction *>(action)->addPoint(pointF);
         layer->addAction(action);
         invalidate();
         return Hw::SUCCESS;

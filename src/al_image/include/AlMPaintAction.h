@@ -5,20 +5,20 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALMMOSAICACTION_H
-#define HWVC_ANDROID_ALMMOSAICACTION_H
+#ifndef HWVC_ANDROID_ALMPAINTACTION_H
+#define HWVC_ANDROID_ALMPAINTACTION_H
 
 #include "AlAbsMFilterAction.h"
 
-al_class_ex(AlMMosaicAction, AlAbsMFilterAction) {
+al_class_ex(AlMPaintAction, AlAbsMFilterAction) {
 public:
-    AlMMosaicAction();
+    AlMPaintAction();
 
-    ~AlMMosaicAction();
+    ~AlMPaintAction();
 
     void addPoint(const AlVec2 &pointF);
 
-    std::vector<AlVec2 *> *getPath();
+    std::vector<float> *getPath();
 
     virtual HwResult draw(HwAbsTexture *src, HwAbsTexture *dest) override;
 
@@ -27,11 +27,11 @@ public:
     virtual HwResult toElement(AlElement **element) override;
 
 private:
-    AlMMosaicAction(const AlMMosaicAction &o) : AlAbsMFilterAction(o) {};
+    AlMPaintAction(const AlMPaintAction &o) : AlAbsMFilterAction(o) {};
 
 private:
-    std::vector<AlVec2 *> path;
+    std::vector<float> path;
 };
 
 
-#endif //HWVC_ANDROID_ALMMOSAICACTION_H
+#endif //HWVC_ANDROID_ALMPAINTACTION_H

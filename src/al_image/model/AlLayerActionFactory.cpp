@@ -8,7 +8,7 @@
 #include "AlLayerActionFactory.h"
 #include "AlMCropAction.h"
 #include "AlMAlignCropAction.h"
-#include "AlMMosaicAction.h"
+#include "AlMPaintAction.h"
 
 AlAbsMAction *AlLayerActionFactory::crop(float left, float top, float right, float bottom) {
     auto *opt = new AlMCropAction();
@@ -22,8 +22,8 @@ AlAbsMAction *AlLayerActionFactory::alignCrop(AlRational &r) {
     return opt;
 }
 
-AlAbsMAction *AlLayerActionFactory::mosaic(const AlPointF &pointF) {
-    auto *action = new AlMMosaicAction();
+AlAbsMAction *AlLayerActionFactory::paint(const AlPointF &pointF) {
+    auto *action = new AlMPaintAction();
     action->addPoint(pointF);
     return action;
 }

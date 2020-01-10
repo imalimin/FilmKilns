@@ -9,7 +9,6 @@
 #include "AlEgl.h"
 #include "Logcat.h"
 
-constexpr int VERTEX_SIZE = 2;
 #define TAG "AlPointProgram"
 
 AlPointProgram *AlPointProgram::create(std::string *v, std::string *f) {
@@ -23,21 +22,16 @@ AlPointProgram *AlPointProgram::create(std::string *v, std::string *f) {
 AlPointProgram::AlPointProgram(std::string *v, std::string *f) : AlAbsGLProgram(v, f) {
     aPosLoc = getAttribLocation("aPosition");
     uTexLoc = getUniformLocation("uTexture");
-    posCount = 1;
-    positions = new float[posCount * VERTEX_SIZE];
-    memset(positions, 0, posCount * VERTEX_SIZE);
 }
 
 AlPointProgram::~AlPointProgram() {
-    posCount = 0;
-    if (positions) {
-        delete[] positions;
-        positions = nullptr;
-    }
+    vetexSize = 0;
+    vetexCount = 0;
+    vertex.clear();
 }
 
 void AlPointProgram::draw(HwAbsTexture *tex) {
-    if (nullptr == positions || posCount <= 0) {
+    if (vertex.empty() || vetexSize <= 0 || vetexCount <= 0) {
         return;
     }
     bind();
@@ -47,8 +41,8 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
         glUniform1i(uTexLoc, 0);
     }
     glEnableVertexAttribArray(aPosLoc);
-    glVertexAttribPointer(aPosLoc, VERTEX_SIZE, GL_FLOAT, GL_FALSE, 0, positions);
-    glDrawArrays(GL_POINTS, 0, posCount);
+    glVertexAttribPointer(aPosLoc, vetexSize, GL_FLOAT, GL_FALSE, 0, this->vertex.data());
+    glDrawArrays(GL_POINTS, 0, vetexCount);
     glDisableVertexAttribArray(aPosLoc);
     if (uTexLoc >= 0) {
         tex->unbind();
@@ -57,17 +51,11 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
     glFlush();
 }
 
-void AlPointProgram::updatePosition(std::vector<AlVec2 *> &position) {
-    if (posCount != position.size()) {
-        if (positions) {
-            delete[] positions;
-        }
-        posCount = position.size();
-        positions = new float[posCount * VERTEX_SIZE];
-    }
-    for (int i = 0; i < posCount; ++i) {
-        AlVec2 *vec = position[i];
-        positions[i * VERTEX_SIZE] = vec->x;
-        positions[i * VERTEX_SIZE + 1] = vec->y;
+void AlPointProgram::setVertex(std::vector<float> &vertex, int32_t size, int32_t count) {
+    if (this->vertex.size() != vertex.size()) {
+        this->vetexSize = size;
+        this->vetexCount = count;
+        this->vertex.clear();
+        this->vertex = vertex;
     }
 }
