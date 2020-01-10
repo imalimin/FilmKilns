@@ -195,8 +195,8 @@ class AlScrollSurfaceView : SurfaceView {
 //        mCurrentPosition.y = scroller.currY.toFloat()
             mCurrentPosition.x -= distanceX
             mCurrentPosition.y -= distanceY
-            val xy = PointF(e1.x * 2 / measuredWidth.toFloat() - 1f,
-                    -(e1.y * 2 / measuredHeight.toFloat() - 1f))
+            val xy = PointF(e2.x * 2 / measuredWidth.toFloat() - 1f,
+                    -(e2.y * 2 / measuredHeight.toFloat() - 1f))
             onScrollListener?.onScroll(this@AlScrollSurfaceView, xy.x, xy.y,
                     -distanceX / width.toFloat() * 2f, distanceY / height.toFloat() * 2f)
             return true

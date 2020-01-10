@@ -126,7 +126,8 @@ private:
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
 
-    AlEgl *aSharedContext = nullptr;
+    /// Just for use gl sources before screen` egl initialize.
+    AlEgl *aBasCtx = nullptr;
     AlAbsContext *context = nullptr;
     std::vector<AlImageLayerModel *> mLayers;
     AlIdentityCreator mLayerIdCreator;

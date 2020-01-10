@@ -41,7 +41,6 @@ void AlPaintFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsT
     if (path) {
         program->bind();
         dynamic_cast<AlPointProgram *>(program)->updatePosition(*path);
-        Logcat::i(TAG, "%s(%d) size %d", __FUNCTION__, __LINE__, path->size());
     }
 }
 
