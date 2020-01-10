@@ -40,7 +40,7 @@ private:
 
 private:
     AlTexAllocator *texAllocator = nullptr;
-    HwAbsFilter *mosaicFilter = nullptr;
+    HwAbsFilter *paintFilter = nullptr;
     AlImageLayer *nLayer = nullptr;
 };
 

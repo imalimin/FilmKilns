@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALLAYERACTIONFACTORY_H
 
 #include "AlAbsMAction.h"
+#include "AlColor.h"
 
 al_class(AlLayerActionFactory) {
 public:
@@ -16,7 +17,7 @@ public:
 
     static AlAbsMAction *alignCrop(AlRational &r);
 
-    static AlAbsMAction *paint(const AlPointF &pointF);
+    static AlAbsMAction *paint(const float paintSize, const AlColor &color);
 
 private:
     AlLayerActionFactory() : Object() {};

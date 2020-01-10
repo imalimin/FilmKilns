@@ -32,6 +32,22 @@ std::vector<float> *AlMPaintAction::getPath() {
     return &path;
 }
 
+void AlMPaintAction::setPaintSize(float size) {
+    this->paintSize = size;
+}
+
+float AlMPaintAction::getPaintSize() {
+    return paintSize;
+}
+
+void AlMPaintAction::setColor(AlColor color) {
+    this->color = color;
+}
+
+AlColor AlMPaintAction::getColor() {
+    return color;
+}
+
 HwResult AlMPaintAction::fromElement(AlElement *element) {
     return Hw::SUCCESS;
 }

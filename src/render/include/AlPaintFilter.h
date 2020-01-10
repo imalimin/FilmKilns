@@ -10,6 +10,7 @@
 
 #include "HwAbsFilter.h"
 #include "AlPointF.h"
+#include "AlColor.h"
 #include <vector>
 
 al_class_ex(AlPaintFilter, HwAbsFilter) {
@@ -19,6 +20,10 @@ public:
     ~AlPaintFilter();
 
     void setPath(std::vector<float> *vec);
+
+    void setPaintSize(float size);
+
+    void setColor(AlColor color);
 
     AlAbsGLProgram *createProgram() override;
 
@@ -30,6 +35,10 @@ private:
     void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
+    int32_t uSize = -1;
+    int32_t uColor = -1;
+    float paintSize = 0.0f;
+    AlColor color = AlColor(0xffffff);
     std::vector<float> *path;
 };
 

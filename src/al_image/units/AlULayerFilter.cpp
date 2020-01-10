@@ -24,18 +24,18 @@ AlULayerFilter::~AlULayerFilter() {
 
 bool AlULayerFilter::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
-    mosaicFilter = new AlPaintFilter();
-    mosaicFilter->prepare();
+    paintFilter = new AlPaintFilter();
+    paintFilter->prepare();
     nLayer = AlImageLayer::create(texAllocator->alloc());
     return true;
 }
 
 bool AlULayerFilter::onDestroy(AlMessage *msg) {
     delete nLayer;
-    delete mosaicFilter;
+    delete paintFilter;
     delete texAllocator;
     nLayer = nullptr;
-    mosaicFilter = nullptr;
+    paintFilter = nullptr;
     texAllocator = nullptr;
     return true;
 }
@@ -59,10 +59,14 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
                                              pair->layer->getHeight(),
                                              GL_RGBA);
             }
-            dynamic_cast<AlPaintFilter *>(mosaicFilter)->setPath(
+            dynamic_cast<AlPaintFilter *>(paintFilter)->setColor(
+                    dynamic_cast<AlMPaintAction *>(action)->getColor());
+            dynamic_cast<AlPaintFilter *>(paintFilter)->setPaintSize(
+                    dynamic_cast<AlMPaintAction *>(action)->getPaintSize());
+            dynamic_cast<AlPaintFilter *>(paintFilter)->setPath(
                     dynamic_cast<AlMPaintAction *>(action)->getPath());
             glViewport(0, 0, nLayer->getWidth(), nLayer->getHeight());
-            mosaicFilter->draw(pair->layer->getTexture(), pair->layer->getTexture());
+            paintFilter->draw(pair->layer->getTexture(), pair->layer->getTexture());
         }
         ++itr;
     }

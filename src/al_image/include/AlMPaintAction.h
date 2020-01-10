@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALMPAINTACTION_H
 
 #include "AlAbsMFilterAction.h"
+#include "AlColor.h"
 
 al_class_ex(AlMPaintAction, AlAbsMFilterAction) {
 public:
@@ -17,6 +18,14 @@ public:
     ~AlMPaintAction();
 
     void addPoint(const AlVec2 &pointF);
+
+    void setPaintSize(float size);
+
+    float getPaintSize();
+
+    void setColor(AlColor color);
+
+    AlColor getColor();
 
     std::vector<float> *getPath();
 
@@ -31,6 +40,8 @@ private:
 
 private:
     std::vector<float> path;
+    float paintSize = 0.0f;
+    AlColor color = AlColor(0xffffff);
 };
 
 

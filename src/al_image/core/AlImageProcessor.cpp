@@ -412,19 +412,21 @@ HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF) {
     if (layer) {
         transToCanvasPos(pointF.x, pointF.y);
         pointF.y = -pointF.y;
+        AlAbsMAction *action = nullptr;
         auto *actions = layer->getAllActions();
         size_t size = actions->size();
         for (int i = 0; i < size; ++i) {
-            AlAbsMAction *action = (*actions)[i];
-            if (typeid(AlMPaintAction) == typeid(*action)) {
-                dynamic_cast<AlMPaintAction *>(action)->addPoint(pointF);
-                invalidate();
-                return Hw::SUCCESS;
+            AlAbsMAction *a = (*actions)[i];
+            if (typeid(AlMPaintAction) == typeid(*a)) {
+                action = a;
+                break;
             }
         }
-        AlAbsMAction *action = AlLayerActionFactory::paint(pointF);
+        if (nullptr == action) {
+            action = AlLayerActionFactory::paint(0.01f, AlColor(0xff0000));
+            layer->addAction(action);
+        }
         dynamic_cast<AlMPaintAction *>(action)->addPoint(pointF);
-        layer->addAction(action);
         invalidate();
         return Hw::SUCCESS;
     }

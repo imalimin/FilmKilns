@@ -15,7 +15,7 @@ public:
     static AlColor from(std::string colorStr);
 
 public:
-    AlColor(int32_t color);
+    AlColor(int32_t argb);
 
     AlColor(const AlColor &o);
 
@@ -40,7 +40,7 @@ public:
     float af();
 
 private:
-    int32_t _color = 0;
+    int32_t _argb = 0;
 
 };
 

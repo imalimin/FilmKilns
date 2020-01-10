@@ -22,8 +22,9 @@ AlAbsMAction *AlLayerActionFactory::alignCrop(AlRational &r) {
     return opt;
 }
 
-AlAbsMAction *AlLayerActionFactory::paint(const AlPointF &pointF) {
+AlAbsMAction *AlLayerActionFactory::paint(const float paintSize, const AlColor &color) {
     auto *action = new AlMPaintAction();
-    action->addPoint(pointF);
+    action->setPaintSize(paintSize);
+    action->setColor(color);
     return action;
 }

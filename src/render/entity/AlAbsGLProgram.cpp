@@ -93,6 +93,10 @@ void AlAbsGLProgram::setUniform2fv(int32_t location, int32_t count, float *array
     glUniform2fv(location, count, array);
 }
 
+void AlAbsGLProgram::setUniform4fv(int32_t location, int32_t count, float *array) {
+    glUniform4fv(location, count, array);
+}
+
 void AlAbsGLProgram::setUniformMatrix4fv(int32_t location, float *value) {
     glUniformMatrix4fv(location, 1, GL_FALSE, value);
 }
