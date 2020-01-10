@@ -29,13 +29,19 @@ private:
 
     AlPointProgram(const AlPointProgram &o) : AlAbsGLProgram(o) {};
 
+    void _updateVBOs();
+
+    uint32_t _createVBOs();
+
 private:
     int32_t aPosLoc = -1;
     int32_t uTexLoc = -1;
+    uint32_t vbo = 0;
 
     std::vector<float> vertex;
-    int32_t vetexSize = 0;
-    int32_t vetexCount = 0;
+    int32_t vertexSize = 0;
+    int32_t vertexCount = 0;
+    bool reqUpdateVertex = false;
 };
 
 

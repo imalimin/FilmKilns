@@ -25,13 +25,13 @@ AlPointProgram::AlPointProgram(std::string *v, std::string *f) : AlAbsGLProgram(
 }
 
 AlPointProgram::~AlPointProgram() {
-    vetexSize = 0;
-    vetexCount = 0;
+    vertexSize = 0;
+    vertexCount = 0;
     vertex.clear();
 }
 
 void AlPointProgram::draw(HwAbsTexture *tex) {
-    if (vertex.empty() || vetexSize <= 0 || vetexCount <= 0) {
+    if (vertex.empty() || vertexSize <= 0 || vertexCount <= 0) {
         return;
     }
     bind();
@@ -40,9 +40,10 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
         tex->bind();
         glUniform1i(uTexLoc, 0);
     }
+    _updateVBOs();
     glEnableVertexAttribArray(aPosLoc);
-    glVertexAttribPointer(aPosLoc, vetexSize, GL_FLOAT, GL_FALSE, 0, this->vertex.data());
-    glDrawArrays(GL_POINTS, 0, vetexCount);
+    glVertexAttribPointer(aPosLoc, vertexSize, GL_FLOAT, GL_FALSE, 0, this->vertex.data());
+    glDrawArrays(GL_POINTS, 0, vertexCount);
     glDisableVertexAttribArray(aPosLoc);
     if (uTexLoc >= 0) {
         tex->unbind();
@@ -53,9 +54,22 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
 
 void AlPointProgram::setVertex(std::vector<float> &vertex, int32_t size, int32_t count) {
     if (this->vertex.size() != vertex.size()) {
-        this->vetexSize = size;
-        this->vetexCount = count;
+        this->vertexSize = size;
+        this->vertexCount = count;
         this->vertex.clear();
         this->vertex = vertex;
+        reqUpdateVertex = true;
     }
+}
+
+void AlPointProgram::_updateVBOs() {
+    if (!reqUpdateVertex) return;
+    reqUpdateVertex = false;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, vertexSize * vertexCount * 4, this->vertex.data());
+    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+}
+
+uint32_t AlPointProgram::_createVBOs() {
+    return 0;
 }
