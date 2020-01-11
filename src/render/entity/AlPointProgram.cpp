@@ -22,16 +22,21 @@ AlPointProgram *AlPointProgram::create(std::string *v, std::string *f) {
 AlPointProgram::AlPointProgram(std::string *v, std::string *f) : AlAbsGLProgram(v, f) {
     aPosLoc = getAttribLocation("aPosition");
     uTexLoc = getUniformLocation("uTexture");
+    vbo = AlVBO::alloc();
+    if (nullptr == vbo) {
+        Logcat::e(TAG, "%s(%d) vbo alloc failed", __FUNCTION__, __LINE__);
+    }
 }
 
 AlPointProgram::~AlPointProgram() {
-    vertexSize = 0;
-    vertexCount = 0;
+    delete vbo;
+    countPerVertex = 0;
+    countVertex = 0;
     vertex.clear();
 }
 
 void AlPointProgram::draw(HwAbsTexture *tex) {
-    if (vertex.empty() || vertexSize <= 0 || vertexCount <= 0) {
+    if (vertex.empty() || countPerVertex <= 0 || countVertex <= 0) {
         return;
     }
     bind();
@@ -40,10 +45,12 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
         tex->bind();
         glUniform1i(uTexLoc, 0);
     }
+    vbo->bind();
     _updateVBOs();
     glEnableVertexAttribArray(aPosLoc);
-    glVertexAttribPointer(aPosLoc, vertexSize, GL_FLOAT, GL_FALSE, 0, this->vertex.data());
-    glDrawArrays(GL_POINTS, 0, vertexCount);
+    glVertexAttribPointer(aPosLoc, countPerVertex, GL_FLOAT, GL_FALSE, 0, 0);
+    vbo->unbind();
+    glDrawArrays(GL_POINTS, 0, countVertex);
     glDisableVertexAttribArray(aPosLoc);
     if (uTexLoc >= 0) {
         tex->unbind();
@@ -52,10 +59,11 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
     glFlush();
 }
 
-void AlPointProgram::setVertex(std::vector<float> &vertex, int32_t size, int32_t count) {
+void AlPointProgram::setVertex(std::vector<float> &vertex, int32_t countPerVertex,
+                               int32_t countVertex) {
     if (this->vertex.size() != vertex.size()) {
-        this->vertexSize = size;
-        this->vertexCount = count;
+        this->countPerVertex = countPerVertex;
+        this->countVertex = countVertex;
         this->vertex.clear();
         this->vertex = vertex;
         reqUpdateVertex = true;
@@ -63,13 +71,12 @@ void AlPointProgram::setVertex(std::vector<float> &vertex, int32_t size, int32_t
 }
 
 void AlPointProgram::_updateVBOs() {
-    if (!reqUpdateVertex) return;
+    if (!reqUpdateVertex || nullptr == vbo) {
+        return;
+    }
     reqUpdateVertex = false;
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertexSize * vertexCount * 4, this->vertex.data());
-    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-}
-
-uint32_t AlPointProgram::_createVBOs() {
-    return 0;
+    AlBuffer *buf = AlBuffer::wrap(reinterpret_cast<uint8_t *>(this->vertex.data()),
+                                   this->vertex.size() * sizeof(float));
+    vbo->update(buf);
+    delete buf;
 }

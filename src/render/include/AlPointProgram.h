@@ -10,6 +10,7 @@
 
 #include "AlAbsGLProgram.h"
 #include "HwAbsTexture.h"
+#include "AlVBO.h"
 #include "AlVec2.h"
 #include "vector"
 
@@ -22,7 +23,7 @@ public:
 
     virtual void draw(HwAbsTexture *tex) override;
 
-    void setVertex(std::vector<float> &vertex, int32_t size, int32_t count);
+    void setVertex(std::vector<float> &vertex, int32_t countPerVertex, int32_t countVertex);
 
 private:
     AlPointProgram(std::string *v, std::string *f);
@@ -31,16 +32,14 @@ private:
 
     void _updateVBOs();
 
-    uint32_t _createVBOs();
-
 private:
     int32_t aPosLoc = -1;
     int32_t uTexLoc = -1;
-    uint32_t vbo = 0;
+    AlVBO *vbo = nullptr;
 
     std::vector<float> vertex;
-    int32_t vertexSize = 0;
-    int32_t vertexCount = 0;
+    int32_t countPerVertex = 0;
+    int32_t countVertex = 0;
     bool reqUpdateVertex = false;
 };
 
