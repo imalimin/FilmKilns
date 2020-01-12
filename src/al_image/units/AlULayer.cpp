@@ -42,7 +42,13 @@ bool AlULayer::onDestroy(AlMessage *msg) {
 }
 
 bool AlULayer::onUpdateLayer(AlMessage *msg) {
-    mLayerManager.update(getLayers(), texAllocator);
+    std::vector<int32_t> delLayers;
+    mLayerManager.update(getLayers(), texAllocator, &delLayers);
+    for (auto id:delLayers) {
+        auto *m = AlMessage::obtain(EVENT_LAYER_REMOVE_CACHE_LAYER);
+        m->arg1 = id;
+        postEvent(m);
+    }
     return true;
 }
 

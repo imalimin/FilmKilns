@@ -89,6 +89,7 @@ static constexpr int EVENT_CANVAS_CLEAR_DONE = KID('A', 'L', 'R', 0x06);
 static constexpr int EVENT_CANVAS_DRAW_DONE = KID('A', 'L', 'R', 0x06);
 
 static constexpr int EVENT_LAYER_FILTER_RENDER = KID('A', 'L', 'F', 0x00);
+static constexpr int EVENT_LAYER_REMOVE_CACHE_LAYER = KID('A', 'L', 'F', 0x01);
 
 /**
  * Define class HwModelProvider.

@@ -7,6 +7,7 @@
 
 #include "AlULayerFilter.h"
 #include "AlPaintFilter.h"
+#include "HwNormalFilter.h"
 #include "AlAbsMFilterAction.h"
 #include "AlMPaintAction.h"
 #include "AlLayerPair.h"
@@ -16,6 +17,8 @@
 AlULayerFilter::AlULayerFilter(string alias) : Unit(alias) {
     registerEvent(EVENT_LAYER_FILTER_RENDER,
                   reinterpret_cast<EventFunc>(&AlULayerFilter::onDoFilterAction));
+    registerEvent(EVENT_LAYER_REMOVE_CACHE_LAYER,
+                  reinterpret_cast<EventFunc>(&AlULayerFilter::onRemoveLayer));
 }
 
 AlULayerFilter::~AlULayerFilter() {
@@ -24,26 +27,32 @@ AlULayerFilter::~AlULayerFilter() {
 
 bool AlULayerFilter::onCreate(AlMessage *msg) {
     texAllocator = new AlTexAllocator();
+    copyFilter = new HwNormalFilter();
+    copyFilter->prepare();
     paintFilter = new AlPaintFilter();
     paintFilter->prepare();
-    nLayer = AlImageLayer::create(texAllocator->alloc());
     return true;
 }
 
 bool AlULayerFilter::onDestroy(AlMessage *msg) {
-    delete nLayer;
+    delete copyFilter;
+    copyFilter = nullptr;
     delete paintFilter;
-    delete texAllocator;
-    nLayer = nullptr;
     paintFilter = nullptr;
+    delete texAllocator;
     texAllocator = nullptr;
     return true;
 }
 
 bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
-    Logcat::i(TAG, "%s(%d) onDoFilterAction", __FUNCTION__, __LINE__);
+    Logcat::i(TAG, "%s(%d) layer size: %d", __FUNCTION__, __LINE__, layers.size());
     AlLayerPair *pair = msg->getObj<AlLayerPair *>();
     if (pair->model->countFilterAction() <= 0) {
+        _notifyDescriptor(pair->layer, pair->model, msg->arg1);
+        return true;
+    }
+    auto *fLayer = _findLayer(pair->model, pair->layer);
+    if (nullptr == fLayer) {
         _notifyDescriptor(pair->layer, pair->model, msg->arg1);
         return true;
     }
@@ -52,9 +61,9 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     while (actions->end() != itr) {
         AlAbsMFilterAction *action = dynamic_cast<AlAbsMFilterAction *>(*itr);
         if (typeid(AlMPaintAction) == typeid(*action)) {
-            if (pair->layer->getWidth() != nLayer->getWidth()
-                || pair->layer->getHeight() != nLayer->getHeight()) {
-                nLayer->getTexture()->update(nullptr,
+            if (pair->layer->getWidth() != fLayer->getWidth()
+                || pair->layer->getHeight() != fLayer->getHeight()) {
+                fLayer->getTexture()->update(nullptr,
                                              pair->layer->getWidth(),
                                              pair->layer->getHeight(),
                                              GL_RGBA);
@@ -67,12 +76,24 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
             dynamic_cast<AlPaintFilter *>(paintFilter)->setPath(path, true);
             path->clear();
             delete path;
-            glViewport(0, 0, nLayer->getWidth(), nLayer->getHeight());
-            paintFilter->draw(pair->layer->getTexture(), pair->layer->getTexture());
+            glViewport(0, 0, fLayer->getWidth(), fLayer->getHeight());
+            paintFilter->draw(fLayer->getTexture(), fLayer->getTexture());
         }
         ++itr;
     }
-    _notifyDescriptor(pair->layer, pair->model, msg->arg1);
+    _notifyDescriptor(fLayer, pair->model, msg->arg1);
+    return true;
+}
+
+bool AlULayerFilter::onRemoveLayer(AlMessage *msg) {
+    auto itr = layers.find(msg->arg1);
+    if (layers.end() != itr) {
+        auto *layer = itr->second;
+        auto *tex = layer->getTexture();
+        texAllocator->recycle(&tex);
+        delete layer;
+        layers.erase(itr);
+    }
     return true;
 }
 
@@ -83,4 +104,22 @@ void AlULayerFilter::_notifyDescriptor(AlImageLayer *layer,
     msg->arg1 = flags;
     msg->desc = "measure";
     postEvent(msg);
+}
+
+AlImageLayer *AlULayerFilter::_findLayer(AlImageLayerModel *model, AlImageLayer *layer) {
+    if (nullptr == model) {
+        return nullptr;
+    }
+    int32_t id = model->getId();
+    auto itr = layers.find(id);
+    if (layers.end() == itr) {
+        auto *l = AlImageLayer::create(texAllocator->alloc());
+        if (l) {
+            layers.insert(std::pair<int32_t, AlImageLayer *>(id, l));
+            l->getTexture()->update(nullptr, layer->getWidth(), layer->getHeight(), GL_RGBA);
+            copyFilter->draw(layer->getTexture(), l->getTexture());
+        }
+        return l;
+    }
+    return itr->second;
 }

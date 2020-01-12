@@ -23,7 +23,9 @@ public:
 
     void release();
 
-    void update(std::vector<AlImageLayerModel *> *list, AlTexAllocator *texAllocator);
+    void update(std::vector<AlImageLayerModel *> *list,
+                AlTexAllocator *texAllocator,
+                std::vector<int32_t> *delLayers = nullptr);
 
     size_t size();
 

@@ -121,7 +121,7 @@ private:
 
     void _notifyLayerUpdate();
 
-    AlImageLayerModel *_getLayer(int32_t id);
+    AlImageLayerModel *_findLayer(int32_t id);
 
 private:
     const string ALIAS_OF_LAYER = "LAYER";

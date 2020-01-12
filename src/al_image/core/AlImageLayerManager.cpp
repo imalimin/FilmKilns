@@ -30,7 +30,8 @@ void AlImageLayerManager::release() {
 }
 
 void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
-                                 AlTexAllocator *texAllocator) {
+                                 AlTexAllocator *texAllocator,
+                                 std::vector<int32_t> *delLayers) {
     this->models = list;
     std::vector<int32_t> ids;
     unsigned int size = list->size();
@@ -48,6 +49,9 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
             auto *it = itr->second;
             itr = mLayers.erase(itr);
             texAllocator->recycle(&(it->tex));
+            if (delLayers) {
+                delLayers->emplace_back(itr->first);
+            }
             delete it;
         } else {
             ++itr;

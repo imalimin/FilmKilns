@@ -135,9 +135,6 @@ int32_t AlImageProcessor::addLayer(const char *path) {
 
 HwResult AlImageProcessor::removeLayer(int32_t id) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    if (mLayers.empty()) {
-        return Hw::FAILED;
-    }
     size_t size = mLayers.size();
     for (int i = 0; i < size; ++i) {
         AlImageLayerModel *it = mLayers[i];
@@ -178,7 +175,7 @@ HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
 
 HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         layer->setScale(scale.toFloat(), scale.toFloat());
         invalidate();
@@ -189,7 +186,7 @@ HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
 
 HwResult AlImageProcessor::postScale(int32_t id, AlRational ds, AlPointF anchor) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         transToCanvasPos(anchor.x, anchor.y);
         float scale = ds.toFloat();
@@ -208,7 +205,7 @@ HwResult AlImageProcessor::postScale(int32_t id, AlRational ds, AlPointF anchor)
 
 HwResult AlImageProcessor::setRotation(int32_t id, AlRational r) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         layer->setRotation(r);
         invalidate();
@@ -219,7 +216,7 @@ HwResult AlImageProcessor::setRotation(int32_t id, AlRational r) {
 
 HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr, AlPointF anchor) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         transToCanvasPos(anchor.x, anchor.y);
         Logcat::i(TAG, "anchor %f,%f", anchor.x, anchor.y);
@@ -245,7 +242,7 @@ HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr, AlPointF anch
 
 HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         transToCanvasPos(x, y);
         layer->setPosition(x, y);
@@ -257,7 +254,7 @@ HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
 
 HwResult AlImageProcessor::postTranslate(int32_t id, float dx, float dy) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         transToCanvasPos(dx, dy);
         layer->setPosition(layer->getPosition().x + dx, layer->getPosition().y + dy);
@@ -269,7 +266,7 @@ HwResult AlImageProcessor::postTranslate(int32_t id, float dx, float dy) {
 
 HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         layer->setAlpha(alpha);
         invalidate();
@@ -278,7 +275,7 @@ HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
     return Hw::FAILED;
 }
 
-AlImageLayerModel *AlImageProcessor::_getLayer(int32_t id) {
+AlImageLayerModel *AlImageProcessor::_findLayer(int32_t id) {
     for (AlImageLayerModel *it : mLayers) {
         if (id == it->getId()) {
             return it;
@@ -306,7 +303,7 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
 
 HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float right, float bottom) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         layer->removeCropAction();
         transToCanvasPos(left, top);
@@ -341,7 +338,7 @@ HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float 
 
 HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer && layer->removeCropAction()) {
         invalidate();
         return Hw::SUCCESS;
@@ -376,7 +373,7 @@ void AlImageProcessor::setOnSaveListener(AlUCanvas::OnSaveListener listener) {
 
 HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         layer->removeAlignCropAction();
         layer->addAction(AlLayerActionFactory::alignCrop(r));
@@ -388,7 +385,7 @@ HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
 
 HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer && layer->removeAlignCropAction()) {
         invalidate();
         return Hw::SUCCESS;
@@ -408,7 +405,7 @@ HwResult AlImageProcessor::undo() {
 
 HwResult AlImageProcessor::paint(int32_t id, AlPointF pointF, bool painting) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _getLayer(id);
+    auto *layer = _findLayer(id);
     if (layer) {
         transToCanvasPos(pointF.x, pointF.y);
         pointF.y = -pointF.y;

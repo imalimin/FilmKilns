@@ -13,6 +13,7 @@
 #include "HwAbsFilter.h"
 #include "AlTexAllocator.h"
 #include "AlImageLayerModel.h"
+#include <map>
 
 al_class_ex(AlULayerFilter, Unit) {
 public:
@@ -35,13 +36,31 @@ public:
     /// \return
     bool onDoFilterAction(AlMessage *msg);
 
+    /// 删除指定的缓存layer
+    /// FORMAT:
+    /// +-----------------------------------------------+
+    /// | msg::obj | msg::arg1  | msg::arg2 | msg::desc |
+    /// +-----------------------------------------------+
+    /// | none     |    id      | none      | none     |
+    /// +-----------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onRemoveLayer(AlMessage *msg);
+
 private:
     void _notifyDescriptor(AlImageLayer *layer, AlImageLayerModel *model, int32_t flags);
 
+    /// 查找缓存的layer，如果不存在则重新拷贝一份
+    /// 可能会拷贝失败，所以需要对返回的layer进行判空
+    /// \param model
+    /// \return
+    AlImageLayer *_findLayer(AlImageLayerModel *model, AlImageLayer *layer);
+
 private:
+    std::map<int32_t, AlImageLayer *> layers;
     AlTexAllocator *texAllocator = nullptr;
     HwAbsFilter *paintFilter = nullptr;
-    AlImageLayer *nLayer = nullptr;
+    HwAbsFilter *copyFilter = nullptr;
 };
 
 
