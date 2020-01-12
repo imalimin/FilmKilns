@@ -85,12 +85,12 @@ bool AlUCanvas::onDraw(AlMessage *m) {
 
 bool AlUCanvas::onShow(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
     auto tex = mCanvas.getOutput();
     if (nullptr == tex) {
         Logcat::e(TAG, "%s(%d): Empty canvas", __FUNCTION__, __LINE__);
         return true;
     }
+    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_DRAW_TEX);
     msg->obj = tex;
     postEvent(msg);
     return true;

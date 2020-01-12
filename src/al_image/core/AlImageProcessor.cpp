@@ -9,7 +9,6 @@
 #include "AlULayer.h"
 #include "AlULayerFilter.h"
 #include "AlULayerDescriptor.h"
-#include "HwRender.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "AlLayerActionFactory.h"
@@ -38,7 +37,6 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlULayerFilter(ALIAS_OF_FILTER));
     registerAnUnit(new AlULayerDescriptor(ALIAS_OF_DESCRIPTOR));
     registerAnUnit(uCanvas);
-    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_CANVAS});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
@@ -46,8 +44,7 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
         this->aBasCtx = AlEgl::offScreen();
         this->context = new AlContext();
         this->putObject("AL_CONTEXT", this->context)
-                .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS,
-                     ALIAS_OF_RENDER, ALIAS_OF_SCREEN});
+                .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS, ALIAS_OF_SCREEN});
     });
     prepare();
     uCanvas->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {

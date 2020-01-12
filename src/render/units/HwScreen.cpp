@@ -13,6 +13,7 @@
 
 HwScreen::HwScreen(string alias) : Unit(alias) {
     registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
+    registerEvent(EVENT_SCREEN_DRAW_TEX, reinterpret_cast<EventFunc>(&HwScreen::onDrawTex));
     registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
                   reinterpret_cast<EventFunc>(&HwScreen::eventUpdateWindow));
 }
@@ -64,6 +65,16 @@ bool HwScreen::eventDraw(AlMessage *msg) {
         draw(tex);
     }
     delete size;
+    return true;
+}
+
+bool HwScreen::onDrawTex(AlMessage *msg) {
+    HwAbsTexture *tex = static_cast<HwAbsTexture *>(msg->obj);
+    egl->makeCurrent();
+    if (egl->isAttachWindow()) {
+        setScaleType(tex->getWidth(), tex->getHeight());
+        draw(tex->texId());
+    }
     return true;
 }
 

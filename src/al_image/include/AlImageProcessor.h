@@ -128,7 +128,6 @@ private:
     const string ALIAS_OF_FILTER = "LAYER_FILTER";
     const string ALIAS_OF_DESCRIPTOR = "LAYER_DESCRIPTOR";
     const string ALIAS_OF_CANVAS = "LAYER_CANVAS";
-    const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
 
     /// Just for use gl sources before screen` egl initialize.

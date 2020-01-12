@@ -62,6 +62,17 @@ public:
     /// \return
     bool eventDraw(AlMessage *msg);
 
+    /// 渲染一张纹理到屏幕
+    /// format:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | AlAbsTexture | none      | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
+    bool onDrawTex(AlMessage *msg);
+
 private:
     AlEgl *egl = nullptr;
     BaseDrawer *drawer = nullptr;
