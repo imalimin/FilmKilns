@@ -32,6 +32,10 @@ public:
 
     void getPath(std::vector<float> &path);
 
+    void getDiffPath(std::vector<float> &path);
+
+    size_t countOfPath();
+
     virtual HwResult draw(HwAbsTexture *src, HwAbsTexture *dest) override;
 
     virtual HwResult fromElement(AlElement *element) override;
@@ -45,6 +49,8 @@ private:
     std::vector<AlPointPath *> path;
     float paintSize = 0.0f;
     AlColor color = AlColor(0xffffff);
+    int32_t row = 0, col = 0;
+    std::mutex mtx;
 };
 
 

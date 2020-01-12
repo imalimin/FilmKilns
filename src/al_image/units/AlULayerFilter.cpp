@@ -63,8 +63,8 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
             dynamic_cast<AlPaintFilter *>(paintFilter)->setColor(nAction->getColor());
             dynamic_cast<AlPaintFilter *>(paintFilter)->setPaintSize(nAction->getPaintSize());
             std::vector<float> *path = new std::vector<float>;
-            nAction->getPath(*path);
-            dynamic_cast<AlPaintFilter *>(paintFilter)->setPath(path);
+            nAction->getDiffPath(*path);
+            dynamic_cast<AlPaintFilter *>(paintFilter)->setPath(path, true);
             path->clear();
             delete path;
             glViewport(0, 0, nLayer->getWidth(), nLayer->getHeight());

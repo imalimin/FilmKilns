@@ -21,9 +21,12 @@ AlPaintFilter::~AlPaintFilter() {
     path.clear();
 }
 
-void AlPaintFilter::setPath(std::vector<float> *vec) {
+void AlPaintFilter::setPath(std::vector<float> *vec, bool clear) {
     if (nullptr == vec || vec->empty()) {
         return;
+    }
+    if (clear) {
+        path.clear();
     }
     for (float it:*vec) {
         path.emplace_back(it);
@@ -60,6 +63,7 @@ void AlPaintFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsT
     HwAbsFilter::drawFirst(program, src, dest);
     program->bind();
     if (!path.empty()) {
+        Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, path.size() / 2);
         dynamic_cast<AlPointProgram *>(program)->setVertex(path, 2, path.size() / 2);
     }
     float color[4];

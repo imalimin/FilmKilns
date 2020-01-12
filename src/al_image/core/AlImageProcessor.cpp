@@ -406,7 +406,7 @@ HwResult AlImageProcessor::undo() {
     return Hw::SUCCESS;
 }
 
-HwResult AlImageProcessor::addMosaic(int32_t id, AlPointF pointF, bool painting) {
+HwResult AlImageProcessor::paint(int32_t id, AlPointF pointF, bool painting) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _getLayer(id);
     if (layer) {

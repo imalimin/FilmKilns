@@ -272,10 +272,10 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_undo
     return Hw::FAILED.code;
 }
 
-JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_addMosaic
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_paint
         (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y, jboolean painting) {
     if (handler) {
-        return getHandler(handler)->addMosaic(id, AlPointF(x, y),JNI_TRUE == painting).code;
+        return getHandler(handler)->paint(id, AlPointF(x, y),JNI_TRUE == painting).code;
     }
     return Hw::FAILED.code;
 }

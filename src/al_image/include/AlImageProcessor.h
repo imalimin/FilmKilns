@@ -107,7 +107,12 @@ public:
 
     HwResult undo();
 
-    HwResult addMosaic(int32_t id, AlPointF pointF, bool painting);
+    /// 画笔绘制接口
+    /// \param id
+    /// \param pointF
+    /// \param painting
+    /// \return
+    HwResult paint(int32_t id, AlPointF pointF, bool painting);
 
     void setOnSaveListener(AlUCanvas::OnSaveListener listener);
 

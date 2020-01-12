@@ -68,7 +68,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
                 processor?.postTranslate(getCurrentLayer(), dx, dy)
             }
             if (paintBox.isChecked) {
-                processor?.addMosaic(getCurrentLayer(), PointF(x, y), 1 == s)
+                processor?.paint(getCurrentLayer(), PointF(x, y), 1 == s)
             }
             //For crop debug
 //            ensureCropLayer()

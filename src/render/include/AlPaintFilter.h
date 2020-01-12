@@ -19,7 +19,7 @@ public:
 
     ~AlPaintFilter();
 
-    void setPath(std::vector<float> *vec);
+    void setPath(std::vector<float> *vec, bool clear = false);
 
     void setPaintSize(float size);
 
