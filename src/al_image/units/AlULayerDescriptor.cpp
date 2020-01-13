@@ -13,6 +13,7 @@
 #include "AlImgLayerDescription.h"
 #include "AlAbsMAction.h"
 #include "AlLayerPair.h"
+#include "AlRenderParams.h"
 
 #define TAG "AlULayerDescriptor"
 
@@ -117,12 +118,13 @@ void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description, int32_
                                        AlMessage::QUEUE_MODE_FIRST_ALWAYS);
     msg->arg1 = flags;
     postEvent(msg);
-    if (!(flags & 0x1)) {
+    AlRenderParams params(flags);
+    if (params.isRenderScreen()) {
         AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
         sMsg->desc = "show";
         postEvent(sMsg);
     }
-    if (flags & 0x4) {
+    if (params.isReqSave()) {
         postEvent(AlMessage::obtain(EVENT_CANVAS_SAVE));
     }
 }

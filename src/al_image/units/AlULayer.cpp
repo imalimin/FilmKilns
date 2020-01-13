@@ -9,6 +9,7 @@
 #include "HwTexture.h"
 #include "ObjectBox.h"
 #include "AlLayerPair.h"
+#include "AlRenderParams.h"
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
@@ -63,8 +64,9 @@ std::vector<AlImageLayerModel *> *AlULayer::getLayers() {
 }
 
 void AlULayer::_notifyAll(int32_t flags) {
+    AlRenderParams params(flags);
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
-    msg->arg1 = (0 != (flags & 0x2));
+    msg->arg1 = params.isTransparent();
     msg->desc = "clear";
     postEvent(msg);
     if (!mLayerManager.empty()) {
@@ -74,12 +76,13 @@ void AlULayer::_notifyAll(int32_t flags) {
             if (nullptr == model) continue;
             AlImageLayer *layer = mLayerManager.find(model->getId());
             if (nullptr == layer) continue;
-            int32_t tFlags = 0x1;
+            AlRenderParams p;
+            p.setRenderScreen(false);
             ///只有最后一个图层绘制完之后才上屏
             if (i >= size - 1) {
-                tFlags = flags;
+                p = params;
             }
-            _notifyFilter(layer, model, tFlags);
+            _notifyFilter(layer, model, p.toInt());
         }
     } else {
         AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);

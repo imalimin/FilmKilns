@@ -19,6 +19,7 @@
 #include "AlTarUtil.h"
 #include "AlMath.h"
 #include "AlMPaintAction.h"
+#include "AlRenderParams.h"
 
 #define TAG "AlImageProcessor"
 
@@ -345,7 +346,11 @@ HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
 
 HwResult AlImageProcessor::save(std::string path) {
     putString("output_path", path).to({ALIAS_OF_CANVAS});
-    invalidate(7);
+    AlRenderParams params;
+    params.setRenderScreen(false);
+    params.setTransparent(true);
+    params.setReqSave(true);
+    invalidate(params.toInt());
     return Hw::SUCCESS;
 }
 

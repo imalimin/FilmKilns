@@ -234,7 +234,6 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         if (null != layerId && layerId >= 0) {
             mLayers.add(layerId)
             setCurLayer(layerId)
-            processor?.setRotation(layerId, AlRational(1, 2))
             Log.i("HWVC", "addLayer $layerId")
         }
     }
