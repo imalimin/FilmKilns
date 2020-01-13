@@ -18,6 +18,8 @@ class AlMatrix;
 /// [x,y,z,w]
 al_class(AlVec4) {
 public:
+    AlVec4(AlVec2 vec2, float z = 0.0f, float w = 1.0f);
+
     AlVec4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 1.0f);
 
     AlVec4(const AlVec4 &o);

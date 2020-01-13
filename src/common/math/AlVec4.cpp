@@ -10,6 +10,10 @@
 
 #define TAG "AlVec4"
 
+AlVec4::AlVec4(AlVec2 vec2, float z, float w) : Object(), x(vec2.x), y(vec2.y), z(z), w(w) {
+
+}
+
 AlVec4::AlVec4(float x, float y, float z, float w) : Object(), x(x), y(y), z(z), w(w) {
 
 }
