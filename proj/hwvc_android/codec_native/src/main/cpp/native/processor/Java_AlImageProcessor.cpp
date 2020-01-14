@@ -44,6 +44,7 @@ static void bindListener(jlong handler) {
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_create
         (JNIEnv *env, jobject thiz) {
     AlImageProcessor *p = new AlImageProcessor();
+    p->prepare();
     p->post([] {
         HwJavaNativeHelper::getInstance()->attachThread();
     });
@@ -74,6 +75,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_releas
         p->post([] {
             HwJavaNativeHelper::getInstance()->detachThread();
         });
+        p->release();
         delete p;
     }
     HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);

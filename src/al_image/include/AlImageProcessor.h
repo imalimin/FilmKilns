@@ -8,8 +8,7 @@
 #ifndef HWVC_ANDROID_ALIMAGEPROCESSOR_H
 #define HWVC_ANDROID_ALIMAGEPROCESSOR_H
 
-#include <vector>
-#include "HwAbsProcessor.h"
+#include "AlAbsProcessor.h"
 #include "HwResult.h"
 #include "HwWindow.h"
 #include "AlImageCanvasModel.h"
@@ -19,12 +18,15 @@
 #include "AlUCanvas.h"
 #include "AlAbsContext.h"
 #include "AlEgl.h"
+#include <vector>
 
-class AlImageProcessor : public HwAbsProcessor {
+al_class_ex(AlImageProcessor, AlAbsProcessor) {
 public:
     AlImageProcessor();
 
     ~AlImageProcessor();
+
+    virtual void onCreate() override;
 
     virtual void onDestroy() override;
 

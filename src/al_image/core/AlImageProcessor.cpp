@@ -23,7 +23,7 @@
 
 #define TAG "AlImageProcessor"
 
-AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
+AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //    tar_t *archive = nullptr;
 //    int count = tar_read_file("/sdcard/test.tar", &archive);
 //    if (archive) {
@@ -41,13 +41,6 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_CANVAS});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
-    post([this] {
-        this->aBaseCtx = AlEgl::offScreen();
-        this->context = new AlContext();
-        this->putObject("AL_CONTEXT", this->context)
-                .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS, ALIAS_OF_SCREEN});
-    });
-    prepare();
     uCanvas->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
         if (this->onSaveListener) {
             this->onSaveListener(code, msg, path);
@@ -59,12 +52,6 @@ AlImageProcessor::AlImageProcessor() : HwAbsProcessor("AlImageProcessor") {
 }
 
 AlImageProcessor::~AlImageProcessor() {
-    post([this] {
-        delete this->context;
-        this->context = nullptr;
-        delete this->aBaseCtx;
-        this->aBaseCtx = nullptr;
-    });
     size_t size = mLayers.size();
     for (int i = 0; i < size; ++i) {
         AlImageLayerModel *it = mLayers[i];
@@ -74,8 +61,22 @@ AlImageProcessor::~AlImageProcessor() {
     this->onSaveListener = nullptr;
 }
 
+void AlImageProcessor::onCreate() {
+    AlAbsProcessor::onCreate();
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    this->aBaseCtx = AlEgl::offScreen();
+    this->context = new AlContext();
+    this->putObject("AL_CONTEXT", this->context)
+            .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS, ALIAS_OF_SCREEN});
+}
+
 void AlImageProcessor::onDestroy() {
-    HwAbsProcessor::onDestroy();
+    AlAbsProcessor::onDestroy();
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    delete this->context;
+    this->context = nullptr;
+    delete this->aBaseCtx;
+    this->aBaseCtx = nullptr;
 }
 
 void AlImageProcessor::updateWindow(HwWindow *win) {
