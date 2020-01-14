@@ -10,6 +10,7 @@
 #include "HwTexture.h"
 #include "Logcat.h"
 #include "AlMosaicFilter.h"
+#include "AlTexManager.h"
 
 #define TAG "AlImageCanvas"
 
@@ -27,6 +28,10 @@ void AlImageCanvas::release() {
     delete mCanvasDrawer;
     mCanvasDrawer = nullptr;
     mCanvasTex = nullptr;
+    if (mGridTex) {
+        AlTexManager::instance()->recycle(&mGridTex);
+        mGridTex = nullptr;
+    }
 #ifdef ENABLE_CROP_DEBUG
     delete mCopyDrawer;
     delete mAlQuadDrawer;
@@ -40,17 +45,18 @@ HwAbsTexture *AlImageCanvas::getOutput() {
     return HwTexture::wrap(dynamic_cast<HwTexture *>(mCanvasTex));
 }
 
-void AlImageCanvas::update(int32_t w, int32_t h, int32_t color, AlTexAllocator *texAllocator) {
+void AlImageCanvas::update(int32_t w, int32_t h, int32_t color) {
     if (nullptr == mCanvasTex) {
         AlTexDescription desc;
         desc.size.width = w;
         desc.size.height = h;
         desc.fmt = GL_RGBA;
-        mCanvasTex = texAllocator->alloc(desc);
+        mCanvasTex = AlTexManager::instance()->alloc(desc);
         fbo = HwFBObject::alloc();
         fbo->bindTex(mCanvasTex);
         mBgDrawer = AlColorGridFilter::create();
-        mBgDrawer->prepare(texAllocator);
+        mGridTex = AlTexManager::instance()->alloc();
+        mBgDrawer->prepare(mGridTex);
 #ifdef ENABLE_CROP_DEBUG
         AlTexDescription d;
         d.size.width = w;

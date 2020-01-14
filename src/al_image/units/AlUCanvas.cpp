@@ -8,6 +8,7 @@
 #include "AlUCanvas.h"
 #include "HwTexture.h"
 #include "AlBitmapFactory.h"
+#include "AlTexManager.h"
 
 #define TAG "AlUCanvas"
 
@@ -30,16 +31,11 @@ AlUCanvas::~AlUCanvas() {
 }
 
 bool AlUCanvas::onCreate(AlMessage *msg) {
-    texAllocator = new AlTexAllocator();
     return true;
 }
 
 bool AlUCanvas::onDestroy(AlMessage *msg) {
     mCanvas.release();
-    if (texAllocator) {
-        delete texAllocator;
-        texAllocator = nullptr;
-    }
     return true;
 }
 
@@ -141,7 +137,7 @@ void AlUCanvas::_update(int32_t width, int32_t height, int32_t color) {
     AlSize *size = dynamic_cast<AlSize *>(getObject("canvas_size"));
     size->width = width;
     size->height = height;
-    mCanvas.update(width, height, color, texAllocator);
+    mCanvas.update(width, height, color);
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE);
     msg->arg1 = mCanvas.getWidth();
     msg->arg2 = mCanvas.getHeight();

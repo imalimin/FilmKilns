@@ -1,6 +1,9 @@
-//
-// Created by mingyi.li on 2018/12/27.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
 #include "AlTexAllocator.h"
 #include "ObjectBox.h"
@@ -33,9 +36,9 @@ HwAbsTexture *AlTexAllocator::alloc(AlTexDescription &desc, AlBuffer *buf) {
     return tex;
 }
 
-void AlTexAllocator::recycle(HwAbsTexture **tex) {
+bool AlTexAllocator::recycle(HwAbsTexture **tex) {
     if (nullptr == tex || nullptr == *tex) {
-        return;
+        return false;
     }
     for (auto itr = textures.cbegin(); itr != textures.cend(); itr++) {
         auto *it = *itr;
@@ -44,9 +47,10 @@ void AlTexAllocator::recycle(HwAbsTexture **tex) {
             delete *tex;
             *tex = nullptr;
             textures.erase(itr);
-            break;
+            return true;
         }
     }
+    return false;
 }
 
 void AlTexAllocator::clear() {
@@ -56,6 +60,14 @@ void AlTexAllocator::clear() {
         }
     }
     textures.clear();
+}
+
+size_t AlTexAllocator::size() {
+    return textures.size();
+}
+
+bool AlTexAllocator::empty() {
+    return 0 == size();
 }
 
 //HwAbsTexture *AlTexAllocator::alloc(AlBitmap *bmp) {

@@ -8,7 +8,7 @@
 #include "AlMessage.h"
 
 UnitPipeline::UnitPipeline(string name) {
-    available = true;
+    notified = false;
     mThread = AlHandlerThread::create(name);
     mHandler = new AlHandler(mThread->getLooper(), [this](AlMessage *msg) {
         if (msg && msg->obj && typeid(AlRunnable) == typeid(*msg->obj)) {
@@ -20,7 +20,7 @@ UnitPipeline::UnitPipeline(string name) {
 }
 
 UnitPipeline::~UnitPipeline() {
-    release();
+    postDestroy();
     mThread->quitSafely();
     delete mThread;
     mThread = nullptr;
@@ -28,31 +28,27 @@ UnitPipeline::~UnitPipeline() {
     mHandler = nullptr;
 }
 
-void UnitPipeline::release() {
-    if (available) {
-        simpleLock.lock();
-        available = false;
-        AlMessage *msg = AlMessage::obtain(EVENT_COMMON_RELEASE);
+void UnitPipeline::postDestroy() {
+    simpleLock.lock();
+    if (!notified) {
+        notified = true;
         if (mHandler) {
+            AlMessage *msg = AlMessage::obtain(EVENT_COMMON_RELEASE);
             mHandler->sendMessage(AlMessage::obtain(EVENT_COMMON_RELEASE, msg));
         }
-        simpleLock.unlock();
     }
+    simpleLock.unlock();
 }
 
 void UnitPipeline::postEvent(AlMessage *msg) {
+    simpleLock.lock();
     if (mHandler) {
-        simpleLock.lock();
-        if (available) {
-            mHandler->sendMessage(msg);
-        } else {
-            Logcat::i("HWVC", "UnitPipeline skip message %p", msg);
-            delete msg;
-        }
+        mHandler->sendMessage(msg);
         simpleLock.unlock();
-    } else {
-        this->dispatch(msg);
+        return;
     }
+    simpleLock.unlock();
+    this->dispatch(msg);
 }
 
 void UnitPipeline::dispatch(AlMessage *msg) {

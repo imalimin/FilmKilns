@@ -10,6 +10,7 @@
 #include "ObjectBox.h"
 #include "AlLayerPair.h"
 #include "AlRenderParams.h"
+#include "AlTexManager.h"
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
@@ -27,24 +28,19 @@ AlULayer::~AlULayer() {
 }
 
 bool AlULayer::onCreate(AlMessage *msg) {
-    texAllocator = new AlTexAllocator();
     /// Just for init models address.
-    mLayerManager.update(getLayers(), texAllocator);
+    mLayerManager.update(getLayers());
     return true;
 }
 
 bool AlULayer::onDestroy(AlMessage *msg) {
     mLayerManager.release();
-    if (texAllocator) {
-        delete texAllocator;
-        texAllocator = nullptr;
-    }
     return true;
 }
 
 bool AlULayer::onUpdateLayer(AlMessage *msg) {
     std::vector<int32_t> delLayers;
-    mLayerManager.update(getLayers(), texAllocator, &delLayers);
+    mLayerManager.update(getLayers(), &delLayers);
     for (auto id:delLayers) {
         auto *m = AlMessage::obtain(EVENT_LAYER_REMOVE_CACHE_LAYER);
         m->arg1 = id;
@@ -107,7 +103,7 @@ bool AlULayer::onImport(AlMessage *m) {
         || layers.empty() || canvas.getWidth() <= 0 || canvas.getHeight() <= 0) {
         return true;
     }
-    mLayerManager.replaceAll(texAllocator, &layers);
+    mLayerManager.replaceAll(&layers);
     layers.clear();
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS, nullptr,
                                        AlMessage::QUEUE_MODE_FIRST_ALWAYS);

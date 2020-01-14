@@ -9,7 +9,6 @@
 #define HWVC_ANDROID_ALULAYER_H
 
 #include "Unit.h"
-#include "AlTexAllocator.h"
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
 #include <deque>
@@ -79,8 +78,6 @@ private:
     void _saveStep();
 
 private:
-    AlTexAllocator *texAllocator = nullptr;
-
     /// +------------------+
     /// |     Model        |
     /// +------------------+

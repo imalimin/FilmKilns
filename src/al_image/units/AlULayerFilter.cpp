@@ -11,6 +11,7 @@
 #include "AlAbsMFilterAction.h"
 #include "AlMPaintAction.h"
 #include "AlLayerPair.h"
+#include "AlTexManager.h"
 
 #define TAG "AlULayerFilter"
 
@@ -26,7 +27,6 @@ AlULayerFilter::~AlULayerFilter() {
 }
 
 bool AlULayerFilter::onCreate(AlMessage *msg) {
-    texAllocator = new AlTexAllocator();
     copyFilter = new HwNormalFilter();
     copyFilter->prepare();
     paintFilter = new AlPaintFilter();
@@ -39,8 +39,6 @@ bool AlULayerFilter::onDestroy(AlMessage *msg) {
     copyFilter = nullptr;
     delete paintFilter;
     paintFilter = nullptr;
-    delete texAllocator;
-    texAllocator = nullptr;
     return true;
 }
 
@@ -90,7 +88,7 @@ bool AlULayerFilter::onRemoveLayer(AlMessage *msg) {
     if (layers.end() != itr) {
         auto *layer = itr->second;
         auto *tex = layer->getTexture();
-        texAllocator->recycle(&tex);
+        AlTexManager::instance()->recycle(&tex);
         delete layer;
         layers.erase(itr);
     }
@@ -113,7 +111,7 @@ AlImageLayer *AlULayerFilter::_findLayer(AlImageLayerModel *model, AlImageLayer 
     int32_t id = model->getId();
     auto itr = layers.find(id);
     if (layers.end() == itr) {
-        auto *l = AlImageLayer::create(texAllocator->alloc());
+        auto *l = AlImageLayer::create(AlTexManager::instance()->alloc());
         if (l) {
             layers.insert(std::pair<int32_t, AlImageLayer *>(id, l));
             l->getTexture()->update(nullptr, layer->getWidth(), layer->getHeight(), GL_RGBA);

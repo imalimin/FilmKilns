@@ -9,6 +9,7 @@
 #include "AlImageLayerManager.h"
 #include "AlBitmapFactory.h"
 #include "AlRotateFilter.h"
+#include "AlTexManager.h"
 #include "Logcat.h"
 
 AlImageLayerManager::AlImageLayerManager() : Object() {
@@ -22,7 +23,7 @@ void AlImageLayerManager::release() {
     auto itr = mLayers.begin();
     while (mLayers.end() != itr) {
         AlImageLayer *layer = itr->second;
-//            texAllocator->recycle(&(itr->second->tex));
+        AlTexManager::instance()->recycle(&(layer->tex));
         delete layer;
         ++itr;
     }
@@ -30,7 +31,6 @@ void AlImageLayerManager::release() {
 }
 
 void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
-                                 AlTexAllocator *texAllocator,
                                  std::vector<int32_t> *delLayers) {
     this->models = list;
     std::vector<int32_t> ids;
@@ -39,7 +39,7 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
         auto *it = list->at(i);
         ids.push_back(it->getId());
         if (!_found(it->getId())) {
-            _newLayer(it, texAllocator);
+            _newLayer(it);
         }
     }
 
@@ -48,7 +48,7 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
         if (result == ids.end()) {
             auto *it = itr->second;
             itr = mLayers.erase(itr);
-            texAllocator->recycle(&(it->tex));
+            AlTexManager::instance()->recycle(&(it->tex));
             if (delLayers) {
                 delLayers->emplace_back(itr->first);
             }
@@ -59,8 +59,7 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
     }
 }
 
-bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
-                                    AlTexAllocator *texAllocator) {
+bool AlImageLayerManager::_newLayer(AlImageLayerModel *model) {
     AlBitmap *bmp = AlBitmapFactory::decodeFile(model->getPath());
     if (nullptr == bmp) {
         Logcat::e("AlImageLayerManager", "%s(%d): decode %s failed", __FUNCTION__, __LINE__,
@@ -74,17 +73,16 @@ bool AlImageLayerManager::_newLayer(AlImageLayerModel *model,
     desc.wrapMode = AlTexDescription::WrapMode::BORDER;
     desc.fmt = GL_RGBA;
     AlBuffer *buf = AlBuffer::wrap(bmp->getPixels(), bmp->getByteSize());
-    auto *srcTex = texAllocator->alloc(desc, buf);
+    auto *srcTex = AlTexManager::instance()->alloc(desc, buf);
     delete buf;
     delete bmp;
-    _correctAngle(texAllocator, &srcTex, rotation);
+    _correctAngle(&srcTex, rotation);
     AlImageLayer *layer = AlImageLayer::create(srcTex);
     mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
     return true;
 }
 
-void AlImageLayerManager::_correctAngle(AlTexAllocator *texAllocator,
-                                        HwAbsTexture **tex,
+void AlImageLayerManager::_correctAngle(HwAbsTexture **tex,
                                         AlRational radian) {
     HwAbsTexture *destTex = nullptr;
     auto rFloat = fmod(std::abs(radian.toFloat()), 2.0);
@@ -98,13 +96,13 @@ void AlImageLayerManager::_correctAngle(AlTexAllocator *texAllocator,
             desc.size.width = (*tex)->getWidth();
             desc.size.height = (*tex)->getHeight();
         }
-        destTex = texAllocator->alloc(desc);
+        destTex = AlTexManager::instance()->alloc(desc);
         AlRotateFilter filter;
         filter.prepare();
         filter.setRotation(radian);
         glViewport(0, 0, destTex->getWidth(), destTex->getHeight());
         filter.draw(*tex, destTex);
-        texAllocator->recycle(tex);
+        AlTexManager::instance()->recycle(tex);
         *tex = destTex;
     }
 }
@@ -138,8 +136,7 @@ AlImageLayer *AlImageLayerManager::find(int32_t id) {
     return itr->second;
 }
 
-void AlImageLayerManager::replaceAll(AlTexAllocator *texAllocator,
-                                     std::vector<AlImageLayerModel *> *list) {
+void AlImageLayerManager::replaceAll(std::vector<AlImageLayerModel *> *list) {
     if (nullptr == list || list->empty()) {
         return;
     }
@@ -154,7 +151,7 @@ void AlImageLayerManager::replaceAll(AlTexAllocator *texAllocator,
     auto itr = mLayers.begin();
     while (mLayers.end() != itr) {
         AlImageLayer *layer = itr->second;
-        texAllocator->recycle(&(itr->second->tex));
+        AlTexManager::instance()->recycle(&(itr->second->tex));
         delete layer;
         ++itr;
     }
@@ -165,7 +162,7 @@ void AlImageLayerManager::replaceAll(AlTexAllocator *texAllocator,
         models->push_back((*list)[i]);
     }
     ///Update layer model.
-    update(models, texAllocator);
+    update(models);
 }
 
 int32_t AlImageLayerManager::getMaxId() {

@@ -9,7 +9,6 @@
 #define HWVC_ANDROID_ALCOLORGRIDFILTER_H
 
 #include "HwAbsFilter.h"
-#include "AlTexAllocator.h"
 #include "AlSize.h"
 
 class AlColorGridFilter : public HwAbsFilter {
@@ -19,9 +18,7 @@ public:
 public:
     ~AlColorGridFilter();
 
-    bool prepare(AlTexAllocator *texAllocator);
-
-    void release(AlTexAllocator *texAllocator);
+    bool prepare(HwAbsTexture *tex);
 
     void draw(HwAbsTexture *dest);
 

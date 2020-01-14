@@ -17,7 +17,7 @@ HwAbsProcessor::HwAbsProcessor(string name) : Object(), name(name) {
 
 HwAbsProcessor::~HwAbsProcessor() {
     if (pipeline) {
-        pipeline->release();
+        pipeline->postDestroy();
         delete pipeline;
         pipeline = nullptr;
     }

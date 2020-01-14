@@ -11,7 +11,6 @@
 #include "Unit.h"
 #include "AlImageLayer.h"
 #include "HwAbsFilter.h"
-#include "AlTexAllocator.h"
 #include "AlImageLayerModel.h"
 #include <map>
 
@@ -58,7 +57,6 @@ private:
 
 private:
     std::map<int32_t, AlImageLayer *> layers;
-    AlTexAllocator *texAllocator = nullptr;
     HwAbsFilter *paintFilter = nullptr;
     HwAbsFilter *copyFilter = nullptr;
 };

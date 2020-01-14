@@ -25,7 +25,7 @@ public:
 
     int registerAnUnit(Unit *unit);
 
-    void release();
+    void postDestroy();
 
 private:
     void dispatch(AlMessage *msg);
@@ -37,7 +37,7 @@ private:
     AlHandler *mHandler = nullptr;
     SimpleLock simpleLock;
     vector<Unit *> units;
-    bool available = true;
+    bool notified = false;
 };
 
 
