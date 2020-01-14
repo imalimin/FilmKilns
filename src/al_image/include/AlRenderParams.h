@@ -32,6 +32,10 @@ public:
 
     void setReqSave(bool value);
 
+    bool isReqClear();
+
+    void setReqClear(bool value);
+
 private:
 /// flags:
 /// +------------------------------------------------------------+

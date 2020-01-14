@@ -114,11 +114,16 @@ HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsMAction *> *opts,
 
 void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description, int32_t flags) {
     Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, flags);
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_DRAW, description,
-                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+    AlRenderParams params(flags);
+    if(params.isReqClear()) {
+        AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
+        msg->arg1 = params.isTransparent();
+        msg->desc = "clear";
+        postEvent(msg);
+    }
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_DRAW, description);
     msg->arg1 = flags;
     postEvent(msg);
-    AlRenderParams params(flags);
     if (params.isRenderScreen()) {
         AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
         sMsg->desc = "show";

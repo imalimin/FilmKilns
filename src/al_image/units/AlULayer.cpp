@@ -61,10 +61,6 @@ std::vector<AlImageLayerModel *> *AlULayer::getLayers() {
 
 void AlULayer::_notifyAll(int32_t flags) {
     AlRenderParams params(flags);
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
-    msg->arg1 = params.isTransparent();
-    msg->desc = "clear";
-    postEvent(msg);
     if (!mLayerManager.empty()) {
         int size = mLayerManager.size();
         for (int i = 0; i < size; ++i) {
@@ -77,6 +73,9 @@ void AlULayer::_notifyAll(int32_t flags) {
             ///只有最后一个图层绘制完之后才上屏
             if (i >= size - 1) {
                 p = params;
+            }
+            if (0 == i) {
+                p.setReqClear(true);
             }
             _notifyFilter(layer, model, p.toInt());
         }

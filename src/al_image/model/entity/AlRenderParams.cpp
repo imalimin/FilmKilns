@@ -58,3 +58,15 @@ void AlRenderParams::setReqSave(bool value) {
 bool AlRenderParams::isReqSave() {
     return 0 != (flags & 0x4);
 }
+
+bool AlRenderParams::isReqClear() {
+    return 0 != (flags & 0x8);
+}
+
+void AlRenderParams::setReqClear(bool value) {
+    if (value) {
+        flags = flags | 0x8;
+    } else {
+        flags = flags & 0xfffffff7;
+    }
+}
