@@ -7,66 +7,45 @@
 
 #include "AlRenderParams.h"
 
-AlRenderParams::AlRenderParams(int32_t flags) : Object(), flags(flags) {
+AlRenderParams::AlRenderParams(int32_t flags) : AlBinaryParams(flags) {
 
 }
 
-AlRenderParams::AlRenderParams(const AlRenderParams &o) : Object(), flags(o.flags) {
+AlRenderParams::AlRenderParams(const AlRenderParams &o) : AlBinaryParams() {
 
 }
 
 AlRenderParams::~AlRenderParams() {
-    flags = 0;
-}
-
-int32_t AlRenderParams::toInt() {
-    return flags;
 }
 
 void AlRenderParams::setRenderScreen(bool value) {
-    if (value) {
-        flags = flags & 0xfffffffe;
-    } else {
-        flags = flags | 0x1;
-    }
+    set(0, !value);
 }
 
 bool AlRenderParams::isRenderScreen() {
-    return 0 == (flags & 0x1);
+    return !get(0);
 }
 
 void AlRenderParams::setTransparent(bool value) {
-    if (value) {
-        flags = flags | 0x2;
-    } else {
-        flags = flags & 0xfffffffd;
-    }
+    set(1, value);
 }
 
 bool AlRenderParams::isTransparent() {
-    return 0 != (flags & 0x2);
+    return get(1);
 }
 
 void AlRenderParams::setReqSave(bool value) {
-    if (value) {
-        flags = flags | 0x4;
-    } else {
-        flags = flags & 0xfffffffb;
-    }
+    set(2, value);
 }
 
 bool AlRenderParams::isReqSave() {
-    return 0 != (flags & 0x4);
-}
-
-bool AlRenderParams::isReqClear() {
-    return 0 != (flags & 0x8);
+    return get(2);
 }
 
 void AlRenderParams::setReqClear(bool value) {
-    if (value) {
-        flags = flags | 0x8;
-    } else {
-        flags = flags & 0xfffffff7;
-    }
+    set(3, value);
+}
+
+bool AlRenderParams::isReqClear() {
+    return get(3);
 }
