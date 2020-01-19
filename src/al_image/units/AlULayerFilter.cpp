@@ -31,10 +31,14 @@ bool AlULayerFilter::onCreate(AlMessage *msg) {
     copyFilter->prepare();
     paintFilter = new AlPaintFilter();
     paintFilter->prepare();
+//    roundFilter = new AlPaintRoundFilter();
+//    roundFilter->prepare();
     return true;
 }
 
 bool AlULayerFilter::onDestroy(AlMessage *msg) {
+    delete roundFilter;
+    roundFilter = nullptr;
     delete copyFilter;
     copyFilter = nullptr;
     delete paintFilter;

@@ -11,6 +11,7 @@
 #include "HwAbsFilter.h"
 #include "AlPointF.h"
 #include "AlColor.h"
+#include "AlPaintRoundFilter.h"
 #include <vector>
 
 al_class_ex(AlPaintFilter, HwAbsFilter) {
@@ -18,6 +19,8 @@ public:
     AlPaintFilter();
 
     ~AlPaintFilter();
+
+    bool prepare() override;
 
     void setPath(std::vector<float> *vec, bool clear = false);
 
@@ -35,6 +38,7 @@ private:
     void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
+    HwAbsTexture *roundTex = nullptr;
     int32_t uSize = -1;
     int32_t uColor = -1;
     float paintSize = 0.0f;

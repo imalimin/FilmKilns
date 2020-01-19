@@ -8,6 +8,8 @@
 #include "AlPaintFilter.h"
 #include "AlPointProgram.h"
 #include "AlMath.h"
+#include "AlTexManager.h"
+#include "AlPaintRoundFilter.h"
 #include "Logcat.h"
 
 constexpr int DIFF_SIZE = 100;
@@ -18,7 +20,26 @@ AlPaintFilter::AlPaintFilter() : HwAbsFilter() {
 }
 
 AlPaintFilter::~AlPaintFilter() {
+    if (roundTex) {
+        AlTexManager::instance()->recycle(&roundTex);
+        roundTex = nullptr;
+    }
     path.clear();
+}
+
+bool AlPaintFilter::prepare() {
+    bool ret = HwAbsFilter::prepare();
+    if (nullptr == roundTex) {
+        AlTexDescription desc;
+        desc.size.width = 64;
+        desc.size.height = 64;
+        roundTex = AlTexManager::instance()->alloc(desc);
+        AlPaintRoundFilter *filter = new AlPaintRoundFilter();
+        filter->prepare();
+        filter->draw(roundTex, roundTex);
+        delete filter;
+    }
+    return ret;
 }
 
 void AlPaintFilter::setPath(std::vector<float> *vec, bool clear) {
@@ -49,9 +70,11 @@ AlAbsGLProgram *AlPaintFilter::createProgram() {
                   "    gl_PointSize = size;\n"
                   "}");
     string fragment("precision mediump float;\n"
+                    "uniform sampler2D uTexture;"
                     "uniform vec4 color;\n"
                     "void main() {\n"
-                    "    gl_FragColor = color;\n"
+                    "    vec4 c = texture2D(uTexture, vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y));\n"
+                    "    gl_FragColor = c;\n"
                     "}");
     AlAbsGLProgram *program = AlPointProgram::create(&vertex, &fragment);
     uSize = program->getUniformLocation("size");
@@ -76,5 +99,7 @@ void AlPaintFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsT
 }
 
 void AlPaintFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
-    HwAbsFilter::draw(src, dest);
+    if (roundTex) {
+        HwAbsFilter::draw(roundTex, dest);
+    }
 }

@@ -86,9 +86,11 @@ HwProgram::~HwProgram() {
 
 void HwProgram::draw(HwAbsTexture *tex) {
     bind();
-    glActiveTexture(GL_TEXTURE0);
-    tex->bind();
-    glUniform1i(uTextureLocation, 0);
+    if (uTextureLocation >= 0) {
+        glActiveTexture(GL_TEXTURE0);
+        tex->bind();
+        glUniform1i(uTextureLocation, 0);
+    }
     enableVertex(aPositionLocation, aTextureCoordinateLocation);
     if (uTextureMatrix >= 0) {
         setUniformMatrix4fv(uTextureMatrix, matrix.data());
