@@ -42,6 +42,29 @@ void HwAbsTexture::update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
 
 uint32_t HwAbsTexture::fmt() { return desc.fmt; }
 
+size_t HwAbsTexture::countOfByte() {
+    int countOfPlane = 1;
+    switch (desc.fmt) {
+        case GL_RGBA: {
+            countOfPlane = 4;
+            break;
+        }
+        case GL_RGB: {
+            countOfPlane = 3;
+            break;
+        }
+        case GL_RGBA4:
+        case GL_RGB565: {
+            countOfPlane = 2;
+            break;
+        }
+        case GL_ALPHA:
+        default:
+            countOfPlane = 1;
+    }
+    return static_cast<size_t>(desc.size.width * desc.size.height * countOfPlane);
+}
+
 AlTexDescription::AlTexDescription()
         : AlTexDescription(GL_TEXTURE_2D, GL_RGBA) {
 }

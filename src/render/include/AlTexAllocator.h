@@ -27,17 +27,20 @@ public:
 
     bool recycle(HwAbsTexture **tex);
 
-    size_t size();
+    size_t countOfTex();
+
+    int64_t countOfByte();
 
     bool empty();
 
 private:
     AlTexAllocator(const AlTexAllocator &o) : Object() {};
 
+    void clear();
+
 private:
     vector<HwAbsTexture *> textures;
-
-    void clear();
+    int64_t _countOfByte = 0;
 };
 
 

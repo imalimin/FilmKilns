@@ -24,6 +24,8 @@ public:
 
     bool recycle(HwAbsTexture **tex);
 
+    void count(int32_t &countOfTex, int64_t &countOfByte);
+
 private:
     AlTexManager() : Object() {};
 
@@ -34,6 +36,8 @@ private:
     AlTexAllocator *_find(int64_t looper);
 
     bool _checkEnv(int64_t &looper);
+
+    void dump();
 
 private:
     static AlTexManager *_instance;

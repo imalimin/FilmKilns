@@ -25,7 +25,9 @@ HwAbsTexture *AlTexManager::alloc() {
     }
     std::lock_guard<std::mutex> guard(mtx);
     auto *allocator = _find(looper);
-    return allocator->alloc();
+    auto *tex = allocator->alloc();
+    dump();
+    return tex;
 }
 
 HwAbsTexture *AlTexManager::alloc(AlTexDescription &desc, AlBuffer *buf) {
@@ -36,7 +38,9 @@ HwAbsTexture *AlTexManager::alloc(AlTexDescription &desc, AlBuffer *buf) {
     }
     std::lock_guard<std::mutex> guard(mtx);
     auto *allocator = _find(looper);
-    return allocator->alloc(desc, buf);
+    auto *tex = allocator->alloc(desc, buf);
+    dump();
+    return tex;
 }
 
 bool AlTexManager::recycle(HwAbsTexture **tex) {
@@ -57,6 +61,7 @@ bool AlTexManager::recycle(HwAbsTexture **tex) {
         map.erase(itr);
         Logcat::i(TAG, "%s(%d) remove allocator(%p)", __FUNCTION__, __LINE__, itr->second);
     }
+    dump();
     return true;
 }
 
@@ -79,4 +84,24 @@ bool AlTexManager::_checkEnv(int64_t &looper) {
     }
     looper = reinterpret_cast<int64_t>(l);
     return true;
+}
+
+void AlTexManager::dump() {
+    int32_t countOfTex = 0;
+    int64_t countOfByte = 0;
+    count(countOfTex, countOfByte);
+    Logcat::i(TAG, "%s(%d) countOfByte=%lld, countOfTex=%d",
+              __FUNCTION__, __LINE__,
+              countOfByte, countOfTex);
+}
+
+void AlTexManager::count(int32_t &countOfTex, int64_t &countOfByte) {
+    countOfTex = 0;
+    countOfByte = 0;
+    auto itr = map.begin();
+    while (map.end() != itr) {
+        countOfTex += itr->second->countOfTex();
+        countOfByte += itr->second->countOfByte();
+        ++itr;
+    }
 }

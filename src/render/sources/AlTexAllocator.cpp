@@ -33,6 +33,7 @@ HwAbsTexture *AlTexAllocator::alloc(AlTexDescription &desc, AlBuffer *buf) {
     if (desc.size.width > 0 && desc.size.height > 0) {
         tex->update(buf, desc.size.width, desc.size.height, desc.fmt);
     }
+    _countOfByte += tex->countOfByte();
     return tex;
 }
 
@@ -44,6 +45,7 @@ bool AlTexAllocator::recycle(HwAbsTexture **tex) {
         auto *it = *itr;
         if (it && *tex == it) {
             Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, it->texId());
+            _countOfByte -= it->countOfByte();
             delete *tex;
             *tex = nullptr;
             textures.erase(itr);
@@ -60,14 +62,19 @@ void AlTexAllocator::clear() {
         }
     }
     textures.clear();
+    _countOfByte = 0;
 }
 
-size_t AlTexAllocator::size() {
+size_t AlTexAllocator::countOfTex() {
     return textures.size();
 }
 
 bool AlTexAllocator::empty() {
-    return 0 == size();
+    return 0 == countOfTex();
+}
+
+int64_t AlTexAllocator::countOfByte() {
+    return _countOfByte;
 }
 
 //HwAbsTexture *AlTexAllocator::alloc(AlBitmap *bmp) {

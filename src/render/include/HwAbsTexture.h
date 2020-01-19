@@ -64,6 +64,8 @@ public:
 
     virtual void unbind() = 0;
 
+    size_t countOfByte();
+
     uint32_t target();
 
     uint32_t fmt();
