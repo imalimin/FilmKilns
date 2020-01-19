@@ -32,7 +32,7 @@ AlAbsGLProgram *AlPaintRoundFilter::createProgram() {
                     "    if(radius <= length(center - vTextureCoord.xy)) {\n"
                     "        gl_FragColor = vec4(1.0, 1.0, 1.0, 0.0);\n"
                     "    } else {\n"
-                    "        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+                    "        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
                     "    }\n"
                     "}");
     AlAbsGLProgram *program = HwProgram::create(&vertex, &fragment);

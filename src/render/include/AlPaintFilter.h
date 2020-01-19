@@ -37,6 +37,8 @@ private:
 
     void drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
+    void drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
+
 private:
     HwAbsTexture *roundTex = nullptr;
     int32_t uSize = -1;

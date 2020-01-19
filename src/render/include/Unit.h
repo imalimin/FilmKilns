@@ -162,10 +162,9 @@ protected:
 private:
     Unit(const Unit &o) : Object() {};
 
-    /**
-     * @msg 事件消息
-     * @return true:我可以处理这个事件，false:无法处理这个事件
-     */
+     /// 广播分发接收函数，通常由UnitPipeline调用
+     /// \param msg 事件消息
+     /// \return true:我可以处理这个事件，false:无法处理这个事件
     bool dispatch(AlMessage *msg);
 
 private:

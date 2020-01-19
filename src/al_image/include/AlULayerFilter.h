@@ -12,7 +12,6 @@
 #include "AlImageLayer.h"
 #include "HwAbsFilter.h"
 #include "AlImageLayerModel.h"
-#include "AlPaintRoundFilter.h"
 #include <map>
 
 al_class_ex(AlULayerFilter, Unit) {
@@ -60,7 +59,6 @@ private:
     std::map<int32_t, AlImageLayer *> layers;
     HwAbsFilter *paintFilter = nullptr;
     HwAbsFilter *copyFilter = nullptr;
-    AlPaintRoundFilter *roundFilter = nullptr;
 };
 
 

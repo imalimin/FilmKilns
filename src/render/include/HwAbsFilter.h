@@ -26,6 +26,9 @@ public:
 
     virtual bool prepare();
 
+    /// 绘制纹理，注意要先调用glViewPort
+    /// \param src
+    /// \param dest
     virtual void draw(HwAbsTexture *src, HwAbsTexture *dest);
 
     virtual void setParams(int *params);

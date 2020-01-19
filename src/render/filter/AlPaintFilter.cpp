@@ -36,6 +36,7 @@ bool AlPaintFilter::prepare() {
         roundTex = AlTexManager::instance()->alloc(desc);
         AlPaintRoundFilter *filter = new AlPaintRoundFilter();
         filter->prepare();
+        glViewport(0, 0, roundTex->getWidth(), roundTex->getHeight());
         filter->draw(roundTex, roundTex);
         delete filter;
     }
@@ -74,7 +75,7 @@ AlAbsGLProgram *AlPaintFilter::createProgram() {
                     "uniform vec4 color;\n"
                     "void main() {\n"
                     "    vec4 c = texture2D(uTexture, vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y));\n"
-                    "    gl_FragColor = c;\n"
+                    "    gl_FragColor = color * c;\n"
                     "}");
     AlAbsGLProgram *program = AlPointProgram::create(&vertex, &fragment);
     uSize = program->getUniformLocation("size");
@@ -96,10 +97,18 @@ void AlPaintFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsT
     color[3] = 1.0f - this->color.af();
     program->setUniform4fv(uColor, 1, color);
     program->setUniform1f(uSize, paintSize * dest->getWidth());
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
 }
 
 void AlPaintFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     if (roundTex) {
         HwAbsFilter::draw(roundTex, dest);
     }
+}
+
+void AlPaintFilter::drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
+    HwAbsFilter::drawEnd(program, src, dest);
+    glDisable(GL_BLEND);
 }
