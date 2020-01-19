@@ -115,6 +115,7 @@ AlImageLayer *AlULayerFilter::_findLayer(AlImageLayerModel *model, AlImageLayer 
         if (l) {
             layers.insert(std::pair<int32_t, AlImageLayer *>(id, l));
             l->getTexture()->update(nullptr, layer->getWidth(), layer->getHeight(), GL_RGBA);
+            glViewport(0, 0, layer->getWidth(), layer->getHeight());
             copyFilter->draw(layer->getTexture(), l->getTexture());
         }
         return l;
