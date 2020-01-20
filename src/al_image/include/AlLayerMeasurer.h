@@ -72,6 +72,8 @@ public:
     /// \return
     HwResult measure(AlImageLayerDrawModel &drawModel);
 
+    HwResult measurePoint(float &x, float &y);
+
     /// 获取经过正交变换后，src size的四个顶点坐标
     /// 比如图层在画布坐标系中四个顶点的值
     AlRectF getSrcPosRectF();

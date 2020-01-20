@@ -145,6 +145,14 @@ void AlLayerMeasurer::measureTransLORectF(AlVec2 &leftTop, AlVec2 &leftBottom,
     rightTop.set((rt * mat).xy());
 }
 
+HwResult AlLayerMeasurer::measurePoint(float &x, float &y) {
+    AlMatrix mat = tMat * oMat;
+    AlVec4 lt(x, y);
+    AlVec2 vec = (lt * mat).xy();
+    x = vec.x;
+    y = vec.y;
+}
+
 HwResult AlLayerMeasurer::measure(AlImageLayerDrawModel &drawModel) {
     drawModel.mat = tMat * oMat;
     drawModel.vertexRectF = lRectF;
