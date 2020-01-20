@@ -410,16 +410,7 @@ HwResult AlImageProcessor::paint(int32_t id, AlPointF pointF, bool painting) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _findLayer(id);
     if (layer) {
-        transToCanvasPos(pointF.x, pointF.y);
-        pointF.y = -pointF.y;
-        AlVec2 scale = layer->getScale();
-        AlRational rotation = layer->getRotation();
-        AlVec2 pos = layer->getPosition();
-        AlMatrix tMat;
-        tMat.setScale(1 / scale.x, 1 / scale.y);
-        tMat.setRotation(-rotation.toFloat() * AlMath::PI);
-        tMat.setTranslate(-pos.x, pos.y);
-        pointF = (AlVec4(pointF) * tMat).xy();
+        _transWin2Layer(layer, pointF.x, pointF.y);
         AlAbsMAction *action = nullptr;
         auto *actions = layer->getAllActions();
         size_t size = actions->size();
@@ -442,4 +433,21 @@ HwResult AlImageProcessor::paint(int32_t id, AlPointF pointF, bool painting) {
         return Hw::SUCCESS;
     }
     return Hw::FAILED;
+}
+
+void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, float &x, float &y) {
+    transToCanvasPos(x, y);
+    y = -y;
+    AlVec2 scale = layer->getScale();
+    AlRational rotation = layer->getRotation();
+    AlVec2 pos = layer->getPosition();
+    x -= pos.x;
+    y += pos.y;
+    AlMatrix tMat;
+    tMat.setScale(1 / scale.x, 1 / scale.y);
+    tMat.setRotation(-rotation.toFloat() * AlMath::PI);
+//    tMat.setTranslate(-pos.x, pos.y);
+    AlPointF pointF = (AlVec4(x, y) * tMat).xy();
+    x = pointF.x;
+    y = pointF.y;
 }

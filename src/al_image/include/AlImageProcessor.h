@@ -115,6 +115,8 @@ private:
 
     AlImageLayerModel *_findLayer(int32_t id);
 
+    void _transWin2Layer(AlImageLayerModel *layer, float &x, float &y);
+
 private:
     const string ALIAS_OF_LAYER = "LAYER";
     const string ALIAS_OF_FILTER = "LAYER_FILTER";
