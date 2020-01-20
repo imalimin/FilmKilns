@@ -436,30 +436,18 @@ HwResult AlImageProcessor::paint(int32_t id, AlPointF pointF, bool painting) {
 }
 
 void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, float &x, float &y) {
-    AlLayerMeasurer aMeasurer = AlLayerMeasurer::centerInside();
+    transToCanvasPos(x, y);
+    y = -y;
     AlVec2 scale = layer->getScale();
     AlRational rotation = layer->getRotation();
     AlVec2 pos = layer->getPosition();
-    AlSize layerSize = mCanvasSize;
-
-
-    float alpha = -rotation.toFloat() * AlMath::PI;
-    AlPointF layerPos = pos;
-    layerPos.x = -layerPos.x;
-    layerPos.y = -layerPos.y;
-
-    float dx = x / 2.0f + layerPos.x;
-    float dy = y / 2.0f + layerPos.y;
-    dx /= scale.x;
-    dy /= scale.y;
-
-    AlCoordsTranslator::translate(mCanvasSize, layerSize, x, y);
-    AlCoordsTranslator::translate(mCanvasSize, layerSize, layerPos.x, layerPos.y);
-
-    aMeasurer.updateOrthogonal(layerSize, layerSize);
-    aMeasurer.setScale(1 / scale.x, 1 / scale.y);
-    aMeasurer.setRotation(alpha);
-    aMeasurer.setTranslate(dx, dy, alpha, 1, -1);
-
-    aMeasurer.measurePoint(x, y);
+    x -= pos.x;
+    y += pos.y;
+    AlMatrix tMat;
+    tMat.setScale(1 / scale.x, 1 / scale.y);
+    tMat.setRotation(-rotation.toFloat() * AlMath::PI);
+//    tMat.setTranslate(-pos.x, pos.y);
+    AlPointF pointF = (AlVec4(x, y) * tMat).xy();
+    x = pointF.x;
+    y = pointF.y;
 }
