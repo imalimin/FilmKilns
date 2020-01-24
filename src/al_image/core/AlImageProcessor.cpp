@@ -39,7 +39,6 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlULayerDescriptor(ALIAS_OF_DESCRIPTOR));
     registerAnUnit(uCanvas);
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    putObject("canvas_size", &mCanvasSize).to({ALIAS_OF_CANVAS});
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
     uCanvas->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
         if (this->onSaveListener) {
@@ -455,9 +454,9 @@ void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, float &x, float
 }
 
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
+    Logcat::i(TAG, "%s(%d) %dx%d", __FUNCTION__, __LINE__, mCanvasSize.width, mCanvasSize.height);
     mCanvasCoord.setScale(mCanvasSize.width / (float) mWinSize.width,
                           mCanvasSize.height / (float) mWinSize.height);
     return true;
