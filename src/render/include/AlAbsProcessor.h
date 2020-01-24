@@ -39,8 +39,6 @@ protected:
 
     void registerAnUnit(Unit *unit);
 
-    void postEvent(AlMessage *msg);
-
     HwPairBuilder<int32_t> putInt32(string key, int32_t value);
 
     HwPairBuilder<int64_t> putInt64(string key, int64_t value);

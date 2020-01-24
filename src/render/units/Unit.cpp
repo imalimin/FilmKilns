@@ -5,6 +5,8 @@
 #include "Unit.h"
 #include "log.h"
 
+#define TAG "Unit"
+
 Event::Event(int what, EventFunc handler) {
     this->what = what;
     this->handler = handler;
@@ -29,7 +31,7 @@ Unit::~Unit() {
     LOGI("~Unit(%s)", alias.c_str());
     if (eventMap.empty()) return;
     for (auto itr = eventMap.rbegin(); itr != eventMap.rend(); itr++) {
-//        delete itr->second;
+        delete itr->second;
     }
     eventMap.clear();
 }
@@ -47,7 +49,7 @@ void Unit::postEvent(AlMessage *msg) {
     if (pipeline) {
         pipeline->postEvent(msg);
     } else {
-        LOGE("%s`s pipeline is null", alias.c_str());
+        Logcat::i(TAG, "%s(%d) failed. skip message %p", __FUNCTION__, __LINE__, msg);
     }
 }
 

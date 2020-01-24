@@ -22,13 +22,6 @@ AlAbsProcessor::~AlAbsProcessor() {
 }
 
 void AlAbsProcessor::prepare() {
-    if (pipeline) {
-        post([=] {
-            onCreate();
-        });
-    } else {
-        onCreate();
-    }
     AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE);
     postEvent(msg);
 }
@@ -64,16 +57,6 @@ void AlAbsProcessor::registerAnUnit(Unit *unit) {
     }
 }
 
-void AlAbsProcessor::postEvent(AlMessage *msg) {
-    if (pipeline) {
-        pipeline->postEvent(msg);
-    } else {
-        Logcat::e(TAG, "%s(%d) failed. Please call startPipeline first.", __FUNCTION__, __LINE__);
-        Logcat::i(TAG, "%s(%d) failed. AlAbsProcessor skip message %p",
-                  __FUNCTION__, __LINE__, msg);
-    }
-}
-
 void AlAbsProcessor::post(function<void()> runnable) {
     if (runnable) {
         AlMessage *msg = AlMessage::obtain(0, new AlRunnable([runnable](Object *o) {
@@ -104,9 +87,12 @@ HwPairBuilder<Object *> AlAbsProcessor::putObject(string key, Object *value) {
 }
 
 bool AlAbsProcessor::onCreate(AlMessage *msg) {
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    onCreate();
     return true;
 }
 
 bool AlAbsProcessor::onDestroy(AlMessage *msg) {
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     return true;
 }
