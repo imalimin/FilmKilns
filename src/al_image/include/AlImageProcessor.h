@@ -18,6 +18,7 @@
 #include "AlUCanvas.h"
 #include "AlAbsContext.h"
 #include "AlEgl.h"
+#include "AlCoordinate.h"
 #include <vector>
 
 al_class_ex(AlImageProcessor, AlAbsProcessor) {
@@ -117,6 +118,8 @@ private:
 
     void _transWin2Layer(AlImageLayerModel *layer, float &x, float &y);
 
+    bool _onCanvasUpdate(AlMessage *msg);
+
 private:
     const string ALIAS_OF_LAYER = "LAYER";
     const string ALIAS_OF_FILTER = "LAYER_FILTER";
@@ -132,6 +135,7 @@ private:
     std::mutex mLayerMtx;
     AlSize mWinSize;
     AlSize mCanvasSize;
+    AlCoordinate mCanvasCoord = AlCoordinate::create();
     AlUCanvas::OnSaveListener onSaveListener = nullptr;
 };
 

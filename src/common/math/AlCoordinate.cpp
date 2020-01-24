@@ -23,6 +23,21 @@ AlCoordinate::~AlCoordinate() {
 
 }
 
-void AlCoordinate::translate(AlVec2 vec2, AlCoordinate &coordinate) {
+void AlCoordinate::translate(AlVec2 &vec2, AlCoordinate &coordinate) {
+    AlVec4 src(vec2);
+    AlVec4 dest = src * mat;
+    vec2.x = dest.x;
+    vec2.y = dest.y;
+}
 
+void AlCoordinate::setScale(float scaleX, float scaleY) {
+    mat.setScale(scaleX, scaleY);
+}
+
+void AlCoordinate::setRotation(float alpha) {
+    mat.setRotation(alpha);
+}
+
+void AlCoordinate::setPosition(float x, float y) {
+    mat.setTranslate(x, y);
 }

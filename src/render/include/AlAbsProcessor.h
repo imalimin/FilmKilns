@@ -16,7 +16,7 @@
 #include <string>
 #include <initializer_list>
 
-al_class(AlAbsProcessor) {
+al_class_ex(AlAbsProcessor, Unit) {
 public:
     AlAbsProcessor(string name);
 
@@ -29,9 +29,13 @@ public:
     void post(function<void()> runnable);
 
 protected:
-    virtual void onCreate();
+    virtual void onCreate() ;
 
-    virtual void onDestroy();
+    virtual void onDestroy() ;
+
+    virtual bool onCreate(AlMessage *msg) override ;
+
+    virtual bool onDestroy(AlMessage *msg) override ;
 
     void registerAnUnit(Unit *unit);
 

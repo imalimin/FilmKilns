@@ -10,6 +10,7 @@
 
 #include "Object.h"
 #include "AlVec2.h"
+#include "AlMatrix.h"
 
 al_class(AlCoordinate) {
 public:
@@ -19,12 +20,19 @@ public:
 
     ~AlCoordinate();
 
-    void translate(AlVec2 vec2, AlCoordinate &coordinate);
+    void translate(AlVec2 &vec2, AlCoordinate &coordinate);
+
+    void setScale(float scaleX, float scaleY);
+
+    void setRotation(float alpha);
+
+    void setPosition(float x, float y);
 
 private:
     AlCoordinate() : Object() {};
-private:
 
+private:
+    AlMatrix mat;
 };
 
 

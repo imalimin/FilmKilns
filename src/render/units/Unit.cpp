@@ -20,7 +20,7 @@ bool Event::dispatch(Unit *unit, AlMessage *msg) {
     return (unit->*handler)(msg);
 }
 
-Unit::Unit(string alias) : alias(alias) {
+Unit::Unit(string alias, AlUnitSetting setting) : alias(alias), setting(setting) {
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Unit::onCreate));
     registerEvent(EVENT_COMMON_RELEASE, reinterpret_cast<EventFunc>(&Unit::onDestroy));
 }
@@ -81,4 +81,20 @@ const string Unit::getString(string key) {
 
 Object *Unit::getObject(string key) {
     return getModelProvider()->getObject(alias + "_" + key);
+}
+
+Unit::AlUnitSetting::AlUnitSetting(bool hosted)
+        : Object(),
+          hosted(hosted) {
+
+}
+
+Unit::AlUnitSetting::AlUnitSetting(const Unit::AlUnitSetting &o)
+        : Object(),
+          hosted(o.hosted) {
+
+}
+
+Unit::AlUnitSetting::~AlUnitSetting() {
+
 }

@@ -63,7 +63,9 @@ void UnitPipeline::dispatch(AlMessage *msg) {
 void UnitPipeline::clear() {
     LOGI("UnitPipeline::clear units");
     for (auto unit:units) {
-        delete unit;
+        if (0 == unit->setting.hosted) {
+            delete unit;
+        }
     }
     units.clear();
 }

@@ -117,10 +117,25 @@ private:
     friend class UnitPipeline;
 
 public:
+    al_class(AlUnitSetting) {
+    public:
+        AlUnitSetting(bool hosted = false);
+
+        AlUnitSetting(const AlUnitSetting &o);
+
+        virtual ~AlUnitSetting();
+
+    public:
+        /// false: This unit will be delete when UnitPipeline delete.
+        /// true: This unit will not be delete when UnitPipeline delete.
+        bool hosted = false;
+    };
+
+public:
     /**
      * @param Alias is IMPORTANT for an unit. It is a tag of model provider.
      */
-    Unit(string alias);
+    Unit(string alias, AlUnitSetting setting = AlUnitSetting());
 
     virtual ~Unit();
 
@@ -162,13 +177,14 @@ protected:
 private:
     Unit(const Unit &o) : Object() {};
 
-     /// 广播分发接收函数，通常由UnitPipeline调用
-     /// \param msg 事件消息
-     /// \return true:我可以处理这个事件，false:无法处理这个事件
+    /// 广播分发接收函数，通常由UnitPipeline调用
+    /// \param msg 事件消息
+    /// \return true:我可以处理这个事件，false:无法处理这个事件
     bool dispatch(AlMessage *msg);
 
 private:
     string alias;
+    AlUnitSetting setting;
     map<int, Event *> eventMap;
     UnitPipeline *pipeline = nullptr;
     HwModelProvider *provider = nullptr;

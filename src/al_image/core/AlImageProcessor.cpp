@@ -49,6 +49,8 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
     uLayer->setOnAlxLoadListener([this](int32_t id) {
         mLayerIdCreator.reset(id);
     });
+    registerEvent(EVENT_LAYER_MEASURE_CANVAS_SIZE,
+                  reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
 }
 
 AlImageProcessor::~AlImageProcessor() {
@@ -450,4 +452,13 @@ void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, float &x, float
     AlPointF pointF = (AlVec4(x, y) * tMat).xy();
     x = pointF.x;
     y = pointF.y;
+}
+
+bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    mCanvasSize.width = msg->arg1;
+    mCanvasSize.height = static_cast<int>(msg->arg2);
+    mCanvasCoord.setScale(mCanvasSize.width / (float) mWinSize.width,
+                          mCanvasSize.height / (float) mWinSize.height);
+    return true;
 }
