@@ -28,14 +28,20 @@ public:
     void postDestroy();
 
 private:
+    UnitPipeline(const UnitPipeline &o) : Object() {};
+
     void dispatch(AlMessage *msg);
 
     void clear();
 
+    void _notifyCreate();
+
+    void _notifyDestroy();
+
 private:
     AlHandlerThread *mThread = nullptr;
     AlHandler *mHandler = nullptr;
-    SimpleLock simpleLock;
+    std::mutex mtx;
     vector<Unit *> units;
     bool notified = false;
 };

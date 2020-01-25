@@ -29,6 +29,8 @@ public:
 
     int size();
 
+    bool empty();
+
     void pop();
 
     void notify();

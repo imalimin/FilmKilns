@@ -7,6 +7,8 @@
 #include "Unit.h"
 #include "AlMessage.h"
 
+#define TAG "UnitPipeline"
+
 UnitPipeline::UnitPipeline(string name) {
     notified = false;
     mThread = AlHandlerThread::create(name);
@@ -29,39 +31,43 @@ UnitPipeline::~UnitPipeline() {
 }
 
 void UnitPipeline::postDestroy() {
-    simpleLock.lock();
+    std::lock_guard<std::mutex> guard(mtx);
     if (!notified) {
         notified = true;
         if (mHandler) {
-            AlMessage *msg = AlMessage::obtain(EVENT_COMMON_RELEASE);
-            mHandler->sendMessage(AlMessage::obtain(EVENT_COMMON_RELEASE, msg));
+            _notifyDestroy();
         }
     }
-    simpleLock.unlock();
 }
 
 void UnitPipeline::postEvent(AlMessage *msg) {
-    simpleLock.lock();
+    std::lock_guard<std::mutex> guard(mtx);
     if (mHandler) {
         mHandler->sendMessage(msg);
-        simpleLock.unlock();
         return;
     }
-    simpleLock.unlock();
     this->dispatch(msg);
 }
 
 void UnitPipeline::dispatch(AlMessage *msg) {
-    for (auto itr = units.cbegin(); itr != units.cend(); itr++) {
-        bool ret = (*itr)->dispatch(msg);
-    }
-    if (EVENT_COMMON_RELEASE == msg->what) {
+    if (EVENT_COMMON_RELEASE != msg->what) {
+        for (auto itr = units.cbegin(); itr != units.cend(); itr++) {
+            bool ret = (*itr)->dispatch(msg);
+        }
+    } else {
+        for (auto itr = units.end() - 1; itr != units.begin() - 1; --itr) {
+            auto *unit = *itr;
+            Logcat::i(TAG, "%s(%d) %s will be destroy.",
+                      __FUNCTION__, __LINE__,
+                      typeid(*unit).name());
+            bool ret = unit->dispatch(msg);
+        }
         clear();
     }
 }
 
 void UnitPipeline::clear() {
-    LOGI("UnitPipeline::clear units");
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     for (auto unit:units) {
         if (0 == unit->setting.hosted) {
             delete unit;
@@ -73,5 +79,14 @@ void UnitPipeline::clear() {
 int UnitPipeline::registerAnUnit(Unit *unit) {
     unit->setController(this);
     units.push_back(unit);
+    _notifyCreate();
     return 1;
+}
+
+void UnitPipeline::_notifyCreate() {
+    postEvent(AlMessage::obtain(EVENT_COMMON_PREPARE, nullptr, AlMessage::QUEUE_MODE_FIRST_ALWAYS));
+}
+
+void UnitPipeline::_notifyDestroy() {
+    mHandler->sendMessage(AlMessage::obtain(EVENT_COMMON_RELEASE));
 }

@@ -188,6 +188,7 @@ private:
     map<int, Event *> eventMap;
     UnitPipeline *pipeline = nullptr;
     HwModelProvider *provider = nullptr;
+    bool created = false;
 };
 
 class HwModelProvider : public Unit {

@@ -9,20 +9,54 @@
 #define HWVC_ANDROID_ALABSPROCESSOR_H
 
 #include "Object.h"
-#include "UnitPipeline.h"
+#include "AlPostMan.h"
 #include "Unit.h"
 #include "HwPair.h"
-#include "HwAbsProcessor.h"
 #include <string>
 #include <initializer_list>
+
+template<typename V>
+class HwPairBuilder : public Object {
+public:
+    HwPairBuilder(AlPostMan *pipe, int32_t what, HwPair<string, V> hwPair)
+            : Object(),
+              pipe(pipe),
+              what(what),
+              hwPair(hwPair) {
+    }
+
+    HwPairBuilder(const HwPairBuilder &builder) : Object(),
+                                                  pipe(builder.pipe),
+                                                  what(builder.what),
+                                                  hwPair(builder.hwPair) {
+    }
+
+    virtual ~HwPairBuilder() {
+        pipe = nullptr;
+    }
+
+    void to(initializer_list<string> args) {
+        for (auto it = args.begin(); it != args.end(); ++it) {
+            if (pipe) {
+                AlMessage *msg = AlMessage::obtain(what, new HwPair<string, V>(
+                        (*it) + "_" + hwPair.key(), hwPair.value()),
+                                                   AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+                pipe->postEvent(msg);
+            }
+        }
+    }
+
+private:
+    AlPostMan *pipe = nullptr;
+    int32_t what = 0;
+    HwPair<string, V> hwPair;
+};
 
 al_class_ex(AlAbsProcessor, Unit) {
 public:
     AlAbsProcessor(string name);
 
     virtual ~AlAbsProcessor();
-
-    void prepare();
 
     void release();
 
@@ -50,7 +84,7 @@ protected:
 private:
     const string ALIAS_OF_MODEL_PROVIDER = "ModelProvider";
     string name;
-    UnitPipeline *pipeline = nullptr;
+    AlPostMan *pipeline = nullptr;
     HwModelProvider *provider = nullptr;
 
 };

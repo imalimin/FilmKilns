@@ -60,13 +60,15 @@ void AlLooper::_enqueueMessage(AlMessage *msg) {
 //    }
     if (msg->queueMode & AlMessage::QUEUE_MODE_UNIQUE) {
         queue.removeAllMessage(msg->what);
+        queueLevel0.removeAllMessage(msg->what);
     }
     if (msg->queueMode & AlMessage::QUEUE_MODE_CLEAR) {
         queue.removeAllMessage(msg->what);
+        queueLevel0.removeAllMessage(msg->what);
         delete msg;
     } else {
         if (msg->queueMode & AlMessage::QUEUE_MODE_FIRST_ALWAYS) {
-            queue.offerAtFront(msg);
+            queueLevel0.offer(msg);
         } else {
             queue.offer(msg);
         }
@@ -86,14 +88,14 @@ void AlLooper::_loop() {
     looping = true;
     for (;;) {
         queue.dump();
-        AlMessage *msg = queue.take();
+        AlMessage *msg = _take();
         if (msg) {
             if (msg->target) {
                 msg->target->dispatchMessage(msg);
             }
             delete msg;
         }
-        queue.pop();
+        _pop();
         if (exitSafely) {
             if (exiting && 0 == queue.size()) {
                 break;
@@ -118,6 +120,22 @@ void AlLooper::_loop() {
     exiting = false;
     exited = true;
     looping = false;
+}
+
+AlMessage *AlLooper::_take() {
+    if (queueLevel0.empty()) {
+        return queue.take();
+    } else {
+        return queueLevel0.take();
+    }
+}
+
+void AlLooper::_pop() {
+    if (queueLevel0.empty()) {
+        return queue.pop();
+    } else {
+        return queueLevel0.pop();
+    }
 }
 
 AlLooperManager *AlLooperManager::instance = new AlLooperManager();

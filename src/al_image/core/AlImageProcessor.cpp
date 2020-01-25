@@ -32,6 +32,7 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //        }
 //        tar_free(archive);
 //    }
+    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
     AlULayer *uLayer = new AlULayer(ALIAS_OF_LAYER);
     AlUCanvas *uCanvas = new AlUCanvas(ALIAS_OF_CANVAS);
     registerAnUnit(uLayer);
@@ -39,7 +40,6 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlULayerDescriptor(ALIAS_OF_DESCRIPTOR));
     registerAnUnit(uCanvas);
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
     uCanvas->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
         if (this->onSaveListener) {
             this->onSaveListener(code, msg, path);

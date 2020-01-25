@@ -137,3 +137,7 @@ void AlMessageQueue::dump() {
     Logcat::i(TAG, "%s", os.str().c_str());
 #endif
 }
+
+bool AlMessageQueue::empty() {
+    return 0 == size();
+}

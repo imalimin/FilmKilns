@@ -56,10 +56,15 @@ private:
 
     void _enqueueMessage(AlMessage *msg);
 
+    AlMessage *_take();
+
+    void _pop();
+
 private:
     std::atomic_bool exiting, exited, exitSafely;
     std::atomic_bool looping;
     AlMessageQueue queue;
+    AlMessageQueue queueLevel0;
 };
 
 class AlLooperManager : public Object {

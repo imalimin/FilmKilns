@@ -28,19 +28,31 @@ AlULayer::~AlULayer() {
 }
 
 bool AlULayer::onCreate(AlMessage *msg) {
+    Logcat::e(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    auto *layers = getLayers();
+    if (nullptr == layers) {
+        Logcat::e(TAG, "%s(%d) failed. Can`t find layers.", __FUNCTION__, __LINE__);
+        return true;
+    }
     /// Just for init models address.
-    mLayerManager.update(getLayers());
+    mLayerManager.update(layers);
     return true;
 }
 
 bool AlULayer::onDestroy(AlMessage *msg) {
+    Logcat::e(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     mLayerManager.release();
     return true;
 }
 
 bool AlULayer::onUpdateLayer(AlMessage *msg) {
     std::vector<int32_t> delLayers;
-    mLayerManager.update(getLayers(), &delLayers);
+    auto *layers = getLayers();
+    if (nullptr == layers) {
+        Logcat::e(TAG, "%s(%d) failed. Can`t find layers.", __FUNCTION__, __LINE__);
+        return true;
+    }
+    mLayerManager.update(layers, &delLayers);
     for (auto id:delLayers) {
         auto *m = AlMessage::obtain(EVENT_LAYER_REMOVE_CACHE_LAYER);
         m->arg1 = id;
@@ -56,6 +68,9 @@ bool AlULayer::onInvalidate(AlMessage *m) {
 
 std::vector<AlImageLayerModel *> *AlULayer::getLayers() {
     auto *obj = static_cast<ObjectBox *>(getObject("layers"));
+    if (nullptr == obj) {
+        return nullptr;
+    }
     return static_cast<vector<AlImageLayerModel *> *>(obj->ptr);
 }
 

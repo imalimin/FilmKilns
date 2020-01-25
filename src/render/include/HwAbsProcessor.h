@@ -40,10 +40,9 @@ public:
     void to(initializer_list<string> args) {
         for (auto it = args.begin(); it != args.end(); ++it) {
             if (pipe) {
-                AlMessage *msg = AlMessage::obtain(what, nullptr,
+                AlMessage *msg = AlMessage::obtain(what, new HwPair<string, V>(
+                        (*it) + "_" + hwPair.key(), hwPair.value()),
                                                    AlMessage::QUEUE_MODE_FIRST_ALWAYS);
-                msg->obj = new HwPair<string, V>(
-                        (*it) + "_" + hwPair.key(), hwPair.value());
                 pipe->postEvent(msg);
             }
         }

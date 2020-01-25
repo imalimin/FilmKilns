@@ -23,6 +23,7 @@ bool Event::dispatch(Unit *unit, AlMessage *msg) {
 }
 
 Unit::Unit(string alias, AlUnitSetting setting) : alias(alias), setting(setting) {
+    created = false;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Unit::onCreate));
     registerEvent(EVENT_COMMON_RELEASE, reinterpret_cast<EventFunc>(&Unit::onDestroy));
 }
@@ -54,6 +55,16 @@ void Unit::postEvent(AlMessage *msg) {
 }
 
 bool Unit::dispatch(AlMessage *msg) {
+    if (created && EVENT_COMMON_PREPARE == msg->what) {
+        return false;
+    }
+    if (!created) {
+        if (EVENT_COMMON_PREPARE != msg->what) {
+            return false;
+        }
+        created = true;
+    }
+
     auto itr = eventMap.find(msg->what);
     if (eventMap.end() != itr) {
         return itr->second->dispatch(this, msg);

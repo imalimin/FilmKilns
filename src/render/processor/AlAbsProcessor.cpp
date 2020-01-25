@@ -12,7 +12,7 @@
 #define TAG "AlAbsProcessor"
 
 AlAbsProcessor::AlAbsProcessor(string name) : Unit(name, Unit::AlUnitSetting(true)), name(name) {
-    pipeline = new UnitPipeline(name);
+    pipeline = AlPostMan::create(name);
     provider = new HwModelProvider(ALIAS_OF_MODEL_PROVIDER);
     registerAnUnit(this);
     registerAnUnit(provider);
@@ -21,22 +21,9 @@ AlAbsProcessor::AlAbsProcessor(string name) : Unit(name, Unit::AlUnitSetting(tru
 AlAbsProcessor::~AlAbsProcessor() {
 }
 
-void AlAbsProcessor::prepare() {
-    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_PREPARE);
-    postEvent(msg);
-}
-
 void AlAbsProcessor::release() {
-    if (pipeline) {
-        pipeline->postDestroy();
-        post([=] {
-            onDestroy();
-        });
-        delete pipeline;
-        pipeline = nullptr;
-    } else {
-        onDestroy();
-    }
+    delete pipeline;
+    pipeline = nullptr;
     provider = nullptr;
 }
 
@@ -94,5 +81,6 @@ bool AlAbsProcessor::onCreate(AlMessage *msg) {
 
 bool AlAbsProcessor::onDestroy(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    onDestroy();
     return true;
 }
