@@ -23,7 +23,7 @@ AlCoordinate::~AlCoordinate() {
 
 }
 
-void AlCoordinate::translate(AlVec2 &vec2, AlCoordinate &coordinate) {
+void AlCoordinate::translate(AlVec2 &vec2) {
     AlVec4 src(vec2);
     AlVec4 dest = src * mat;
     vec2.x = dest.x;

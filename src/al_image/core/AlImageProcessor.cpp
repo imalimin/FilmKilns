@@ -285,7 +285,11 @@ AlImageLayerModel *AlImageProcessor::_findLayer(int32_t id) {
 }
 
 void AlImageProcessor::transToCanvasPos(float &x, float &y) {
-    AlCoordsTranslator::translate(mWinSize, mCanvasSize, x, y);
+    AlVec2 vec2(x, y);
+    mCanvasCoord.translate(vec2);
+    x = vec2.x;
+    y = vec2.y;
+//    AlCoordsTranslator::translate(mWinSize, mCanvasSize, x, y);
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
@@ -457,7 +461,7 @@ bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
     Logcat::i(TAG, "%s(%d) %dx%d", __FUNCTION__, __LINE__, mCanvasSize.width, mCanvasSize.height);
-    mCanvasCoord.setScale(mCanvasSize.width / (float) mWinSize.width,
-                          mCanvasSize.height / (float) mWinSize.height);
+    mCanvasCoord.setScale(mWinSize.width / (float) mCanvasSize.width,
+                          mWinSize.height / (float) mCanvasSize.height);
     return true;
 }

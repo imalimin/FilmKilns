@@ -20,7 +20,7 @@ public:
 
     ~AlCoordinate();
 
-    void translate(AlVec2 &vec2, AlCoordinate &coordinate);
+    void translate(AlVec2 &vec2);
 
     void setScale(float scaleX, float scaleY);
 
