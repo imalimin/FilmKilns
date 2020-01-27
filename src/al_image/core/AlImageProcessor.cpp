@@ -446,15 +446,22 @@ void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, float &x, float
     AlVec2 scale = layer->getScale();
     AlRational rotation = layer->getRotation();
     AlVec2 pos = layer->getPosition();
-    x -= pos.x;
+    double alpha = -rotation.toFloat() * AlMath::PI;
+
+    x += -pos.x;
     y += pos.y;
-    AlMatrix tMat;
-    tMat.setScale(1 / scale.x, 1 / scale.y);
-    tMat.setRotation(-rotation.toFloat() * AlMath::PI);
-//    tMat.setTranslate(-pos.x, pos.y);
-    AlPointF pointF = (AlVec4(x, y) * tMat).xy();
-    x = pointF.x;
-    y = pointF.y;
+    x *= mWinSize.width;
+    y *= mWinSize.height;
+
+    AlCoordinate coord = AlCoordinate::create();
+    coord.setScale(1 / scale.x, 1 / scale.y);
+    coord.setRotation(alpha);
+//    coord.setPosition(-pos.x * mWinSize.width, pos.y * mWinSize.height);
+
+    AlVec2 vec2(x, y);
+    coord.translate(vec2);
+    x = vec2.x / mWinSize.width;
+    y = vec2.y / mWinSize.height;
 }
 
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
