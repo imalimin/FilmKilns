@@ -285,11 +285,11 @@ AlImageLayerModel *AlImageProcessor::_findLayer(int32_t id) {
 }
 
 void AlImageProcessor::transToCanvasPos(float &x, float &y) {
-    AlVec2 vec2(x, y);
-    mCanvasCoord.translate(vec2);
-    x = vec2.x;
-    y = vec2.y;
-//    AlCoordsTranslator::translate(mWinSize, mCanvasSize, x, y);
+//    AlVec2 vec2(x, y);
+//    mCanvasCoord.translate(vec2);
+//    x = vec2.x;
+//    y = vec2.y;
+    AlCoordsTranslator::translate(mWinSize, mCanvasSize, x, y);
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
@@ -411,11 +411,12 @@ HwResult AlImageProcessor::undo() {
     return Hw::SUCCESS;
 }
 
-HwResult AlImageProcessor::paint(int32_t id, AlPointF pointF, bool painting) {
+HwResult AlImageProcessor::paint(int32_t id, int32_t x, int32_t y, bool painting) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _findLayer(id);
     if (layer) {
-        _transWin2Layer(layer, pointF.x, pointF.y);
+        _transWin2Layer(layer, x, y);
+        AlPointF pointF(x / (float) mWinSize.width, y / (float) mWinSize.height);
         AlAbsMAction *action = nullptr;
         auto *actions = layer->getAllActions();
         size_t size = actions->size();
@@ -440,28 +441,19 @@ HwResult AlImageProcessor::paint(int32_t id, AlPointF pointF, bool painting) {
     return Hw::FAILED;
 }
 
-void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, float &x, float &y) {
-    transToCanvasPos(x, y);
+void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, int32_t &x, int32_t &y) {
+    mCanvasCoord.translate(x, y);
     y = -y;
     AlVec2 scale = layer->getScale();
     AlRational rotation = layer->getRotation();
     AlVec2 pos = layer->getPosition();
     double alpha = -rotation.toFloat() * AlMath::PI;
 
-    x += -pos.x;
-    y += pos.y;
-    x *= mWinSize.width;
-    y *= mWinSize.height;
-
     AlCoordinate coord = AlCoordinate::create();
     coord.setScale(1 / scale.x, 1 / scale.y);
     coord.setRotation(alpha);
-//    coord.setPosition(-pos.x * mWinSize.width, pos.y * mWinSize.height);
-
-    AlVec2 vec2(x, y);
-    coord.translate(vec2);
-    x = vec2.x / mWinSize.width;
-    y = vec2.y / mWinSize.height;
+    coord.seTranslate(-pos.x * mWinSize.width, pos.y * mWinSize.height);
+    coord.translate(x, y);
 }
 
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {

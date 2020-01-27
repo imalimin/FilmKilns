@@ -105,7 +105,7 @@ public:
     /// \param pointF
     /// \param painting
     /// \return
-    HwResult paint(int32_t id, AlPointF pointF, bool painting);
+    HwResult paint(int32_t id, int32_t x, int32_t y, bool painting);
 
     void setOnSaveListener(AlUCanvas::OnSaveListener listener);
 
@@ -116,7 +116,7 @@ private:
 
     AlImageLayerModel *_findLayer(int32_t id);
 
-    void _transWin2Layer(AlImageLayerModel *layer, float &x, float &y);
+    void _transWin2Layer(AlImageLayerModel *layer, int32_t &x, int32_t &y);
 
     bool _onCanvasUpdate(AlMessage *msg);
 

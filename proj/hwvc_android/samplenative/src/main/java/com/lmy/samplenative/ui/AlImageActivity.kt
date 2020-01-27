@@ -2,7 +2,7 @@ package com.lmy.samplenative.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.PointF
+import android.graphics.Point
 import android.graphics.RectF
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -68,7 +68,8 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
                 processor?.postTranslate(getCurrentLayer(), dx, dy)
             }
             if (paintBox.isChecked) {
-                processor?.paint(getCurrentLayer(), PointF(x, y), 1 == s)
+                processor?.paint(getCurrentLayer(), Point((x * surfaceView.width).toInt(),
+                        (y * surfaceView.height).toInt()), 1 == s)
             }
             //For crop debug
 //            ensureCropLayer()

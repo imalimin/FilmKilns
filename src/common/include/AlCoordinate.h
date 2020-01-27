@@ -20,19 +20,20 @@ public:
 
     ~AlCoordinate();
 
-    void translate(AlVec2 &vec2);
+    void translate(int32_t &x, int32_t &y);
 
     void setScale(float scaleX, float scaleY);
 
     void setRotation(float alpha);
 
-    void setPosition(float x, float y);
+    void seTranslate(int32_t x, int32_t y);
 
 private:
     AlCoordinate() : Object() {};
 
 private:
     AlMatrix mat;
+    int32_t transX = 0, transY = 0;
 };
 
 
