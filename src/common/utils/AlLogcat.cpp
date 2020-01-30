@@ -1,10 +1,13 @@
-//
-// Created by limin on 2019/4/11.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
-#include "../include/Logcat.h"
+#include "AlLogcat.h"
 
-void Logcat::i(const string &TAG, const string fmt, ...) {
+void AlLogcat::i(const string &TAG, const string fmt, ...) {
 #ifdef HWDEBUG
     va_list args;
     va_start(args, fmt);
@@ -17,7 +20,7 @@ void Logcat::i(const string &TAG, const string fmt, ...) {
 #endif
 }
 
-void Logcat::e(const string &TAG, const string fmt, ...) {
+void AlLogcat::e(const string &TAG, const string fmt, ...) {
 #ifdef HWDEBUG
     va_list args;
     va_start(args, fmt);
@@ -30,7 +33,7 @@ void Logcat::e(const string &TAG, const string fmt, ...) {
 #endif
 }
 
-void Logcat::w(const string &TAG, const string fmt, ...) {
+void AlLogcat::w(const string &TAG, const string fmt, ...) {
 #ifdef HWDEBUG
     va_list args;
     va_start(args, fmt);
