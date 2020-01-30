@@ -6,29 +6,59 @@
 */
 
 #include "AlMPaintAction.h"
-#include "Logcat.h"
+#include "AlMath.h"
+#include "AlLogcat.h"
 
-#define TAG "AlMMosaicAction"
+#define TAG "AlMPaintAction"
 
 AlMPaintAction::AlMPaintAction() : AlAbsMFilterAction(TYPE_MOSAIC) {
-    newPath();
+//    paint(AlVec2(-0.5f, 0.0f));
+//    paint(AlVec2(0.0f, 0.5f));
+//    paint(AlVec2(0.5f, 0.0f));
+//    paint(AlVec2(0.0f, -0.5f));
+//    paint(AlVec2(-0.75f, 0.5f));
+//    paint(AlVec2(0.0f, 0.75f));
+//    paint(AlVec2(0.75f, -0.5f));
+//    int count = 3 + 2 * 8;
+//    for (int i = 0; i < count; ++i) {
+//        AlVec2 point = AlVec2(AlMath::random(0, 100) / 50.0f - 1.0f,
+//                              AlMath::random(0, 100) / 50.0f - 1.0f);
+//        paint(point);
+//    }
+//    newPath();
 }
 
 AlMPaintAction::~AlMPaintAction() {
+    _original.clear();
+    auto itr = path.begin();
+    while (path.end() != itr) {
+        delete *itr;
+        ++itr;
+    }
     path.clear();
 };
 
 void AlMPaintAction::newPath() {
     std::lock_guard<std::mutex> guard(mtx);
-    path.emplace_back(new AlPointPath());
+    _original.emplace_back(AlVec2(MAXFLOAT, MAXFLOAT));
+    AlLogI(TAG, "%d", _original.size());
 }
 
 void AlMPaintAction::paint(const AlVec2 &pointF) {
-    if (!path.empty()) {
-        std::lock_guard<std::mutex> guard(mtx);
-        path[path.size() - 1]->paintTo(pointF);
+    std::lock_guard<std::mutex> guard(mtx);
+    _original.emplace_back(pointF);
+    size_t size = _original.size();
+    if (MAXFLOAT == _original[size - 2].x && MAXFLOAT == _original[size - 2].y) {
+        splitIndex = size - 1;
     }
-    Logcat::i(TAG, "%s(%d) addPoint %d", __FUNCTION__, __LINE__, path.size());
+    int32_t ss = size - splitIndex - 3;
+    if (ss == 0 || (ss > 0 && 0 == ss % 2)) {
+        AlVec2 p0 = _original[size - 3];
+        AlVec2 p1 = _original[size - 2];
+        AlVec2 p2 = _original[size - 1];
+        path.emplace_back(AlBezierCurve::create(p0, p1, p2));
+        AlLogI(TAG, "paint: (%f, %f),(%f, %f),(%f, %f)", p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
+    }
 }
 
 HwResult AlMPaintAction::draw(HwAbsTexture *src, HwAbsTexture *dest) {
@@ -36,34 +66,16 @@ HwResult AlMPaintAction::draw(HwAbsTexture *src, HwAbsTexture *dest) {
 }
 
 void AlMPaintAction::getPath(std::vector<float> &path) {
-    for (AlPointPath *p:this->path) {
-        auto *temp = p->path();
-        for (float it:*temp) {
-            path.emplace_back(it);
-        }
+    for (AlBezierCurve *c:this->path) {
+        c->getPath(path);
     }
 }
 
 void AlMPaintAction::getDiffPath(std::vector<float> &path) {
     std::lock_guard<std::mutex> guard(mtx);
     size_t size = this->path.size();
-    int i = 0, j = 0;
-    for (i = row; i < size; ++i) {
-        AlPointPath *p = this->path[i];
-        size_t len = p->path()->size();
-        for (j = (i == row ? col : 0); j < len; ++j) {
-            path.emplace_back(p->path()->at(j));
-        }
-    }
-    if (!path.empty()) {
-        if (0 != i) {
-            i -= 1;
-        }
-        row = i;
-        if (j >= 2) {
-            j -= 2;
-        }
-        col = j;
+    for (; cursor < size; ++cursor) {
+        this->path[cursor]->getPath(path);
     }
 }
 

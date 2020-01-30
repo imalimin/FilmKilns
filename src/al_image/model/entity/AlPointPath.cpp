@@ -7,80 +7,73 @@
 
 #include "AlPointPath.h"
 #include "AlMath.h"
+#include "AlLogcat.h"
 
-static float lengthWithT(float t, float a, float b, float c) {
-    if (a < 0.00001f) {
-        return 0.0f;
+#define TAG "AlPointPath"
+
+/// p = (1 - t) ^ 2 * p0 + 2 * t * (1 - t) * p1 + t ^ 2 * p2
+static AlVec2 bezier_point(AlVec2 p0, AlVec2 p1, AlVec2 p2, AlVec2 p3, double t) {
+    double it = 1 - t;
+    return AlVec2(
+            it * it * it * p0.x + 3 * it * it * t * p1.x + 3 * it * t * t * p2.x + t * t * t * p3.x,
+            it * it * it * p0.y + 3 * it * it * t * p1.y + 3 * it * t * t * p2.y +
+            t * t * t * p3.y);
+}
+
+static AlVec2 bezier_speed_point(AlVec2 p0, AlVec2 p1, AlVec2 p2, AlVec2 p3, double t) {
+    double it = 1 - t;
+    return AlVec2(
+            -3 * p0.x * it * it + 3 * p1.x * it * it - 6 * p1.x * it * t + 6 * p2.x * it * t -
+            3 * p2.x * t * t + 3 * p3.x * t * t,
+            -3 * p0.y * it * it + 3 * p1.y * it * it - 6 * p1.y * it * t + 6 * p2.y * it * t -
+            3 * p2.y * t * t + 3 * p3.y * t * t);
+}
+
+static double bezier_speed(AlVec2 p0, AlVec2 p1, AlVec2 p2, AlVec2 p3, double t) {
+    AlVec2 speed = bezier_speed_point(p0, p1, p2, p3, t);
+    return sqrt(speed.x * speed.x + speed.y * speed.y);
+}
+
+static double bezier_length(AlVec2 p0, AlVec2 p1, AlVec2 p2, AlVec2 p3, double t) {
+#define TOTAL_SIMPSON_STEP    (10000)
+    int stepCounts = (int) (TOTAL_SIMPSON_STEP * t);
+    if (stepCounts & 1) stepCounts++;    //偶数
+    if (stepCounts == 0) return 0.0;
+
+    int halfCounts = stepCounts / 2;
+    double sum1 = 0.0, sum2 = 0.0;
+    double dStep = t / stepCounts;
+
+    for (int i = 0; i < halfCounts; i++) {
+        sum1 += bezier_speed(p0, p1, p2, p3, (2 * i + 1) * dStep);
     }
 
-    float temp1 = sqrtf(c + t * (b + a * t));
-    float temp2 = (2 * a * t * temp1 + b * (temp1 - sqrtf(c)));
-    float temp3 = log(std::abs(b + 2 * sqrtf(a) * sqrtf(c) + 0.0001f));
-    float temp4 = log(std::abs(b + 2 * a * t + 2 * sqrtf(a) * temp1) + 0.0001f);
-    float temp5 = 2 * sqrtf(a) * temp2;
-    float temp6 = (b * b - 4 * a * c) * (temp3 - temp4);
+    for (int i = 1; i < halfCounts; i++) {
+        sum2 += bezier_speed(p0, p1, p2, p3, (2 * i) * dStep);
+    }
 
-    return (temp5 + temp6) / (8 * powf(a, 1.5f));
+    return (bezier_speed(p0, p1, p2, p3, 0.0) + bezier_speed(p0, p1, p2, p3, 1.0) + 2 * sum2 +
+            4 * sum1) * dStep / 3.0;
 }
 
-static float speedWithT(float t, float a, float b, float c) {
-    return sqrtf(std::max<float>(a * pow(t, 2.0) + b * t + c, 0));
-}
+static double bezier_even(AlVec2 p0, AlVec2 p1, AlVec2 p2, AlVec2 p3, double t) {
+    double len = t * bezier_length(p0, p1, p2, p3, 1.0);
+    double t1 = t, t2;
 
-static float tWithT(float t, float len, float a, float b, float c) {
-    float t1 = t;
-    float t2;
-
-    while (true) {
-        float speed = speedWithT(t1, a, b, c);
-        if (speed < 0.0001f) {
-            t2 = t1;
-            break;
-        }
-        t2 = t1 - (lengthWithT(t1, a, b, c) - len) / speed;
-        if (std::abs(t1 - t2) < 0.0001f) {
-            break;
-        }
+    do {
+        t2 = t1 - (bezier_length(p0, p1, p2, p3, t1) - len) / bezier_length(p0, p1, p2, p3, t1);
+        if (abs(t1 - t2) < 0.0000001f) break;
         t1 = t2;
-    }
+    } while (true);
     return t2;
 }
 
-static void bezier(AlVec2 from, AlVec2 to, AlVec2 control,
-                   float paintSize, std::vector<float> &points) {
-    AlVec2 P0 = from;
-    // 如果 control 是 from 和 to 的中点，则将 control 设置为和 from 重合
-    bool isCenter = ((from + to) / 2.0f - control) < AlVec2(0.0001f, 0.0001f);
-    AlVec2 P1 = isCenter ? from : control;
-    AlVec2 P2 = to;
+static void bezierV2(AlVec2 p0, AlVec2 p1, AlVec2 p2, AlVec2 p3,
+                     float paintSize, std::vector<float> &points) {
 
-    float ax = P0.x - 2 * P1.x + P2.x;
-    float ay = P0.y - 2 * P1.y + P2.y;
-    float bx = 2 * P1.x - 2 * P0.x;
-    float by = 2 * P1.y - 2 * P0.y;
-
-    float a = 4 * (ax * ax + ay * ay);
-    float b = 4 * (ax * bx + ay * by);
-    float c = bx * bx + by * by;
-
-    float totalLength = lengthWithT(1, a, b, c);  // 整条曲线的长度
-    float pointsPerLength = 5.0 / paintSize;  // 用点的尺寸计算出，单位长度需要多少个点
-    int count = std::max<float>(1, std::ceil(pointsPerLength * totalLength));  // 曲线应该生成的点数
-
-    for (int i = 0; i <= count; ++i) {
-        float t = i * 1.0f / count;
-        float length = t * totalLength;
-        t = tWithT(t, length, a, b, c);
-        // 根据 t 求出坐标
-        float x = (1 - t) * (1 - t) * P0.x + 2 * (1 - t) * t * P1.x + t * t * P2.x;
-        float y = (1 - t) * (1 - t) * P0.y + 2 * (1 - t) * t * P1.y + t * t * P2.y;
-        points.emplace_back(x);
-        points.emplace_back(y);
-    }
 }
 
 AlPointPath::AlPointPath() : Object() {
-
 }
 
 AlPointPath::AlPointPath(const AlPointPath &o) : Object(), original(o.original), _path(o._path) {
@@ -103,11 +96,15 @@ void AlPointPath::paintTo(const AlVec2 &p) {
         AlVec2 p0 = original[size - 3];
         AlVec2 p1 = original[size - 2];
         AlVec2 p2 = original[size - 1];
+        AlLogI(TAG, "(%f,%f),(%f,%f),(%f,%f)",
+               p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
+        AlBezierCurve *curve = AlBezierCurve::create(p0, p1, p2);
         std::vector<float> points;
-        bezier(p0, p2, p1, 0.01f, points);
+        curve->getPath(points);
         for (float it:points) {
             _path.emplace_back(it);
         }
+        delete curve;
     }
 }
 

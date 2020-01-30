@@ -10,6 +10,7 @@
 
 #include "Object.h"
 #include "AlVec2.h"
+#include "AlBezierCurve.h"
 #include <vector>
 
 al_class(AlPointPath) {

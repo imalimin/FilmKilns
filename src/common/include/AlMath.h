@@ -31,6 +31,8 @@ public:
     /// \return
     static int32_t lcm(int32_t a, int32_t b);
 
+    static int32_t random(int32_t min, int32_t max);
+
 private:
     AlMath() : Object() {};
 

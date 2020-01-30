@@ -6,6 +6,7 @@
 */
 
 #include "AlMath.h"
+#include "TimeUtils.h"
 
 uint16_t AlMath::swap16(uint16_t val) {
     return (val << 8) | (val >> 8);
@@ -32,4 +33,9 @@ int32_t AlMath::gcd(int32_t a, int32_t b) {
 
 int32_t AlMath::lcm(int32_t a, int32_t b) {
     return a * b / gcd(a, b);
+}
+
+int32_t AlMath::random(int32_t min, int32_t max) {
+    srand(static_cast<unsigned int>(TimeUtils::getCurrentTimeUS()));
+    return rand() % (max - min + 1) + min;
 }

@@ -48,7 +48,7 @@ AlVec2 &AlVec2::operator+(const float value) {
     return *vec2;
 }
 
-AlVec2 &AlVec2::operator+(const AlVec2 vec) {
+AlVec2 &AlVec2::operator+(const AlVec2 &vec) {
     static AlVec2 *vec2;
     if (vec2 == nullptr) {
         vec2 = new AlVec2();
@@ -58,7 +58,7 @@ AlVec2 &AlVec2::operator+(const AlVec2 vec) {
     return *vec2;
 }
 
-AlVec2 &AlVec2::operator-(const AlVec2 vec) {
+AlVec2 &AlVec2::operator-(const AlVec2 &vec) {
     static AlVec2 *vec2;
     if (vec2 == nullptr) {
         vec2 = new AlVec2();
@@ -78,6 +78,14 @@ AlVec2 &AlVec2::operator/(const float value) {
     return *vec2;
 }
 
-bool AlVec2::operator<(const AlVec2 vec) {
+bool AlVec2::operator<(const AlVec2 &vec) {
     return x < vec.x && y < vec.y;
+}
+
+bool AlVec2::operator>(const AlVec2 &vec) {
+    return x > vec.x && y > vec.y;
+}
+
+bool AlVec2::operator==(const AlVec2 &vec) {
+    return x == vec.x && y == vec.y;
 }
