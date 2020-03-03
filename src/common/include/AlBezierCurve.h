@@ -30,8 +30,14 @@ public:
 private:
     AlBezierCurve(const AlVec2 &p0, const AlVec2 &p1, const AlVec2 &p2);
 
+    float _calculateLength();
+
+    void _bezier(float paintSize, std::vector<float> &points);
+
 private:
     AlVec2 p0, p1, p2;
+    float a = 0.0F, b = 0.0F, c = 0.0F;
+    float _length = 0.0F;
 };
 
 

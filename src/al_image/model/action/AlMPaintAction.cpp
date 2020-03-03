@@ -56,7 +56,13 @@ void AlMPaintAction::paint(const AlVec2 &pointF) {
         AlVec2 p0 = _original[size - 3];
         AlVec2 p1 = _original[size - 2];
         AlVec2 p2 = _original[size - 1];
-        path.emplace_back(AlBezierCurve::create(p0, p1, p2));
+        auto *curve = AlBezierCurve::create(p0, p1, p2);
+        if (curve->empty()) {
+            _original.erase(_original.end() - 2);
+            delete curve;
+            return;
+        }
+        path.emplace_back(curve);
         AlLogI(TAG, "paint: (%f, %f),(%f, %f),(%f, %f)", p0.x, p0.y, p1.x, p1.y, p2.x, p2.y);
     }
 }
