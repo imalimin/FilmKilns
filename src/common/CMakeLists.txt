@@ -16,6 +16,7 @@ include_directories(
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/../glm
 )
 
 #include_directories(
@@ -96,6 +97,7 @@ find_library(
 
 target_link_libraries(
         hwvcom
+        glm
         OpenSLES
         ${zlib}
         ${log-lib}
