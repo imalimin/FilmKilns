@@ -19,8 +19,8 @@ class AlCropView : View {
     private val hRectF = RectF()
     private val vRectF = RectF()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private var strokeWidth: Float = 1f
-    private var onChangeListener: OnChangeListener? = null;
+    private var strokeWidth: Float = 2f
+    private var onChangeListener: OnChangeListener? = null
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -42,7 +42,7 @@ class AlCropView : View {
     }
 
     private fun initialize() {
-        paint.color = Color.WHITE
+        paint.color = Color.LTGRAY
         paint.strokeWidth = strokeWidth
         val width = 9f * 6
         val height = 9f
