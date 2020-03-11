@@ -10,6 +10,7 @@
 
 #include "Object.h"
 #include "AlVec4.h"
+#include <vector>
 
 class AlVec4;
 
@@ -24,6 +25,8 @@ public:
 
     virtual ~AlMatrix();
 
+    virtual void reset();
+
     virtual void setScale(float scaleX, float scaleY);
 
     virtual void setRotation(float rotation);
@@ -34,7 +37,9 @@ public:
     /// \return 转置矩阵
     AlMatrix &T();
 
-    AlMatrix &operator*(AlMatrix m);
+    AlMatrix &operator*(const AlMatrix &m);
+
+    AlVec4 &operator*(const AlVec4 &v);
 
     /// [4x4] x [4x1]
     /// \param v
@@ -55,14 +60,10 @@ private:
     void _set(int32_t row, int32_t col, float val);
 
 public:
-    static const float PI;
-    static const int SIZE;
+    static constexpr int SIZE = 18;
 
 private:
-    float matrix[16] = {1.0f, 0.0f, 0.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f, 0.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f,
-                        0.0f, 0.0f, 0.0f, 1.0f};
+    std::vector<float> matrix;
 };
 
 

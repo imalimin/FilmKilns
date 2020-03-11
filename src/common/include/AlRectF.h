@@ -26,6 +26,8 @@ public:
 
     void set(float left, float top, float right, float bottom);
 
+    void dump();
+
 public:
     float left = 0.0f;
     float top = 0.0f;

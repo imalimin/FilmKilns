@@ -6,6 +6,9 @@
 */
 
 #include "AlRectF.h"
+#include "AlLogcat.h"
+
+#define TAG "AlRectF"
 
 AlRectF::AlRectF()
         : Object(),
@@ -59,4 +62,8 @@ void AlRectF::set(float left, float top, float right, float bottom) {
     this->top = top;
     this->right = right;
     this->bottom = bottom;
+}
+
+void AlRectF::dump() {
+    AlLogI(TAG, "(%f, %f), (%f, %f)", left, top, right, bottom);
 }

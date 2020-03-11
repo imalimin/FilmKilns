@@ -11,28 +11,33 @@
 
 #define TAG "AlMatrix"
 
-const float AlMatrix::PI = 3.141592653f;
-const int AlMatrix::SIZE = 16;
-
 AlMatrix &AlMatrix::fromArray(float *array) {
     static AlMatrix *mat;
     if (mat == nullptr) {
         mat = new AlMatrix();
     }
-    memcpy(mat->matrix, array, SIZE * sizeof(float));
+    for (int i = 0; i < SIZE; ++i) {
+        mat->matrix[i] = array[i];
+    }
     return *mat;
 }
 
-AlMatrix::AlMatrix() : Object() {
-
+AlMatrix::AlMatrix() : Object(), matrix(SIZE) {
+    reset();
 }
 
-AlMatrix::AlMatrix(const AlMatrix &o) : Object() {
-    memcpy(this->matrix, o.matrix, SIZE * sizeof(float));
+AlMatrix::AlMatrix(const AlMatrix &o) : Object(), matrix(o.matrix) {
 }
 
 AlMatrix::~AlMatrix() {
 
+}
+
+void AlMatrix::reset() {
+    _set(0, 0, 1.f);
+    _set(1, 1, 1.f);
+    _set(2, 2, 1.f);
+    _set(3, 3, 1.f);
 }
 
 void AlMatrix::setScale(float scaleX, float scaleY) {
@@ -51,7 +56,7 @@ void AlMatrix::setRotation(float rotation) {
 }
 
 float *AlMatrix::data() {
-    return matrix;
+    return matrix.data();
 }
 
 void AlMatrix::_set(int32_t row, int32_t col, float val) {
@@ -80,35 +85,36 @@ AlMatrix &AlMatrix::T() {
     return *mat;
 }
 
-AlMatrix &AlMatrix::operator*(AlMatrix m) {
+AlMatrix &AlMatrix::operator*(const AlMatrix &m) {
     static AlMatrix *mat;
     if (mat == nullptr) {
         mat = new AlMatrix();
     }
+    AlMatrix *right = const_cast<AlMatrix *>(&m);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            mat->_set(i, j, get(i, 0) * m.get(0, j) +
-                            get(i, 1) * m.get(1, j) +
-                            get(i, 2) * m.get(2, j) +
-                            get(i, 3) * m.get(3, j));
+            mat->_set(i, j, get(i, 0) * right->get(0, j) +
+                            get(i, 1) * right->get(1, j) +
+                            get(i, 2) * right->get(2, j) +
+                            get(i, 3) * right->get(3, j));
         }
     }
     return *mat;
 }
 
-//AlVec4 &AlMatrix::operator*(AlVec4 v) {
-//    static AlVec4 *vec;
-//    if (vec == nullptr) {
-//        vec = new AlVec4();
-//    }
-//    for (int i = 0; i < 4; i++) {
-//        vec->set(i, get(i, 0) * v.x +
-//                    get(i, 1) * v.y +
-//                    get(i, 2) * v.z +
-//                    get(i, 3) * v.w);
-//    }
-//    return *vec;
-//}
+AlVec4 &AlMatrix::operator*(const AlVec4 &v) {
+    static AlVec4 *vec;
+    if (vec == nullptr) {
+        vec = new AlVec4();
+    }
+    for (int i = 0; i < 4; i++) {
+        vec->set(i, v.x * get(i, 0) +
+                    v.y * get(i, 1) +
+                    v.z * get(i, 2) +
+                    v.w * get(i, 3));
+    }
+    return *vec;
+}
 
 void AlMatrix::dump() {
     Logcat::i(TAG, "1: {%f, %f, %f, %f}", get(0, 0), get(0, 1), get(0, 2), get(0, 3));

@@ -52,6 +52,7 @@ AlLayerMeasurer::~AlLayerMeasurer() {
 void AlLayerMeasurer::updateOrthogonal(AlSize &src, AlSize &target) {
     _calculateRect(src, target, lRectF, cRectF);
     oMat.update(cRectF.left, cRectF.right, cRectF.bottom, cRectF.top, -1.0f, 1.0f);
+    tMat.reset();
     Logcat::i(TAG, "canvas coord %f, %f", cRectF.left, cRectF.top);
 }
 
