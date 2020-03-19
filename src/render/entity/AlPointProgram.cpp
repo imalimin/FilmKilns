@@ -61,13 +61,11 @@ void AlPointProgram::draw(HwAbsTexture *tex) {
 
 void AlPointProgram::setVertex(std::vector<float> &vertex, int32_t countPerVertex,
                                int32_t countVertex) {
-    if (this->vertex.size() != vertex.size()) {
-        this->countPerVertex = countPerVertex;
-        this->countVertex = countVertex;
-        this->vertex.clear();
-        this->vertex = vertex;
-        reqUpdateVertex = true;
-    }
+    this->countPerVertex = countPerVertex;
+    this->countVertex = countVertex;
+    this->vertex.clear();
+    this->vertex = vertex;
+    reqUpdateVertex = true;
 }
 
 void AlPointProgram::_updateVBOs() {
