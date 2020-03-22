@@ -16,6 +16,8 @@
 #include "AlCanvasDrawer.h"
 #include "AlColorGridFilter.h"
 #include "AlImageLayerDrawModel.h"
+#include "AlPaintFilter.h"
+
 #ifdef ENABLE_CROP_DEBUG
 #include "AlQuadDrawer.h"
 #include "HwNormalFilter.h"
@@ -48,6 +50,8 @@ private:
 
     void _draw(AlImageLayerDrawModel *description);
 
+    void _drawDebug();
+
 private:
     HwAbsFBObject *fbo = nullptr;
     /// Manager by AlTexAllocator. DON`T delete here.
@@ -55,6 +59,7 @@ private:
     HwAbsTexture *mGridTex = nullptr;
     AlColorGridFilter *mBgDrawer = nullptr;
     AlCanvasDrawer *mCanvasDrawer = nullptr;
+    AlPaintFilter *paintFilter = nullptr;
 #ifdef ENABLE_CROP_DEBUG
     HwAbsTexture *mLayerTex = nullptr;
     HwNormalFilter *mCopyDrawer = nullptr;

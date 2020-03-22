@@ -46,6 +46,12 @@ HwAbsTexture *AlImageCanvas::getOutput() {
 }
 
 void AlImageCanvas::update(int32_t w, int32_t h, int32_t color) {
+    if(nullptr == paintFilter) {
+        paintFilter = new AlPaintFilter();
+        paintFilter->prepare();
+        paintFilter->setColor(AlColor(0x0000ff00));
+        paintFilter->setPaintSize(0.006f);
+    }
     if (nullptr == mCanvasTex) {
         AlTexDescription desc;
         desc.size.width = w;
@@ -134,6 +140,7 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
     ///Draw layer
     mCanvasDrawer->draw(description->tex, mCanvasTex);
 #endif
+    _drawDebug();
 }
 
 HwResult AlImageCanvas::read(AlBuffer *buf) {
@@ -143,4 +150,12 @@ HwResult AlImageCanvas::read(AlBuffer *buf) {
     mCanvasTex->read(buf->data());
     fbo->unbind();
     return Hw::SUCCESS;
+}
+
+void AlImageCanvas::_drawDebug() {
+    std::vector<float> point(2);
+    point[0] = 0.f;
+    point[1] = 0.f;
+    paintFilter->setPath(&point, true);
+    paintFilter->draw(mCanvasTex, mCanvasTex);
 }

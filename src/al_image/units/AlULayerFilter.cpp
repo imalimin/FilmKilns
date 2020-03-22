@@ -12,6 +12,9 @@
 #include "AlMPaintAction.h"
 #include "AlLayerPair.h"
 #include "AlTexManager.h"
+#include "AlMath.h"
+#include "AlOrthMatrix.h"
+#include "Al2DCoordinate.h"
 
 #define TAG "AlULayerFilter"
 
@@ -31,6 +34,8 @@ bool AlULayerFilter::onCreate(AlMessage *msg) {
     copyFilter->prepare();
     paintFilter = new AlPaintFilter();
     paintFilter->prepare();
+    dynamic_cast<AlPaintFilter *>(paintFilter)->setColor(AlColor(0x00ff0000));
+    dynamic_cast<AlPaintFilter *>(paintFilter)->setPaintSize(0.01f);
     return true;
 }
 
@@ -42,9 +47,62 @@ bool AlULayerFilter::onDestroy(AlMessage *msg) {
     return true;
 }
 
+void AlULayerFilter::_translate(AlMatrix &mat, float transX, float transY, float &x, float &y) {
+    AlVec4 src(x + transX, y + transY);
+    AlVec4 dest = src * mat;
+    x = dest.x;
+    y = dest.y;
+}
+
+void AlULayerFilter::_transWin2Layer(AlImageLayerModel *model, float &x, float &y) {
+    AlSize mWinSize(1440, 2872);
+    AlSize mCanvasSize(1628, 2896);
+    AlMatrix cMat, lMat;
+    cMat.setScale(mWinSize.width / (float) mCanvasSize.width,
+                  mWinSize.height / (float) mCanvasSize.height);
+
+    _translate(cMat, 0, 0, x, y);
+    y = -y;
+    AlVec2 scale = model->getScale();
+    AlRational rotation = model->getRotation();
+    AlVec2 pos = model->getPosition();
+    double alpha = -rotation.toFloat() * AlMath::PI;
+
+    lMat.setScale(1 / scale.x, 1 / scale.y);
+    lMat.setRotation(alpha);
+    _translate(lMat, -pos.x, pos.y, x, y);
+    AlLogI(TAG, "pos(%f, %f)", x, y);
+}
+
+void AlULayerFilter::_transCanvas2Layer(AlImageLayerModel *model, float &x, float &y) {
+    ///1080x1794
+    AlVec2 vec(x, y);
+    Al2DCoordinate srcCoord(1628, 2896), dstCoord(1628, 2896);
+    dstCoord.setScale(model->getScale().x, model->getScale().y);
+    dstCoord.setRotation(model->getRotation());
+    dstCoord.setPosition(model->getPosition().x, model->getPosition().y);
+    srcCoord.translate(&vec, &dstCoord);
+    x = vec.x;
+    y = vec.y;
+    AlLogI(TAG, "pos(%f, %f), trans(%f, %f)", x, y, model->getPosition().x, model->getPosition().y);
+}
+
+void AlULayerFilter::_showDebugInfo(AlImageLayerModel *model, AlImageLayer *layer) {
+    AlPointF pointF(0, 0);
+    _transCanvas2Layer(model, pointF.x, pointF.y);
+    std::vector<float> point(2);
+    point[0] = pointF.x;
+    point[1] = pointF.y;
+    dynamic_cast<AlPaintFilter *>(paintFilter)->setPath(&point, true);
+    glViewport(0, 0, layer->getWidth(), layer->getHeight());
+    paintFilter->draw(layer->getTexture(), layer->getTexture());
+}
+
+
 bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d) layer size: %d", __FUNCTION__, __LINE__, layers.size());
     AlLayerPair *pair = msg->getObj<AlLayerPair *>();
+    _showDebugInfo(pair->model, pair->layer);
     if (pair->model->countFilterAction() <= 0) {
         _notifyDescriptor(pair->layer, pair->model, msg->arg1);
         return true;

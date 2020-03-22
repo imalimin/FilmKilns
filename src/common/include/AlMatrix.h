@@ -37,9 +37,9 @@ public:
     /// \return 转置矩阵
     AlMatrix &T();
 
-    AlMatrix &operator*(const AlMatrix &m);
+    AlMatrix operator*(const AlMatrix &m);
 
-    AlVec4 &operator*(const AlVec4 &v);
+    AlVec4 operator*(const AlVec4 &v);
 
     /// [4x4] x [4x1]
     /// \param v

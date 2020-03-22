@@ -85,35 +85,29 @@ AlMatrix &AlMatrix::T() {
     return *mat;
 }
 
-AlMatrix &AlMatrix::operator*(const AlMatrix &m) {
-    static AlMatrix *mat;
-    if (mat == nullptr) {
-        mat = new AlMatrix();
-    }
+AlMatrix AlMatrix::operator*(const AlMatrix &m) {
+    AlMatrix mat;
     AlMatrix *right = const_cast<AlMatrix *>(&m);
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            mat->_set(i, j, get(i, 0) * right->get(0, j) +
-                            get(i, 1) * right->get(1, j) +
-                            get(i, 2) * right->get(2, j) +
-                            get(i, 3) * right->get(3, j));
+            mat._set(i, j, get(i, 0) * right->get(0, j) +
+                           get(i, 1) * right->get(1, j) +
+                           get(i, 2) * right->get(2, j) +
+                           get(i, 3) * right->get(3, j));
         }
     }
-    return *mat;
+    return mat;
 }
 
-AlVec4 &AlMatrix::operator*(const AlVec4 &v) {
-    static AlVec4 *vec;
-    if (vec == nullptr) {
-        vec = new AlVec4();
-    }
+AlVec4 AlMatrix::operator*(const AlVec4 &v) {
+    AlVec4 vec;
     for (int i = 0; i < 4; i++) {
-        vec->set(i, v.x * get(i, 0) +
-                    v.y * get(i, 1) +
-                    v.z * get(i, 2) +
-                    v.w * get(i, 3));
+        vec.set(i, v.x * get(i, 0) +
+                   v.y * get(i, 1) +
+                   v.z * get(i, 2) +
+                   v.w * get(i, 3));
     }
-    return *vec;
+    return vec;
 }
 
 void AlMatrix::dump() {

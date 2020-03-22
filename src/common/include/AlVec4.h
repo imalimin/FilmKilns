@@ -34,7 +34,7 @@ public:
     /// [1x4] x [4x4]
     /// \param m
     /// \return
-    AlVec4 &operator*(AlMatrix &m);
+    AlVec4 operator*(AlMatrix &m);
 
     AlVec2 xy();
 

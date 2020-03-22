@@ -12,6 +12,7 @@
 #include "AlImageLayer.h"
 #include "HwAbsFilter.h"
 #include "AlImageLayerModel.h"
+#include "AlMatrix.h"
 #include <map>
 
 al_class_ex(AlULayerFilter, Unit) {
@@ -54,6 +55,14 @@ private:
     /// \param model
     /// \return
     AlImageLayer *_findLayer(AlImageLayerModel *model, AlImageLayer *layer);
+
+    void _showDebugInfo(AlImageLayerModel *model, AlImageLayer *layer);
+
+    void _translate(AlMatrix &mat, float transX, float transY, float &x, float &y);
+
+    void _transWin2Layer(AlImageLayerModel *model, float &x, float &y);
+
+    void _transCanvas2Layer(AlImageLayerModel *model, float &x, float &y);
 
 private:
     std::map<int32_t, AlImageLayer *> layers;
