@@ -47,6 +47,8 @@ public:
     /// \return
     bool onRemoveLayer(AlMessage *msg);
 
+    bool onCanvasSizeUpdate(AlMessage *msg);
+
 private:
     void _notifyDescriptor(AlImageLayer *layer, AlImageLayerModel *model, int32_t flags);
 
@@ -62,12 +64,13 @@ private:
 
     void _transWin2Layer(AlImageLayerModel *model, float &x, float &y);
 
-    void _transCanvas2Layer(AlImageLayerModel *model, float &x, float &y);
+    void _transCanvas2Layer(AlImageLayerModel *model, AlImageLayer *layer, float &x, float &y);
 
 private:
     std::map<int32_t, AlImageLayer *> layers;
     HwAbsFilter *paintFilter = nullptr;
     HwAbsFilter *copyFilter = nullptr;
+    AlSize aCanvasSize;
 };
 
 

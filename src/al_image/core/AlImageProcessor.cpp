@@ -88,16 +88,15 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 }
 
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
-    float scale = w / (float) mCanvasSize.width;
-    AlSize dest(w, static_cast<int>(mCanvasSize.height * scale));
-    size_t size = mLayers.size();
-    for (int i = 0; i < size; ++i) {
-        auto *layer = mLayers[i];
-        layer->setScale(layer->getScale().x * scale, layer->getScale().y * scale);
-    }
-    mCanvasSize.width = dest.width;
-    mCanvasSize.height = dest.height;
-    Logcat::i(TAG, "%s(%d) %dx%d", __FUNCTION__, __LINE__, dest.width, dest.height);
+//    float scale = w / (float) mCanvasSize.width;
+//    AlSize dest(w, static_cast<int>(mCanvasSize.height * scale));
+//    size_t size = mLayers.size();
+//    for (int i = 0; i < size; ++i) {
+//        auto *layer = mLayers[i];
+//        layer->setScale(layer->getScale().x * scale, layer->getScale().y * scale);
+//    }
+    mCanvasSize.width = w;
+    mCanvasSize.height = h;
     _notifyCanvasUpdate();
     invalidate();
 }
@@ -459,7 +458,7 @@ void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, int32_t &x, int
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
-    Logcat::i(TAG, "%s(%d) %dx%d", __FUNCTION__, __LINE__, mCanvasSize.width, mCanvasSize.height);
+    AlLogI(TAG, "%dx%d", mCanvasSize.width, mCanvasSize.height);
     mCanvasCoord.setScale(mWinSize.width / (float) mCanvasSize.width,
                           mWinSize.height / (float) mCanvasSize.height);
     return true;

@@ -11,11 +11,13 @@
 
 al_class(Al2DCoordinate) {
 public:
-    Al2DCoordinate(int32_t xWide, int32_t yWide);
+    Al2DCoordinate(int32_t xWide = 0, int32_t yWide = 0);
 
     Al2DCoordinate(const Al2DCoordinate &o);
 
     virtual ~Al2DCoordinate();
+
+    void setWide(int32_t x, int32_t y);
 
     void setScale(float scaleX, float scaleY);
 
@@ -26,8 +28,7 @@ public:
     void translate(AlVec2 *vec, Al2DCoordinate *dstCoord);
 
 private:
-    int32_t xWide = 0;
-    int32_t yWide = 0;
+    AlVec2 wide;
     AlRational rotation = AlRational();
     AlVec2 position;
     AlVec2 scale;

@@ -23,6 +23,8 @@ AlULayerFilter::AlULayerFilter(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayerFilter::onDoFilterAction));
     registerEvent(EVENT_LAYER_REMOVE_CACHE_LAYER,
                   reinterpret_cast<EventFunc>(&AlULayerFilter::onRemoveLayer));
+    registerEvent(EVENT_LAYER_MEASURE_CANVAS_SIZE,
+                  reinterpret_cast<EventFunc>(&AlULayerFilter::onCanvasSizeUpdate));
 }
 
 AlULayerFilter::~AlULayerFilter() {
@@ -74,10 +76,12 @@ void AlULayerFilter::_transWin2Layer(AlImageLayerModel *model, float &x, float &
     AlLogI(TAG, "pos(%f, %f)", x, y);
 }
 
-void AlULayerFilter::_transCanvas2Layer(AlImageLayerModel *model, float &x, float &y) {
+void AlULayerFilter::_transCanvas2Layer(AlImageLayerModel *model, AlImageLayer *layer,
+                                        float &x, float &y) {
     ///1080x1794
     AlVec2 vec(x, y);
-    Al2DCoordinate srcCoord(1628, 2896), dstCoord(1628, 2896);
+    Al2DCoordinate srcCoord(aCanvasSize.width, aCanvasSize.height);
+    Al2DCoordinate dstCoord(layer->getWidth(), layer->getHeight());
     dstCoord.setScale(model->getScale().x, model->getScale().y);
     dstCoord.setRotation(model->getRotation());
     dstCoord.setPosition(model->getPosition().x, model->getPosition().y);
@@ -89,7 +93,7 @@ void AlULayerFilter::_transCanvas2Layer(AlImageLayerModel *model, float &x, floa
 
 void AlULayerFilter::_showDebugInfo(AlImageLayerModel *model, AlImageLayer *layer) {
     AlPointF pointF(0, 0);
-    _transCanvas2Layer(model, pointF.x, pointF.y);
+    _transCanvas2Layer(model, layer, pointF.x, pointF.y);
     std::vector<float> point(2);
     point[0] = pointF.x;
     point[1] = pointF.y;
@@ -98,6 +102,11 @@ void AlULayerFilter::_showDebugInfo(AlImageLayerModel *model, AlImageLayer *laye
     paintFilter->draw(layer->getTexture(), layer->getTexture());
 }
 
+bool AlULayerFilter::onCanvasSizeUpdate(AlMessage *msg) {
+    aCanvasSize.width = msg->arg1;
+    aCanvasSize.height = static_cast<int>(msg->arg2);
+    return true;
+}
 
 bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d) layer size: %d", __FUNCTION__, __LINE__, layers.size());
