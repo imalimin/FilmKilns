@@ -26,14 +26,10 @@ bool HwScreen::onDestroy(AlMessage *msg) {
     if (egl) {
         egl->makeCurrent();
     }
-    if (drawer) {
-        delete drawer;
-        drawer = nullptr;
-    }
-    if (egl) {
-        delete egl;
-        egl = nullptr;
-    }
+    delete drawer;
+    drawer = nullptr;
+    delete egl;
+    egl = nullptr;
     return true;
 }
 
@@ -57,6 +53,9 @@ bool HwScreen::eventUpdateWindow(AlMessage *msg) {
 }
 
 bool HwScreen::eventDraw(AlMessage *msg) {
+    if (nullptr == egl) {
+        return true;
+    }
     Size *size = msg->getObj<ObjectBox *>()->unWrap<Size *>();
     GLuint tex = static_cast<GLuint>(msg->arg1);
     egl->makeCurrent();
@@ -69,6 +68,9 @@ bool HwScreen::eventDraw(AlMessage *msg) {
 }
 
 bool HwScreen::onDrawTex(AlMessage *msg) {
+    if (nullptr == egl) {
+        return true;
+    }
     HwAbsTexture *tex = static_cast<HwAbsTexture *>(msg->obj);
     egl->makeCurrent();
     if (egl->isAttachWindow()) {
