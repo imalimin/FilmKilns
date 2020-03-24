@@ -83,6 +83,7 @@ void AlImageProcessor::onDestroy() {
 void AlImageProcessor::updateWindow(HwWindow *win) {
     mWinSize.width = win->getWidth();
     mWinSize.height = win->getHeight();
+    mWinCoord.setWide(mWinSize.width, mWinSize.height);
     AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
 }
@@ -410,12 +411,11 @@ HwResult AlImageProcessor::undo() {
     return Hw::SUCCESS;
 }
 
-HwResult AlImageProcessor::paint(int32_t id, int32_t x, int32_t y, bool painting) {
+HwResult AlImageProcessor::paint(int32_t id, float x, float y, bool painting) {
     std::lock_guard<std::mutex> guard(mLayerMtx);
     auto *layer = _findLayer(id);
     if (layer) {
-        _transWin2Layer(layer, x, y);
-        AlPointF pointF(x / (float) mWinSize.width, y / (float) mWinSize.height);
+        AlPointF pointF(_transWin2Layer(layer, x, y));
         AlAbsMAction *action = nullptr;
         auto *actions = layer->getAllActions();
         size_t size = actions->size();
@@ -440,26 +440,27 @@ HwResult AlImageProcessor::paint(int32_t id, int32_t x, int32_t y, bool painting
     return Hw::FAILED;
 }
 
-void AlImageProcessor::_transWin2Layer(AlImageLayerModel *layer, int32_t &x, int32_t &y) {
-    mCanvasCoord.translate(x, y);
-    y = -y;
-    AlVec2 scale = layer->getScale();
-    AlRational rotation = layer->getRotation();
-    AlVec2 pos = layer->getPosition();
-    double alpha = -rotation.toFloat() * AlMath::PI;
-
-    AlCoordinate coord = AlCoordinate::create();
-    coord.setScale(1 / scale.x, 1 / scale.y);
-    coord.setRotation(alpha);
-    coord.seTranslate(-pos.x * mWinSize.width, pos.y * mWinSize.height);
-    coord.translate(x, y);
+AlVec2 AlImageProcessor::_transWin2Layer(AlImageLayerModel *model, float x, float y) {
+    AlVec2 vec(x, y);
+//    mWinCoord.translate(&vec, &mCanvasCoord);
+    float tx = vec.x, ty = vec.y;
+    Al2DCoordinate layerCoord(1628, 2896);
+    layerCoord.setScale(model->getScale().x, model->getScale().y);
+    layerCoord.setRotation(model->getRotation());
+    layerCoord.setPosition(model->getPosition().x, model->getPosition().y);
+    mCanvasCoord.translate(&vec, &layerCoord);
+    AlLogI(TAG, "(%f, %f) -> (%f, %f) -> (%f, %f)", x, y, tx, ty, vec.x, vec.y);
+    vec.y = -vec.y;
+    return vec;
 }
 
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
     AlLogI(TAG, "%dx%d", mCanvasSize.width, mCanvasSize.height);
+    mWinCoord.setWide(mWinSize.width, mWinSize.height);
+    mCanvasCoord.setWide(mCanvasSize.width, mCanvasSize.height);
     mCanvasCoord.setScale(mWinSize.width / (float) mCanvasSize.width,
-                          mWinSize.height / (float) mCanvasSize.height);
+                          mWinSize.width / (float) mCanvasSize.width);
     return true;
 }

@@ -274,7 +274,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_undo
 }
 
 JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_paint
-        (JNIEnv *env, jobject thiz, jlong handler, jint id, jint x, jint y, jboolean painting) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y, jboolean painting) {
     if (handler) {
         return getHandler(handler)->paint(id, x, y, JNI_TRUE == painting).code;
     }

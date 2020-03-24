@@ -9,12 +9,12 @@
 #include "AlMath.h"
 
 Al2DCoordinate::Al2DCoordinate(int32_t xWide, int32_t yWide)
-        : Object(), wide(xWide, yWide) {
+        : Object(), wide(xWide, yWide), scale(1, 1), rotation(0, 1), position(0, 0) {
 
 }
 
 Al2DCoordinate::Al2DCoordinate(const Al2DCoordinate &o)
-        : Object(), wide(o.wide) {
+        : Object(), wide(o.wide), scale(o.scale), rotation(o.rotation), position(o.position) {
 
 }
 
@@ -56,13 +56,11 @@ void Al2DCoordinate::translate(AlVec2 *vec, Al2DCoordinate *dstCoord) {
     double alpha = static_cast<float>(dstCoord->rotation.toFloat() * AlMath::PI);
 
 
-    AlVec4 tVec(-dstCoord->position.x * wide.x / 2,
-                -dstCoord->position.y * wide.y / 2);
-    AlMatrix sMat0, sMat1, rMat;
-    sMat0.setScale(sRect.getWidth() / 2.0f, sRect.getHeight() / 2.0f);
+    AlVec4 tVec(-(dstCoord->position.x - vec->x) * wide.x / 2,
+                -(dstCoord->position.y + vec->y) * wide.y / 2);
+    AlMatrix sMat1, rMat;
     sMat1.setScale(1 / dstCoord->scale.x, 1 / dstCoord->scale.y);
     rMat.setRotation(alpha);
-//    tVec = tVec * sMat0;
     /// 矩阵表示变换步骤时，刚好和实际顺序相反
     /// 缩放(sMat)->旋转(rMat)->位移(tMat) = vec * tMat * rMat * sMat
     tVec = tVec * rMat * sMat1;
@@ -73,7 +71,7 @@ void Al2DCoordinate::translate(AlVec2 *vec, Al2DCoordinate *dstCoord) {
     oMat.update(dRect.left, dRect.right, dRect.bottom, dRect.top, -1.0f, 1.0f);
     mMat.setTranslate(tVec.x, -tVec.y);
 
-    AlVec4 vec4(vec->x, vec->y);
+    AlVec4 vec4(0, 0);
     AlVec4 point = vec4 * mMat * oMat;
     vec->x = point.x;
     vec->y = point.y;

@@ -313,7 +313,7 @@ class AlImageProcessor private constructor() : CPPObject() {
      * 画笔绘制接口
      * @param point 屏幕像素坐标，中心为原点
      */
-    fun paint(id: Int, point: Point, painting: Boolean): Int {
+    fun paint(id: Int, point: PointF, painting: Boolean): Int {
         if (!isNativeNull()) {
             return paint(handler, id, point.x, point.y, painting)
         }
@@ -397,5 +397,5 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun import(handler: Long, path: String): Int
     private external fun redo(handler: Long): Int
     private external fun undo(handler: Long): Int
-    private external fun paint(handler: Long, id: Int, x: Int, y: Int, painting: Boolean): Int
+    private external fun paint(handler: Long, id: Int, x: Float, y: Float, painting: Boolean): Int
 }

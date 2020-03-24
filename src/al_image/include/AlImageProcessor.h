@@ -18,7 +18,7 @@
 #include "AlUCanvas.h"
 #include "AlAbsContext.h"
 #include "AlEgl.h"
-#include "AlCoordinate.h"
+#include "Al2DCoordinate.h"
 #include <vector>
 
 al_class_ex(AlImageProcessor, AlAbsProcessor) {
@@ -105,7 +105,7 @@ public:
     /// \param pointF
     /// \param painting
     /// \return
-    HwResult paint(int32_t id, int32_t x, int32_t y, bool painting);
+    HwResult paint(int32_t id, float x, float y, bool painting);
 
     void setOnSaveListener(AlUCanvas::OnSaveListener listener);
 
@@ -116,7 +116,7 @@ private:
 
     AlImageLayerModel *_findLayer(int32_t id);
 
-    void _transWin2Layer(AlImageLayerModel *layer, int32_t &x, int32_t &y);
+    AlVec2 _transWin2Layer(AlImageLayerModel *model, float x, float y);
 
     bool _onCanvasUpdate(AlMessage *msg);
 
@@ -135,7 +135,8 @@ private:
     std::mutex mLayerMtx;
     AlSize mWinSize;
     AlSize mCanvasSize;
-    AlCoordinate mCanvasCoord = AlCoordinate::create();
+    Al2DCoordinate mWinCoord;
+    Al2DCoordinate mCanvasCoord;
     AlUCanvas::OnSaveListener onSaveListener = nullptr;
 };
 

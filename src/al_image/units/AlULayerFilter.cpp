@@ -92,7 +92,7 @@ void AlULayerFilter::_transCanvas2Layer(AlImageLayerModel *model, AlImageLayer *
 }
 
 void AlULayerFilter::_showDebugInfo(AlImageLayerModel *model, AlImageLayer *layer) {
-    AlPointF pointF(0, 0);
+    AlPointF pointF(0.25f, 0.55f);
     _transCanvas2Layer(model, layer, pointF.x, pointF.y);
     std::vector<float> point(2);
     point[0] = pointF.x;
