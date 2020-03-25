@@ -449,7 +449,7 @@ AlVec2 AlImageProcessor::_transWin2Layer(AlImageLayerModel *model, float x, floa
     layerCoord.setRotation(model->getRotation());
     layerCoord.setPosition(model->getPosition().x, model->getPosition().y);
     mCanvasCoord.translate(&vec, &layerCoord);
-    AlLogI(TAG, "(%f, %f) -> (%f, %f) -> (%f, %f)", x, y, tx, ty, vec.x, vec.y);
+    AlLogI(TAG, "(%f, %f)", model->getPosition().x, model->getPosition().y);
     vec.y = -vec.y;
     return vec;
 }
@@ -457,7 +457,8 @@ AlVec2 AlImageProcessor::_transWin2Layer(AlImageLayerModel *model, float x, floa
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
-    AlLogI(TAG, "%dx%d", mCanvasSize.width, mCanvasSize.height);
+    AlLogI(TAG, "%dx%d, %dx%d", mWinSize.width, mWinSize.height,
+           mCanvasSize.width, mCanvasSize.height);
     mWinCoord.setWide(mWinSize.width, mWinSize.height);
     mCanvasCoord.setWide(mCanvasSize.width, mCanvasSize.height);
     mCanvasCoord.setScale(mWinSize.width / (float) mCanvasSize.width,

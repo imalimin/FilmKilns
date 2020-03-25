@@ -57,7 +57,7 @@ void Al2DCoordinate::translate(AlVec2 *vec, Al2DCoordinate *dstCoord) {
 
 
     AlVec4 tVec(-(dstCoord->position.x - vec->x) * wide.x / 2,
-                -(dstCoord->position.y + vec->y) * wide.y / 2);
+                (dstCoord->position.y) * wide.y / 2);
     AlMatrix sMat1, rMat;
     sMat1.setScale(1 / dstCoord->scale.x, 1 / dstCoord->scale.y);
     rMat.setRotation(alpha);

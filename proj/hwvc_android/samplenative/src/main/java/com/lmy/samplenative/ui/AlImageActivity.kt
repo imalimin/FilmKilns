@@ -76,7 +76,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         surfaceView?.setOnScaleListener { v, ds, anchor ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postScale(getCurrentLayer(), ds, anchor)
+//                processor?.postScale(getCurrentLayer(), ds, anchor)
             }
             //For crop debug
 //            ensureCropLayer()
@@ -101,7 +101,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         if (null == processor) {
             processor = AlImageProcessor.create()
         }
-//        processor?.setCanvas(1080, 1920)
+        processor?.setCanvas(1440, 2896)
         processor?.setOnSaveListener(this)
         //For crop debug
 //        cropView.setOnChangeListener {

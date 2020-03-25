@@ -153,9 +153,11 @@ HwResult AlImageCanvas::read(AlBuffer *buf) {
 }
 
 void AlImageCanvas::_drawDebug() {
-    std::vector<float> point(2);
-    point[0] = 0.25f;
-    point[1] = 0.55f;
+    std::vector<float> point(4);
+    point[0] = 0.f;
+    point[1] = 0.f;
+    point[2] = 0.25f;
+    point[3] = 0.55f;
     paintFilter->setPath(&point, true);
     paintFilter->draw(mCanvasTex, mCanvasTex);
 }
