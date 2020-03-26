@@ -60,8 +60,6 @@ public:
 
     HwResult setAlpha(int32_t id, float alpha);
 
-    void transToCanvasPos(float &x, float &y);
-
     /// 根据window坐标获取对应的Layer，还需要适配缩放旋转的情况
     /// \param x x坐标，x∈[-1,1]
     /// \param y y坐标，y∈[-1,1]
@@ -118,6 +116,8 @@ private:
 
     bool _onCanvasUpdate(AlMessage *msg);
 
+    bool _onLayerQuery(AlMessage *msg);
+
 private:
     const string ALIAS_OF_LAYER = "LAYER";
     const string ALIAS_OF_FILTER = "LAYER_FILTER";
@@ -134,6 +134,8 @@ private:
     AlSize mWinSize;
     AlSize mCanvasSize;
     AlUCanvas::OnSaveListener onSaveListener = nullptr;
+    int32_t mCurLayerId = AlIdentityCreator::NONE_ID;
+    SimpleLock mQueryLock;
 };
 
 

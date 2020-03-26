@@ -78,6 +78,14 @@ static constexpr int EVENT_AIMAGE_IMPORT = KID('A', 'I', 'G', 0x01);
 static constexpr int EVENT_AIMAGE_REDO = KID('A', 'I', 'G', 0x02);
 static constexpr int EVENT_AIMAGE_UNDO = KID('A', 'I', 'G', 0x03);
 static constexpr int EVENT_LAYER_PAINT = KID('A', 'I', 'G', 0x04);
+static constexpr int EVENT_LAYER_SCALE = KID('A', 'I', 'G', 0x05);
+static constexpr int EVENT_LAYER_SCALE_POST = KID('A', 'I', 'G', 0x06);
+static constexpr int EVENT_LAYER_ROTATE = KID('A', 'I', 'G', 0x07);
+static constexpr int EVENT_LAYER_ROTATE_POST = KID('A', 'I', 'G', 0x08);
+static constexpr int EVENT_LAYER_TRANS = KID('A', 'I', 'G', 0x09);
+static constexpr int EVENT_LAYER_TRANS_POST = KID('A', 'I', 'G', 0xa);
+static constexpr int EVENT_LAYER_QUERY = KID('A', 'I', 'G', 0xb);
+static constexpr int EVENT_LAYER_QUERY_NOTIFY = KID('A', 'I', 'G', 0xc);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
 static constexpr int EVENT_LAYER_MEASURE_CANVAS_NOTIFY = KID('A', 'L', 'M', 0x01);

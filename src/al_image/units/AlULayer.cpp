@@ -14,6 +14,9 @@
 #include "AlPaintDesc.h"
 #include "AlMPaintAction.h"
 #include "AlLayerActionFactory.h"
+#include "AlOperateScale.h"
+#include "AlOperateRotate.h"
+#include "AlOperateTrans.h"
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
@@ -24,11 +27,23 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
     registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
     registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
-    registerEvent(EVENT_LAYER_PAINT, reinterpret_cast<EventFunc>(&AlULayer::onPaint));
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayer::_onCanvasUpdate));
     registerEvent(EVENT_SCREEN_UPDATE_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayer::_onWindowUpdate));
+    ///Operate
+    registerEvent(EVENT_LAYER_PAINT, reinterpret_cast<EventFunc>(&AlULayer::onOperatePaint));
+    registerEvent(EVENT_LAYER_SCALE, reinterpret_cast<EventFunc>(&AlULayer::onOperateScale));
+    registerEvent(EVENT_LAYER_SCALE_POST,
+                  reinterpret_cast<EventFunc>(&AlULayer::onOperatePostScale));
+    registerEvent(EVENT_LAYER_ROTATE, reinterpret_cast<EventFunc>(&AlULayer::onOperateRotate));
+    registerEvent(EVENT_LAYER_ROTATE_POST,
+                  reinterpret_cast<EventFunc>(&AlULayer::onOperatePostRotate));
+    registerEvent(EVENT_LAYER_TRANS, reinterpret_cast<EventFunc>(&AlULayer::onOperateTrans));
+    registerEvent(EVENT_LAYER_TRANS_POST,
+                  reinterpret_cast<EventFunc>(&AlULayer::onOperatePostTrans));
+    registerEvent(EVENT_LAYER_QUERY,
+                  reinterpret_cast<EventFunc>(&AlULayer::onOperateQuery));
 }
 
 AlULayer::~AlULayer() {
@@ -146,7 +161,7 @@ bool AlULayer::onUndo(AlMessage *m) {
     return true;
 }
 
-bool AlULayer::onPaint(AlMessage *m) {
+bool AlULayer::onOperatePaint(AlMessage *m) {
     auto *desc = m->getObj<AlPaintDesc *>();
     if (nullptr == desc) {
         return true;
@@ -236,4 +251,72 @@ void AlULayer::_updateCoordination() {
         }
         mCanvasCoord.setScale(scale, scale);
     }
+}
+
+bool AlULayer::onOperateScale(AlMessage *m) {
+    return true;
+}
+
+bool AlULayer::onOperatePostScale(AlMessage *m) {
+    return true;
+}
+
+bool AlULayer::onOperateRotate(AlMessage *m) {
+    return true;
+}
+
+bool AlULayer::onOperatePostRotate(AlMessage *m) {
+    return true;
+}
+
+bool AlULayer::onOperateTrans(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateTrans *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto *model = mLayerManager.findModel(desc->layerId);
+    if (model) {
+        AlVec2 vec(desc->x, desc->y);
+        mWinCoord.translate(&vec, &mCanvasCoord);
+        model->setPosition(vec.x, vec.y);
+        _invalidate();
+    }
+    return true;
+}
+
+bool AlULayer::onOperatePostTrans(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateTrans *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto model = mLayerManager.findModel(desc->layerId);
+    if (model) {
+        AlVec2 vec(desc->x, desc->y);
+        mWinCoord.translate(&vec, &mCanvasCoord);
+        model->setPosition(model->getPosition().x + vec.x, model->getPosition().y + vec.y);
+        _invalidate();
+    }
+    return true;
+}
+
+bool AlULayer::onOperateQuery(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateTrans *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto *model = getLayerModel(desc->x, desc->y);
+    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY);
+    msg->arg1 = nullptr != model ? model->getId() : AlIdentityCreator::NONE_ID;
+    postEvent(msg);
+    return true;
+}
+
+AlImageLayerModel *AlULayer::getLayerModel(float x, float y) {
+    AlVec2 vec(x, y);
+    mWinCoord.translate(&vec, &mCanvasCoord);
+    return mLayerManager.findModel(vec.x, vec.y);
+}
+
+void AlULayer::_invalidate() {
+    _notifyAll(0);
 }

@@ -63,7 +63,21 @@ public:
 
     bool onUndo(AlMessage *m);
 
-    bool onPaint(AlMessage *m);
+    bool onOperatePaint(AlMessage *m);
+
+    bool onOperateScale(AlMessage *m);
+
+    bool onOperatePostScale(AlMessage *m);
+
+    bool onOperateRotate(AlMessage *m);
+
+    bool onOperatePostRotate(AlMessage *m);
+
+    bool onOperateTrans(AlMessage *m);
+
+    bool onOperatePostTrans(AlMessage *m);
+
+    bool onOperateQuery(AlMessage *m);
 
     bool _onCanvasUpdate(AlMessage *msg);
 
@@ -87,6 +101,10 @@ private:
     void _updateCoordination();
 
     AlVec2 _transWin2Layer(AlImageLayerModel *model, float x, float y);
+
+    AlImageLayerModel *getLayerModel(float x, float y);
+
+    void _invalidate();
 
 private:
     /// +------------------+

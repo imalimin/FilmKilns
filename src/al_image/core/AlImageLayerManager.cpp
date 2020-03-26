@@ -175,3 +175,21 @@ int32_t AlImageLayerManager::getMaxId() {
     }
     return id;
 }
+
+AlImageLayerModel *AlImageLayerManager::findModel(float x, float y) {
+    for (auto *m:*models) {
+        if (m && m->getQuad().inside(AlPointF(x, y))) {
+            return m;
+        }
+    }
+    return nullptr;
+}
+
+AlImageLayerModel *AlImageLayerManager::findModel(const int32_t id) {
+    for (auto *m:*models) {
+        if (m && m->getId() == id) {
+            return m;
+        }
+    }
+    return nullptr;
+}

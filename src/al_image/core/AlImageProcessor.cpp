@@ -20,6 +20,9 @@
 #include "AlMath.h"
 #include "AlRenderParams.h"
 #include "AlPaintDesc.h"
+#include "AlOperateScale.h"
+#include "AlOperateRotate.h"
+#include "AlOperateTrans.h"
 
 #define TAG "AlImageProcessor"
 
@@ -50,6 +53,8 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
     });
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
+    registerEvent(EVENT_LAYER_QUERY_NOTIFY,
+                  reinterpret_cast<EventFunc>(&AlImageProcessor::_onLayerQuery));
 }
 
 AlImageProcessor::~AlImageProcessor() {
@@ -173,94 +178,45 @@ HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
 }
 
 HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        layer->setScale(scale.toFloat(), scale.toFloat());
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_SCALE,
+                                  new AlOperateScale(id, scale, AlPointF(0, 0)));
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::postScale(int32_t id, AlRational ds, AlPointF anchor) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        transToCanvasPos(anchor.x, anchor.y);
-        float scale = ds.toFloat();
-        float dx = anchor.x - layer->getPosition().x;
-        float dy = anchor.y - layer->getPosition().y;
-        float x = dx * (1.0f - scale);
-        float y = dy * (1.0f - scale);
-        layer->setPosition(layer->getPosition().x + x, layer->getPosition().y + y);
-        layer->setScale(layer->getScale().x * scale,
-                        layer->getScale().y * scale);
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_SCALE_POST,
+                                  new AlOperateScale(id, ds, anchor));
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::setRotation(int32_t id, AlRational r) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        layer->setRotation(r);
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_ROTATE,
+                                  new AlOperateRotate(id, r, AlPointF(0, 0)));
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr, AlPointF anchor) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        transToCanvasPos(anchor.x, anchor.y);
-        Logcat::i(TAG, "anchor %f,%f", anchor.x, anchor.y);
-
-//        float alpha = dr.toFloat() * AlMath::PI;
-//        float dx = anchor.x - layer->getPosition().x;
-//        float dy = anchor.y - layer->getPosition().y;
-//
-//        float x = dx * cosf(alpha) - dy * sinf(alpha);
-//        float y = dx * sinf(alpha) + dy * cosf(alpha);
-//        layer->setPosition(anchor.x - x,
-//                           anchor.y - y);
-
-        ///TODO 还可以提高精度
-        auto nr = layer->getRotation().toFloat() + dr.toFloat();
-        auto r = AlRational(static_cast<int32_t>(nr * 100000), 100000);
-        layer->setRotation(r);
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_ROTATE_POST,
+                                  new AlOperateRotate(id, dr, anchor));
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        transToCanvasPos(x, y);
-        layer->setPosition(x, y);
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_TRANS,
+                                  new AlOperateTrans(id, x, y));
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::postTranslate(int32_t id, float dx, float dy) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        transToCanvasPos(dx, dy);
-        layer->setPosition(layer->getPosition().x + dx, layer->getPosition().y + dy);
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_TRANS_POST,
+                                  new AlOperateTrans(id, dx, dy));
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
@@ -283,59 +239,46 @@ AlImageLayerModel *AlImageProcessor::_findLayer(int32_t id) {
     return nullptr;
 }
 
-void AlImageProcessor::transToCanvasPos(float &x, float &y) {
-//    AlVec2 vec2(x, y);
-//    mCanvasCoord.translate(vec2);
-//    x = vec2.x;
-//    y = vec2.y;
-    AlCoordsTranslator::translate(mWinSize, mCanvasSize, x, y);
-}
-
 int32_t AlImageProcessor::getLayer(float x, float y) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    transToCanvasPos(x, y);
-    size_t size = mLayers.size();
-    for (int i = size - 1; i >= 0; --i) {
-        auto *layer = mLayers[i];
-        if (layer && layer->getQuad().inside(AlPointF(x, y))) {
-            return layer->getId();
-        }
-    }
-    return Hw::FAILED.code;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY,
+                                  new AlOperateTrans(0, x, y));
+    postEvent(msg);
+    mQueryLock.wait(500000);
+    return mCurLayerId;
 }
 
 HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float right, float bottom) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        layer->removeCropAction();
-        transToCanvasPos(left, top);
-        transToCanvasPos(right, bottom);
-        layer->addAction(AlLayerActionFactory::crop(left, top, right, bottom));
-        invalidate();
-        return Hw::SUCCESS;
-    }
+//    std::lock_guard<std::mutex> guard(mLayerMtx);
+//    auto *layer = _findLayer(id);
+//    if (layer) {
+//        layer->removeCropAction();
+//        transToCanvasPos(left, top);
+//        transToCanvasPos(right, bottom);
+//        layer->addAction(AlLayerActionFactory::crop(left, top, right, bottom));
+//        invalidate();
+//        return Hw::SUCCESS;
+//    }
     return Hw::FAILED;
 }
 
 HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom) {
 //    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_CROP_CANVAS,
 //                                new AlRectF(left, top, right, bottom)));
-    transToCanvasPos(left, top);
-    transToCanvasPos(right, bottom);
-    AlRectF rectF(left, top, right, bottom);
-    AlSize dest(static_cast<int>(mCanvasSize.width * (rectF.getWidth() / 2.0f)),
-                static_cast<int>(mCanvasSize.height * (rectF.getHeight() / 2.0f)));
-    AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
-    size_t size = mLayers.size();
-    for (int i = 0; i < size; ++i) {
-        auto *layer = mLayers[i];
-        AlCoordsTranslator::changeCanvasStayLoc(&mCanvasSize, &dest, &anchor, layer);
-    }
-    mCanvasSize.width = dest.width;
-    mCanvasSize.height = dest.height;
-    _notifyCanvasUpdate();
-    invalidate();
+//    transToCanvasPos(left, top);
+//    transToCanvasPos(right, bottom);
+//    AlRectF rectF(left, top, right, bottom);
+//    AlSize dest(static_cast<int>(mCanvasSize.width * (rectF.getWidth() / 2.0f)),
+//                static_cast<int>(mCanvasSize.height * (rectF.getHeight() / 2.0f)));
+//    AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
+//    size_t size = mLayers.size();
+//    for (int i = 0; i < size; ++i) {
+//        auto *layer = mLayers[i];
+//        AlCoordsTranslator::changeCanvasStayLoc(&mCanvasSize, &dest, &anchor, layer);
+//    }
+//    mCanvasSize.width = dest.width;
+//    mCanvasSize.height = dest.height;
+//    _notifyCanvasUpdate();
+//    invalidate();
     return Hw::SUCCESS;
 }
 
@@ -412,7 +355,7 @@ HwResult AlImageProcessor::undo() {
 
 HwResult AlImageProcessor::paint(int32_t id, float x, float y, bool painting) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_PAINT);
-    msg->obj = new AlPaintDesc(id,x,y,painting);
+    msg->obj = new AlPaintDesc(id, x, y, painting);
     postEvent(msg);
     return Hw::SUCCESS;
 }
@@ -420,5 +363,12 @@ HwResult AlImageProcessor::paint(int32_t id, float x, float y, bool painting) {
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
+    return true;
+}
+
+bool AlImageProcessor::_onLayerQuery(AlMessage *msg) {
+    AlLogI(TAG, "%d", msg->arg1);
+    mCurLayerId = msg->arg1;
+    mQueryLock.notify();
     return true;
 }
