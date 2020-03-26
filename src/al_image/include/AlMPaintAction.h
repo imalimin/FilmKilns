@@ -30,6 +30,8 @@ public:
 
     AlColor getColor();
 
+    void getOriginalPath(std::vector<float> &path);
+
     void getPath(std::vector<float> &path);
 
     void getDiffPath(std::vector<float> &path);

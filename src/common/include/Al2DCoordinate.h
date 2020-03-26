@@ -29,9 +29,9 @@ public:
 
 private:
     AlVec2 wide;
+    AlVec2 scale;
     AlRational rotation = AlRational();
     AlVec2 position;
-    AlVec2 scale;
 };
 
 

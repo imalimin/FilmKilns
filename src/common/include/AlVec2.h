@@ -42,6 +42,8 @@ public:
 
     AlVec2 &operator/(const float value);
 
+    bool isNan();
+
 public:
     float x = 0.0f;
     float y = 0.0f;

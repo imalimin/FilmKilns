@@ -6,6 +6,7 @@
 */
 
 #include "AlVec2.h"
+#include "AlMath.h"
 
 void AlVec2::swap(AlVec2 *vec1, AlVec2 *vec2) {
     float tmp = vec1->x;
@@ -88,4 +89,8 @@ bool AlVec2::operator>(const AlVec2 &vec) {
 
 bool AlVec2::operator==(const AlVec2 &vec) {
     return x == vec.x && y == vec.y;
+}
+
+bool AlVec2::isNan() {
+    return isnanf(x) || isnanf(y) ;
 }

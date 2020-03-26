@@ -441,16 +441,16 @@ HwResult AlImageProcessor::paint(int32_t id, float x, float y, bool painting) {
 }
 
 AlVec2 AlImageProcessor::_transWin2Layer(AlImageLayerModel *model, float x, float y) {
-    AlVec2 vec(x, y);
-//    mWinCoord.translate(&vec, &mCanvasCoord);
+    AlVec2 vec(x, -y);
+    mWinCoord.translate(&vec, &mCanvasCoord);
     float tx = vec.x, ty = vec.y;
     Al2DCoordinate layerCoord(1628, 2896);
     layerCoord.setScale(model->getScale().x, model->getScale().y);
     layerCoord.setRotation(model->getRotation());
     layerCoord.setPosition(model->getPosition().x, model->getPosition().y);
     mCanvasCoord.translate(&vec, &layerCoord);
-    AlLogI(TAG, "(%f, %f)", model->getPosition().x, model->getPosition().y);
-    vec.y = -vec.y;
+    AlLogI(TAG, "(%f, %f) -> (%f, %f) -> (%f, %f)", x, y, tx, ty, vec.x, vec.y);
+    vec.y = vec.y;
     return vec;
 }
 
@@ -459,6 +459,8 @@ bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.height = static_cast<int>(msg->arg2);
     AlLogI(TAG, "%dx%d, %dx%d", mWinSize.width, mWinSize.height,
            mCanvasSize.width, mCanvasSize.height);
+    AlSize win(mWinSize.width > 0 ? mWinSize.width : mCanvasSize.width,
+               mWinSize.height > 0 ? mWinSize.height : mCanvasSize.height);
     mWinCoord.setWide(mWinSize.width, mWinSize.height);
     mCanvasCoord.setWide(mCanvasSize.width, mCanvasSize.height);
     mCanvasCoord.setScale(mWinSize.width / (float) mCanvasSize.width,

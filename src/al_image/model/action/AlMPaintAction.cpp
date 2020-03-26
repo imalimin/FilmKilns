@@ -71,6 +71,13 @@ HwResult AlMPaintAction::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     return Hw::SUCCESS;
 }
 
+void AlMPaintAction::getOriginalPath(std::vector<float> &path) {
+    for (AlPointF p:this->_original) {
+        path.emplace_back(p.x);
+        path.emplace_back(p.y);
+    }
+}
+
 void AlMPaintAction::getPath(std::vector<float> &path) {
     for (AlBezierCurve *c:this->path) {
         c->getPath(path);
