@@ -11,6 +11,7 @@
 #include "Unit.h"
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
+#include "Al2DCoordinate.h"
 #include <deque>
 
 class AlULayer : public Unit {
@@ -62,6 +63,12 @@ public:
 
     bool onUndo(AlMessage *m);
 
+    bool onPaint(AlMessage *m);
+
+    bool _onCanvasUpdate(AlMessage *msg);
+
+    bool _onWindowUpdate(AlMessage *msg);
+
     void setOnAlxLoadListener(OnAlxLoadListener listener);
 
 private:
@@ -77,6 +84,10 @@ private:
 
     void _saveStep();
 
+    void _updateCoordination();
+
+    AlVec2 _transWin2Layer(AlImageLayerModel *model, float x, float y);
+
 private:
     /// +------------------+
     /// |     Model        |
@@ -86,6 +97,8 @@ private:
     AlImageLayerManager mLayerManager;
     std::deque<std::string *> steps;
     OnAlxLoadListener onAlxLoadListener = nullptr;
+    Al2DCoordinate mWinCoord;
+    Al2DCoordinate mCanvasCoord;
 };
 
 

@@ -11,6 +11,9 @@
 #include "AlLayerPair.h"
 #include "AlRenderParams.h"
 #include "AlTexManager.h"
+#include "AlPaintDesc.h"
+#include "AlMPaintAction.h"
+#include "AlLayerActionFactory.h"
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
@@ -21,6 +24,11 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
     registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
     registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
+    registerEvent(EVENT_LAYER_PAINT, reinterpret_cast<EventFunc>(&AlULayer::onPaint));
+    registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
+                  reinterpret_cast<EventFunc>(&AlULayer::_onCanvasUpdate));
+    registerEvent(EVENT_SCREEN_UPDATE_NOTIFY,
+                  reinterpret_cast<EventFunc>(&AlULayer::_onWindowUpdate));
 }
 
 AlULayer::~AlULayer() {
@@ -138,10 +146,94 @@ bool AlULayer::onUndo(AlMessage *m) {
     return true;
 }
 
+bool AlULayer::onPaint(AlMessage *m) {
+    auto *desc = m->getObj<AlPaintDesc *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto *layer = mLayerManager.getLayer(desc->layerId);
+    if (layer) {
+        AlPointF pointF(_transWin2Layer(layer, desc->point.x, desc->point.y));
+        AlAbsMAction *action = nullptr;
+        auto *actions = layer->getAllActions();
+        size_t size = actions->size();
+        for (int i = 0; i < size; ++i) {
+            AlAbsMAction *a = (*actions)[i];
+            if (typeid(AlMPaintAction) == typeid(*a)) {
+                action = a;
+            }
+        }
+        if (nullptr == action) {
+            action = AlLayerActionFactory::paint(0.01f, AlColor(0xff0000));
+            layer->addAction(action);
+        }
+        dynamic_cast<AlMPaintAction *>(action)->paint(pointF);
+        if (!desc->painting) {
+            dynamic_cast<AlMPaintAction *>(action)->newPath();
+        }
+        _notifyAll(0);
+    }
+    return true;
+}
+
 void AlULayer::_saveStep() {
 
 }
 
 void AlULayer::setOnAlxLoadListener(AlULayer::OnAlxLoadListener listener) {
     this->onAlxLoadListener = listener;
+}
+
+AlVec2 AlULayer::_transWin2Layer(AlImageLayerModel *model, float x, float y) {
+    auto *layer = mLayerManager.find(model->getId());
+    if (nullptr == layer) {
+        return AlVec2(x, -y);
+    }
+    AlVec2 vec(x, -y);
+    mWinCoord.translate(&vec, &mCanvasCoord);
+    float tx = vec.x, ty = vec.y;
+    Al2DCoordinate layerCoord(layer->getWidth(), layer->getHeight());
+    layerCoord.setScale(model->getScale().x, model->getScale().y);
+    layerCoord.setRotation(model->getRotation());
+    layerCoord.setPosition(model->getPosition().x, model->getPosition().y);
+    mCanvasCoord.translate(&vec, &layerCoord);
+    AlLogI(TAG, "(%f, %f) -> (%f, %f) -> (%f, %f)", x, y, tx, ty, vec.x, vec.y);
+    vec.y = vec.y;
+    return vec;
+}
+
+bool AlULayer::_onWindowUpdate(AlMessage *msg) {
+    int32_t width = msg->arg1;
+    int32_t height = static_cast<int>(msg->arg2);
+    mWinCoord.setWide(width, height);
+    _updateCoordination();
+    return true;
+
+}
+
+bool AlULayer::_onCanvasUpdate(AlMessage *msg) {
+    int32_t width = msg->arg1;
+    int32_t height = static_cast<int>(msg->arg2);
+    mCanvasCoord.setWide(width, height);
+    _updateCoordination();
+    return true;
+}
+
+void AlULayer::_updateCoordination() {
+    AlSize ws = mWinCoord.getRegion();
+    AlSize cs = mCanvasCoord.getRegion();
+    if (ws.width > 0 && ws.height > 0
+        && cs.width > 0 && cs.height > 0) {
+        float wRatio = ws.ratio();
+        float cRatio = cs.ratio();
+        float scale = 1.f;
+        /// 由于Canvas在Win中默认会以centerInside的状态显示
+        /// 所以这里需要根据两个的比例来计算实际的缩放系数
+        if (wRatio > cRatio) {
+            scale = ws.height / (float) cs.height;
+        } else {
+            scale = ws.width / (float) cs.width;
+        }
+        mCanvasCoord.setScale(scale, scale);
+    }
 }

@@ -116,8 +116,6 @@ private:
 
     AlImageLayerModel *_findLayer(int32_t id);
 
-    AlVec2 _transWin2Layer(AlImageLayerModel *model, float x, float y);
-
     bool _onCanvasUpdate(AlMessage *msg);
 
 private:
@@ -135,8 +133,6 @@ private:
     std::mutex mLayerMtx;
     AlSize mWinSize;
     AlSize mCanvasSize;
-    Al2DCoordinate mWinCoord;
-    Al2DCoordinate mCanvasCoord;
     AlUCanvas::OnSaveListener onSaveListener = nullptr;
 };
 

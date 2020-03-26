@@ -1,12 +1,16 @@
-//
-// Created by mingyi.li on 2020-03-22.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
 #ifndef HWVC_ANDROID_AL2DCOORDINATE_H
 #define HWVC_ANDROID_AL2DCOORDINATE_H
 
 #include "Object.h"
 #include "AlVec2.h"
+#include "AlSize.h"
 #include "AlRational.h"
 
 al_class(Al2DCoordinate) {
@@ -18,6 +22,8 @@ public:
     virtual ~Al2DCoordinate();
 
     void setWide(int32_t x, int32_t y);
+
+    AlSize getRegion();
 
     void setScale(float scaleX, float scaleY);
 

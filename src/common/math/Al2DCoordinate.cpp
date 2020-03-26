@@ -1,6 +1,9 @@
-//
-// Created by mingyi.li on 2020-03-22.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
 #include "Al2DCoordinate.h"
 #include "AlOrthMatrix.h"
@@ -76,4 +79,8 @@ void Al2DCoordinate::translate(AlVec2 *vec, Al2DCoordinate *dstCoord) {
     AlVec4 point = vec4 * mMat * oMat;
     vec->x = point.x;
     vec->y = point.y;
+}
+
+AlSize Al2DCoordinate::getRegion() {
+    return AlSize(wide.x, wide.y);
 }

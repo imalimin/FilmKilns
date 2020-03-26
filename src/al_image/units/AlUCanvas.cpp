@@ -135,7 +135,7 @@ void AlUCanvas::setOnSaveListener(AlUCanvas::OnSaveListener listener) {
 
 void AlUCanvas::_update(int32_t width, int32_t height, int32_t color) {
     mCanvas.update(width, height, color);
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_SIZE);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MEASURE_CANVAS_NOTIFY);
     msg->arg1 = mCanvas.getWidth();
     msg->arg2 = mCanvas.getHeight();
     postEvent(msg);

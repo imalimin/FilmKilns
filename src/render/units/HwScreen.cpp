@@ -49,6 +49,10 @@ bool HwScreen::eventUpdateWindow(AlMessage *msg) {
     }
     this->width = nw->win->getWidth();
     this->height = nw->win->getHeight();
+    auto *m = AlMessage::obtain(EVENT_SCREEN_UPDATE_NOTIFY);
+    m->arg1 = this->width;
+    m->arg2 = this->height;
+    postEvent(m);
     return true;
 }
 

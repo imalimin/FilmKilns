@@ -101,7 +101,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         if (null == processor) {
             processor = AlImageProcessor.create()
         }
-//        processor?.setCanvas(1440, 2896)
+//        processor?.setCanvas(1920, 1080)
         processor?.setOnSaveListener(this)
         //For crop debug
 //        cropView.setOnChangeListener {

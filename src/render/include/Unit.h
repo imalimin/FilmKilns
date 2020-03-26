@@ -46,6 +46,7 @@ static constexpr int EVENT_RENDER_SET_FILTER = KID('R', 'N', 'D', 0x02);// æ›´æ–
 static constexpr int EVENT_SCREEN_DRAW = KID('S', 'C', 'R', 0x01);
 static constexpr int EVENT_SCREEN_DRAW_TEX = KID('S', 'C', 'R', 0x02);
 static constexpr int EVENT_SCREEN_UPDATE_WINDOW = KID('S', 'C', 'R', 0x03);
+static constexpr int EVENT_SCREEN_UPDATE_NOTIFY = KID('S', 'C', 'R', 0x04);
 
 static constexpr int EVENT_VIDEO_START = KID('V', 'D', 'O', 0x01);
 static constexpr int EVENT_VIDEO_PAUSE = KID('V', 'D', 'O', 0x02);
@@ -76,9 +77,10 @@ static constexpr int EVENT_AIMAGE_UPDATE_LAYER = KID('A', 'I', 'G', 0x00);
 static constexpr int EVENT_AIMAGE_IMPORT = KID('A', 'I', 'G', 0x01);
 static constexpr int EVENT_AIMAGE_REDO = KID('A', 'I', 'G', 0x02);
 static constexpr int EVENT_AIMAGE_UNDO = KID('A', 'I', 'G', 0x03);
+static constexpr int EVENT_LAYER_PAINT = KID('A', 'I', 'G', 0x04);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
-static constexpr int EVENT_LAYER_MEASURE_CANVAS_SIZE = KID('A', 'L', 'M', 0x01);
+static constexpr int EVENT_LAYER_MEASURE_CANVAS_NOTIFY = KID('A', 'L', 'M', 0x01);
 
 static constexpr int EVENT_LAYER_RENDER_UPDATE_CANVAS = KID('A', 'L', 'R', 0x00);
 static constexpr int EVENT_LAYER_RENDER_CLEAR = KID('A', 'L', 'R', 0x01);

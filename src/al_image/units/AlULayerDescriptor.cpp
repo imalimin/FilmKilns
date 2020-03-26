@@ -19,7 +19,7 @@
 
 AlULayerDescriptor::AlULayerDescriptor(const string &alias) : Unit(alias) {
     registerEvent(EVENT_LAYER_MEASURE, reinterpret_cast<EventFunc>(&AlULayerDescriptor::onMeasure));
-    registerEvent(EVENT_LAYER_MEASURE_CANVAS_SIZE,
+    registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayerDescriptor::onCanvasSizeUpdate));
 }
 

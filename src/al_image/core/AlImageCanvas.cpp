@@ -140,7 +140,7 @@ void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
     ///Draw layer
     mCanvasDrawer->draw(description->tex, mCanvasTex);
 #endif
-    _drawDebug();
+//    _drawDebug();
 }
 
 HwResult AlImageCanvas::read(AlBuffer *buf) {

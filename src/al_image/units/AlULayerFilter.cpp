@@ -23,7 +23,7 @@ AlULayerFilter::AlULayerFilter(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayerFilter::onDoFilterAction));
     registerEvent(EVENT_LAYER_REMOVE_CACHE_LAYER,
                   reinterpret_cast<EventFunc>(&AlULayerFilter::onRemoveLayer));
-    registerEvent(EVENT_LAYER_MEASURE_CANVAS_SIZE,
+    registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayerFilter::onCanvasSizeUpdate));
 }
 
@@ -111,7 +111,7 @@ bool AlULayerFilter::onCanvasSizeUpdate(AlMessage *msg) {
 bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d) layer size: %d", __FUNCTION__, __LINE__, layers.size());
     AlLayerPair *pair = msg->getObj<AlLayerPair *>();
-    _showDebugInfo(pair->model, pair->layer);
+//    _showDebugInfo(pair->model, pair->layer);
     if (pair->model->countFilterAction() <= 0) {
         _notifyDescriptor(pair->layer, pair->model, msg->arg1);
         return true;

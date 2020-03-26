@@ -7,14 +7,15 @@
         android:id="@+id/surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         android:fitsSystemWindows="false" />
 
     <com.lmy.hwvcnative.widget.AlDebugView
         android:id="@+id/debugView"
         android:layout_width="match_parent"
-        android:visibility="gone"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="false" />
+        android:fitsSystemWindows="false"
+        android:visibility="gone" />
 
     <com.lmy.hwvcnative.widget.AlCropView
         android:id="@+id/cropView"

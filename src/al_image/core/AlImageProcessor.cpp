@@ -18,8 +18,8 @@
 #include "core/file/AlFileExporter.h"
 #include "AlTarUtil.h"
 #include "AlMath.h"
-#include "AlMPaintAction.h"
 #include "AlRenderParams.h"
+#include "AlPaintDesc.h"
 
 #define TAG "AlImageProcessor"
 
@@ -48,7 +48,7 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
     uLayer->setOnAlxLoadListener([this](int32_t id) {
         mLayerIdCreator.reset(id);
     });
-    registerEvent(EVENT_LAYER_MEASURE_CANVAS_SIZE,
+    registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
 }
 
@@ -83,7 +83,6 @@ void AlImageProcessor::onDestroy() {
 void AlImageProcessor::updateWindow(HwWindow *win) {
     mWinSize.width = win->getWidth();
     mWinSize.height = win->getHeight();
-    mWinCoord.setWide(mWinSize.width, mWinSize.height);
     AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
 }
@@ -412,58 +411,14 @@ HwResult AlImageProcessor::undo() {
 }
 
 HwResult AlImageProcessor::paint(int32_t id, float x, float y, bool painting) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        AlPointF pointF(_transWin2Layer(layer, x, y));
-        AlAbsMAction *action = nullptr;
-        auto *actions = layer->getAllActions();
-        size_t size = actions->size();
-        for (int i = 0; i < size; ++i) {
-            AlAbsMAction *a = (*actions)[i];
-            if (typeid(AlMPaintAction) == typeid(*a)) {
-                action = a;
-                break;
-            }
-        }
-        if (nullptr == action) {
-            action = AlLayerActionFactory::paint(0.01f, AlColor(0xff0000));
-            layer->addAction(action);
-        }
-        dynamic_cast<AlMPaintAction *>(action)->paint(pointF);
-        if (!painting) {
-            dynamic_cast<AlMPaintAction *>(action)->newPath();
-        }
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
-}
-
-AlVec2 AlImageProcessor::_transWin2Layer(AlImageLayerModel *model, float x, float y) {
-    AlVec2 vec(x, -y);
-    mWinCoord.translate(&vec, &mCanvasCoord);
-    float tx = vec.x, ty = vec.y;
-    Al2DCoordinate layerCoord(1628, 2896);
-    layerCoord.setScale(model->getScale().x, model->getScale().y);
-    layerCoord.setRotation(model->getRotation());
-    layerCoord.setPosition(model->getPosition().x, model->getPosition().y);
-    mCanvasCoord.translate(&vec, &layerCoord);
-    AlLogI(TAG, "(%f, %f) -> (%f, %f) -> (%f, %f)", x, y, tx, ty, vec.x, vec.y);
-    vec.y = vec.y;
-    return vec;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_PAINT);
+    msg->obj = new AlPaintDesc(id,x,y,painting);
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
-    AlLogI(TAG, "%dx%d, %dx%d", mWinSize.width, mWinSize.height,
-           mCanvasSize.width, mCanvasSize.height);
-    AlSize win(mWinSize.width > 0 ? mWinSize.width : mCanvasSize.width,
-               mWinSize.height > 0 ? mWinSize.height : mCanvasSize.height);
-    mWinCoord.setWide(mWinSize.width, mWinSize.height);
-    mCanvasCoord.setWide(mCanvasSize.width, mCanvasSize.height);
-    mCanvasCoord.setScale(mWinSize.width / (float) mCanvasSize.width,
-                          mWinSize.width / (float) mCanvasSize.width);
     return true;
 }
