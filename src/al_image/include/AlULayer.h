@@ -63,27 +63,38 @@ public:
 
     bool onUndo(AlMessage *m);
 
-    bool onOperatePaint(AlMessage *m);
-
-    bool onOperateScale(AlMessage *m);
-
-    bool onOperatePostScale(AlMessage *m);
-
-    bool onOperateRotate(AlMessage *m);
-
-    bool onOperatePostRotate(AlMessage *m);
-
-    bool onOperateTrans(AlMessage *m);
-
-    bool onOperatePostTrans(AlMessage *m);
-
-    bool onOperateQuery(AlMessage *m);
-
     bool _onCanvasUpdate(AlMessage *msg);
 
     bool _onWindowUpdate(AlMessage *msg);
 
     void setOnAlxLoadListener(OnAlxLoadListener listener);
+
+protected:
+    void invalidate();
+
+    /// 查找Layer model
+    /// \param x 屏幕坐标
+    /// \param y 屏幕坐标
+    /// \return
+    AlImageLayerModel *findLayerModel(float x, float y);
+
+    /// 查找Layer model
+    /// \param layerId 图层id
+    /// \return
+    AlImageLayerModel *findLayerModel(int32_t layerId);
+
+    /// 屏幕坐标装换到图层坐标
+    /// \param model Layer model
+    /// \param x 屏幕归一化坐标[-1,1]
+    /// \param y 屏幕归一化坐标[-1,1]
+    /// \return
+    AlVec2 transWin2Layer(AlImageLayerModel *model, float x, float y);
+
+    /// 屏幕坐标装换到画布坐标
+    /// \param x 屏幕归一化坐标[-1,1]
+    /// \param y 屏幕归一化坐标[-1,1]
+    /// \return
+    AlVec2 transWin2Canvas(float x, float y);
 
 private:
     void _notifyAll(int32_t flags = 0);
@@ -99,12 +110,6 @@ private:
     void _saveStep();
 
     void _updateCoordination();
-
-    AlVec2 _transWin2Layer(AlImageLayerModel *model, float x, float y);
-
-    AlImageLayerModel *getLayerModel(float x, float y);
-
-    void _invalidate();
 
 private:
     /// +------------------+

@@ -6,7 +6,7 @@
 */
 
 #include "AlImageProcessor.h"
-#include "AlULayer.h"
+#include "AlULayerWithOpt.h"
 #include "AlULayerFilter.h"
 #include "AlULayerDescriptor.h"
 #include "HwScreen.h"
@@ -36,7 +36,7 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //        tar_free(archive);
 //    }
     putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
-    AlULayer *uLayer = new AlULayer(ALIAS_OF_LAYER);
+    AlULayer *uLayer = new AlULayerWithOpt(ALIAS_OF_LAYER);
     AlUCanvas *uCanvas = new AlUCanvas(ALIAS_OF_CANVAS);
     registerAnUnit(uLayer);
     registerAnUnit(new AlULayerFilter(ALIAS_OF_FILTER));
@@ -179,42 +179,48 @@ HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
 
 HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_SCALE,
-                                  new AlOperateScale(id, scale, AlPointF(0, 0)));
+                                  new AlOperateScale(id, scale, AlPointF(0, 0)),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
     return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::postScale(int32_t id, AlRational ds, AlPointF anchor) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_SCALE_POST,
-                                  new AlOperateScale(id, ds, anchor));
+                                  new AlOperateScale(id, ds, anchor),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
     return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::setRotation(int32_t id, AlRational r) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_ROTATE,
-                                  new AlOperateRotate(id, r, AlPointF(0, 0)));
+                                  new AlOperateRotate(id, r, AlPointF(0, 0)),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
     return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::postRotation(int32_t id, AlRational dr, AlPointF anchor) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_ROTATE_POST,
-                                  new AlOperateRotate(id, dr, anchor));
+                                  new AlOperateRotate(id, dr, anchor),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
     return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::setTranslate(int32_t id, float x, float y) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_TRANS,
-                                  new AlOperateTrans(id, x, y));
+                                  new AlOperateTrans(id, x, y),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
     return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::postTranslate(int32_t id, float dx, float dy) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_TRANS_POST,
-                                  new AlOperateTrans(id, dx, dy));
+                                  new AlOperateTrans(id, dx, dy),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
     return Hw::SUCCESS;
 }

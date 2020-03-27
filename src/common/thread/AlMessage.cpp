@@ -23,31 +23,15 @@ AlMessage *AlMessage::obtain() {
 }
 
 AlMessage *AlMessage::obtain(int32_t what) {
-    AlMessage *msg = AlMessageManager::getInstance()->popOne();
-    if (msg) {
-        msg->what = what;
-        msg->obj = nullptr;
-        msg->arg1 = 0;
-        msg->arg2 = 0;
-        msg->desc = "Undef";
-        msg->queueMode = QUEUE_MODE_NORMAL;
-        return msg;
-    }
-    return new AlMessage(what);
+    return obtain(what, nullptr, QUEUE_MODE_NORMAL);
 }
 
 AlMessage *AlMessage::obtain(int32_t what, Object *obj) {
-    AlMessage *msg = AlMessageManager::getInstance()->popOne();
-    if (msg) {
-        msg->what = what;
-        msg->obj = obj;
-        msg->arg1 = 0;
-        msg->arg2 = 0;
-        msg->desc = "Undef";
-        msg->queueMode = QUEUE_MODE_NORMAL;
-        return msg;
-    }
-    return new AlMessage(what, obj);
+    return obtain(what, obj, QUEUE_MODE_NORMAL);
+}
+
+AlMessage *AlMessage::obtain(int32_t what, int16_t queueMode) {
+    return obtain(what, nullptr, queueMode);
 }
 
 AlMessage *AlMessage::obtain(int32_t what, Object *obj, int16_t queueMode) {

@@ -11,12 +11,6 @@
 #include "AlLayerPair.h"
 #include "AlRenderParams.h"
 #include "AlTexManager.h"
-#include "AlPaintDesc.h"
-#include "AlMPaintAction.h"
-#include "AlLayerActionFactory.h"
-#include "AlOperateScale.h"
-#include "AlOperateRotate.h"
-#include "AlOperateTrans.h"
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
@@ -31,19 +25,6 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayer::_onCanvasUpdate));
     registerEvent(EVENT_SCREEN_UPDATE_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayer::_onWindowUpdate));
-    ///Operate
-    registerEvent(EVENT_LAYER_PAINT, reinterpret_cast<EventFunc>(&AlULayer::onOperatePaint));
-    registerEvent(EVENT_LAYER_SCALE, reinterpret_cast<EventFunc>(&AlULayer::onOperateScale));
-    registerEvent(EVENT_LAYER_SCALE_POST,
-                  reinterpret_cast<EventFunc>(&AlULayer::onOperatePostScale));
-    registerEvent(EVENT_LAYER_ROTATE, reinterpret_cast<EventFunc>(&AlULayer::onOperateRotate));
-    registerEvent(EVENT_LAYER_ROTATE_POST,
-                  reinterpret_cast<EventFunc>(&AlULayer::onOperatePostRotate));
-    registerEvent(EVENT_LAYER_TRANS, reinterpret_cast<EventFunc>(&AlULayer::onOperateTrans));
-    registerEvent(EVENT_LAYER_TRANS_POST,
-                  reinterpret_cast<EventFunc>(&AlULayer::onOperatePostTrans));
-    registerEvent(EVENT_LAYER_QUERY,
-                  reinterpret_cast<EventFunc>(&AlULayer::onOperateQuery));
 }
 
 AlULayer::~AlULayer() {
@@ -161,62 +142,6 @@ bool AlULayer::onUndo(AlMessage *m) {
     return true;
 }
 
-bool AlULayer::onOperatePaint(AlMessage *m) {
-    auto *desc = m->getObj<AlPaintDesc *>();
-    if (nullptr == desc) {
-        return true;
-    }
-    auto *layer = mLayerManager.getLayer(desc->layerId);
-    if (layer) {
-        AlPointF pointF(_transWin2Layer(layer, desc->point.x, desc->point.y));
-        AlAbsMAction *action = nullptr;
-        auto *actions = layer->getAllActions();
-        size_t size = actions->size();
-        for (int i = 0; i < size; ++i) {
-            AlAbsMAction *a = (*actions)[i];
-            if (typeid(AlMPaintAction) == typeid(*a)) {
-                action = a;
-            }
-        }
-        if (nullptr == action) {
-            action = AlLayerActionFactory::paint(0.01f, AlColor(0xff0000));
-            layer->addAction(action);
-        }
-        dynamic_cast<AlMPaintAction *>(action)->paint(pointF);
-        if (!desc->painting) {
-            dynamic_cast<AlMPaintAction *>(action)->newPath();
-        }
-        _notifyAll(0);
-    }
-    return true;
-}
-
-void AlULayer::_saveStep() {
-
-}
-
-void AlULayer::setOnAlxLoadListener(AlULayer::OnAlxLoadListener listener) {
-    this->onAlxLoadListener = listener;
-}
-
-AlVec2 AlULayer::_transWin2Layer(AlImageLayerModel *model, float x, float y) {
-    auto *layer = mLayerManager.find(model->getId());
-    if (nullptr == layer) {
-        return AlVec2(x, -y);
-    }
-    AlVec2 vec(x, -y);
-    mWinCoord.translate(&vec, &mCanvasCoord);
-    float tx = vec.x, ty = vec.y;
-    Al2DCoordinate layerCoord(layer->getWidth(), layer->getHeight());
-    layerCoord.setScale(model->getScale().x, model->getScale().y);
-    layerCoord.setRotation(model->getRotation());
-    layerCoord.setPosition(model->getPosition().x, model->getPosition().y);
-    mCanvasCoord.translate(&vec, &layerCoord);
-    AlLogI(TAG, "(%f, %f) -> (%f, %f) -> (%f, %f)", x, y, tx, ty, vec.x, vec.y);
-    vec.y = vec.y;
-    return vec;
-}
-
 bool AlULayer::_onWindowUpdate(AlMessage *msg) {
     int32_t width = msg->arg1;
     int32_t height = static_cast<int>(msg->arg2);
@@ -232,6 +157,34 @@ bool AlULayer::_onCanvasUpdate(AlMessage *msg) {
     mCanvasCoord.setWide(width, height);
     _updateCoordination();
     return true;
+}
+
+void AlULayer::_saveStep() {
+
+}
+
+AlVec2 AlULayer::transWin2Layer(AlImageLayerModel *model, float x, float y) {
+    auto *layer = mLayerManager.find(model->getId());
+    if (nullptr == layer) {
+        return AlVec2(x, y);
+    }
+    AlVec2 vec(x, y);
+    mWinCoord.translate(&vec, &mCanvasCoord);
+    float tx = vec.x, ty = vec.y;
+    Al2DCoordinate layerCoord(layer->getWidth(), layer->getHeight());
+    layerCoord.setScale(model->getScale().x, model->getScale().y);
+    layerCoord.setRotation(model->getRotation());
+    layerCoord.setPosition(model->getPosition().x, model->getPosition().y);
+    mCanvasCoord.translate(&vec, &layerCoord);
+    AlLogI(TAG, "(%f, %f) -> (%f, %f) -> (%f, %f)", x, y, tx, ty, vec.x, vec.y);
+    vec.y = vec.y;
+    return vec;
+}
+
+AlVec2 AlULayer::transWin2Canvas(float x, float y) {
+    AlVec2 vec(x, y);
+    mWinCoord.translate(&vec, &mCanvasCoord);
+    return vec;
 }
 
 void AlULayer::_updateCoordination() {
@@ -253,70 +206,20 @@ void AlULayer::_updateCoordination() {
     }
 }
 
-bool AlULayer::onOperateScale(AlMessage *m) {
-    return true;
+void AlULayer::setOnAlxLoadListener(AlULayer::OnAlxLoadListener listener) {
+    this->onAlxLoadListener = listener;
 }
 
-bool AlULayer::onOperatePostScale(AlMessage *m) {
-    return true;
-}
-
-bool AlULayer::onOperateRotate(AlMessage *m) {
-    return true;
-}
-
-bool AlULayer::onOperatePostRotate(AlMessage *m) {
-    return true;
-}
-
-bool AlULayer::onOperateTrans(AlMessage *m) {
-    auto *desc = m->getObj<AlOperateTrans *>();
-    if (nullptr == desc) {
-        return true;
-    }
-    auto *model = mLayerManager.findModel(desc->layerId);
-    if (model) {
-        AlVec2 vec(desc->x, desc->y);
-        mWinCoord.translate(&vec, &mCanvasCoord);
-        model->setPosition(vec.x, vec.y);
-        _invalidate();
-    }
-    return true;
-}
-
-bool AlULayer::onOperatePostTrans(AlMessage *m) {
-    auto *desc = m->getObj<AlOperateTrans *>();
-    if (nullptr == desc) {
-        return true;
-    }
-    auto model = mLayerManager.findModel(desc->layerId);
-    if (model) {
-        AlVec2 vec(desc->x, desc->y);
-        mWinCoord.translate(&vec, &mCanvasCoord);
-        model->setPosition(model->getPosition().x + vec.x, model->getPosition().y + vec.y);
-        _invalidate();
-    }
-    return true;
-}
-
-bool AlULayer::onOperateQuery(AlMessage *m) {
-    auto *desc = m->getObj<AlOperateTrans *>();
-    if (nullptr == desc) {
-        return true;
-    }
-    auto *model = getLayerModel(desc->x, desc->y);
-    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY);
-    msg->arg1 = nullptr != model ? model->getId() : AlIdentityCreator::NONE_ID;
-    postEvent(msg);
-    return true;
-}
-
-AlImageLayerModel *AlULayer::getLayerModel(float x, float y) {
+AlImageLayerModel *AlULayer::findLayerModel(float x, float y) {
     AlVec2 vec(x, y);
     mWinCoord.translate(&vec, &mCanvasCoord);
     return mLayerManager.findModel(vec.x, vec.y);
 }
 
-void AlULayer::_invalidate() {
-    _notifyAll(0);
+AlImageLayerModel *AlULayer::findLayerModel(int32_t layerId) {
+    return mLayerManager.findModel(layerId);
+}
+
+void AlULayer::invalidate() {
+    postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
 }
