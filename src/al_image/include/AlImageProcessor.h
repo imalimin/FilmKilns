@@ -110,10 +110,6 @@ public:
 private:
     void _notifyCanvasUpdate();
 
-    void _notifyLayerUpdate();
-
-    AlImageLayerModel *_findLayer(int32_t id);
-
     bool _onCanvasUpdate(AlMessage *msg);
 
     bool _onLayerQuery(AlMessage *msg);
@@ -128,8 +124,6 @@ private:
     /// Just for use gl sources before screen` egl initialize.
     AlEgl *aBaseCtx = nullptr;
     AlAbsContext *context = nullptr;
-    std::vector<AlImageLayerModel *> mLayers;
-    AlIdentityCreator mLayerIdCreator;
     std::mutex mLayerMtx;
     AlSize mWinSize;
     AlSize mCanvasSize;

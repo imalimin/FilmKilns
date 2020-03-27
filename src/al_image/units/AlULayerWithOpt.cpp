@@ -12,6 +12,7 @@
 #include "AlOperateScale.h"
 #include "AlOperateRotate.h"
 #include "AlOperateTrans.h"
+#include "AlOperateAlpha.h"
 
 AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
     registerEvent(EVENT_LAYER_QUERY,
@@ -27,6 +28,8 @@ AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
     registerEvent(EVENT_LAYER_TRANS, reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateTrans));
     registerEvent(EVENT_LAYER_TRANS_POST,
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperatePostTrans));
+    registerEvent(EVENT_LAYER_ALPHA,
+                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateAlpha));
 }
 
 AlULayerWithOpt::~AlULayerWithOpt() {
@@ -165,5 +168,9 @@ bool AlULayerWithOpt::onOperateQuery(AlMessage *m) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY);
     msg->arg1 = nullptr != model ? model->getId() : AlIdentityCreator::NONE_ID;
     postEvent(msg);
+    return true;
+}
+
+bool AlULayerWithOpt::onOperateAlpha(AlMessage *m) {
     return true;
 }

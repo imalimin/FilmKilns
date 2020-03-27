@@ -26,7 +26,7 @@ public:
 
     bool onDestroy(AlMessage *msg) override;
 
-    /// 表示图层有更新，比如新增或删除图层
+    /// 添加图层
     /// FORMAT:
     /// +--------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 |
@@ -35,7 +35,29 @@ public:
     /// +--------------------------------------+
     /// \param msg
     /// \return
-    bool onUpdateLayer(AlMessage *msg);
+    bool onAddLayer(AlMessage *msg);
+
+    /// 删除图层
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | none         | layer id  | none      |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
+    bool onRemoveLayer(AlMessage *msg);
+
+    /// 移动图层层级
+    /// FORMAT:
+    /// +--------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 |
+    /// +--------------------------------------+
+    /// | none         | layer id  | layer idx |
+    /// +--------------------------------------+
+    /// \param msg
+    /// \return
+    bool onMoveLayer(AlMessage *msg);
 
     /// 重绘所有图层，并绘制到窗口
     /// FORMAT:
@@ -112,11 +134,6 @@ private:
     void _updateCoordination();
 
 private:
-    /// +------------------+
-    /// |     Model        |
-    /// +------------------+
-    std::vector<AlImageLayerModel *> *getLayers();
-
     AlImageLayerManager mLayerManager;
     std::deque<std::string *> steps;
     OnAlxLoadListener onAlxLoadListener = nullptr;

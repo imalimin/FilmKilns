@@ -23,6 +23,7 @@
 #include "AlOperateScale.h"
 #include "AlOperateRotate.h"
 #include "AlOperateTrans.h"
+#include "AlOperateAlpha.h"
 
 #define TAG "AlImageProcessor"
 
@@ -35,7 +36,6 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //        }
 //        tar_free(archive);
 //    }
-    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
     AlULayer *uLayer = new AlULayerWithOpt(ALIAS_OF_LAYER);
     AlUCanvas *uCanvas = new AlUCanvas(ALIAS_OF_CANVAS);
     registerAnUnit(uLayer);
@@ -48,9 +48,6 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
             this->onSaveListener(code, msg, path);
         }
     });
-    uLayer->setOnAlxLoadListener([this](int32_t id) {
-        mLayerIdCreator.reset(id);
-    });
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
     registerEvent(EVENT_LAYER_QUERY_NOTIFY,
@@ -58,12 +55,6 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 }
 
 AlImageProcessor::~AlImageProcessor() {
-    size_t size = mLayers.size();
-    for (int i = 0; i < size; ++i) {
-        AlImageLayerModel *it = mLayers[i];
-        delete it;
-    }
-    mLayers.clear();
     this->onSaveListener = nullptr;
 }
 
@@ -119,62 +110,27 @@ void AlImageProcessor::_notifyCanvasUpdate() {
     postEvent(msg);
 }
 
-void AlImageProcessor::_notifyLayerUpdate() {
-    putObject("layers", ObjectBox::box(&mLayers)).to({ALIAS_OF_LAYER});
-    postEvent(AlMessage::obtain(EVENT_AIMAGE_UPDATE_LAYER));
-}
-
 int32_t AlImageProcessor::addLayer(const char *path) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    std::string str(path);
-    auto *layer = AlImageLayerModel::create(&mLayerIdCreator, str);
-    if (nullptr == layer) {
-        return Hw::FAILED.code;
-    }
-    mLayers.push_back(layer);
-    _notifyLayerUpdate();
-    invalidate();
-    return layer->getId();
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_ADD);
+    msg->desc = std::string(path);
+    postEvent(msg);
+    mQueryLock.wait();
+    return mCurLayerId;
 }
 
 HwResult AlImageProcessor::removeLayer(int32_t id) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    size_t size = mLayers.size();
-    for (int i = 0; i < size; ++i) {
-        AlImageLayerModel *it = mLayers[i];
-        if (id == it->getId()) {
-            auto itr = mLayers.begin();
-            std::advance(itr, i);
-            mLayers.erase(itr);
-            delete it;
-            _notifyLayerUpdate();
-            invalidate();
-            return Hw::SUCCESS;
-        }
-    }
-    return Hw::FAILED;
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_REMOVE);
+    msg->arg1 = id;
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::moveLayerIndex(int32_t id, int32_t index) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    if (mLayers.empty()) {
-        return Hw::FAILED;
-    }
-    size_t size = mLayers.size();
-    index = std::max(index, 0);
-    index = std::min<int32_t>(index, size - 1);
-    for (int i = 0; i < size; ++i) {
-        AlImageLayerModel *it = mLayers[i];
-        if (id == it->getId()) {
-            auto itr = mLayers.begin();
-            std::advance(itr, i);
-            mLayers.erase(itr);
-            mLayers.insert(mLayers.begin() + index, it);
-            invalidate();
-            return Hw::SUCCESS;
-        }
-    }
-    return Hw::FAILED;
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_MOVE);
+    msg->arg1 = id;
+    msg->arg2 = index;
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::setScale(int32_t id, AlRational scale) {
@@ -226,23 +182,11 @@ HwResult AlImageProcessor::postTranslate(int32_t id, float dx, float dy) {
 }
 
 HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        layer->setAlpha(alpha);
-        invalidate();
-        return Hw::SUCCESS;
-    }
-    return Hw::FAILED;
-}
-
-AlImageLayerModel *AlImageProcessor::_findLayer(int32_t id) {
-    for (AlImageLayerModel *it : mLayers) {
-        if (id == it->getId()) {
-            return it;
-        }
-    }
-    return nullptr;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_TRANS_POST,
+                                  new AlOperateAlpha(id, alpha),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
@@ -289,12 +233,12 @@ HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float 
 }
 
 HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer && layer->removeCropAction()) {
-        invalidate();
-        return Hw::SUCCESS;
-    }
+//    std::lock_guard<std::mutex> guard(mLayerMtx);
+//    auto *layer = _findLayer(id);
+//    if (layer && layer->removeCropAction()) {
+//        invalidate();
+//        return Hw::SUCCESS;
+//    }
     return Hw::FAILED;
 }
 
@@ -309,10 +253,10 @@ HwResult AlImageProcessor::save(std::string path) {
 }
 
 HwResult AlImageProcessor::exportFile(std::string path) {
-    AlFileExporter exporter;
-    AlImageCanvasModel canvas;
-    canvas.set(mCanvasSize.width, mCanvasSize.height, 0);
-    return exporter.exportAsFile(&canvas, &mLayers, path);
+//    AlFileExporter exporter;
+//    AlImageCanvasModel canvas;
+//    canvas.set(mCanvasSize.width, mCanvasSize.height, 0);
+//    return exporter.exportAsFile(&canvas, &mLayers, path);
 }
 
 HwResult AlImageProcessor::importFile(std::string path) {
@@ -328,24 +272,24 @@ void AlImageProcessor::setOnSaveListener(AlUCanvas::OnSaveListener listener) {
 }
 
 HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer) {
-        layer->removeAlignCropAction();
-        layer->addAction(AlLayerActionFactory::alignCrop(r));
-        invalidate();
-        return Hw::SUCCESS;
-    }
+//    std::lock_guard<std::mutex> guard(mLayerMtx);
+//    auto *layer = _findLayer(id);
+//    if (layer) {
+//        layer->removeAlignCropAction();
+//        layer->addAction(AlLayerActionFactory::alignCrop(r));
+//        invalidate();
+//        return Hw::SUCCESS;
+//    }
     return Hw::FAILED;
 }
 
 HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
-    std::lock_guard<std::mutex> guard(mLayerMtx);
-    auto *layer = _findLayer(id);
-    if (layer && layer->removeAlignCropAction()) {
-        invalidate();
-        return Hw::SUCCESS;
-    }
+//    std::lock_guard<std::mutex> guard(mLayerMtx);
+//    auto *layer = _findLayer(id);
+//    if (layer && layer->removeAlignCropAction()) {
+//        invalidate();
+//        return Hw::SUCCESS;
+//    }
     return Hw::FAILED;
 }
 

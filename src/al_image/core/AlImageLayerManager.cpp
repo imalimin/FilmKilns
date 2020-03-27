@@ -12,6 +12,8 @@
 #include "AlTexManager.h"
 #include "Logcat.h"
 
+#define TAG "AlImageLayerManager"
+
 AlImageLayerManager::AlImageLayerManager() : Object() {
 
 }
@@ -28,19 +30,59 @@ void AlImageLayerManager::release() {
         ++itr;
     }
     mLayers.clear();
+    size_t size = models.size();
+    for (int i = 0; i < size; ++i) {
+        AlImageLayerModel *it = models[i];
+        delete it;
+    }
+    mLayers.clear();
 }
 
-void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
-                                 std::vector<int32_t> *delLayers) {
-    this->models = list;
-    std::vector<int32_t> ids;
-    unsigned int size = list->size();
-    for (unsigned int i = 0; i < size; ++i) {
-        auto *it = list->at(i);
-        ids.push_back(it->getId());
-        if (!_found(it->getId())) {
-            _newLayer(it);
+int32_t AlImageLayerManager::addLayer(const std::string path) {
+    auto *model = AlImageLayerModel::create(&mLayerIdCreator, path);
+    AlBitmap *bmp = AlBitmapFactory::decodeFile(model->getPath());
+    if (nullptr == bmp || nullptr == model) {
+        AlLogE(TAG, "decode %s failed", path.c_str());
+        return AlIdentityCreator::NONE_ID;
+    }
+    auto rotation = bmp->getRotation();
+    AlTexDescription desc;
+    desc.size.width = bmp->getWidth();
+    desc.size.height = bmp->getHeight();
+    desc.wrapMode = AlTexDescription::WrapMode::BORDER;
+    desc.fmt = GL_RGBA;
+    AlBuffer *buf = AlBuffer::wrap(bmp->getPixels(), bmp->getByteSize());
+    auto *srcTex = AlTexManager::instance()->alloc(desc, buf);
+    delete buf;
+    delete bmp;
+    _correctAngle(&srcTex, rotation);
+    AlImageLayer *layer = AlImageLayer::create(srcTex);
+    models.push_back(model);
+    mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
+    return model->getId();
+}
+
+void AlImageLayerManager::removeLayer(const int32_t id) {
+    for (auto itr = models.begin(); itr != models.end(); ++itr) {
+        auto *model = *itr;
+        if (model && model->getId() == id) {
+            models.erase(itr);
+            auto it = mLayers.find(model->getId());
+            if (it != mLayers.end()) {
+                auto *layer = it->second;
+                mLayers.erase(it);
+                _delLayer(layer);
+            }
+            delete model;
+            break;
         }
+    }
+}
+
+void AlImageLayerManager::update(std::vector<int32_t> *delLayers) {
+    std::vector<int32_t> ids;
+    for (auto *it : models) {
+        ids.push_back(it->getId());
     }
 
     for (auto itr = mLayers.begin(); mLayers.end() != itr;) {
@@ -57,29 +99,6 @@ void AlImageLayerManager::update(std::vector<AlImageLayerModel *> *list,
             ++itr;
         }
     }
-}
-
-bool AlImageLayerManager::_newLayer(AlImageLayerModel *model) {
-    AlBitmap *bmp = AlBitmapFactory::decodeFile(model->getPath());
-    if (nullptr == bmp) {
-        Logcat::e("AlImageLayerManager", "%s(%d): decode %s failed", __FUNCTION__, __LINE__,
-                  model->getPath().c_str());
-        return true;
-    }
-    auto rotation = bmp->getRotation();
-    AlTexDescription desc;
-    desc.size.width = bmp->getWidth();
-    desc.size.height = bmp->getHeight();
-    desc.wrapMode = AlTexDescription::WrapMode::BORDER;
-    desc.fmt = GL_RGBA;
-    AlBuffer *buf = AlBuffer::wrap(bmp->getPixels(), bmp->getByteSize());
-    auto *srcTex = AlTexManager::instance()->alloc(desc, buf);
-    delete buf;
-    delete bmp;
-    _correctAngle(&srcTex, rotation);
-    AlImageLayer *layer = AlImageLayer::create(srcTex);
-    mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
-    return true;
 }
 
 void AlImageLayerManager::_correctAngle(HwAbsTexture **tex,
@@ -107,24 +126,20 @@ void AlImageLayerManager::_correctAngle(HwAbsTexture **tex,
     }
 }
 
-bool AlImageLayerManager::_found(int32_t id) {
-    return mLayers.end() != mLayers.find(id);
-}
-
 size_t AlImageLayerManager::size() {
     if (empty()) {
         return 0;
     }
-    return models->size();
+    return models.size();
 }
 
 bool AlImageLayerManager::empty() {
-    return nullptr == models || models->empty();
+    return models.empty();
 }
 
 AlImageLayerModel *AlImageLayerManager::getLayer(int32_t index) {
     if (empty()) return nullptr;
-    return models->at(index);
+    return models[index];
 }
 
 AlImageLayer *AlImageLayerManager::find(int32_t id) {
@@ -137,47 +152,45 @@ AlImageLayer *AlImageLayerManager::find(int32_t id) {
 }
 
 void AlImageLayerManager::replaceAll(std::vector<AlImageLayerModel *> *list) {
-    if (nullptr == list || list->empty()) {
-        return;
-    }
-    ///Clear all layer model.
-    size_t size = models->size();
-    for (int i = 0; i < size; ++i) {
-        AlImageLayerModel *it = (*models)[i];
-        delete it;
-    }
-    models->clear();
-    ///Clear all layer.
-    auto itr = mLayers.begin();
-    while (mLayers.end() != itr) {
-        AlImageLayer *layer = itr->second;
-        AlTexManager::instance()->recycle(&(itr->second->tex));
-        delete layer;
-        ++itr;
-    }
-    mLayers.clear();
-    ///Replace layer model.
-    size = list->size();
-    for (int i = 0; i < size; ++i) {
-        models->push_back((*list)[i]);
-    }
-    ///Update layer model.
-    update(models);
+//    if (nullptr == list || list->empty()) {
+//        return;
+//    }
+//    ///Clear all layer model.
+//    for (auto *it : models) {
+//        delete it;
+//    }
+//    models.clear();
+//    ///Clear all layer.
+//    auto itr = mLayers.begin();
+//    while (mLayers.end() != itr) {
+//        AlImageLayer *layer = itr->second;
+//        AlTexManager::instance()->recycle(&(itr->second->tex));
+//        delete layer;
+//        ++itr;
+//    }
+//    mLayers.clear();
+//    ///Replace layer model.
+//    size_t size = list->size();
+//    for (int i = 0; i < size; ++i) {
+//        models.push_back((*list)[i]);
+//    }
 }
 
 int32_t AlImageLayerManager::getMaxId() {
     if (empty()) return 0;
     int32_t id = 0;
-    size_t size = models->size();
+    size_t size = models.size();
     for (int i = 0; i < size; ++i) {
-        int32_t tmp = (*models)[i]->getId();
+        int32_t tmp = models[i]->getId();
         id = max(tmp, id);
     }
     return id;
 }
 
 AlImageLayerModel *AlImageLayerManager::findModel(float x, float y) {
-    for (auto *m:*models) {
+    size_t size = models.size();
+    for (int i = size - 1; i >= 0; --i) {
+        auto *m = models[i];
         if (m && m->getQuad().inside(AlPointF(x, y))) {
             return m;
         }
@@ -186,10 +199,17 @@ AlImageLayerModel *AlImageLayerManager::findModel(float x, float y) {
 }
 
 AlImageLayerModel *AlImageLayerManager::findModel(const int32_t id) {
-    for (auto *m:*models) {
+    for (auto *m:models) {
         if (m && m->getId() == id) {
             return m;
         }
     }
     return nullptr;
+}
+
+void AlImageLayerManager::_delLayer(AlImageLayer *&layer) {
+    if (layer) {
+        AlTexManager::instance()->recycle(&(layer->tex));
+        delete layer;
+    }
 }

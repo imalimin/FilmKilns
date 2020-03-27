@@ -73,7 +73,7 @@ static constexpr int EVENT_CAMERA_INVALIDATE = KID('C', 'A', 'M', 0x00);
 
 static constexpr int EVENT_VIDEO_COMPILER_BACKWARD = KID('H', 'V', 'C', 0x00);
 
-static constexpr int EVENT_AIMAGE_UPDATE_LAYER = KID('A', 'I', 'G', 0x00);
+static constexpr int EVENT_LAYER_ADD = KID('A', 'I', 'G', 0x00);
 static constexpr int EVENT_AIMAGE_IMPORT = KID('A', 'I', 'G', 0x01);
 static constexpr int EVENT_AIMAGE_REDO = KID('A', 'I', 'G', 0x02);
 static constexpr int EVENT_AIMAGE_UNDO = KID('A', 'I', 'G', 0x03);
@@ -86,6 +86,9 @@ static constexpr int EVENT_LAYER_TRANS = KID('A', 'I', 'G', 0x09);
 static constexpr int EVENT_LAYER_TRANS_POST = KID('A', 'I', 'G', 0xa);
 static constexpr int EVENT_LAYER_QUERY = KID('A', 'I', 'G', 0xb);
 static constexpr int EVENT_LAYER_QUERY_NOTIFY = KID('A', 'I', 'G', 0xc);
+static constexpr int EVENT_LAYER_REMOVE = KID('A', 'I', 'G', 0xe);
+static constexpr int EVENT_LAYER_MOVE = KID('A', 'I', 'G', 0x10);
+static constexpr int EVENT_LAYER_ALPHA = KID('A', 'I', 'G', 0x11);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
 static constexpr int EVENT_LAYER_MEASURE_CANVAS_NOTIFY = KID('A', 'L', 'M', 0x01);

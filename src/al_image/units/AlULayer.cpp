@@ -17,7 +17,9 @@
 
 AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlULayer::onInvalidate));
-    registerEvent(EVENT_AIMAGE_UPDATE_LAYER, reinterpret_cast<EventFunc>(&AlULayer::onUpdateLayer));
+    registerEvent(EVENT_LAYER_ADD, reinterpret_cast<EventFunc>(&AlULayer::onAddLayer));
+    registerEvent(EVENT_LAYER_REMOVE, reinterpret_cast<EventFunc>(&AlULayer::onRemoveLayer));
+    registerEvent(EVENT_LAYER_MOVE, reinterpret_cast<EventFunc>(&AlULayer::onMoveLayer));
     registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
     registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
     registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
@@ -32,14 +34,7 @@ AlULayer::~AlULayer() {
 }
 
 bool AlULayer::onCreate(AlMessage *msg) {
-    Logcat::e(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    auto *layers = getLayers();
-    if (nullptr == layers) {
-        Logcat::e(TAG, "%s(%d) failed. Can`t find layers.", __FUNCTION__, __LINE__);
-        return true;
-    }
-    /// Just for init models address.
-    mLayerManager.update(layers);
+    AlLogI(TAG, "%d", 1);
     return true;
 }
 
@@ -49,33 +44,26 @@ bool AlULayer::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool AlULayer::onUpdateLayer(AlMessage *msg) {
-    std::vector<int32_t> delLayers;
-    auto *layers = getLayers();
-    if (nullptr == layers) {
-        Logcat::e(TAG, "%s(%d) failed. Can`t find layers.", __FUNCTION__, __LINE__);
-        return true;
-    }
-    mLayerManager.update(layers, &delLayers);
-    for (auto id:delLayers) {
-        auto *m = AlMessage::obtain(EVENT_LAYER_REMOVE_CACHE_LAYER);
-        m->arg1 = id;
-        postEvent(m);
-    }
+bool AlULayer::onAddLayer(AlMessage *msg) {
+    int32_t id = mLayerManager.addLayer(msg->desc);
+    postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY, id));
+    invalidate();
+    return true;
+}
+
+bool AlULayer::onRemoveLayer(AlMessage *msg) {
+    mLayerManager.removeLayer(msg->arg1);
+    invalidate();
+    return true;
+}
+
+bool AlULayer::onMoveLayer(AlMessage *msg) {
     return true;
 }
 
 bool AlULayer::onInvalidate(AlMessage *m) {
     _notifyAll(m->arg1);
     return true;
-}
-
-std::vector<AlImageLayerModel *> *AlULayer::getLayers() {
-    auto *obj = static_cast<ObjectBox *>(getObject("layers"));
-    if (nullptr == obj) {
-        return nullptr;
-    }
-    return static_cast<vector<AlImageLayerModel *> *>(obj->ptr);
 }
 
 void AlULayer::_notifyAll(int32_t flags) {
@@ -99,6 +87,8 @@ void AlULayer::_notifyAll(int32_t flags) {
             _notifyFilter(layer, model, p.toInt());
         }
     } else {
+        ///没有图层时清空画布
+        postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR));
         AlMessage *sMsg = AlMessage::obtain(EVENT_LAYER_RENDER_SHOW);
         sMsg->desc = "show";
         postEvent(sMsg);
@@ -113,24 +103,24 @@ void AlULayer::_notifyFilter(AlImageLayer *layer, AlImageLayerModel *model, int3
 }
 
 bool AlULayer::onImport(AlMessage *m) {
-    std::string path = m->desc;
-    AlImageCanvasModel canvas;
-    std::vector<AlImageLayerModel *> layers;
-    AlFileImporter importer;
-    if (Hw::SUCCESS != importer.importFromFile(path, &canvas, &layers)
-        || layers.empty() || canvas.getWidth() <= 0 || canvas.getHeight() <= 0) {
-        return true;
-    }
-    mLayerManager.replaceAll(&layers);
-    layers.clear();
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS, nullptr,
-                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
-    msg->obj = new AlSize(canvas.getWidth(), canvas.getHeight());
-    postEvent(msg);
-    _notifyAll();
-    if (onAlxLoadListener) {
-        onAlxLoadListener(mLayerManager.getMaxId());
-    }
+//    std::string path = m->desc;
+//    AlImageCanvasModel canvas;
+//    std::vector<AlImageLayerModel *> layers;
+//    AlFileImporter importer;
+//    if (Hw::SUCCESS != importer.importFromFile(path, &canvas, &layers)
+//        || layers.empty() || canvas.getWidth() <= 0 || canvas.getHeight() <= 0) {
+//        return true;
+//    }
+//    mLayerManager.replaceAll(&layers);
+//    layers.clear();
+//    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS, nullptr,
+//                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+//    msg->obj = new AlSize(canvas.getWidth(), canvas.getHeight());
+//    postEvent(msg);
+//    _notifyAll();
+//    if (onAlxLoadListener) {
+//        onAlxLoadListener(mLayerManager.getMaxId());
+//    }
     return true;
 }
 

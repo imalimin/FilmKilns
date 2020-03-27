@@ -22,8 +22,11 @@ public:
 
     void release();
 
-    void update(std::vector<AlImageLayerModel *> *list,
-                std::vector<int32_t> *delLayers = nullptr);
+    int32_t addLayer(const std::string path);
+
+    void removeLayer(const int32_t id);
+
+    void update(std::vector<int32_t> *delLayers = nullptr);
 
     size_t size();
 
@@ -44,17 +47,16 @@ public:
 private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};
 
-    bool _newLayer(AlImageLayerModel *model);
-
-    bool _found(int32_t id);
+    void _delLayer(AlImageLayer *&layer);
 
     void _correctAngle(HwAbsTexture **tex, AlRational radian);
 
 private:
+    AlIdentityCreator mLayerIdCreator;
     /**
      * AlImageProcessor::mLayers instance.
      */
-    std::vector<AlImageLayerModel *> *models = nullptr;
+    std::vector<AlImageLayerModel *> models;
     std::map<int32_t, AlImageLayer *> mLayers;
 };
 

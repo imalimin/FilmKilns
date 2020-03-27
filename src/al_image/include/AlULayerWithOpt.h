@@ -32,6 +32,8 @@ public:
 
     bool onOperateQuery(AlMessage *m);
 
+    bool onOperateAlpha(AlMessage *m);
+
 };
 
 
