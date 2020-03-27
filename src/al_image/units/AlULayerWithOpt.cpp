@@ -13,6 +13,7 @@
 #include "AlOperateRotate.h"
 #include "AlOperateTrans.h"
 #include "AlOperateAlpha.h"
+#include "AlOperateCrop.h"
 
 AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
     registerEvent(EVENT_LAYER_QUERY,
@@ -30,6 +31,10 @@ AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperatePostTrans));
     registerEvent(EVENT_LAYER_ALPHA,
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateAlpha));
+    registerEvent(EVENT_LAYER_CROP,
+                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayer));
+    registerEvent(EVENT_LAYER_CROP_CANCEL,
+                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayerCancel));
 }
 
 AlULayerWithOpt::~AlULayerWithOpt() {
@@ -172,5 +177,42 @@ bool AlULayerWithOpt::onOperateQuery(AlMessage *m) {
 }
 
 bool AlULayerWithOpt::onOperateAlpha(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateAlpha *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto model = findLayerModel(desc->layerId);
+    if (model) {
+        model->setAlpha(desc->alpha);
+        invalidate();
+    }
+    return true;
+}
+
+bool AlULayerWithOpt::onCropLayer(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateCrop *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto model = findLayerModel(desc->layerId);
+    if (model) {
+        AlVec2 lt = transWin2Canvas(desc->rectF.left, desc->rectF.top);
+        AlVec2 rb = transWin2Canvas(desc->rectF.right, desc->rectF.bottom);
+        model->removeCropAction();
+        model->addAction(AlLayerActionFactory::crop(lt.x, lt.y, rb.x, rb.y));
+        invalidate();
+    }
+    return true;
+}
+
+bool AlULayerWithOpt::onCropLayerCancel(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateCrop *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto model = findLayerModel(desc->layerId);
+    if (model && model->removeCropAction()) {
+        invalidate();
+    }
     return true;
 }

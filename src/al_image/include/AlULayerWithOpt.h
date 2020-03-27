@@ -34,6 +34,10 @@ public:
 
     bool onOperateAlpha(AlMessage *m);
 
+    bool onCropLayer(AlMessage *m);
+
+    bool onCropLayerCancel(AlMessage *m);
+
 };
 
 

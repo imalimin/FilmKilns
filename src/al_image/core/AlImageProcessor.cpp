@@ -24,6 +24,7 @@
 #include "AlOperateRotate.h"
 #include "AlOperateTrans.h"
 #include "AlOperateAlpha.h"
+#include "AlOperateCrop.h"
 
 #define TAG "AlImageProcessor"
 
@@ -84,13 +85,6 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 }
 
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
-//    float scale = w / (float) mCanvasSize.width;
-//    AlSize dest(w, static_cast<int>(mCanvasSize.height * scale));
-//    size_t size = mLayers.size();
-//    for (int i = 0; i < size; ++i) {
-//        auto *layer = mLayers[i];
-//        layer->setScale(layer->getScale().x * scale, layer->getScale().y * scale);
-//    }
     mCanvasSize.width = w;
     mCanvasSize.height = h;
     _notifyCanvasUpdate();
@@ -198,17 +192,11 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
 }
 
 HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float right, float bottom) {
-//    std::lock_guard<std::mutex> guard(mLayerMtx);
-//    auto *layer = _findLayer(id);
-//    if (layer) {
-//        layer->removeCropAction();
-//        transToCanvasPos(left, top);
-//        transToCanvasPos(right, bottom);
-//        layer->addAction(AlLayerActionFactory::crop(left, top, right, bottom));
-//        invalidate();
-//        return Hw::SUCCESS;
-//    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_CROP,
+                                  new AlOperateCrop(id, left, top, right, bottom),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom) {
@@ -233,13 +221,11 @@ HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float 
 }
 
 HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
-//    std::lock_guard<std::mutex> guard(mLayerMtx);
-//    auto *layer = _findLayer(id);
-//    if (layer && layer->removeCropAction()) {
-//        invalidate();
-//        return Hw::SUCCESS;
-//    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_CROP_CANCEL,
+                                  new AlOperateCrop(id, 0, 0, 0, 0),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::save(std::string path) {
