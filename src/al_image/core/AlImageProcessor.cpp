@@ -87,20 +87,14 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
     mCanvasSize.width = w;
     mCanvasSize.height = h;
-    _notifyCanvasUpdate();
-    invalidate();
+    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE,
+                                new AlSize(w, h)));
 }
 
 void AlImageProcessor::invalidate(int32_t flag) {
     AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr,
                                        AlMessage::QUEUE_MODE_UNIQUE);
     msg->arg1 = flag;
-    postEvent(msg);
-}
-
-void AlImageProcessor::_notifyCanvasUpdate() {
-    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS);
-    msg->obj = new AlSize(mCanvasSize.width, mCanvasSize.height);
     postEvent(msg);
 }
 
@@ -200,23 +194,11 @@ HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float ri
 }
 
 HwResult AlImageProcessor::cropCanvas(float left, float top, float right, float bottom) {
-//    postEvent(AlMessage::obtain(EVENT_LAYER_RENDER_CROP_CANVAS,
-//                                new AlRectF(left, top, right, bottom)));
-//    transToCanvasPos(left, top);
-//    transToCanvasPos(right, bottom);
-//    AlRectF rectF(left, top, right, bottom);
-//    AlSize dest(static_cast<int>(mCanvasSize.width * (rectF.getWidth() / 2.0f)),
-//                static_cast<int>(mCanvasSize.height * (rectF.getHeight() / 2.0f)));
-//    AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
-//    size_t size = mLayers.size();
-//    for (int i = 0; i < size; ++i) {
-//        auto *layer = mLayers[i];
-//        AlCoordsTranslator::changeCanvasStayLoc(&mCanvasSize, &dest, &anchor, layer);
-//    }
-//    mCanvasSize.width = dest.width;
-//    mCanvasSize.height = dest.height;
-//    _notifyCanvasUpdate();
-//    invalidate();
+    auto *msg = AlMessage::obtain(EVENT_CANVAS_CROP,
+                                  new AlOperateCrop(AlIdentityCreator::NONE_ID,
+                                                    left, top, right, bottom),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
+    postEvent(msg);
     return Hw::SUCCESS;
 }
 

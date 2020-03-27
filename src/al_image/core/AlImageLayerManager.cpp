@@ -213,3 +213,7 @@ void AlImageLayerManager::_delLayer(AlImageLayer *&layer) {
         delete layer;
     }
 }
+
+AlImageLayerModel *AlImageLayerManager::findModelByIndex(const int32_t idx) {
+    return models[idx];
+}

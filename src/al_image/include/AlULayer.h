@@ -118,6 +118,10 @@ protected:
     /// \return
     AlVec2 transWin2Canvas(float x, float y);
 
+    AlSize getCanvasSize();
+
+    void cropCanvasAndStayLoc(AlSize *src, AlSize *dest, AlPointF *anchor);
+
 private:
     void _notifyAll(int32_t flags = 0);
 

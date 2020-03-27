@@ -38,6 +38,8 @@ public:
 
     AlImageLayerModel *findModel(const int32_t id);
 
+    AlImageLayerModel *findModelByIndex(const int32_t idx);
+
     AlImageLayer *find(int32_t id);
 
     void replaceAll(std::vector<AlImageLayerModel *> *list);

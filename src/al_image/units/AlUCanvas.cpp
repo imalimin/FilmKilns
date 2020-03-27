@@ -13,8 +13,8 @@
 #define TAG "AlUCanvas"
 
 AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
-    registerEvent(EVENT_LAYER_RENDER_UPDATE_CANVAS,
-                  reinterpret_cast<EventFunc>(&AlUCanvas::onUpdateCanvas));
+    registerEvent(EVENT_CANVAS_RESIZE,
+                  reinterpret_cast<EventFunc>(&AlUCanvas::onResize));
     registerEvent(EVENT_LAYER_RENDER_CLEAR,
                   reinterpret_cast<EventFunc>(&AlUCanvas::onClear));
     registerEvent(EVENT_LAYER_RENDER_DRAW,
@@ -22,8 +22,6 @@ AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
     registerEvent(EVENT_LAYER_RENDER_SHOW,
                   reinterpret_cast<EventFunc>(&AlUCanvas::onShow));
     registerEvent(EVENT_CANVAS_SAVE, reinterpret_cast<EventFunc>(&AlUCanvas::onSave));
-    registerEvent(EVENT_LAYER_RENDER_CROP_CANVAS,
-                  reinterpret_cast<EventFunc>(&AlUCanvas::onCropCanvas));
 }
 
 AlUCanvas::~AlUCanvas() {
@@ -39,22 +37,13 @@ bool AlUCanvas::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool AlUCanvas::onUpdateCanvas(AlMessage *m) {
+bool AlUCanvas::onResize(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    AlSize *size = m->getObj<AlSize *>();
-    _update(size->width, size->height, 0);
-    return true;
-}
-
-bool AlUCanvas::onCropCanvas(AlMessage *m) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    AlRectF *rectF = m->getObj<AlRectF *>();
-    if (nullptr == rectF) {
-        return false;
+    auto *size = m->getObj<AlSize *>();
+    if (nullptr == size) {
+        return true;
     }
-    Logcat::i(TAG, "(%f,%f), (%f,%f)", rectF->left, rectF->top, rectF->right, rectF->bottom);
-    _update(static_cast<int32_t>(mCanvas.getWidth() * rectF->getWidth()),
-            static_cast<int32_t>(mCanvas.getHeight() * rectF->getHeight()), 0);
+    _update(size->width, size->height, 0);
     return true;
 }
 

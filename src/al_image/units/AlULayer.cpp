@@ -113,7 +113,7 @@ bool AlULayer::onImport(AlMessage *m) {
 //    }
 //    mLayerManager.replaceAll(&layers);
 //    layers.clear();
-//    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_UPDATE_CANVAS, nullptr,
+//    AlMessage *msg = AlMessage::obtain(EVENT_CANVAS_RESIZE, nullptr,
 //                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
 //    msg->obj = new AlSize(canvas.getWidth(), canvas.getHeight());
 //    postEvent(msg);
@@ -137,6 +137,7 @@ bool AlULayer::_onWindowUpdate(AlMessage *msg) {
     int32_t height = static_cast<int>(msg->arg2);
     mWinCoord.setWide(width, height);
     _updateCoordination();
+    AlLogI(TAG, "%dx%d", width, height);
     return true;
 
 }
@@ -146,6 +147,7 @@ bool AlULayer::_onCanvasUpdate(AlMessage *msg) {
     int32_t height = static_cast<int>(msg->arg2);
     mCanvasCoord.setWide(width, height);
     _updateCoordination();
+    AlLogI(TAG, "%dx%d", width, height);
     return true;
 }
 
@@ -212,4 +214,20 @@ AlImageLayerModel *AlULayer::findLayerModel(int32_t layerId) {
 
 void AlULayer::invalidate() {
     postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
+}
+
+AlSize AlULayer::getCanvasSize() {
+    return mCanvasCoord.getRegion();
+}
+
+void AlULayer::cropCanvasAndStayLoc(AlSize *src, AlSize *dest, AlPointF *anchor) {
+    auto size = mLayerManager.size();
+    for (int i = 0; i < size; ++i) {
+        auto *model = mLayerManager.findModelByIndex(i);
+        AlSize posPixels(static_cast<int>(src->width * (model->getPosition().x + anchor->x)),
+                         static_cast<int>(src->height * (model->getPosition().y + anchor->y)));
+        AlPointF nPos(posPixels.width / (float) dest->width,
+                      posPixels.height / (float) dest->height);
+        model->setPosition(nPos.x, nPos.y);
+    }
 }

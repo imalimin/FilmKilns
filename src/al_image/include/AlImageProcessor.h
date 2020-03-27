@@ -108,8 +108,6 @@ public:
     void setOnSaveListener(AlUCanvas::OnSaveListener listener);
 
 private:
-    void _notifyCanvasUpdate();
-
     bool _onCanvasUpdate(AlMessage *msg);
 
     bool _onLayerQuery(AlMessage *msg);
