@@ -14,16 +14,17 @@
 #include "AlOperateCrop.h"
 #include "AlRectLoc.h"
 #include "core/file/AlFileImporter.h"
+#include "core/file/AlFileExporter.h"
 
 #define TAG "AlULayer"
-#define ACTION_ADD_LAYER 0x01
 
 AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlULayer::onInvalidate));
     registerEvent(EVENT_LAYER_ADD, reinterpret_cast<EventFunc>(&AlULayer::onAddLayer));
     registerEvent(EVENT_LAYER_REMOVE, reinterpret_cast<EventFunc>(&AlULayer::onRemoveLayer));
     registerEvent(EVENT_LAYER_MOVE, reinterpret_cast<EventFunc>(&AlULayer::onMoveLayer));
-    registerEvent(EVENT_AIMAGE_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
+    registerEvent(EVENT_LAYER_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
+    registerEvent(EVENT_LAYER_EXPORT, reinterpret_cast<EventFunc>(&AlULayer::onExport));
     registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
     registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
@@ -55,7 +56,7 @@ bool AlULayer::onDestroy(AlMessage *msg) {
 
 bool AlULayer::onAddLayer(AlMessage *msg) {
     auto *m = AlMessage::obtain(EVENT_IMAGE_CODEC_DECODE);
-    m->arg1 = ACTION_ADD_LAYER;
+    m->arg1 = msg->what;
     m->desc = msg->desc;
     postEvent(m);
     return true;
@@ -63,7 +64,7 @@ bool AlULayer::onAddLayer(AlMessage *msg) {
 
 bool AlULayer::onReceiveImage(AlMessage *msg) {
     switch (msg->arg1) {
-        case ACTION_ADD_LAYER: {
+        case EVENT_LAYER_ADD: {
             auto *box = msg->getObj<ObjectBox *>();
             int32_t id = AlIdentityCreator::NONE_ID;
             if (box) {
@@ -150,6 +151,23 @@ bool AlULayer::onImport(AlMessage *m) {
 //    if (onAlxLoadListener) {
 //        onAlxLoadListener(mLayerManager.getMaxId());
 //    }
+    return true;
+}
+
+bool AlULayer::onExport(AlMessage *msg) {
+    size_t len = mLayerManager.size();
+    std::vector<AlImageLayerModel *> models;
+    for (int i = 0; i < len; ++i) {
+        models.emplace_back(mLayerManager.findModelByIndex(i));
+    }
+    std::string path = msg->desc;
+    AlSize size = getCanvasSize();
+    AlFileExporter exporter;
+    AlImageCanvasModel canvas;
+    canvas.set(size.width, size.height, 0);
+    exporter.exportAsFile(&canvas, &models, path);
+
+    postMessage(AlMessage::obtain(EVENT_LAYER_EXPORT_FINISH));
     return true;
 }
 

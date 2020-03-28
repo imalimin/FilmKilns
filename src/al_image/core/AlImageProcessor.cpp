@@ -14,7 +14,6 @@
 #include "AlMCropAction.h"
 #include "AlContext.h"
 #include "AlCoordsTranslator.h"
-#include "core/file/AlFileExporter.h"
 #include "AlTarUtil.h"
 #include "AlMath.h"
 #include "AlRenderParams.h"
@@ -48,6 +47,10 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
     registerEvent(EVENT_LAYER_QUERY_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onLayerQuery));
+    registerEvent(EVENT_LAYER_EXPORT_FINISH,
+                  reinterpret_cast<EventFunc>(&AlImageProcessor::_onExportFinish));
+    registerEvent(EVENT_LAYER_IMPORT_FINISH,
+                  reinterpret_cast<EventFunc>(&AlImageProcessor::_onImportFinish));
 }
 
 AlImageProcessor::~AlImageProcessor() {
@@ -219,14 +222,15 @@ HwResult AlImageProcessor::save(std::string path) {
 }
 
 HwResult AlImageProcessor::exportFile(std::string path) {
-//    AlFileExporter exporter;
-//    AlImageCanvasModel canvas;
-//    canvas.set(mCanvasSize.width, mCanvasSize.height, 0);
-//    return exporter.exportAsFile(&canvas, &mLayers, path);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_EXPORT);
+    msg->desc = path;
+    postEvent(msg);
+    mExportLock.wait();
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::importFile(std::string path) {
-    AlMessage *msg = AlMessage::obtain(EVENT_AIMAGE_IMPORT);
+    AlMessage *msg = AlMessage::obtain(EVENT_LAYER_IMPORT);
     msg->desc = path;
     postEvent(msg);
     invalidate();
@@ -280,5 +284,14 @@ bool AlImageProcessor::_onLayerQuery(AlMessage *msg) {
     AlLogI(TAG, "%d", msg->arg1);
     mCurLayerId = msg->arg1;
     mQueryLock.notify();
+    return true;
+}
+
+bool AlImageProcessor::_onExportFinish(AlMessage *msg) {
+    mExportLock.notify();
+    return true;
+}
+
+bool AlImageProcessor::_onImportFinish(AlMessage *msg) {
     return true;
 }

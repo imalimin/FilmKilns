@@ -26,6 +26,7 @@ public:
 
     bool onDestroy(AlMessage *msg) override;
 
+private:
     /// 添加图层
     /// FORMAT:
     /// +--------------------------------------------------+
@@ -92,6 +93,17 @@ public:
     /// \return
     bool onImport(AlMessage *m);
 
+    /// 导出为.qua文件
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | none      | none      | .alx file |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onExport(AlMessage *msg);
+
     bool onRedo(AlMessage *m);
 
     bool onUndo(AlMessage *m);
@@ -118,14 +130,14 @@ public:
     /// \return
     bool onResizeCanvas(AlMessage *m);
 
-    bool _onCanvasUpdate(AlMessage *msg);
-
-    bool _onWindowUpdate(AlMessage *msg);
-
     void setOnAlxLoadListener(OnAlxLoadListener listener);
 
 protected:
     void invalidate();
+
+    bool _onCanvasUpdate(AlMessage *msg);
+
+    bool _onWindowUpdate(AlMessage *msg);
 
     /// 查找Layer model
     /// \param x 屏幕坐标

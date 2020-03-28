@@ -342,6 +342,7 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
                 if (null != outputName) {
                     val name = outputName.substring(0, outputName.lastIndexOf('.'))
                     processor?.export("${File(parent, "${name}.alx").absoluteFile}")
+                    Toast.makeText(context, "Export finish.", Toast.LENGTH_LONG).show()
                 } else {
                     Toast.makeText(context,
                             "Save finish failed. Add a layer first. Pls",

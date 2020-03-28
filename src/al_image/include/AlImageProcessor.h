@@ -115,6 +115,10 @@ private:
 
     bool _onLayerQuery(AlMessage *msg);
 
+    bool _onExportFinish(AlMessage *msg);
+
+    bool _onImportFinish(AlMessage *msg);
+
 private:
     const string ALIAS_OF_IMAGE = "IMAGE";
     const string ALIAS_OF_IMAGE_GRAPH = "IMAGE_GRAPH";
@@ -123,12 +127,12 @@ private:
     /// Just for use gl sources before screen` egl initialize.
     AlEgl *aBaseCtx = nullptr;
     AlAbsContext *context = nullptr;
-    std::mutex mLayerMtx;
     AlSize mWinSize;
     AlSize mCanvasSize;
     AlUCanvas::OnSaveListener onSaveListener = nullptr;
     int32_t mCurLayerId = AlIdentityCreator::NONE_ID;
     SimpleLock mQueryLock;
+    SimpleLock mExportLock;
 };
 
 
