@@ -9,6 +9,7 @@
 #include "HwTexture.h"
 #include "AlBitmapFactory.h"
 #include "AlTexManager.h"
+#include "ObjectBox.h"
 
 #define TAG "AlUCanvas"
 
@@ -22,6 +23,8 @@ AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
     registerEvent(EVENT_LAYER_RENDER_SHOW,
                   reinterpret_cast<EventFunc>(&AlUCanvas::onShow));
     registerEvent(EVENT_CANVAS_SAVE, reinterpret_cast<EventFunc>(&AlUCanvas::onSave));
+    registerEvent(EVENT_IMAGE_CODEC_ENCODE_NOTIFY,
+                  reinterpret_cast<EventFunc>(&AlUCanvas::onEncodeFinish));
 }
 
 AlUCanvas::~AlUCanvas() {
@@ -65,6 +68,12 @@ bool AlUCanvas::onDraw(AlMessage *m) {
     _draw(description);
     ++mDrawCount;
     _notifyDrawDone();
+    if (!mOutputPath.empty()) {
+        auto *msg = AlMessage::obtain(EVENT_IMAGE_CODEC_ENCODE, mCanvas.getOutput());
+        msg->arg1 = EVENT_CANVAS_SAVE;
+        msg->desc = mOutputPath;
+        postMessage(msg);
+    }
     return true;
 }
 
@@ -83,24 +92,7 @@ bool AlUCanvas::onShow(AlMessage *m) {
 
 bool AlUCanvas::onSave(AlMessage *m) {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    std::string path = getString("output_path");
-    if ("" == path || path.empty()) {
-        if (onSaveListener) {
-            onSaveListener(Hw::FAILED.code, "Failed", path.c_str());
-        }
-        return true;
-    }
-    auto output = mCanvas.getOutput();
-    size_t size = static_cast<size_t>(output->getWidth() * output->getHeight() * 4);
-    AlBuffer *buf = AlBuffer::alloc(size);
-    if (Hw::SUCCESS != mCanvas.read(buf)) {
-        Logcat::w(TAG, "%s(%d) read pixels failed", __FUNCTION__, __LINE__);
-    }
-    AlBitmapFactory::save(output->getWidth(), output->getHeight(), buf, path);
-    delete buf;
-    if (onSaveListener) {
-        onSaveListener(Hw::SUCCESS.code, "Success", path.c_str());
-    }
+    mOutputPath = m->desc;
     return true;
 }
 
@@ -134,4 +126,16 @@ void AlUCanvas::_notifyDrawDone() {
     auto *msg = AlMessage::obtain(EVENT_CANVAS_DRAW_DONE);
     msg->arg1 = mDrawCount;
     postEvent(msg);
+}
+
+bool AlUCanvas::onEncodeFinish(AlMessage *msg) {
+    switch (msg->arg1) {
+        case EVENT_CANVAS_SAVE: {
+            auto *m = AlMessage::obtain(EVENT_CANVAS_SAVE_FINISH);
+            m->desc = msg->desc;
+            postMessage(m);
+            break;
+        }
+    }
+    return false;
 }

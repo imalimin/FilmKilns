@@ -11,6 +11,7 @@
 #include "AlMath.h"
 #include "AlRotateFilter.h"
 #include "ObjectBox.h"
+#include "HwFBObject.h"
 
 #define TAG "AlUImageCodec"
 
@@ -30,6 +31,8 @@ bool AlUImageCodec::onCreate(AlMessage *msg) {
 }
 
 bool AlUImageCodec::onDestroy(AlMessage *msg) {
+    delete fbo;
+    fbo = nullptr;
     return true;
 }
 
@@ -59,9 +62,27 @@ bool AlUImageCodec::onDecode(AlMessage *msg) {
 }
 
 bool AlUImageCodec::onEncode(AlMessage *msg) {
-
+    auto path = msg->desc;
+    auto *tex = msg->getObj<HwAbsTexture *>();
     AlMessage *m = AlMessage::obtain(EVENT_IMAGE_CODEC_ENCODE_NOTIFY);
     m->arg1 = msg->arg1; //Feedback req code.
+    m->desc = "";
+    if ("" == path || path.empty() || nullptr == tex) {
+        postEvent(m);
+        return true;
+    }
+    size_t size = static_cast<size_t>(tex->getWidth() * tex->getHeight() * 4);
+    AlBuffer *buf = AlBuffer::alloc(size);
+    if (!_read(tex, buf)) {
+        AlLogE(TAG, "read pixels failed %d", 0);
+        postEvent(m);
+        return true;
+    }
+    AlBitmapFactory::save(tex->getWidth(), tex->getHeight(), buf, path);
+    delete buf;
+
+    m->arg1 = msg->arg1; //Feedback req code.
+    m->desc = msg->desc; //Feedback image file path.
     postEvent(m);
     return true;
 }
@@ -89,4 +110,17 @@ void AlUImageCodec::_correctAngle(HwAbsTexture **tex,
         AlTexManager::instance()->recycle(tex);
         *tex = destTex;
     }
+}
+
+bool AlUImageCodec::_read(HwAbsTexture *tex, AlBuffer *buf) {
+    if (nullptr == tex || nullptr == buf) return false;
+    if (nullptr == fbo) {
+        fbo = HwFBObject::alloc();
+    }
+    fbo->bindTex(tex);
+    fbo->bind();
+    tex->read(buf->data());
+    fbo->unbind();
+    glFinish();
+    return true;
 }

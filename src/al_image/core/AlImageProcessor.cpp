@@ -51,6 +51,8 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onExportFinish));
     registerEvent(EVENT_LAYER_IMPORT_FINISH,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onImportFinish));
+    registerEvent(EVENT_CANVAS_SAVE_FINISH,
+                  reinterpret_cast<EventFunc>(&AlImageProcessor::_onSaveFinish));
 }
 
 AlImageProcessor::~AlImageProcessor() {
@@ -213,12 +215,15 @@ HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
 }
 
 HwResult AlImageProcessor::save(std::string path) {
-    putString("output_path", path).to({ALIAS_OF_IMAGE_GRAPH});
+    auto *m = AlMessage::obtain(EVENT_CANVAS_SAVE);
+    m->arg1 = EVENT_CANVAS_SAVE;
+    m->desc = path;
+    postMessage(m);
     AlRenderParams params;
     params.setRenderScreen(false);
     params.setTransparent(true);
-    params.setReqSave(true);
     invalidate(params.toInt());
+    mSaveLock.wait();
     return Hw::SUCCESS;
 }
 
@@ -294,5 +299,10 @@ bool AlImageProcessor::_onExportFinish(AlMessage *msg) {
 }
 
 bool AlImageProcessor::_onImportFinish(AlMessage *msg) {
+    return true;
+}
+
+bool AlImageProcessor::_onSaveFinish(AlMessage *msg) {
+    mSaveLock.notify();
     return true;
 }

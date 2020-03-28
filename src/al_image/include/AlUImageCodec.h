@@ -46,6 +46,11 @@ public:
 
 private:
     void _correctAngle(HwAbsTexture **tex, AlRational radian);
+
+    bool _read(HwAbsTexture *tex, AlBuffer *buf);
+
+private:
+    HwAbsFBObject *fbo = nullptr;
 };
 
 

@@ -25,6 +25,7 @@ public:
 
     bool onDestroy(AlMessage *msg) override;
 
+private:
     /// 更新画布大小
     /// FORMAT:
     /// +--------------------------------------+
@@ -71,14 +72,16 @@ public:
 
     /// 保存图片到文件
     /// FORMAT:
-    /// +--------------------------------------+
-    /// | msg::obj     | msg::arg1 | msg::arg2 |
-    /// +--------------------------------------+
-    /// | none         | none      | none      |
-    /// +--------------------------------------+
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | req code  | none      | out path  |
+    /// +--------------------------------------------------+
     /// \param msg
     /// \return
     bool onSave(AlMessage *m);
+
+    bool onEncodeFinish(AlMessage *msg);
 
     void setOnSaveListener(OnSaveListener listener);
 
@@ -95,6 +98,8 @@ private:
     AlImageCanvas mCanvas;
     OnSaveListener onSaveListener = nullptr;
     int32_t mDrawCount = 0;
+    /// Request save to file(as jpeg...) next draw.
+    std::string mOutputPath;
 };
 
 

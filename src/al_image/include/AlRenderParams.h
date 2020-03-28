@@ -36,10 +36,6 @@ public:
 
     bool isTransparent();
 
-    void setReqSave(bool value);
-
-    bool isReqSave();
-
     void setReqClear(bool value);
 
     bool isReqClear();

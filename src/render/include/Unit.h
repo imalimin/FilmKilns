@@ -99,7 +99,8 @@ static constexpr int EVENT_LAYER_RENDER_SHOW = KID('A', 'L', 'R', 0x03);
 static constexpr int EVENT_CANVAS_SAVE = KID('A', 'L', 'R', 0x04);
 static constexpr int EVENT_CANVAS_CROP = KID('A', 'L', 'R', 0x05);
 static constexpr int EVENT_CANVAS_CLEAR_DONE = KID('A', 'L', 'R', 0x06);
-static constexpr int EVENT_CANVAS_DRAW_DONE = KID('A', 'L', 'R', 0x06);
+static constexpr int EVENT_CANVAS_DRAW_DONE = KID('A', 'L', 'R', 0x07);
+static constexpr int EVENT_CANVAS_SAVE_FINISH = KID('A', 'L', 'R', 0x08);
 
 static constexpr int EVENT_LAYER_FILTER_RENDER = KID('A', 'L', 'F', 0x00);
 static constexpr int EVENT_LAYER_REMOVE_CACHE_LAYER = KID('A', 'L', 'F', 0x01);

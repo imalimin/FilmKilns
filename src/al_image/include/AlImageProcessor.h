@@ -119,6 +119,8 @@ private:
 
     bool _onImportFinish(AlMessage *msg);
 
+    bool _onSaveFinish(AlMessage *msg);
+
 private:
     const string ALIAS_OF_IMAGE = "IMAGE";
     const string ALIAS_OF_IMAGE_GRAPH = "IMAGE_GRAPH";
@@ -133,6 +135,7 @@ private:
     int32_t mCurLayerId = AlIdentityCreator::NONE_ID;
     SimpleLock mQueryLock;
     SimpleLock mExportLock;
+    SimpleLock mSaveLock;
 };
 
 

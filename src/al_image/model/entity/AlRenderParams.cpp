@@ -34,18 +34,10 @@ bool AlRenderParams::isTransparent() {
     return get(1);
 }
 
-void AlRenderParams::setReqSave(bool value) {
+void AlRenderParams::setReqClear(bool value) {
     set(2, value);
 }
 
-bool AlRenderParams::isReqSave() {
-    return get(2);
-}
-
-void AlRenderParams::setReqClear(bool value) {
-    set(3, value);
-}
-
 bool AlRenderParams::isReqClear() {
-    return get(3);
+    return get(2);
 }

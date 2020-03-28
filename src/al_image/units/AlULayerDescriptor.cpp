@@ -129,7 +129,4 @@ void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description, int32_
         sMsg->desc = "show";
         postEvent(sMsg);
     }
-    if (params.isReqSave()) {
-        postEvent(AlMessage::obtain(EVENT_CANVAS_SAVE));
-    }
 }
