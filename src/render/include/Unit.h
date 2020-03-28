@@ -83,6 +83,8 @@ static constexpr int EVENT_LAYER_MOVE = KID('A', 'I', 'G', 0x10);
 static constexpr int EVENT_LAYER_ALPHA = KID('A', 'I', 'G', 0x11);
 static constexpr int EVENT_LAYER_CROP = KID('A', 'I', 'G', 0x12);
 static constexpr int EVENT_LAYER_CROP_CANCEL = KID('A', 'I', 'G', 0x13);
+static constexpr int EVENT_LAYER_ALIGN_CROP = KID('A', 'I', 'G', 0x14);
+static constexpr int EVENT_LAYER_ALIGN_CROP_CANCEL = KID('A', 'I', 'G', 0x15);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
 static constexpr int EVENT_LAYER_MEASURE_CANVAS_NOTIFY = KID('A', 'L', 'M', 0x01);

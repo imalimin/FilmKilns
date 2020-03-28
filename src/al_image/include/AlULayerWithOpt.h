@@ -38,6 +38,10 @@ public:
 
     bool onCropLayerCancel(AlMessage *m);
 
+    bool onAlignCropLayer(AlMessage *m);
+
+    bool onAlignCropLayerCancel(AlMessage *m);
+
 };
 
 

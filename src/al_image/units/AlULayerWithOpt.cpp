@@ -35,6 +35,10 @@ AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayer));
     registerEvent(EVENT_LAYER_CROP_CANCEL,
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayerCancel));
+    registerEvent(EVENT_LAYER_ALIGN_CROP,
+                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onAlignCropLayer));
+    registerEvent(EVENT_LAYER_ALIGN_CROP_CANCEL,
+                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onAlignCropLayerCancel));
 }
 
 AlULayerWithOpt::~AlULayerWithOpt() {
@@ -212,6 +216,32 @@ bool AlULayerWithOpt::onCropLayerCancel(AlMessage *m) {
     }
     auto model = findLayerModel(desc->layerId);
     if (model && model->removeCropAction()) {
+        invalidate();
+    }
+    return true;
+}
+
+bool AlULayerWithOpt::onAlignCropLayer(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateRotate *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto model = findLayerModel(desc->layerId);
+    if (model) {
+        model->removeAlignCropAction();
+        model->addAction(AlLayerActionFactory::alignCrop(desc->rotation));
+        invalidate();
+    }
+    return true;
+}
+
+bool AlULayerWithOpt::onAlignCropLayerCancel(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateRotate *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto model = findLayerModel(desc->layerId);
+    if (model && model->removeAlignCropAction()) {
         invalidate();
     }
     return true;

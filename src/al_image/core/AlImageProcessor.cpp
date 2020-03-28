@@ -238,25 +238,19 @@ void AlImageProcessor::setOnSaveListener(AlUCanvas::OnSaveListener listener) {
 }
 
 HwResult AlImageProcessor::ensureAlignCrop(int32_t id, AlRational r) {
-//    std::lock_guard<std::mutex> guard(mLayerMtx);
-//    auto *layer = _findLayer(id);
-//    if (layer) {
-//        layer->removeAlignCropAction();
-//        layer->addAction(AlLayerActionFactory::alignCrop(r));
-//        invalidate();
-//        return Hw::SUCCESS;
-//    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_ALIGN_CROP,
+                                  new AlOperateRotate(id, r, AlVec2(0, 0)),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::cancelAlignCrop(int32_t id) {
-//    std::lock_guard<std::mutex> guard(mLayerMtx);
-//    auto *layer = _findLayer(id);
-//    if (layer && layer->removeAlignCropAction()) {
-//        invalidate();
-//        return Hw::SUCCESS;
-//    }
-    return Hw::FAILED;
+    auto *msg = AlMessage::obtain(EVENT_LAYER_ALIGN_CROP_CANCEL,
+                                  new AlOperateRotate(id, AlRational(), AlVec2()),
+                                  AlMessage::QUEUE_MODE_UNIQUE);
+    postEvent(msg);
+    return Hw::SUCCESS;
 }
 
 HwResult AlImageProcessor::redo() {
