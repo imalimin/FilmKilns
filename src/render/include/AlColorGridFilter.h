@@ -18,7 +18,7 @@ public:
 public:
     ~AlColorGridFilter();
 
-    bool prepare(HwAbsTexture *tex);
+    bool prepare() override;
 
     void draw(HwAbsTexture *dest);
 
@@ -26,8 +26,6 @@ private:
     AlColorGridFilter();
 
     AlColorGridFilter(const AlColorGridFilter &o) : HwAbsFilter() {};
-
-    bool prepare() override;
 
     AlAbsGLProgram *createProgram() override;
 
@@ -38,7 +36,7 @@ private:
     void _update(AlSize &canvasSize);
 
 private:
-    HwAbsTexture *srcTex = nullptr;
+    HwAbsTexture *tex = nullptr;
     static constexpr int GRID_SIZE = 24;
     AlSize canvasSize = AlSize();
     int32_t size = 0;

@@ -7,6 +7,7 @@
 
 #include "AlColorGridFilter.h"
 #include "HwProgram.h"
+#include "AlTexManager.h"
 
 AlColorGridFilter *AlColorGridFilter::create() {
     return new AlColorGridFilter();
@@ -17,12 +18,7 @@ AlColorGridFilter::AlColorGridFilter() : HwAbsFilter() {
 }
 
 AlColorGridFilter::~AlColorGridFilter() {
-    srcTex = nullptr;
-}
-
-bool AlColorGridFilter::prepare(HwAbsTexture *tex) {
-    this->srcTex = tex;
-    return prepare();
+    AlTexManager::instance()->recycle(&tex);
 }
 
 bool AlColorGridFilter::prepare() {
@@ -64,7 +60,13 @@ void AlColorGridFilter::_update(AlSize &canvasSize) {
             memcpy(bmp + size * 4 * i + len, bmp, len);
         }
     }
-    this->srcTex->update(buf, size, size, GL_RGBA);
+    if (tex) {
+        AlTexManager::instance()->recycle(&tex);
+    }
+    AlTexDescription desc;
+    desc.size.width = size;
+    desc.size.height = size;
+    tex = AlTexManager::instance()->alloc(desc, buf);
     delete buf;
 }
 
@@ -104,7 +106,7 @@ void AlColorGridFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, Hw
 void AlColorGridFilter::draw(HwAbsTexture *dest) {
     AlSize size(dest->getWidth(), dest->getHeight());
     _update(size);
-    draw(this->srcTex, dest);
+    draw(tex, dest);
 }
 
 void AlColorGridFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {

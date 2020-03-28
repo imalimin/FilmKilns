@@ -56,7 +56,6 @@ private:
     HwAbsFBObject *fbo = nullptr;
     /// Manager by AlTexAllocator. DON`T delete here.
     HwAbsTexture *mCanvasTex = nullptr;
-    HwAbsTexture *mGridTex = nullptr;
     AlColorGridFilter *mBgDrawer = nullptr;
     AlCanvasDrawer *mCanvasDrawer = nullptr;
     AlPaintFilter *paintFilter = nullptr;

@@ -28,10 +28,6 @@ void AlImageCanvas::release() {
     delete mCanvasDrawer;
     mCanvasDrawer = nullptr;
     mCanvasTex = nullptr;
-    if (mGridTex) {
-        AlTexManager::instance()->recycle(&mGridTex);
-        mGridTex = nullptr;
-    }
 #ifdef ENABLE_CROP_DEBUG
     delete mCopyDrawer;
     delete mAlQuadDrawer;
@@ -61,8 +57,7 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color) {
         fbo = HwFBObject::alloc();
         fbo->bindTex(mCanvasTex);
         mBgDrawer = AlColorGridFilter::create();
-        mGridTex = AlTexManager::instance()->alloc();
-        mBgDrawer->prepare(mGridTex);
+        mBgDrawer->prepare();
 #ifdef ENABLE_CROP_DEBUG
         AlTexDescription d;
         d.size.width = w;
