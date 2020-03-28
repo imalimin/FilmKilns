@@ -38,8 +38,6 @@ public:
 
     bool onCropLayerCancel(AlMessage *m);
 
-    bool onCropCanvas(AlMessage *m);
-
 };
 
 

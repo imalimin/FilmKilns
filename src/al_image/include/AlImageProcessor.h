@@ -19,6 +19,8 @@
 #include "AlAbsContext.h"
 #include "AlEgl.h"
 #include "Al2DCoordinate.h"
+#include "AlColor.h"
+#include "AlRectLoc.h"
 #include <vector>
 
 al_class_ex(AlImageProcessor, AlAbsProcessor) {
@@ -33,7 +35,8 @@ public:
 
     void updateWindow(HwWindow *win);
 
-    void setCanvas(int32_t w, int32_t h, int32_t color);
+    void setCanvas(int32_t w, int32_t h, AlRectLoc loc = AlRectLoc::CENTER(),
+                   AlColor color = AlColor(0x00000000));
 
     /// 通知所有单元进行绘制操作
     /// \param msg

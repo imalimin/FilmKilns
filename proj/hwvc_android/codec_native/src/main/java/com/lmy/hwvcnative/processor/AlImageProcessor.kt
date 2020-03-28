@@ -41,11 +41,12 @@ class AlImageProcessor private constructor() : CPPObject() {
      * 设置画布大小，图层也会等比例缩放
      * @param w     新的画布宽度
      * @param h     新的画布高度
+     * @param loc   定位
      * @param color 画布颜色
      */
-    fun setCanvas(w: Int, h: Int, color: Int = 0) {
+    fun setCanvas(w: Int, h: Int, loc: Int = 0, color: Int = 0) {
         if (!isNativeNull()) {
-            setCanvas(handler, w, h, color)
+            setCanvas(handler, w, h, loc, color)
         }
     }
 
@@ -364,7 +365,7 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun release(handler: Long)
     private external fun updateWindow(handler: Long, surface: Surface)
     private external fun invalidate(handler: Long)
-    private external fun setCanvas(handler: Long, w: Int, h: Int, color: Int)
+    private external fun setCanvas(handler: Long, w: Int, h: Int, loc: Int, color: Int)
     private external fun addLayer(handler: Long, path: String): Int
     private external fun moveLayerIndex(handler: Long, id: Int, index: Int): Int
     private external fun removeLayer(handler: Long, id: Int): Int

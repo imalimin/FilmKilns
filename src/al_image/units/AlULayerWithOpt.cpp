@@ -35,8 +35,6 @@ AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayer));
     registerEvent(EVENT_LAYER_CROP_CANCEL,
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayerCancel));
-    registerEvent(EVENT_CANVAS_CROP,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropCanvas));
 }
 
 AlULayerWithOpt::~AlULayerWithOpt() {
@@ -216,23 +214,5 @@ bool AlULayerWithOpt::onCropLayerCancel(AlMessage *m) {
     if (model && model->removeCropAction()) {
         invalidate();
     }
-    return true;
-}
-
-bool AlULayerWithOpt::onCropCanvas(AlMessage *m) {
-    auto *desc = m->getObj<AlOperateCrop *>();
-    if (nullptr == desc) {
-        return true;
-    }
-    AlVec2 lt = transWin2Canvas(desc->rectF.left, desc->rectF.top);
-    AlVec2 rb = transWin2Canvas(desc->rectF.right, desc->rectF.bottom);
-    AlRectF rectF(lt.x, lt.y, rb.x, rb.y);
-    AlSize src = getCanvasSize();
-    AlSize dst(src.width * rectF.getWidth() / 2,
-               src.height * rectF.getHeight() / 2);
-    AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
-    cropCanvasAndStayLoc(&src, &dst, &anchor);
-    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(dst)));
-    invalidate();
     return true;
 }

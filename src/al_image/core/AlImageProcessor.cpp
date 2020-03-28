@@ -84,11 +84,14 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
     postEvent(msg);
 }
 
-void AlImageProcessor::setCanvas(int32_t w, int32_t h, int32_t color) {
+void AlImageProcessor::setCanvas(int32_t w, int32_t h, AlRectLoc loc, AlColor color) {
     mCanvasSize.width = w;
     mCanvasSize.height = h;
-    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE,
-                                new AlSize(w, h)));
+    auto *msg = AlMessage::obtain(EVENT_CANVAS_RESIZE,
+                                  new AlRectLoc(loc));
+    msg->arg1 = w;
+    msg->arg2 = h;
+    postEvent(msg);
 }
 
 void AlImageProcessor::invalidate(int32_t flag) {

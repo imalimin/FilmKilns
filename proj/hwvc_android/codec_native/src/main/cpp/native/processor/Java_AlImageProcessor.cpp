@@ -61,9 +61,9 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_update
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_setCanvas
-        (JNIEnv *env, jobject thiz, jlong handler, jint w, jint h, jint color) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint w, jint h, jint loc, jint color) {
     if (handler) {
-        getHandler(handler)->setCanvas(w, h, color);
+        getHandler(handler)->setCanvas(w, h, AlRectLoc::value(loc), AlColor(color));
     }
 }
 

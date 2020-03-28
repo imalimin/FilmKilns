@@ -28,11 +28,11 @@ public:
 
     /// 添加图层
     /// FORMAT:
-    /// +--------------------------------------+
-    /// | msg::obj     | msg::arg1 | msg::arg2 |
-    /// +--------------------------------------+
-    /// | none         | none      | none      |
-    /// +--------------------------------------+
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// |              | none      | none      |  path     |
+    /// +--------------------------------------------------+
     /// \param msg
     /// \return
     bool onAddLayer(AlMessage *msg);
@@ -85,6 +85,28 @@ public:
 
     bool onUndo(AlMessage *m);
 
+    /// 裁剪画布，并保持图层位置不变
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | AlOperateCrop| none      | none      |           |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onCropCanvas(AlMessage *m);
+
+    /// 调整画布，并保持图层位置不变
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | AlRectLoc    | width     | height    |           |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onResizeCanvas(AlMessage *m);
+
     bool _onCanvasUpdate(AlMessage *msg);
 
     bool _onWindowUpdate(AlMessage *msg);
@@ -120,8 +142,6 @@ protected:
 
     AlSize getCanvasSize();
 
-    void cropCanvasAndStayLoc(AlSize *src, AlSize *dest, AlPointF *anchor);
-
 private:
     void _notifyAll(int32_t flags = 0);
 
@@ -136,6 +156,8 @@ private:
     void _saveStep();
 
     void _updateCoordination();
+
+    void _cropCanvasAndStayLoc(AlSize &src, AlSize &dst, AlPointF &anchor);
 
 private:
     AlImageLayerManager mLayerManager;

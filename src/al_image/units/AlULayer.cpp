@@ -11,6 +11,8 @@
 #include "AlLayerPair.h"
 #include "AlRenderParams.h"
 #include "AlTexManager.h"
+#include "AlOperateCrop.h"
+#include "AlRectLoc.h"
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
@@ -27,6 +29,10 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayer::_onCanvasUpdate));
     registerEvent(EVENT_SCREEN_UPDATE_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayer::_onWindowUpdate));
+    registerEvent(EVENT_CANVAS_CROP,
+                  reinterpret_cast<EventFunc>(&AlULayer::onCropCanvas));
+    registerEvent(EVENT_CANVAS_RESIZE,
+                  reinterpret_cast<EventFunc>(&AlULayer::onResizeCanvas));
 }
 
 AlULayer::~AlULayer() {
@@ -220,14 +226,69 @@ AlSize AlULayer::getCanvasSize() {
     return mCanvasCoord.getRegion();
 }
 
-void AlULayer::cropCanvasAndStayLoc(AlSize *src, AlSize *dest, AlPointF *anchor) {
+void AlULayer::_cropCanvasAndStayLoc(AlSize &src, AlSize &dst, AlPointF &anchor) {
     auto size = mLayerManager.size();
     for (int i = 0; i < size; ++i) {
         auto *model = mLayerManager.findModelByIndex(i);
-        AlSize posPixels(static_cast<int>(src->width * (model->getPosition().x + anchor->x)),
-                         static_cast<int>(src->height * (model->getPosition().y + anchor->y)));
-        AlPointF nPos(posPixels.width / (float) dest->width,
-                      posPixels.height / (float) dest->height);
+        AlSize posPixels(static_cast<int>(src.width * (model->getPosition().x + anchor.x)),
+                         static_cast<int>(src.height * (model->getPosition().y + anchor.y)));
+        AlPointF nPos(posPixels.width / (float) dst.width,
+                      posPixels.height / (float) dst.height);
         model->setPosition(nPos.x, nPos.y);
     }
+}
+
+bool AlULayer::onCropCanvas(AlMessage *m) {
+    auto *desc = m->getObj<AlOperateCrop *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    AlVec2 lt = transWin2Canvas(desc->rectF.left, desc->rectF.top);
+    AlVec2 rb = transWin2Canvas(desc->rectF.right, desc->rectF.bottom);
+    AlRectF rectF(lt.x, lt.y, rb.x, rb.y);
+    AlSize src = getCanvasSize();
+    AlSize dst(src.width * rectF.getWidth() / 2,
+               src.height * rectF.getHeight() / 2);
+    AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
+    _cropCanvasAndStayLoc(src, dst, anchor);
+    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(dst)));
+    invalidate();
+    return true;
+}
+
+bool AlULayer::onResizeCanvas(AlMessage *m) {
+    auto *loc = m->getObj<AlRectLoc *>();
+    if (nullptr == loc) {
+        return true;
+    }
+    int32_t width = m->arg1;
+    int32_t height = m->arg2;
+    AlSize size = getCanvasSize();
+    float sx = width / (float) size.width;
+    float sy = height / (float) size.height;
+    AlRectF rectF(-sx, sy, sx, -sy);
+    if ((AlRectLoc::LEFT() & *loc).int32()) {
+        rectF.left = -1.f;
+        rectF.right = rectF.left + sx * 2;
+    }
+    if ((AlRectLoc::TOP() & *loc).int32()) {
+        rectF.top = 1.f;
+        rectF.bottom = rectF.top - sy * 2;
+    }
+    if ((AlRectLoc::RIGHT() & *loc).int32()) {
+        rectF.right = 1.f;
+        rectF.left = rectF.right - sx * 2;
+    }
+    if ((AlRectLoc::BOTTOM() & *loc).int32()) {
+        rectF.bottom = -1.f;
+        rectF.top = rectF.bottom + sy * 2;
+    }
+
+    AlSize dst(size.width * rectF.getWidth() / 2,
+               size.height * rectF.getHeight() / 2);
+    AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
+    _cropCanvasAndStayLoc(size, dst, anchor);
+    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(dst)));
+    invalidate();
+    return true;
 }
