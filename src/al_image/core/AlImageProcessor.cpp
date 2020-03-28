@@ -6,6 +6,7 @@
 */
 
 #include "AlImageProcessor.h"
+#include "AlUImageCodec.h"
 #include "AlULayerWithOpt.h"
 #include "AlULayerFilter.h"
 #include "AlULayerDescriptor.h"
@@ -39,6 +40,7 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //    }
     AlULayer *uLayer = new AlULayerWithOpt(ALIAS_OF_LAYER);
     AlUCanvas *uCanvas = new AlUCanvas(ALIAS_OF_CANVAS);
+    registerAnUnit(new AlUImageCodec(ALIAS_OF_IMAGE));
     registerAnUnit(uLayer);
     registerAnUnit(new AlULayerFilter(ALIAS_OF_FILTER));
     registerAnUnit(new AlULayerDescriptor(ALIAS_OF_DESCRIPTOR));

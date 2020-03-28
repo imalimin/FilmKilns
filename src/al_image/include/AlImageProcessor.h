@@ -116,6 +116,7 @@ private:
     bool _onLayerQuery(AlMessage *msg);
 
 private:
+    const string ALIAS_OF_IMAGE = "IMAGE";
     const string ALIAS_OF_LAYER = "LAYER";
     const string ALIAS_OF_FILTER = "LAYER_FILTER";
     const string ALIAS_OF_DESCRIPTOR = "LAYER_DESCRIPTOR";

@@ -7,8 +7,6 @@
 
 #include <algorithm>
 #include "AlImageLayerManager.h"
-#include "AlBitmapFactory.h"
-#include "AlRotateFilter.h"
 #include "AlTexManager.h"
 #include "Logcat.h"
 
@@ -38,25 +36,13 @@ void AlImageLayerManager::release() {
     mLayers.clear();
 }
 
-int32_t AlImageLayerManager::addLayer(const std::string path) {
-    auto *model = AlImageLayerModel::create(&mLayerIdCreator, path);
-    AlBitmap *bmp = AlBitmapFactory::decodeFile(model->getPath());
-    if (nullptr == bmp || nullptr == model) {
-        AlLogE(TAG, "decode %s failed", path.c_str());
+int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, const std::string path) {
+    if (nullptr == tex) {
+        AlLogE(TAG, "failed %d", 0);
         return AlIdentityCreator::NONE_ID;
     }
-    auto rotation = bmp->getRotation();
-    AlTexDescription desc;
-    desc.size.width = bmp->getWidth();
-    desc.size.height = bmp->getHeight();
-    desc.wrapMode = AlTexDescription::WrapMode::BORDER;
-    desc.fmt = GL_RGBA;
-    AlBuffer *buf = AlBuffer::wrap(bmp->getPixels(), bmp->getByteSize());
-    auto *srcTex = AlTexManager::instance()->alloc(desc, buf);
-    delete buf;
-    delete bmp;
-    _correctAngle(&srcTex, rotation);
-    AlImageLayer *layer = AlImageLayer::create(srcTex);
+    auto *model = AlImageLayerModel::create(&mLayerIdCreator, path);
+    AlImageLayer *layer = AlImageLayer::create(tex);
     models.push_back(model);
     mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
     return model->getId();
@@ -98,31 +84,6 @@ void AlImageLayerManager::update(std::vector<int32_t> *delLayers) {
         } else {
             ++itr;
         }
-    }
-}
-
-void AlImageLayerManager::_correctAngle(HwAbsTexture **tex,
-                                        AlRational radian) {
-    HwAbsTexture *destTex = nullptr;
-    auto rFloat = fmod(std::abs(radian.toFloat()), 2.0);
-    if (0 != rFloat) {
-        AlTexDescription desc;
-        desc.fmt = (*tex)->fmt();
-        if (0.5 == rFloat || 1.5 == rFloat) {///宽高对换
-            desc.size.width = (*tex)->getHeight();
-            desc.size.height = (*tex)->getWidth();
-        } else {
-            desc.size.width = (*tex)->getWidth();
-            desc.size.height = (*tex)->getHeight();
-        }
-        destTex = AlTexManager::instance()->alloc(desc);
-        AlRotateFilter filter;
-        filter.prepare();
-        filter.setRotation(radian);
-        glViewport(0, 0, destTex->getWidth(), destTex->getHeight());
-        filter.draw(*tex, destTex);
-        AlTexManager::instance()->recycle(tex);
-        *tex = destTex;
     }
 }
 

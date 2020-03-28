@@ -107,6 +107,11 @@ static constexpr int EVENT_CANVAS_DRAW_DONE = KID('A', 'L', 'R', 0x06);
 static constexpr int EVENT_LAYER_FILTER_RENDER = KID('A', 'L', 'F', 0x00);
 static constexpr int EVENT_LAYER_REMOVE_CACHE_LAYER = KID('A', 'L', 'F', 0x01);
 
+static constexpr int EVENT_IMAGE_CODEC_DECODE = KID('I', 'C', 'D', 0x00);
+static constexpr int EVENT_IMAGE_CODEC_DECODE_NOTIFY = KID('I', 'C', 'D', 0x01);
+static constexpr int EVENT_IMAGE_CODEC_ENCODE = KID('I', 'C', 'D', 0x02);
+static constexpr int EVENT_IMAGE_CODEC_ENCODE_NOTIFY = KID('I', 'C', 'D', 0x03);
+
 /**
  * Define class HwModelProvider.
  */

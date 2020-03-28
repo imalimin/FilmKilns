@@ -22,7 +22,7 @@ public:
 
     void release();
 
-    int32_t addLayer(const std::string path);
+    int32_t addLayer(HwAbsTexture *tex, const std::string path);
 
     void removeLayer(const int32_t id);
 
@@ -50,8 +50,6 @@ private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};
 
     void _delLayer(AlImageLayer *&layer);
-
-    void _correctAngle(HwAbsTexture **tex, AlRational radian);
 
 private:
     AlIdentityCreator mLayerIdCreator;

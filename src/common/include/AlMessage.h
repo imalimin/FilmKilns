@@ -49,7 +49,10 @@ public:
 
     template<class T>
     T getObj() {
-        return dynamic_cast<T>(obj);
+        if (nullptr != obj) {
+            return dynamic_cast<T>(obj);
+        }
+        return nullptr;
     }
 
 public:

@@ -37,6 +37,17 @@ public:
     /// \return
     bool onAddLayer(AlMessage *msg);
 
+    /// 解码图片通知
+    /// FORMAT:
+    /// +-----------------------------------------------------+
+    /// | msg::obj        | msg::arg1 | msg::arg2 | msg::desc |
+    /// +-----------------------------------------------------+
+    /// | AbsTexture wrap | req code  | none      |  path     |
+    /// +-----------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onReceiveImage(AlMessage *msg);
+
     /// 删除图层
     /// FORMAT:
     /// +--------------------------------------+

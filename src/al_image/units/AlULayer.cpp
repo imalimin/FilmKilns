@@ -16,6 +16,7 @@
 #include "core/file/AlFileImporter.h"
 
 #define TAG "AlULayer"
+#define ACTION_ADD_LAYER 0x01
 
 AlULayer::AlULayer(string alias) : Unit(alias) {
     registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlULayer::onInvalidate));
@@ -33,6 +34,8 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayer::onCropCanvas));
     registerEvent(EVENT_CANVAS_RESIZE,
                   reinterpret_cast<EventFunc>(&AlULayer::onResizeCanvas));
+    registerEvent(EVENT_IMAGE_CODEC_DECODE_NOTIFY,
+                  reinterpret_cast<EventFunc>(&AlULayer::onReceiveImage));
 }
 
 AlULayer::~AlULayer() {
@@ -51,9 +54,26 @@ bool AlULayer::onDestroy(AlMessage *msg) {
 }
 
 bool AlULayer::onAddLayer(AlMessage *msg) {
-    int32_t id = mLayerManager.addLayer(msg->desc);
-    postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY, id));
-    invalidate();
+    auto *m = AlMessage::obtain(EVENT_IMAGE_CODEC_DECODE);
+    m->arg1 = ACTION_ADD_LAYER;
+    m->desc = msg->desc;
+    postEvent(m);
+    return true;
+}
+
+bool AlULayer::onReceiveImage(AlMessage *msg) {
+    switch (msg->arg1) {
+        case ACTION_ADD_LAYER: {
+            auto *box = msg->getObj<ObjectBox *>();
+            int32_t id = AlIdentityCreator::NONE_ID;
+            if (box) {
+                id = mLayerManager.addLayer(box->unWrap<HwAbsTexture *>(), msg->desc);
+            }
+            postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY, id));
+            invalidate();
+            break;
+        }
+    }
     return true;
 }
 
