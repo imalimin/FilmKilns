@@ -38,11 +38,6 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
     registerAnUnit(new AlUImageCodec(ALIAS_OF_IMAGE));
     registerAnUnit(new AlGImage(ALIAS_OF_IMAGE_GRAPH));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-//    graph->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
-//        if (this->onSaveListener) {
-//            this->onSaveListener(code, msg, path);
-//        }
-//    });
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
     registerEvent(EVENT_LAYER_QUERY_NOTIFY,
@@ -223,7 +218,6 @@ HwResult AlImageProcessor::save(std::string path) {
     params.setRenderScreen(false);
     params.setTransparent(true);
     invalidate(params.toInt());
-    mSaveLock.wait();
     return Hw::SUCCESS;
 }
 
@@ -303,6 +297,14 @@ bool AlImageProcessor::_onImportFinish(AlMessage *msg) {
 }
 
 bool AlImageProcessor::_onSaveFinish(AlMessage *msg) {
-    mSaveLock.notify();
+    if (this->onSaveListener) {
+        HwResult ret = Hw::SUCCESS;
+        std::string tip("Save finish.");
+        if (msg->desc.empty()) {
+            ret = Hw::FAILED;
+            tip = "Save failed.";
+        }
+        this->onSaveListener(ret.code, tip.c_str(), msg->desc.c_str());
+    }
     return true;
 }

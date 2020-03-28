@@ -135,7 +135,6 @@ private:
     int32_t mCurLayerId = AlIdentityCreator::NONE_ID;
     SimpleLock mQueryLock;
     SimpleLock mExportLock;
-    SimpleLock mSaveLock;
 };
 
 

@@ -259,7 +259,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
 
     override fun onSave(code: Int, msg: String?, path: String?) {
         Toast.makeText(this@AlImageActivity,
-                "Save finish: $code",
+                "$msg code: $code",
                 Toast.LENGTH_LONG).show()
         if (null != path || code != AlResult.SUCCESS) {
             MediaScannerConnection.scanFile(this, Array<String>(1) { path!! }, null) { _: String, uri: Uri ->
