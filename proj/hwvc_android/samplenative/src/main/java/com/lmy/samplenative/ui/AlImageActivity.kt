@@ -421,7 +421,9 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
             BottomSheetItem(1, R.mipmap.ic_launcher, "Rest Layer"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer"),
             BottomSheetItem(3, R.mipmap.ic_launcher, "Crop Layer"),
-            BottomSheetItem(4, R.mipmap.ic_launcher, "Clear Crop Layer")
+            BottomSheetItem(4, R.mipmap.ic_launcher, "Clear Crop Layer"),
+            BottomSheetItem(5, R.mipmap.ic_launcher, "Move up"),
+            BottomSheetItem(6, R.mipmap.ic_launcher, "Move down")
     )
 
     override fun show(): BottomSheetDialog {
@@ -456,6 +458,12 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
             }
             4 -> {
                 processor?.cancelCropLayer(context.getCurrentLayer())
+            }
+            5 -> {
+                processor?.moveLayerIndex(context.getCurrentLayer(), 1)
+            }
+            6 -> {
+                processor?.moveLayerIndex(context.getCurrentLayer(), 0)
             }
         }
     }

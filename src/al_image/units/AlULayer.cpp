@@ -98,6 +98,8 @@ bool AlULayer::onRemoveLayer(AlMessage *msg) {
 }
 
 bool AlULayer::onMoveLayer(AlMessage *msg) {
+    mLayerManager.moveLayer(msg->arg1, static_cast<int32_t>(msg->arg2));
+    invalidate();
     return true;
 }
 

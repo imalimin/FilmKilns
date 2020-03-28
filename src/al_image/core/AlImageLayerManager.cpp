@@ -77,6 +77,24 @@ void AlImageLayerManager::removeLayer(const int32_t id) {
     }
 }
 
+void AlImageLayerManager::moveLayer(const int32_t id, int32_t idx) {
+    AlImageLayerModel *model = nullptr;
+    for (auto itr = models.begin(); itr != models.end(); ++itr) {
+        if ((*itr)->getId() == id) {
+            model = *itr;
+            models.erase(itr);
+            break;
+        }
+    }
+    if (model) {
+        if (idx >= models.size()) {
+            models.emplace_back(model);
+        } else {
+            models.insert(models.begin() + idx, model);
+        }
+    }
+}
+
 void AlImageLayerManager::update(std::vector<int32_t> *delLayers) {
     std::vector<int32_t> ids;
     for (auto *it : models) {

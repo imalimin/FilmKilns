@@ -28,6 +28,8 @@ public:
 
     void removeLayer(const int32_t id);
 
+    void moveLayer(const int32_t id, int32_t idx);
+
     void update(std::vector<int32_t> *delLayers = nullptr);
 
     size_t size();
