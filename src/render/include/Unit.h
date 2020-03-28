@@ -4,19 +4,11 @@
  * This source code is licensed under the GPL license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 #ifndef HARDWAREVIDEOCODEC_UNIT_H
 #define HARDWAREVIDEOCODEC_UNIT_H
 
-#include "Object.h"
-#include "UnitPipeline.h"
-#include "AlMessage.h"
-#include "HwBundle.h"
-#include <map>
-//#include "HwModelProvider.h"
-
 #define KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
-
-using namespace std;
 
 static constexpr int EVENT_COMMON_RELEASE = KID('C', 'O', 'M', 0x01);
 static constexpr int EVENT_COMMON_PREPARE = KID('C', 'O', 'M', 0x02);
@@ -112,10 +104,21 @@ static constexpr int EVENT_IMAGE_CODEC_DECODE_NOTIFY = KID('I', 'C', 'D', 0x01);
 static constexpr int EVENT_IMAGE_CODEC_ENCODE = KID('I', 'C', 'D', 0x02);
 static constexpr int EVENT_IMAGE_CODEC_ENCODE_NOTIFY = KID('I', 'C', 'D', 0x03);
 
+#include "Object.h"
+#include "UnitPipeline.h"
+#include "AlMessage.h"
+#include "HwBundle.h"
+#include "AlPostMan.h"
+#include <map>
+//#include "HwModelProvider.h"
+using namespace std;
+
 /**
  * Define class HwModelProvider.
  */
 class HwModelProvider;
+
+class AlAbsGraph;
 
 typedef bool (Unit::*EventFunc)(AlMessage *);
 
@@ -125,7 +128,7 @@ public:
 
     virtual ~Event();
 
-    bool dispatch(Unit *unit, AlMessage *msg);
+    bool handle(Unit *unit, AlMessage *msg);
 
 protected:
     int what = 0;
@@ -135,6 +138,7 @@ protected:
 class Unit : public Object {
 private:
     friend class UnitPipeline;
+    friend class AlAbsGraph;
 
 public:
     al_class(AlUnitSetting) {
@@ -159,7 +163,7 @@ public:
 
     virtual ~Unit();
 
-    virtual void setController(UnitPipeline *pipeline);
+    virtual void setController(AlAbsPoster *poster);
 
     bool registerEvent(int what, EventFunc handler);
 
@@ -192,21 +196,29 @@ public:
     /** Model Provider END */
 
 protected:
+    /// 广播分发接收函数，通常由UnitPipeline调用
+    /// Don`t call this func.
+    /// \param msg 事件消息
+    /// \return true:我可以处理这个事件，false:无法处理这个事件
+    virtual bool dispatch(AlMessage *msg);
+
+    /// 广播消息
+    /// @deprecated Install by postMessage.
+    /// \param msg
     void postEvent(AlMessage *msg);
+
+    /// 广播消息
+    /// \param msg
+    void postMessage(AlMessage *msg);
 
 private:
     Unit(const Unit &o) : Object() {};
-
-    /// 广播分发接收函数，通常由UnitPipeline调用
-    /// \param msg 事件消息
-    /// \return true:我可以处理这个事件，false:无法处理这个事件
-    bool dispatch(AlMessage *msg);
 
 private:
     string alias;
     AlUnitSetting setting;
     map<int, Event *> eventMap;
-    UnitPipeline *pipeline = nullptr;
+    AlAbsPoster *poster = nullptr;
     HwModelProvider *provider = nullptr;
     bool created = false;
 };

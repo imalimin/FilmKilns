@@ -10,17 +10,26 @@
 
 #include "UnitPipeline.h"
 
-al_class_ex(AlPostMan, UnitPipeline) {
+class AlAbsPoster : Object {
+public:
+    virtual void postMessage(AlMessage *msg) = 0;
+};
+
+class AlPostMan : public UnitPipeline, AlAbsPoster {
 public:
     static AlPostMan *create(const string &name);
 
 public:
     virtual ~AlPostMan();
 
+    virtual int registerAnUnit(Unit *unit) override;
+
 private:
     AlPostMan(const string &name);
 
     AlPostMan(const AlPostMan &o) : UnitPipeline("") {};
+
+    void postMessage(AlMessage *msg) override;
 };
 
 

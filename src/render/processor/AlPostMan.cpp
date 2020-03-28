@@ -21,3 +21,12 @@ AlPostMan::AlPostMan(const string &name) : UnitPipeline(name) {
 
 AlPostMan::~AlPostMan() {
 }
+
+void AlPostMan::postMessage(AlMessage *msg) {
+    postEvent(msg);
+}
+
+int AlPostMan::registerAnUnit(Unit *unit) {
+    unit->setController(this);
+    return UnitPipeline::registerAnUnit(unit);
+}

@@ -61,6 +61,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/model/action/*.cpp
             ${PROJECT_SOURCE_DIR}/model/entity/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/graph/*.cpp
             #Header
             ${PROJECT_SOURCE_DIR}/include/*.h
     )
@@ -77,6 +78,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/model/action/*.cpp
             ${PROJECT_SOURCE_DIR}/model/entity/*.cpp
             ${PROJECT_SOURCE_DIR}/units/*.cpp
+            ${PROJECT_SOURCE_DIR}/units/graph/*.cpp
     )
 endif ()
 message(STATUS "${SOURCES}")

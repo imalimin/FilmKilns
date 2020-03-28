@@ -77,7 +77,6 @@ void UnitPipeline::clear() {
 }
 
 int UnitPipeline::registerAnUnit(Unit *unit) {
-    unit->setController(this);
     units.push_back(unit);
     _notifyCreate();
     return 1;

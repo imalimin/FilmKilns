@@ -1,6 +1,9 @@
-//
-// Created by mingyi.li on 2018/12/25.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
 #include "Unit.h"
 #include "log.h"
@@ -18,7 +21,7 @@ Event::~Event() {
     this->handler = nullptr;
 }
 
-bool Event::dispatch(Unit *unit, AlMessage *msg) {
+bool Event::handle(Unit *unit, AlMessage *msg) {
     return (unit->*handler)(msg);
 }
 
@@ -42,15 +45,19 @@ bool Unit::registerEvent(int what, EventFunc handler) {
     return true;
 }
 
-void Unit::setController(UnitPipeline *pipeline) {
-    this->pipeline = pipeline;
+void Unit::setController(AlAbsPoster *poster) {
+    this->poster = poster;
 }
 
 void Unit::postEvent(AlMessage *msg) {
-    if (pipeline) {
-        pipeline->postEvent(msg);
+    postMessage(msg);
+}
+
+void Unit::postMessage(AlMessage *msg) {
+    if (poster) {
+        poster->postMessage(msg);
     } else {
-        Logcat::i(TAG, "%s(%d) failed. skip message %p", __FUNCTION__, __LINE__, msg);
+        AlLogE(TAG, "failed. skip message %p", msg);
     }
 }
 
@@ -67,7 +74,7 @@ bool Unit::dispatch(AlMessage *msg) {
 
     auto itr = eventMap.find(msg->what);
     if (eventMap.end() != itr) {
-        return itr->second->dispatch(this, msg);
+        return itr->second->handle(this, msg);
     }
     return false;
 }

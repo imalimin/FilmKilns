@@ -7,9 +7,7 @@
 
 #include "AlImageProcessor.h"
 #include "AlUImageCodec.h"
-#include "AlULayerWithOpt.h"
-#include "AlULayerFilter.h"
-#include "AlULayerDescriptor.h"
+#include "AlGImage.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "AlLayerActionFactory.h"
@@ -38,19 +36,14 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //        }
 //        tar_free(archive);
 //    }
-    AlULayer *uLayer = new AlULayerWithOpt(ALIAS_OF_LAYER);
-    AlUCanvas *uCanvas = new AlUCanvas(ALIAS_OF_CANVAS);
     registerAnUnit(new AlUImageCodec(ALIAS_OF_IMAGE));
-    registerAnUnit(uLayer);
-    registerAnUnit(new AlULayerFilter(ALIAS_OF_FILTER));
-    registerAnUnit(new AlULayerDescriptor(ALIAS_OF_DESCRIPTOR));
-    registerAnUnit(uCanvas);
+    registerAnUnit(new AlGImage(ALIAS_OF_IMAGE_GRAPH));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    uCanvas->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
-        if (this->onSaveListener) {
-            this->onSaveListener(code, msg, path);
-        }
-    });
+//    graph->setOnSaveListener([this](int32_t code, const char *msg, const char *path) {
+//        if (this->onSaveListener) {
+//            this->onSaveListener(code, msg, path);
+//        }
+//    });
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
     registerEvent(EVENT_LAYER_QUERY_NOTIFY,
@@ -66,8 +59,8 @@ void AlImageProcessor::onCreate() {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     this->aBaseCtx = AlEgl::offScreen();
     this->context = new AlContext();
-    this->putObject("AL_CONTEXT", this->context)
-            .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS, ALIAS_OF_SCREEN});
+//    this->putObject("AL_CONTEXT", this->context)
+//            .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS, ALIAS_OF_SCREEN});
 }
 
 void AlImageProcessor::onDestroy() {
@@ -216,7 +209,7 @@ HwResult AlImageProcessor::cancelCropLayer(int32_t id) {
 }
 
 HwResult AlImageProcessor::save(std::string path) {
-    putString("output_path", path).to({ALIAS_OF_CANVAS});
+    putString("output_path", path).to({ALIAS_OF_IMAGE_GRAPH});
     AlRenderParams params;
     params.setRenderScreen(false);
     params.setTransparent(true);

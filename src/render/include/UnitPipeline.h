@@ -23,7 +23,7 @@ public:
 
     void postEvent(AlMessage *msg);
 
-    int registerAnUnit(Unit *unit);
+    virtual int registerAnUnit(Unit *unit);
 
     void postDestroy();
 
