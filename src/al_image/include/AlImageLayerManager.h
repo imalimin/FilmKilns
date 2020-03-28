@@ -20,9 +20,11 @@ public:
 
     ~AlImageLayerManager();
 
-    void release();
+    void clear();
 
     int32_t addLayer(HwAbsTexture *tex, const std::string path);
+
+    int32_t addLayer(HwAbsTexture *tex, AlImageLayerModel &model);
 
     void removeLayer(const int32_t id);
 
@@ -41,10 +43,6 @@ public:
     AlImageLayerModel *findModelByIndex(const int32_t idx);
 
     AlImageLayer *find(int32_t id);
-
-    void replaceAll(std::vector<AlImageLayerModel *> *list);
-
-    int32_t getMaxId();
 
 private:
     AlImageLayerManager(const AlImageLayerManager &e) : Object() {};

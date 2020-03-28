@@ -19,7 +19,7 @@ AlImageLayerManager::AlImageLayerManager() : Object() {
 AlImageLayerManager::~AlImageLayerManager() {
 }
 
-void AlImageLayerManager::release() {
+void AlImageLayerManager::clear() {
     auto itr = mLayers.begin();
     while (mLayers.end() != itr) {
         AlImageLayer *layer = itr->second;
@@ -33,7 +33,7 @@ void AlImageLayerManager::release() {
         AlImageLayerModel *it = models[i];
         delete it;
     }
-    mLayers.clear();
+    models.clear();
 }
 
 int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, const std::string path) {
@@ -46,6 +46,18 @@ int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, const std::string path)
     models.push_back(model);
     mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
     return model->getId();
+}
+
+int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, AlImageLayerModel &model) {
+    if (nullptr == tex) {
+        AlLogE(TAG, "failed %d", 0);
+        return AlIdentityCreator::NONE_ID;
+    }
+    auto *m = AlImageLayerModel::create(&mLayerIdCreator, model);
+    AlImageLayer *layer = AlImageLayer::create(tex);
+    models.push_back(m);
+    mLayers.insert(pair<int32_t, AlImageLayer *>(m->getId(), layer));
+    return m->getId();
 }
 
 void AlImageLayerManager::removeLayer(const int32_t id) {
@@ -110,42 +122,6 @@ AlImageLayer *AlImageLayerManager::find(int32_t id) {
         return nullptr;
     }
     return itr->second;
-}
-
-void AlImageLayerManager::replaceAll(std::vector<AlImageLayerModel *> *list) {
-//    if (nullptr == list || list->empty()) {
-//        return;
-//    }
-//    ///Clear all layer model.
-//    for (auto *it : models) {
-//        delete it;
-//    }
-//    models.clear();
-//    ///Clear all layer.
-//    auto itr = mLayers.begin();
-//    while (mLayers.end() != itr) {
-//        AlImageLayer *layer = itr->second;
-//        AlTexManager::instance()->recycle(&(itr->second->tex));
-//        delete layer;
-//        ++itr;
-//    }
-//    mLayers.clear();
-//    ///Replace layer model.
-//    size_t size = list->size();
-//    for (int i = 0; i < size; ++i) {
-//        models.push_back((*list)[i]);
-//    }
-}
-
-int32_t AlImageLayerManager::getMaxId() {
-    if (empty()) return 0;
-    int32_t id = 0;
-    size_t size = models.size();
-    for (int i = 0; i < size; ++i) {
-        int32_t tmp = models[i]->getId();
-        id = max(tmp, id);
-    }
-    return id;
 }
 
 AlImageLayerModel *AlImageLayerManager::findModel(float x, float y) {

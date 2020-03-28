@@ -16,8 +16,6 @@
 
 class AlULayer : public Unit {
 public:
-    typedef function<void(int32_t)> OnAlxLoadListener;
-public:
     AlULayer(string alias);
 
     virtual ~AlULayer();
@@ -32,7 +30,7 @@ private:
     /// +--------------------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
     /// +--------------------------------------------------+
-    /// |              | none      | none      |  path     |
+    /// | layer model  | none      | none      |  path     |
     /// +--------------------------------------------------+
     /// \param msg
     /// \return
@@ -130,8 +128,6 @@ private:
     /// \return
     bool onResizeCanvas(AlMessage *m);
 
-    void setOnAlxLoadListener(OnAlxLoadListener listener);
-
 protected:
     void invalidate();
 
@@ -185,9 +181,10 @@ private:
 private:
     AlImageLayerManager mLayerManager;
     std::deque<std::string *> steps;
-    OnAlxLoadListener onAlxLoadListener = nullptr;
     Al2DCoordinate mWinCoord;
     Al2DCoordinate mCanvasCoord;
+    ///For import cache.
+    std::deque<AlImageLayerModel *> mImportQueue;
 };
 
 

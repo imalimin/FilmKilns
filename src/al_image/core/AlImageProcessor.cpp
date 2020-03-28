@@ -101,6 +101,7 @@ void AlImageProcessor::invalidate(int32_t flag) {
 
 int32_t AlImageProcessor::addLayer(const char *path) {
     AlMessage *msg = AlMessage::obtain(EVENT_LAYER_ADD);
+    msg->arg1 = EVENT_LAYER_ADD;
     msg->desc = std::string(path);
     postEvent(msg);
     mQueryLock.wait();

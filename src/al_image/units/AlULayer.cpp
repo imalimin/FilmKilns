@@ -40,7 +40,6 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
 }
 
 AlULayer::~AlULayer() {
-    this->onAlxLoadListener = nullptr;
 }
 
 bool AlULayer::onCreate(AlMessage *msg) {
@@ -50,13 +49,13 @@ bool AlULayer::onCreate(AlMessage *msg) {
 
 bool AlULayer::onDestroy(AlMessage *msg) {
     Logcat::e(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    mLayerManager.release();
+    mLayerManager.clear();
     return true;
 }
 
 bool AlULayer::onAddLayer(AlMessage *msg) {
     auto *m = AlMessage::obtain(EVENT_IMAGE_CODEC_DECODE);
-    m->arg1 = msg->what;
+    m->arg1 = msg->arg1;
     m->desc = msg->desc;
     postEvent(m);
     return true;
@@ -72,6 +71,17 @@ bool AlULayer::onReceiveImage(AlMessage *msg) {
             }
             postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY, id));
             invalidate();
+            break;
+        }
+        case EVENT_LAYER_IMPORT: {
+            auto *box = msg->getObj<ObjectBox *>();
+            auto *model = mImportQueue.front();
+            if (box && model) {
+                mLayerManager.addLayer(box->unWrap<HwAbsTexture *>(), *model);
+                mImportQueue.pop_front();
+                invalidate();
+            }
+            delete model;
             break;
         }
     }
@@ -133,24 +143,28 @@ void AlULayer::_notifyFilter(AlImageLayer *layer, AlImageLayerModel *model, int3
 }
 
 bool AlULayer::onImport(AlMessage *m) {
-//    std::string path = m->desc;
-//    AlImageCanvasModel canvas;
-//    std::vector<AlImageLayerModel *> layers;
-//    AlFileImporter importer;
-//    if (Hw::SUCCESS != importer.importFromFile(path, &canvas, &layers)
-//        || layers.empty() || canvas.getWidth() <= 0 || canvas.getHeight() <= 0) {
-//        return true;
-//    }
-//    mLayerManager.replaceAll(&layers);
-//    layers.clear();
-//    AlMessage *msg = AlMessage::obtain(EVENT_CANVAS_RESIZE, nullptr,
-//                                       AlMessage::QUEUE_MODE_FIRST_ALWAYS);
-//    msg->obj = new AlSize(canvas.getWidth(), canvas.getHeight());
-//    postEvent(msg);
-//    _notifyAll();
-//    if (onAlxLoadListener) {
-//        onAlxLoadListener(mLayerManager.getMaxId());
-//    }
+    std::string path = m->desc;
+    AlImageCanvasModel canvas;
+    std::vector<AlImageLayerModel *> layers;
+    AlFileImporter importer;
+    if (Hw::SUCCESS != importer.importFromFile(path, &canvas, &layers)
+        || layers.empty() || canvas.getWidth() <= 0 || canvas.getHeight() <= 0) {
+        return true;
+    }
+    mLayerManager.clear();
+    for (auto &layer : layers) {
+        mImportQueue.push_back(layer);
+        AlMessage *msg = AlMessage::obtain(EVENT_IMAGE_CODEC_DECODE);
+        msg->arg1 = EVENT_LAYER_IMPORT;
+        msg->desc = layer->getPath();
+        postEvent(msg);
+    }
+    layers.clear();
+    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE,
+                                new AlSize(canvas.getWidth(), canvas.getHeight()),
+                                AlMessage::QUEUE_MODE_FIRST_ALWAYS));
+    postMessage(AlMessage::obtain(EVENT_LAYER_IMPORT_FINISH));
+    invalidate();
     return true;
 }
 
@@ -243,10 +257,6 @@ void AlULayer::_updateCoordination() {
         }
         mCanvasCoord.setScale(scale, scale);
     }
-}
-
-void AlULayer::setOnAlxLoadListener(AlULayer::OnAlxLoadListener listener) {
-    this->onAlxLoadListener = listener;
 }
 
 AlImageLayerModel *AlULayer::findLayerModel(float x, float y) {

@@ -31,6 +31,14 @@ AlImageLayerModel *AlImageLayerModel::create(AlIdentityCreator *creator, const s
     return create(creator->generate(), path);
 }
 
+AlImageLayerModel *AlImageLayerModel::create(AlIdentityCreator *creator, AlImageLayerModel &model) {
+    int32_t id = model.getId();
+    model.id = creator->generate();
+    auto *m = new AlImageLayerModel(model);
+    model.id = id;
+    return m;
+}
+
 AlImageLayerModel *AlImageLayerModel::create(int32_t id, const std::string path) {
     return new AlImageLayerModel(id, path);
 }

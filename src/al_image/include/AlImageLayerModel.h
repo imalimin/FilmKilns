@@ -27,6 +27,8 @@ al_class_ex(AlImageLayerModel, AlAbsElemented) {
 public:
     static AlImageLayerModel *create(AlIdentityCreator *creator, const std::string path);
 
+    static AlImageLayerModel *create(AlIdentityCreator *creator, AlImageLayerModel &model);
+
 private:
     friend AlFileImporter;
 
