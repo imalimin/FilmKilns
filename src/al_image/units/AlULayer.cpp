@@ -79,6 +79,9 @@ bool AlULayer::onReceiveImage(AlMessage *msg) {
 
 bool AlULayer::onRemoveLayer(AlMessage *msg) {
     mLayerManager.removeLayer(msg->arg1);
+    auto *m = AlMessage::obtain(EVENT_LAYER_REMOVE_CACHE_LAYER);
+    m->arg1 = msg->arg1;
+    postEvent(m);
     invalidate();
     return true;
 }
