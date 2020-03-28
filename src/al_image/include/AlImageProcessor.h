@@ -25,6 +25,13 @@
 
 al_class_ex(AlImageProcessor, AlAbsProcessor) {
 public:
+public:
+    ///code, msg, path
+    typedef function<void(int32_t, const char *, const char *)> OnSaveListener;
+    typedef function<void(std::vector<int32_t> ids,
+                          std::vector<int32_t> ws,
+                          std::vector<int32_t> hs)> OnLayerInfoListener;
+public:
     AlImageProcessor();
 
     ~AlImageProcessor();
@@ -108,7 +115,11 @@ public:
     /// \return
     HwResult paint(int32_t id, float x, float y, bool painting);
 
-    void setOnSaveListener(AlUCanvas::OnSaveListener listener);
+    void queryLayerInfo();
+
+    void setOnSaveListener(OnSaveListener listener);
+
+    void setOnLayerInfoListener(OnLayerInfoListener l);
 
 private:
     bool _onCanvasUpdate(AlMessage *msg);
@@ -121,6 +132,17 @@ private:
 
     bool _onSaveFinish(AlMessage *msg);
 
+    /// 所有图层信息结果
+    /// FORMAT:
+    /// +------------------------------------------------------+
+    /// | msg::obj         | msg::arg1 | msg::arg2 | msg::desc |
+    /// +------------------------------------------------------+
+    /// | layer dsc vector | none      | none      |           |
+    /// +------------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onLayerInfoResult(AlMessage *msg);
+
 private:
     const string ALIAS_OF_IMAGE = "IMAGE";
     const string ALIAS_OF_IMAGE_GRAPH = "IMAGE_GRAPH";
@@ -131,7 +153,8 @@ private:
     AlAbsContext *context = nullptr;
     AlSize mWinSize;
     AlSize mCanvasSize;
-    AlUCanvas::OnSaveListener onSaveListener = nullptr;
+    OnSaveListener onSaveListener = nullptr;
+    OnLayerInfoListener onLayerInfoListener = nullptr;
     int32_t mCurLayerId = AlIdentityCreator::NONE_ID;
     SimpleLock mQueryLock;
     SimpleLock mExportLock;

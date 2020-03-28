@@ -37,6 +37,8 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayer::onResizeCanvas));
     registerEvent(EVENT_IMAGE_CODEC_DECODE_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayer::onReceiveImage));
+    registerEvent(EVENT_LAYER_QUERY_INFO,
+                  reinterpret_cast<EventFunc>(&AlULayer::onQueryInfo));
 }
 
 AlULayer::~AlULayer() {
@@ -69,7 +71,7 @@ bool AlULayer::onReceiveImage(AlMessage *msg) {
             if (box) {
                 id = mLayerManager.addLayer(box->unWrap<HwAbsTexture *>(), msg->desc);
             }
-            postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY, id));
+            postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY, id));
             invalidate();
             break;
         }
@@ -343,5 +345,19 @@ bool AlULayer::onResizeCanvas(AlMessage *m) {
     _cropCanvasAndStayLoc(size, dst, anchor);
     postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(dst)));
     invalidate();
+    return true;
+}
+
+bool AlULayer::onQueryInfo(AlMessage *msg) {
+    size_t size = mLayerManager.size();
+    auto *models = new std::vector<AlImgLayerDescription *>(size);
+    for (int i = 0; i < size; ++i) {
+        auto *model = mLayerManager.findModelByIndex(i);
+        auto *layer = mLayerManager.find(model->getId());
+        (*models)[i] = new AlImgLayerDescription(*model);
+        (*models)[i]->setSize(AlSize(layer->getWidth(), layer->getHeight()));
+    }
+
+    postMessage(AlMessage::obtain(EVENT_LAYER_QUERY_INFO_NOTIFY, ObjectBox::box(models)));
     return true;
 }

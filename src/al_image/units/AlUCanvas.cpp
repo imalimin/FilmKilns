@@ -28,7 +28,6 @@ AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
 }
 
 AlUCanvas::~AlUCanvas() {
-    this->onSaveListener = nullptr;
 }
 
 bool AlUCanvas::onCreate(AlMessage *msg) {
@@ -108,10 +107,6 @@ void AlUCanvas::_newDefaultCanvas(AlSize size) {
 
 void AlUCanvas::_draw(AlImageLayerDrawModel *description) {
     mCanvas.draw(description);
-}
-
-void AlUCanvas::setOnSaveListener(AlUCanvas::OnSaveListener listener) {
-    this->onSaveListener = listener;
 }
 
 void AlUCanvas::_update(int32_t width, int32_t height, int32_t color) {

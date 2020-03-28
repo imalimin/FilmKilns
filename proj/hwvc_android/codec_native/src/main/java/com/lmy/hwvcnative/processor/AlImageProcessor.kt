@@ -1,17 +1,18 @@
 package com.lmy.hwvcnative.processor
 
-import android.graphics.Point
 import android.graphics.PointF
 import android.os.Handler
 import android.os.Looper
 import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
+import com.lmy.hwvcnative.entity.AlLayer
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.entity.AlResult
 
 class AlImageProcessor private constructor() : CPPObject() {
     private val mMainHandler = Handler(Looper.getMainLooper())
     private var onSaveListener: OnSaveListener? = null
+    private var onLayerInfoListener: OnLayerInfoListener? = null
 
     init {
         handler = create()
@@ -321,6 +322,15 @@ class AlImageProcessor private constructor() : CPPObject() {
         return AlResult.FAILED
     }
 
+    fun queryLayerInfo(l: OnLayerInfoListener? = null) {
+        if (null != l) {
+            onLayerInfoListener = l
+        }
+        if (!isNativeNull()) {
+            return queryLayerInfo(handler)
+        }
+    }
+
     /***************************/
     /**      Listener         **/
     /***************************/
@@ -340,6 +350,22 @@ class AlImageProcessor private constructor() : CPPObject() {
         })
     }
 
+    interface OnLayerInfoListener {
+        fun onInfo(layers: Array<AlLayer>)
+    }
+
+    fun setOnLayerInfoListener(l: OnLayerInfoListener) {
+        this.onLayerInfoListener = l
+    }
+
+    fun setOnLayerInfoListener(l: (layers: Array<AlLayer>) -> Unit) {
+        setOnLayerInfoListener(object : OnLayerInfoListener {
+            override fun onInfo(layers: Array<AlLayer>) {
+                l(layers)
+            }
+        })
+    }
+
     /***************************/
     /** Callback from native  **/
     /***************************/
@@ -353,6 +379,21 @@ class AlImageProcessor private constructor() : CPPObject() {
     fun onSave(code: Int, msg: String?, path: String?) {
         mMainHandler.post {
             onSaveListener?.onSave(code, msg, path)
+        }
+    }
+
+    /**
+     * 查询所有图层信息回调
+     * @param ids layer id
+     * @param ws  layer width
+     * @param hs  layer height
+     */
+    fun onLayerInfo(ids: IntArray, ws: IntArray, hs: IntArray) {
+        val layers = Array(ids.size) {
+            return@Array AlLayer(ids[it], ws[it], hs[it])
+        }
+        mMainHandler.post {
+            onLayerInfoListener?.onInfo(layers)
         }
     }
 
@@ -399,4 +440,5 @@ class AlImageProcessor private constructor() : CPPObject() {
     private external fun redo(handler: Long): Int
     private external fun undo(handler: Long): Int
     private external fun paint(handler: Long, id: Int, x: Float, y: Float, painting: Boolean): Int
+    private external fun queryLayerInfo(handler: Long)
 }

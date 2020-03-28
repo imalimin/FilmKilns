@@ -16,7 +16,7 @@
 #include "AlOperateCrop.h"
 
 AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
-    registerEvent(EVENT_LAYER_QUERY,
+    registerEvent(EVENT_LAYER_QUERY_ID,
                   reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateQuery));
     registerEvent(EVENT_LAYER_PAINT, reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperatePaint));
     registerEvent(EVENT_LAYER_SCALE, reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateScale));
@@ -174,7 +174,7 @@ bool AlULayerWithOpt::onOperateQuery(AlMessage *m) {
         return true;
     }
     auto *model = findLayerModel(desc->x, desc->y);
-    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_NOTIFY);
+    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
     msg->arg1 = nullptr != model ? model->getId() : AlIdentityCreator::NONE_ID;
     postEvent(msg);
     return true;

@@ -40,7 +40,7 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
-    registerEvent(EVENT_LAYER_QUERY_NOTIFY,
+    registerEvent(EVENT_LAYER_QUERY_ID_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onLayerQuery));
     registerEvent(EVENT_LAYER_EXPORT_FINISH,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onExportFinish));
@@ -48,6 +48,8 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onImportFinish));
     registerEvent(EVENT_CANVAS_SAVE_FINISH,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onSaveFinish));
+    registerEvent(EVENT_LAYER_QUERY_INFO_NOTIFY,
+                  reinterpret_cast<EventFunc>(&AlImageProcessor::_onLayerInfoResult));
 }
 
 AlImageProcessor::~AlImageProcessor() {
@@ -177,7 +179,7 @@ HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
-    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY,
+    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_ID,
                                   new AlOperateTrans(0, x, y));
     postEvent(msg);
     mQueryLock.wait(500000);
@@ -237,7 +239,7 @@ HwResult AlImageProcessor::importFile(std::string path) {
     return Hw::SUCCESS;
 }
 
-void AlImageProcessor::setOnSaveListener(AlUCanvas::OnSaveListener listener) {
+void AlImageProcessor::setOnSaveListener(OnSaveListener listener) {
     this->onSaveListener = listener;
 }
 
@@ -274,6 +276,10 @@ HwResult AlImageProcessor::paint(int32_t id, float x, float y, bool painting) {
     return Hw::SUCCESS;
 }
 
+void AlImageProcessor::queryLayerInfo() {
+    postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_INFO));
+}
+
 bool AlImageProcessor::_onCanvasUpdate(AlMessage *msg) {
     mCanvasSize.width = msg->arg1;
     mCanvasSize.height = static_cast<int>(msg->arg2);
@@ -307,4 +313,27 @@ bool AlImageProcessor::_onSaveFinish(AlMessage *msg) {
         this->onSaveListener(ret.code, tip.c_str(), msg->desc.c_str());
     }
     return true;
+}
+
+bool AlImageProcessor::_onLayerInfoResult(AlMessage *msg) {
+    auto *box = msg->getObj<ObjectBox *>();
+    if (this->onLayerInfoListener && box) {
+        auto *models = static_cast<vector<AlImgLayerDescription *> *>(box->ptr);
+        std::vector<int32_t> ids(models->size());
+        std::vector<int32_t> ws(models->size());
+        std::vector<int32_t> hs(models->size());
+        for (int i = 0; i < models->size(); ++i) {
+            ids[i] = (*models)[i]->getId();
+            AlSize size = (*models)[i]->getSize();
+            ws[i] = size.width;
+            hs[i] = size.height;
+        }
+        this->onLayerInfoListener(ids, ws, hs);
+        delete models;
+    }
+    return true;
+}
+
+void AlImageProcessor::setOnLayerInfoListener(AlImageProcessor::OnLayerInfoListener l) {
+    this->onLayerInfoListener = l;
 }

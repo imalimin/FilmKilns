@@ -9,6 +9,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -20,6 +21,7 @@ import android.widget.Toast
 import com.lmy.common.ui.GallerySelectActivity
 import com.lmy.common.ui.fragment.BaseLazyFragment
 import com.lmy.file.ui.dialog.FileDialog
+import com.lmy.hwvcnative.entity.AlLayer
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.entity.AlResult
 import com.lmy.hwvcnative.processor.AlImageProcessor
@@ -32,7 +34,9 @@ import java.io.File
 
 class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionListener,
         SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener,
-        View.OnClickListener, AlImageProcessor.OnSaveListener {
+        View.OnClickListener, AlImageProcessor.OnSaveListener,
+        AlImageProcessor.OnLayerInfoListener {
+
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
     private val mLayers = ArrayList<Int>()
@@ -103,6 +107,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
 //        processor?.setCanvas(1920, 1080)
         processor?.setOnSaveListener(this)
+        processor?.setOnLayerInfoListener(this)
         //For crop debug
 //        cropView.setOnChangeListener {
 //            processor?.cancelCropLayer(getCurrentLayer())
@@ -270,6 +275,17 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
     }
 
+    override fun onInfo(layers: Array<AlLayer>) {
+        val sb = StringBuffer()
+        layers.forEach {
+            sb.append("layer ${it.id}, ${it.width}x${it.height}")
+            sb.append("\n")
+        }
+        AlertDialog.Builder(this)
+                .setMessage(sb.substring(0, sb.length - 1))
+                .show()
+    }
+
     fun showOptLayer(show: Boolean) {
 //        optLayout.visibility = if (show) View.VISIBLE else View.GONE
         optLayout.visibility = View.VISIBLE
@@ -423,7 +439,8 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
             BottomSheetItem(3, R.mipmap.ic_launcher, "Crop Layer"),
             BottomSheetItem(4, R.mipmap.ic_launcher, "Clear Crop Layer"),
             BottomSheetItem(5, R.mipmap.ic_launcher, "Move up"),
-            BottomSheetItem(6, R.mipmap.ic_launcher, "Move down")
+            BottomSheetItem(6, R.mipmap.ic_launcher, "Move down"),
+            BottomSheetItem(7, R.mipmap.ic_launcher, "Show info")
     )
 
     override fun show(): BottomSheetDialog {
@@ -464,6 +481,9 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
             }
             6 -> {
                 processor?.moveLayerIndex(context.getCurrentLayer(), 0)
+            }
+            7 -> {
+                processor?.queryLayerInfo()
             }
         }
     }

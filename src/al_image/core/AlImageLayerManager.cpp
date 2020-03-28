@@ -87,6 +87,9 @@ void AlImageLayerManager::moveLayer(const int32_t id, int32_t idx) {
         }
     }
     if (model) {
+        if (idx < 0) {
+            idx = 0;
+        }
         if (idx >= models.size()) {
             models.emplace_back(model);
         } else {

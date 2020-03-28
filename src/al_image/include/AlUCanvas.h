@@ -14,9 +14,6 @@
 
 class AlUCanvas : public Unit {
 public:
-    ///code, msg, path
-    typedef function<void(int32_t, const char *, const char *)> OnSaveListener;
-public:
     AlUCanvas(const string &alias);
 
     virtual ~AlUCanvas();
@@ -83,8 +80,6 @@ private:
 
     bool onEncodeFinish(AlMessage *msg);
 
-    void setOnSaveListener(OnSaveListener listener);
-
 private:
     void _newDefaultCanvas(AlSize size);
 
@@ -96,7 +91,6 @@ private:
 
 private:
     AlImageCanvas mCanvas;
-    OnSaveListener onSaveListener = nullptr;
     int32_t mDrawCount = 0;
     /// Request save to file(as jpeg...) next draw.
     std::string mOutputPath;

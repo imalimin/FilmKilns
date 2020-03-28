@@ -128,6 +128,17 @@ private:
     /// \return
     bool onResizeCanvas(AlMessage *m);
 
+    /// 查询所有图层信息
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | none      | none      |           |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onQueryInfo(AlMessage *msg);
+
 protected:
     void invalidate();
 

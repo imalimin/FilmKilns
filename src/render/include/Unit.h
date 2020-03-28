@@ -76,8 +76,8 @@ static constexpr int EVENT_LAYER_ROTATE = KID('A', 'I', 'G', 0x07);
 static constexpr int EVENT_LAYER_ROTATE_POST = KID('A', 'I', 'G', 0x08);
 static constexpr int EVENT_LAYER_TRANS = KID('A', 'I', 'G', 0x09);
 static constexpr int EVENT_LAYER_TRANS_POST = KID('A', 'I', 'G', 0xa);
-static constexpr int EVENT_LAYER_QUERY = KID('A', 'I', 'G', 0xb);
-static constexpr int EVENT_LAYER_QUERY_NOTIFY = KID('A', 'I', 'G', 0xc);
+static constexpr int EVENT_LAYER_QUERY_ID = KID('A', 'I', 'G', 0xb);
+static constexpr int EVENT_LAYER_QUERY_ID_NOTIFY = KID('A', 'I', 'G', 0xc);
 static constexpr int EVENT_LAYER_REMOVE = KID('A', 'I', 'G', 0xe);
 static constexpr int EVENT_LAYER_MOVE = KID('A', 'I', 'G', 0x10);
 static constexpr int EVENT_LAYER_ALPHA = KID('A', 'I', 'G', 0x11);
@@ -88,6 +88,8 @@ static constexpr int EVENT_LAYER_ALIGN_CROP_CANCEL = KID('A', 'I', 'G', 0x15);
 static constexpr int EVENT_LAYER_EXPORT = KID('A', 'I', 'G', 0x16);
 static constexpr int EVENT_LAYER_EXPORT_FINISH = KID('A', 'I', 'G', 0x17);
 static constexpr int EVENT_LAYER_IMPORT_FINISH = KID('A', 'I', 'G', 0x18);
+static constexpr int EVENT_LAYER_QUERY_INFO = KID('A', 'I', 'G', 0x1a);
+static constexpr int EVENT_LAYER_QUERY_INFO_NOTIFY = KID('A', 'I', 'G', 0x1b);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
 static constexpr int EVENT_LAYER_MEASURE_CANVAS_NOTIFY = KID('A', 'L', 'M', 0x01);
@@ -144,6 +146,7 @@ protected:
 class Unit : public Object {
 private:
     friend class UnitPipeline;
+
     friend class AlAbsGraph;
 
 public:

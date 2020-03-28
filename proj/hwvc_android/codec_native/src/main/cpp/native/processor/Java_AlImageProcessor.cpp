@@ -15,6 +15,8 @@ extern "C" {
 
 static JMethodDescription mOnSave = {"Java_com_lmy_hwvcnative_processor_AlImageProcessor",
                                      "onSave", "(ILjava/lang/String;Ljava/lang/String;)V"};
+static JMethodDescription mOnLayerInfo = {"Java_com_lmy_hwvcnative_processor_AlImageProcessor",
+                                          "onLayerInfo", "([I[I[I)V"};
 
 static AlImageProcessor *getHandler(jlong handler) {
     return reinterpret_cast<AlImageProcessor *>(handler);
@@ -26,18 +28,42 @@ static void bindListener(jlong handler) {
                                                      const char *path) {
         jobject jObject = nullptr;
         JNIEnv *pEnv = nullptr;
-        jmethodID methodID = nullptr;
+        jmethodID mid = nullptr;
         if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
             HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
             HwJavaNativeHelper::getInstance()->findMethod(handler,
                                                           mOnSave,
-                                                          &methodID)) {
+                                                          &mid)) {
             jstring jMsg = pEnv->NewStringUTF(msg);
             jstring jPath = pEnv->NewStringUTF(path);
-            pEnv->CallVoidMethod(jObject, methodID, static_cast<jint>(code), jMsg, jPath);
+            pEnv->CallVoidMethod(jObject, mid, static_cast<jint>(code), jMsg, jPath);
             pEnv->DeleteLocalRef(jPath);
             pEnv->DeleteLocalRef(jMsg);
         }
+    });
+    getHandler(handler)->setOnLayerInfoListener([handler](std::vector<int32_t> ids,
+                                                          std::vector<int32_t> ws,
+                                                          std::vector<int32_t> hs) {
+        jobject jObject = nullptr;
+        JNIEnv *pEnv = nullptr;
+        jmethodID mid = nullptr;
+        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                          mOnLayerInfo,
+                                                          &mid)) {
+            jintArray jIds = pEnv->NewIntArray(ids.size());
+            jintArray jWs = pEnv->NewIntArray(ws.size());
+            jintArray jHs = pEnv->NewIntArray(hs.size());
+            pEnv->SetIntArrayRegion(jIds, 0, ids.size(), ids.data());
+            pEnv->SetIntArrayRegion(jWs, 0, ws.size(), ws.data());
+            pEnv->SetIntArrayRegion(jHs, 0, hs.size(), hs.data());
+            pEnv->CallVoidMethod(jObject, mid, jIds, jWs, jHs);
+            pEnv->DeleteLocalRef(jHs);
+            pEnv->DeleteLocalRef(jWs);
+            pEnv->DeleteLocalRef(jIds);
+        }
+
     });
 }
 
@@ -279,6 +305,13 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_paint
         return getHandler(handler)->paint(id, x, y, JNI_TRUE == painting).code;
     }
     return Hw::FAILED.code;
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_queryLayerInfo
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        getHandler(handler)->queryLayerInfo();
+    }
 }
 
 #ifdef __cplusplus
