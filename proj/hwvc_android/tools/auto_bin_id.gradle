@@ -1,0 +1,18 @@
+project.task("autoCreateBinId") {
+    doFirst {
+        println("auto bin id apply.")
+        FileTree tree = fileTree('../../src').include('**/*.h')
+        tree.each { File file ->
+            if (file.exists()) {
+//                println file.name
+                file.withReader('UTF-8') { reader ->
+                    reader.eachLine {
+                        if("al_class_ex(AlGImage, AlAbsGraph) {".matches("al_class_ex\\(.+AlAbsGraph\\)")) {
+                            println file.name
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
