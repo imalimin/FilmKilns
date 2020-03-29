@@ -3,7 +3,7 @@
 buildscript {
     ext.kotlin_version = '1.3.50'
     ext.versionCode = 2
-    ext.versionName = "1.1.0"
+    ext.versionName = "1.2.0"
     ext.support_version = '28.0.0'
     ext.target_version = 28
     ext.min_version = 22
