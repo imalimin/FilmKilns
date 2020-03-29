@@ -121,6 +121,7 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
         _notifyDescriptor(pair->layer, pair->model, msg->arg1);
         return true;
     }
+    AlLogI(TAG, "layer: %d", pair->model->getId());
     auto *actions = pair->model->getAllActions();
     auto itr = actions->begin();
     while (actions->end() != itr) {
