@@ -281,7 +281,7 @@ AlSize AlULayer::getCanvasSize() {
     return mCanvasCoord.getRegion();
 }
 
-void AlULayer::_cropCanvasAndStayLoc(AlSize &src, AlSize &dst, AlPointF &anchor) {
+void AlULayer::_cropCanvasAndKeepLoc(AlSize &src, AlSize &dst, AlPointF &anchor) {
     auto size = mLayerManager.size();
     for (int i = 0; i < size; ++i) {
         auto *model = mLayerManager.findModelByIndex(i);
@@ -305,7 +305,7 @@ bool AlULayer::onCropCanvas(AlMessage *m) {
     AlSize dst(src.width * rectF.getWidth() / 2,
                src.height * rectF.getHeight() / 2);
     AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
-    _cropCanvasAndStayLoc(src, dst, anchor);
+    _cropCanvasAndKeepLoc(src, dst, anchor);
     postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(dst)));
     invalidate();
     return true;
@@ -342,7 +342,7 @@ bool AlULayer::onResizeCanvas(AlMessage *m) {
     AlSize dst(size.width * rectF.getWidth() / 2,
                size.height * rectF.getHeight() / 2);
     AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
-    _cropCanvasAndStayLoc(size, dst, anchor);
+    _cropCanvasAndKeepLoc(size, dst, anchor);
     postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(dst)));
     invalidate();
     return true;

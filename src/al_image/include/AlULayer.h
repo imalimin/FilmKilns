@@ -187,7 +187,7 @@ private:
 
     void _updateCoordination();
 
-    void _cropCanvasAndStayLoc(AlSize &src, AlSize &dst, AlPointF &anchor);
+    void _cropCanvasAndKeepLoc(AlSize &src, AlSize &dst, AlPointF &anchor);
 
 private:
     AlImageLayerManager mLayerManager;
