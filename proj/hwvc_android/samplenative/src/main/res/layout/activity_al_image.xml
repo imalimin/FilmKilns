@@ -37,51 +37,6 @@
             <TableRow>
 
                 <TextView
-                    android:paddingRight="8dp"
-                    android:text="Layer"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/layerView"
-                    android:text="-1"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:paddingRight="8dp"
-                    android:text="Scale"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/scaleView"
-                    android:text="0"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:paddingRight="8dp"
-                    android:text="Rotation"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/rotateView"
-                    android:text="0"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="12sp" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
                     android:text="Align Crop"
                     android:textColor="@color/colorAccent"
                     android:textSize="12sp" />

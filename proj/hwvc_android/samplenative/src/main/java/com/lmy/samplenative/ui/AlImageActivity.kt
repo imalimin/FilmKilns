@@ -39,8 +39,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
 
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
-    private val mLayers = ArrayList<Int>()
-    private var mCurrentLayer = -1
+    private var mCurrentLayer = AlLayer.none()
     private var alpha: Double = 0.0
     private var outputName: String? = null
     private val surfaceCallback = object : SurfaceHolder.Callback {
@@ -65,32 +64,32 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         surfaceView.holder.addCallback(surfaceCallback)
         surfaceView?.setOnClickListener { v, x, y ->
             if (null != processor) {
-                setCurLayer(processor!!.getLayer(x, y))
+                setCurLayer(AlLayer(processor!!.getLayer(x, y), 0, 0))
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy, s ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postTranslate(getCurrentLayer(), dx, dy)
+                processor?.postTranslate(getCurrentLayer().id, dx, dy)
             }
             if (paintBox.isChecked) {
-                processor?.paint(getCurrentLayer(), PointF(x, y), 1 == s)
+                processor?.paint(getCurrentLayer().id, PointF(x, y), 1 == s)
             }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnScaleListener { v, ds, anchor ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postScale(getCurrentLayer(), ds, anchor)
+                processor?.postScale(getCurrentLayer().id, ds, anchor)
             }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnRotateListener { v, dr, anchor ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postRotation(getCurrentLayer(), dr, anchor)
+                processor?.postRotation(getCurrentLayer().id, dr, anchor)
             } else {
                 alpha += (dr.num / dr.den.toDouble())
-                processor?.ensureAlignCrop(getCurrentLayer(),
+                processor?.ensureAlignCrop(getCurrentLayer().id,
                         AlRational((alpha * 100000).toInt(), 100000))
             }
         }
@@ -150,7 +149,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
                 bottomSheetDialog = EditOptDialog(this, processor).show()
             }
             R.id.layerBtn -> {
-                bottomSheetDialog = LayerOptDialog(this, processor).show()
+                processor?.queryLayerInfo()
             }
             R.id.optBtn -> {
                 optLayout.visibility = if (View.VISIBLE == optLayout.visibility) {
@@ -167,9 +166,9 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
             R.id.alignCropBox -> {
                 if (isChecked) {
                     alpha = 0.0
-                    processor?.ensureAlignCrop(getCurrentLayer(), AlRational(0, 100000))
+                    processor?.ensureAlignCrop(getCurrentLayer().id, AlRational(0, 100000))
                 } else {
-                    processor?.cancelAlignCrop(getCurrentLayer())
+                    processor?.cancelAlignCrop(getCurrentLayer().id)
                 }
             }
             R.id.selectBox -> {
@@ -238,15 +237,13 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
             outputName = File(file).name
         }
         if (null != layerId && layerId >= 0) {
-            mLayers.add(layerId)
-            setCurLayer(layerId)
+            setCurLayer(AlLayer(layerId, 0, 0))
             Log.i("HWVC", "addLayer $layerId")
         }
     }
 
-    private fun setCurLayer(layer: Int) {
+    fun setCurLayer(layer: AlLayer) {
         mCurrentLayer = layer
-        layerView.text = layer.toString()
     }
 
     fun pickImage() {
@@ -258,7 +255,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         selector.show(supportFragmentManager, "SELECTOR")
     }
 
-    fun getCurrentLayer(): Int = mCurrentLayer
+    fun getCurrentLayer(): AlLayer = mCurrentLayer
 
     fun getOutputName(): String? = outputName
 
@@ -276,14 +273,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
     }
 
     override fun onInfo(layers: Array<AlLayer>) {
-        val sb = StringBuffer()
-        layers.forEach {
-            sb.append("layer ${it.id}, ${it.width}x${it.height}")
-            sb.append("\n")
-        }
-        AlertDialog.Builder(this)
-                .setMessage(sb.substring(0, sb.length - 1))
-                .show()
+        bottomSheetDialog = LayerInfoDialog(this, processor).show(layers)
     }
 
     fun showOptLayer(show: Boolean) {
@@ -314,7 +304,7 @@ interface IOptDialog {
 
 class FileOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
-    private val OPTS = arrayListOf<BottomSheetItem>(
+    private val OPTS = arrayListOf(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Save"),
             BottomSheetItem(1, R.mipmap.ic_launcher, "Export"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "Import")
@@ -375,7 +365,7 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
 
 class EditOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
-    private val OPTS = arrayListOf<BottomSheetItem>(
+    private val OPTS = arrayListOf(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Select"),
             BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "None")
@@ -400,7 +390,7 @@ class EditOptDialog(private var context: AlImageActivity, private var processor:
 
 class CanvasOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
-    private val OPTS = arrayListOf<BottomSheetItem>(
+    private val OPTS = arrayListOf(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Crop Canvas"),
             BottomSheetItem(1, R.mipmap.ic_launcher, "Resize to 720p"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "None")
@@ -430,9 +420,44 @@ class CanvasOptDialog(private var context: AlImageActivity, private var processo
     }
 }
 
+class LayerInfoDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
+    : IOptDialog, BottomSheetItem.OnClickListener {
+    private var layers: Array<AlLayer>? = null
+    private var map: HashMap<Int, AlLayer>? = null
+    fun show(layers: Array<AlLayer>): BottomSheetDialog {
+        this.layers = layers
+        this.map = HashMap()
+        layers.forEach {
+            this.map!![it.id] = it
+        }
+        return show()
+    }
+
+    override fun show(): BottomSheetDialog {
+        val opts = ArrayList<BottomSheetItem>()
+        layers?.forEach {
+            opts.add(BottomSheetItem(it.id, R.mipmap.ic_launcher, "${it.id}, ${it.width}x${it.height}"))
+        }
+        if (opts.size < 3) {
+            for (i in 0 until 3 - opts.size) {
+                opts.add(BottomSheetItem(-1, R.mipmap.ic_launcher, "-1, 0x0"))
+            }
+        }
+        val dialog = BottomSheetDialog(context, opts)
+        dialog.onItemClickListener = this
+        dialog.show()
+        return dialog
+    }
+
+    override fun onBottomSheetItemClick(item: BottomSheetItem) {
+        context.setCurLayer(if (null != map && map!!.containsKey(item.id)) map!![item.id]!! else AlLayer.none())
+        LayerOptDialog(context, processor).show()
+    }
+}
+
 class LayerOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
-    private val OPTS = arrayListOf<BottomSheetItem>(
+    private val OPTS = arrayListOf(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
             BottomSheetItem(1, R.mipmap.ic_launcher, "Rest Layer"),
             BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer"),
@@ -456,31 +481,31 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 context.pickImage()
             }
             1 -> {
-                processor?.setTranslate(context.getCurrentLayer(), 0f, 0f)
-                processor?.setRotation(context.getCurrentLayer(), AlRational.zero())
-                processor?.setScale(context.getCurrentLayer(), AlRational(1, 1))
+                processor?.setTranslate(context.getCurrentLayer().id, 0f, 0f)
+                processor?.setRotation(context.getCurrentLayer().id, AlRational.zero())
+                processor?.setScale(context.getCurrentLayer().id, AlRational(1, 1))
             }
             2 -> {
-                processor?.removeLayer(context.getCurrentLayer())
+                processor?.removeLayer(context.getCurrentLayer().id)
             }
             3 -> {
-                processor?.cancelCropLayer(context.getCurrentLayer())
+                processor?.cancelCropLayer(context.getCurrentLayer().id)
                 val rectF = context.getSelectRect()
                 if (null != rectF) {
-                    processor?.ensureCropLayer(context.getCurrentLayer(),
+                    processor?.ensureCropLayer(context.getCurrentLayer().id,
                             rectF.left, rectF.top,
                             rectF.right, rectF.bottom)
                 }
                 context.showSelector(false)
             }
             4 -> {
-                processor?.cancelCropLayer(context.getCurrentLayer())
+                processor?.cancelCropLayer(context.getCurrentLayer().id)
             }
             5 -> {
-                processor?.moveLayerIndex(context.getCurrentLayer(), 1)
+                processor?.moveLayerIndex(context.getCurrentLayer().id, 1)
             }
             6 -> {
-                processor?.moveLayerIndex(context.getCurrentLayer(), 0)
+                processor?.moveLayerIndex(context.getCurrentLayer().id, 0)
             }
             7 -> {
                 processor?.queryLayerInfo()
