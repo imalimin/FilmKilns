@@ -10,7 +10,7 @@
 
 #include "AlULayer.h"
 
-al_class_ex(AlULayerWithOpt, AlULayer) {
+al_def_unit(AlULayerWithOpt, AlULayer) {
 public:
     AlULayerWithOpt(string alias);
 

@@ -15,7 +15,7 @@
 #include "AlMatrix.h"
 #include <map>
 
-al_class_ex(AlULayerFilter, Unit) {
+al_def_unit(AlULayerFilter, Unit) {
 public:
     AlULayerFilter(string alias);
 

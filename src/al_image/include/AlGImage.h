@@ -10,11 +10,16 @@
 
 #include "AlAbsGraph.h"
 
-al_class_ex(AlGImage, AlAbsGraph) {
+al_def_unit(AlGImage, AlAbsGraph) {
 public:
     AlGImage(const std::string alias);
 
     virtual ~AlGImage();
+
+private:
+    al_def_msg(onTestMsg1)
+
+    al_def_msg(onTestMsg2)
 
 private:
     const string ALIAS_OF_LAYER = "LAYER";

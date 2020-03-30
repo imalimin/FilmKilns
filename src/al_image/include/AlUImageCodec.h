@@ -12,7 +12,7 @@
 #include "AlRational.h"
 #include "HwAbsTexture.h"
 
-al_class_ex(AlUImageCodec, Unit) {
+al_def_unit(AlUImageCodec, Unit) {
 public:
     AlUImageCodec(const string &alias);
 

@@ -15,7 +15,7 @@
 #include "AlSize.h"
 #include "AlImgLayerDescription.h"
 
-class AlULayerDescriptor : public Unit {
+al_def_unit(AlULayerDescriptor, Unit) {
 public:
     AlULayerDescriptor(const string &alias);
 

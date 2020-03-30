@@ -10,7 +10,7 @@
 
 #include "Unit.h"
 
-class AlAbsGraph : public Unit, AlAbsPoster {
+al_def_unit(AlAbsGraph, Unit), AlAbsPoster {
 public:
     AlAbsGraph(const std::string alias);
 

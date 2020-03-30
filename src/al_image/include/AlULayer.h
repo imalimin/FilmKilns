@@ -14,7 +14,7 @@
 #include "Al2DCoordinate.h"
 #include <deque>
 
-class AlULayer : public Unit {
+al_def_unit(AlULayer, Unit) {
 public:
     AlULayer(string alias);
 

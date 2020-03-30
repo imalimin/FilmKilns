@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-present, lmyooyo@gmail.com.
+ * Copyright (c) 2018-present, aliminabc@gmail.com.
  *
  * This source code is licensed under the GPL license found in the
  * LICENSE file in the root directory of this source tree.
@@ -118,12 +118,15 @@ static constexpr int EVENT_IMAGE_CODEC_ENCODE_NOTIFY = KID('I', 'C', 'D', 0x03);
 #include "HwBundle.h"
 #include "AlPostMan.h"
 #include <map>
-//#include "HwModelProvider.h"
+
+#define al_def_unit(cls, parent) \
+class cls : public parent \
+
+#define al_def_msg(name) \
+bool name(AlMessage *m); \
+
 using namespace std;
 
-/**
- * Define class HwModelProvider.
- */
 class HwModelProvider;
 
 class AlAbsGraph;

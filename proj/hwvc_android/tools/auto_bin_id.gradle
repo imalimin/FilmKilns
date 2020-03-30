@@ -1,16 +1,80 @@
-project.task("autoCreateBinId") {
+project.task("createMsgIds") {
     doFirst {
         println("auto bin id apply.")
-        FileTree tree = fileTree('../../src').include('**/*.h')
-        tree.each { File file ->
+        fileTree('../../src').include('**/*.h').each { File file ->
             if (file.exists()) {
 //                println file.name
+                def isAnUnit = false
+                def msgIds = []
                 file.withReader('UTF-8') { reader ->
                     reader.eachLine {
-                        if("al_class_ex(AlGImage, AlAbsGraph) {".matches("al_class_ex\\(.+AlAbsGraph\\)")) {
-                            println file.name
+                        if (it.startsWith("al_def_unit")) {
+                            isAnUnit = true
+                        }
+                        if (it.trim().startsWith("al_def_msg")) {
+                            def str = it.trim()
+                            str = str.substring(str.indexOf('(') + 1, str.indexOf(')'))
+                            if (!msgIds.contains(str)) {
+                                msgIds.add(str)
+                            }
                         }
                     }
+                }
+                if (isAnUnit) {
+                    def sb = new StringBuffer()
+                    def count = 0x10000
+                    msgIds.forEach({
+                        sb.append("static constexpr int MSG")
+                        def found = false
+                        def str = it.toString()
+                        println str
+                        def len = str.length()
+                        for (int i = 0; i < len; ++i) {
+                            def isUpCase = false
+                            if (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') {
+                                isUpCase = true
+                                found = true
+                            } else if (str.charAt(i) >= 'a' && str.charAt(i) <= 'z') {
+                                isUpCase = false
+                            } else {
+                                continue
+                            }
+                            if (found) {
+                                if (isUpCase) {
+                                    sb.append("_${str.charAt(i)}")
+                                } else {
+                                    sb.append("${str.charAt(i).toString().toUpperCase()}")
+                                }
+                            }
+                        }
+                        sb.append(" = 0x${Integer.toHexString(count)};\n")
+                        ++count
+                    })
+                    String content = sb.toString()
+                    println content
+                    File of = new File("../../src/render/include/AlUnitMsgIds.h")
+                    if (of.exists()) {
+                        of.delete()
+                    }
+                    FileWriter fw = new FileWriter(of)
+                    fw.write("/*\n" +
+                            " * Copyright (c) 2018-present, aliminabc@gmail.com.\n" +
+                            " *\n" +
+                            " * This source code is licensed under the GPL license found in the\n" +
+                            " * LICENSE file in the root directory of this source tree.\n" +
+                            " * \n" +
+                            " * Auto create by auto_bin_id.gradle.\n" +
+                            " */\n" +
+                            "$content")
+                    fw.write()
+                    fw.flush()
+                    fw.close()
+//                    of.withWriter('UTF-8') { writer ->
+//                        writer.write('123\n')
+//                        writer.write(sb.toString())
+//                        println sb.toString()
+//                        writer.flush()
+//                    }
                 }
             }
         }

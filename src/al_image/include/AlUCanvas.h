@@ -12,7 +12,7 @@
 #include "AlImageCanvas.h"
 #include "AlImageCanvasModel.h"
 
-class AlUCanvas : public Unit {
+al_def_unit(AlUCanvas, Unit) {
 public:
     AlUCanvas(const string &alias);
 
