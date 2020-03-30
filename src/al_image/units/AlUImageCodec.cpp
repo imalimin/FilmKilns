@@ -37,9 +37,14 @@ bool AlUImageCodec::onDestroy(AlMessage *msg) {
 }
 
 bool AlUImageCodec::onDecode(AlMessage *msg) {
+    AlMessage *m = AlMessage::obtain(EVENT_IMAGE_CODEC_DECODE_NOTIFY);
+    m->arg1 = msg->arg1; //Feedback req code.
+    m->arg2 = Hw::FAILED.code;
+
     AlBitmap *bmp = AlBitmapFactory::decodeFile(msg->desc);
     if (nullptr == bmp) {
         AlLogE(TAG, "decode %s failed", msg->desc.c_str());
+        postEvent(m);
         return true;
     }
     auto rotation = bmp->getRotation();
@@ -54,19 +59,21 @@ bool AlUImageCodec::onDecode(AlMessage *msg) {
     delete bmp;
     _correctAngle(&tex, rotation);
 
-    AlMessage *m = AlMessage::obtain(EVENT_IMAGE_CODEC_DECODE_NOTIFY, ObjectBox::wrap(tex));
-    m->arg1 = msg->arg1; //Feedback req code.
+    m->arg2 = Hw::SUCCESS.code;
     m->desc = msg->desc; //Feedback image file path.
+    m->obj = ObjectBox::wrap(tex);
     postEvent(m);
     return true;
 }
 
 bool AlUImageCodec::onEncode(AlMessage *msg) {
-    auto path = msg->desc;
-    auto *tex = msg->getObj<HwAbsTexture *>();
     AlMessage *m = AlMessage::obtain(EVENT_IMAGE_CODEC_ENCODE_NOTIFY);
     m->arg1 = msg->arg1; //Feedback req code.
+    m->arg2 = Hw::FAILED.code;
     m->desc = "";
+
+    auto path = msg->desc;
+    auto *tex = msg->getObj<HwAbsTexture *>();
     if ("" == path || path.empty() || nullptr == tex) {
         postEvent(m);
         return true;
@@ -81,7 +88,7 @@ bool AlUImageCodec::onEncode(AlMessage *msg) {
     AlBitmapFactory::save(tex->getWidth(), tex->getHeight(), buf, path);
     delete buf;
 
-    m->arg1 = msg->arg1; //Feedback req code.
+    m->arg2 = Hw::SUCCESS.code;
     m->desc = msg->desc; //Feedback image file path.
     postEvent(m);
     return true;

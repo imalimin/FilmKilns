@@ -29,3 +29,11 @@ HwResult &HwResult::operator=(const HwResult &value) {
     code = value.code;
     return *this;
 }
+
+bool HwResult::operator==(int ret) const {
+    return ret == code;
+}
+
+bool HwResult::operator!=(int ret) const {
+    return ret != code;
+}

@@ -297,13 +297,12 @@ bool AlImageProcessor::_onImportFinish(AlMessage *msg) {
 
 bool AlImageProcessor::_onSaveFinish(AlMessage *msg) {
     if (this->onSaveListener) {
-        HwResult ret = Hw::SUCCESS;
+        int ret = static_cast<int>(msg->arg2);
         std::string tip("Save finish.");
-        if (msg->desc.empty()) {
-            ret = Hw::FAILED;
+        if (Hw::SUCCESS.code != ret) {
             tip = "Save failed.";
         }
-        this->onSaveListener(ret.code, tip.c_str(), msg->desc.c_str());
+        this->onSaveListener(ret, tip.c_str(), msg->desc.c_str());
     }
     return true;
 }

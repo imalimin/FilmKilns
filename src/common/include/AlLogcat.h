@@ -34,17 +34,17 @@ std::string fmt_name;                                                     \
 fmt_name.append("%s(%d): ");                                              \
 fmt_name.append(fmt);                                                     \
 
-#define AlLogI(tag, fmt, ...)                                             \
+#define AlLogI(tag, fmt, args...)                                         \
 AlLogFormat(format, fmt)                                                  \
-AlLogcat::i(tag, format.c_str(), __FUNCTION__, __LINE__, __VA_ARGS__)       \
+AlLogcat::i(tag, format.c_str(), __FUNCTION__, __LINE__, ##args)          \
 
-#define AlLogE(tag, fmt, ...)                                             \
+#define AlLogE(tag, fmt, args...)                                         \
 AlLogFormat(format, fmt)                                                  \
-AlLogcat::e(tag, format.c_str(), __FUNCTION__, __LINE__, __VA_ARGS__)       \
+AlLogcat::e(tag, format.c_str(), __FUNCTION__, __LINE__, ##args)          \
 
-#define AlLogW(tag, fmt, ...)                                             \
+#define AlLogW(tag, fmt, args...)                                         \
 AlLogFormat(format, fmt)                                                  \
-AlLogcat::w(tag, format.c_str(), __FUNCTION__, __LINE__, __VA_ARGS__)       \
+AlLogcat::w(tag, format.c_str(), __FUNCTION__, __LINE__, ##args)          \
 
 
 #endif //HWVC_ANDROID_ALLOGCAT_H

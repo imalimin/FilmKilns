@@ -127,6 +127,7 @@ bool AlUCanvas::onEncodeFinish(AlMessage *msg) {
     switch (msg->arg1) {
         case EVENT_CANVAS_SAVE: {
             auto *m = AlMessage::obtain(EVENT_CANVAS_SAVE_FINISH);
+            m->arg2 = msg->arg2;
             m->desc = msg->desc;
             postMessage(m);
             break;

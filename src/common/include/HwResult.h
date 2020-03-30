@@ -24,6 +24,10 @@ public:
 
     bool operator!=(const HwResult &ret) const;
 
+    bool operator==(int ret) const;
+
+    bool operator!=(int ret) const;
+
     HwResult &operator=(const HwResult &value);
 };
 

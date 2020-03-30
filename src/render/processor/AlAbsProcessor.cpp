@@ -28,11 +28,11 @@ void AlAbsProcessor::release() {
 }
 
 void AlAbsProcessor::onCreate() {
-    Logcat::e(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogI(TAG, "");
 }
 
 void AlAbsProcessor::onDestroy() {
-    Logcat::e(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogI(TAG, "");
 }
 
 void AlAbsProcessor::registerAnUnit(Unit *unit) {
@@ -40,7 +40,7 @@ void AlAbsProcessor::registerAnUnit(Unit *unit) {
         unit->setModelProvider(provider);
         pipeline->registerAnUnit(unit);
     } else {
-        Logcat::e(TAG, "%s(%d) failed. You must call startPipeline first.", __FUNCTION__, __LINE__);
+        AlLogI(TAG, "failed. You must call startPipeline first.");
     }
 }
 
@@ -74,13 +74,13 @@ HwPairBuilder<Object *> AlAbsProcessor::putObject(string key, Object *value) {
 }
 
 bool AlAbsProcessor::onCreate(AlMessage *msg) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogI(TAG, "");
     onCreate();
     return true;
 }
 
 bool AlAbsProcessor::onDestroy(AlMessage *msg) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogI(TAG, "");
     onDestroy();
     return true;
 }

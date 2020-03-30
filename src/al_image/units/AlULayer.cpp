@@ -55,6 +55,7 @@ bool AlULayer::onDestroy(AlMessage *msg) {
     return true;
 }
 
+
 bool AlULayer::onAddLayer(AlMessage *msg) {
     auto *m = AlMessage::obtain(EVENT_IMAGE_CODEC_DECODE);
     m->arg1 = msg->arg1;
@@ -66,19 +67,21 @@ bool AlULayer::onAddLayer(AlMessage *msg) {
 bool AlULayer::onReceiveImage(AlMessage *msg) {
     switch (msg->arg1) {
         case EVENT_LAYER_ADD: {
-            auto *box = msg->getObj<ObjectBox *>();
             int32_t id = AlIdentityCreator::NONE_ID;
-            if (box) {
+            if (Hw::SUCCESS.code == msg->arg2) {
+                auto *box = msg->getObj<ObjectBox *>();
                 id = mLayerManager.addLayer(box->unWrap<HwAbsTexture *>(), msg->desc);
+                invalidate();
             }
-            postEvent(AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY, id));
-            invalidate();
+            auto *m = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
+            m->arg1 = id;
+            postEvent(m);
             break;
         }
         case EVENT_LAYER_IMPORT: {
-            auto *box = msg->getObj<ObjectBox *>();
             auto *model = mImportQueue.front();
-            if (box && model) {
+            if (Hw::SUCCESS == msg->arg2 && model) {
+                auto *box = msg->getObj<ObjectBox *>();
                 mLayerManager.addLayer(box->unWrap<HwAbsTexture *>(), *model);
                 mImportQueue.pop_front();
                 invalidate();
