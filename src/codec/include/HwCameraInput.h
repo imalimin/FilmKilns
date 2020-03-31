@@ -43,7 +43,7 @@ private:
 private:
     AlSize cameraSize;
     AlEgl *egl = nullptr;
-    HwTexture *srcTex = nullptr;
+    AlSPointer<HwTexture> srcTex;
     HwTexture *destTex = nullptr;
     HwAbsFBObject *fbo = nullptr;
     HwProgram *program = nullptr;

@@ -94,14 +94,15 @@ uint32_t HwCameraRecorder::getTex() {
 }
 
 void HwCameraRecorder::mackCameraCurrent() {
-    if (camera) {
-        camera->mackCurrent();
-    }
+//    if (camera) {
+//        camera->mackCurrent();
+//    }
 }
 
 void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
-    putInt32("camera_width", w).to({ALIAS_OF_CAMERA});
-    putInt32("camera_height", h).to({ALIAS_OF_CAMERA});
+    AlMessage *msg = AlMessage::obtain(MSG_CAMERA_UPDATE_SIZE);
+    msg->ptr = new AlSize(w, h);
+    postEvent(msg);
 }
 
 void HwCameraRecorder::backward() {
@@ -113,6 +114,10 @@ void HwCameraRecorder::setRecordListener(function<void(int64_t)> listener) {
 }
 
 bool HwCameraRecorder::_onOESTexNotify(AlMessage *msg) {
-    oesTex = 0;
+    auto *tex = msg->ptr.as<HwAbsTexture>();
+    if (tex) {
+        oesTex = tex->texId();
+        AlLogI(TAG, "%d", oesTex);
+    }
     return true;
 }

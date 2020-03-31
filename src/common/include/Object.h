@@ -55,51 +55,46 @@ public:
 
     ~AlSPointer();
 
-    AlSPointer<T> &operator=(AlSPointer<T> &o);
+    AlSPointer<T> &operator=(T *o);
 
     T *operator->();
 
     template<class D>
     D *as();
 
+    void release();
+
+    bool isNull();
+
+private:
+    void _ref(Object *obj);
+
+    void _unref();
+
 private:
     Object *obj = nullptr;
 };
 
 template<class T>
-AlSPointer<T>::AlSPointer(Object *obj) : Object(), obj(nullptr) {
-    if (obj) {
-        obj->ref();
-        this->obj = obj;
-    }
+AlSPointer<T>::AlSPointer(Object *obj) : Object() {
+    _ref(obj);
 }
 
 template<class T>
 AlSPointer<T>::AlSPointer(const AlSPointer &o) : Object() {
-    if (o.obj) {
-        obj->ref();
-        this->obj = o.obj;
-    }
+    _ref(o.obj);
 }
 
 template<class T>
 AlSPointer<T>::~AlSPointer() {
-    if (obj) {
-        obj->unref();
-        if (obj->countOfRef <= 0) {
-            delete obj;
-            this->obj = nullptr;
-        }
-    }
+    _unref();
 }
 
 template<class T>
-AlSPointer<T> &AlSPointer<T>::operator=(AlSPointer<T> &o) {
-    static AlSPointer<T> *p;
-    if (p == nullptr) {
-        p = new AlSPointer<T>(o.obj);
-    }
-    return *p;
+AlSPointer<T> &AlSPointer<T>::operator=(T *o) {
+    _unref();
+    _ref(o);
+    return *this;
 }
 
 template<class T>
@@ -114,6 +109,35 @@ D *AlSPointer<T>::as() {
         return dynamic_cast<D *>(obj);
     }
     return nullptr;
+}
+
+template<class T>
+void AlSPointer<T>::_ref(Object *obj) {
+    if (obj) {
+        obj->ref();
+        this->obj = obj;
+    }
+}
+
+template<class T>
+void AlSPointer<T>::_unref() {
+    if (obj) {
+        obj->unref();
+        if (obj->countOfRef <= 0) {
+            delete obj;
+            this->obj = nullptr;
+        }
+    }
+}
+
+template<class T>
+void AlSPointer<T>::release() {
+    _unref();
+}
+
+template<class T>
+bool AlSPointer<T>::isNull() {
+    return nullptr == obj;
 }
 
 #endif //HARDWAREVIDEOCODEC_OBJECT_H

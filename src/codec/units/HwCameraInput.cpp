@@ -13,7 +13,9 @@
 #include "AlMath.h"
 #include "HwAbsTexture.h"
 
-HwCameraInput::HwCameraInput(string alias) : Unit(alias) {
+#define TAG "HwCameraInput"
+
+HwCameraInput::HwCameraInput(string alias) : Unit(alias), srcTex(nullptr) {
     registerEvent(EVENT_CAMERA_INVALIDATE,
                   reinterpret_cast<EventFunc>(&HwCameraInput::eventInvalidate));
     registerEvent(MSG_CAMERA_UPDATE_SIZE,
@@ -48,7 +50,7 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
                     "        }");
     program = HwProgram::create(&vertex, &fragment);
     auto *m = AlMessage::obtain(MSG_CAMERA_OES_TEX_NOTIFY);
-    m->ptr = AlSPointer<HwAbsTexture>(srcTex);
+    m->ptr = srcTex.as<Object>();
     postMessage(m);
     return true;
 }
@@ -60,10 +62,7 @@ bool HwCameraInput::onDestroy(AlMessage *msg) {
         delete fbo;
         fbo = nullptr;
     }
-    if (srcTex) {
-        delete srcTex;
-        srcTex = nullptr;
-    }
+    srcTex.release();
     if (destTex) {
         delete destTex;
         destTex = nullptr;
@@ -105,7 +104,7 @@ void HwCameraInput::draw(int w, int h) {
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
     fbo->bind();
-    program->draw(srcTex);
+    program->draw(srcTex.as());
     fbo->unbind();
 }
 
@@ -118,7 +117,7 @@ void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
 }
 
 uint32_t HwCameraInput::getTex() {
-    if (srcTex) {
+    if (!srcTex.isNull()) {
         return srcTex->texId();
     }
     return 0;
@@ -133,7 +132,7 @@ void HwCameraInput::mackCurrent() {
 void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
     AlMatrix scale;
     float vRatio = w / (float) h;
-    float cRatio = getInt32("camera_width") / (float) getInt32("camera_height");
+    float cRatio = cameraSize.ratio();
     if (cRatio > vRatio) {
         scale.setScale(vRatio / cRatio, -1.0f);
     } else {
@@ -146,4 +145,5 @@ void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
 void HwCameraInput::_onUpdateSize(AlMessage *msg) {
     cameraSize.width = msg->ptr.as<AlSize>()->width;
     cameraSize.height = msg->ptr.as<AlSize>()->height;
+    AlLogI(TAG, "%dx%d", cameraSize.width, cameraSize.height);
 }
