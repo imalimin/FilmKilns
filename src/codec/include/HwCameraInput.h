@@ -20,15 +20,18 @@ public:
 
     virtual ~HwCameraInput();
 
+    uint32_t getTex();
+
+    void mackCurrent();
+
+private:
     bool onCreate(AlMessage *msg) override;
 
     bool onDestroy(AlMessage *msg) override;
 
     bool eventInvalidate(AlMessage *msg);
 
-    uint32_t getTex();
-
-    void mackCurrent();
+    void _onUpdateSize(AlMessage *msg);
 
 private:
     void draw(int w, int h);
@@ -38,6 +41,7 @@ private:
     void updateMatrix(int32_t w, int32_t h, AlMatrix *matrix);
 
 private:
+    AlSize cameraSize;
     AlEgl *egl = nullptr;
     HwTexture *srcTex = nullptr;
     HwTexture *destTex = nullptr;

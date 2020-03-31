@@ -13,13 +13,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickListener {
 
     private val ITEMS = arrayListOf(
-            Item("Echo Player") { startActivity(Intent(this, EchoActivity::class.java)) },
-            Item("Image Editor") { startActivity(Intent(this, ImageActivity::class.java)) },
             Item("New Image Editor") { startActivity(Intent(this, AlImageActivity::class.java)) },
             Item("Audio Player") { startActivity(Intent(this, AudioActivity::class.java)) },
             Item("Video Player") { startActivity(Intent(this, VideoActivity::class.java)) },
             Item("Audio Recorder & Mux") { startActivity(Intent(this, AudioRecordAndMuxActivity::class.java)) },
             Item("Video Recorder") { startActivity(Intent(this, CameraActivity::class.java)) },
+            Item("Echo Player") { startActivity(Intent(this, EchoActivity::class.java)) },
+            Item("Image Editor") { startActivity(Intent(this, ImageActivity::class.java)) },
             Item("Voice Player") { startActivity(Intent(this, AudioPlayerActivity::class.java)) },
             Item("Voice Recorder") { startActivity(Intent(this, TestAudioRecorderActivity::class.java)) },
             Item("TestMemFIFOActivity") { startActivity(Intent(this, TestMemFIFOActivity::class.java)) },

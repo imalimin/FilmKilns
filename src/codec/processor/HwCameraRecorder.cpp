@@ -15,38 +15,37 @@
 #include "NativeWindow.h"
 #include "HwTexture.h"
 
-HwCameraRecorder::HwCameraRecorder() : HwAbsProcessor("HwCameraRecorder") {
-    camera = new HwCameraInput(ALIAS_OF_CAMERA);
+#define TAG "HwCameraRecorder"
+
+HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
-    registerAnUnit(camera);
+    registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    HwVideoCompiler *c = new HwVideoCompiler(ALIAS_OF_COMPILER);
-    registerAnUnit(c);
-    post([this] {
-        this->aSharedContext = AlEgl::offScreen();
-    });
-    prepare();
-    c->setRecordListener([this](int64_t timeInUs) {
-        this->recordListener(timeInUs);
-    });
+    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
+//    c->setRecordListener([this](int64_t timeInUs) {
+//        this->recordListener(timeInUs);
+//    });
+    registerEvent(MSG_CAMERA_OES_TEX_NOTIFY,
+                  reinterpret_cast<EventFunc>(&HwCameraRecorder::_onOESTexNotify));
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
-    post([this] {
-        delete this->aSharedContext;
-        this->aSharedContext = nullptr;
-    });
+    delete audioFormat;
+    audioFormat = nullptr;
+    this->recordListener = nullptr;
+}
+
+void HwCameraRecorder::onCreate() {
+    AlAbsProcessor::onCreate();
+    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    aSharedContext = AlEgl::offScreen();
 }
 
 void HwCameraRecorder::onDestroy() {
-    HwAbsProcessor::onDestroy();
-    if (audioFormat) {
-        delete audioFormat;
-        audioFormat = nullptr;
-    }
-    camera = nullptr;
-    this->recordListener = nullptr;
+    AlAbsProcessor::onDestroy();
+    delete aSharedContext;
+    aSharedContext = nullptr;
 }
 
 void HwCameraRecorder::updateWindow(HwWindow *win) {
@@ -91,7 +90,7 @@ void HwCameraRecorder::setFilter(HwAbsFilter *filter) {
 }
 
 uint32_t HwCameraRecorder::getTex() {
-    return camera->getTex();
+    return oesTex;
 }
 
 void HwCameraRecorder::mackCameraCurrent() {
@@ -111,4 +110,9 @@ void HwCameraRecorder::backward() {
 
 void HwCameraRecorder::setRecordListener(function<void(int64_t)> listener) {
     this->recordListener = listener;
+}
+
+bool HwCameraRecorder::_onOESTexNotify(AlMessage *msg) {
+    oesTex = 0;
+    return true;
 }

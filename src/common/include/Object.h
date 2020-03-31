@@ -59,6 +59,9 @@ public:
 
     T *operator->();
 
+    template<class D>
+    D *as();
+
 private:
     Object *obj = nullptr;
 };
@@ -102,6 +105,15 @@ AlSPointer<T> &AlSPointer<T>::operator=(AlSPointer<T> &o) {
 template<class T>
 T *AlSPointer<T>::operator->() {
     return obj;
+}
+
+template<class T>
+template<class D>
+D *AlSPointer<T>::as() {
+    if (nullptr != obj) {
+        return dynamic_cast<D *>(obj);
+    }
+    return nullptr;
 }
 
 #endif //HARDWAREVIDEOCODEC_OBJECT_H

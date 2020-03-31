@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWCAMERARECORDER_H
 #define HWVC_ANDROID_HWCAMERARECORDER_H
 
-#include "HwAbsProcessor.h"
+#include "AlAbsProcessor.h"
 #include "HwWindow.h"
 #include "HwAbsFilter.h"
 #include "HwSampleFormat.h"
@@ -37,13 +37,16 @@
  *        |                     |                      |                  |                    |
  *
  */
-class HwCameraRecorder : public HwAbsProcessor {
+class HwCameraRecorder : public AlAbsProcessor {
 public:
     HwCameraRecorder();
 
     virtual ~HwCameraRecorder();
 
+    virtual void onCreate() override;
+
     virtual void onDestroy() override;
+
 
     void updateWindow(HwWindow *win);
 
@@ -78,14 +81,17 @@ public:
     void setRecordListener(function<void(int64_t)> listener);
 
 private:
+    bool _onOESTexNotify(AlMessage *msg);
+
+private:
     const string ALIAS_OF_MIC = "MIC";
     const string ALIAS_OF_CAMERA = "CAMERA";
     const string ALIAS_OF_RENDER = "RENDER";
     const string ALIAS_OF_SCREEN = "SCREEN";
     const string ALIAS_OF_COMPILER = "COMPILER";
+    uint32_t oesTex = GL_NONE;
     AlEgl *aSharedContext = nullptr;
     HwSampleFormat *audioFormat = nullptr;
-    HwCameraInput *camera = nullptr;
     function<void(int64_t)> recordListener = nullptr;
 };
 

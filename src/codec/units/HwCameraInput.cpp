@@ -11,10 +11,13 @@
 #include "NativeWindow.h"
 #include "HwFBObject.h"
 #include "AlMath.h"
+#include "HwAbsTexture.h"
 
 HwCameraInput::HwCameraInput(string alias) : Unit(alias) {
     registerEvent(EVENT_CAMERA_INVALIDATE,
                   reinterpret_cast<EventFunc>(&HwCameraInput::eventInvalidate));
+    registerEvent(MSG_CAMERA_UPDATE_SIZE,
+                  reinterpret_cast<EventFunc>(&HwCameraInput::_onUpdateSize));
 }
 
 HwCameraInput::~HwCameraInput() {
@@ -44,6 +47,9 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
                     "            gl_FragColor = color;\n"
                     "        }");
     program = HwProgram::create(&vertex, &fragment);
+    auto *m = AlMessage::obtain(MSG_CAMERA_OES_TEX_NOTIFY);
+    m->ptr = AlSPointer<HwAbsTexture>(srcTex);
+    postMessage(m);
     return true;
 }
 
@@ -135,4 +141,9 @@ void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
     }
     AlMatrix trans = scale * (*matrix);
     program->updateMatrix(&trans);
+}
+
+void HwCameraInput::_onUpdateSize(AlMessage *msg) {
+    cameraSize.width = msg->ptr.as<AlSize>()->width;
+    cameraSize.height = msg->ptr.as<AlSize>()->height;
 }
