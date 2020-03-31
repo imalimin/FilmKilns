@@ -15,3 +15,11 @@ Object::~Object() {
 std::string Object::toString() {
     return std::string();
 }
+
+void Object::ref() {
+    ++countOfRef;
+}
+
+void Object::unref() {
+    --countOfRef;
+}

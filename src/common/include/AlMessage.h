@@ -26,6 +26,7 @@ public:
     string desc;
     /// Will be delete after cycle.
     Object *obj = nullptr;
+    AlSPointer<Object> ptr;
     int16_t queueMode = QUEUE_MODE_NORMAL;
 private:
     friend AlLooper;
@@ -41,7 +42,7 @@ private:
 
     AlMessage(int32_t what, Object *obj, int16_t queueMode);
 
-    AlMessage(AlMessage &e) : Object() {
+    AlMessage(AlMessage &e) : Object(), ptr(nullptr) {
     }
 
 public:
