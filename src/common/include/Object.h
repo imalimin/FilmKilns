@@ -99,7 +99,7 @@ AlSPointer<T> &AlSPointer<T>::operator=(T *o) {
 
 template<class T>
 T *AlSPointer<T>::operator->() {
-    return obj;
+    return as<T>();
 }
 
 template<class T>

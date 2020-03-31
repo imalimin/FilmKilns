@@ -12,6 +12,8 @@
 #include "HwFBObject.h"
 #include "AlMath.h"
 #include "HwAbsTexture.h"
+#include "ObjectBox.h"
+#include "AlRunnable.h"
 
 #define TAG "HwCameraInput"
 
@@ -20,6 +22,8 @@ HwCameraInput::HwCameraInput(string alias) : Unit(alias), srcTex(nullptr) {
                   reinterpret_cast<EventFunc>(&HwCameraInput::eventInvalidate));
     registerEvent(MSG_CAMERA_UPDATE_SIZE,
                   reinterpret_cast<EventFunc>(&HwCameraInput::_onUpdateSize));
+    registerEvent(MSG_CAMERA_RUN,
+                  reinterpret_cast<EventFunc>(&HwCameraInput::_onRun));
 }
 
 HwCameraInput::~HwCameraInput() {
@@ -27,7 +31,7 @@ HwCameraInput::~HwCameraInput() {
 }
 
 bool HwCameraInput::onCreate(AlMessage *msg) {
-    Logcat::i("HWVC", "HwCameraInput::eventPrepare");
+    AlLogI(TAG, "");
     egl = AlEgl::offScreen(AlEgl::currentContext());
     srcTex = HwTexture::allocOES();
     AlTexDescription desc;
@@ -56,7 +60,7 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
 }
 
 bool HwCameraInput::onDestroy(AlMessage *msg) {
-    Logcat::i("HWVC", "HwCameraInput::onDestroy");
+    AlLogI(TAG, "");
     egl->makeCurrent();
     if (fbo) {
         delete fbo;
@@ -104,29 +108,15 @@ void HwCameraInput::draw(int w, int h) {
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
     fbo->bind();
-    program->draw(srcTex.as());
+    program->draw(srcTex.as<HwAbsTexture>());
     fbo->unbind();
 }
 
 void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
-    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
+    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_DRAW_TEX, AlMessage::QUEUE_MODE_UNIQUE);
     msg->obj = HwTexture::wrap(destTex);
     msg->arg2 = tsInNs;
-    msg->queueMode = AlMessage::QUEUE_MODE_UNIQUE;
     postEvent(msg);
-}
-
-uint32_t HwCameraInput::getTex() {
-    if (!srcTex.isNull()) {
-        return srcTex->texId();
-    }
-    return 0;
-}
-
-void HwCameraInput::mackCurrent() {
-    if (egl) {
-        egl->makeCurrent();
-    }
 }
 
 void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
@@ -146,4 +136,12 @@ void HwCameraInput::_onUpdateSize(AlMessage *msg) {
     cameraSize.width = msg->ptr.as<AlSize>()->width;
     cameraSize.height = msg->ptr.as<AlSize>()->height;
     AlLogI(TAG, "%dx%d", cameraSize.width, cameraSize.height);
+}
+
+void HwCameraInput::_onRun(AlMessage *msg) {
+    auto *func = msg->getObj<AlRunnable *>();
+    if (func) {
+        egl->makeCurrent();
+        (*func)(nullptr);
+    }
 }

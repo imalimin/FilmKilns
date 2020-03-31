@@ -54,7 +54,7 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
 
     fun prepare() {
         if (0L == handler) return
-        postEvent(handler, EVENT_PREPARE)
+//        postEvent(handler, EVENT_PREPARE)
     }
 
     fun start() {
@@ -73,12 +73,17 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     }
 
     fun onHandleMessage(what: Int, arg1: Int) {
-//        Log.i("CameraActivity", "onHandleMessage $what")
         when (what) {
-            1 -> camera = CameraWrapper.open(mCameraIndex, videoWidth, videoHeight,
-                    arg1, this)
-            2 -> camera?.release()
-            4 -> {
+//            EVENT_PREPARE ->
+            EVENT_RELEASE -> camera?.release()
+            EVENT_DRAW -> {
+                camera?.draw()
+                if (0L != handler) {
+                    invalidate(handler, camera!!.getMatrix(), camera!!.timestamp(),
+                            camera!!.cameraHeight, camera!!.cameraWidth)
+                }
+            }
+            EVENT_SWAP -> {
                 mCameraIndex = if (CameraWrapper.CameraIndex.FRONT == mCameraIndex)
                     CameraWrapper.CameraIndex.BACK
                 else {
@@ -86,14 +91,16 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
                 }
                 camera?.switchCamera(mCameraIndex)
             }
-            3 -> {
-                camera?.draw()
-                if (0L != handler) {
-                    invalidate(handler, camera!!.getMatrix(), camera!!.timestamp(),
-                            camera!!.cameraHeight, camera!!.cameraWidth)
-                }
-            }
         }
+    }
+
+    fun onNativePrepared(oesTex: Int) {
+        if (null != camera || oesTex <= 0) {
+            return
+        }
+        Log.i("HwCameraRecorder:", "OES tex $oesTex")
+        camera = CameraWrapper.open(mCameraIndex, videoWidth, videoHeight,
+                oesTex, this)
     }
 
     override fun setFilter(filter: Filter) {

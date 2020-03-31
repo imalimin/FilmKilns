@@ -17,11 +17,42 @@ static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor
 static JMethodDescription vRecordProgressDesc = {
         "Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
         "onRecordProgress", "(J)V"};
+static JMethodDescription midOnNativePrepared = {
+        "Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
+        "onNativePrepared", "(I)V"};
 
 static int HwCameraRecorderWhat = 0;
 
 static HwCameraRecorder *getHandler(jlong handler) {
     return reinterpret_cast<HwCameraRecorder *>(handler);
+}
+
+static void bindListener(jlong handler) {
+    getHandler(handler)->setRecordListener([handler](int64_t timeInUs) {
+        jobject jObject = nullptr;
+        JNIEnv *pEnv = nullptr;
+        jmethodID mid = nullptr;
+        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                          vRecordProgressDesc,
+                                                          &mid)) {
+            pEnv->CallVoidMethod(jObject, mid, static_cast<jlong>(timeInUs));
+        }
+    });
+    getHandler(handler)->setOnNativeReadyListener([handler](int32_t oesTex) {
+        jobject jObject = nullptr;
+        JNIEnv *pEnv = nullptr;
+        jmethodID mid = nullptr;
+        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                          midOnNativePrepared,
+                                                          &mid)) {
+            pEnv->CallVoidMethod(jObject, mid, static_cast<jint>(oesTex));
+        }
+    });
+
 }
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_create
@@ -32,19 +63,7 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_creat
     });
     jlong handler = reinterpret_cast<jlong>(p);
     HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
-    ///Callback
-    getHandler(handler)->setRecordListener([handler](int64_t timeInUs) {
-        jobject jObject = nullptr;
-        JNIEnv *pEnv = nullptr;
-        jmethodID methodID = nullptr;
-        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-            HwJavaNativeHelper::getInstance()->findMethod(handler,
-                                                          vRecordProgressDesc,
-                                                          &methodID)) {
-            pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(timeInUs));
-        }
-    });
+    bindListener(handler);
     return handler;
 }
 
@@ -52,7 +71,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
         (JNIEnv *env, jobject thiz, jlong handler, jint what) {
     if (handler) {
         HwCameraRecorderWhat = what;
-        getHandler(handler)->post([handler]() {
+        getHandler(handler)->runOnCameraContext([handler]() {
             jobject jObject = nullptr;
             JNIEnv *pEnv = nullptr;
             jmethodID methodID = nullptr;
@@ -61,18 +80,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
                 HwJavaNativeHelper::getInstance()->findMethod(handler,
                                                               cOnHandleMessage,
                                                               &methodID)) {
-                getHandler(handler)->mackCameraCurrent();
                 switch (HwCameraRecorderWhat) {
                     case 4: {
-                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat,
-                                             1 == HwCameraRecorderWhat ? getHandler(
-                                                     handler)->getTex() : 0);
+                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat, 0);
                         break;
                     }
                     default:
-                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat,
-                                             1 == HwCameraRecorderWhat ? getHandler(
-                                                     handler)->getTex() : 0);
+                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat, 0);
                 }
             }
         });
@@ -132,7 +146,8 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invalidate
-        (JNIEnv *env, jobject thiz, jlong handler, jfloatArray matrix, jlong tsInNs, jint cw, jint ch) {
+        (JNIEnv *env, jobject thiz, jlong handler, jfloatArray matrix, jlong tsInNs, jint cw,
+         jint ch) {
     if (handler) {
         if (matrix) {
             jfloat *pMatrix = env->GetFloatArrayElements(matrix, JNI_FALSE);

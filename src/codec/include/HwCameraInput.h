@@ -20,10 +20,6 @@ public:
 
     virtual ~HwCameraInput();
 
-    uint32_t getTex();
-
-    void mackCurrent();
-
 private:
     bool onCreate(AlMessage *msg) override;
 
@@ -32,6 +28,8 @@ private:
     bool eventInvalidate(AlMessage *msg);
 
     void _onUpdateSize(AlMessage *msg);
+
+    void _onRun(AlMessage *msg);
 
 private:
     void draw(int w, int h);

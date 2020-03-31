@@ -14,15 +14,16 @@
 #include "ObjectBox.h"
 #include "NativeWindow.h"
 #include "HwTexture.h"
+#include "AlRunnable.h"
 
 #define TAG "HwCameraRecorder"
 
 HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
-    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
+//    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
+//    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
 //    c->setRecordListener([this](int64_t timeInUs) {
 //        this->recordListener(timeInUs);
 //    });
@@ -33,7 +34,7 @@ HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
 HwCameraRecorder::~HwCameraRecorder() {
     delete audioFormat;
     audioFormat = nullptr;
-    this->recordListener = nullptr;
+    this->onNativeReadyListener = nullptr;
 }
 
 void HwCameraRecorder::onCreate() {
@@ -89,14 +90,11 @@ void HwCameraRecorder::setFilter(HwAbsFilter *filter) {
     postEvent(msg);
 }
 
-uint32_t HwCameraRecorder::getTex() {
-    return oesTex;
-}
-
-void HwCameraRecorder::mackCameraCurrent() {
-//    if (camera) {
-//        camera->mackCurrent();
-//    }
+void HwCameraRecorder::runOnCameraContext(function<void()> func) {
+    AlMessage *msg = AlMessage::obtain(MSG_CAMERA_RUN, new AlRunnable([func](Object *o) {
+        func();
+    }));
+    postEvent(msg);
 }
 
 void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
@@ -110,14 +108,18 @@ void HwCameraRecorder::backward() {
 }
 
 void HwCameraRecorder::setRecordListener(function<void(int64_t)> listener) {
-    this->recordListener = listener;
+}
+
+void HwCameraRecorder::setOnNativeReadyListener(OnNativeReadyListener l) {
+    this->onNativeReadyListener = l;
 }
 
 bool HwCameraRecorder::_onOESTexNotify(AlMessage *msg) {
     auto *tex = msg->ptr.as<HwAbsTexture>();
-    if (tex) {
+    if (tex && onNativeReadyListener) {
         oesTex = tex->texId();
         AlLogI(TAG, "%d", oesTex);
+        onNativeReadyListener(oesTex);
     }
     return true;
 }

@@ -64,6 +64,7 @@ static constexpr int EVENT_MICROPHONE_OUT_SAMPLES = KID('M', 'I', 'C', 0x02);
 static constexpr int EVENT_CAMERA_INVALIDATE = KID('C', 'A', 'M', 0x00);
 static constexpr int MSG_CAMERA_UPDATE_SIZE = KID('C', 'A', 'M', 0x01);
 static constexpr int MSG_CAMERA_OES_TEX_NOTIFY = KID('C', 'A', 'M', 0x02);
+static constexpr int MSG_CAMERA_RUN = KID('C', 'A', 'M', 0x03);
 
 static constexpr int EVENT_VIDEO_COMPILER_BACKWARD = KID('H', 'V', 'C', 0x00);
 

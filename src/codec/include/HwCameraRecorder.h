@@ -39,6 +39,9 @@
  */
 class HwCameraRecorder : public AlAbsProcessor {
 public:
+    typedef function<void(int32_t)> OnNativeReadyListener;
+
+public:
     HwCameraRecorder();
 
     virtual ~HwCameraRecorder();
@@ -67,9 +70,7 @@ public:
 
     void setFilter(HwAbsFilter *filter);
 
-    uint32_t getTex();
-
-    void mackCameraCurrent();
+    void runOnCameraContext(function<void()> func);
 
     void setCameraSize(int32_t w, int32_t h);
 
@@ -79,6 +80,8 @@ public:
     void backward();
 
     void setRecordListener(function<void(int64_t)> listener);
+
+    void setOnNativeReadyListener(OnNativeReadyListener l);
 
 private:
     bool _onOESTexNotify(AlMessage *msg);
@@ -92,7 +95,7 @@ private:
     uint32_t oesTex = GL_NONE;
     AlEgl *aSharedContext = nullptr;
     HwSampleFormat *audioFormat = nullptr;
-    function<void(int64_t)> recordListener = nullptr;
+    OnNativeReadyListener onNativeReadyListener = nullptr;
 };
 
 
