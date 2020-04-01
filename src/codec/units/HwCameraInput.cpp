@@ -14,16 +14,19 @@
 #include "HwAbsTexture.h"
 #include "ObjectBox.h"
 #include "AlRunnable.h"
+#include "AlTexManager.h"
 
 #define TAG "HwCameraInput"
 
-HwCameraInput::HwCameraInput(string alias) : Unit(alias), srcTex(nullptr) {
+HwCameraInput::HwCameraInput(string alias) : Unit(alias), srcTex(nullptr), destTex(nullptr) {
     registerEvent(EVENT_CAMERA_INVALIDATE,
                   reinterpret_cast<EventFunc>(&HwCameraInput::eventInvalidate));
     registerEvent(MSG_CAMERA_UPDATE_SIZE,
                   reinterpret_cast<EventFunc>(&HwCameraInput::_onUpdateSize));
     registerEvent(MSG_CAMERA_RUN,
                   reinterpret_cast<EventFunc>(&HwCameraInput::_onRun));
+    registerEvent(EVENT_LAYER_QUERY_ID_NOTIFY,
+                  reinterpret_cast<EventFunc>(&HwCameraInput::_onLayerNotify));
 }
 
 HwCameraInput::~HwCameraInput() {
@@ -34,8 +37,7 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
     AlLogI(TAG, "");
     egl = AlEgl::offScreen(AlEgl::currentContext());
     srcTex = HwTexture::allocOES();
-    AlTexDescription desc;
-    destTex = HwTexture::alloc(desc);
+    destTex = AlTexManager::instance()->alloc();
     string vertex("        attribute vec4 aPosition;\n"
                   "        attribute vec4 aTextureCoord;\n"
                   "        uniform mat4 uTextureMatrix;\n"
@@ -62,15 +64,8 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
 bool HwCameraInput::onDestroy(AlMessage *msg) {
     AlLogI(TAG, "");
     egl->makeCurrent();
-    if (fbo) {
-        delete fbo;
-        fbo = nullptr;
-    }
     srcTex.release();
-    if (destTex) {
-        delete destTex;
-        destTex = nullptr;
-    }
+//    destTex.release();
     if (program) {
         delete program;
         program = nullptr;
@@ -98,11 +93,15 @@ bool HwCameraInput::eventInvalidate(AlMessage *msg) {
 void HwCameraInput::draw(int w, int h) {
     egl->makeCurrent();
     if (!fbo) {
-        if (destTex) {
+        if (!destTex.isNull()) {
             destTex->update(nullptr, w, h);
+
+            auto *m = AlMessage::obtain(MSG_LAYER_ADD_TEX);
+            m->ptr = destTex.as<Object>();
+            postMessage(m);
         }
         fbo = HwFBObject::alloc();
-        fbo->bindTex(destTex);
+        fbo->bindTex(destTex.as<HwAbsTexture>());
     }
     glViewport(0, 0, destTex->getWidth(), destTex->getHeight());
     glClear(GL_COLOR_BUFFER_BIT);
@@ -113,9 +112,9 @@ void HwCameraInput::draw(int w, int h) {
 }
 
 void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
-    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_DRAW_TEX, AlMessage::QUEUE_MODE_UNIQUE);
-    msg->obj = HwTexture::wrap(destTex);
-    msg->arg2 = tsInNs;
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr,
+                                       AlMessage::QUEUE_MODE_UNIQUE);
+    msg->arg1 = 0;
     postEvent(msg);
 }
 
@@ -144,4 +143,9 @@ void HwCameraInput::_onRun(AlMessage *msg) {
         egl->makeCurrent();
         (*func)(nullptr);
     }
+}
+
+void HwCameraInput::_onLayerNotify(AlMessage *msg) {
+    mLayerId = msg->arg1;
+    AlLogI(TAG, "%d", mLayerId);
 }

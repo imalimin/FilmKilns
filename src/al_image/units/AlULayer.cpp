@@ -39,6 +39,8 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayer::onReceiveImage));
     registerEvent(EVENT_LAYER_QUERY_INFO,
                   reinterpret_cast<EventFunc>(&AlULayer::onQueryInfo));
+    registerEvent(MSG_LAYER_ADD_TEX,
+                  reinterpret_cast<EventFunc>(&AlULayer::onAddLayerTex));
 }
 
 AlULayer::~AlULayer() {
@@ -62,6 +64,12 @@ bool AlULayer::onAddLayer(AlMessage *msg) {
     m->desc = msg->desc;
     postEvent(m);
     return true;
+}
+
+bool AlULayer::onAddLayerTex(AlMessage *msg) {
+    auto *m = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
+    m->arg1 = mLayerManager.addLayerTex(msg->ptr.as<HwAbsTexture>());
+    postEvent(m);
 }
 
 bool AlULayer::onReceiveImage(AlMessage *msg) {

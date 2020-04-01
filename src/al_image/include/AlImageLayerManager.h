@@ -24,6 +24,8 @@ public:
 
     int32_t addLayer(HwAbsTexture *tex, const std::string path);
 
+    int32_t addLayerTex(HwAbsTexture *tex);
+
     int32_t addLayer(HwAbsTexture *tex, AlImageLayerModel &model);
 
     void removeLayer(const int32_t id);

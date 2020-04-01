@@ -9,7 +9,7 @@
 #include "../include/HwCameraRecorder.h"
 #include "../include/HwMicrophone.h"
 #include "../include/HwVideoCompiler.h"
-#include "HwRender.h"
+#include "AlGImage.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "NativeWindow.h"
@@ -21,7 +21,7 @@
 HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
-//    registerAnUnit(new HwRender(ALIAS_OF_RENDER));
+    registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
 //    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
 //    c->setRecordListener([this](int64_t timeInUs) {

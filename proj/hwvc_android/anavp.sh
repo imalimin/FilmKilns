@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 parse() {
-	project=$1
+    project=$1
     content=$2
     p=`echo $content | sed 's/.*#//g;s/.so.*//g'`
     array=(${p/// })
@@ -13,8 +13,10 @@ parse() {
 
     len=
     arm="armeabi-v7a"
+    cmd="arm-linux-androideabi-addr2line.exe"
     if [ ${#addr} -gt 8 ];then
     	arm="arm64-v8a"
+        cmd="aarch64-linux-android-addr2line.exe"
     fi
 
     result=''
@@ -26,7 +28,7 @@ parse() {
     	if [ -d $dir ];then
     		so_file="${dir}/build/intermediates/cmake/debug/obj/${arm}/${so}"
     		if [ -f $so_file ];then
-    			result=$(parse_addr $so_file $addr)
+    			result=`${cmd} -e $so_file $addr`
     			date=$(date "+%Y-%m-%d %H:%M:%S")
     			echo "${date} #${idx} ${addr} at ${so}:"
     			echo -e "\033[33m ${result} \033[0m"
@@ -37,11 +39,11 @@ parse() {
     # result=
 }
 
-parse_addr() {
-	# echo "$1, $2"
-	echo `aarch64-linux-android-addr2line -e $1 $2`
-	return $?
-}
+# parse_addr() {
+# 	# echo "$1, $2"
+# 	echo `aarch64-linux-android-addr2line -e $1 $2`
+# 	return $?
+# }
 
 show_help() {
 	echo "-p: Parse native track stack."

@@ -67,17 +67,17 @@ public:
     bool isNull();
 
 private:
-    void _ref(Object *obj);
+    void _ref(T *obj);
 
     void _unref();
 
 private:
-    Object *obj = nullptr;
+    T *obj = nullptr;
 };
 
 template<class T>
 AlSPointer<T>::AlSPointer(Object *obj) : Object() {
-    _ref(obj);
+    _ref(dynamic_cast<T *>(obj));
 }
 
 template<class T>
@@ -99,7 +99,7 @@ AlSPointer<T> &AlSPointer<T>::operator=(T *o) {
 
 template<class T>
 T *AlSPointer<T>::operator->() {
-    return as<T>();
+    return obj;
 }
 
 template<class T>
@@ -112,7 +112,7 @@ D *AlSPointer<T>::as() {
 }
 
 template<class T>
-void AlSPointer<T>::_ref(Object *obj) {
+void AlSPointer<T>::_ref(T *obj) {
     if (obj) {
         obj->ref();
         this->obj = obj;

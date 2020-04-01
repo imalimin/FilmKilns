@@ -31,6 +31,8 @@ private:
 
     void _onRun(AlMessage *msg);
 
+    void _onLayerNotify(AlMessage *msg);
+
 private:
     void draw(int w, int h);
 
@@ -41,10 +43,11 @@ private:
 private:
     AlSize cameraSize;
     AlEgl *egl = nullptr;
-    AlSPointer<HwTexture> srcTex;
-    HwTexture *destTex = nullptr;
+    AlSPointer<HwAbsTexture> srcTex;
+    AlSPointer<HwAbsTexture> destTex;
     HwAbsFBObject *fbo = nullptr;
     HwProgram *program = nullptr;
+    int32_t mLayerId = -1;
 };
 
 

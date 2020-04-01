@@ -48,6 +48,10 @@ int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, const std::string path)
     return model->getId();
 }
 
+int32_t AlImageLayerManager::addLayerTex(HwAbsTexture *tex) {
+    return addLayer(tex, "/tex/");
+}
+
 int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, AlImageLayerModel &model) {
     if (nullptr == tex) {
         AlLogE(TAG, "failed %d", 0);

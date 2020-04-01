@@ -11,6 +11,7 @@ if (ANDROID)
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
             ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
             ${PROJECT_SOURCE_DIR}/../render/include
+            ${PROJECT_SOURCE_DIR}/../al_image/include
             ${YUV}/include
             # android
             ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/encoder
@@ -145,6 +146,7 @@ if (ANDROID)
             hwvc_codec
             hwvcom
             hwvc_render
+            alimage
             hwffmpeg
             yuv
             mediandk
