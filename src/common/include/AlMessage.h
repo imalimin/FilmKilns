@@ -64,8 +64,6 @@ public:
 //    static constexpr int16_t QUEUE_MODE_CLEAR_ALL = 0x10;
 
 public:
-    static AlMessage *obtain();
-
     static AlMessage *obtain(int32_t what);
 
     static AlMessage *obtain(int32_t what, Object *obj);

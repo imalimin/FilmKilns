@@ -25,7 +25,7 @@ private:
 
     bool onDestroy(AlMessage *msg) override;
 
-    bool eventInvalidate(AlMessage *msg);
+    bool _onInvalidate(AlMessage *msg);
 
     void _onUpdateSize(AlMessage *msg);
 

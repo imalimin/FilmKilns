@@ -8,20 +8,6 @@
 #include "AlMessage.h"
 #include "ObjectBox.h"
 
-AlMessage *AlMessage::obtain() {
-    AlMessage *msg = AlMessageManager::getInstance()->popOne();
-    if (msg) {
-        msg->what = 0;
-        msg->obj = nullptr;
-        msg->arg1 = 0;
-        msg->arg2 = 0;
-        msg->desc = "Undef";
-        msg->queueMode = QUEUE_MODE_NORMAL;
-        return msg;
-    }
-    return new AlMessage();
-}
-
 AlMessage *AlMessage::obtain(int32_t what) {
     return obtain(what, nullptr, QUEUE_MODE_NORMAL);
 }
@@ -104,6 +90,11 @@ void AlMessageManager::recycle(AlMessage *msg) {
     }
     std::lock_guard<std::mutex> guard(poolMtx);
     if (msg->obj) {
+        msg->what = -1;
+        msg->arg1 = 0;
+        msg->arg2 = 0;
+        msg->desc = "Undef";
+        msg->queueMode = AlMessage::QUEUE_MODE_NORMAL;
         delete msg->obj;
         msg->obj = nullptr;
     }

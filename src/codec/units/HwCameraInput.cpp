@@ -20,7 +20,7 @@
 
 HwCameraInput::HwCameraInput(string alias) : Unit(alias), srcTex(nullptr), destTex(nullptr) {
     registerEvent(EVENT_CAMERA_INVALIDATE,
-                  reinterpret_cast<EventFunc>(&HwCameraInput::eventInvalidate));
+                  reinterpret_cast<EventFunc>(&HwCameraInput::_onInvalidate));
     registerEvent(MSG_CAMERA_UPDATE_SIZE,
                   reinterpret_cast<EventFunc>(&HwCameraInput::_onUpdateSize));
     registerEvent(MSG_CAMERA_RUN,
@@ -77,16 +77,15 @@ bool HwCameraInput::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool HwCameraInput::eventInvalidate(AlMessage *msg) {
+bool HwCameraInput::_onInvalidate(AlMessage *msg) {
+    AlLogI(TAG, "");
     int64_t tsInNs = msg->arg2;
-    int width = getInt32("width");
-    int height = getInt32("height");
     if (msg->obj) {
         AlMatrix *m = msg->getObj<AlMatrix *>();
-        updateMatrix(width, height, m);
+        updateMatrix(cameraSize.width, cameraSize.height, m);
     }
-    draw(width, height);
-    notify(tsInNs, width, height);
+    draw(cameraSize.width, cameraSize.height);
+    notify(tsInNs, cameraSize.width, cameraSize.height);
     return true;
 }
 
@@ -112,10 +111,10 @@ void HwCameraInput::draw(int w, int h) {
 }
 
 void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
-    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr,
-                                       AlMessage::QUEUE_MODE_UNIQUE);
-    msg->arg1 = 0;
-    postEvent(msg);
+//    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr,
+//                                       AlMessage::QUEUE_MODE_UNIQUE);
+//    msg->arg1 = 0;
+//    postEvent(msg);
 }
 
 void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {

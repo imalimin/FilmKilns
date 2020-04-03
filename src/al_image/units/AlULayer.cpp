@@ -69,7 +69,8 @@ bool AlULayer::onAddLayer(AlMessage *msg) {
 bool AlULayer::onAddLayerTex(AlMessage *msg) {
     auto *m = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
     m->arg1 = mLayerManager.addLayerTex(msg->ptr.as<HwAbsTexture>());
-    postEvent(m);
+    postMessage(m);
+    return true;
 }
 
 bool AlULayer::onReceiveImage(AlMessage *msg) {

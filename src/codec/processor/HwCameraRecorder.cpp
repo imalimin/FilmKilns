@@ -63,10 +63,9 @@ void HwCameraRecorder::pause() {
 }
 
 void HwCameraRecorder::invalidate(AlMatrix *matrix, int64_t tsInNs) {
-    AlMessage *msg = AlMessage::obtain(EVENT_CAMERA_INVALIDATE);
-    msg->obj = new AlMatrix(*matrix);
+    AlMessage *msg = AlMessage::obtain(EVENT_CAMERA_INVALIDATE, new AlMatrix(*matrix),
+                                       Message::QUEUE_MODE_UNIQUE);
     msg->arg2 = tsInNs;
-    msg->queueMode = Message::QUEUE_MODE_UNIQUE;
     postEvent(msg);
 }
 

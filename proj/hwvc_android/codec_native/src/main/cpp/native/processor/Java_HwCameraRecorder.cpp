@@ -21,8 +21,6 @@ static JMethodDescription midOnNativePrepared = {
         "Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
         "onNativePrepared", "(I)V"};
 
-static int HwCameraRecorderWhat = 0;
-
 static HwCameraRecorder *getHandler(jlong handler) {
     return reinterpret_cast<HwCameraRecorder *>(handler);
 }
@@ -70,8 +68,8 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_creat
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEvent
         (JNIEnv *env, jobject thiz, jlong handler, jint what) {
     if (handler) {
-        HwCameraRecorderWhat = what;
-        getHandler(handler)->runOnCameraContext([handler]() {
+        int w = what;
+        getHandler(handler)->runOnCameraContext([handler, w]() {
             jobject jObject = nullptr;
             JNIEnv *pEnv = nullptr;
             jmethodID methodID = nullptr;
@@ -80,15 +78,22 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
                 HwJavaNativeHelper::getInstance()->findMethod(handler,
                                                               cOnHandleMessage,
                                                               &methodID)) {
-                switch (HwCameraRecorderWhat) {
+                AlLogI("Java_HwCameraRecorder", "what %d <<", w);
+                switch (w) {
                     case 4: {
-                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat, 0);
+                        pEnv->CallVoidMethod(jObject, methodID, w, 0);
+                        break;
+                    }
+                    case 2: {
+                        pEnv->CallVoidMethod(jObject, methodID, w, 0);
                         break;
                     }
                     default:
-                        pEnv->CallVoidMethod(jObject, methodID, HwCameraRecorderWhat, 0);
+                        pEnv->CallVoidMethod(jObject, methodID, w, 0);
                 }
+                pEnv->ExceptionCheck();
             }
+            AlLogI("Java_HwCameraRecorder", "what %d >>", w);
         });
     }
 }
@@ -138,6 +143,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
     if (handler) {
         HwCameraRecorder *p = getHandler(handler);
         p->post([] {
+            AlLogI("Java_HwCameraRecorder", "release");
             HwJavaNativeHelper::getInstance()->detachThread();
         });
         delete p;

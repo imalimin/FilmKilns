@@ -51,14 +51,13 @@ void UnitPipeline::postEvent(AlMessage *msg) {
 
 void UnitPipeline::dispatch(AlMessage *msg) {
     if (EVENT_COMMON_RELEASE != msg->what) {
-        for (auto itr = units.cbegin(); itr != units.cend(); itr++) {
-            bool ret = (*itr)->dispatch(msg);
+        for (auto *unit:units) {
+            bool ret = unit->dispatch(msg);
         }
     } else {
         for (auto itr = units.end() - 1; itr != units.begin() - 1; --itr) {
             auto *unit = *itr;
-            Logcat::i(TAG, "%s(%d) %s will be destroy.",
-                      __FUNCTION__, __LINE__,
+            AlLogI(TAG, "%s will be destroy.",
                       typeid(*unit).name());
             bool ret = unit->dispatch(msg);
         }
@@ -67,9 +66,9 @@ void UnitPipeline::dispatch(AlMessage *msg) {
 }
 
 void UnitPipeline::clear() {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    for (auto unit:units) {
-        if (0 == unit->setting.hosted) {
+    AlLogI(TAG, "clear");
+    for (auto *unit:units) {
+        if (!unit->setting.hosted) {
             delete unit;
         }
     }
@@ -77,7 +76,7 @@ void UnitPipeline::clear() {
 }
 
 int UnitPipeline::registerAnUnit(Unit *unit) {
-    units.push_back(unit);
+    units.emplace_back(unit);
     _notifyCreate();
     return 1;
 }

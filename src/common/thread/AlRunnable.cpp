@@ -15,5 +15,6 @@ AlRunnable::~AlRunnable() {
 void AlRunnable::operator()(Object *obj) {
     if (runnable) {
         runnable(obj);
+        runnable = nullptr;
     }
 }
