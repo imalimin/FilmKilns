@@ -78,7 +78,6 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
                 HwJavaNativeHelper::getInstance()->findMethod(handler,
                                                               cOnHandleMessage,
                                                               &methodID)) {
-                AlLogI("Java_HwCameraRecorder", "what %d <<", w);
                 switch (w) {
                     case 4: {
                         pEnv->CallVoidMethod(jObject, methodID, w, 0);
@@ -93,7 +92,6 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
                 }
                 pEnv->ExceptionCheck();
             }
-            AlLogI("Java_HwCameraRecorder", "what %d >>", w);
         });
     }
 }
@@ -146,6 +144,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
             AlLogI("Java_HwCameraRecorder", "release");
             HwJavaNativeHelper::getInstance()->detachThread();
         });
+        p->release();
         delete p;
     }
     HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);

@@ -42,11 +42,10 @@ private:
 
 private:
     AlSize cameraSize;
-    AlEgl *egl = nullptr;
     AlSPointer<HwAbsTexture> srcTex;
-    AlSPointer<HwAbsTexture> destTex;
     HwAbsFBObject *fbo = nullptr;
     HwProgram *program = nullptr;
+    HwAbsTexture *mLayerTex = nullptr;
     int32_t mLayerId = -1;
 };
 

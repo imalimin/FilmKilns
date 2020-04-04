@@ -72,6 +72,9 @@ public:
 
     virtual void update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt = GL_RGBA);
 
+protected:
+    HwAbsTexture(const HwAbsTexture &o);
+
 public:
     /**
      * Call by HwAbsFBObject

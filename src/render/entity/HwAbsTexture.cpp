@@ -65,6 +65,10 @@ size_t HwAbsTexture::countOfByte() {
     return static_cast<size_t>(desc.size.width * desc.size.height * countOfPlane);
 }
 
+HwAbsTexture::HwAbsTexture(const HwAbsTexture &o) : Object(), desc(o.desc), tex(o.tex) {
+
+}
+
 AlTexDescription::AlTexDescription()
         : AlTexDescription(GL_TEXTURE_2D, GL_RGBA) {
 }

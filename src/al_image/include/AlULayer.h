@@ -41,11 +41,11 @@ private:
     /// +--------------------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
     /// +--------------------------------------------------+
-    /// | tex          | none      | none      |  path     |
+    /// | size         | none      | none      |  path     |
     /// +--------------------------------------------------+
     /// \param msg
     /// \return
-    bool onAddLayerTex(AlMessage *msg);
+    bool onAddLayerEmpty(AlMessage *msg);
 
     /// 解码图片通知
     /// FORMAT:

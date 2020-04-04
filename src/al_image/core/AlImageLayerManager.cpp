@@ -48,8 +48,19 @@ int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, const std::string path)
     return model->getId();
 }
 
-int32_t AlImageLayerManager::addLayerTex(HwAbsTexture *tex) {
-    return addLayer(tex, "/tex/");
+int32_t AlImageLayerManager::addLayerEmpty(AlSize size) {
+    if (size.width <= 0 || size.height <= 0) {
+        AlLogE(TAG, "failed %d", 0);
+        return AlIdentityCreator::NONE_ID;
+    }
+    auto *model = AlImageLayerModel::create(&mLayerIdCreator, "empty");
+    AlTexDescription desc;
+    desc.size.width = size.width;
+    desc.size.height = size.height;
+    AlImageLayer *layer = AlImageLayer::create(AlTexManager::instance()->alloc(desc));
+    models.push_back(model);
+    mLayers.insert(pair<int32_t, AlImageLayer *>(model->getId(), layer));
+    return model->getId();
 }
 
 int32_t AlImageLayerManager::addLayer(HwAbsTexture *tex, AlImageLayerModel &model) {

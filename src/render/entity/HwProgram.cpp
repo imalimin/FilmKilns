@@ -10,6 +10,7 @@
 #include <GLES2/gl2.h>
 #include "Logcat.h"
 #include "Egl.h"
+#include <cassert>
 
 #define TAG "HwProgram"
 
@@ -85,6 +86,7 @@ HwProgram::~HwProgram() {
 }
 
 void HwProgram::draw(HwAbsTexture *tex) {
+    assert(nullptr != tex);
     bind();
     if (uTextureLocation >= 0) {
         glActiveTexture(GL_TEXTURE0);

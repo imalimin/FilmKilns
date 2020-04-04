@@ -19,9 +19,10 @@ public:
     static HwTexture *allocOES();
 
 #endif
+
     static HwTexture *alloc(AlTexDescription &desc);
 
-    static HwTexture *wrap(HwTexture *tex);
+    static HwAbsTexture *wrap(HwAbsTexture *tex);
 
 public:
     virtual ~HwTexture();
@@ -37,6 +38,8 @@ public:
 
 private:
     HwTexture(AlTexDescription &desc);
+
+    HwTexture(const HwAbsTexture &o);
 
 private:
     bool applied = false;

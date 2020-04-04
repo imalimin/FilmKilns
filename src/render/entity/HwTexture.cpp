@@ -8,6 +8,7 @@
 #include "../include/HwTexture.h"
 #include "../include/Egl.h"
 #include "Logcat.h"
+#include <cassert>
 
 #ifdef __ANDROID__
 
@@ -31,9 +32,9 @@ HwTexture *HwTexture::alloc(AlTexDescription &desc) {
     return new HwTexture(desc);
 }
 
-HwTexture *HwTexture::wrap(HwTexture *tex) {
-    HwTexture *t = new HwTexture(tex->desc);
-    t->tex = tex->tex;
+HwAbsTexture *HwTexture::wrap(HwAbsTexture *tex) {
+    assert(nullptr != tex);
+    HwTexture *t = new HwTexture(*tex);
     t->isRef = true;
     return t;
 }
@@ -70,6 +71,10 @@ HwTexture::HwTexture(AlTexDescription &desc) : HwAbsTexture(desc),
             break;
     }
     unbind();
+}
+
+HwTexture::HwTexture(const HwAbsTexture &o) : HwAbsTexture(o) {
+
 }
 
 HwTexture::~HwTexture() {

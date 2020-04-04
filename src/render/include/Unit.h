@@ -93,7 +93,7 @@ static constexpr int EVENT_LAYER_EXPORT_FINISH = KID('A', 'I', 'G', 0x17);
 static constexpr int EVENT_LAYER_IMPORT_FINISH = KID('A', 'I', 'G', 0x18);
 static constexpr int EVENT_LAYER_QUERY_INFO = KID('A', 'I', 'G', 0x1a);
 static constexpr int EVENT_LAYER_QUERY_INFO_NOTIFY = KID('A', 'I', 'G', 0x1b);
-static constexpr int MSG_LAYER_ADD_TEX = KID('A', 'I', 'G', 0x1c);
+static constexpr int MSG_LAYER_ADD_EMPTY = KID('A', 'I', 'G', 0x1c);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
 static constexpr int EVENT_LAYER_MEASURE_CANVAS_NOTIFY = KID('A', 'L', 'M', 0x01);

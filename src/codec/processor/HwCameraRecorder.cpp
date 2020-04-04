@@ -19,7 +19,7 @@
 #define TAG "HwCameraRecorder"
 
 HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
-    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+//    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
@@ -39,7 +39,6 @@ HwCameraRecorder::~HwCameraRecorder() {
 
 void HwCameraRecorder::onCreate() {
     AlAbsProcessor::onCreate();
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     aSharedContext = AlEgl::offScreen();
 }
 
