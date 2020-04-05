@@ -17,6 +17,7 @@
 #include "stdio.h"
 #include <string>
 #include <stdarg.h>
+#include <inttypes.h>
 
 using namespace std;
 

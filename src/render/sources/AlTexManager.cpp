@@ -20,12 +20,13 @@ AlTexManager *AlTexManager::instance() {
 HwAbsTexture *AlTexManager::alloc() {
     int64_t looper;
     if (!_checkEnv(looper)) {
-        Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+        AlLogI(TAG, "failed.");
         return nullptr;
     }
     std::lock_guard<std::mutex> guard(mtx);
     auto *allocator = _find(looper);
     auto *tex = allocator->alloc();
+    AlLogI(TAG, "alloc %d", tex->texId());
     dump();
     return tex;
 }
@@ -33,12 +34,13 @@ HwAbsTexture *AlTexManager::alloc() {
 HwAbsTexture *AlTexManager::alloc(AlTexDescription &desc, AlBuffer *buf) {
     int64_t looper;
     if (!_checkEnv(looper)) {
-        Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+        AlLogI(TAG, "failed.");
         return nullptr;
     }
     std::lock_guard<std::mutex> guard(mtx);
     auto *allocator = _find(looper);
     auto *tex = allocator->alloc(desc, buf);
+    AlLogI(TAG, "alloc %d", tex->texId());
     dump();
     return tex;
 }
@@ -46,20 +48,22 @@ HwAbsTexture *AlTexManager::alloc(AlTexDescription &desc, AlBuffer *buf) {
 bool AlTexManager::recycle(HwAbsTexture **tex) {
     int64_t looper;
     if (!_checkEnv(looper)) {
-        Logcat::e(TAG, "%s(%d) failed", __FUNCTION__, __LINE__);
+        AlLogE(TAG, "failed");
         return false;
     }
     std::lock_guard<std::mutex> guard(mtx);
     auto *allocator = _find(looper);
+    int id = (*tex)->texId();
     if (!allocator->recycle(tex)) {
-        Logcat::w(TAG, "%s(%d) warning", __FUNCTION__, __LINE__);
+        AlLogW(TAG, "failed");
         return false;
     }
+    AlLogI(TAG, "recycle %d", id);
     if (allocator->empty()) {
         auto itr = map.find(looper);
+        AlLogI(TAG, "remove allocator(%p)", itr->second);
         delete itr->second;
         map.erase(itr);
-        Logcat::i(TAG, "%s(%d) remove allocator(%p)", __FUNCTION__, __LINE__, itr->second);
     }
     dump();
     return true;
@@ -78,7 +82,7 @@ AlTexAllocator *AlTexManager::_find(int64_t looper) {
 bool AlTexManager::_checkEnv(int64_t &looper) {
     auto *l = AlLooper::myLooper();
     if (nullptr == l || EGL_NO_CONTEXT == AlEgl::currentContext()) {
-        Logcat::e(TAG, "%s(%d) failed. looper=%p", __FUNCTION__, __LINE__, l);
+        AlLogI(TAG, "failed. looper=%p", l);
         looper = 0;
         return false;
     }
@@ -90,9 +94,9 @@ void AlTexManager::dump() {
     int32_t countOfTex = 0;
     int64_t countOfByte = 0;
     count(countOfTex, countOfByte);
-    Logcat::i(TAG, "%s(%d) countOfByte=%lld, countOfTex=%d",
-              __FUNCTION__, __LINE__,
-              countOfByte, countOfTex);
+    AlLogI(TAG, "countOfByte=%"
+            PRId64
+            ", countOfTex=%d", countOfByte, countOfTex);
 }
 
 void AlTexManager::count(int32_t &countOfTex, int64_t &countOfByte) {

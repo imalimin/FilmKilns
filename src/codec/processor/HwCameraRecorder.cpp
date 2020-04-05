@@ -19,10 +19,10 @@
 #define TAG "HwCameraRecorder"
 
 HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
+    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
 //    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
-    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
 //    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
 //    c->setRecordListener([this](int64_t timeInUs) {
 //        this->recordListener(timeInUs);

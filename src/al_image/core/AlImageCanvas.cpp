@@ -26,8 +26,10 @@ void AlImageCanvas::release() {
     delete fbo;
     delete mBgDrawer;
     delete mCanvasDrawer;
+    AlTexManager::instance()->recycle(&mCanvasTex);
+    delete paintFilter;
+    paintFilter = nullptr;
     mCanvasDrawer = nullptr;
-    mCanvasTex = nullptr;
 #ifdef ENABLE_CROP_DEBUG
     delete mCopyDrawer;
     delete mAlQuadDrawer;
@@ -42,7 +44,7 @@ HwAbsTexture *AlImageCanvas::getOutput() {
 }
 
 void AlImageCanvas::update(int32_t w, int32_t h, int32_t color) {
-    if(nullptr == paintFilter) {
+    if (nullptr == paintFilter) {
         paintFilter = new AlPaintFilter();
         paintFilter->prepare();
         paintFilter->setColor(AlColor(0x0000ff00));

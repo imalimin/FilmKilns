@@ -35,9 +35,9 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //        }
 //        tar_free(archive);
 //    }
+    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new AlUImageCodec(ALIAS_OF_IMAGE));
     registerAnUnit(new AlGImage(ALIAS_OF_IMAGE_GRAPH));
-    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlImageProcessor::_onCanvasUpdate));
     registerEvent(EVENT_LAYER_QUERY_ID_NOTIFY,
