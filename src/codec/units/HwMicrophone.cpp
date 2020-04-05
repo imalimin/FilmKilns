@@ -8,6 +8,7 @@
 #include "../include/HwMicrophone.h"
 #include "TimeUtils.h"
 #include "Thread.h"
+#include "AlBuffer.h"
 
 #define TAG "HwMicrophone"
 
@@ -103,7 +104,7 @@ void HwMicrophone::send(HwBuffer *buf) {
         AlMessage *msg = AlMessage::obtain(EVENT_MICROPHONE_OUT_SAMPLES);
         msg->arg1 = 1;
         msg->arg2 = TimeUtils::getCurrentTimeUS() * 1000;
-        msg->obj = HwBuffer::wrap(frame->data(), frame->size());
+        msg->obj = AlBuffer::wrap(frame->data(), frame->size());
         postEvent(msg);
     }
 }

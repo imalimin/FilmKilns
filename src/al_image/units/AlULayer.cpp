@@ -33,7 +33,7 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
                   reinterpret_cast<EventFunc>(&AlULayer::_onWindowUpdate));
     registerEvent(EVENT_CANVAS_CROP,
                   reinterpret_cast<EventFunc>(&AlULayer::onCropCanvas));
-    registerEvent(EVENT_CANVAS_RESIZE,
+    registerEvent(MSG_LAYER_RESIZE_CANVAS,
                   reinterpret_cast<EventFunc>(&AlULayer::onResizeCanvas));
     registerEvent(EVENT_IMAGE_CODEC_DECODE_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlULayer::onReceiveImage));

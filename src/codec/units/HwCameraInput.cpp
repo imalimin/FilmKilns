@@ -106,10 +106,9 @@ void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
     msg->arg1 = 0;
     postEvent(msg);
 
-//    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_DRAW_TEX, AlMessage::QUEUE_MODE_UNIQUE);
-//    msg->obj = HwTexture::wrap(dynamic_cast<HwTexture *>(destTex));
-//    msg->arg2 = tsInNs;
-//    postEvent(msg);
+    auto *m = AlMessage::obtain(MSG_TIMESTAMP);
+    m->arg2 = tsInNs;
+    postMessage(m);
 }
 
 void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {

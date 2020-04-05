@@ -13,6 +13,7 @@
 #include "HwVideoFrame.h"
 #include "HwAudioFrame.h"
 #include "AlSize.h"
+#include "AlBuffer.h"
 #include <atomic>
 #include <list>
 #include <vector>
@@ -30,16 +31,51 @@ public:
     void setRecordListener(function<void(int64_t)> listener);
 
 private:
+    /// 输出路径
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | none      | none      |   path    |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
     bool _onSetOutPath(AlMessage *msg);
 
+    /// 编码大小
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | size         | none      | none      |           |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
     bool _onSetSize(AlMessage *msg);
 
+    /// 音频格式
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | format       | none      | none      |           |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
     bool _onFormat(AlMessage *msg);
 
-    /**
-     * Response read pixels message.
-     */
-    bool _onResponsePixels(AlMessage *msg);
+    /// 时间戳
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | none      | time      |           |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onTimestamp(AlMessage *msg);
+
+    bool _onDrawDone(AlMessage *msg);
 
     bool _onSamples(AlMessage *msg);
 
@@ -51,7 +87,7 @@ private:
 
     bool _onBackward(AlMessage *msg);
 
-    void write(HwBuffer *buf, int64_t tsInNs);
+    void _write(AlBuffer *buf, int64_t tsInNs);
 
     int64_t getRecordTimeInUs();
 
@@ -76,6 +112,7 @@ private:
      */
     function<void(int64_t)> recordListener = nullptr;
     bool initialized = false;
+    std::deque<int64_t> mPtsQueue;
 };
 
 

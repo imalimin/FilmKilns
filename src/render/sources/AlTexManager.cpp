@@ -47,7 +47,7 @@ HwAbsTexture *AlTexManager::alloc(AlTexDescription &desc, AlBuffer *buf) {
 
 bool AlTexManager::recycle(HwAbsTexture **tex) {
     int64_t looper;
-    if (!_checkEnv(looper)) {
+    if (nullptr == tex || nullptr == *tex || !_checkEnv(looper)) {
         AlLogE(TAG, "failed");
         return false;
     }

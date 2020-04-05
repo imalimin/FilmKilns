@@ -18,9 +18,11 @@
 
 AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                                                  aFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100) {
-    registerEvent(EVENT_COMMON_PIXELS_READY,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onResponsePixels));
-    registerEvent(EVENT_COMMON_PIXELS, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onWrite));
+    registerEvent(EVENT_CANVAS_DRAW_DONE,
+                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onDrawDone));
+    registerEvent(MSG_CANVAS_NOTIFY_PIXELS,
+                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onWrite));
+
     registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onStart));
     registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onPause));
     registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
@@ -32,6 +34,7 @@ AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
     registerEvent(MSG_VIDEO_OUTPUT_SIZE,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetSize));
     registerEvent(MSG_MICROPHONE_FORMAT, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onFormat));
+    registerEvent(MSG_TIMESTAMP, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onTimestamp));
 }
 
 AlVideoCompiler::~AlVideoCompiler() {
@@ -59,14 +62,16 @@ bool AlVideoCompiler::onDestroy(AlMessage *msg) {
         delete videoFrame;
         videoFrame = nullptr;
     }
+    mPtsQueue.clear();
     this->recordListener = nullptr;
     return true;
 }
 
-bool AlVideoCompiler::_onResponsePixels(AlMessage *msg) {
+bool AlVideoCompiler::_onDrawDone(AlMessage *msg) {
     if (recording) {
-        postEvent(AlMessage::obtain(EVENT_COMMON_PIXELS_READ, nullptr,
-                                    AlMessage::QUEUE_MODE_FIRST_ALWAYS));
+        auto *m = AlMessage::obtain(MSG_CANVAS_REQ_PIXELS, AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+        m->arg1 = static_cast<int32_t>(HwFrameFormat::HW_IMAGE_NV12);
+        postEvent(m);
     }
     return true;
 }
@@ -75,8 +80,14 @@ bool AlVideoCompiler::_onWrite(AlMessage *msg) {
     if (!recording) {
         return true;
     }
-    HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
-    write(buf, msg->arg2);
+    auto *buf = msg->getObj<AlBuffer *>();
+    if (buf && !mPtsQueue.empty()) {
+        int64_t pts = mPtsQueue.front();
+        mPtsQueue.pop_front();
+        _write(buf, pts);
+    } else {
+        AlLogW(TAG, "Encode failed. No pts or no buf.");
+    }
     return true;
 }
 
@@ -95,7 +106,7 @@ bool AlVideoCompiler::_onPause(AlMessage *msg) {
 
 bool AlVideoCompiler::_onBackward(AlMessage *msg) {
     if (recording) {
-        Logcat::e("HWVC", "AlVideoCompiler::eventBackward failed. Recording now.");
+        AlLogE(TAG, "failed. Recording now.");
         return true;
     }
     // Notify record progress.
@@ -125,9 +136,9 @@ void AlVideoCompiler::_initialize() {
     }
 }
 
-void AlVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
+void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
     if (!buf) {
-        Logcat::e("HWVC", "AlVideoCompiler::write failed. Buffer is null.");
+        AlLogE(TAG, "failed. Buffer is null.");
         return;
     }
     //Enable NV12 or YV12
@@ -161,7 +172,7 @@ void AlVideoCompiler::write(HwBuffer *buf, int64_t tsInNs) {
     if (encoder) {
         encoder->write(videoFrame);
     } else {
-        Logcat::e("HWVC", "AlVideoCompiler::write failed. Encoder has release.");
+        AlLogE(TAG, "failed. Video encoder encoder not init.");
     }
 }
 
@@ -169,7 +180,7 @@ bool AlVideoCompiler::_onSamples(AlMessage *msg) {
     if (!recording) {
         return true;
     }
-    HwBuffer *buf = static_cast<HwBuffer *>(msg->obj);
+    auto *buf = msg->getObj<AlBuffer *>();
     int64_t tsInNs = msg->arg2;
     memcpy(audioFrame->data(), buf->data(), buf->size());
     if (lastATsInNs < 0) {
@@ -185,7 +196,7 @@ bool AlVideoCompiler::_onSamples(AlMessage *msg) {
             recordListener(getRecordTimeInUs());
         }
     } else {
-        Logcat::e("HWVC", "AlVideoCompiler::write audio failed. Encoder has release.");
+        AlLogE(TAG, "failed. Audio encoder encoder not init.");
     }
     return true;
 }
@@ -200,6 +211,7 @@ int64_t AlVideoCompiler::getRecordTimeInUs() {
 
 bool AlVideoCompiler::_onSetOutPath(AlMessage *msg) {
     this->path = msg->desc;
+    AlLogI(TAG, "%s", this->path.c_str());
     return true;
 }
 
@@ -217,5 +229,10 @@ bool AlVideoCompiler::_onFormat(AlMessage *msg) {
     if (f) {
         aFormat = *f;
     }
+    return true;
+}
+
+bool AlVideoCompiler::_onTimestamp(AlMessage *msg) {
+    mPtsQueue.push_back(msg->arg2);
     return true;
 }

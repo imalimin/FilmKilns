@@ -84,7 +84,7 @@ void AlImageProcessor::updateWindow(HwWindow *win) {
 void AlImageProcessor::setCanvas(int32_t w, int32_t h, AlRectLoc loc, AlColor color) {
     mCanvasSize.width = w;
     mCanvasSize.height = h;
-    auto *msg = AlMessage::obtain(EVENT_CANVAS_RESIZE,
+    auto *msg = AlMessage::obtain(MSG_LAYER_RESIZE_CANVAS,
                                   new AlRectLoc(loc));
     msg->arg1 = w;
     msg->arg2 = h;

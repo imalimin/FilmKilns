@@ -80,6 +80,17 @@ private:
 
     bool onEncodeFinish(AlMessage *msg);
 
+    /// 读取图层pixels
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | pixels    | none      | out path  |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onReqPixels(AlMessage *msg);
+
 private:
     void _newDefaultCanvas(AlSize size);
 
@@ -94,6 +105,11 @@ private:
     int32_t mDrawCount = 0;
     /// Request save to file(as jpeg...) next draw.
     std::string mOutputPath;
+    /// For read yuv pixels
+    HwAbsFilter *yuvFilter = nullptr;
+    HwAbsTexture *yuvTex = nullptr;
+    HwAbsFBObject *fbo = nullptr;
+    AlBuffer *pixels;
 };
 
 

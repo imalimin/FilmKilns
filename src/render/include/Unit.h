@@ -66,6 +66,7 @@ static constexpr int EVENT_CAMERA_INVALIDATE = KID('C', 'A', 'M', 0x00);
 static constexpr int MSG_CAMERA_UPDATE_SIZE = KID('C', 'A', 'M', 0x01);
 static constexpr int MSG_CAMERA_OES_TEX_NOTIFY = KID('C', 'A', 'M', 0x02);
 static constexpr int MSG_CAMERA_RUN = KID('C', 'A', 'M', 0x03);
+static constexpr int MSG_TIMESTAMP = KID('C', 'A', 'M', 0x04);
 
 static constexpr int MSG_VIDEO_COMPILER_BACKWARD = KID('H', 'V', 'C', 0x00);
 static constexpr int MSG_VIDEO_OUTPUT_PATH = KID('H', 'V', 'C', 0x01);
@@ -97,6 +98,7 @@ static constexpr int EVENT_LAYER_IMPORT_FINISH = KID('A', 'I', 'G', 0x18);
 static constexpr int EVENT_LAYER_QUERY_INFO = KID('A', 'I', 'G', 0x1a);
 static constexpr int EVENT_LAYER_QUERY_INFO_NOTIFY = KID('A', 'I', 'G', 0x1b);
 static constexpr int MSG_LAYER_ADD_EMPTY = KID('A', 'I', 'G', 0x1c);
+static constexpr int MSG_LAYER_RESIZE_CANVAS = KID('A', 'I', 'G', 0x1d);
 
 static constexpr int EVENT_LAYER_MEASURE = KID('A', 'L', 'M', 0x00);
 static constexpr int EVENT_LAYER_MEASURE_CANVAS_NOTIFY = KID('A', 'L', 'M', 0x01);
@@ -110,6 +112,8 @@ static constexpr int EVENT_CANVAS_CROP = KID('A', 'L', 'R', 0x05);
 static constexpr int EVENT_CANVAS_CLEAR_DONE = KID('A', 'L', 'R', 0x06);
 static constexpr int EVENT_CANVAS_DRAW_DONE = KID('A', 'L', 'R', 0x07);
 static constexpr int EVENT_CANVAS_SAVE_FINISH = KID('A', 'L', 'R', 0x08);
+static constexpr int MSG_CANVAS_REQ_PIXELS = KID('A', 'L', 'R', 0x09);
+static constexpr int MSG_CANVAS_NOTIFY_PIXELS = KID('A', 'L', 'R', 0x010);
 
 static constexpr int EVENT_LAYER_FILTER_RENDER = KID('A', 'L', 'F', 0x00);
 static constexpr int EVENT_LAYER_REMOVE_CACHE_LAYER = KID('A', 'L', 'F', 0x01);

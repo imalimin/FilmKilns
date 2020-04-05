@@ -23,7 +23,7 @@ HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
-//    registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
+    registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
 //    c->setRecordListener([this](int64_t timeInUs) {
 //        this->recordListener(timeInUs);
 //    });
@@ -75,6 +75,8 @@ void HwCameraRecorder::setOutputFilePath(string filePath) {
 void HwCameraRecorder::setFormat(int width, int height, HwSampleFormat format) {
     postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height)));
     postMessage(AlMessage::obtain(MSG_MICROPHONE_FORMAT, new HwSampleFormat(format)));
+    auto *msg = AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(width, height));
+    postEvent(msg);
 }
 
 void HwCameraRecorder::setFilter(HwAbsFilter *filter) {

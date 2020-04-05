@@ -10,6 +10,8 @@
 #include "AlBitmapFactory.h"
 #include "AlTexManager.h"
 #include "ObjectBox.h"
+#include "HwRGBA2NV12Filter.h"
+#include "HwFBObject.h"
 
 #define TAG "AlUCanvas"
 
@@ -25,6 +27,8 @@ AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
     registerEvent(EVENT_CANVAS_SAVE, reinterpret_cast<EventFunc>(&AlUCanvas::onSave));
     registerEvent(EVENT_IMAGE_CODEC_ENCODE_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlUCanvas::onEncodeFinish));
+    registerEvent(MSG_CANVAS_REQ_PIXELS,
+                  reinterpret_cast<EventFunc>(&AlUCanvas::_onReqPixels));
 }
 
 AlUCanvas::~AlUCanvas() {
@@ -36,6 +40,13 @@ bool AlUCanvas::onCreate(AlMessage *msg) {
 
 bool AlUCanvas::onDestroy(AlMessage *msg) {
     mCanvas.release();
+    delete yuvFilter;
+    yuvFilter = nullptr;
+    AlTexManager::instance()->recycle(&yuvTex);
+    delete fbo;
+    fbo = nullptr;
+    delete pixels;
+    pixels = nullptr;
     return true;
 }
 
@@ -133,5 +144,37 @@ bool AlUCanvas::onEncodeFinish(AlMessage *msg) {
             break;
         }
     }
-    return false;
+    return true;
+}
+
+bool AlUCanvas::_onReqPixels(AlMessage *msg) {
+    int format = msg->arg1;
+    switch (format) {
+        case 3: {
+            break;
+        }
+    }
+    if (nullptr == yuvFilter) {
+        yuvFilter = new HwRGBA2NV12Filter();
+        bool ret = yuvFilter->prepare();
+        AlTexDescription desc;
+        desc.size.width = mCanvas.getWidth() / 4;
+        desc.size.height = mCanvas.getHeight() * 3 / 2;
+        yuvTex = AlTexManager::instance()->alloc(desc);
+        fbo = HwFBObject::alloc();
+        fbo->bindTex(yuvTex);
+        pixels = AlBuffer::alloc(yuvTex->getWidth() * yuvTex->getHeight() * 4);
+    }
+    glViewport(0, 0, yuvTex->getWidth(), yuvTex->getHeight());
+    auto *src = mCanvas.getOutput();
+    yuvFilter->draw(src, yuvTex);
+    delete src;
+
+    auto *m = AlMessage::obtain(MSG_CANVAS_NOTIFY_PIXELS);
+    glFinish();
+    if (fbo->read(pixels->data())) {
+        m->obj = AlBuffer::wrap(pixels->data(), pixels->size());
+    }
+    postMessage(m);
+    return true;
 }
