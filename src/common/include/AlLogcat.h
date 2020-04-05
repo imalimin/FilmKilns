@@ -36,16 +36,16 @@ fmt_name.append("%s(%d): ");                                              \
 fmt_name.append(fmt);                                                     \
 
 #define AlLogI(tag, fmt, args...)                                         \
-AlLogFormat(format, fmt)                                                  \
-AlLogcat::i(tag, format.c_str(), __FUNCTION__, __LINE__, ##args)          \
+AlLogFormat(log_format, fmt)                                              \
+AlLogcat::i(tag, log_format.c_str(), __FUNCTION__, __LINE__, ##args)      \
 
 #define AlLogE(tag, fmt, args...)                                         \
-AlLogFormat(format, fmt)                                                  \
-AlLogcat::e(tag, format.c_str(), __FUNCTION__, __LINE__, ##args)          \
+AlLogFormat(log_format, fmt)                                              \
+AlLogcat::e(tag, log_format.c_str(), __FUNCTION__, __LINE__, ##args)      \
 
 #define AlLogW(tag, fmt, args...)                                         \
-AlLogFormat(format, fmt)                                                  \
-AlLogcat::w(tag, format.c_str(), __FUNCTION__, __LINE__, ##args)          \
+AlLogFormat(log_format, fmt)                                              \
+AlLogcat::w(tag, log_format.c_str(), __FUNCTION__, __LINE__, ##args)      \
 
 
 #endif //HWVC_ANDROID_ALLOGCAT_H

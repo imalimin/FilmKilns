@@ -8,7 +8,7 @@
 #include <Size.h>
 #include "../include/HwCameraRecorder.h"
 #include "../include/HwMicrophone.h"
-#include "../include/HwVideoCompiler.h"
+#include "include/AlVideoCompiler.h"
 #include "AlGImage.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
@@ -20,10 +20,10 @@
 
 HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
-//    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
-//    registerAnUnit(new HwVideoCompiler(ALIAS_OF_COMPILER));
+//    registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
 //    c->setRecordListener([this](int64_t timeInUs) {
 //        this->recordListener(timeInUs);
 //    });
@@ -32,8 +32,6 @@ HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
-    delete audioFormat;
-    audioFormat = nullptr;
     this->onNativeReadyListener = nullptr;
 }
 
@@ -69,17 +67,14 @@ void HwCameraRecorder::invalidate(AlMatrix *matrix, int64_t tsInNs) {
 }
 
 void HwCameraRecorder::setOutputFilePath(string filePath) {
-    putString("path", filePath).to({ALIAS_OF_COMPILER});
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_PATH);
+    msg->desc = filePath;
+    postMessage(msg);
 }
 
 void HwCameraRecorder::setFormat(int width, int height, HwSampleFormat format) {
-    if (audioFormat) {
-        delete audioFormat;
-    }
-    audioFormat = new HwSampleFormat(format);
-    putInt32("width", width).to({ALIAS_OF_CAMERA, ALIAS_OF_COMPILER});
-    putInt32("height", height).to({ALIAS_OF_CAMERA, ALIAS_OF_COMPILER});
-    putObject("audioFormat", audioFormat).to({ALIAS_OF_MIC, ALIAS_OF_COMPILER});
+    postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height)));
+    postMessage(AlMessage::obtain(MSG_MICROPHONE_FORMAT, new HwSampleFormat(format)));
 }
 
 void HwCameraRecorder::setFilter(HwAbsFilter *filter) {
@@ -89,10 +84,9 @@ void HwCameraRecorder::setFilter(HwAbsFilter *filter) {
 }
 
 void HwCameraRecorder::runOnCameraContext(function<void()> func) {
-    AlMessage *msg = AlMessage::obtain(MSG_CAMERA_RUN, new AlRunnable([func](Object *o) {
+    postEvent(AlMessage::obtain(MSG_CAMERA_RUN, new AlRunnable([func](Object *o) {
         func();
-    }));
-    postEvent(msg);
+    })));
 }
 
 void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
@@ -102,7 +96,7 @@ void HwCameraRecorder::setCameraSize(int32_t w, int32_t h) {
 }
 
 void HwCameraRecorder::backward() {
-    postEvent(AlMessage::obtain(EVENT_VIDEO_COMPILER_BACKWARD));
+    postEvent(AlMessage::obtain(MSG_VIDEO_COMPILER_BACKWARD));
 }
 
 void HwCameraRecorder::setRecordListener(function<void(int64_t)> listener) {

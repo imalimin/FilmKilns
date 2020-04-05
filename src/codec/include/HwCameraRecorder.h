@@ -94,7 +94,6 @@ private:
     const string ALIAS_OF_COMPILER = "COMPILER";
     uint32_t oesTex = GL_NONE;
     AlEgl *aSharedContext = nullptr;
-    HwSampleFormat *audioFormat = nullptr;
     OnNativeReadyListener onNativeReadyListener = nullptr;
 };
 

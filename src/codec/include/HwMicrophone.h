@@ -10,7 +10,8 @@
 
 #include "Unit.h"
 #include "HwAudioRecorder.h"
-#include "../include/HwAudioFrame.h"
+#include "HwAudioFrame.h"
+#include "HwSampleFormat.h"
 
 class HwMicrophone : public Unit {
 public:
@@ -22,18 +23,21 @@ public:
 
     bool onDestroy(AlMessage *msg) override;
 
-    bool eventLoop(AlMessage *msg);
-
-    bool eventStart(AlMessage *msg);
-
-    bool eventPause(AlMessage *msg);
-
 private:
+    bool _onFormat(AlMessage *msg);
+
+    bool _onLoop(AlMessage *msg);
+
+    bool _onStart(AlMessage *msg);
+
+    bool _onPause(AlMessage *msg);
+
     void loop();
 
     void send(HwBuffer *buf);
 
 private:
+    HwSampleFormat format;
     HwAudioRecorder *recorder = nullptr;
     HwAudioFrame *frame = nullptr;
     bool looping = false;

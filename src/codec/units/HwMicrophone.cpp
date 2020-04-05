@@ -9,11 +9,14 @@
 #include "TimeUtils.h"
 #include "Thread.h"
 
-HwMicrophone::HwMicrophone(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&HwMicrophone::eventStart));
-    registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&HwMicrophone::eventPause));
-    registerEvent(EVENT_MICROPHONE_LOOP, reinterpret_cast<EventFunc>(&HwMicrophone::eventLoop));
+#define TAG "HwMicrophone"
 
+HwMicrophone::HwMicrophone(string alias) : Unit(alias),
+                                           format(HwFrameFormat::HW_SAMPLE_S32, 2, 44100) {
+    registerEvent(MSG_MICROPHONE_FORMAT, reinterpret_cast<EventFunc>(&HwMicrophone::_onFormat));
+    registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&HwMicrophone::_onStart));
+    registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&HwMicrophone::_onPause));
+    registerEvent(EVENT_MICROPHONE_LOOP, reinterpret_cast<EventFunc>(&HwMicrophone::_onLoop));
 }
 
 HwMicrophone::~HwMicrophone() {
@@ -21,10 +24,6 @@ HwMicrophone::~HwMicrophone() {
 }
 
 bool HwMicrophone::onCreate(AlMessage *msg) {
-    frame = new HwAudioFrame(nullptr, HwFrameFormat::HW_SAMPLE_S32, 2, 44100, 1024);
-    recorder = new HwAudioRecorder(2, 44100, 0x0020, 1024);
-    recorder->start();
-    loop();
     return true;
 }
 
@@ -41,20 +40,51 @@ bool HwMicrophone::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool HwMicrophone::eventStart(AlMessage *msg) {
+bool HwMicrophone::_onFormat(AlMessage *msg) {
+    auto *f = msg->getObj<HwSampleFormat *>();
+    if (f) {
+        AlLogI(TAG, "");
+        format = *f;
+        int sampleCount = 1024;
+        frame = new HwAudioFrame(nullptr, format.getFormat(), format.getChannels(),
+                                 format.getSampleRate(), sampleCount);
+        uint16_t f = 0x0020;
+        switch (this->format.getFormat()) {
+            case HwFrameFormat::HW_SAMPLE_S32: {
+                f = 0x0020;
+                break;
+            }
+            case HwFrameFormat::HW_SAMPLE_S16: {
+                f = 0x0010;
+                break;
+            }
+            default: {
+                AlLogW(TAG, "UnSupport format(%d)", (int) this->format.getFormat());
+                f = 0x0020;
+            }
+        }
+        recorder = new HwAudioRecorder(format.getChannels(), format.getSampleRate(),
+                                       f, sampleCount);
+        recorder->start();
+        loop();
+    }
+    return true;
+}
+
+bool HwMicrophone::_onStart(AlMessage *msg) {
     looping = true;
     loop();
     return true;
 }
 
-bool HwMicrophone::eventPause(AlMessage *msg) {
+bool HwMicrophone::_onPause(AlMessage *msg) {
     looping = false;
     return true;
 }
 
-bool HwMicrophone::eventLoop(AlMessage *msg) {
+bool HwMicrophone::_onLoop(AlMessage *msg) {
     if (recorder && looping) {
-        HwBuffer *buf = recorder->read(8192);
+        HwBuffer *buf = recorder->read(frame->size());
         if (buf) {
             send(buf);
         }
