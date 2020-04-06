@@ -63,7 +63,6 @@ bool AlVideoCompiler::onDestroy(AlMessage *msg) {
         videoFrame = nullptr;
     }
     mPtsQueue.clear();
-    this->recordListener = nullptr;
     return true;
 }
 
@@ -109,10 +108,7 @@ bool AlVideoCompiler::_onBackward(AlMessage *msg) {
         AlLogE(TAG, "failed. Recording now.");
         return true;
     }
-    // Notify record progress.
-    if (recordListener) {
-        recordListener(getRecordTimeInUs());
-    }
+    _notifyTime();
     return true;
 }
 
@@ -191,18 +187,11 @@ bool AlVideoCompiler::_onSamples(AlMessage *msg) {
     audioFrame->setPts(aTimestamp / 1000);
     if (encoder) {
         encoder->write(audioFrame);
-        // Notify record progress.
-        if (recordListener) {
-            recordListener(getRecordTimeInUs());
-        }
+        _notifyTime();
     } else {
         AlLogE(TAG, "failed. Audio encoder encoder not init.");
     }
     return true;
-}
-
-void AlVideoCompiler::setRecordListener(function<void(int64_t)> listener) {
-    this->recordListener = listener;
 }
 
 int64_t AlVideoCompiler::getRecordTimeInUs() {
@@ -235,4 +224,11 @@ bool AlVideoCompiler::_onFormat(AlMessage *msg) {
 bool AlVideoCompiler::_onTimestamp(AlMessage *msg) {
     mPtsQueue.push_back(msg->arg2);
     return true;
+}
+
+void AlVideoCompiler::_notifyTime() {
+    // Notify record progress.
+    auto *m = AlMessage::obtain(MSG_VIDEO_COMPILER_TIME);
+    m->arg2 = getRecordTimeInUs();
+    postMessage(m);
 }

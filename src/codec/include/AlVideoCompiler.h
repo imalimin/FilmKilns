@@ -28,8 +28,6 @@ public:
 
     bool onDestroy(AlMessage *msg) override;
 
-    void setRecordListener(function<void(int64_t)> listener);
-
 private:
     /// 输出路径
     /// FORMAT:
@@ -93,6 +91,8 @@ private:
 
     void _initialize();
 
+    void _notifyTime();
+
 private:
     AlSize size;
     std::string path;
@@ -107,10 +107,6 @@ private:
     int64_t vTimestamp = -1, aTimestamp = -1;
     int64_t offsetOfDuration = 0;
     int count = 0;
-    /**
-     * Listeners
-     */
-    function<void(int64_t)> recordListener = nullptr;
     bool initialized = false;
     std::deque<int64_t> mPtsQueue;
 };

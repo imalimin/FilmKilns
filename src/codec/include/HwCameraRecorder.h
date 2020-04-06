@@ -86,6 +86,8 @@ public:
 private:
     bool _onOESTexNotify(AlMessage *msg);
 
+    bool _onRecordProgress(AlMessage *msg);
+
 private:
     const string ALIAS_OF_MIC = "MIC";
     const string ALIAS_OF_CAMERA = "CAMERA";
@@ -95,6 +97,7 @@ private:
     uint32_t oesTex = GL_NONE;
     AlEgl *aSharedContext = nullptr;
     OnNativeReadyListener onNativeReadyListener = nullptr;
+    function<void(int64_t)> onRecordListener;
 };
 
 

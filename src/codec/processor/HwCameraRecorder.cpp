@@ -24,15 +24,15 @@ HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
-//    c->setRecordListener([this](int64_t timeInUs) {
-//        this->recordListener(timeInUs);
-//    });
     registerEvent(MSG_CAMERA_OES_TEX_NOTIFY,
                   reinterpret_cast<EventFunc>(&HwCameraRecorder::_onOESTexNotify));
+    registerEvent(MSG_VIDEO_COMPILER_TIME,
+                  reinterpret_cast<EventFunc>(&HwCameraRecorder::_onRecordProgress));
 }
 
 HwCameraRecorder::~HwCameraRecorder() {
     this->onNativeReadyListener = nullptr;
+    this->onRecordListener = nullptr;
 }
 
 void HwCameraRecorder::onCreate() {
@@ -102,6 +102,7 @@ void HwCameraRecorder::backward() {
 }
 
 void HwCameraRecorder::setRecordListener(function<void(int64_t)> listener) {
+    this->onRecordListener = listener;
 }
 
 void HwCameraRecorder::setOnNativeReadyListener(OnNativeReadyListener l) {
@@ -114,6 +115,13 @@ bool HwCameraRecorder::_onOESTexNotify(AlMessage *msg) {
         oesTex = tex->texId();
         AlLogI(TAG, "%d", oesTex);
         onNativeReadyListener(oesTex);
+    }
+    return true;
+}
+
+bool HwCameraRecorder::_onRecordProgress(AlMessage *msg) {
+    if (onRecordListener) {
+        onRecordListener(msg->arg2);
     }
     return true;
 }
