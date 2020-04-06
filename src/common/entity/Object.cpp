@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 #include "../include/Object.h"
+#include <typeinfo>
 
 Object::Object() {
 }
@@ -13,7 +14,7 @@ Object::~Object() {
 }
 
 std::string Object::toString() {
-    return std::string();
+    return std::string(typeid(*this).name());
 }
 
 void Object::ref() {

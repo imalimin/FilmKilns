@@ -109,7 +109,7 @@ private:
     HwAbsFilter *yuvFilter = nullptr;
     HwAbsTexture *yuvTex = nullptr;
     HwAbsFBObject *fbo = nullptr;
-    AlBuffer *pixels;
+    AlBuffer *pixels = nullptr;
 };
 
 

@@ -44,12 +44,19 @@ void UnitPipeline::postEvent(AlMessage *msg) {
     std::lock_guard<std::mutex> guard(mtx);
     if (mHandler) {
         mHandler->sendMessage(msg);
-        return;
     }
-    this->dispatch(msg);
+//    this->dispatch(msg);
 }
 
 void UnitPipeline::dispatch(AlMessage *msg) {
+    AlLogI(TAG, "%d, %d", msg->what, units.size());
+    if (EVENT_COMMON_PREPARE == msg->what) {
+        std::lock_guard<std::mutex> guard(mtx);
+        for (auto *unit:units) {
+            bool ret = unit->dispatch(msg);
+        }
+        return;
+    }
     if (EVENT_COMMON_RELEASE != msg->what) {
         for (auto *unit:units) {
             bool ret = unit->dispatch(msg);
@@ -57,8 +64,7 @@ void UnitPipeline::dispatch(AlMessage *msg) {
     } else {
         for (auto itr = units.end() - 1; itr != units.begin() - 1; --itr) {
             auto *unit = *itr;
-            AlLogI(TAG, "%s will be destroy.",
-                      typeid(*unit).name());
+            AlLogI(TAG, "%s will be destroy.", unit->toString().c_str());
             bool ret = unit->dispatch(msg);
         }
         clear();
@@ -76,7 +82,10 @@ void UnitPipeline::clear() {
 }
 
 int UnitPipeline::registerAnUnit(Unit *unit) {
-    units.emplace_back(unit);
+    {
+        std::lock_guard<std::mutex> guard(mtx);
+        units.emplace_back(unit);
+    }
     _notifyCreate();
     return 1;
 }
