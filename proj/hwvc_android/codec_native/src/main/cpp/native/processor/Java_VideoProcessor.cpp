@@ -19,6 +19,22 @@ static HwVideoProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwVideoProcessor *>(handler);
 }
 
+static void bindListener(jlong handler) {
+    getHandler(handler)->setPlayProgressListener([handler](int64_t us, int64_t duration) {
+        jobject jObject = nullptr;
+        JNIEnv *pEnv = nullptr;
+        jmethodID methodID = nullptr;
+        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            HwJavaNativeHelper::getInstance()->findMethod(handler,
+                                                          vPlayProgressDesc,
+                                                          &methodID)) {
+            pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us),
+                                 static_cast<jlong>(duration));
+        }
+    });
+}
+
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_create
         (JNIEnv *env, jobject thiz) {
     HwVideoProcessor *p = new HwVideoProcessor();
@@ -27,6 +43,7 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_create
     });
     jlong handler = reinterpret_cast<jlong>(p);
     HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
+    bindListener(handler);
     return handler;
 }
 
@@ -37,26 +54,6 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_setSourc
         std::string pathStr(pPath);
         env->ReleaseStringUTFChars(path, pPath);
         getHandler(handler)->setSource(pathStr);
-    }
-}
-
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
-    if (handler) {
-        getHandler(handler)->prepare(new HwAndroidWindow(env, surface));
-        getHandler(handler)->setPlayProgressListener([handler](int64_t us, int64_t duration) {
-            jobject jObject = nullptr;
-            JNIEnv *pEnv = nullptr;
-            jmethodID methodID = nullptr;
-            if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-                HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-                HwJavaNativeHelper::getInstance()->findMethod(handler,
-                                                              vPlayProgressDesc,
-                                                              &methodID)) {
-                pEnv->CallVoidMethod(jObject, methodID, static_cast<jlong>(us),
-                                     static_cast<jlong>(duration));
-            }
-        });
     }
 }
 
@@ -102,7 +99,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_VideoProcessor_release
         p->post([] {
             HwJavaNativeHelper::getInstance()->detachThread();
         });
-        p->stop();
+        p->release();
         delete p;
     }
     HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);

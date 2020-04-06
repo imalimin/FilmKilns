@@ -124,23 +124,26 @@ void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
     program->updateMatrix(&trans);
 }
 
-void HwCameraInput::_onUpdateSize(AlMessage *msg) {
+bool HwCameraInput::_onUpdateSize(AlMessage *msg) {
     cameraSize.width = msg->ptr.as<AlSize>()->width;
     cameraSize.height = msg->ptr.as<AlSize>()->height;
 //    AlLogI(TAG, "%dx%d", cameraSize.width, cameraSize.height);
+    return true;
 }
 
-void HwCameraInput::_onRun(AlMessage *msg) {
+bool HwCameraInput::_onRun(AlMessage *msg) {
     auto *func = msg->getObj<AlRunnable *>();
     if (func) {
         (*func)(nullptr);
     }
+    return true;
 }
 
-void HwCameraInput::_onLayerNotify(AlMessage *msg) {
+bool HwCameraInput::_onLayerNotify(AlMessage *msg) {
     mLayerId = msg->arg1;
     if (nullptr == mLayerTex) {
         mLayerTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
     }
     AlLogI(TAG, "%d", mLayerId);
+    return true;
 }

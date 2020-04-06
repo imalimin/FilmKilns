@@ -11,6 +11,9 @@
 #include "../include/HwVideoFrame.h"
 #include "Thread.h"
 #include "HwTexture.h"
+#include "AlTexManager.h"
+
+#define TAG "HwVideoInput"
 
 HwVideoInput::HwVideoInput(string alias) : HwStreamMedia(alias) {
     registerEvent(EVENT_VIDEO_START, reinterpret_cast<EventFunc>(&HwVideoInput::eventStart));
@@ -20,49 +23,41 @@ HwVideoInput::HwVideoInput(string alias) : HwStreamMedia(alias) {
                   reinterpret_cast<EventFunc>(&HwVideoInput::eventSetSource));
     registerEvent(EVENT_VIDEO_LOOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventLoop));
     registerEvent(EVENT_VIDEO_STOP, reinterpret_cast<EventFunc>(&HwVideoInput::eventStop));
+    registerEvent(EVENT_LAYER_QUERY_ID_NOTIFY,
+                  reinterpret_cast<EventFunc>(&HwVideoInput::_onLayerNotify));
     decoder = new AsynVideoDecoder();
 }
 
 HwVideoInput::~HwVideoInput() {
-    LOGI("HwVideoInput::HwVideoInputeoInput");
     simpleLock.lock();
     if (decoder) {
         delete decoder;
         decoder = nullptr;
     }
     simpleLock.unlock();
-    playListener = nullptr;
 }
 
 bool HwVideoInput::onDestroy(AlMessage *msg) {
-    LOGI("HwVideoInput::onDestroy");
+    AlLogI(TAG, "");
     eventStop(nullptr);
     if (yuvFilter) {
         delete yuvFilter;
         yuvFilter = nullptr;
     }
-    if (texAllocator) {
-        delete texAllocator;
-        texAllocator = nullptr;
-    }
+    AlTexManager::instance()->recycle(&y);
+    AlTexManager::instance()->recycle(&u);
+    AlTexManager::instance()->recycle(&v);
     return true;
 }
 
 bool HwVideoInput::onCreate(AlMessage *msg) {
+    AlLogI(TAG, "");
     playState = PAUSE;
-    if (!decoder->prepare(path)) {
-        LOGE("HwVideoInput::open %s failed", path.c_str());
-        eventStop(nullptr);
-        return true;
-    }
-    if (!texAllocator) {
-        texAllocator = new AlTexAllocator();
-    }
     return true;
 }
 
 bool HwVideoInput::eventStart(AlMessage *msg) {
-    LOGI("HwVideoInput::eventStart");
+    AlLogI(TAG, "");
     if (PAUSE == playState) {
         playState = PLAYING;
         if (decoder) {
@@ -89,15 +84,21 @@ bool HwVideoInput::eventSeek(AlMessage *msg) {
 }
 
 bool HwVideoInput::eventStop(AlMessage *msg) {
+    AlLogI(TAG, "");
     playState = STOP;
-    Logcat::i("HWVC", "HwVideoInput::eventStop");
     return true;
 }
 
 bool HwVideoInput::eventSetSource(AlMessage *msg) {
-    string *str = static_cast<string *>(msg->getObj<ObjectBox *>()->ptr);
-    this->path = string(str->c_str());
-    delete str;
+    this->path = msg->desc;
+    if (!decoder->prepare(path)) {
+        AlLogE(TAG, "open file(%s) failed", path.c_str());
+        eventStop(nullptr);
+        return true;
+    }
+    auto *m = AlMessage::obtain(MSG_LAYER_ADD_EMPTY,
+                                new AlSize(decoder->width(), decoder->height()));
+    postMessage(m);
     return true;
 }
 
@@ -113,11 +114,11 @@ bool HwVideoInput::eventLoop(AlMessage *msg) {
     HwResult ret = grab();
     simpleLock.unlock();
     if (Hw::MEDIA_EOF == ret) {
-        Logcat::i("HWVC", "HwVideoInput::eventLoop EOF");
+        AlLogI(TAG, " eof");
         if (enableLoop) {
             decoder->seek(0);
             decoder->start();
-            Logcat::i("HWVC", "HwVideoInput::eventLoop play loop.");
+            AlLogI(TAG, "play loop.");
             loop();
         } else {
             eventPause(nullptr);
@@ -132,17 +133,14 @@ void HwVideoInput::checkEnv(int32_t w, int32_t h) {
     if (!yuvFilter) {
         yuvFilter = new HwYV122RGBAFilter();
         yuvFilter->prepare();
-        AlTexDescription desc;
-        target = HwTexture::alloc(desc);
-        target->update(nullptr, w, h, GL_RGBA);
     }
 }
 
 void HwVideoInput::bindTex(HwVideoFrame *frame) {
     if (!y || !u || !v) {
-        y = texAllocator->alloc();
-        u = texAllocator->alloc();
-        v = texAllocator->alloc();
+        y = AlTexManager::instance()->alloc();
+        u = AlTexManager::instance()->alloc();
+        v = AlTexManager::instance()->alloc();
     }
     int size = frame->getWidth() * frame->getHeight();
     AlBuffer *buf = AlBuffer::wrap(frame->data(), size);
@@ -161,16 +159,15 @@ HwResult HwVideoInput::grab() {
     int64_t time = getCurrentTimeUS();
     HwAbsMediaFrame *frame = nullptr;
     HwResult ret = decoder->grab(&frame);
-    Logcat::i("HWVC", "HwVideoInput::grab cost: %lld, ret: %d", getCurrentTimeUS() - time,
-              ret.code);
+//    AlLogI(TAG, "cost: %lld, ret: %d", getCurrentTimeUS() - time, ret.code);
     if (!frame) {
-        Logcat::i("HWVC", "HwVideoInput::grab wait");
+//        AlLogI(TAG, "wait");
         Thread::sleep(5000);
         return ret;
     }
 
     if (frame->isVideo()) {
-        Logcat::i("HWVC", "HwVideoInput::play picture pts=%lld", frame->getPts());
+//        AlLogI(TAG, "play picture pts=%lld", frame->getPts());
         HwVideoFrame *videoFrame = dynamic_cast<HwVideoFrame *>(frame);
         int64_t curPts = frame->getPts();
         int64_t curTimeInUs = getCurrentTimeUS();
@@ -179,10 +176,11 @@ HwResult HwVideoInput::grab() {
             if (delta > 0) { // @TODO To avoid waiting too long when seeking.
                 Thread::sleep(delta);
             }
-            LOGI("HwVideoInput::grab sleep %d x %d, delta time: %lld",
-                 videoFrame->getWidth(),
-                 videoFrame->getHeight(),
-                 delta);
+//            AlLogI(TAG, "sleep %d x %d, delta time: %"
+//                    PRId64,
+//                   videoFrame->getWidth(),
+//                   videoFrame->getHeight(),
+//                   delta);
         }
         lastPts = curPts;
         lastShowTime = curTimeInUs;
@@ -191,21 +189,20 @@ HwResult HwVideoInput::grab() {
 //        lock->lock();
         glViewport(0, 0, videoFrame->getWidth(), videoFrame->getHeight());
 //        lock->unlock();
-        yuvFilter->draw(y, u, v, target);
-        invalidate(target);
+        yuvFilter->draw(y, u, v, mLayerTex);
+        _invalidate();
     } else if (frame->isAudio()) {
         playAudioFrame(dynamic_cast<HwAudioFrame *>(frame->clone()));
-        Logcat::i("HWVC", "HwVideoInput::play audio pts=%lld", frame->getPts());
+//        AlLogI(TAG, "play audio pts=%lld", frame->getPts());
     }
-    processPlayListener(frame->getPts());
+    _notifyProgress(frame->getPts());
     return ret;
 }
 
-bool HwVideoInput::invalidate(HwAbsTexture *tex) {
-    AlMessage *msg = AlMessage::obtain(EVENT_RENDER_FILTER);
-    msg->obj = HwTexture::wrap(dynamic_cast<HwTexture *>(tex));
-    msg->desc = "RENDER";
-    postEvent(msg);
+bool HwVideoInput::_invalidate() {
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE);
+    msg->arg1 = 0;
+    postMessage(msg);
     return true;
 }
 
@@ -215,18 +212,25 @@ void HwVideoInput::playAudioFrame(HwAudioFrame *frame) {
     postEvent(msg);
 }
 
-void HwVideoInput::processPlayListener(int64_t us) {
-    if (playListener) {
-        if (llabs(lastPlayPts - us) >= INTERVAL_PROGRESS) {
-            int64_t time = getCurrentTimeUS();
-            playListener(us, decoder->getDuration());
-            Logcat::i("HWVC", "HwVideoInput::play callback cost %lld",
-                      getCurrentTimeUS() - time);
-            lastPlayPts = us;
-        }
+void HwVideoInput::_notifyProgress(int64_t us) {
+    if (llabs(lastPlayPts - us) >= INTERVAL_PROGRESS) {
+        int64_t time = getCurrentTimeUS();
+//        AlLogI(TAG, "play callback cost %"
+//                PRId64, getCurrentTimeUS() - time);
+        lastPlayPts = us;
+
+        AlMessage *msg = AlMessage::obtain(MSG_VIDEO_PROGRESS);
+        msg->arg1 = us;
+        msg->arg2 = decoder->getDuration();
+        postMessage(msg);
     }
 }
 
-void HwVideoInput::setPlayListener(function<void(int64_t, int64_t)> listener) {
-    this->playListener = listener;
+bool HwVideoInput::_onLayerNotify(AlMessage *msg) {
+    mLayerId = msg->arg1;
+    if (nullptr == mLayerTex) {
+        mLayerTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
+    }
+    AlLogI(TAG, "%d", mLayerId);
+    return true;
 }

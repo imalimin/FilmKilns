@@ -19,7 +19,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
+class VideoActivity : BaseActivity(),
         SeekBar.OnSeekBarChangeListener {
 
     private lateinit var mFilterController: FilterController
@@ -29,6 +29,19 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
     private var surface: Surface? = null
     private var playing: Boolean = true
     private var duration: Long = -1
+    private val surfaceCallback = object : SurfaceHolder.Callback {
+        override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
+            processor?.updateWindow(holder.surface)
+        }
+
+        override fun surfaceDestroyed(p0: SurfaceHolder?) {
+            Log.i("HWVC", "surfaceDestroyed")
+        }
+
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            Log.i("HWVC", "surfaceCreated")
+        }
+    }
 
     override fun getLayoutResource(): Int = R.layout.activity_video
     override fun initView() {
@@ -80,48 +93,12 @@ class VideoActivity : BaseActivity(), TextureView.SurfaceTextureListener,
             playing = !playing
         }
         surfaceView.keepScreenOn = true
-        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
-                if (!prepared) {
-                    prepared = true
-                    processor?.prepare(holder.surface)
-                    processor?.start()
-                } else {
-                    processor?.updateWindow(holder.surface)
-                }
-            }
-
-            override fun surfaceDestroyed(p0: SurfaceHolder?) {
-                Log.i("HWVC", "surfaceDestroyed")
-            }
-
-            override fun surfaceCreated(holder: SurfaceHolder) {
-            }
-        })
-//        surfaceView.surfaceTextureListener = this
+        surfaceView.holder.addCallback(surfaceCallback)
     }
 
     override fun onRetainCustomNonConfigurationInstance(): Any? {
         Log.i("HWVC", "VideoActivity onRetainCustomNonConfigurationInstance")
         return processor
-    }
-
-    override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) {
-    }
-
-    override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) {
-    }
-
-    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?): Boolean {
-//                processor?.release()
-//                processor = null
-        this.surface?.release()
-        return true
-    }
-
-    override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-        this.surface = Surface(surface)
-        processor?.prepare(this.surface!!)
     }
 
     override fun onResume() {

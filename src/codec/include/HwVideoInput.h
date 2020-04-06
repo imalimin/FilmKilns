@@ -25,10 +25,11 @@ public:
 
     virtual ~HwVideoInput();
 
-    bool onDestroy(AlMessage *msg) override;
-
     bool onCreate(AlMessage *msg) override;
 
+    bool onDestroy(AlMessage *msg) override;
+
+private:
     bool eventStart(AlMessage *msg) override;
 
     bool eventPause(AlMessage *msg) override;
@@ -37,13 +38,20 @@ public:
 
     bool eventStop(AlMessage *msg) override;
 
+    /// 设置播放资源
+    /// FORMAT:
+    /// +----------------------------------------------+
+    /// | msg::obj | msg::arg1 | msg::arg2 | msg::desc |
+    /// +----------------------------------------------+
+    /// | none     | none      | none      |   path    |
+    /// +----------------------------------------------+
+    /// \param msg
+    /// \return
     bool eventSetSource(AlMessage *msg) override;
 
     bool eventLoop(AlMessage *msg);
 
-    void setPlayListener(function<void(int64_t, int64_t)> listener);
-
-private:
+    bool _onLayerNotify(AlMessage *msg);
 
     void loop();
 
@@ -53,21 +61,19 @@ private:
 
     void playAudioFrame(HwAudioFrame *frame);
 
-    void processPlayListener(int64_t us);
-
     void bindTex(HwVideoFrame *frame);
 
-    bool invalidate(HwAbsTexture *tex);
+    bool _invalidate();
+
+    void _notifyProgress(int64_t us);
 
 private:
     const int INTERVAL_PROGRESS = 1000000;
-    AlTexAllocator *texAllocator = nullptr;
     AbsVideoDecoder *decoder = nullptr;
     HwYV122RGBAFilter *yuvFilter = nullptr;
     HwAbsTexture *y = nullptr;
     HwAbsTexture *u = nullptr;
     HwAbsTexture *v = nullptr;
-    HwAbsTexture *target = nullptr;
     PlayState playState = STOP;
     SimpleLock simpleLock;
     string path;
@@ -75,13 +81,10 @@ private:
     int64_t lastShowTime = -1;
     int64_t lastPlayPts = INT64_MIN;
 
-    /**
-     * Listeners
-     */
-    function<void(int64_t, int64_t)> playListener = nullptr;
-
     /** setting */
     bool enableLoop = true;
+    HwAbsTexture *mLayerTex = nullptr;
+    int32_t mLayerId = -1;
 };
 
 

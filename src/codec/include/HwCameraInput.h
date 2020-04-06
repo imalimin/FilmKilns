@@ -27,11 +27,11 @@ private:
 
     bool _onInvalidate(AlMessage *msg);
 
-    void _onUpdateSize(AlMessage *msg);
+    bool _onUpdateSize(AlMessage *msg);
 
-    void _onRun(AlMessage *msg);
+    bool _onRun(AlMessage *msg);
 
-    void _onLayerNotify(AlMessage *msg);
+    bool _onLayerNotify(AlMessage *msg);
 
 private:
     void draw(int w, int h);

@@ -10,7 +10,7 @@
 
 #include "Unit.h"
 
-class HwStreamMedia : public Unit {
+al_def_unit(HwStreamMedia, Unit) {
 public:
     HwStreamMedia(string alias);
 
