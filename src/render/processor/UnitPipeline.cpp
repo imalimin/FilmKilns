@@ -17,7 +17,7 @@ UnitPipeline::UnitPipeline(string name) {
             AlRunnable *run = dynamic_cast<AlRunnable *>(msg->obj);
             (*run)(msg);
         }
-        this->dispatch(msg);
+        this->_dispatch(msg);
     });
 }
 
@@ -48,27 +48,40 @@ void UnitPipeline::postEvent(AlMessage *msg) {
 //    this->dispatch(msg);
 }
 
-void UnitPipeline::dispatch(AlMessage *msg) {
+void UnitPipeline::_dispatch(AlMessage *msg) {
     AlLogI(TAG, "%d, %d", msg->what, units.size());
     if (EVENT_COMMON_PREPARE == msg->what) {
-        std::lock_guard<std::mutex> guard(mtx);
-        for (auto *unit:units) {
-            bool ret = unit->dispatch(msg);
-        }
+        _disCreate(msg);
         return;
     }
-    if (EVENT_COMMON_RELEASE != msg->what) {
-        for (auto *unit:units) {
-            bool ret = unit->dispatch(msg);
-        }
-    } else {
-        for (auto itr = units.end() - 1; itr != units.begin() - 1; --itr) {
-            auto *unit = *itr;
-            AlLogI(TAG, "%s will be destroy.", unit->toString().c_str());
-            bool ret = unit->dispatch(msg);
-        }
-        clear();
+    if (EVENT_COMMON_RELEASE == msg->what) {
+        _disDestroy(msg);
+        return;
     }
+    for (auto *unit:units) {
+        bool ret = unit->dispatch(msg);
+    }
+}
+
+bool UnitPipeline::_disCreate(AlMessage *msg) {
+//    std::lock_guard<std::mutex> guard(mtx);
+    while (!units0.empty()) {
+        auto *u = units0.front();
+        bool ret = u->dispatch(msg);
+        units0.pop_front();
+        units.emplace_back(u);
+    }
+    return true;
+}
+
+bool UnitPipeline::_disDestroy(AlMessage *msg) {
+    for (auto itr = units.end() - 1; itr != units.begin() - 1; --itr) {
+        auto *unit = *itr;
+        AlLogI(TAG, "%s will be destroy.", unit->toString().c_str());
+        bool ret = unit->dispatch(msg);
+    }
+    clear();
+    return true;
 }
 
 void UnitPipeline::clear() {
@@ -79,12 +92,18 @@ void UnitPipeline::clear() {
         }
     }
     units.clear();
+    for (auto *unit:units0) {
+        if (!unit->setting.hosted) {
+            delete unit;
+        }
+    }
+    units0.clear();
 }
 
 int UnitPipeline::registerAnUnit(Unit *unit) {
     {
-        std::lock_guard<std::mutex> guard(mtx);
-        units.emplace_back(unit);
+//        std::lock_guard<std::mutex> guard(mtx);
+        units0.push_back(unit);
     }
     _notifyCreate();
     return 1;

@@ -30,7 +30,11 @@ public:
 private:
     UnitPipeline(const UnitPipeline &o) : Object() {};
 
-    void dispatch(AlMessage *msg);
+    void _dispatch(AlMessage *msg);
+
+    bool _disCreate(AlMessage *msg);
+
+    bool _disDestroy(AlMessage *msg);
 
     void clear();
 
@@ -42,6 +46,8 @@ private:
     AlHandlerThread *mThread = nullptr;
     AlHandler *mHandler = nullptr;
     std::mutex mtx;
+    /// Should prepare units.
+    std::deque<Unit *> units0;
     vector<Unit *> units;
     bool notified = false;
 };
