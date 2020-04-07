@@ -40,6 +40,11 @@ android {
             path "CMakeLists.txt"
         }
     }
+    android.libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "hwvc_${defaultConfig.versionName}_${defaultConfig.versionCode}" + '.aar'
+        }
+    }
 }
 
 dependencies {
