@@ -114,8 +114,6 @@ static constexpr int EVENT_CANVAS_CROP = KID('A', 'L', 'R', 0x05);
 static constexpr int EVENT_CANVAS_CLEAR_DONE = KID('A', 'L', 'R', 0x06);
 static constexpr int EVENT_CANVAS_DRAW_DONE = KID('A', 'L', 'R', 0x07);
 static constexpr int EVENT_CANVAS_SAVE_FINISH = KID('A', 'L', 'R', 0x08);
-static constexpr int MSG_CANVAS_REQ_PIXELS = KID('A', 'L', 'R', 0x09);
-static constexpr int MSG_CANVAS_NOTIFY_PIXELS = KID('A', 'L', 'R', 0x010);
 
 static constexpr int EVENT_LAYER_FILTER_RENDER = KID('A', 'L', 'F', 0x00);
 static constexpr int EVENT_LAYER_REMOVE_CACHE_LAYER = KID('A', 'L', 'F', 0x01);
@@ -124,6 +122,9 @@ static constexpr int EVENT_IMAGE_CODEC_DECODE = KID('I', 'C', 'D', 0x00);
 static constexpr int EVENT_IMAGE_CODEC_DECODE_NOTIFY = KID('I', 'C', 'D', 0x01);
 static constexpr int EVENT_IMAGE_CODEC_ENCODE = KID('I', 'C', 'D', 0x02);
 static constexpr int EVENT_IMAGE_CODEC_ENCODE_NOTIFY = KID('I', 'C', 'D', 0x03);
+
+static constexpr int MSG_TEX_READER_REQ_PIXELS = KID('A', 'T', 'R', 0x01);
+static constexpr int MSG_TEX_READER_NOTIFY_PIXELS = KID('A', 'T', 'R', 0x02);
 
 #include "Object.h"
 #include "UnitPipeline.h"

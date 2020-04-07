@@ -10,6 +10,7 @@
 #include "../include/HwMicrophone.h"
 #include "include/AlVideoCompiler.h"
 #include "AlGImage.h"
+#include "AlUTexReader.h"
 #include "HwScreen.h"
 #include "ObjectBox.h"
 #include "NativeWindow.h"
@@ -23,6 +24,7 @@ HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
+    registerAnUnit(new AlUTexReader(ALIAS_OF_READER));
     registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerEvent(MSG_CAMERA_OES_TEX_NOTIFY,
                   reinterpret_cast<EventFunc>(&HwCameraRecorder::_onOESTexNotify));

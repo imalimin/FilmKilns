@@ -20,7 +20,7 @@ AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                                                  aFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100) {
     registerEvent(EVENT_CANVAS_DRAW_DONE,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onDrawDone));
-    registerEvent(MSG_CANVAS_NOTIFY_PIXELS,
+    registerEvent(MSG_TEX_READER_NOTIFY_PIXELS,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onWrite));
 
     registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onStart));
@@ -68,7 +68,7 @@ bool AlVideoCompiler::onDestroy(AlMessage *msg) {
 
 bool AlVideoCompiler::_onDrawDone(AlMessage *msg) {
     if (recording) {
-        auto *m = AlMessage::obtain(MSG_CANVAS_REQ_PIXELS, AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+        auto *m = AlMessage::obtain(MSG_TEX_READER_REQ_PIXELS, AlMessage::QUEUE_MODE_FIRST_ALWAYS);
         m->arg1 = static_cast<int32_t>(HwFrameFormat::HW_IMAGE_NV12);
         postEvent(m);
     }
