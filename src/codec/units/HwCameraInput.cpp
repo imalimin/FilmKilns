@@ -72,6 +72,7 @@ bool HwCameraInput::onDestroy(AlMessage *msg) {
 }
 
 bool HwCameraInput::_onInvalidate(AlMessage *msg) {
+    AlLogI(TAG, "");
     int64_t tsInNs = msg->arg2;
     if (msg->obj) {
         AlMatrix *m = msg->getObj<AlMatrix *>();

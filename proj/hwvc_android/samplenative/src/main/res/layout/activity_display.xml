@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/swapBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="SWAP" />
+
+            <Button
+                android:id="@+id/recordBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Record" />
+
+            <TextView
+                style="@style/TextAppearance.UIFabric.Caption"
+                android:id="@+id/timeView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="6dp"
+                android:layout_toStartOf="@id/recordBtn"
+                android:text="00:00.000" />
+
+            <Button
+                android:id="@+id/nextBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Done" />
+
+            <Button
+                android:id="@+id/backBtn"
+                style="@style/Widget.UIFabric.Button.Borderless"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="6dp"
+                android:layout_toStartOf="@id/nextBtn"
+                android:text="Del" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <include layout="@layout/view_filter" />
+</RelativeLayout>

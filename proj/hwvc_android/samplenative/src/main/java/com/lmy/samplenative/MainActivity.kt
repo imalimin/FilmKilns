@@ -18,6 +18,7 @@ class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickList
             Item("Video Player") { startActivity(Intent(this, VideoActivity::class.java)) },
             Item("Audio Recorder & Mux") { startActivity(Intent(this, AudioRecordAndMuxActivity::class.java)) },
             Item("Video Recorder") { startActivity(Intent(this, CameraActivity::class.java)) },
+            Item("Display Recorder") { startActivity(Intent(this, AlDisplayActivity::class.java)) },
             Item("Echo Player") { startActivity(Intent(this, EchoActivity::class.java)) },
             Item("Image Editor") { startActivity(Intent(this, ImageActivity::class.java)) },
             Item("Voice Player") { startActivity(Intent(this, AudioPlayerActivity::class.java)) },
