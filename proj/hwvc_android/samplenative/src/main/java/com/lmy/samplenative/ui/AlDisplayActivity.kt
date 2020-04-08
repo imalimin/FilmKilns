@@ -5,6 +5,9 @@ import android.content.Intent
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
 import android.util.Log
 import android.view.SurfaceHolder
 import com.lmy.hwvcnative.processor.AlDisplayRecorder
@@ -16,6 +19,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class AlDisplayActivity : BaseActivity() {
     private var recorder: AlDisplayRecorder? = null
     private lateinit var path: String
@@ -24,9 +28,17 @@ class AlDisplayActivity : BaseActivity() {
     private val format = SimpleDateFormat("mm:ss.SSS")
     private var recording = false
     private var requestPreview = false
+    private var win: FloatWindow? = null
 
     override fun getLayoutResource(): Int = R.layout.activity_display
     override fun initView() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            startActivityForResult(Intent(ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 0x02)
+        } else {
+//            startService(new Intent(MainActivity.this, FloatingService.class));
+        }
+        win = FloatWindow(this)
+        win?.show()
         mpm = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         startActivityForResult(mpm?.createScreenCaptureIntent(), REQ_PROJECTION)
         recordBtn.setOnClickListener {
@@ -48,10 +60,10 @@ class AlDisplayActivity : BaseActivity() {
             recorder?.release()
         }
         backBtn.setOnClickListener {
-//            recorder?.backward()
+            //            recorder?.backward()
         }
         swapBtn.setOnClickListener {
-//            recorder?.swapCamera()
+            //            recorder?.swapCamera()
         }
     }
 
