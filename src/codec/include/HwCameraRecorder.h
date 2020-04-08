@@ -12,8 +12,8 @@
 #include "HwWindow.h"
 #include "HwAbsFilter.h"
 #include "HwSampleFormat.h"
-#include "HwCameraInput.h"
 #include "AlEgl.h"
+#include "AlMatrix.h"
 
 /**
  *    Controller                Unit                  Unit               Unit                 Unit

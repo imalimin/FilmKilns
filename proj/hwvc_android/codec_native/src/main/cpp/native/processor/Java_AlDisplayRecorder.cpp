@@ -6,7 +6,7 @@
 */
 
 #include "../include/HwJavaNativeHelper.h"
-#include "HwCameraRecorder.h"
+#include "AlDisplayRecorder.h"
 #include "../include/HwAndroidWindow.h"
 
 #ifdef __cplusplus
@@ -22,8 +22,8 @@ static JMethodDescription midOnNativePrepared = {
         "Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
         "onNativePrepared", "(I)V"};
 
-static HwCameraRecorder *getHandler(jlong handler) {
-    return reinterpret_cast<HwCameraRecorder *>(handler);
+static AlDisplayRecorder *getHandler(jlong handler) {
+    return reinterpret_cast<AlDisplayRecorder *>(handler);
 }
 
 static void bindListener(jlong handler) {
@@ -56,7 +56,7 @@ static void bindListener(jlong handler) {
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_create
         (JNIEnv *env, jobject thiz) {
-    HwCameraRecorder *p = new HwCameraRecorder();
+    auto *p = new AlDisplayRecorder();
     p->post([] {
         HwJavaNativeHelper::getInstance()->attachThread();
     });
@@ -139,7 +139,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_pause
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
-        HwCameraRecorder *p = getHandler(handler);
+        auto *p = getHandler(handler);
         p->post([] {
             AlLogI("Java_AlDisplayRecorder", "release");
             HwJavaNativeHelper::getInstance()->detachThread();

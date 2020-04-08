@@ -32,11 +32,11 @@ class AlDisplayActivity : BaseActivity() {
 
     override fun getLayoutResource(): Int = R.layout.activity_display
     override fun initView() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            startActivityForResult(Intent(ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 0x02)
-        } else {
-//            startService(new Intent(MainActivity.this, FloatingService.class));
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+//            startActivityForResult(Intent(ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 0x02)
+//        } else {
+////            startService(new Intent(MainActivity.this, FloatingService.class));
+//        }
         win = FloatWindow(this)
         win?.show()
         mpm = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
