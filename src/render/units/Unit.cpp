@@ -16,7 +16,6 @@ Event::Event(int what, EventFunc handler) {
 }
 
 Event::~Event() {
-    LOGE("~Event");
     this->what = 0;
     this->handler = nullptr;
 }

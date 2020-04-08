@@ -33,15 +33,18 @@ private:
 
     bool _onLayerNotify(AlMessage *msg);
 
-private:
-    void draw(int w, int h);
+    bool _onOutputSize(AlMessage *msg);
 
-    void notify(int64_t tsInNs, int w, int h);
+private:
+    void draw();
+
+    void notify(int64_t tsInNs);
 
     void updateMatrix(int32_t w, int32_t h, AlMatrix *matrix);
 
 private:
     AlSize cameraSize;
+    AlSize outSize;
     AlSPointer<HwAbsTexture> srcTex;
     HwAbsFBObject *fbo = nullptr;
     HwProgram *program = nullptr;

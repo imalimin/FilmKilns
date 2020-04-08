@@ -9,7 +9,11 @@ package com.lmy.hwvcnative
 abstract class CPPObject {
     internal var handler: Long = 0
 
-    fun isNativeNull(): Boolean = NULL == handler;
+    fun isNativeNull(): Boolean = NULL == handler
+
+    open fun onNativeMessage(what: Int, arg1: Int) {
+
+    }
 
     //    internal abstract fun create(): Long
     companion object {

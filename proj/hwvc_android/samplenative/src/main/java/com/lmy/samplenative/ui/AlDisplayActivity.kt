@@ -67,6 +67,10 @@ class AlDisplayActivity : BaseActivity() {
         }
 
         surfaceView.keepScreenOn = true
+        if (null != surfaceView.holder.surface) {
+            recorder?.showAt(surfaceView.holder.surface)
+            return
+        }
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
                 recorder?.showAt(holder.surface)

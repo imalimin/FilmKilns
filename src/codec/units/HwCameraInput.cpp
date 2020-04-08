@@ -15,6 +15,7 @@
 #include "ObjectBox.h"
 #include "AlRunnable.h"
 #include "AlTexManager.h"
+#include "AlRenderParams.h"
 
 #define TAG "HwCameraInput"
 
@@ -27,6 +28,8 @@ HwCameraInput::HwCameraInput(string alias) : Unit(alias), srcTex(nullptr) {
                   reinterpret_cast<EventFunc>(&HwCameraInput::_onRun));
     registerEvent(EVENT_LAYER_QUERY_ID_NOTIFY,
                   reinterpret_cast<EventFunc>(&HwCameraInput::_onLayerNotify));
+    registerEvent(MSG_VIDEO_OUTPUT_SIZE,
+                  reinterpret_cast<EventFunc>(&HwCameraInput::_onOutputSize));
 }
 
 HwCameraInput::~HwCameraInput() {
@@ -72,23 +75,27 @@ bool HwCameraInput::onDestroy(AlMessage *msg) {
 }
 
 bool HwCameraInput::_onInvalidate(AlMessage *msg) {
+    if (nullptr == mLayerTex) {
+        if (!fbo) {
+            auto *m = AlMessage::obtain(MSG_LAYER_ADD_EMPTY,
+                                        new AlSize(outSize.width, outSize.height));
+            postMessage(m);
+            fbo = HwFBObject::alloc();
+        }
+        return true;
+    }
     AlLogI(TAG, "");
     int64_t tsInNs = msg->arg2;
     if (msg->obj) {
         AlMatrix *m = msg->getObj<AlMatrix *>();
-        updateMatrix(cameraSize.width, cameraSize.height, m);
+        updateMatrix(mLayerTex->getWidth(), mLayerTex->getHeight(), m);
     }
-    draw(cameraSize.width, cameraSize.height);
-    notify(tsInNs, cameraSize.width, cameraSize.height);
+    draw();
+    notify(tsInNs);
     return true;
 }
 
-void HwCameraInput::draw(int w, int h) {
-    if (!fbo) {
-        auto *m = AlMessage::obtain(MSG_LAYER_ADD_EMPTY, new AlSize(w, h));
-        postMessage(m);
-        fbo = HwFBObject::alloc();
-    }
+void HwCameraInput::draw() {
     if (mLayerTex) {
 //        AlLogI(TAG, "%d, %d", mLayerId, mLayerTex->texId());
         glViewport(0, 0, mLayerTex->getWidth(), mLayerTex->getHeight());
@@ -101,10 +108,12 @@ void HwCameraInput::draw(int w, int h) {
     }
 }
 
-void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
+void HwCameraInput::notify(int64_t tsInNs) {
     AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr,
                                        AlMessage::QUEUE_MODE_UNIQUE);
-    msg->arg1 = 0;
+    AlRenderParams params;
+    params.setTransparent(true);
+    msg->arg1 = params.toInt();
     postEvent(msg);
 
     auto *m = AlMessage::obtain(MSG_TIMESTAMP);
@@ -113,9 +122,11 @@ void HwCameraInput::notify(int64_t tsInNs, int w, int h) {
 }
 
 void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
+    AlLogI(TAG, "%dx%d, %dx%d", w, h, cameraSize.width, cameraSize.height);
     AlMatrix scale;
     float vRatio = w / (float) h;
     float cRatio = cameraSize.ratio();
+    scale.setScale(1.0f, -1.0f);
     if (cRatio > vRatio) {
         scale.setScale(vRatio / cRatio, -1.0f);
     } else {
@@ -146,5 +157,15 @@ bool HwCameraInput::_onLayerNotify(AlMessage *msg) {
         mLayerTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
     }
     AlLogI(TAG, "%d", mLayerId);
+    return true;
+}
+
+bool HwCameraInput::_onOutputSize(AlMessage *msg) {
+    auto size = msg->getObj<AlSize *>();
+    if (size) {
+        outSize.width = size->width;
+        outSize.height = size->height;
+        AlLogI(TAG, "%dx%d", outSize.width, outSize.height);
+    }
     return true;
 }

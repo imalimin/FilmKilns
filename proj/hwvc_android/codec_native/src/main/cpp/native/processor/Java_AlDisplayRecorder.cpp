@@ -13,9 +13,9 @@
 extern "C" {
 #endif
 
-static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
-                                              "onHandleMessage", "(II)V"};
-static JMethodDescription vRecordProgressDesc = {
+static JMethodDescription midOnNativeMessage = {"Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
+                                              "onNativeMessage", "(II)V"};
+static JMethodDescription midOnRecordProgressDesc = {
         "Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
         "onRecordProgress", "(J)V"};
 static JMethodDescription midOnNativePrepared = {
@@ -34,7 +34,7 @@ static void bindListener(jlong handler) {
         if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
             HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
             HwJavaNativeHelper::getInstance()->findMethod(handler,
-                                                          vRecordProgressDesc,
+                                                          midOnRecordProgressDesc,
                                                           &mid)) {
             pEnv->CallVoidMethod(jObject, mid, static_cast<jlong>(timeInUs));
         }
@@ -72,23 +72,23 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_postE
         getHandler(handler)->runOnCameraContext([handler, w]() {
             jobject jObject = nullptr;
             JNIEnv *pEnv = nullptr;
-            jmethodID methodID = nullptr;
+            jmethodID mid = nullptr;
             if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
                 HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
                 HwJavaNativeHelper::getInstance()->findMethod(handler,
-                                                              cOnHandleMessage,
-                                                              &methodID)) {
+                                                              midOnNativeMessage,
+                                                              &mid)) {
                 switch (w) {
                     case 4: {
-                        pEnv->CallVoidMethod(jObject, methodID, w, 0);
+                        pEnv->CallVoidMethod(jObject, mid, w, 0);
                         break;
                     }
                     case 2: {
-                        pEnv->CallVoidMethod(jObject, methodID, w, 0);
+                        pEnv->CallVoidMethod(jObject, mid, w, 0);
                         break;
                     }
                     default:
-                        pEnv->CallVoidMethod(jObject, methodID, w, 0);
+                        pEnv->CallVoidMethod(jObject, mid, w, 0);
                 }
                 pEnv->ExceptionCheck();
             }
@@ -115,7 +115,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setFo
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_updateWindow
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_showAt
         (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
         getHandler(handler)->updateWindow(new HwAndroidWindow(env, surface));

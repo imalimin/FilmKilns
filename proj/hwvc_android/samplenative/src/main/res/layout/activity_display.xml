@@ -9,11 +9,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <SurfaceView
-            android:id="@+id/surfaceView"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_gravity="center"
+            android:layout_weight="1">
+
+            <SurfaceView
+                android:id="@+id/surfaceView"
+                android:layout_width="320dp"
+                android:layout_height="320dp"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -41,8 +48,8 @@
                 android:text="Record" />
 
             <TextView
-                style="@style/TextAppearance.UIFabric.Caption"
                 android:id="@+id/timeView"
+                style="@style/TextAppearance.UIFabric.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
