@@ -16,6 +16,7 @@
 #include "AlRunnable.h"
 #include "AlTexManager.h"
 #include "AlRenderParams.h"
+#include "AlOperateScale.h"
 
 #define TAG "AlUOESTexInput"
 
@@ -78,13 +79,14 @@ bool AlUOESTexInput::_onInvalidate(AlMessage *msg) {
     if (nullptr == mLayerTex) {
         if (!fbo) {
             auto *m = AlMessage::obtain(MSG_LAYER_ADD_EMPTY,
-                                        new AlSize(outSize.width, outSize.height));
+                                        new AlSize(cameraSize.width, cameraSize.height));
             postMessage(m);
             fbo = HwFBObject::alloc();
         }
         return true;
     }
-    AlLogI(TAG, "");
+    AlLogI(TAG, "%dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
+           cameraSize.width, cameraSize.height);
     int64_t tsInNs = msg->arg2;
     if (msg->obj) {
         AlMatrix *m = msg->getObj<AlMatrix *>();
@@ -122,18 +124,7 @@ void AlUOESTexInput::notify(int64_t tsInNs) {
 }
 
 void AlUOESTexInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
-    AlLogI(TAG, "%dx%d, %dx%d", w, h, cameraSize.width, cameraSize.height);
-    AlMatrix scale;
-    float vRatio = w / (float) h;
-    float cRatio = cameraSize.ratio();
-    scale.setScale(1.0f, -1.0f);
-    if (cRatio > vRatio) {
-        scale.setScale(vRatio / cRatio, -1.0f);
-    } else {
-        scale.setScale(1.0f, -cRatio / vRatio);
-    }
-    AlMatrix trans = scale * (*matrix);
-    program->updateMatrix(&trans);
+    program->updateMatrix(matrix);
 }
 
 bool AlUOESTexInput::_onUpdateSize(AlMessage *msg) {
@@ -155,6 +146,15 @@ bool AlUOESTexInput::_onLayerNotify(AlMessage *msg) {
     mLayerId = msg->arg1;
     if (nullptr == mLayerTex) {
         mLayerTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
+        auto scaleX = AlRational(mLayerTex->getWidth(), cameraSize.width);
+        auto scaleY = AlRational(mLayerTex->getHeight(), cameraSize.height);
+        if (scaleY.toFloat() > scaleX.toFloat()) {
+            scaleX = scaleY;
+        }
+        auto *desc = new AlOperateScale(mLayerId, scaleX, AlVec2(0, 0));
+        /// Y轴镜像
+        desc->scaleY.num = -desc->scaleY.num;
+        postEvent(AlMessage::obtain(EVENT_LAYER_SCALE, desc));
     }
     AlLogI(TAG, "%d", mLayerId);
     return true;

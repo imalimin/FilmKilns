@@ -123,7 +123,7 @@ void AlVideoCompiler::_initialize() {
             return;
         }
         if (0 != size.width % 16 || 0 != size.height % 16) {
-            AlLogE(TAG, "Not align 16.");
+            AlLogE(TAG, "Not align 16. %dx%d", size.width, size.height);
             return;
         }
         encoder = new HwAsyncEncoder();
