@@ -34,6 +34,10 @@ AlMatrix::~AlMatrix() {
 }
 
 void AlMatrix::reset() {
+    matrix.resize(SIZE);
+    for (int i = 0; i < matrix.size(); ++i) {
+        matrix[i] = 0;
+    }
     _set(0, 0, 1.f);
     _set(1, 1, 1.f);
     _set(2, 2, 1.f);
@@ -43,7 +47,7 @@ void AlMatrix::reset() {
 void AlMatrix::setScale(float scaleX, float scaleY) {
     _set(0, 0, scaleX);
     _set(1, 1, scaleY);
-    _set(3, 2, 1.0f);
+    _set(2, 2, 1.0f);
 }
 
 void AlMatrix::setRotation(float rotation) {

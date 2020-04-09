@@ -36,6 +36,12 @@ AlRational &AlRational::operator+(AlRational r) {
     return *r1;
 }
 
+AlRational &AlRational::operator=(const AlRational &o) {
+    this->num = o.num;
+    this->den = o.den;
+    return *this;
+}
+
 float AlRational::toFloat() {
     if (0 == den) {
         return 0.0f;

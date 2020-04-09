@@ -21,7 +21,8 @@ public:
     virtual ~AlOperateScale();
 
 public:
-    AlRational scale;
+    AlRational scaleX;
+    AlRational scaleY;
     AlVec2 anchor;
 };
 

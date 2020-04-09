@@ -22,6 +22,8 @@ public:
 
     AlRational &operator+(AlRational r);
 
+    AlRational &operator=(const AlRational &o);
+
     float toFloat();
 
     double toDouble();

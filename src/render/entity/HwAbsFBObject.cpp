@@ -42,6 +42,8 @@ void HwAbsFBObject::unbindTex() {
 }
 
 void HwAbsFBObject::bind() {
+//    GLint curFbo;
+//    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curFbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 

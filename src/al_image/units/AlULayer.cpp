@@ -322,6 +322,8 @@ bool AlULayer::onCropCanvas(AlMessage *m) {
     AlSize src = getCanvasSize();
     AlSize dst(src.width * rectF.getWidth() / 2,
                src.height * rectF.getHeight() / 2);
+//    dst.width = (( dst.width >> 4) + (( dst.width & 0xF) >> 3)) << 4;
+//    dst.height = (( dst.height >> 4) + (( dst.height & 0xF) >> 3)) << 4;
     AlPointF anchor(-(rectF.right + rectF.left) / 2.0f, -(rectF.top + rectF.bottom) / 2.0f);
     _cropCanvasAndKeepLoc(src, dst, anchor);
     postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(dst)));

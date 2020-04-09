@@ -8,12 +8,12 @@
 #include "AlOperateScale.h"
 
 AlOperateScale::AlOperateScale(int32_t layerId, AlRational scale, AlVec2 anchor)
-        : AlOperateDesc(layerId), scale(scale), anchor(anchor) {
+        : AlOperateDesc(layerId), scaleX(scale), scaleY(scale), anchor(anchor) {
 
 }
 
 AlOperateScale::AlOperateScale(const AlOperateScale &o)
-        : AlOperateDesc(o.layerId), scale(o.scale), anchor(o.anchor) {
+        : AlOperateDesc(o.layerId), scaleX(o.scaleX), scaleY(o.scaleY), anchor(o.anchor) {
 
 }
 

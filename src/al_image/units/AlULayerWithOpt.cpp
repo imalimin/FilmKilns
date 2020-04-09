@@ -83,7 +83,7 @@ bool AlULayerWithOpt::onOperateScale(AlMessage *m) {
     }
     auto *model = findLayerModel(desc->layerId);
     if (model) {
-        model->setScale(desc->scale.toFloat(), desc->scale.toFloat());
+        model->setScale(desc->scaleX.toFloat(), desc->scaleY.toFloat());
         invalidate();
     }
     return true;
@@ -97,14 +97,15 @@ bool AlULayerWithOpt::onOperatePostScale(AlMessage *m) {
     auto *model = findLayerModel(desc->layerId);
     if (model) {
         AlVec2 vec = transWin2Canvas(desc->anchor.x, desc->anchor.y);
-        float scale = desc->scale.toFloat();
+        float scaleX = desc->scaleX.toFloat();
+        float scaleY = desc->scaleY.toFloat();
         float dx = desc->anchor.x - model->getPosition().x;
         float dy = desc->anchor.y - model->getPosition().y;
-        float x = dx * (1.0f - scale);
-        float y = dy * (1.0f - scale);
+        float x = dx * (1.0f - scaleX);
+        float y = dy * (1.0f - scaleY);
         model->setPosition(model->getPosition().x + x, model->getPosition().y + y);
-        model->setScale(model->getScale().x * scale,
-                        model->getScale().y * scale);
+        model->setScale(model->getScale().x * scaleX,
+                        model->getScale().y * scaleY);
         invalidate();
     }
     return true;

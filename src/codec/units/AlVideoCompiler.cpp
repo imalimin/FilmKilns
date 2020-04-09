@@ -92,6 +92,10 @@ bool AlVideoCompiler::_onWrite(AlMessage *msg) {
 
 bool AlVideoCompiler::_onStart(AlMessage *msg) {
     _initialize();
+    if (!initialized) {
+        AlLogE(TAG, "failed. Not initialized.");
+        return true;
+    }
     recording = true;
     return true;
 }
@@ -114,21 +118,23 @@ bool AlVideoCompiler::_onBackward(AlMessage *msg) {
 
 void AlVideoCompiler::_initialize() {
     if (!initialized) {
-        initialized = true;
-        int32_t width = size.width;
-        int32_t height = size.height;
         if (StringUtils::isEmpty(&path) || size.width <= 0 || size.height <= 0) {
             AlLogE(TAG, "failed");
             return;
         }
+        if (0 != size.width % 16 || 0 != size.height % 16) {
+            AlLogE(TAG, "Not align 16.");
+            return;
+        }
         encoder = new HwAsyncEncoder();
-        if (!encoder->prepare(path, width, height, aFormat)) {
+        if (!encoder->prepare(path, size.width, size.height, aFormat)) {
             AlLogE(TAG, "Prepare video encoder failed");
         }
         videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12,
                                       size.width, size.height);
         audioFrame = new HwAudioFrame(nullptr, aFormat.getFormat(), aFormat.getChannels(),
                                       aFormat.getSampleRate(), 1024);
+        initialized = true;
     }
 }
 
