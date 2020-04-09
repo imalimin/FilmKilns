@@ -35,7 +35,7 @@ class AlDisplayRecorder(private val mp: MediaProjection,
     fun setFormat(width: Int, height: Int, sampleFormat: Int = 102,
                   channels: Int = 2, sampleRate: Int = 44100) {
         if (0L == handler) return
-        setFormat(handler, width, height, sampleFormat, channels, sampleRate)
+        setFormat(handler, dw, dh, sampleFormat, channels, sampleRate)
     }
 
     fun start() {
