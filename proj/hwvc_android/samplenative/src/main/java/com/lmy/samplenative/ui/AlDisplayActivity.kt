@@ -28,17 +28,9 @@ class AlDisplayActivity : BaseActivity() {
     private val format = SimpleDateFormat("mm:ss.SSS")
     private var recording = false
     private var requestPreview = false
-    private var win: FloatWindow? = null
 
     override fun getLayoutResource(): Int = R.layout.activity_display
     override fun initView() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-//            startActivityForResult(Intent(ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")), 0x02)
-//        } else {
-////            startService(new Intent(MainActivity.this, FloatingService.class));
-//        }
-        win = FloatWindow(this)
-        win?.show()
         mpm = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         startActivityForResult(mpm?.createScreenCaptureIntent(), REQ_PROJECTION)
         recordBtn.setOnClickListener {
@@ -63,7 +55,6 @@ class AlDisplayActivity : BaseActivity() {
             //            recorder?.backward()
         }
         swapBtn.setOnClickListener {
-            recorder?.cropOutputSize(win!!.getRect())
             //            recorder?.swapCamera()
         }
     }
@@ -74,7 +65,7 @@ class AlDisplayActivity : BaseActivity() {
         recorder = AlDisplayRecorder(mp, metrics.widthPixels, metrics.heightPixels,
                 metrics.densityDpi)
         recorder?.setOutputFilePath(path)
-        recorder?.setFormat(544, 960)
+        recorder?.setFormat(1088, 1792)
         recorder?.setOnRecordProgressListener {
             timeView.text = format.format(Date(it / 1000))
         }
