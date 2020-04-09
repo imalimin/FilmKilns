@@ -91,8 +91,8 @@ class FloatWindow(private val ctx: Context) : View.OnClickListener, View.OnTouch
                 loc = getLoc(frameView!!, event)
             }
             MotionEvent.ACTION_MOVE -> {
-                val dx = (event.rawX - pointF.x).toInt()
-                val dy = (event.rawY - pointF.y).toInt()
+                var dx = (event.rawX - pointF.x).toInt()
+                var dy = (event.rawY - pointF.y).toInt()
                 when (loc) {
                     LOC_LT -> {
                         lp!!.width -= dx

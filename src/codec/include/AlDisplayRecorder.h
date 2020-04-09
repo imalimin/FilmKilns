@@ -46,6 +46,8 @@ public:
 
     void setFormat(int width, int height, HwSampleFormat format);
 
+    void cropOutputSize(float left, float top, float right, float bottom);
+
     void setFilter(HwAbsFilter *filter);
 
     void runOnCameraContext(function<void()> func);
@@ -65,6 +67,8 @@ private:
     bool _onOESTexNotify(AlMessage *msg);
 
     bool _onRecordProgress(AlMessage *msg);
+
+    bool _onCanvasUpdate(AlMessage *msg);
 
 private:
     const string ALIAS_OF_MIC = "MIC";

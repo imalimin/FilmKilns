@@ -13,8 +13,9 @@
 extern "C" {
 #endif
 
-static JMethodDescription midOnNativeMessage = {"Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
-                                              "onNativeMessage", "(II)V"};
+static JMethodDescription midOnNativeMessage = {
+        "Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
+        "onNativeMessage", "(II)V"};
 static JMethodDescription midOnRecordProgressDesc = {
         "Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
         "onRecordProgress", "(J)V"};
@@ -161,6 +162,14 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_inval
             getHandler(handler)->setCameraSize(cw, ch);
             getHandler(handler)->invalidate(&m, tsInNs);
         }
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_cropOutputSize
+        (JNIEnv *env, jobject thiz, jlong handler, jfloat left, jfloat top,
+         jfloat right, jfloat bottom) {
+    if (handler) {
+        getHandler(handler)->cropOutputSize(left, top, right, bottom);
     }
 }
 

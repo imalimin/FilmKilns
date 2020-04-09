@@ -17,6 +17,8 @@
 #include "HwTexture.h"
 #include "AlRunnable.h"
 #include "AlSize.h"
+#include "AlOperateCrop.h"
+#include "AlIdentityCreator.h"
 
 #define TAG "HwCameraRecorder"
 
@@ -31,6 +33,8 @@ AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("AlDisplayRecorder") {
                   reinterpret_cast<EventFunc>(&AlDisplayRecorder::_onOESTexNotify));
     registerEvent(MSG_VIDEO_COMPILER_TIME,
                   reinterpret_cast<EventFunc>(&AlDisplayRecorder::_onRecordProgress));
+    registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
+                  reinterpret_cast<EventFunc>(&AlDisplayRecorder::_onCanvasUpdate));
 }
 
 AlDisplayRecorder::~AlDisplayRecorder() {
@@ -78,7 +82,13 @@ void AlDisplayRecorder::setOutputFilePath(string filePath) {
 void AlDisplayRecorder::setFormat(int width, int height, HwSampleFormat format) {
     postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height)));
     postMessage(AlMessage::obtain(MSG_MICROPHONE_FORMAT, new HwSampleFormat(format)));
-    auto *msg = AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(width, height));
+    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(width, height)));
+}
+
+void AlDisplayRecorder::cropOutputSize(float left, float top, float right, float bottom) {
+    auto *opt = new AlOperateCrop(AlIdentityCreator::NONE_ID, left, top, right, bottom);
+    opt->coordIdx = AlOperateDesc::CoordIdx::CANVAS;
+    auto *msg = AlMessage::obtain(EVENT_CANVAS_CROP, opt, AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
 }
 
@@ -126,5 +136,13 @@ bool AlDisplayRecorder::_onRecordProgress(AlMessage *msg) {
     if (onRecordListener) {
         onRecordListener(msg->arg2);
     }
+    return true;
+}
+
+bool AlDisplayRecorder::_onCanvasUpdate(AlMessage *msg) {
+    int32_t width = msg->arg1;
+    int32_t height = static_cast<int>(msg->arg2);
+    postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height),
+                                  AlMessage::QUEUE_MODE_FIRST_ALWAYS));
     return true;
 }

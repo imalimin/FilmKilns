@@ -209,6 +209,7 @@ bool AlVideoCompiler::_onSetSize(AlMessage *msg) {
     if (size) {
         this->size.width = size->width;
         this->size.height = size->height;
+        AlLogI(TAG, "%dx%d", size->width, size->height);
     }
     return true;
 }

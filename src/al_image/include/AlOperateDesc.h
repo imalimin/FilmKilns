@@ -12,6 +12,13 @@
 
 al_class(AlOperateDesc) {
 public:
+    enum class CoordIdx : int {
+        UNKNOWN = 0,
+        WINDOW,
+        CANVAS,
+        LAYER
+    };
+public:
     AlOperateDesc(int32_t layerId);
 
     AlOperateDesc(const AlOperateDesc &o);
@@ -20,6 +27,7 @@ public:
 
 public:
     int32_t layerId;
+    CoordIdx coordIdx = CoordIdx::WINDOW;
 };
 
 

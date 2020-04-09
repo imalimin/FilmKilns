@@ -312,8 +312,12 @@ bool AlULayer::onCropCanvas(AlMessage *m) {
     if (nullptr == desc) {
         return true;
     }
-    AlVec2 lt = transWin2Canvas(desc->rectF.left, desc->rectF.top);
-    AlVec2 rb = transWin2Canvas(desc->rectF.right, desc->rectF.bottom);
+    AlVec2 lt(desc->rectF.left, desc->rectF.top);
+    AlVec2 rb(desc->rectF.right, desc->rectF.bottom);
+    if (AlOperateDesc::CoordIdx::WINDOW == desc->coordIdx) {
+        lt = transWin2Canvas(desc->rectF.left, desc->rectF.top);
+        rb = transWin2Canvas(desc->rectF.right, desc->rectF.bottom);
+    }
     AlRectF rectF(lt.x, lt.y, rb.x, rb.y);
     AlSize src = getCanvasSize();
     AlSize dst(src.width * rectF.getWidth() / 2,

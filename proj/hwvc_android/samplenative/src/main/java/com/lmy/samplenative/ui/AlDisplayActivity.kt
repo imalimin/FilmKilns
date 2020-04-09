@@ -63,6 +63,7 @@ class AlDisplayActivity : BaseActivity() {
             //            recorder?.backward()
         }
         swapBtn.setOnClickListener {
+            recorder?.cropOutputSize(win!!.getRect())
             //            recorder?.swapCamera()
         }
     }

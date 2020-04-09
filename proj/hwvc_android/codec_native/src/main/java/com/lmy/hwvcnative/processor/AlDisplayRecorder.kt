@@ -1,6 +1,7 @@
 package com.lmy.hwvcnative.processor
 
 import android.graphics.Bitmap
+import android.graphics.RectF
 import android.graphics.SurfaceTexture
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
@@ -101,6 +102,11 @@ class AlDisplayRecorder(private val mp: MediaProjection,
         showAt(handler, surface)
     }
 
+    fun cropOutputSize(rect: RectF) {
+        if (isNativeNull()) return
+        cropOutputSize(handler, rect.left, rect.top, rect.right, rect.bottom)
+    }
+
     private external fun create(): Long
     private external fun showAt(handler: Long, surface: Surface)
     private external fun start(handler: Long)
@@ -113,6 +119,9 @@ class AlDisplayRecorder(private val mp: MediaProjection,
     private external fun setOutputFilePath(handler: Long, filePath: String)
     private external fun setFormat(handler: Long, width: Int, height: Int, sampleFormat: Int,
                                    channels: Int, sampleRate: Int)
+
+    private external fun cropOutputSize(handler: Long, left: Float, top: Float,
+                                        right: Float, bottom: Float)
 
     companion object {
         const val EVENT_PREPARE = 1
