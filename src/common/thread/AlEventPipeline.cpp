@@ -6,7 +6,7 @@
  */
 
 #include "AlEventPipeline.h"
-#include "AlFuncWrapper.h"
+#include "AlRunnable.h"
 
 AlEventPipeline *AlEventPipeline::create(std::string name) {
     return new AlEventPipeline(name);
@@ -20,9 +20,9 @@ AlEventPipeline::AlEventPipeline(std::string name) : Object() {
     exited = false;
     mThread = AlHandlerThread::create(name);
     mHandler = new AlHandler(mThread->getLooper(), [](AlMessage *msg) {
-        if (msg->obj) {
-            AlFuncWrapper *func = dynamic_cast<AlFuncWrapper *>(msg->obj);
-            func->invoke();
+        auto *run = msg->getObj<AlRunnable *>();
+        if (run) {
+            (*run)(nullptr);
         }
     });
 }
@@ -30,9 +30,9 @@ AlEventPipeline::AlEventPipeline(std::string name) : Object() {
 AlEventPipeline::AlEventPipeline(AlLooper *looper) {
     exited = false;
     mHandler = new AlHandler(looper, [](AlMessage *msg) {
-        if (msg->obj) {
-            AlFuncWrapper *func = dynamic_cast<AlFuncWrapper *>(msg->obj);
-            func->invoke();
+        auto *run = msg->getObj<AlRunnable *>();
+        if (run) {
+            (*run)(nullptr);
         }
     });
 }
@@ -48,12 +48,14 @@ AlEventPipeline::~AlEventPipeline() {
     mHandler = nullptr;
 }
 
-void AlEventPipeline::queueEvent(function<void()> event) {
+void AlEventPipeline::queueEvent(function<void()> func) {
     if (exited) {
         return;
     }
     if (mHandler) {
-        mHandler->sendMessage(AlMessage::obtain(0, AlFuncWrapper::wrap(event)));
+        mHandler->sendMessage(AlMessage::obtain(0, new AlRunnable([func](Object *o) {
+            func();
+        })));
     }
 }
 

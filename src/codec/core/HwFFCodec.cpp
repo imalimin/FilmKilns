@@ -11,6 +11,8 @@
 #include "BinaryUtils.h"
 #include "Logcat.h"
 
+#define TAG "HwFFCodec"
+
 HwFFCodec::HwFFCodec(int32_t codecId) : HwAbsCodec(codecId) {
 
 }
@@ -56,20 +58,20 @@ HwResult HwFFCodec::configure(HwBundle *format) {
     AVCodecID id = static_cast<AVCodecID>(codecId);
     AVCodec *pCodec = avcodec_find_encoder(id);
     if (!pCodec) {
+        AlLogE(TAG, "could not find %d codec!", id);
         release();
-        Logcat::e("HWVC", "HwFFCodec::initialize could not find %d codec!", id);
         return Hw::FAILED;
     }
     ctx = avcodec_alloc_context3(pCodec);
     if (!ctx) {
+        AlLogE(TAG, "could not init %d codec context!", id);
         release();
-        Logcat::e("HWVC", "HwFFCodec::initialize could not init %d codec context!", id);
         return Hw::FAILED;
     }
     switch (id) {
         case AV_CODEC_ID_H264: {
             if (!configureVideo(id, pCodec)) {
-                Logcat::e("HWVC", "HwFFCodec::initialize could not open %d codec!", id);
+                AlLogE(TAG, "could not open %d codec!", id);
                 return Hw::FAILED;
             }
             break;
@@ -77,7 +79,7 @@ HwResult HwFFCodec::configure(HwBundle *format) {
         case AV_CODEC_ID_AAC_LATM:
         case AV_CODEC_ID_AAC: {
             if (!configureAudio(id, pCodec)) {
-                Logcat::e("HWVC", "HwFFCodec::initialize could not open %d codec!", id);
+                AlLogE(TAG, "could not open %d codec!", id);
                 return Hw::FAILED;
             }
             break;
@@ -151,9 +153,8 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     int ret = avcodec_open2(ctx, codec, &param);
     av_dict_free(&param);
     if (ret < 0) {
+        AlLogE(TAG, "could not open %d codec!", ctx->codec_id);
         release();
-        Logcat::e("HWVC", "HwFFCodec::configureVideo could not open %d codec!",
-                  ctx->codec_id);
         return false;
     }
     return parseExtraData();
@@ -182,8 +183,7 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
             avcodec_close(ctx);
             avcodec_free_context(&ctx);
         }
-        Logcat::e("HWVC", "HwFFCodec::configureAudio could not open audio codec: %s",
-                  strerror(AVUNERROR(ret)));
+        AlLogE(TAG, "could not open audio codec: %s", strerror(AVUNERROR(ret)));
         return false;
     }
     return parseExtraData();
@@ -206,7 +206,7 @@ bool HwFFCodec::parseExtraData() {
             }
         }
         if (spsPos < 0 || ppsPos < 0) {
-            Logcat::e("HWVC", "HwFFCodec::configureVideo could not find sps & pps!");
+            AlLogE(TAG, "could not find sps & pps!");
             return false;
         }
         buffers[0] = HwBuffer::alloc(ppsPos - spsPos);
@@ -313,11 +313,11 @@ HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
     av_packet_unref(avPacket);
     int ret = avcodec_receive_packet(ctx, avPacket);
     if (AVERROR(EAGAIN) == ret) {
-        Logcat::e("HWVC", "HwFFCodec::encode wait(%s)", strerror(AVUNERROR(ret)));
+        AlLogE(TAG, "wait(%s)", strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
     if (ret < 0) {
-        Logcat::e("HWVC", "HwFFCodec::encode failed: %s", strerror(AVUNERROR(ret)));
+        AlLogE(TAG, "failed: %s", strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
     avPacket->duration = duration;

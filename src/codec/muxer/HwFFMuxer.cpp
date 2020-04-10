@@ -8,6 +8,8 @@
 #include "../include/HwFFMuxer.h"
 #include "Logcat.h"
 
+#define TAG "HwFFMuxer"
+
 HwFFMuxer::HwFFMuxer() : HwAbsMuxer() {
 }
 
@@ -34,7 +36,7 @@ HwResult HwFFMuxer::configure(string filePath, string type) {
     av_register_all();
     int ret = avformat_alloc_output_context2(&pFormatCtx, NULL, type.c_str(), filePath.c_str());
     if (ret < 0 || !pFormatCtx) {
-        Logcat::e("HWVC", "HwFFMuxer::configure failed %s", strerror(AVUNERROR(ret)));
+        AlLogE(TAG, "failed %s", strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
     av_dict_set(&pFormatCtx->metadata, "comment", "hwvc", 0);
@@ -44,14 +46,14 @@ HwResult HwFFMuxer::configure(string filePath, string type) {
 
 HwResult HwFFMuxer::start() {
     if (avio_open2(&pFormatCtx->pb, filePath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
+        AlLogE(TAG, "failed to open output file!");
         release();
-        Logcat::e("HWVC", "HwFFMuxer::initialize failed to open output file!");
         return Hw::FAILED;
     }
     int ret = avformat_write_header(pFormatCtx, nullptr);
     if (ret < 0) {
+        AlLogE(TAG, "failed to write header!");
         release();
-        Logcat::e("HWVC", "HwFFMuxer::initialize failed to write header!");
         return Hw::FAILED;
     }
     return Hw::SUCCESS;
@@ -125,9 +127,9 @@ bool HwFFMuxer::copyExtraData(AVStream *stream, HwAbsCodec *codec) {
                 offset += sps->size();
                 memcpy(extra + offset, pps->data(), pps->size());
                 stream->codecpar->extradata = extra;
-                FILE *fp = fopen("/sdcard/extra.data", "wb");
-                fwrite(stream->codecpar->extradata, 1, stream->codecpar->extradata_size, fp);
-                fclose(fp);
+//                FILE *fp = fopen("/sdcard/extra.data", "wb");
+//                fwrite(stream->codecpar->extradata, 1, stream->codecpar->extradata_size, fp);
+//                fclose(fp);
             }
             break;
         }
@@ -158,13 +160,13 @@ HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
     // pts / cq * bq
     av_packet_rescale_ts(avPacket, AV_TIME_BASE_Q, tb);
     if (tracks[track]->cur_dts >= avPacket->dts) {
-        Logcat::i("HWVC", "HwFFMuxer::write will failed(%lld, %lld), try reset correctly.",
-                  tracks[track]->cur_dts, avPacket->dts);
+        AlLogE(TAG, "will failed(%lld, %lld), try reset correctly.",
+               tracks[track]->cur_dts, avPacket->dts);
         avPacket->dts += 1;
     }
     int ret = av_interleaved_write_frame(pFormatCtx, avPacket);
     if (0 != ret) {
-        Logcat::e("HWVC", "HwFFMuxer::write failed(track %d): %s", track, strerror(AVUNERROR(ret)));
+        AlLogE(TAG, "failed(track %d): %s", track, strerror(AVUNERROR(ret)));
         return Hw::FAILED;
     }
     return Hw::SUCCESS;

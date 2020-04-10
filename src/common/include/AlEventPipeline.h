@@ -28,7 +28,7 @@ private:
 public:
     ~AlEventPipeline();
 
-    void queueEvent(function<void()> event);
+    void queueEvent(function<void()> func);
 
     void quit();
 
