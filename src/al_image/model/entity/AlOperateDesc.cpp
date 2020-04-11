@@ -8,11 +8,13 @@
 #include "AlOperateDesc.h"
 #include "AlIdentityCreator.h"
 
-AlOperateDesc::AlOperateDesc(int32_t layerId) : Object(), layerId(layerId) {
+AlOperateDesc::AlOperateDesc(int32_t layerId)
+        : Object(), layerId(layerId), coordIdx(CoordIdx::WINDOW) {
 
 }
 
-AlOperateDesc::AlOperateDesc(const AlOperateDesc &o) : Object(), layerId(o.layerId) {
+AlOperateDesc::AlOperateDesc(const AlOperateDesc &o)
+        : Object(), layerId(o.layerId), coordIdx(o.coordIdx) {
 
 }
 

@@ -88,6 +88,7 @@ void AlDisplayRecorder::setFormat(int width, int height, HwSampleFormat format) 
 void AlDisplayRecorder::cropOutputSize(float left, float top, float right, float bottom) {
     auto *opt = new AlOperateCrop(AlIdentityCreator::NONE_ID, left, top, right, bottom);
     opt->coordIdx = AlOperateDesc::CoordIdx::CANVAS;
+    opt->align16 = true;
     auto *msg = AlMessage::obtain(EVENT_CANVAS_CROP, opt, AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
 }

@@ -39,3 +39,15 @@ int32_t AlMath::random(int32_t min, int32_t max) {
     srand(static_cast<unsigned int>(TimeUtils::getCurrentTimeUS()));
     return rand() % (max - min + 1) + min;
 }
+
+int32_t AlMath::round32(double val) {
+    return static_cast<int32_t>(round64(val));
+}
+
+int64_t AlMath::round64(double val) {
+    return static_cast<int64_t>(round(val));
+}
+
+int32_t AlMath::align16(int32_t val) {
+    return ((val >> 4) + ((val & 0xF) >> 3)) << 4;;
+}

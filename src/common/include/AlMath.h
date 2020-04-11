@@ -33,6 +33,12 @@ public:
 
     static int32_t random(int32_t min, int32_t max);
 
+    static int32_t round32(double val);
+
+    static int64_t round64(double val);
+
+    static int32_t align16(int32_t val);
+
 private:
     AlMath() : Object() {};
 

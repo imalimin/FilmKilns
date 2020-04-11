@@ -21,6 +21,7 @@ public:
 
 public:
     AlRectF rectF;
+    bool align16 = false;
 };
 
 
