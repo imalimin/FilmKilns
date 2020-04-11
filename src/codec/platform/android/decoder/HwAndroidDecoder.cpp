@@ -78,7 +78,7 @@ bool HwAndroidDecoder::configure() {
     bundle.putObject("csd-0", csd0Buf);
     bundle.putObject("csd-1", csd1Buf);
     codec = HwAndroidCodec::createDecoder(HwAndroidCodec::HW_ANDROID_AVC);
-    if (Hw::SUCCESS != codec->configure(&bundle)) {
+    if (Hw::SUCCESS != codec->configure(bundle)) {
         delete csd0Buf;
         delete csd1Buf;
         Logcat::e("HWVC", "HwAndroidDecoder::configure failed to configure audio codec!");

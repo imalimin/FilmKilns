@@ -35,7 +35,9 @@ void HwFFCodec::release() {
         avFrame = nullptr;
     }
     if (ctx) {
-        avcodec_close(ctx);
+        if (avcodec_is_open(ctx)) {
+            avcodec_close(ctx);
+        }
         avcodec_free_context(&ctx);
     }
     if (translator) {
@@ -50,7 +52,7 @@ void HwFFCodec::release() {
     }
 }
 
-HwResult HwFFCodec::configure(HwBundle *format) {
+HwResult HwFFCodec::configure(HwBundle &format) {
     HwAbsCodec::configure(format);
     if (codecId <= AV_CODEC_ID_NONE) {
         return Hw::FAILED;
@@ -88,16 +90,15 @@ HwResult HwFFCodec::configure(HwBundle *format) {
             return Hw::FAILED;
     }
     //Copy parameters.
-    if (format) {
-        format->putInt32(KEY_PROFILE, ctx->profile);
-        format->putInt32(KEY_LEVEL, ctx->level);
-        format->putInt32(KEY_BIT_RATE, static_cast<int32_t>(ctx->bit_rate));
-        format->putInt32(KEY_FRAME_SIZE, ctx->frame_size);
-    }
+    getFormat().putInt32(KEY_PROFILE, ctx->profile);
+    getFormat().putInt32(KEY_LEVEL, ctx->level);
+    getFormat().putInt32(KEY_BIT_RATE, static_cast<int32_t>(ctx->bit_rate));
+    getFormat().putInt32(KEY_FRAME_SIZE, ctx->frame_size);
+
     avFrame = av_frame_alloc();
     avPacket = av_packet_alloc();
-    if (ctx->codec_type == AVMEDIA_TYPE_AUDIO && format) {
-        const int32_t &f = format->getInt32(KEY_FORMAT);
+    if (ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+        const int32_t &f = format.getInt32(KEY_FORMAT);
         translator = new HwAudioTranslator(HwSampleFormat(HwFrameFormat::HW_SAMPLE_FLTP,
                                                           ctx->channels,
                                                           ctx->sample_rate),
@@ -117,12 +118,12 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     ctx->codec_id = id;
     ctx->codec_type = AVMEDIA_TYPE_VIDEO;
     ctx->pix_fmt = HwAbsMediaFrame::convertVideoFrameFormat(
-            (HwFrameFormat) format->getInt32(KEY_FORMAT));
-    ctx->width = format->getInt32(KEY_WIDTH);
-    ctx->height = format->getInt32(KEY_HEIGHT);
-    ctx->bit_rate = format->getInt32(KEY_BIT_RATE);
-    ctx->time_base = {1, format->getInt32(KEY_FPS)};
-    ctx->framerate = {format->getInt32(KEY_FPS), 1};
+            (HwFrameFormat) getFormat().getInt32(KEY_FORMAT));
+    ctx->width = getFormat().getInt32(KEY_WIDTH);
+    ctx->height = getFormat().getInt32(KEY_HEIGHT);
+    ctx->bit_rate = getFormat().getInt32(KEY_BIT_RATE);
+    ctx->time_base = {1, getFormat().getInt32(KEY_FPS)};
+    ctx->framerate = {getFormat().getInt32(KEY_FPS), 1};
 
 
     ctx->gop_size = 15;
@@ -144,7 +145,7 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     if (AV_CODEC_ID_H264 == ctx->codec_id) {
         ctx->profile = FF_PROFILE_H264_HIGH;
         //0 - 51
-        av_dict_set_int(&param, "crf", format->getInt32(KEY_QUALITY), 0);  // or abr,qp
+        av_dict_set_int(&param, "crf", getFormat().getInt32(KEY_QUALITY), 0);  // or abr,qp
         //ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow and placebo.
         av_dict_set(&param, "preset", "superfast", 0);
         //av_dict_set(param, "profile", "main", 0)
@@ -164,9 +165,9 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
     ctx->codec_id = id;
     ctx->codec_type = AVMEDIA_TYPE_AUDIO;
     ctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
-    ctx->bit_rate = format->getInt32(KEY_BIT_RATE);
-    ctx->sample_rate = format->getInt32(KEY_SAMPLE_RATE);
-    ctx->channels = format->getInt32(KEY_CHANNELS);
+    ctx->bit_rate = getFormat().getInt32(KEY_BIT_RATE);
+    ctx->sample_rate = getFormat().getInt32(KEY_SAMPLE_RATE);
+    ctx->channels = getFormat().getInt32(KEY_CHANNELS);
     ctx->channel_layout = static_cast<uint64_t>(
             av_get_default_channel_layout(ctx->channels));
     ctx->time_base = {1, ctx->sample_rate};
@@ -237,13 +238,13 @@ int32_t HwFFCodec::type() {
 }
 
 HwBuffer *HwFFCodec::getExtraBuffer(string key) {
-    if ("csd-0" == key) {
+    if (HwAbsCodec::KEY_CSD_0 == key) {
         return buffers[0];
-    } else if ("csd-1" == key) {
+    } else if (HwAbsCodec::KEY_CSD_1 == key) {
         return buffers[1];
-    } else if ("csd-3" == key) {
+    } else if (HwAbsCodec::KEY_CSD_2 == key) {
         return buffers[2];
-    } else if ("csd-4" == key) {
+    } else if (HwAbsCodec::KEY_CSD_3 == key) {
         return buffers[3];
     }
     return nullptr;

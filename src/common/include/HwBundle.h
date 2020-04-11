@@ -19,6 +19,8 @@ public:
 public:
     HwBundle();
 
+    HwBundle(const HwBundle &o);
+
     virtual ~HwBundle();
 
     void putInt32(string key, int32_t value);

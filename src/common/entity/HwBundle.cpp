@@ -13,6 +13,18 @@ HwBundle::HwBundle() : Object() {
 
 }
 
+HwBundle::HwBundle(const HwBundle &o) : Object() {
+    for (auto itr = o.int32Map.begin(); itr != o.int32Map.end(); ++itr) {
+        putInt32(itr->first, itr->second);
+    }
+    for (auto itr = o.int64Map.begin(); itr != o.int64Map.end(); ++itr) {
+        putInt64(itr->first, itr->second);
+    }
+    for (auto itr = o.strMap.begin(); itr != o.strMap.end(); ++itr) {
+        putString(itr->first, itr->second);
+    }
+}
+
 HwBundle::~HwBundle() {
     int32Map.clear();
     int64Map.clear();

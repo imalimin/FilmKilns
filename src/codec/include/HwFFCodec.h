@@ -27,7 +27,7 @@ public:
 
     virtual ~HwFFCodec();
 
-    virtual HwResult configure(HwBundle *format) override;
+    virtual HwResult configure(HwBundle &format) override;
 
     virtual HwResult start() override;
 

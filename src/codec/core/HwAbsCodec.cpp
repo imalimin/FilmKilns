@@ -19,6 +19,10 @@ const string HwAbsCodec::KEY_QUALITY = "video-quality";
 const string HwAbsCodec::KEY_SAMPLE_RATE = "audio-sample-rate";
 const string HwAbsCodec::KEY_CHANNELS = "audio-channels";
 const string HwAbsCodec::KEY_FRAME_SIZE = "audio-frame-size";
+const string HwAbsCodec::KEY_CSD_0 = "csd-0";
+const string HwAbsCodec::KEY_CSD_1 = "csd-1";
+const string HwAbsCodec::KEY_CSD_2 = "csd-2";
+const string HwAbsCodec::KEY_CSD_3 = "csd-3";
 
 HwAbsCodec::HwAbsCodec(int32_t codecId) : Object(), codecId(codecId) {
 
@@ -28,11 +32,11 @@ HwAbsCodec::~HwAbsCodec() {
 
 }
 
-HwResult HwAbsCodec::configure(HwBundle *format) {
+HwResult HwAbsCodec::configure(HwBundle &format) {
     this->format = format;
     return Hw::SUCCESS;
 }
 
 int32_t HwAbsCodec::getCodecId() { return codecId; }
 
-HwBundle *HwAbsCodec::getFormat() { return format; }
+HwBundle &HwAbsCodec::getFormat() { return format; }

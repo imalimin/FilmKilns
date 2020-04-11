@@ -54,20 +54,20 @@ void HwAndroidCodec::release() {
     }
 }
 
-HwResult HwAndroidCodec::configure(HwBundle *format) {
+HwResult HwAndroidCodec::configure(HwBundle &format) {
     HwAbsCodec::configure(format);
-    int32_t width = format->getInt32(KEY_WIDTH);
-    int32_t height = format->getInt32(KEY_HEIGHT);
-    int32_t bitRate = (int32_t) format->getInt32(KEY_BIT_RATE);
+    int32_t width = format.getInt32(KEY_WIDTH);
+    int32_t height = format.getInt32(KEY_HEIGHT);
+    int32_t bitRate = (int32_t) format.getInt32(KEY_BIT_RATE);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
     AMediaFormat *cf = AMediaFormat_new();
     if (HW_ANDROID_AVC == codecId) {
-        fps = format->getInt32(KEY_FPS);
+        fps = format.getInt32(KEY_FPS);
         AMediaFormat_setString(cf, AMEDIAFORMAT_KEY_MIME, "video/avc");
         AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_WIDTH, width);
         AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_HEIGHT, height);
         if (encodeMode) {
-            if (HwFrameFormat::HW_IMAGE_YV12 == (HwFrameFormat) format->getInt32(KEY_FORMAT)) {
+            if (HwFrameFormat::HW_IMAGE_YV12 == (HwFrameFormat) format.getInt32(KEY_FORMAT)) {
                 AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_COLOR_FORMAT,
                                       COLOR_FormatYUV420Flexible);
             }
@@ -75,8 +75,8 @@ HwResult HwAndroidCodec::configure(HwBundle *format) {
             AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_FRAME_RATE, fps);
             AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_I_FRAME_INTERVAL, 3);// Seconds
         } else {
-            HwBuffer *csd0Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-0"));
-            HwBuffer *csd1Buf = dynamic_cast<HwBuffer *>(format->getObject("csd-1"));
+            HwBuffer *csd0Buf = dynamic_cast<HwBuffer *>(format.getObject("csd-0"));
+            HwBuffer *csd1Buf = dynamic_cast<HwBuffer *>(format.getObject("csd-1"));
             AMediaFormat_setBuffer(cf, "csd-0", csd0Buf->data(), csd0Buf->size());
             AMediaFormat_setBuffer(cf, "csd-1", csd1Buf->data(), csd1Buf->size());
         }

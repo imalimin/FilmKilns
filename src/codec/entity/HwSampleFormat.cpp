@@ -15,7 +15,7 @@ HwSampleFormat::HwSampleFormat(HwFrameFormat format,
     this->sampleRate = sampleRate;
 }
 
-HwSampleFormat::HwSampleFormat(const HwSampleFormat &format) {
+HwSampleFormat::HwSampleFormat(const HwSampleFormat &format) : Object() {
     this->format = format.format;
     this->channels = format.channels;
     this->sampleRate = format.sampleRate;

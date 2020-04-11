@@ -44,7 +44,7 @@ public:
 
     virtual ~HwAndroidCodec();
 
-    virtual HwResult configure(HwBundle *format) override;
+    virtual HwResult configure(HwBundle &format) override;
 
     virtual HwResult start() override;
 

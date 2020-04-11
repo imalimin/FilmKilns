@@ -20,36 +20,36 @@ public:
 
     virtual  ~HwAbsCodec();
 
-    virtual HwResult configure(HwBundle *format);
+    virtual HwResult configure(HwBundle &format);
 
-    virtual HwResult start()=0;
+    virtual HwResult start() = 0;
 
     virtual int32_t getCodecId();
 
-    virtual HwBundle *getFormat();
+    virtual HwBundle &getFormat();
 
     /**
      * For encoder. HwAbsMediaFrame in & AVPacket out.
      * For decoder. AVPacket in & HwAbsMediaFrame out.
      */
-    virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt)=0;
+    virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) = 0;
 
     /**
      * @return 0 for video. 1 for audio. Other invalid.
      */
-    virtual int32_t type()=0;
+    virtual int32_t type() = 0;
 
     /**
      * @param key csd-0\csd-1\csd-2
      * @return buffer.
      */
-    virtual HwBuffer *getExtraBuffer(string key)=0;
+    virtual HwBuffer *getExtraBuffer(string key) = 0;
 
-    virtual void flush()=0;
+    virtual void flush() = 0;
 
 protected:
     int32_t codecId = INT32_MIN;
-    HwBundle *format = nullptr;
+    HwBundle format;
 public:
     static const string KEY_MIME;
     static const string KEY_FORMAT;
@@ -65,6 +65,11 @@ public:
     static const string KEY_SAMPLE_RATE;
     static const string KEY_CHANNELS;
     static const string KEY_FRAME_SIZE;
+
+    static const string KEY_CSD_0;
+    static const string KEY_CSD_1;
+    static const string KEY_CSD_2;
+    static const string KEY_CSD_3;
 };
 
 

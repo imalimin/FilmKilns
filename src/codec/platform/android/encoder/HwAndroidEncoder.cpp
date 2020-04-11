@@ -37,7 +37,7 @@ bool HwAndroidEncoder::configure() {
     format.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * 3);
     format.putInt32(HwAbsCodec::KEY_FPS, fps);
     format.putInt32(HwAbsCodec::KEY_QUALITY, 15);
-    if (Hw::SUCCESS != vCodec->configure(&format)) {
+    if (Hw::SUCCESS != vCodec->configure(format)) {
         Logcat::e("HWVC", "HwAndroidEncoder::configure failed to configure video codec!");
         release();
         return false;
@@ -51,7 +51,7 @@ bool HwAndroidEncoder::configure() {
     aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
     aBundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
     aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
-    if (Hw::SUCCESS != aCodec->configure(&aBundle)) {
+    if (Hw::SUCCESS != aCodec->configure(aBundle)) {
         Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to configure audio codec!");
         release();
         return false;

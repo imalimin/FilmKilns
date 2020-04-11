@@ -18,17 +18,18 @@ HwFFMuxer::~HwFFMuxer() {
 }
 
 void HwFFMuxer::release() {
-    if (pFormatCtx) {
-        av_write_trailer(pFormatCtx);
-    }
     tracks.clear();
     if (pFormatCtx) {
+        if (started) {
+            av_write_trailer(pFormatCtx);
+        }
         if (!(pFormatCtx->flags & AVFMT_NOFILE)) {
             avio_closep(&pFormatCtx->pb);
         }
         avformat_free_context(pFormatCtx);
         pFormatCtx = nullptr;
     }
+    started = false;
 }
 
 HwResult HwFFMuxer::configure(string filePath, string type) {
@@ -52,10 +53,11 @@ HwResult HwFFMuxer::start() {
     }
     int ret = avformat_write_header(pFormatCtx, nullptr);
     if (ret < 0) {
-        AlLogE(TAG, "failed to write header!");
+        AlLogE(TAG, "failed to write header, %s", strerror(AVUNERROR(ret)));
         release();
         return Hw::FAILED;
     }
+    started = true;
     return Hw::SUCCESS;
 }
 
@@ -72,7 +74,7 @@ void HwFFMuxer::setInt64Parameter(int64_t &param, int64_t value) {
 }
 
 int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
-    if (!codec || !codec->getFormat()) {
+    if (!codec) {
         return TRACK_NONE;
     }
     AVStream *stream = avformat_new_stream(pFormatCtx, nullptr);
@@ -83,18 +85,18 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
     // See avcodec_parameters_from_context
     stream->codecpar->codec_id = static_cast<AVCodecID>(codec->getCodecId());
     setInt32Parameter(stream->codecpar->profile,
-                      codec->getFormat()->getInt32(HwAbsCodec::KEY_PROFILE));
-    setInt32Parameter(stream->codecpar->level, codec->getFormat()->getInt32(HwAbsCodec::KEY_LEVEL));
+                      codec->getFormat().getInt32(HwAbsCodec::KEY_PROFILE));
+    setInt32Parameter(stream->codecpar->level, codec->getFormat().getInt32(HwAbsCodec::KEY_LEVEL));
     setInt64Parameter(stream->codecpar->bit_rate,
-                      codec->getFormat()->getInt32(HwAbsCodec::KEY_BIT_RATE));
+                      codec->getFormat().getInt32(HwAbsCodec::KEY_BIT_RATE));
     if (1 == codec->type()) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
         setInt32Parameter(stream->codecpar->sample_rate,
-                          codec->getFormat()->getInt32(HwAbsCodec::KEY_SAMPLE_RATE));
+                          codec->getFormat().getInt32(HwAbsCodec::KEY_SAMPLE_RATE));
         setInt32Parameter(stream->codecpar->channels,
-                          codec->getFormat()->getInt32(HwAbsCodec::KEY_CHANNELS));
+                          codec->getFormat().getInt32(HwAbsCodec::KEY_CHANNELS));
         setInt32Parameter(stream->codecpar->frame_size,
-                          codec->getFormat()->getInt32(HwAbsCodec::KEY_FRAME_SIZE));
+                          codec->getFormat().getInt32(HwAbsCodec::KEY_FRAME_SIZE));
         stream->codecpar->channel_layout = static_cast<uint64_t>(
                 av_get_default_channel_layout(stream->codecpar->channels));
         stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
@@ -102,9 +104,9 @@ int32_t HwFFMuxer::addTrack(HwAbsCodec *codec) {
     } else if (0 == codec->type()) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
         setInt32Parameter(stream->codecpar->width,
-                          codec->getFormat()->getInt32(HwAbsCodec::KEY_WIDTH));
+                          codec->getFormat().getInt32(HwAbsCodec::KEY_WIDTH));
         setInt32Parameter(stream->codecpar->height,
-                          codec->getFormat()->getInt32(HwAbsCodec::KEY_HEIGHT));
+                          codec->getFormat().getInt32(HwAbsCodec::KEY_HEIGHT));
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
 //        stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
     }
@@ -151,7 +153,7 @@ bool HwFFMuxer::copyExtraData(AVStream *stream, HwAbsCodec *codec) {
 }
 
 HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
-    if (!pkt || track > tracks.size() - 1 || !pFormatCtx) {
+    if (!started || !pkt || track > tracks.size() - 1 || !pFormatCtx) {
         return Hw::FAILED;
     }
     pkt->ref(&avPacket);

@@ -51,6 +51,7 @@ private:
     void setInt64Parameter(int64_t &param, int64_t value);
 
 private:
+    bool started = false;
     AVFormatContext *pFormatCtx = nullptr;
     vector<AVStream *> tracks;
     AVPacket *avPacket = nullptr;
