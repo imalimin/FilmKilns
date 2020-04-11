@@ -129,10 +129,10 @@ class AlCropView : View {
                             lt0.offset(dx, dy)
                             lt.set(lt0)
 
-                            lt0.x = Math.min(lt0.x, rb0.x - 16)
-                            lt0.y = Math.min(lt0.y, rb0.y - 16)
-                            lt.x = Math.min(lt.x, rb.x - 16)
-                            lt.y = Math.min(lt.y, rb.y - 16)
+                            lt0.x = Math.min(lt0.x, rb0.x - MIN_CROP_SIZE)
+                            lt0.y = Math.min(lt0.y, rb0.y - MIN_CROP_SIZE)
+                            lt.x = Math.min(lt.x, rb.x - MIN_CROP_SIZE)
+                            lt.y = Math.min(lt.y, rb.y - MIN_CROP_SIZE)
 
                             if (fixAlign) {
                                 lt.x = rb0.x - align16((rb0.x - lt0.x).toInt())
@@ -145,10 +145,10 @@ class AlCropView : View {
                             lt.offset(dx, 0f)
                             rb.offset(0f, dy)
 
-                            lt0.x = Math.min(lt0.x, rb0.x - 16)
-                            rb0.y = Math.max(lt0.y + 16, rb0.y)
-                            lt.x = Math.min(lt.x, rb.x - 16)
-                            rb.y = Math.max(lt.y + 16, rb.y)
+                            lt0.x = Math.min(lt0.x, rb0.x - MIN_CROP_SIZE)
+                            rb0.y = Math.max(lt0.y + MIN_CROP_SIZE, rb0.y)
+                            lt.x = Math.min(lt.x, rb.x - MIN_CROP_SIZE)
+                            rb.y = Math.max(lt.y + MIN_CROP_SIZE, rb.y)
 
                             if (fixAlign) {
                                 lt.x = rb0.x - align16((rb0.x - lt0.x).toInt())
@@ -159,10 +159,10 @@ class AlCropView : View {
                             rb0.offset(dx, dy)
                             rb.offset(dx, dy)
 
-                            rb0.x = Math.max(lt0.x + 16, rb0.x)
-                            rb0.y = Math.max(lt0.y + 16, rb0.y)
-                            rb.x = Math.max(lt.x + 16, rb.x)
-                            rb.y = Math.max(lt.y + 16, rb.y)
+                            rb0.x = Math.max(lt0.x + MIN_CROP_SIZE, rb0.x)
+                            rb0.y = Math.max(lt0.y + MIN_CROP_SIZE, rb0.y)
+                            rb.x = Math.max(lt.x + MIN_CROP_SIZE, rb.x)
+                            rb.y = Math.max(lt.y + MIN_CROP_SIZE, rb.y)
 
                             if (fixAlign) {
                                 rb.x = lt0.x + align16((rb0.x - lt0.x).toInt())
@@ -175,10 +175,10 @@ class AlCropView : View {
                             rb.offset(dx, 0f)
                             lt.offset(0f, dy)
 
-                            rb0.x = Math.max(lt0.x + 16, rb0.x)
-                            lt0.y = Math.min(lt0.y, rb0.y - 16)
-                            rb.x = Math.max(lt.x + 16, rb.x)
-                            lt.y = Math.min(lt.y, rb.y - 16)
+                            rb0.x = Math.max(lt0.x + MIN_CROP_SIZE, rb0.x)
+                            lt0.y = Math.min(lt0.y, rb0.y - MIN_CROP_SIZE)
+                            rb.x = Math.max(lt.x + MIN_CROP_SIZE, rb.x)
+                            lt.y = Math.min(lt.y, rb.y - MIN_CROP_SIZE)
 
                             if (fixAlign) {
                                 rb.x = lt0.x + align16((rb0.x - lt0.x).toInt())
@@ -274,18 +274,34 @@ class AlCropView : View {
         canvas?.drawLine(start.x, start.y, end.x, end.y, paint)
     }
 
-    fun getCropRectF(): RectF = RectF(
-        lt.x / (measuredWidth / 2f) - 1f,
-        1f - lt.y / (measuredHeight / 2f),
-        rb.x / (measuredWidth / 2f) - 1f,
-        1f - rb.y / (measuredHeight / 2f)
-    )
+    fun getCropRectF(considerStroke: Boolean = false): RectF {
+        val lt = PointF(this.lt.x, this.lt.y)
+        val rb = PointF(this.rb.x, this.rb.y)
+        if (considerStroke) {
+            lt.x += strokeWidth / 2f
+            lt.y += strokeWidth / 2f
+            rb.x -= strokeWidth / 2f
+            rb.y -= strokeWidth / 2f
+        }
+        return RectF(
+            lt.x / (measuredWidth / 2f) - 1f,
+            1f - lt.y / (measuredHeight / 2f),
+            rb.x / (measuredWidth / 2f) - 1f,
+            1f - rb.y / (measuredHeight / 2f)
+        )
+    }
 
-    fun getCropRectFInDisplay(): RectF {
+    fun getCropRectFInDisplay(considerStroke: Boolean = false): RectF {
         val loc = IntArray(2)
         getLocationOnScreen(loc)
         val lt = PointF(loc[0] + this.lt.x, loc[1] + this.lt.y)
         val rb = PointF(loc[0] + this.rb.x, loc[1] + this.rb.y)
+        if (considerStroke) {
+            lt.x += strokeWidth / 2f
+            lt.y += strokeWidth / 2f
+            rb.x -= strokeWidth / 2f
+            rb.y -= strokeWidth / 2f
+        }
         return RectF(
             lt.x / (displaySize.x / 2f) - 1f,
             1f - lt.y / (displaySize.y / 2f),
@@ -321,5 +337,9 @@ class AlCropView : View {
 
     interface OnChangeListener {
         fun onChange(view: View)
+    }
+
+    companion object {
+        const val MIN_CROP_SIZE = 64
     }
 }
