@@ -24,6 +24,8 @@ public:
 
     HwSampleFormat &operator=(const HwSampleFormat &format);
 
+    bool valid();
+
 private:
     uint16_t channels = 0;
     uint32_t sampleRate = 0;

@@ -39,3 +39,10 @@ HwSampleFormat &HwSampleFormat::operator=(const HwSampleFormat &format) {
     this->sampleRate = format.sampleRate;
     return *this;
 }
+
+bool HwSampleFormat::valid() {
+    bool validChannel = 1 == channels || 2 == channels;
+    bool validSampleRate = 8000 == sampleRate || 16000 == sampleRate || 32000 == sampleRate ||
+                           44100 == sampleRate || 48000 == sampleRate;
+    return HwFrameFormat::HW_FMT_NONE != format && validChannel && validSampleRate;
+}

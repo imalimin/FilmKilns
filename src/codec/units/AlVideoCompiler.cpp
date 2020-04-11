@@ -51,17 +51,13 @@ bool AlVideoCompiler::onDestroy(AlMessage *msg) {
     if (encoder) {
         encoder->stop();
         encoder->release();
-        delete encoder;
-        encoder = nullptr;
     }
-    if (audioFrame) {
-        delete audioFrame;
-        audioFrame = nullptr;
-    }
-    if (videoFrame) {
-        delete videoFrame;
-        videoFrame = nullptr;
-    }
+    delete encoder;
+    encoder = nullptr;
+    delete audioFrame;
+    audioFrame = nullptr;
+    delete videoFrame;
+    videoFrame = nullptr;
     mPtsQueue.clear();
     return true;
 }
@@ -172,6 +168,7 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
     videoFrame->setPts(aTimestamp / 1000);
     ++count;
     if (encoder) {
+        AlLogI(TAG, "write %" PRId64, videoFrame->getPts());
         encoder->write(videoFrame);
     } else {
         AlLogE(TAG, "failed. Video encoder encoder not init.");
@@ -180,6 +177,10 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
 
 bool AlVideoCompiler::_onSamples(AlMessage *msg) {
     if (!recording) {
+        return true;
+    }
+    /// Without audio.
+    if(nullptr == audioFrame) {
         return true;
     }
     auto *buf = msg->getObj<AlBuffer *>();

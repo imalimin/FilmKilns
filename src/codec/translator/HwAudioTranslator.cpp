@@ -6,6 +6,8 @@
 #include "../include/HwAbsMediaFrame.h"
 #include "Logcat.h"
 
+#define TAG "HwAudioTranslator"
+
 HwAudioTranslator::HwAudioTranslator(HwSampleFormat outFormat, HwSampleFormat inFormat)
         : outFormat(outFormat),
           inFormat(inFormat),
@@ -19,13 +21,13 @@ HwAudioTranslator::HwAudioTranslator(HwSampleFormat outFormat, HwSampleFormat in
                                     inFormat.getSampleRate(),
                                     0, nullptr);
     if (!swrContext || 0 != swr_init(swrContext)) {
-        Logcat::e("HWVC", "HwAudioTranslator init failed");
+        AlLogE(TAG, "failed");
         if (swrContext) {
             swr_free(&swrContext);
             swrContext = nullptr;
         }
     }
-    Logcat::i("HWVC", "HwAudioTranslator(%d, %d, %d <- %d, %d, %d)",
+    AlLogI(TAG, "(%d, %d, %d) <- (%d, %d, %d)",
               outFormat.getChannels(),
               HwAbsMediaFrame::convertAudioFrameFormat(outFormat.getFormat()),
               outFormat.getSampleRate(),
@@ -67,14 +69,14 @@ bool HwAudioTranslator::translate(AVFrame **dest, AVFrame **src) {
         outFrame->pts = 0;
         int ret = av_frame_get_buffer(outFrame, 0);
         if (0 != ret) {
-            Logcat::e("HWVC", "HwAudioTranslator(%p) translate failed. avFrame alloc failed: %s",
+            AlLogE(TAG, "failed. avFrame alloc failed: %s",
                       this, strerror(AVUNERROR(ret)));
             return false;
         }
     }
     int ret = swr_convert_frame(swrContext, outFrame, src[0]);
     if (0 != ret) {
-        Logcat::e("HWVC", "HwAudioTranslator(%p) translate failed: %s",
+        AlLogE(TAG, "translator(%p) failed: %s",
                   this, strerror(AVUNERROR(ret)));
         return false;
     }
