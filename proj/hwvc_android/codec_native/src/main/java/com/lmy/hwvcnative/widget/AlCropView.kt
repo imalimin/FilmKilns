@@ -25,6 +25,7 @@ class AlCropView : View {
     private var strokeWidth: Float = 2f
     private var onChangeListener: OnChangeListener? = null
     private var fixAlign = false
+    private val defaultSize = Point()
     private val displaySize = Point()
 
     constructor(context: Context) : super(context) {
@@ -46,6 +47,10 @@ class AlCropView : View {
         initialize()
     }
 
+    private fun align16(v: Int): Int {
+        return (v shr 4) + (v and 0xF shr 3) shl 4
+    }
+
     private fun initialize() {
         paint.color = Color.LTGRAY
         paint.strokeWidth = strokeWidth
@@ -62,10 +67,14 @@ class AlCropView : View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = View.MeasureSpec.getSize(widthMeasureSpec)
         val height = View.MeasureSpec.getSize(heightMeasureSpec)
-        lt.x = width / 4f
-        lt.y = height / 3f
-        rb.x = width * 3 / 4f
-        rb.y = height * 2 / 3f
+
+        defaultSize.x = align16(width * 2 / 3)
+        defaultSize.y = align16(height * 2 / 3)
+
+        lt.x = (width - defaultSize.x) / 2f
+        lt.y = (height - defaultSize.y) / 2f
+        rb.x = lt.x + defaultSize.x
+        rb.y = lt.y + defaultSize.y
         lt0.set(lt)
         rb0.set(rb)
     }
@@ -119,9 +128,15 @@ class AlCropView : View {
                         Loc.LT -> {
                             lt0.offset(dx, dy)
                             lt.set(lt0)
+
+                            lt0.x = Math.min(lt0.x, rb0.x - 16)
+                            lt0.y = Math.min(lt0.y, rb0.y - 16)
+                            lt.x = Math.min(lt.x, rb.x - 16)
+                            lt.y = Math.min(lt.y, rb.y - 16)
+
                             if (fixAlign) {
-                                lt.x += ((rb0.x - lt0.x) - ((rb0.x - lt0.x) / 16).toInt() * 16f)
-                                lt.y += ((rb0.y - lt0.y) - ((rb0.y - lt0.y) / 16).toInt() * 16f)
+                                lt.x = rb0.x - align16((rb0.x - lt0.x).toInt())
+                                lt.y = rb0.y - align16((rb0.y - lt0.y).toInt())
                             }
                         }
                         Loc.LB -> {
@@ -129,22 +144,53 @@ class AlCropView : View {
                             rb0.offset(0f, dy)
                             lt.offset(dx, 0f)
                             rb.offset(0f, dy)
+
+                            lt0.x = Math.min(lt0.x, rb0.x - 16)
+                            rb0.y = Math.max(lt0.y + 16, rb0.y)
+                            lt.x = Math.min(lt.x, rb.x - 16)
+                            rb.y = Math.max(lt.y + 16, rb.y)
+
+                            if (fixAlign) {
+                                lt.x = rb0.x - align16((rb0.x - lt0.x).toInt())
+                                rb.y = lt0.y + align16((rb0.y - lt0.y).toInt())
+                            }
                         }
                         Loc.RB -> {
                             rb0.offset(dx, dy)
                             rb.offset(dx, dy)
+
+                            rb0.x = Math.max(lt0.x + 16, rb0.x)
+                            rb0.y = Math.max(lt0.y + 16, rb0.y)
+                            rb.x = Math.max(lt.x + 16, rb.x)
+                            rb.y = Math.max(lt.y + 16, rb.y)
+
+                            if (fixAlign) {
+                                rb.x = lt0.x + align16((rb0.x - lt0.x).toInt())
+                                rb.y = lt0.y + align16((rb0.y - lt0.y).toInt())
+                            }
                         }
                         Loc.RT -> {
                             rb0.offset(dx, 0f)
                             lt0.offset(0f, dy)
                             rb.offset(dx, 0f)
                             lt.offset(0f, dy)
+
+                            rb0.x = Math.max(lt0.x + 16, rb0.x)
+                            lt0.y = Math.min(lt0.y, rb0.y - 16)
+                            rb.x = Math.max(lt.x + 16, rb.x)
+                            lt.y = Math.min(lt.y, rb.y - 16)
+
+                            if (fixAlign) {
+                                rb.x = lt0.x + align16((rb0.x - lt0.x).toInt())
+                                lt.y = rb0.y - align16((rb0.y - lt0.y).toInt())
+                            }
                         }
                         Loc.C -> {
                             lt0.offset(dx, dy)
                             rb0.offset(dx, dy)
                         }
                     }
+                    checkBound()
                     lastTouchPointF.set(event.x, event.y)
                     onChangeListener?.onChange(this)
                     postInvalidate()
@@ -153,6 +199,18 @@ class AlCropView : View {
             }
         }
         return ret
+    }
+
+    private fun checkBound() {
+        lt0.x = Math.max(0f, lt0.x)
+        lt0.y = Math.max(0f, lt0.y)
+        lt.x = Math.max(0f, lt.x)
+        lt.y = Math.max(0f, lt.y)
+
+        rb0.x = Math.min(measuredWidth.toFloat(), rb0.x)
+        rb0.y = Math.min(measuredHeight.toFloat(), rb0.y)
+        rb.x = Math.min(measuredWidth.toFloat(), rb.x)
+        rb.y = Math.min(measuredHeight.toFloat(), rb.y)
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -237,10 +295,10 @@ class AlCropView : View {
     }
 
     fun reset() {
-        lt.x = measuredWidth / 4f
-        lt.y = measuredHeight / 4f
-        rb.x = measuredWidth * 3 / 4f
-        rb.y = measuredHeight * 3 / 4f
+        lt.x = (measuredWidth - defaultSize.x) / 2f
+        lt.y = (measuredHeight - defaultSize.y) / 2f
+        rb.x = lt.x + defaultSize.x
+        rb.y = lt.y + defaultSize.y
         lt0.set(lt)
         rb0.set(rb)
     }
