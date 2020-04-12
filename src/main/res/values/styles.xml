@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="AlertDialog.Bottom" parent="BaseAlertDialog.Bottom">
+        <item name="android:windowBackground">@drawable/bg_dialog_bottom</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+</resources>
