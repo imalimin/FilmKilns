@@ -1,2 +1,4 @@
 include ':samplenative', ':OfficeUIFabric', ':hwcommon', ':alfile', ':algraphic', ':alimage', ':alcore', ':alcodec'
 include ':codec_native'
+project(":OfficeUIFabric").projectDir = new File("./ui-fabric-android/OfficeUIFabric")
+

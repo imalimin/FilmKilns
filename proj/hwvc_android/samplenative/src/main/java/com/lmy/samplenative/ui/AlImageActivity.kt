@@ -9,7 +9,6 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent

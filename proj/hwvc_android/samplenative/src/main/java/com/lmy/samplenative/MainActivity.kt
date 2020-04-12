@@ -1,9 +1,9 @@
 package com.lmy.samplenative
 
 import android.content.Intent
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.RecyclerView
 import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.lmy.samplenative.adapter.OnRecyclerItemClickListener
 import com.lmy.samplenative.adapter.SimpleTextAdapter
 import com.lmy.samplenative.ui.*

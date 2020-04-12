@@ -6,10 +6,10 @@
     android:fitsSystemWindows="true"
     android:background="?attr/colorAccent">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 </FrameLayout>

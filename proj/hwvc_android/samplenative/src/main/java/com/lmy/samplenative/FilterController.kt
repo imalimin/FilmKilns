@@ -3,11 +3,11 @@ package com.lmy.samplenative
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.appcompat.app.AlertDialog
 import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.filter.HwNormalFilter
 import com.lmy.hwvcnative.filter.HwvcFilter

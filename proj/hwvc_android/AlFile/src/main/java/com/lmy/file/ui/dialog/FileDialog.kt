@@ -1,10 +1,10 @@
 package com.lmy.file.ui.dialog
 
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lmy.common.ext.setOnItemClickListener
 import com.lmy.common.model.entity.Error
 import com.lmy.common.ui.dialog.BaseDialogFragment

@@ -5,9 +5,6 @@ import android.content.Intent
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.net.Uri
-import android.os.Build
-import android.provider.Settings
-import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
 import android.util.Log
 import android.view.SurfaceHolder
 import com.lmy.hwvcnative.processor.AlDisplayRecorder

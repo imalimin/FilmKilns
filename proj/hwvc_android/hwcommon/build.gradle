@@ -33,7 +33,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$androidx_version"
     implementation "androidx.core:core-ktx:$androidx_version"
-    implementation "com.google.android.material:material:$androidx_version"
+    implementation "com.google.android.material:material:$material_version"
 //    implementation 'com.facebook.fresco:fresco:latest.release'
     //Fix java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/core/util/Pools$SynchronizedPool;
     implementation 'com.facebook.fresco:fresco:1.12.1'

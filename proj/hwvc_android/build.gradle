@@ -8,6 +8,7 @@ buildscript {
     ext.target_version = 28
     ext.min_version = 22
     ext.androidx_version = '1.0.2'
+    ext.material_version = '1.1.0'
 
     ext.bintray_userOrg = 'lmylr'
     ext.bintray_groupId = 'com.lmy.codec'

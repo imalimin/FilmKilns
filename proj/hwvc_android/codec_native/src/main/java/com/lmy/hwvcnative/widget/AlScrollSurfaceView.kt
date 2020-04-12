@@ -2,10 +2,10 @@ package com.lmy.hwvcnative.widget
 
 import android.content.Context
 import android.graphics.PointF
-import android.support.v4.view.GestureDetectorCompat
 import android.util.AttributeSet
 import android.view.*
 import android.widget.OverScroller
+import androidx.core.view.GestureDetectorCompat
 import com.lmy.hwvcnative.entity.AlRational
 import kotlin.math.abs
 import kotlin.math.atan2

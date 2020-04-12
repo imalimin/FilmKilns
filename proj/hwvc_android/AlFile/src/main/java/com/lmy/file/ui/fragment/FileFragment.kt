@@ -2,7 +2,7 @@ package com.lmy.file.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.Toast
 import com.lmy.common.ext.fromFile
 import com.lmy.common.ext.setOnItemClickListener

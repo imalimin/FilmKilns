@@ -2,11 +2,12 @@ package com.lmy.samplenative.adapter;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by lmy on 2017/2/1.

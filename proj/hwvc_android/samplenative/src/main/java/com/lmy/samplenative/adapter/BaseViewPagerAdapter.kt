@@ -1,9 +1,10 @@
 package com.lmy.samplenative.adapter
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
+
 
 abstract class BaseViewPagerAdapter(private val fm: FragmentManager) : FragmentPagerAdapter(fm) {
     private var viewPager: ViewPager? = null
