@@ -139,10 +139,20 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
         AlLogE(TAG, "failed. Buffer is null.");
         return;
     }
+    int64_t time = TimeUtils::getCurrentTimeUS();
+    if (lastTime > 0) {
+        countOfTime += (time - lastTime);
+        ++count;
+        if (count >= 100) {
+            AlLogI(TAG, "fps %d", (count * 1000000 / countOfTime));
+            countOfTime = 0;
+            count = 0;
+        }
+    }
+    lastTime = time;
     //Enable NV12 or YV12
 #if 1
     int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
-    int64_t time = TimeUtils::getCurrentTimeUS();
     libyuv::NV12ToI420(buf->data(), videoFrame->getWidth(),
                        buf->data() + pixelCount, videoFrame->getWidth(),
                        videoFrame->data(), videoFrame->getWidth(),
@@ -165,10 +175,10 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
     }
     vTimestamp += (tsInNs - lastTsInNs);
     lastTsInNs = tsInNs;
-    videoFrame->setPts(aTimestamp / 1000);
-    ++count;
+    videoFrame->setPts(vTimestamp / 1000);
     if (encoder) {
-        AlLogI(TAG, "write %" PRId64, videoFrame->getPts());
+//        AlLogI(TAG, "write %"
+//                PRId64, videoFrame->getPts());
         encoder->write(videoFrame);
     } else {
         AlLogE(TAG, "failed. Video encoder encoder not init.");
@@ -180,11 +190,12 @@ bool AlVideoCompiler::_onSamples(AlMessage *msg) {
         return true;
     }
     /// Without audio.
-    if(nullptr == audioFrame) {
+    if (nullptr == audioFrame) {
         return true;
     }
     auto *buf = msg->getObj<AlBuffer *>();
-    int64_t tsInNs = msg->arg2;
+    int64_t tsInNs = calAudioPtsInNs(countOfSample);
+    countOfSample += buf->size() / aFormat.getBytesPerSample();
     memcpy(audioFrame->data(), buf->data(), buf->size());
     if (lastATsInNs < 0) {
         lastATsInNs = tsInNs;
@@ -193,6 +204,8 @@ bool AlVideoCompiler::_onSamples(AlMessage *msg) {
     lastATsInNs = tsInNs;
     audioFrame->setPts(aTimestamp / 1000);
     if (encoder) {
+//        AlLogI(TAG, "write %"
+//                PRId64, audioFrame->getPts());
         encoder->write(audioFrame);
         _notifyTime();
     } else {
@@ -239,4 +252,8 @@ void AlVideoCompiler::_notifyTime() {
     auto *m = AlMessage::obtain(MSG_VIDEO_COMPILER_TIME);
     m->arg2 = getRecordTimeInUs();
     postMessage(m);
+}
+
+int64_t AlVideoCompiler::calAudioPtsInNs(int64_t samples) {
+    return samples * 1000000000 / aFormat.getSampleRate();
 }

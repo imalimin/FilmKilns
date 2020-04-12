@@ -93,6 +93,8 @@ private:
 
     void _notifyTime();
 
+    int64_t calAudioPtsInNs(int64_t samples);
+
 private:
     AlSize size;
     std::string path;
@@ -100,6 +102,7 @@ private:
     HwAbsVideoEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
     HwAudioFrame *audioFrame = nullptr;
+    int64_t countOfSample = 0;
     std::atomic_bool recording;
     // last timestamp in ns.
     int64_t lastTsInNs = -1, lastATsInNs = -1;
@@ -109,6 +112,9 @@ private:
     int count = 0;
     bool initialized = false;
     std::deque<int64_t> mPtsQueue;
+
+    int64_t lastTime = 0;
+    int64_t countOfTime = 0;
 };
 
 
