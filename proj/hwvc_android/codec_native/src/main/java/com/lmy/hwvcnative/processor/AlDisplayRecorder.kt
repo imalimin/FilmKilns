@@ -15,13 +15,18 @@ import com.lmy.hwvcnative.CPPObject
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
 
-class AlDisplayRecorder(private val mp: MediaProjection,
-                        private val dw: Int,
-                        private val dh: Int,
-                        private val dpi: Int) : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
+class AlDisplayRecorder(
+    private val mp: MediaProjection,
+    private val dw: Int,
+    private val dh: Int,
+    private val dpi: Int,
+    private val fps: Int = 24
+) : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     private val mHandler = Handler(Looper.getMainLooper())
     private var vd: AlVirtualDisplay? = null
     private var onRecordProgressListener: ((Long) -> Unit)? = null
+    private var lastTime = 0L
+    private val durOfFrame = 1000000000 / fps
 
     init {
         handler = create()
@@ -32,8 +37,10 @@ class AlDisplayRecorder(private val mp: MediaProjection,
         setOutputFilePath(handler, filePath)
     }
 
-    fun setFormat(width: Int, height: Int, sampleFormat: Int = 102,
-                  channels: Int = 2, sampleRate: Int = 44100) {
+    fun setFormat(
+        width: Int, height: Int, sampleFormat: Int = 102,
+        channels: Int = 2, sampleRate: Int = 44100
+    ) {
         if (0L == handler) return
         setFormat(handler, dw, dh, sampleFormat, channels, sampleRate)
     }
@@ -69,6 +76,12 @@ class AlDisplayRecorder(private val mp: MediaProjection,
             HwCameraRecorder.EVENT_DRAW -> {
                 vd?.draw()
                 val time = vd!!.timestamp()
+                if (lastTime > 0L) {
+                    if (time - lastTime < durOfFrame) {
+                        return
+                    }
+                }
+                lastTime = time
                 Log.i("AlDisplayRecorder", "draw $time")
                 if (0L != handler) {
                     invalidate(handler, vd!!.matrix(), time, dw, dh)
@@ -113,15 +126,21 @@ class AlDisplayRecorder(private val mp: MediaProjection,
     private external fun pause(handler: Long)
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
-    private external fun invalidate(handler: Long, matrix: FloatArray, tsInNs: Long,
-                                    cw: Int, ch: Int)
+    private external fun invalidate(
+        handler: Long, matrix: FloatArray, tsInNs: Long,
+        cw: Int, ch: Int
+    )
 
     private external fun setOutputFilePath(handler: Long, filePath: String)
-    private external fun setFormat(handler: Long, width: Int, height: Int, sampleFormat: Int,
-                                   channels: Int, sampleRate: Int)
+    private external fun setFormat(
+        handler: Long, width: Int, height: Int, sampleFormat: Int,
+        channels: Int, sampleRate: Int
+    )
 
-    private external fun cropOutputSize(handler: Long, left: Float, top: Float,
-                                        right: Float, bottom: Float)
+    private external fun cropOutputSize(
+        handler: Long, left: Float, top: Float,
+        right: Float, bottom: Float
+    )
 
     companion object {
         const val EVENT_PREPARE = 1
@@ -131,11 +150,13 @@ class AlDisplayRecorder(private val mp: MediaProjection,
     }
 }
 
-class AlVirtualDisplay private constructor(private val mp: MediaProjection,
-                                           private val dw: Int,
-                                           private val dh: Int,
-                                           private val dpi: Int,
-                                           private val tex: Int) {
+class AlVirtualDisplay private constructor(
+    private val mp: MediaProjection,
+    private val dw: Int,
+    private val dh: Int,
+    private val dpi: Int,
+    private val tex: Int
+) {
     private var vd: VirtualDisplay? = null
     private var texture: SurfaceTexture? = null
     private var transformMatrix: FloatArray = FloatArray(16)
@@ -163,9 +184,11 @@ class AlVirtualDisplay private constructor(private val mp: MediaProjection,
         Log.i("AlDisplayRecorder", "setup $dw x $dh, $dpi")
         texture = SurfaceTexture(tex)
         texture?.setDefaultBufferSize(dw, dh)
-        vd = mp.createVirtualDisplay("hwvc", dw, dh, dpi,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                Surface(texture), callback, Handler(Looper.getMainLooper()))
+        vd = mp.createVirtualDisplay(
+            "hwvc", dw, dh, dpi,
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+            Surface(texture), callback, Handler(Looper.getMainLooper())
+        )
     }
 
     private var src: ByteArray? = null
@@ -216,7 +239,13 @@ class AlVirtualDisplay private constructor(private val mp: MediaProjection,
     }
 
     companion object {
-        fun open(mp: MediaProjection, width: Int, height: Int, dpi: Int, tex: Int): AlVirtualDisplay {
+        fun open(
+            mp: MediaProjection,
+            width: Int,
+            height: Int,
+            dpi: Int,
+            tex: Int
+        ): AlVirtualDisplay {
             return AlVirtualDisplay(mp, width, height, dpi, tex)
         }
     }
