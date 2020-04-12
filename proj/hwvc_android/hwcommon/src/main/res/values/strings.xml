@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Common</string>
+    <!--picker-->
+    <string name="gallery">相册</string>
+    <string name="folder_all">所有照片</string>
+    <string name="preview">预览</string>
+    <string name="msg_no_camera">No system camera found</string>
+    <string name="msg_amount_limit">超过最大可选数量限制</string>
+    <string name="action_done">完成</string>
+    <string name="photo_unit">张照片</string>
+    <string name="tip_take_photo">拍照</string>
+</resources>
