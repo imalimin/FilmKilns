@@ -24,6 +24,8 @@ public:
 
     HwSampleFormat &operator=(const HwSampleFormat &format);
 
+    size_t getBytesPerSample();
+
     bool valid();
 
 private:

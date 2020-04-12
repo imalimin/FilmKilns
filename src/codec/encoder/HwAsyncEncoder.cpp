@@ -8,6 +8,8 @@
 #include "../include/HwAsyncEncoder.h"
 #include "../include/HwFFmpegEncoder.h"
 
+#define TAG "HwAsyncEncoder"
+
 HwAsyncEncoder::HwAsyncEncoder() : HwAbsVideoEncoder() {
     pipeline = AlEventPipeline::create("HwAsyncFFEncoder");
     hwFrameAllocator = new HwFrameAllocator();
@@ -40,7 +42,7 @@ bool HwAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat 
 
 HwResult HwAsyncEncoder::write(HwAbsMediaFrame *frame) {
     if (cache.size() >= MAX_FRAME_CACHE) {
-        Logcat::e("HWVC", "HwAsyncFFEncoder::write lack of cache.");
+        AlLogE(TAG, "frame(%lld). Lack of cache", frame->getPts());
         return Hw::FAILED;
     }
     HwAbsMediaFrame *temp = hwFrameAllocator->ref(frame);

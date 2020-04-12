@@ -52,10 +52,13 @@ private:
     HwAbsCodec *aCodec = nullptr;
     bool firstVideoFrameWrite = false;
     int64_t sampleCount = 0;
-    int64_t frameCount = 0;
     std::mutex lock;
 
     int32_t quality = 18;
+
+    int64_t countOfFrame = 0;
+    int64_t lastTime = 0;
+    int64_t countOfTime = 0;
 };
 
 #ifdef __cplusplus

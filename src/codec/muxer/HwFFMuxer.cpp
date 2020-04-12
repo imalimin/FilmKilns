@@ -162,9 +162,13 @@ HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
     // pts / cq * bq
     av_packet_rescale_ts(avPacket, AV_TIME_BASE_Q, tb);
     if (tracks[track]->cur_dts >= avPacket->dts) {
-        AlLogE(TAG, "will failed(%lld, %lld), try reset correctly.",
-               tracks[track]->cur_dts, avPacket->dts);
+        AlLogE(TAG, "will failed cur_dts(%lld), dts(%lld), idx(%d)), try reset correctly.",
+               tracks[track]->cur_dts, avPacket->dts, avPacket->stream_index);
         avPacket->dts += 1;
+    }
+    if (tracks[track]->index == 1) {
+        AlLogE(TAG, "write audio %"
+                PRId64, avPacket->pts);
     }
     int ret = av_interleaved_write_frame(pFormatCtx, avPacket);
     if (0 != ret) {

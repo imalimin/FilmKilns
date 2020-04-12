@@ -3,6 +3,7 @@
 //
 
 #include "../include/HwSampleFormat.h"
+#include "../include/HwAbsMediaFrame.h"
 
 const HwSampleFormat HwSampleFormat::NONE = HwSampleFormat(HwFrameFormat::HW_FMT_NONE, 0, 0);
 
@@ -38,6 +39,10 @@ HwSampleFormat &HwSampleFormat::operator=(const HwSampleFormat &format) {
     this->channels = format.channels;
     this->sampleRate = format.sampleRate;
     return *this;
+}
+
+size_t HwSampleFormat::getBytesPerSample() {
+    return static_cast<size_t>(HwAbsMediaFrame::getBytesPerSample(format) * channels);
 }
 
 bool HwSampleFormat::valid() {
