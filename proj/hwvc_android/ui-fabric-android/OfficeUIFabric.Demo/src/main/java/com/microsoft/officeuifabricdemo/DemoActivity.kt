@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+package com.microsoft.officeuifabricdemo
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.MenuItem
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_demo_detail.*
+import java.util.*
+
+abstract class DemoActivity : AppCompatActivity() {
+    companion object {
+        const val DEMO_ID = "demo_id"
+    }
+
+    protected abstract val contentLayoutId: Int
+        @LayoutRes get
+    protected open val contentNeedsScrollableContainer: Boolean
+        get() = true
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity_demo_detail)
+
+        // Show the Up button in the action bar.
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        // Set demo title
+        val demoID = intent.getSerializableExtra(DEMO_ID) as UUID
+        val demo = DEMOS.find { it.id == demoID }
+        title = demo?.title
+
+        // Load content and place it in the requested container
+        val container = if (contentNeedsScrollableContainer) demo_detail_scrollable_container else demo_detail_container
+        layoutInflater.inflate(contentLayoutId, container, true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                navigateUpTo(Intent(this, DemoListActivity::class.java))
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+}

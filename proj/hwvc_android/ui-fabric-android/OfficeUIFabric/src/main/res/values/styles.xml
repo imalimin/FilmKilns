@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Widget.UIFabric" parent="@android:style/Widget"/>
+
+    <!--BottomNavigation-->
+    <style name="Widget.UIFabric.BottomNavigation" parent="Widget.Design.BottomNavigationView">
+        <item name="android:layout_gravity">bottom</item>
+        <item name="android:background">?attr/uifabricBottomNavigationBackgroundColor</item>
+        <item name="itemBackground">@drawable/ms_ripple_transparent_background_borderless</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.UIFabric.BottomNavigation.Active</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.UIFabric.BottomNavigation.Inactive</item>
+        <item name="itemIconTint">@color/bottom_navigation_icon_tint</item>
+        <item name="labelVisibilityMode">labeled</item>
+    </style>
+    <style name="Widget.UIFabric.BottomNavigation.Unlabeled">
+        <item name="labelVisibilityMode">unlabeled</item>
+    </style>
+    
+    <!--Button-->
+    <style name="Widget.UIFabric.Button" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:textAppearance">@style/TextAppearance.UIFabric.Button</item>
+        <item name="android:paddingStart">@dimen/uifabric_button_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/uifabric_button_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/uifabric_button_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/uifabric_button_padding_vertical</item>
+        <item name="android:minHeight">@dimen/uifabric_button_min_height</item>
+        <item name="android:stateListAnimator" tools:ignore="NewApi">@null</item>
+    </style>
+    <!--We use Borderless button style as the parent to avoid drop shadow issues in some APIs.-->
+    <style name="Widget.UIFabric.Button.Borderless" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">@drawable/button_borderless_background</item>
+        <item name="android:textAppearance">@style/TextAppearance.UIFabric.Button.Borderless</item>
+        <item name="android:paddingStart">@dimen/uifabric_button_borderless_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/uifabric_button_borderless_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/uifabric_button_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/uifabric_button_padding_vertical</item>
+        <item name="android:minHeight">@dimen/uifabric_button_min_height</item>
+    </style>
+
+    <!--Compound Buttons-->
+    <style name="Widget.UIFabric.RadioButton" parent="@style/Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:buttonTint">@color/compound_button_tint</item>
+    </style>
+    <style name="Widget.UIFabric.CheckBox" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:buttonTint">@color/compound_button_tint</item>
+    </style>
+
+    <!--DateTimePickerDialog-->
+    <style name="DateTimePickerDialog.Toolbar" parent="@style/ThemeOverlay.AppCompat">
+        <item name="android:colorControlHighlight">?attr/uifabricBackgroundPressedColor</item>
+    </style>
+    <style name="Base.Widget.UIFabric.DateTimePickerDialog.DateTimeRange.TabLayout" parent="Widget.UIFabric.Dialog.TabLayout">
+        <item name="tabGravity">fill</item>
+        <item name="tabMode">fixed</item>
+    </style>
+    <style name="Widget.UIFabric.DateTimePickerDialog.DateTimeRange.TabLayout" parent="Base.Widget.UIFabric.DateTimePickerDialog.DateTimeRange.TabLayout" />
+
+    <!--Dialog-->
+    <style name="Dialog.UIFabric" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackground">?attr/uifabricDialogBackgroundColor</item>
+        <item name="android:colorBackgroundCacheHint">?attr/uifabricDialogBackgroundColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.UIFabric.Title1</item>
+    </style>
+    <style name="Widget.UIFabric.Dialog.TabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabGravity">center</item>
+        <item name="tabMode">scrollable</item>
+        <item name="tabTextAppearance">@style/TextAppearance.UIFabric.Tab.Light</item>
+        <item name="tabMinWidth">90dp</item>
+        <item name="tabSelectedTextColor">?attr/uifabricTabSelectedTextColor</item>
+        <item name="tabIndicatorColor">?attr/uifabricTabIndicatorColor</item>
+        <item name="android:background">?attr/uifabricDialogTabLayoutBackgroundColor</item>
+        <item name="tabRippleColor">?uifabricBackgroundPressedColor</item>
+    </style>
+
+    <!--Drawer-->
+    <style name="Drawer.UIFabric" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Drawer.UIFabric.Animation</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+    <style name="Drawer.UIFabric.Animation">
+        <item name="android:windowEnterAnimation">@anim/drawer_background_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/drawer_background_fade_out</item>
+    </style>
+
+    <!--NumberPicker-->
+    <style name="Widget.UIFabric.NumberPicker">
+        <item name="android:orientation">vertical</item>
+        <item name="android:requiresFadingEdge">vertical</item>
+        <item name="android:fadingEdgeLength">@dimen/uifabric_date_time_picker_fading_edge_length</item>
+        <item name="solidColor">@android:color/transparent</item>
+        <item name="internalMinWidth">@dimen/uifabric_date_time_picker_internal_min_width</item>
+        <item name="internalMaxHeight">@dimen/uifabric_date_time_picker_max_height</item>
+        <item name="selectorWheelItemCount">@integer/uifabric_number_picker_selector_wheel_item_count</item>
+        <item name="textAlign">center</item>
+        <item name="android:paddingRight">@dimen/uifabric_date_time_picker_padding_right</item>
+    </style>
+
+    <!--Progress: Circular-->
+    <style name="Widget.UIFabric.CircularProgress.XSmall" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:contentDescription">@string/progress_circular_content_description_indeterminate</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateDrawable">@drawable/anim_progress_circular_gray_xsmall</item>
+        <item name="android:minHeight">@dimen/uifabric_progress_circular_xsmall</item>
+        <item name="android:minWidth">@dimen/uifabric_progress_circular_xsmall</item>
+        <item name="android:maxHeight">@dimen/uifabric_progress_circular_xsmall</item>
+        <item name="android:maxWidth">@dimen/uifabric_progress_circular_xsmall</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.Small" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:contentDescription">@string/progress_circular_content_description_indeterminate</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateDrawable">@drawable/anim_progress_circular_gray_small</item>
+        <item name="android:minHeight">@dimen/uifabric_progress_circular_small</item>
+        <item name="android:minWidth">@dimen/uifabric_progress_circular_small</item>
+        <item name="android:maxHeight">@dimen/uifabric_progress_circular_small</item>
+        <item name="android:maxWidth">@dimen/uifabric_progress_circular_small</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.Medium" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:contentDescription">@string/progress_circular_content_description_indeterminate</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateDrawable">@drawable/anim_progress_circular_gray_medium</item>
+        <item name="android:minHeight">@dimen/uifabric_progress_circular_medium</item>
+        <item name="android:minWidth">@dimen/uifabric_progress_circular_medium</item>
+        <item name="android:maxHeight">@dimen/uifabric_progress_circular_medium</item>
+        <item name="android:maxWidth">@dimen/uifabric_progress_circular_medium</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.Large" parent="@style/Widget.AppCompat.ProgressBar">
+        <item name="android:contentDescription">@string/progress_circular_content_description_indeterminate</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateDrawable">@drawable/anim_progress_circular_gray_large</item>
+        <item name="android:minHeight">@dimen/uifabric_progress_circular_large</item>
+        <item name="android:minWidth">@dimen/uifabric_progress_circular_large</item>
+        <item name="android:maxHeight">@dimen/uifabric_progress_circular_large</item>
+        <item name="android:maxWidth">@dimen/uifabric_progress_circular_large</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.XSmall.Primary">
+        <item name="android:indeterminateTint">?attr/uifabricProgressPrimaryColor</item>
+        <item name="android:indeterminateTintMode">src_in</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.Small.Primary">
+        <item name="android:indeterminateTint">?attr/uifabricProgressPrimaryColor</item>
+        <item name="android:indeterminateTintMode">src_in</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.Medium.Primary">
+        <item name="android:indeterminateTint">?attr/uifabricProgressPrimaryColor</item>
+        <item name="android:indeterminateTintMode">src_in</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.Large.Primary">
+        <item name="android:indeterminateTint">?attr/uifabricProgressPrimaryColor</item>
+        <item name="android:indeterminateTintMode">src_in</item>
+    </style>
+
+    <!--Searchbar-->
+    <style name="Widget.UIFabric.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="colorControlActivated">?attr/uifabricSearchbarSearchViewCursorColor</item>
+        <item name="android:textColorHint">?attr/uifabricSearchbarSearchViewTextHintColor</item>
+        <item name="android:editTextColor">?attr/uifabricSearchbarSearchViewTextColor</item>
+        <item name="android:textSize">@dimen/uifabric_searchbar_search_view_text_size</item>
+    </style>
+    <style name="Widget.UIFabric.CircularProgress.XSmall.Search">
+        <item name="android:indeterminateTint">?attr/uifabricSearchbarProgressColor</item>
+        <item name="android:indeterminateTintMode">src_in</item>
+        <item name="android:minHeight">@dimen/uifabric_searchbar_progress_size</item>
+        <item name="android:minWidth">@dimen/uifabric_searchbar_progress_size</item>
+        <item name="android:maxHeight">@dimen/uifabric_searchbar_progress_size</item>
+        <item name="android:maxWidth">@dimen/uifabric_searchbar_progress_size</item>
+    </style>
+
+    <!--Toolbar-->
+    <!--We use Widget.AppCompat.Toolbar instead of a ThemeOverlay to maintain Android's default Toolbar styling.-->
+    <style name="Base.Widget.UIFabric.Toolbar" parent="@style/Widget.AppCompat.Toolbar">
+        <item name="android:background">?attr/uifabricToolbarBackgroundColor</item>
+        <item name="titleTextAppearance">@style/TextAppearance.UIFabric.ToolbarTitle</item>
+        <item name="subtitleTextAppearance">@style/TextAppearance.UIFabric.ToolbarSubtitle</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+    <style name="Widget.UIFabric.Toolbar" parent="@style/Base.Widget.UIFabric.Toolbar" />
+    <style name="Widget.UIFabric.Toolbar.OverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">?attr/uifabricToolbarIconColor</item>
+    </style>
+
+</resources>
