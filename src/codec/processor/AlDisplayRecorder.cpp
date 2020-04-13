@@ -79,6 +79,18 @@ void AlDisplayRecorder::setOutputFilePath(string filePath) {
     postMessage(msg);
 }
 
+void AlDisplayRecorder::setBitrate(int32_t bitrate) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_BITRATE_LEVEL);
+    msg->arg1 = bitrate;
+    postEvent(msg);
+}
+
+void AlDisplayRecorder::setProfile(std::string profile) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_PROFILE);
+    msg->desc = profile;
+    postEvent(msg);
+}
+
 void AlDisplayRecorder::setFormat(int width, int height, HwSampleFormat format) {
     postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height)));
     postMessage(AlMessage::obtain(MSG_MICROPHONE_FORMAT, new HwSampleFormat(format)));

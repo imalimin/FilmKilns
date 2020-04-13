@@ -23,6 +23,14 @@ HwFFmpegEncoder::~HwFFmpegEncoder() {
     release();
 }
 
+void HwFFmpegEncoder::setBitrate(int32_t rate) {
+    this->bitrate = rate;
+}
+
+void HwFFmpegEncoder::setProfile(std::string profile) {
+    this->profile = profile;
+}
+
 bool HwFFmpegEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     this->path = path;
     this->width = width;
@@ -41,8 +49,9 @@ bool HwFFmpegEncoder::initialize() {
     bundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
     bundle.putInt32(HwAbsCodec::KEY_WIDTH, width);
     bundle.putInt32(HwAbsCodec::KEY_HEIGHT, height);
-    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * 3);
+    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, this->bitrate);
     bundle.putInt32(HwAbsCodec::KEY_FPS, fps);
+    bundle.putString(HwAbsCodec::KEY_PROFILE, this->profile);
     //For CRF
     bundle.putInt32(HwAbsCodec::KEY_QUALITY, quality);
     vCodec = new HwFFCodec(AV_CODEC_ID_H264);

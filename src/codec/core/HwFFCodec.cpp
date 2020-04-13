@@ -145,10 +145,10 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     if (AV_CODEC_ID_H264 == ctx->codec_id) {
         ctx->profile = FF_PROFILE_H264_HIGH;
         //0 - 51
-        av_dict_set_int(&param, "crf", getFormat().getInt32(KEY_QUALITY), 0);  // or abr,qp
+//        av_dict_set_int(&param, "crf", getFormat().getInt32(KEY_QUALITY), 0);  // or abr,qp
         //ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow and placebo.
         av_dict_set(&param, "preset", "superfast", 0);
-        //av_dict_set(param, "profile", "main", 0)
+        av_dict_set(&param, "profile", getFormat().getString(HwAbsCodec::KEY_PROFILE).c_str(), 0);
         av_dict_set(&param, "tune", "zerolatency", 0);
     }
     int ret = avcodec_open2(ctx, codec, &param);

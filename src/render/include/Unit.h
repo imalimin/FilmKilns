@@ -73,6 +73,8 @@ static constexpr int MSG_VIDEO_COMPILER_BACKWARD = KID('H', 'V', 'C', 0x00);
 static constexpr int MSG_VIDEO_OUTPUT_PATH = KID('H', 'V', 'C', 0x01);
 static constexpr int MSG_VIDEO_OUTPUT_SIZE = KID('H', 'V', 'C', 0x02);
 static constexpr int MSG_VIDEO_COMPILER_TIME = KID('H', 'V', 'C', 0x03);
+static constexpr int MSG_VIDEO_OUTPUT_BITRATE_LEVEL = KID('H', 'V', 'C', 0x04);
+static constexpr int MSG_VIDEO_OUTPUT_PROFILE = KID('H', 'V', 'C', 0x05);
 
 static constexpr int EVENT_LAYER_ADD = KID('A', 'I', 'G', 0x00);
 static constexpr int EVENT_LAYER_IMPORT = KID('A', 'I', 'G', 0x01);

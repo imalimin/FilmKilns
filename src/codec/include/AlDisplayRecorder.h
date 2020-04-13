@@ -44,6 +44,10 @@ public:
 
     void setOutputFilePath(string filePath);
 
+    void setBitrate(int32_t bitrate);
+
+    void setProfile(std::string profile);
+
     void setFormat(int width, int height, HwSampleFormat format);
 
     void cropOutputSize(float left, float top, float right, float bottom);

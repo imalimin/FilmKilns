@@ -173,6 +173,22 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_cropO
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setBitrate
+        (JNIEnv *env, jobject thiz, jlong handler, jint bitrate) {
+    if (handler) {
+        getHandler(handler)->setBitrate(bitrate);
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setProfile
+        (JNIEnv *env, jobject thiz, jlong handler, jstring profile) {
+    if (handler) {
+        const char *str = env->GetStringUTFChars(profile, JNI_FALSE);
+        getHandler(handler)->setProfile(std::string(str));
+        env->ReleaseStringUTFChars(profile, str);
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif

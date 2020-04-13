@@ -19,6 +19,14 @@ HwAndroidEncoder::~HwAndroidEncoder() {
     release();
 }
 
+void HwAndroidEncoder::setBitrate(int32_t rate) {
+
+}
+
+void HwAndroidEncoder::setProfile(std::string profile) {
+
+}
+
 bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     this->path = path;
     this->width = width;

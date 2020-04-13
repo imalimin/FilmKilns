@@ -33,6 +33,10 @@ public:
 
     virtual ~HwAndroidEncoder();
 
+    virtual void setBitrate(int32_t rate) override;
+
+    virtual void setProfile(std::string profile) override;
+
     virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) override;
 
     virtual HwResult write(HwAbsMediaFrame *frame) override;

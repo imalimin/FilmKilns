@@ -51,6 +51,28 @@ private:
     /// \return
     bool _onSetSize(AlMessage *msg);
 
+    /// 设置码率系数
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | bitrate   | none      |   path    |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onSetBitrateLevel(AlMessage *msg);
+
+    /// 设置profile
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | none      | none      |  profile  |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onSetProfile(AlMessage *msg);
+
     /// 音频格式
     /// FORMAT:
     /// +--------------------------------------------------+
@@ -98,6 +120,8 @@ private:
 private:
     AlSize size;
     std::string path;
+    int32_t bitLevel = 0;
+    std::string profile;
     HwSampleFormat aFormat;
     HwAbsVideoEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;

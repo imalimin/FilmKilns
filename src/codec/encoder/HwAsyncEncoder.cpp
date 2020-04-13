@@ -31,6 +31,14 @@ HwAsyncEncoder::~HwAsyncEncoder() {
     }
 }
 
+void HwAsyncEncoder::setBitrate(int32_t rate) {
+    encoder->setBitrate(rate);
+}
+
+void HwAsyncEncoder::setProfile(std::string profile) {
+    encoder->setProfile(profile);
+}
+
 bool HwAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     if (encoder) {
         looping = encoder->prepare(path, width, height, audioFormat);

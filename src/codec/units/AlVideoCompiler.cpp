@@ -6,8 +6,7 @@
 */
 
 #include "include/AlVideoCompiler.h"
-#include "../include/HwAsyncEncoder.h"
-#include "../platform/android/encoder/HwAndroidEncoder.h"
+#include "../include/AlEncoderBuilder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
 #include "../include/HwSampleFormat.h"
@@ -33,6 +32,10 @@ AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetOutPath));
     registerEvent(MSG_VIDEO_OUTPUT_SIZE,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetSize));
+    registerEvent(MSG_VIDEO_OUTPUT_BITRATE_LEVEL,
+                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetBitrateLevel));
+    registerEvent(MSG_VIDEO_OUTPUT_PROFILE,
+                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetProfile));
     registerEvent(MSG_MICROPHONE_FORMAT, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onFormat));
     registerEvent(MSG_TIMESTAMP, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onTimestamp));
 }
@@ -122,10 +125,15 @@ void AlVideoCompiler::_initialize() {
             AlLogE(TAG, "Not align 16. %dx%d", size.width, size.height);
             return;
         }
-        encoder = new HwAsyncEncoder();
-        if (!encoder->prepare(path, size.width, size.height, aFormat)) {
-            AlLogE(TAG, "Prepare video encoder failed");
-        }
+        encoder = AlEncoderBuilder()
+                .setOutput(path)
+                .setSize(size)
+                .setAudioFormat(aFormat)
+                .setBitrate(size.width * size.height * bitLevel)
+                .setProfile(profile)
+                .setEnableAsyn(true)
+                .setEnableHardware(false)
+                .build();
         videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12,
                                       size.width, size.height);
         audioFrame = new HwAudioFrame(nullptr, aFormat.getFormat(), aFormat.getChannels(),
@@ -239,6 +247,19 @@ bool AlVideoCompiler::_onFormat(AlMessage *msg) {
     if (f) {
         aFormat = *f;
     }
+    return true;
+}
+
+bool AlVideoCompiler::_onSetBitrateLevel(AlMessage *msg) {
+    bitLevel = msg->arg1;
+    if (bitLevel <= 0 || bitLevel > 5) {
+        bitLevel = 3;
+    }
+    return true;
+}
+
+bool AlVideoCompiler::_onSetProfile(AlMessage *msg) {
+    profile = msg->desc;
     return true;
 }
 

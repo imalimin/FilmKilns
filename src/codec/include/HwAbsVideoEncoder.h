@@ -19,6 +19,9 @@ public:
 
     virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) = 0;
 
+    virtual void setBitrate(int32_t rate) = 0;
+
+    virtual void setProfile(std::string profile) = 0;
 };
 
 

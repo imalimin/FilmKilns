@@ -30,6 +30,10 @@ public:
 
     virtual ~HwFFmpegEncoder();
 
+    virtual void setBitrate(int32_t rate) override;
+
+    virtual void setProfile(std::string profile) override;
+
     virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) override;
 
     virtual HwResult write(HwAbsMediaFrame *frame) override;
@@ -45,6 +49,8 @@ private:
     string path;
     int width = 0;
     int height = 0;
+    int32_t bitrate = 0;
+    std::string profile;
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
     int32_t aTrack = HwAbsMuxer::TRACK_NONE, vTrack = HwAbsMuxer::TRACK_NONE;
     HwAbsMuxer *muxer = nullptr;

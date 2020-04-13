@@ -33,7 +33,7 @@ class AlDisplayRecorder(
     }
 
     fun setOutputFilePath(filePath: String) {
-        if (0L == handler) return
+        if (isNativeNull()) return
         setOutputFilePath(handler, filePath)
     }
 
@@ -41,29 +41,39 @@ class AlDisplayRecorder(
         width: Int, height: Int, sampleFormat: Int = 102,
         channels: Int = 2, sampleRate: Int = 44100
     ) {
-        if (0L == handler) return
+        if (isNativeNull()) return
         setFormat(handler, dw, dh, sampleFormat, channels, sampleRate)
     }
 
+    fun setBitrate(bitrate: Int) {
+        if (isNativeNull()) return
+        setBitrate(handler, bitrate)
+    }
+
+    fun setProfile(profile: String) {
+        if (isNativeNull()) return
+        setProfile(handler, profile)
+    }
+
     fun start() {
-        if (0L == handler) return
+        if (isNativeNull()) return
         start(handler)
     }
 
     fun pause() {
-        if (0L == handler) return
+        if (isNativeNull()) return
         pause(handler)
     }
 
     fun release() {
-        if (0L == handler) return
+        if (isNativeNull()) return
         postEvent(handler, EVENT_RELEASE)
         release(handler)
         handler = 0L
     }
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
-        if (0L == handler) return
+        if (isNativeNull()) return
         postEvent(handler, EVENT_DRAW)
     }
 
@@ -141,6 +151,10 @@ class AlDisplayRecorder(
         handler: Long, left: Float, top: Float,
         right: Float, bottom: Float
     )
+
+    private external fun setBitrate(handler: Long, bitrate: Int)
+
+    private external fun setProfile(handler: Long, profile: String)
 
     companion object {
         const val EVENT_PREPARE = 1
