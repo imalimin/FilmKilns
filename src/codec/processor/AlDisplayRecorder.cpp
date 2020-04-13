@@ -19,6 +19,7 @@
 #include "AlSize.h"
 #include "AlOperateCrop.h"
 #include "AlIdentityCreator.h"
+#include "AlMath.h"
 
 #define TAG "HwCameraRecorder"
 
@@ -92,9 +93,21 @@ void AlDisplayRecorder::setProfile(std::string profile) {
 }
 
 void AlDisplayRecorder::setFormat(int width, int height, HwSampleFormat format) {
-    postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height)));
+    AlRational scaleFactor;
+    int w = width, h = height;
+    if (w > 720) {
+        scaleFactor.num = 720;
+        scaleFactor.den = w;
+        w = 720;
+        h = AlMath::align16(static_cast<int32_t>(height * scaleFactor.toFloat()));
+    } else {
+        scaleFactor.num = 1;
+        scaleFactor.den = 1;
+    }
+    postMessage(AlMessage::obtain(MSG_CAMERA_LAYER_SCALE, new AlRational(scaleFactor)));
+    postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(w, h)));
     postMessage(AlMessage::obtain(MSG_MICROPHONE_FORMAT, new HwSampleFormat(format)));
-    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(width, height)));
+    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(w, h)));
 }
 
 void AlDisplayRecorder::cropOutputSize(float left, float top, float right, float bottom) {

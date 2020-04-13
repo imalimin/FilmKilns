@@ -68,6 +68,7 @@ static constexpr int MSG_CAMERA_UPDATE_SIZE = KID('C', 'A', 'M', 0x01);
 static constexpr int MSG_CAMERA_OES_TEX_NOTIFY = KID('C', 'A', 'M', 0x02);
 static constexpr int MSG_CAMERA_RUN = KID('C', 'A', 'M', 0x03);
 static constexpr int MSG_TIMESTAMP = KID('C', 'A', 'M', 0x04);
+static constexpr int MSG_CAMERA_LAYER_SCALE = KID('C', 'A', 'M', 0x05);
 
 static constexpr int MSG_VIDEO_COMPILER_BACKWARD = KID('H', 'V', 'C', 0x00);
 static constexpr int MSG_VIDEO_OUTPUT_PATH = KID('H', 'V', 'C', 0x01);

@@ -121,10 +121,9 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
             (HwFrameFormat) getFormat().getInt32(KEY_FORMAT));
     ctx->width = getFormat().getInt32(KEY_WIDTH);
     ctx->height = getFormat().getInt32(KEY_HEIGHT);
-    ctx->bit_rate = getFormat().getInt32(KEY_BIT_RATE);
     ctx->time_base = {1, getFormat().getInt32(KEY_FPS)};
     ctx->framerate = {getFormat().getInt32(KEY_FPS), 1};
-
+    _configureBitrate(getFormat().getInt32(KEY_BIT_RATE));
 
     ctx->gop_size = 15;
 //    pCodecCtx->ticks_per_frame = 2;
@@ -221,6 +220,10 @@ bool HwFFCodec::parseExtraData() {
         }
     }
     return true;
+}
+
+void HwFFCodec::_configureBitrate(int32_t bitrate) {
+    ctx->bit_rate = bitrate;
 }
 
 int32_t HwFFCodec::type() {

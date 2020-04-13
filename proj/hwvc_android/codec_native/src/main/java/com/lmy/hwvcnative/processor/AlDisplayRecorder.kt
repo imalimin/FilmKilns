@@ -20,7 +20,7 @@ class AlDisplayRecorder(
     private val dw: Int,
     private val dh: Int,
     private val dpi: Int,
-    private val fps: Int = 24
+    private val fps: Int = 30
 ) : CPPObject(), SurfaceTexture.OnFrameAvailableListener {
     private val mHandler = Handler(Looper.getMainLooper())
     private var vd: AlVirtualDisplay? = null

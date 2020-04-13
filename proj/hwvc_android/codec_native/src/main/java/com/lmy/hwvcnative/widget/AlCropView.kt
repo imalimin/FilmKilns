@@ -291,6 +291,10 @@ class AlCropView : View {
         )
     }
 
+    fun getCropSizeOfPixels(): Point {
+        return Point((rb.x - lt.x).toInt(), (rb.y - lt.y).toInt())
+    }
+
     fun getCropRectFInDisplay(considerStroke: Boolean = false): RectF {
         val loc = IntArray(2)
         getLocationOnScreen(loc)

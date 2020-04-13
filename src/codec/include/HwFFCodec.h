@@ -51,6 +51,8 @@ private:
 
     bool parseExtraData();
 
+    void _configureBitrate(int32_t bitrate);
+
 private:
     AVCodecContext *ctx = nullptr;
     AVFrame *avFrame = nullptr;

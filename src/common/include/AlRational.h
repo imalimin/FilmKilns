@@ -29,8 +29,8 @@ public:
     double toDouble();
 
 public:
-    int32_t num; ///< Numerator
-    int32_t den; ///< Denominator
+    int32_t num; ///< Numerator(分子)
+    int32_t den; ///< Denominator(分母)
 };
 
 

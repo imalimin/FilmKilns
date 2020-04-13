@@ -31,6 +31,8 @@ AlUOESTexInput::AlUOESTexInput(string alias) : Unit(alias), srcTex(nullptr) {
                   reinterpret_cast<EventFunc>(&AlUOESTexInput::_onLayerNotify));
     registerEvent(MSG_VIDEO_OUTPUT_SIZE,
                   reinterpret_cast<EventFunc>(&AlUOESTexInput::_onOutputSize));
+    registerEvent(MSG_CAMERA_LAYER_SCALE,
+                  reinterpret_cast<EventFunc>(&AlUOESTexInput::_onScale));
 }
 
 AlUOESTexInput::~AlUOESTexInput() {
@@ -78,9 +80,7 @@ bool AlUOESTexInput::onDestroy(AlMessage *msg) {
 bool AlUOESTexInput::_onInvalidate(AlMessage *msg) {
     if (nullptr == mLayerTex) {
         if (!fbo) {
-            auto *m = AlMessage::obtain(MSG_LAYER_ADD_EMPTY,
-                                        new AlSize(cameraSize.width, cameraSize.height));
-            postMessage(m);
+            _createLayer();
             fbo = HwFBObject::alloc();
         }
         return true;
@@ -95,6 +95,12 @@ bool AlUOESTexInput::_onInvalidate(AlMessage *msg) {
     draw();
     notify(tsInNs);
     return true;
+}
+
+void AlUOESTexInput::_createLayer() {
+    auto *m = AlMessage::obtain(MSG_LAYER_ADD_EMPTY,
+                                new AlSize(cameraSize.width, cameraSize.height));
+    postMessage(m);
 }
 
 void AlUOESTexInput::draw() {
@@ -146,8 +152,10 @@ bool AlUOESTexInput::_onLayerNotify(AlMessage *msg) {
     mLayerId = msg->arg1;
     if (nullptr == mLayerTex) {
         mLayerTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
-        auto scaleX = AlRational(mLayerTex->getWidth(), cameraSize.width);
-        auto scaleY = AlRational(mLayerTex->getHeight(), cameraSize.height);
+        auto scaleX = AlRational(mLayerTex->getWidth() * this->scale.num,
+                                 cameraSize.width * this->scale.den);
+        auto scaleY = AlRational(mLayerTex->getHeight() * this->scale.num,
+                                 cameraSize.height * this->scale.den);
         if (scaleY.toFloat() > scaleX.toFloat()) {
             scaleX = scaleY;
         }
@@ -168,4 +176,12 @@ bool AlUOESTexInput::_onOutputSize(AlMessage *msg) {
         AlLogI(TAG, "%dx%d", outSize.width, outSize.height);
     }
     return true;
+}
+
+bool AlUOESTexInput::_onScale(AlMessage *msg) {
+    auto scale = msg->getObj<AlRational *>();
+    if (scale) {
+        this->scale = *scale;
+    }
+    return false;
 }

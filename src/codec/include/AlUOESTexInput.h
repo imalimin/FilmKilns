@@ -13,6 +13,7 @@
 #include "HwTexture.h"
 #include "HwAbsFBObject.h"
 #include "HwProgram.h"
+#include "AlRational.h"
 
 al_def_unit(AlUOESTexInput, Unit) {
 public:
@@ -35,6 +36,8 @@ private:
 
     bool _onOutputSize(AlMessage *msg);
 
+    bool _onScale(AlMessage *msg);
+
 private:
     void draw();
 
@@ -42,9 +45,12 @@ private:
 
     void updateMatrix(int32_t w, int32_t h, AlMatrix *matrix);
 
+    void _createLayer();
+
 private:
     AlSize cameraSize;
     AlSize outSize;
+    AlRational scale;
     AlSPointer<HwAbsTexture> srcTex;
     HwAbsFBObject *fbo = nullptr;
     HwProgram *program = nullptr;
