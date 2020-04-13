@@ -106,18 +106,26 @@ HwResult AlBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf,
     AlBitmapInfo info;
     info.width = w;
     info.height = h;
-    std::string suffix = path.substr(path.find_last_of('.') + 1);
-    bool png = StringUtils::equalsIgnoreCase("png", suffix);
-    bool webp = StringUtils::equalsIgnoreCase("webp", suffix);
     AlAbsEncoder *encoder = nullptr;
-    if (png) {
-        encoder = new AlPngEncoder(path);
-    } else {
-        if (webp) {
-            encoder = new AlWebPEncoder(path);
-        } else {
-            encoder = new AlJpegEncoder(path);
+    switch (_getFileSuffix(path)) {
+        case FORMAT_PNG: {
+            encoder = new AlPngEncoder(path);
+            break;
         }
+        case FORMAT_JPEG: {
+            encoder = new AlJpegEncoder(path);
+            break;
+        }
+        case FORMAT_BMP: {
+            break;
+        }
+        case FORMAT_WEBP: {
+            encoder = new AlWebPEncoder(path);
+            break;
+        }
+    }
+    if (nullptr == encoder) {
+        return Hw::FAILED;
     }
     HwResult ret = encoder->process(buf, &info, path);
     delete encoder;
@@ -161,4 +169,18 @@ int32_t AlBitmapFactory::_guessFormat(uint8_t *buf) {
 //        format = WEBP_TIFF_FORMAT;
 //    }
     return format;
+}
+
+int32_t AlBitmapFactory::_getFileSuffix(std::string path) {
+    std::string suffix = path.substr(path.find_last_of('.') + 1);
+    if (StringUtils::equalsIgnoreCase("png", suffix)) {
+        return FORMAT_PNG;
+    }
+    if (StringUtils::equalsIgnoreCase("webp", suffix)) {
+        return FORMAT_WEBP;
+    }
+    if (StringUtils::equalsIgnoreCase("bmp", suffix)) {
+        return FORMAT_BMP;
+    }
+    return FORMAT_JPEG;
 }
