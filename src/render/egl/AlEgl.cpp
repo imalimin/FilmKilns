@@ -123,6 +123,7 @@ void AlEgl::init(EGLContext context, HwWindow *win) {
     } else {
         createContext(EGL_NO_CONTEXT);
     }
+    AlLogI(TAG, "Create context %p", this->eglContext);
     if (EGL_NO_CONTEXT == this->eglContext) {
         Logcat::e(TAG, "$s bad context", __func__);
         return;

@@ -41,7 +41,7 @@ bool AlUTexReader::_onScreenDraw(AlMessage *msg) {
     delete srcTex;
     srcTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
 
-#if 0
+#if 1
     size_t size = static_cast<size_t>(srcTex->getWidth() * srcTex->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
     if (nullptr == fbo) {
@@ -52,7 +52,7 @@ bool AlUTexReader::_onScreenDraw(AlMessage *msg) {
     srcTex->read(buf->data());
     fbo->unbind();
     glFinish();
-    AlBitmapFactory::save(srcTex->getWidth(), srcTex->getHeight(), buf, "/sdcard/000000.jpg");
+    AlBitmapFactory::save(srcTex->getWidth(), srcTex->getHeight(), buf, "/sdcard/000000.bmp");
     delete buf;
 #endif
     return true;
@@ -76,7 +76,6 @@ bool AlUTexReader::_onReqPixels(AlMessage *msg) {
         desc.size.height = srcTex->getHeight() * 3 / 2;
         yuvTex = AlTexManager::instance()->alloc(desc);
         fbo = HwFBObject::alloc();
-        fbo->bindTex(yuvTex);
         pixels = AlBuffer::alloc(yuvTex->getWidth() * yuvTex->getHeight() * 4);
     }
     glViewport(0, 0, yuvTex->getWidth(), yuvTex->getHeight());
@@ -84,9 +83,12 @@ bool AlUTexReader::_onReqPixels(AlMessage *msg) {
 
     auto *m = AlMessage::obtain(MSG_TEX_READER_NOTIFY_PIXELS);
     glFinish();
+    fbo->bindTex(yuvTex);
+    fbo->bind();
     if (fbo->read(pixels->data())) {
         m->obj = AlBuffer::wrap(pixels->data(), pixels->size());
     }
+    fbo->unbind();
     postMessage(m);
     return true;
 }

@@ -43,3 +43,19 @@ void AlBitmapInfo::reset() {
 bool AlBitmapInfo::isNull() {
     return width <= 0 || height <= 0 || depth <= 0 || AlColorSpace::NONE == colorSpace;
 }
+
+int AlBitmapInfo::bitsPerPixel(AlColorSpace colorSpace) {
+    switch (colorSpace) {
+        case AlColorSpace::GRAY:
+            return 8;
+        case AlColorSpace::YV12:
+        case AlColorSpace::NV12:
+            return 12;
+        case AlColorSpace::RGB:
+            return 24;
+        case AlColorSpace::RGBA:
+            return 32;
+        default:
+            return 0;
+    }
+}

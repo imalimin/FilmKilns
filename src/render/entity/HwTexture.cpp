@@ -99,7 +99,7 @@ void HwTexture::update(AlBuffer *buf, int32_t w, int32_t h, uint32_t fmt) {
     HwAbsTexture::update(buf, w, h, fmt);
     bind();
     if (applied && buf && getWidth() == w && getHeight() == h && fmt == this->fmt()) {
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, fmt, GL_UNSIGNED_BYTE, buf->data());
+        glTexSubImage2D(desc.target, 0, 0, 0, w, h, fmt, GL_UNSIGNED_BYTE, buf->data());
     } else {
         applied = true;
         if (buf) {

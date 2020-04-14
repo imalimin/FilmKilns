@@ -13,6 +13,7 @@
 #include "AlPngEncoder.h"
 #include "AlWebPDecoder.h"
 #include "AlWebPEncoder.h"
+#include "AlBMPEncoder.h"
 #include "StringUtils.h"
 #include "AlObjectGuard.h"
 
@@ -59,6 +60,7 @@ AlBitmap *AlBitmapFactory::decodeFile(std::string file) {
 }
 
 AlBitmap *AlBitmapFactory::decodeFile(std::string file, AlBitmap *recycleBitmap) {
+    AlLogE(TAG, "Not support function.");
     return nullptr;
 }
 
@@ -106,6 +108,8 @@ HwResult AlBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf,
     AlBitmapInfo info;
     info.width = w;
     info.height = h;
+    info.depth = 4;
+    info.colorSpace = AlColorSpace::RGBA;
     AlAbsEncoder *encoder = nullptr;
     switch (_getFileSuffix(path)) {
         case FORMAT_PNG: {
@@ -117,6 +121,7 @@ HwResult AlBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf,
             break;
         }
         case FORMAT_BMP: {
+            encoder = new AlBMPEncoder();
             break;
         }
         case FORMAT_WEBP: {

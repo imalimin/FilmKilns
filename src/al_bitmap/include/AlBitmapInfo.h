@@ -14,6 +14,9 @@
 
 al_class(AlBitmapInfo) {
 public:
+    static int bitsPerPixel(AlColorSpace colorSpace);
+
+public:
     AlBitmapInfo();
 
     AlBitmapInfo(const AlBitmapInfo &o);
@@ -29,7 +32,8 @@ public:
 public:
     int32_t width = 0;
     int32_t height = 0;
-    uint32_t depth = 0;
+    /// Bits per color channel.
+    uint32_t depth = 8;
     AlColorSpace colorSpace = AlColorSpace::NONE;
     ///表示需要旋转多少弧度才能正向像是，顺时针方向为正向(CW)
     AlRational rotation = AlRational();
