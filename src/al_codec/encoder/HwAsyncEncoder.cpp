@@ -49,13 +49,20 @@ bool HwAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat 
 }
 
 HwResult HwAsyncEncoder::write(HwAbsMediaFrame *frame) {
-    if (cache.size() >= MAX_FRAME_CACHE) {
-        AlLogE(TAG, "frame(%lld). Lack of cache", frame->getPts());
+    if (vQueue.size() >= MAX_V_FRAME_CACHE && frame->isVideo()) {
+        _dropFrame();
+        AlLogE(TAG, "Lack of cache, vQueue(%d), aQueue(%d), Skip Video Frame: pts=%"
+                PRId64, vQueue.size(), aQueue.size(), frame->getPts());
         return Hw::FAILED;
     }
     HwAbsMediaFrame *temp = hwFrameAllocator->ref(frame);
     if (temp) {
-        cache.push(temp);
+        if (temp->isAudio()) {
+            aQueue.push(temp);
+        } else {
+            vQueue.push(temp);
+        }
+        tQueue.push(temp->isAudio());
         writeBlock.notify();
         return Hw::SUCCESS;
     }
@@ -63,16 +70,23 @@ HwResult HwAsyncEncoder::write(HwAbsMediaFrame *frame) {
 }
 
 void HwAsyncEncoder::write() {
-    while (cache.empty()) {
+    while (tQueue.empty()) {
         writeBlock.wait();
         if (!looping) {
-            return;;
+            return;
         }
     }
     simpleLock.lock();
     if (looping && encoder) {
-        HwAbsMediaFrame *frame = cache.front();
-        cache.pop();
+        HwAbsMediaFrame *frame = nullptr;
+        if (tQueue.front()) {
+            frame = aQueue.front();
+            aQueue.pop();
+        } else {
+            frame = vQueue.front();
+            vQueue.pop();
+        }
+        tQueue.pop();
         if (frame) {
             encoder->write(frame);
             frame->recycle();
@@ -112,4 +126,7 @@ void HwAsyncEncoder::release() {
     if (encoder) {
         return encoder->release();
     }
+}
+
+void HwAsyncEncoder::_dropFrame() {
 }

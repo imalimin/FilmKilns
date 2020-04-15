@@ -36,12 +36,16 @@ private:
 
     void write();
 
+    void _dropFrame();
+
 private:
-    const int MAX_FRAME_CACHE = 36;
+    const int MAX_V_FRAME_CACHE = 32;
     HwAbsVideoEncoder *encoder = nullptr;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     AlEventPipeline *pipeline = nullptr;
-    queue<HwAbsMediaFrame *> cache;
+    std::queue<HwAbsMediaFrame *> vQueue;
+    std::queue<HwAbsMediaFrame *> aQueue;
+    std::queue<bool> tQueue;
     SimpleLock simpleLock;
     SimpleLock writeBlock;
     bool looping = false;
