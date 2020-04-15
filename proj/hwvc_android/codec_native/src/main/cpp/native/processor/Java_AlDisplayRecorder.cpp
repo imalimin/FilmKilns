@@ -189,6 +189,15 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setPr
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setPreset
+        (JNIEnv *env, jobject thiz, jlong handler, jstring profile) {
+    if (handler) {
+        const char *str = env->GetStringUTFChars(profile, JNI_FALSE);
+        getHandler(handler)->setPreset(std::string(str));
+        env->ReleaseStringUTFChars(profile, str);
+    }
+}
+
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setMaxSize
         (JNIEnv *env, jobject thiz, jlong handler, jint width, jint height) {
     if (handler) {

@@ -27,6 +27,10 @@ void HwAndroidEncoder::setProfile(std::string profile) {
 
 }
 
+void HwAndroidEncoder::setPreset(std::string preset) {
+
+}
+
 bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     this->path = path;
     this->width = width;

@@ -37,6 +37,8 @@ public:
 
     AlEncoderBuilder &setProfile(std::string profile);
 
+    AlEncoderBuilder &setPreset(std::string preset);
+
     AlEncoderBuilder &setOutput(std::string output);
 
     HwAbsVideoEncoder *build();
@@ -48,6 +50,7 @@ private:
     bool enableAsyn = true;
     int32_t bitrate = 0;
     std::string profile;
+    std::string preset;
     std::string output;
 };
 

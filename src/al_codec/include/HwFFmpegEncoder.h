@@ -34,6 +34,8 @@ public:
 
     virtual void setProfile(std::string profile) override;
 
+    virtual void setPreset(std::string preset) override;
+
     virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) override;
 
     virtual HwResult write(HwAbsMediaFrame *frame) override;
@@ -51,6 +53,7 @@ private:
     int height = 0;
     int32_t bitrate = 0;
     std::string profile;
+    std::string preset;
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
     int32_t aTrack = HwAbsMuxer::TRACK_NONE, vTrack = HwAbsMuxer::TRACK_NONE;
     HwAbsMuxer *muxer = nullptr;

@@ -92,6 +92,12 @@ void AlDisplayRecorder::setProfile(std::string profile) {
     postEvent(msg);
 }
 
+void AlDisplayRecorder::setPreset(std::string preset) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_PRESET);
+    msg->desc = preset;
+    postEvent(msg);
+}
+
 void AlDisplayRecorder::setFormat(int width, int height, HwSampleFormat format) {
     postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height)));
     postMessage(AlMessage::obtain(MSG_MICROPHONE_FORMAT, new HwSampleFormat(format)));

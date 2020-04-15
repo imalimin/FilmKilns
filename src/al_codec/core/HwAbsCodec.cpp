@@ -10,6 +10,7 @@
 const string HwAbsCodec::KEY_MIME = "media-mime";
 const string HwAbsCodec::KEY_FORMAT = "media-format";
 const string HwAbsCodec::KEY_PROFILE = "media-profile";
+const string HwAbsCodec::KEY_PRESET = "media-preset";
 const string HwAbsCodec::KEY_LEVEL = "media-level";
 const string HwAbsCodec::KEY_BIT_RATE = "media-bit-rate";
 const string HwAbsCodec::KEY_WIDTH = "video-width";

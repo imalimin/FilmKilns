@@ -39,6 +39,10 @@ void HwAsyncEncoder::setProfile(std::string profile) {
     encoder->setProfile(profile);
 }
 
+void HwAsyncEncoder::setPreset(std::string preset) {
+    encoder->setPreset(preset);
+}
+
 bool HwAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     if (encoder) {
         looping = encoder->prepare(path, width, height, audioFormat);

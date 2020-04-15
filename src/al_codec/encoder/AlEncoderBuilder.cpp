@@ -51,6 +51,11 @@ AlEncoderBuilder &AlEncoderBuilder::setProfile(std::string profile) {
     return *this;
 }
 
+AlEncoderBuilder &AlEncoderBuilder::setPreset(std::string preset) {
+    this->preset = preset;
+    return *this;
+}
+
 AlEncoderBuilder &AlEncoderBuilder::setOutput(std::string output) {
     this->output = output;
     return *this;

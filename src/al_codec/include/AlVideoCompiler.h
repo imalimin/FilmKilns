@@ -84,6 +84,17 @@ private:
     /// \return
     bool _onSetProfile(AlMessage *msg);
 
+    /// 设置preset
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | none      | none      |  preset   |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onSetPreset(AlMessage *msg);
+
     /// 音频格式
     /// FORMAT:
     /// +--------------------------------------------------+
@@ -136,6 +147,7 @@ private:
     std::string path;
     int32_t bitLevel = 3;
     std::string profile = "High";
+    std::string preset = "superfast";
     HwSampleFormat aFormat;
     HwAbsVideoEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;

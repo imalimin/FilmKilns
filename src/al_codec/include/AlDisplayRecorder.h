@@ -48,6 +48,8 @@ public:
 
     void setProfile(std::string profile);
 
+    void setPreset(std::string preset);
+
     void setFormat(int width, int height, HwSampleFormat format);
 
     void setMaxSize(int width, int height);

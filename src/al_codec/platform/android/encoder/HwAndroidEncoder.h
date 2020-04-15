@@ -37,6 +37,8 @@ public:
 
     virtual void setProfile(std::string profile) override;
 
+    virtual void setPreset(std::string preset) override;
+
     virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) override;
 
     virtual HwResult write(HwAbsMediaFrame *frame) override;

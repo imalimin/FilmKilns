@@ -37,6 +37,8 @@ AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetBitrateLevel));
     registerEvent(MSG_VIDEO_OUTPUT_PROFILE,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetProfile));
+    registerEvent(MSG_VIDEO_OUTPUT_PRESET,
+                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetPreset));
     registerEvent(MSG_VIDEO_OUTPUT_MAX_SIZE,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetMaxSize));
     registerEvent(MSG_MICROPHONE_FORMAT, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onFormat));
@@ -140,6 +142,7 @@ void AlVideoCompiler::_initialize() {
                 .setAudioFormat(aFormat)
                 .setBitrate(size.width * size.height * bitLevel)
                 .setProfile(profile)
+                .setPreset(preset)
                 .setEnableAsyn(true)
                 .setEnableHardware(false)
                 .build();
@@ -301,6 +304,14 @@ bool AlVideoCompiler::_onSetProfile(AlMessage *msg) {
         return true;
     }
     profile = msg->desc;
+    return true;
+}
+
+bool AlVideoCompiler::_onSetPreset(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
+    preset = msg->desc;
     return true;
 }
 

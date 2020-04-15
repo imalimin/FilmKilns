@@ -54,6 +54,7 @@ public:
     static const string KEY_MIME;
     static const string KEY_FORMAT;
     static const string KEY_PROFILE;
+    static const string KEY_PRESET;
     static const string KEY_LEVEL;
     static const string KEY_BIT_RATE;
     // Video

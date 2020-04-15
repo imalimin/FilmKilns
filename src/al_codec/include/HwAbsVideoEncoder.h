@@ -22,6 +22,8 @@ public:
     virtual void setBitrate(int32_t rate) = 0;
 
     virtual void setProfile(std::string profile) = 0;
+
+    virtual void setPreset(std::string preset) = 0;
 };
 
 
