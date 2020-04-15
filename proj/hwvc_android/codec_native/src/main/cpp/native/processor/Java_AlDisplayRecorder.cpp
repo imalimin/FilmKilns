@@ -189,6 +189,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setPr
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setScaleSize
+        (JNIEnv *env, jobject thiz, jlong handler, jint width, jint height) {
+    if (handler) {
+        getHandler(handler)->setScaleSize(width, height);
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif

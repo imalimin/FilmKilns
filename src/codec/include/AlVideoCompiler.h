@@ -45,11 +45,22 @@ private:
     /// +--------------------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
     /// +--------------------------------------------------+
-    /// | size         | none      | none      |           |
+    /// | AlSize       | none      | none      |           |
     /// +--------------------------------------------------+
     /// \param msg
     /// \return
     bool _onSetSize(AlMessage *msg);
+
+    /// 缩放大小，主要用于等比例缩放
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | AlSize       | none      | none      |           |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onSetScaleSize(AlMessage *msg);
 
     /// 设置码率系数
     /// FORMAT:
@@ -121,6 +132,7 @@ private:
 
 private:
     AlSize size;
+    AlSize scaleSize;
     std::string path;
     int32_t bitLevel = 0;
     std::string profile;

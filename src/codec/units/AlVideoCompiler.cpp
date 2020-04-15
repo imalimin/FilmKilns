@@ -37,6 +37,8 @@ AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetBitrateLevel));
     registerEvent(MSG_VIDEO_OUTPUT_PROFILE,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetProfile));
+    registerEvent(MSG_VIDEO_OUTPUT_SCALE_SIZE,
+                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetScaleSize));
     registerEvent(MSG_MICROPHONE_FORMAT, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onFormat));
     registerEvent(MSG_TIMESTAMP, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onTimestamp));
 }
@@ -123,6 +125,14 @@ void AlVideoCompiler::_initialize() {
         if (StringUtils::isEmpty(&path) || size.width <= 0 || size.height <= 0) {
             AlLogE(TAG, "failed");
             return;
+        }
+        int32_t width = size.width, height = size.height;
+        if (width > scaleSize.width) {
+            width = scaleSize.width;
+            height = width * size.height / size.width;
+            size.width = AlMath::align16(width);
+            size.height = AlMath::align16(height);
+            AlLogI(TAG, "Scale size to %dx%d", size.width, size.height);
         }
         if (0 != size.width % 16 || 0 != size.height % 16) {
             AlLogE(TAG, "Not align 16. %dx%d", size.width, size.height);
@@ -244,14 +254,22 @@ bool AlVideoCompiler::_onSetSize(AlMessage *msg) {
     }
     auto *size = msg->getObj<AlSize *>();
     if (size) {
-        int32_t width = size->width, height = size->height;
-        if (width > 720) {
-            width = 720;
-            height = width * size->height / size->width;
-        }
-        this->size.width = AlMath::align16(width);
-        this->size.height = AlMath::align16(height);
+        this->size.width = AlMath::align16(size->width);
+        this->size.height = AlMath::align16(size->height);
         AlLogI(TAG, "%dx%d", this->size.width, this->size.height);
+    }
+    return true;
+}
+
+bool AlVideoCompiler::_onSetScaleSize(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
+    auto *size = msg->getObj<AlSize *>();
+    if (size) {
+        this->scaleSize.width = size->width;
+        this->scaleSize.height = size->height;
+        AlLogI(TAG, "%dx%d", this->scaleSize.width, this->scaleSize.height);
     }
     return true;
 }

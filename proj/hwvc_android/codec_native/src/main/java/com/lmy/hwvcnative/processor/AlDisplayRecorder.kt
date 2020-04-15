@@ -43,6 +43,7 @@ class AlDisplayRecorder(
     ) {
         if (isNativeNull()) return
         setFormat(handler, dw, dh, sampleFormat, channels, sampleRate)
+        setScaleSize(width, height)
     }
 
     fun setBitrate(bitrate: Int) {
@@ -53,6 +54,11 @@ class AlDisplayRecorder(
     fun setProfile(profile: String) {
         if (isNativeNull()) return
         setProfile(handler, profile)
+    }
+
+    fun setScaleSize(width: Int, height: Int) {
+        if (isNativeNull()) return
+        setScaleSize(handler, width, height)
     }
 
     fun start() {
@@ -151,6 +157,8 @@ class AlDisplayRecorder(
         handler: Long, left: Float, top: Float,
         right: Float, bottom: Float
     )
+
+    private external fun setScaleSize(handler: Long, width: Int, height: Int)
 
     private external fun setBitrate(handler: Long, bitrate: Int)
 
