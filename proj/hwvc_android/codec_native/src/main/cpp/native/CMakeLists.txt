@@ -6,7 +6,7 @@ include_directories(
         ${HWVC_PATH}/al_common/include
         ${HWVC_PATH}/al_bitmap/include
         ${HWVC_PATH}/al_image/include
-        ${HWVC_PATH}/codec/include
+        ${HWVC_PATH}/al_codec/include
         ${HWVC_PATH}/al_graphic/include
 )
 
@@ -70,7 +70,7 @@ target_link_libraries( # Specifies the target library.
         al_bitmap
         al_common
         al_image
-        hwvc_codec
+        al_codec
         al_graphic
         android
         ${log-lib})

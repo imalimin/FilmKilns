@@ -11,7 +11,7 @@ class HWVC {
             System.loadLibrary("al_common")
             System.loadLibrary("al_bitmap")
             System.loadLibrary("al_graphic")
-            System.loadLibrary("hwvc_codec")
+            System.loadLibrary("al_codec")
             System.loadLibrary("al_image")
             System.loadLibrary("hwvc_native")
         }

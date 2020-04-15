@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvc_codec LANGUAGES C CXX)
+project(al_codec LANGUAGES C CXX)
 set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared")
 set(FFMPEG ${PREBUILD_SHARED}/ffmpeg)
 set(YUV ${PREBUILD_SHARED}/yuv)
@@ -125,7 +125,7 @@ else ()
 endif ()
 
 add_library( # Sets the name of the library.
-        hwvc_codec
+        al_codec
 
         # Sets the library as a shared library.
         SHARED
@@ -143,7 +143,7 @@ if (ANDROID)
             log)
 
     target_link_libraries( # Specifies the target library.
-            hwvc_codec
+            al_codec
             al_common
             al_graphic
             al_image
@@ -156,7 +156,7 @@ if (ANDROID)
             ${log-lib})
 else ()
     target_link_libraries( # Specifies the target library.
-            hwvc_codec
+            al_codec
             al_common
             al_graphic
             al_image
