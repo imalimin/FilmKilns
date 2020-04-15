@@ -5,13 +5,13 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "include/AlVideoCompiler.h"
-#include "../include/AlEncoderBuilder.h"
+#include "AlVideoCompiler.h"
+#include "AlEncoderBuilder.h"
 #include "libyuv.h"
 #include "TimeUtils.h"
-#include "../include/HwSampleFormat.h"
+#include "HwSampleFormat.h"
 #include "StringUtils.h"
-#include "../include/HwVideoUtils.h"
+#include "HwVideoUtils.h"
 #include "AlMath.h"
 
 #define TAG "AlVideoCompiler"
@@ -127,16 +127,12 @@ void AlVideoCompiler::_initialize() {
             return;
         }
         int32_t width = size.width, height = size.height;
-        if (width > scaleSize.width) {
+        if (width > scaleSize.width && scaleSize.width > 0 && scaleSize.height > 0) {
             width = scaleSize.width;
             height = width * size.height / size.width;
             size.width = AlMath::align16(width);
             size.height = AlMath::align16(height);
             AlLogI(TAG, "Scale size to %dx%d", size.width, size.height);
-        }
-        if (0 != size.width % 16 || 0 != size.height % 16) {
-            AlLogE(TAG, "Not align 16. %dx%d", size.width, size.height);
-            return;
         }
         encoder = AlEncoderBuilder()
                 .setOutput(path)
@@ -147,6 +143,10 @@ void AlVideoCompiler::_initialize() {
                 .setEnableAsyn(true)
                 .setEnableHardware(false)
                 .build();
+        if (nullptr == encoder) {
+            AlLogE(TAG, "Prepare video encoder failed");
+            return;
+        }
         videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12,
                                       size.width, size.height);
         audioFrame = new HwAudioFrame(nullptr, aFormat.getFormat(), aFormat.getChannels(),

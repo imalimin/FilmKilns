@@ -134,8 +134,8 @@ private:
     AlSize size;
     AlSize scaleSize;
     std::string path;
-    int32_t bitLevel = 0;
-    std::string profile;
+    int32_t bitLevel = 3;
+    std::string profile = "High";
     HwSampleFormat aFormat;
     HwAbsVideoEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;

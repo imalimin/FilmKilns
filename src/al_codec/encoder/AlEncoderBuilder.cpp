@@ -57,6 +57,10 @@ AlEncoderBuilder &AlEncoderBuilder::setOutput(std::string output) {
 }
 
 HwAbsVideoEncoder *AlEncoderBuilder::build() {
+    if (0 != size.width % 16 || 0 != size.height % 16) {
+        AlLogE(TAG, "Not align 16. %dx%d", size.width, size.height);
+        return nullptr;
+    }
     HwAbsVideoEncoder *encoder = nullptr;
     if (enableAsyn) {
         if (!enableHardware) {
@@ -71,10 +75,17 @@ HwAbsVideoEncoder *AlEncoderBuilder::build() {
             encoder = new HwAndroidEncoder();
         }
     }
+    AlLogI(TAG,
+           "Alloc encoder video(width=%d, height=%d, bitrate=%d, profile=%s), audio(fmt=%d, sample rate=%d, channels=%d), out=%s",
+           size.width, size.height, bitrate, profile.c_str(),
+           (int) audioFormat.getFormat(), audioFormat.getSampleRate(), audioFormat.getChannels(),
+           output.c_str());
     encoder->setBitrate(bitrate);
     encoder->setProfile(profile);
     if (!encoder->prepare(output, size.width, size.height, audioFormat)) {
         AlLogE(TAG, "Prepare video encoder failed");
+        delete encoder;
+        return nullptr;
     }
     return encoder;
 }

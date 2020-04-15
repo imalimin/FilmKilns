@@ -5,8 +5,8 @@ set(FFMPEG ${PREBUILD_SHARED}/ffmpeg)
 set(YUV ${PREBUILD_SHARED}/yuv)
 if (ANDROID)
     include_directories(
-            # common
             ${PROJECT_SOURCE_DIR}
+            ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_image/include
@@ -18,6 +18,8 @@ if (ANDROID)
     )
 else ()
     include_directories(
+            ${PROJECT_SOURCE_DIR}
+            ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
