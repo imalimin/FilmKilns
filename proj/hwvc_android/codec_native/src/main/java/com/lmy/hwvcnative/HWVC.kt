@@ -13,7 +13,7 @@ class HWVC {
             System.loadLibrary("al_graphic")
             System.loadLibrary("al_codec")
             System.loadLibrary("al_image")
-            System.loadLibrary("hwvc_native")
+            System.loadLibrary("al_media")
         }
     }
 }

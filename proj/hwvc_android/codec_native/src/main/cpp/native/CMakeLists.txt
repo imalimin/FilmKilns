@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvc_native LANGUAGES C CXX)
+project(al_media LANGUAGES C CXX)
 set(HWVC_PATH ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
@@ -49,7 +49,7 @@ file(
         ${PROJECT_SOURCE_DIR}/test/*.cpp
 )
 add_library( # Sets the name of the library.
-        hwvc_native
+        al_media
 
         # Sets the library as a shared library.
         SHARED
@@ -66,7 +66,7 @@ find_library( # Sets the name of the path variable.
         log)
 
 target_link_libraries( # Specifies the target library.
-        hwvc_native
+        al_media
         al_bitmap
         al_common
         al_image
