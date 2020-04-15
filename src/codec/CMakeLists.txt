@@ -10,7 +10,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/../common/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
             ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
-            ${PROJECT_SOURCE_DIR}/../render/include
+            ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_image/include
             ${YUV}/include
             # android
@@ -21,7 +21,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/../common/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
             ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
-            ${PROJECT_SOURCE_DIR}/../render/include
+            ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${YUV}/include
     )
 endif ()
@@ -145,8 +145,8 @@ if (ANDROID)
     target_link_libraries( # Specifies the target library.
             hwvc_codec
             hwvcom
-            hwvc_render
-            alimage
+            al_graphic
+            al_image
             hwffmpeg
             yuv
             mediandk
@@ -158,7 +158,8 @@ else ()
     target_link_libraries( # Specifies the target library.
             hwvc_codec
             hwvcom
-            hwvc_render
+            al_graphic
+            al_image
             hwffmpeg
             yuv)
 endif ()

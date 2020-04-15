@@ -30,7 +30,7 @@ endif (ENABLE_GLM)
 
 add_subdirectory(${SRC_PATH_ROOT}/common)
 add_subdirectory(${SRC_PATH_ROOT}/al_bitmap)
-add_subdirectory(${SRC_PATH_ROOT}/render)
+add_subdirectory(${SRC_PATH_ROOT}/al_graphic)
 add_subdirectory(${SRC_PATH_ROOT}/codec)
 add_subdirectory(${SRC_PATH_ROOT}/al_image)
 if (ENABLE_GLM)

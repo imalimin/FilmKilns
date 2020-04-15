@@ -7,7 +7,7 @@ include_directories(
         ${HWVC_PATH}/al_bitmap/include
         ${HWVC_PATH}/al_image/include
         ${HWVC_PATH}/codec/include
-        ${HWVC_PATH}/render/include
+        ${HWVC_PATH}/al_graphic/include
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
@@ -67,10 +67,10 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
         hwvc_native
-        albitmap
+        al_bitmap
         hwvcom
-        alimage
+        al_image
         hwvc_codec
-        hwvc_render
+        al_graphic
         android
         ${log-lib})

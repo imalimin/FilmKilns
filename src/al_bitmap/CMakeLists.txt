@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(albitmap LANGUAGES C CXX)
+project(al_bitmap LANGUAGES C CXX)
 
 option(HWDEBUG "Whether show opengl logs." ON)
 if (HWDEBUG)
@@ -101,7 +101,7 @@ file(
 )
 
 add_library(
-        albitmap
+        al_bitmap
         SHARED
         ${SOURCES}
 )
@@ -116,7 +116,7 @@ find_library(
         z)
 
 target_link_libraries(
-        albitmap
+        al_bitmap
         hwvcom
         #        libjpeg
         libturbojpeg

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvc_render LANGUAGES C CXX)
+project(al_graphic LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}
@@ -105,7 +105,7 @@ else ()
 endif ()
 message(STATUS "${SOURCES}")
 add_library( # Sets the name of the library.
-        hwvc_render
+        al_graphic
 
         # Sets the library as a shared library.
         SHARED
@@ -122,8 +122,8 @@ if (ANDROID)
             # you want CMake to locate.
             log)
     target_link_libraries( # Specifies the target library.
-            hwvc_render
-            albitmap
+            al_graphic
+            al_bitmap
             hwvcom
             # Links the target library to the log library
             # included in the NDK.
@@ -136,7 +136,7 @@ if (ANDROID)
 else ()
     # TODO other platform
     target_link_libraries( # Specifies the target library.
-            hwvc_render
-            albitmap
+            al_graphic
+            al_bitmap
             hwvcom)
 endif ()

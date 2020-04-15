@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(alimage LANGUAGES C CXX)
+project(al_image LANGUAGES C CXX)
 if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../common/include
-            ${PROJECT_SOURCE_DIR}/../render/include
+            ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
     )
 else ()
     include_directories(
             ${PROJECT_SOURCE_DIR}/include
             ${PROJECT_SOURCE_DIR}/../common/include
-            ${PROJECT_SOURCE_DIR}/../render/include
+            ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
     )
 endif ()
@@ -83,7 +83,7 @@ else ()
 endif ()
 message(STATUS "${SOURCES}")
 add_library(
-        alimage
+        al_image
         SHARED
         ${SOURCES}
 )
@@ -93,16 +93,16 @@ if (ANDROID)
             log-lib
             log)
     target_link_libraries(
-            alimage
+            al_image
             hwvcom
-            albitmap
-            hwvc_render
+            al_bitmap
+            al_graphic
             ${log-lib})
 else ()
     # TODO other platform
     target_link_libraries(
-            alimage
+            al_image
             hwvcom
-            albitmap
+            al_bitmap
             hwvc_render)
 endif ()
