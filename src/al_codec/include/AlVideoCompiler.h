@@ -51,7 +51,7 @@ private:
     /// \return
     bool _onSetSize(AlMessage *msg);
 
-    /// 缩放大小，主要用于等比例缩放
+    /// 设置最大大小，超过最大限制将会被缩放
     /// FORMAT:
     /// +--------------------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
@@ -60,7 +60,7 @@ private:
     /// +--------------------------------------------------+
     /// \param msg
     /// \return
-    bool _onSetScaleSize(AlMessage *msg);
+    bool _onSetMaxSize(AlMessage *msg);
 
     /// 设置码率系数
     /// FORMAT:
@@ -132,7 +132,7 @@ private:
 
 private:
     AlSize size;
-    AlSize scaleSize;
+    AlSize maxSize;
     std::string path;
     int32_t bitLevel = 3;
     std::string profile = "High";

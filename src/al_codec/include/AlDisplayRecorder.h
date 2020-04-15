@@ -50,7 +50,7 @@ public:
 
     void setFormat(int width, int height, HwSampleFormat format);
 
-    void setScaleSize(int width, int height);
+    void setMaxSize(int width, int height);
 
     void cropOutputSize(float left, float top, float right, float bottom);
 

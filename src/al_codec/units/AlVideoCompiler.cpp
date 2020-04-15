@@ -37,8 +37,8 @@ AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetBitrateLevel));
     registerEvent(MSG_VIDEO_OUTPUT_PROFILE,
                   reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetProfile));
-    registerEvent(MSG_VIDEO_OUTPUT_SCALE_SIZE,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetScaleSize));
+    registerEvent(MSG_VIDEO_OUTPUT_MAX_SIZE,
+                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetMaxSize));
     registerEvent(MSG_MICROPHONE_FORMAT, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onFormat));
     registerEvent(MSG_TIMESTAMP, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onTimestamp));
 }
@@ -127,8 +127,8 @@ void AlVideoCompiler::_initialize() {
             return;
         }
         int32_t width = size.width, height = size.height;
-        if (width > scaleSize.width && scaleSize.width > 0 && scaleSize.height > 0) {
-            width = scaleSize.width;
+        if (width > maxSize.width && maxSize.width > 0 && maxSize.height > 0) {
+            width = maxSize.width;
             height = width * size.height / size.width;
             size.width = AlMath::align16(width);
             size.height = AlMath::align16(height);
@@ -261,15 +261,15 @@ bool AlVideoCompiler::_onSetSize(AlMessage *msg) {
     return true;
 }
 
-bool AlVideoCompiler::_onSetScaleSize(AlMessage *msg) {
+bool AlVideoCompiler::_onSetMaxSize(AlMessage *msg) {
     if (_isInitialized()) {
         return true;
     }
     auto *size = msg->getObj<AlSize *>();
     if (size) {
-        this->scaleSize.width = size->width;
-        this->scaleSize.height = size->height;
-        AlLogI(TAG, "%dx%d", this->scaleSize.width, this->scaleSize.height);
+        this->maxSize.width = size->width;
+        this->maxSize.height = size->height;
+        AlLogI(TAG, "%dx%d", this->maxSize.width, this->maxSize.height);
     }
     return true;
 }
