@@ -12,6 +12,7 @@
 #include "../include/HwSampleFormat.h"
 #include "StringUtils.h"
 #include "../include/HwVideoUtils.h"
+#include "AlMath.h"
 
 #define TAG "AlVideoCompiler"
 
@@ -67,7 +68,9 @@ bool AlVideoCompiler::onDestroy(AlMessage *msg) {
 
 bool AlVideoCompiler::_onDrawDone(AlMessage *msg) {
     if (recording) {
-        auto *m = AlMessage::obtain(MSG_TEX_READER_REQ_PIXELS, AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+        auto *m = AlMessage::obtain(MSG_TEX_READER_REQ_PIXELS,
+                                    new AlSize(this->size),
+                                    AlMessage::QUEUE_MODE_FIRST_ALWAYS);
         m->arg1 = static_cast<int32_t>(HwFrameFormat::HW_IMAGE_NV12);
         postEvent(m);
     }
@@ -202,7 +205,7 @@ bool AlVideoCompiler::_onSamples(AlMessage *msg) {
         return true;
     }
     auto *buf = msg->getObj<AlBuffer *>();
-    int64_t tsInNs = calAudioPtsInNs(countOfSample);
+    int64_t tsInNs = _calAudioPtsInNs(countOfSample);
     countOfSample += buf->size() / aFormat.getBytesPerSample();
     memcpy(audioFrame->data(), buf->data(), buf->size());
     if (lastATsInNs < 0) {
@@ -227,22 +230,36 @@ int64_t AlVideoCompiler::getRecordTimeInUs() {
 }
 
 bool AlVideoCompiler::_onSetOutPath(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
     this->path = msg->desc;
     AlLogI(TAG, "%s", this->path.c_str());
     return true;
 }
 
 bool AlVideoCompiler::_onSetSize(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
     auto *size = msg->getObj<AlSize *>();
     if (size) {
-        this->size.width = size->width;
-        this->size.height = size->height;
-        AlLogI(TAG, "%dx%d", size->width, size->height);
+        int32_t width = size->width, height = size->height;
+        if (width > 720) {
+            width = 720;
+            height = width * size->height / size->width;
+        }
+        this->size.width = AlMath::align16(width);
+        this->size.height = AlMath::align16(height);
+        AlLogI(TAG, "%dx%d", this->size.width, this->size.height);
     }
     return true;
 }
 
 bool AlVideoCompiler::_onFormat(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
     auto *f = msg->getObj<HwSampleFormat *>();
     if (f) {
         aFormat = *f;
@@ -251,6 +268,9 @@ bool AlVideoCompiler::_onFormat(AlMessage *msg) {
 }
 
 bool AlVideoCompiler::_onSetBitrateLevel(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
     bitLevel = msg->arg1;
     if (bitLevel <= 0 || bitLevel > 5) {
         bitLevel = 3;
@@ -259,6 +279,9 @@ bool AlVideoCompiler::_onSetBitrateLevel(AlMessage *msg) {
 }
 
 bool AlVideoCompiler::_onSetProfile(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
     profile = msg->desc;
     return true;
 }
@@ -275,6 +298,10 @@ void AlVideoCompiler::_notifyTime() {
     postMessage(m);
 }
 
-int64_t AlVideoCompiler::calAudioPtsInNs(int64_t samples) {
+bool AlVideoCompiler::_isInitialized() {
+    return initialized;
+}
+
+int64_t AlVideoCompiler::_calAudioPtsInNs(int64_t samples) {
     return samples * 1000000000 / aFormat.getSampleRate();
 }

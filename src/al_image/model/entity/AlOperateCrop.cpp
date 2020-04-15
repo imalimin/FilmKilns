@@ -8,12 +8,12 @@
 #include "AlOperateCrop.h"
 
 AlOperateCrop::AlOperateCrop(int32_t layerId, float left, float top, float right, float bottom)
-        : AlOperateDesc(layerId), rectF(left, top, right, bottom), align16(false) {
+        : AlOperateDesc(layerId), rectF(left, top, right, bottom) {
 
 }
 
 AlOperateCrop::AlOperateCrop(const AlOperateCrop &o)
-        : AlOperateDesc(layerId), rectF(o.rectF), align16(o.align16) {
+        : AlOperateDesc(layerId), rectF(o.rectF) {
 
 }
 

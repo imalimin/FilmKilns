@@ -115,7 +115,9 @@ private:
 
     void _notifyTime();
 
-    int64_t calAudioPtsInNs(int64_t samples);
+    int64_t _calAudioPtsInNs(int64_t samples);
+
+    bool _isInitialized();
 
 private:
     AlSize size;

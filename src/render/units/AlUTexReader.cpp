@@ -7,6 +7,7 @@
 
 #include "AlUTexReader.h"
 #include "AlTexManager.h"
+#include "AlRotateFilter.h"
 #include "HwRGBA2NV12Filter.h"
 #include "HwFBObject.h"
 #include "HwTexture.h"
@@ -27,8 +28,11 @@ bool AlUTexReader::onCreate(AlMessage *msg) {
 }
 
 bool AlUTexReader::onDestroy(AlMessage *msg) {
+    delete resizeFilter;
+    resizeFilter = nullptr;
     delete yuvFilter;
     yuvFilter = nullptr;
+    AlTexManager::instance()->recycle(&resizeTex);
     AlTexManager::instance()->recycle(&yuvTex);
     delete fbo;
     fbo = nullptr;
@@ -41,7 +45,7 @@ bool AlUTexReader::_onScreenDraw(AlMessage *msg) {
     delete srcTex;
     srcTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
 
-#if 1
+#if 0
     size_t size = static_cast<size_t>(srcTex->getWidth() * srcTex->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
     if (nullptr == fbo) {
@@ -62,6 +66,7 @@ bool AlUTexReader::_onReqPixels(AlMessage *msg) {
     if (nullptr == srcTex) {
         return true;
     }
+    auto *srcTex = _resize(this->srcTex, msg->getObj<AlSize *>());
     int format = msg->arg1;
     switch (format) {
         case 3: {
@@ -91,4 +96,23 @@ bool AlUTexReader::_onReqPixels(AlMessage *msg) {
     fbo->unbind();
     postMessage(m);
     return true;
+}
+
+HwAbsTexture *AlUTexReader::_resize(HwAbsTexture *srcTex, AlSize *size) {
+    if (size && size->width != srcTex->getWidth() && size->height != srcTex->getHeight()) {
+        if (nullptr == resizeFilter) {
+            resizeFilter = new AlRotateFilter();
+            resizeFilter->prepare();
+        }
+        if (nullptr == resizeTex) {
+            AlTexDescription desc;
+            desc.size.width = size->width;
+            desc.size.height = size->height;
+            resizeTex = AlTexManager::instance()->alloc(desc);
+        }
+        glViewport(0, 0, resizeTex->getWidth(), resizeTex->getHeight());
+        resizeFilter->draw(srcTex, resizeTex);
+        return resizeTex;
+    }
+    return srcTex;
 }

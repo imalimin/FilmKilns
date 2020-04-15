@@ -29,14 +29,18 @@ private:
     /// +--------------------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
     /// +--------------------------------------------------+
-    /// | none         | pixels    | none      | out path  |
+    /// | AlSize       | pixels    | none      | out path  |
     /// +--------------------------------------------------+
     /// \param msg
     /// \return
     bool _onReqPixels(AlMessage *msg);
 
+    HwAbsTexture * _resize(HwAbsTexture *srcTex, AlSize *size);
+
 private:
     HwAbsTexture *srcTex = nullptr;
+    HwAbsTexture *resizeTex = nullptr;
+    HwAbsFilter *resizeFilter = nullptr;
     HwAbsFilter *yuvFilter = nullptr;
     HwAbsTexture *yuvTex = nullptr;
     HwAbsFBObject *fbo = nullptr;

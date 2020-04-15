@@ -36,8 +36,6 @@ private:
 
     bool _onOutputSize(AlMessage *msg);
 
-    bool _onScale(AlMessage *msg);
-
 private:
     void draw();
 
@@ -50,7 +48,6 @@ private:
 private:
     AlSize cameraSize;
     AlSize outSize;
-    AlRational scale;
     AlSPointer<HwAbsTexture> srcTex;
     HwAbsFBObject *fbo = nullptr;
     HwProgram *program = nullptr;

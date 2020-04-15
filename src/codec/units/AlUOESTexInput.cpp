@@ -31,8 +31,6 @@ AlUOESTexInput::AlUOESTexInput(string alias) : Unit(alias), srcTex(nullptr) {
                   reinterpret_cast<EventFunc>(&AlUOESTexInput::_onLayerNotify));
     registerEvent(MSG_VIDEO_OUTPUT_SIZE,
                   reinterpret_cast<EventFunc>(&AlUOESTexInput::_onOutputSize));
-    registerEvent(MSG_CAMERA_LAYER_SCALE,
-                  reinterpret_cast<EventFunc>(&AlUOESTexInput::_onScale));
 }
 
 AlUOESTexInput::~AlUOESTexInput() {
@@ -152,14 +150,7 @@ bool AlUOESTexInput::_onLayerNotify(AlMessage *msg) {
     mLayerId = msg->arg1;
     if (nullptr == mLayerTex) {
         mLayerTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
-        auto scaleX = AlRational(mLayerTex->getWidth() * this->scale.num,
-                                 cameraSize.width * this->scale.den);
-        auto scaleY = AlRational(mLayerTex->getHeight() * this->scale.num,
-                                 cameraSize.height * this->scale.den);
-        if (scaleY.toFloat() > scaleX.toFloat()) {
-            scaleX = scaleY;
-        }
-        auto *desc = new AlOperateScale(mLayerId, scaleX, AlVec2(0, 0));
+        auto *desc = new AlOperateScale(mLayerId, AlRational(1, 1), AlVec2(0, 0));
         /// Y轴镜像
         desc->scaleY.num = -desc->scaleY.num;
         postEvent(AlMessage::obtain(EVENT_LAYER_SCALE, desc));
@@ -176,12 +167,4 @@ bool AlUOESTexInput::_onOutputSize(AlMessage *msg) {
         AlLogI(TAG, "%dx%d", outSize.width, outSize.height);
     }
     return true;
-}
-
-bool AlUOESTexInput::_onScale(AlMessage *msg) {
-    auto scale = msg->getObj<AlRational *>();
-    if (scale) {
-        this->scale = *scale;
-    }
-    return false;
 }

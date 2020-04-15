@@ -93,27 +93,14 @@ void AlDisplayRecorder::setProfile(std::string profile) {
 }
 
 void AlDisplayRecorder::setFormat(int width, int height, HwSampleFormat format) {
-    AlRational scaleFactor;
-    int w = width, h = height;
-    if (w > 720) {
-        scaleFactor.num = 720;
-        scaleFactor.den = w;
-        w = 720;
-        h = AlMath::align16(static_cast<int32_t>(height * scaleFactor.toFloat()));
-    } else {
-        scaleFactor.num = 1;
-        scaleFactor.den = 1;
-    }
-    postMessage(AlMessage::obtain(MSG_CAMERA_LAYER_SCALE, new AlRational(scaleFactor)));
-    postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(w, h)));
+    postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height)));
     postMessage(AlMessage::obtain(MSG_MICROPHONE_FORMAT, new HwSampleFormat(format)));
-    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(w, h)));
+    postEvent(AlMessage::obtain(EVENT_CANVAS_RESIZE, new AlSize(width, height)));
 }
 
 void AlDisplayRecorder::cropOutputSize(float left, float top, float right, float bottom) {
     auto *opt = new AlOperateCrop(AlIdentityCreator::NONE_ID, left, top, right, bottom);
     opt->coordIdx = AlOperateDesc::CoordIdx::CANVAS;
-    opt->align16 = true;
     auto *msg = AlMessage::obtain(EVENT_CANVAS_CROP, opt, AlMessage::QUEUE_MODE_UNIQUE);
     postEvent(msg);
 }
