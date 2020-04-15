@@ -15,7 +15,7 @@ set(WEBP ${PREBUILD_STATIC}/libwebp/libs/${ANDROID_ABI})
 include_directories(
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/../common/include
+        ${PROJECT_SOURCE_DIR}/../al_common/include
         ${PREBUILD_STATIC}/libturbojpeg/include
         ${PREBUILD_STATIC}/libpng/include
         ${PREBUILD_STATIC}/libwebp/include
@@ -117,7 +117,7 @@ find_library(
 
 target_link_libraries(
         al_bitmap
-        hwvcom
+        al_common
         #        libjpeg
         libturbojpeg
         libpng16

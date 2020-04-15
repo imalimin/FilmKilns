@@ -7,21 +7,21 @@ if (ANDROID)
     include_directories(
             # common
             ${PROJECT_SOURCE_DIR}
-            ${PROJECT_SOURCE_DIR}/../common/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
-            ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
+            ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_image/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
             ${YUV}/include
             # android
             ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/encoder
     )
 else ()
     include_directories(
-            ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/../al_common/include
+            ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
             ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
-            ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${YUV}/include
     )
 endif ()
@@ -144,7 +144,7 @@ if (ANDROID)
 
     target_link_libraries( # Specifies the target library.
             hwvc_codec
-            hwvcom
+            al_common
             al_graphic
             al_image
             hwffmpeg
@@ -157,7 +157,7 @@ if (ANDROID)
 else ()
     target_link_libraries( # Specifies the target library.
             hwvc_codec
-            hwvcom
+            al_common
             al_graphic
             al_image
             hwffmpeg

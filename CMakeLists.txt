@@ -28,7 +28,7 @@ endif (ENABLE_GLM)
 #endif ()
 #
 
-add_subdirectory(${SRC_PATH_ROOT}/common)
+add_subdirectory(${SRC_PATH_ROOT}/al_common)
 add_subdirectory(${SRC_PATH_ROOT}/al_bitmap)
 add_subdirectory(${SRC_PATH_ROOT}/al_graphic)
 add_subdirectory(${SRC_PATH_ROOT}/codec)

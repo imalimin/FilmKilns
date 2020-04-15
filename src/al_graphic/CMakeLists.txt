@@ -4,7 +4,7 @@ if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
             ${PROJECT_SOURCE_DIR}/platform/android
             ${PROJECT_SOURCE_DIR}/platform/android/buffer
@@ -15,7 +15,7 @@ else ()
     include_directories(
             ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
     )
 endif ()
@@ -124,7 +124,7 @@ if (ANDROID)
     target_link_libraries( # Specifies the target library.
             al_graphic
             al_bitmap
-            hwvcom
+            al_common
             # Links the target library to the log library
             # included in the NDK.
             #        GLESv1_CM
@@ -138,5 +138,5 @@ else ()
     target_link_libraries( # Specifies the target library.
             al_graphic
             al_bitmap
-            hwvcom)
+            al_common)
 endif ()

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwvcom LANGUAGES C CXX)
+project(al_common LANGUAGES C CXX)
 
 option(HWDEBUG "Whether show opengl logs." ON)
 if (HWDEBUG)
@@ -81,7 +81,7 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
 add_library(
-        hwvcom
+        al_common
         SHARED
         ${SOURCES}
 )
@@ -96,7 +96,7 @@ find_library(
         z)
 
 target_link_libraries(
-        hwvcom
+        al_common
         glm
         OpenSLES
         ${zlib}

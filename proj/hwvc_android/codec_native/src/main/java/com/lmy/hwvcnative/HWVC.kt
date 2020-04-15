@@ -8,7 +8,7 @@ class HWVC {
         fun init(context: Context) {
             System.loadLibrary("hwffmpeg")
             System.loadLibrary("yuv")
-            System.loadLibrary("hwvcom")
+            System.loadLibrary("al_common")
             System.loadLibrary("al_bitmap")
             System.loadLibrary("al_graphic")
             System.loadLibrary("hwvc_codec")

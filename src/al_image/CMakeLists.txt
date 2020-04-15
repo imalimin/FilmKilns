@@ -4,14 +4,14 @@ if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
     )
 else ()
     include_directories(
             ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../common/include
+            ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_bitmap/include
     )
@@ -94,7 +94,7 @@ if (ANDROID)
             log)
     target_link_libraries(
             al_image
-            hwvcom
+            al_common
             al_bitmap
             al_graphic
             ${log-lib})
@@ -102,7 +102,7 @@ else ()
     # TODO other platform
     target_link_libraries(
             al_image
-            hwvcom
+            al_common
             al_bitmap
             hwvc_render)
 endif ()

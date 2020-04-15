@@ -5,7 +5,7 @@
 #ifndef HARDWAREVIDEOCODEC_ANATIVEWINDOW_H
 #define HARDWAREVIDEOCODEC_ANATIVEWINDOW_H
 
-#include "../../common/include/Object.h"
+#include "Object.h"
 #include "Egl.h"
 #include "HwWindow.h"
 

@@ -3,7 +3,7 @@ project(hwvc_native LANGUAGES C CXX)
 set(HWVC_PATH ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
-        ${HWVC_PATH}/common/include
+        ${HWVC_PATH}/al_common/include
         ${HWVC_PATH}/al_bitmap/include
         ${HWVC_PATH}/al_image/include
         ${HWVC_PATH}/codec/include
@@ -68,7 +68,7 @@ find_library( # Sets the name of the path variable.
 target_link_libraries( # Specifies the target library.
         hwvc_native
         al_bitmap
-        hwvcom
+        al_common
         al_image
         hwvc_codec
         al_graphic

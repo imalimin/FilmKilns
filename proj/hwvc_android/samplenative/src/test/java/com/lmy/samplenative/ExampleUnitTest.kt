@@ -17,8 +17,8 @@ import java.util.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        System.loadLibrary("hwvcom")
-        System.loadLibrary("hwvc_render")
+        System.loadLibrary("al_common")
+        System.loadLibrary("al_graphic")
         System.loadLibrary("hwvc_native")
         PinkFilter(arrayOf("sTexture2", "sTexture3"),
                 arrayOf("textures/pink.png", "textures/pink.png"))
