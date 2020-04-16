@@ -19,31 +19,20 @@
 
 AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                                                  aFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100) {
-    registerEvent(EVENT_CANVAS_DRAW_DONE,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onDrawDone));
-    registerEvent(MSG_TEX_READER_NOTIFY_PIXELS,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onWrite));
-
-    registerEvent(EVENT_COMMON_START, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onStart));
-    registerEvent(EVENT_COMMON_PAUSE, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onPause));
-    registerEvent(EVENT_MICROPHONE_OUT_SAMPLES,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSamples));
-    registerEvent(MSG_VIDEO_COMPILER_BACKWARD,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onBackward));
-    registerEvent(MSG_VIDEO_OUTPUT_PATH,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetOutPath));
-    registerEvent(MSG_VIDEO_OUTPUT_SIZE,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetSize));
-    registerEvent(MSG_VIDEO_OUTPUT_BITRATE_LEVEL,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetBitrateLevel));
-    registerEvent(MSG_VIDEO_OUTPUT_PROFILE,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetProfile));
-    registerEvent(MSG_VIDEO_OUTPUT_PRESET,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetPreset));
-    registerEvent(MSG_VIDEO_OUTPUT_MAX_SIZE,
-                  reinterpret_cast<EventFunc>(&AlVideoCompiler::_onSetMaxSize));
-    registerEvent(MSG_MICROPHONE_FORMAT, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onFormat));
-    registerEvent(MSG_TIMESTAMP, reinterpret_cast<EventFunc>(&AlVideoCompiler::_onTimestamp));
+    al_reg_msg(EVENT_CANVAS_DRAW_DONE, AlVideoCompiler::_onDrawDone);
+    al_reg_msg(MSG_TEX_READER_NOTIFY_PIXELS, AlVideoCompiler::_onWrite);
+    al_reg_msg(EVENT_COMMON_START, AlVideoCompiler::_onStart);
+    al_reg_msg(EVENT_COMMON_PAUSE, AlVideoCompiler::_onPause);
+    al_reg_msg(EVENT_MICROPHONE_OUT_SAMPLES, AlVideoCompiler::_onSamples);
+    al_reg_msg(MSG_VIDEO_COMPILER_BACKWARD, AlVideoCompiler::_onBackward);
+    al_reg_msg(MSG_VIDEO_OUTPUT_PATH, AlVideoCompiler::_onSetOutPath);
+    al_reg_msg(MSG_VIDEO_OUTPUT_SIZE, AlVideoCompiler::_onSetSize);
+    al_reg_msg(MSG_VIDEO_OUTPUT_BITRATE_LEVEL, AlVideoCompiler::_onSetBitrateLevel);
+    al_reg_msg(MSG_VIDEO_OUTPUT_PROFILE, AlVideoCompiler::_onSetProfile);
+    al_reg_msg(MSG_VIDEO_OUTPUT_PRESET, AlVideoCompiler::_onSetPreset);
+    al_reg_msg(MSG_VIDEO_OUTPUT_MAX_SIZE, AlVideoCompiler::_onSetMaxSize);
+    al_reg_msg(MSG_MICROPHONE_FORMAT, AlVideoCompiler::_onFormat);
+    al_reg_msg(MSG_TIMESTAMP, AlVideoCompiler::_onTimestamp);
 }
 
 AlVideoCompiler::~AlVideoCompiler() {

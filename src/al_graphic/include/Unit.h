@@ -143,6 +143,9 @@ class cls : public parent \
 #define al_def_msg(name) \
 bool name(AlMessage *m); \
 
+#define al_reg_msg(id, func) \
+registerEvent(id, reinterpret_cast<EventFunc>(&func)); \
+
 using namespace std;
 
 class HwModelProvider;

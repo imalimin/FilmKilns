@@ -46,7 +46,7 @@ HwResult AlBMPEncoder::process(AlBuffer *buf, AlBitmapInfo *info, std::string pa
 
     infoHeader.size = 40;
     infoHeader.width = static_cast<uint32_t>(info->width);
-    infoHeader.height = static_cast<uint32_t>(info->height);
+    infoHeader.height = static_cast<uint32_t>(-info->height);
     infoHeader.planes = 1;
     infoHeader.depthInBit = depthInBit;
     /// RGB:0(不压缩)

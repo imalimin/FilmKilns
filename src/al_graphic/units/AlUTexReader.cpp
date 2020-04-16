@@ -14,10 +14,8 @@
 #include "AlBitmapFactory.h"
 
 AlUTexReader::AlUTexReader(const string &alias) : Unit(alias) {
-    registerEvent(EVENT_SCREEN_DRAW_TEX,
-                  reinterpret_cast<EventFunc>(&AlUTexReader::_onScreenDraw));
-    registerEvent(MSG_TEX_READER_REQ_PIXELS,
-                  reinterpret_cast<EventFunc>(&AlUTexReader::_onReqPixels));
+    al_reg_msg(EVENT_SCREEN_DRAW_TEX, AlUTexReader::_onScreenDraw);
+    al_reg_msg(MSG_TEX_READER_REQ_PIXELS, AlUTexReader::_onReqPixels);
 }
 
 AlUTexReader::~AlUTexReader() {
@@ -45,17 +43,17 @@ bool AlUTexReader::_onScreenDraw(AlMessage *msg) {
     delete srcTex;
     srcTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
 
-#if 0
+#if 1
     size_t size = static_cast<size_t>(srcTex->getWidth() * srcTex->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
     if (nullptr == fbo) {
         fbo = HwFBObject::alloc();
     }
+    glFinish();
     fbo->bindTex(srcTex);
     fbo->bind();
     srcTex->read(buf->data());
     fbo->unbind();
-    glFinish();
     AlBitmapFactory::save(srcTex->getWidth(), srcTex->getHeight(), buf, "/sdcard/000000.bmp");
     delete buf;
 #endif
