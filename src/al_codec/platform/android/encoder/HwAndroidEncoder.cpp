@@ -8,8 +8,11 @@
 #include "HwAndroidEncoder.h"
 #include "Logcat.h"
 #include "../core/HwAndroidCodec.h"
-#include "../../../include/HwFFMuxer.h"
-#include "../../../include/HwFFCodec.h"
+#include "HwFFMuxer.h"
+#include "HwFFCodec.h"
+#include "TimeUtils.h"
+
+#define TAG "HwAndroidEncoder"
 
 HwAndroidEncoder::HwAndroidEncoder() : HwAbsVideoEncoder() {
 
@@ -50,7 +53,7 @@ bool HwAndroidEncoder::configure() {
     format.putInt32(HwAbsCodec::KEY_FPS, fps);
     format.putInt32(HwAbsCodec::KEY_QUALITY, 15);
     if (Hw::SUCCESS != vCodec->configure(format)) {
-        Logcat::e("HWVC", "HwAndroidEncoder::configure failed to configure video codec!");
+        AlLogE(TAG, "failed to configure video codec!");
         release();
         return false;
     }
@@ -64,14 +67,14 @@ bool HwAndroidEncoder::configure() {
     aBundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
     aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
     if (Hw::SUCCESS != aCodec->configure(aBundle)) {
-        Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to configure audio codec!");
+        AlLogE(TAG, "failed to configure audio codec!");
         release();
         return false;
     }
     aCodec->start();
     muxer = new HwFFMuxer();
     if (Hw::SUCCESS != muxer->configure(path, HwAbsMuxer::TYPE_MP4)) {
-        Logcat::e("HWVC", "HwAndroidEncoder::configure failed to configure muxer!");
+        AlLogE(TAG, "failed to configure muxer!");
         release();
         return false;
     }
@@ -80,18 +83,18 @@ bool HwAndroidEncoder::configure() {
      */
     vTrack = muxer->addTrack(vCodec);
     if (HwAbsMuxer::TRACK_NONE == vTrack) {
-        Logcat::e("HWVC", "HwAndroidEncoder::configure failed to add video track!");
+        AlLogE(TAG, "failed to add video track!");
         release();
         return false;
     }
     aTrack = muxer->addTrack(aCodec);
     if (HwAbsMuxer::TRACK_NONE == aTrack) {
-        Logcat::e("HWVC", "HwFFmpegEncoder::initialize failed to add audio track!");
+        AlLogE(TAG, "failed to add audio track!");
         release();
         return false;
     }
     if (Hw::SUCCESS != muxer->start()) {
-        Logcat::e("HWVC", "HwAndroidEncoder::configure failed to start muxer!");
+        AlLogE(TAG, "failed to start muxer!");
         release();
         return false;
     }
@@ -112,6 +115,17 @@ HwResult HwAndroidEncoder::write(HwAbsMediaFrame *frame) {
         }
         return Hw::SUCCESS;
     } else if (frame->isVideo() && vCodec && muxer) {
+        int64_t time = TimeUtils::getCurrentTimeUS();
+        if (lastTime > 0) {
+            countOfTime += (time - lastTime);
+            ++countOfFrame;
+            if (countOfFrame >= 100) {
+                AlLogI(TAG, "fps %lld", (countOfFrame * 1000000 / countOfTime));
+                countOfTime = 0;
+                countOfFrame = 0;
+            }
+        }
+        lastTime = time;
         vCodec->process(&frame, &packet);
         if (packet) {
             muxer->write(vTrack, packet);

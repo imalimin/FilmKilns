@@ -166,10 +166,6 @@ HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
                tracks[track]->cur_dts, avPacket->dts, avPacket->stream_index);
         avPacket->dts += 1;
     }
-    if (tracks[track]->index == 1) {
-        AlLogE(TAG, "write audio %"
-                PRId64, avPacket->pts);
-    }
     int ret = av_interleaved_write_frame(pFormatCtx, avPacket);
     if (0 != ret) {
         AlLogE(TAG, "failed(track %d): %s", track, strerror(AVUNERROR(ret)));

@@ -13,6 +13,7 @@
 #include "StringUtils.h"
 #include "HwVideoUtils.h"
 #include "AlMath.h"
+#include "HwAndroidEncoder.h"
 
 #define TAG "AlVideoCompiler"
 
@@ -144,7 +145,7 @@ void AlVideoCompiler::_initialize() {
                 .setProfile(profile)
                 .setPreset(preset)
                 .setEnableAsyn(true)
-                .setEnableHardware(false)
+                .setEnableHardware(true)
                 .build();
         if (nullptr == encoder) {
             AlLogE(TAG, "Prepare video encoder failed");
@@ -175,19 +176,19 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
     }
     lastTime = time;
     //Enable NV12 or YV12
-#if 1
-    int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
-    libyuv::NV12ToI420(buf->data(), videoFrame->getWidth(),
-                       buf->data() + pixelCount, videoFrame->getWidth(),
-                       videoFrame->data(), videoFrame->getWidth(),
-                       videoFrame->data() + pixelCount,
-                       videoFrame->getWidth() / 2,
-                       videoFrame->data() + pixelCount * 5 / 4,
-                       videoFrame->getWidth() / 2,
-                       videoFrame->getWidth(), videoFrame->getHeight());
-#else
-    memcpy(videoFrame->data(), buf->data(), buf->size());
-#endif
+    if (typeid(HwAndroidEncoder) != typeid(*encoder)) {
+        int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
+        libyuv::NV12ToI420(buf->data(), videoFrame->getWidth(),
+                           buf->data() + pixelCount, videoFrame->getWidth(),
+                           videoFrame->data(), videoFrame->getWidth(),
+                           videoFrame->data() + pixelCount,
+                           videoFrame->getWidth() / 2,
+                           videoFrame->data() + pixelCount * 5 / 4,
+                           videoFrame->getWidth() / 2,
+                           videoFrame->getWidth(), videoFrame->getHeight());
+    } else {
+        memcpy(videoFrame->data(), buf->data(), buf->size());
+    }
 #if 0
     Logcat::i("HWVC", "HwVideoOutput::write nv12 convert cost %lld",
               TimeUtils::getCurrentTimeUS() - time);
