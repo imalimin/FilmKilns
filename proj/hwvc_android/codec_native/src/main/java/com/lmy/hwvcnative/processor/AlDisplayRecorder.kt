@@ -1,19 +1,15 @@
 package com.lmy.hwvcnative.processor
 
-import android.graphics.Bitmap
 import android.graphics.RectF
 import android.graphics.SurfaceTexture
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
-import android.media.ImageReader
 import android.media.projection.MediaProjection
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
-import java.io.FileOutputStream
-import java.nio.ByteBuffer
 
 class AlDisplayRecorder(
     private val mp: MediaProjection,
@@ -189,7 +185,6 @@ class AlVirtualDisplay private constructor(
     private var vd: VirtualDisplay? = null
     private var texture: SurfaceTexture? = null
     private var transformMatrix: FloatArray = FloatArray(16)
-    private var reader: ImageReader? = null
     private val callback = object : VirtualDisplay.Callback() {
         override fun onResumed() {
             Log.i("AlDisplayRecorder", "onResumed")
@@ -205,46 +200,15 @@ class AlVirtualDisplay private constructor(
     }
 
     init {
-//        reader = ImageReader.newInstance(dw, dh, PixelFormat.RGBA_8888, 5)
-//        reader?.setOnImageAvailableListener({ reader ->
-//            save(reader)
-//            reader?.close()
-//        }, null)
         Log.i("AlDisplayRecorder", "setup $dw x $dh, $dpi")
         texture = SurfaceTexture(tex)
+        // glGetInt
         texture?.setDefaultBufferSize(dw, dh)
         vd = mp.createVirtualDisplay(
             "hwvc", dw, dh, dpi,
             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
             Surface(texture), callback, Handler(Looper.getMainLooper())
         )
-    }
-
-    private var src: ByteArray? = null
-    private var dst: ByteArray? = null
-    private fun save(reader: ImageReader) {
-        val image = reader.acquireNextImage()
-        val width = image.width
-        val height = image.height
-        val planes = image.planes
-        val rowStride = planes[0].rowStride
-        val pixelStride = planes[0].pixelStride
-
-        if (null == src) {
-            src = ByteArray(planes[0].buffer.remaining())
-        }
-        if (null == dst) {
-            dst = ByteArray(width * height * pixelStride)
-        }
-        planes[0].buffer.get(src!!)
-        for (i in 0 until height) {
-            System.arraycopy(src, i * rowStride, dst, i * width * pixelStride, width * pixelStride)
-        }
-        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        bmp.copyPixelsFromBuffer(ByteBuffer.wrap(dst))
-        val fos = FileOutputStream("/sdcard/000000.jpg")
-        bmp.compress(Bitmap.CompressFormat.JPEG, 80, fos)
-        fos.close()
     }
 
     fun setOnFrameAvailableListener(l: SurfaceTexture.OnFrameAvailableListener) {
@@ -264,7 +228,6 @@ class AlVirtualDisplay private constructor(
         vd?.release()
         mp.stop()
         texture?.release()
-        reader?.close()
     }
 
     companion object {

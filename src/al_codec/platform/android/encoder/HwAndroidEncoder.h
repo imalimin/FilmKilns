@@ -8,9 +8,10 @@
 #ifndef HWVC_ANDROID_HWANDROIDENCODER_H
 #define HWVC_ANDROID_HWANDROIDENCODER_H
 
-#include "../../../include/HwAbsVideoEncoder.h"
-#include "../../../include/HwAbsCodec.h"
-#include "../../../include/HwAbsMuxer.h"
+#include "HwAbsVideoEncoder.h"
+#include "HwAbsCodec.h"
+#include "HwAbsMuxer.h"
+#include "AlFPSMeasurer.h"
 #include <mutex>
 
 
@@ -62,10 +63,7 @@ private:
     int32_t vTrack = HwAbsMuxer::TRACK_NONE, aTrack = HwAbsMuxer::TRACK_NONE;
     bool firstVideoFrameWrite = false;
     std::mutex lock;
-
-    int64_t countOfFrame = 0;
-    int64_t lastTime = 0;
-    int64_t countOfTime = 0;
+    AlFPSMeasurer fps;
 };
 
 

@@ -99,7 +99,6 @@ bool AlVideoCompiler::_onStart(AlMessage *msg) {
 bool AlVideoCompiler::_onPause(AlMessage *msg) {
     recording = false;
     lastTsInNs = -1;
-    lastATsInNs = -1;
     return true;
 }
 
@@ -153,17 +152,7 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
         AlLogE(TAG, "failed. Buffer is null.");
         return;
     }
-    int64_t time = TimeUtils::getCurrentTimeUS();
-    if (lastTime > 0) {
-        countOfTime += (time - lastTime);
-        ++count;
-        if (count >= 100) {
-            AlLogI(TAG, "fps %d", (count * 1000000 / countOfTime));
-            countOfTime = 0;
-            count = 0;
-        }
-    }
-    lastTime = time;
+    fps.record(TAG);
     //Enable NV12 or YV12
     if (typeid(HwAndroidEncoder) != typeid(*encoder)) {
         int pixelCount = videoFrame->getWidth() * videoFrame->getHeight();
@@ -208,18 +197,11 @@ bool AlVideoCompiler::_onSamples(AlMessage *msg) {
         return true;
     }
     auto *buf = msg->getObj<AlBuffer *>();
-    int64_t tsInNs = _calAudioPtsInNs(countOfSample);
+    aTimestamp = _calAudioPtsInNs(countOfSample);
     countOfSample += buf->size() / aFormat.getBytesPerSample();
     memcpy(audioFrame->data(), buf->data(), buf->size());
-    if (lastATsInNs < 0) {
-        lastATsInNs = tsInNs;
-    }
-    aTimestamp += (tsInNs - lastATsInNs);
-    lastATsInNs = tsInNs;
     audioFrame->setPts(aTimestamp / 1000);
     if (encoder) {
-//        AlLogI(TAG, "write %"
-//                PRId64, audioFrame->getPts());
         encoder->write(audioFrame);
         _notifyTime();
     } else {

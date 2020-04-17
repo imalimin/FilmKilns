@@ -14,6 +14,7 @@
 #include "HwAudioFrame.h"
 #include "AlSize.h"
 #include "AlBuffer.h"
+#include "AlFPSMeasurer.h"
 #include <atomic>
 #include <list>
 #include <vector>
@@ -155,16 +156,14 @@ private:
     int64_t countOfSample = 0;
     std::atomic_bool recording;
     // last timestamp in ns.
-    int64_t lastTsInNs = -1, lastATsInNs = -1;
+    int64_t lastTsInNs = -1;
     // frame timestamp in ns.
     int64_t vTimestamp = -1, aTimestamp = -1;
     int64_t offsetOfDuration = 0;
     int count = 0;
     bool initialized = false;
     std::deque<int64_t> mPtsQueue;
-
-    int64_t lastTime = 0;
-    int64_t countOfTime = 0;
+    AlFPSMeasurer fps;
 };
 
 

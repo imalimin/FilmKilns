@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWANDROIDCODEC_H
 #define HWVC_ANDROID_HWANDROIDCODEC_H
 
-#include "../../include/HwAbsCodec.h"
+#include "HwAbsCodec.h"
 #include "HwBuffer.h"
 #include "media/NdkMediaCodec.h"
 

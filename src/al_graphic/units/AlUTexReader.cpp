@@ -43,7 +43,7 @@ bool AlUTexReader::_onScreenDraw(AlMessage *msg) {
     delete srcTex;
     srcTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
 
-#if 1
+#if 0
     size_t size = static_cast<size_t>(srcTex->getWidth() * srcTex->getHeight() * 4);
     AlBuffer *buf = AlBuffer::alloc(size);
     if (nullptr == fbo) {

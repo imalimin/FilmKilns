@@ -8,7 +8,7 @@
 #include "HwAndroidCodec.h"
 #include "Logcat.h"
 #include <media/NdkImage.h>
-#include "../../../include/HwVideoFrame.h"
+#include "HwVideoFrame.h"
 #include "libyuv.h"
 
 const int32_t HwAndroidCodec::HW_ANDROID_AVC = AV_CODEC_ID_H264;

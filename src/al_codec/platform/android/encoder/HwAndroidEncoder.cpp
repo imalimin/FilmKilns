@@ -115,17 +115,7 @@ HwResult HwAndroidEncoder::write(HwAbsMediaFrame *frame) {
         }
         return Hw::SUCCESS;
     } else if (frame->isVideo() && vCodec && muxer) {
-        int64_t time = TimeUtils::getCurrentTimeUS();
-        if (lastTime > 0) {
-            countOfTime += (time - lastTime);
-            ++countOfFrame;
-            if (countOfFrame >= 100) {
-                AlLogI(TAG, "fps %lld", (countOfFrame * 1000000 / countOfTime));
-                countOfTime = 0;
-                countOfFrame = 0;
-            }
-        }
-        lastTime = time;
+        fps.record(TAG);
         vCodec->process(&frame, &packet);
         if (packet) {
             muxer->write(vTrack, packet);
