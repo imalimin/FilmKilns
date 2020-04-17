@@ -7,6 +7,7 @@
 
 #include "AlBMPEncoder.h"
 #include "AlLogcat.h"
+#include "AlMemoryUtils.h"
 
 #define TAG "AlBMPEncoder"
 
@@ -27,14 +28,8 @@ HwResult AlBMPEncoder::process(AlBuffer *buf, AlBitmapInfo *info, std::string pa
         AlLogE(TAG, "failed");
         return Hw::FAILED;
     }
-//    for (int i = 0; i < info->height; ++i) {
-//        for (int j = 0; j < info->width; ++j) {
-//            buf->data()[i * info->width * 4 + j * 4 + 0] = 0;
-//            buf->data()[i * info->width * 4 + j * 4 + 1] = 0;
-//            buf->data()[i * info->width * 4 + j * 4 + 2] = 0;
-//            buf->data()[i * info->width * 4 + j * 4 + 3] = 0;
-//        }
-//    }
+
+    AlMemoryUtils::rgba2bgra(buf->data(), info->width, info->height, 4);
     uint16_t depthInBit = static_cast<uint16_t>(AlBitmapInfo::bitsPerPixel(info->colorSpace));
     Header header = {0, 0, 0, 0, 0};
     InfoHeader infoHeader = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

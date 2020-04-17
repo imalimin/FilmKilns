@@ -2,92 +2,53 @@
 // Created by mingyi.li on 2019/10/22.
 //
 
-#include "../include/AlMemoryUtils.h"
+#include "AlMemoryUtils.h"
+#include "arm_neon.h"
 
-size_t AlMemoryUtils::memcpy(const unsigned char *dst, const unsigned char *src, size_t size) {
+void AlMemoryUtils::rgba2bgra(uint8_t *data, int width, int height, int stride) {
 #ifdef __ANDROID__
-    if (AlMemoryUtils::supportNeon()) {
-        if (size & 63) {
-            int alignSize = (size - size % 64);
-            memcpy64(dst, src, alignSize);
-            std::memcpy((void *) (dst + alignSize), src + alignSize, size - alignSize);
-        } else {
-            memcpy64(dst, src, size);
-        }
-    } else {
-        std::memcpy((void *) dst, src, size);
+    long len = width * height * stride;
+    int stride_bytes = stride * 16;
+    long left = len % stride_bytes;
+    len = len - left;
+    for (int i = 0; i < len; i += stride_bytes) {
+        uint8_t *target = data + i;
+        uint8x16x4_t src = vld4q_u8(target);
+        uint8x16x4_t dst;
+        dst.val[0] = src.val[2];
+        dst.val[1] = src.val[1];
+        dst.val[2] = src.val[0];
+        dst.val[3] = src.val[3];
+        vst4q_u8(target, dst);
     }
-    return size;
+    for (long i = len; i < len + left; i += stride) {
+        std::swap(data[i], data[i + 2]);
+    }
 #else
-    return memcpy(dst, src, size);
+    for (int i = 0; i < len; i += stride) {
+        std::swap(data[i], data[i + 2]);
+    }
 #endif
 }
 
+size_t AlMemoryUtils::memcpy(uint8_t *dst, uint8_t *src, size_t size) {
 #ifdef __ANDROID__
-
-bool AlMemoryUtils::supportNeon() {
-    return android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM &&
-           (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON) != 0;
-}
-
-size_t AlMemoryUtils::memcpy64(const unsigned char *dst, const unsigned char *src, size_t size) {
-#if defined(__LP64__)
-    asm volatile (
-        "1:\n"
-        "ld1 {v0.8b,v1.8b,v2.8b,v3.8b}, [%0], #32\n"  // load 32
-        "subs %w2, %w2, #32\n"                        // 32 processed per loop
-        "st1 {v0.8b,v1.8b,v2.8b,v3.8b}, [%1], #32\n"  // store 32
-        "b.gt 1b\n"
-        : "+r"(src),                                  // %0
-        "+r"(dst),                                    // %1
-        "+r"(size)
-        :: "cc", "memory", "v0", "v1", "v2", "v3"     // Clobber List
-        );
-#elif defined(_ARM_ARCH_7)
-    asm volatile (
-    "1:\n"
-    "VLDM %1!, {d0-d7}\n"
-    "VSTM %0!, {d0-d7}\n"
-    "SUBS %2, %2, #0x40\n"
-    "BGT 1b\n"
-    : "+r"(dst),
-    "+r"(src),
-    "+r"(size)
-    ::"d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7", "cc", "memory"
-    );
+    long len = size;
+    int stride_bytes = 64;
+    long left = len % stride_bytes;
+    len = len - left;
+    for (int i = 0; i < len; i += stride_bytes) {
+        uint8_t *target = src + i;
+        uint8x16x4_t from = vld4q_u8(target);
+        uint8x16x4_t to;
+        to.val[0] = from.val[0];
+        to.val[1] = from.val[1];
+        to.val[2] = from.val[2];
+        to.val[3] = from.val[3];
+        vst4q_u8(dst + i, to);
+    }
+    std::memcpy(dst + len, src + len, left);
+#else
+    std::memcpy(dst, src, size);
 #endif
-    return size;
 }
-
-size_t AlMemoryUtils::memcpy128(const unsigned char *dst, const unsigned char *src, size_t size) {
-#if defined(__LP64__)
-    asm volatile (
-        "1:\n"
-        "ld1 {v0.2D,v1.2D,v2.2D,v3.2D}, [%0], #64\n"  // load 64
-        "subs %w2, %w2, #64\n"                        // 64 processed per loop
-        "st1 {v0.2D,v1.2D,v2.2D,v3.2D}, [%1], #64\n"  // store 64
-        "b.gt 1b\n"
-        : "+r"(src),                                  // %0
-        "+r"(dst),                                    // %1
-        "+r"(size)
-        :: "cc", "memory", "v0", "v1", "v2", "v3"     // Clobber List
-        );
-#elif defined(_ARM_ARCH_7)
-    asm volatile (
-    "1:\n"
-    "VLDM %0!,    {d0-d15}\n\t"
-    "VSTM %1!,     {d0-d15}\n\t"
-    "subs       %2, %2, #128\n"
-    "bgt        1b\n"
-    :"+r"(src),
-    "+r"(dst),
-    "+r"(size)
-    :
-    : "cc", "memory", "q0", "q1", "q2", "q3", "q4",
-    "q5", "q6", "q7"
-    );
-#endif
-    return size;
-}
-
-#endif

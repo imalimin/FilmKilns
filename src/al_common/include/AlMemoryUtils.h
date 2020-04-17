@@ -6,26 +6,12 @@
 #define HWVC_ANDROID_ALMEMORYUTILS_H
 
 #include "Object.h"
-#include <cpu-features.h>
 
 class AlMemoryUtils : public Object {
 public:
-    static size_t memcpy(const unsigned char *dst, const unsigned char *src, size_t size);
+    static void rgba2bgra(uint8_t *data, int width, int height, int stride);
 
-#ifdef __ANDROID__
-
-    static bool supportNeon();
-
-private:
-    /**
-     * Neon memory copy.
-     */
-
-    static size_t memcpy64(const unsigned char *dst, const unsigned char *src, size_t size);
-
-    static size_t memcpy128(const unsigned char *dst, const unsigned char *src, size_t size);
-
-#endif
+    static size_t memcpy(uint8_t *dst, uint8_t *src, size_t size);
 };
 
 
