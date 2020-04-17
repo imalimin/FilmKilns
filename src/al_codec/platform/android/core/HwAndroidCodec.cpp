@@ -19,7 +19,9 @@ HwAbsCodec *HwAndroidCodec::createDecoder(int32_t codecId) {
     return c;
 }
 
-HwAndroidCodec::HwAndroidCodec(int32_t codecId) : HwAbsCodec(codecId) {
+HwAndroidCodec::HwAndroidCodec(int32_t codecId, bool makeNalSelf)
+        : HwAbsCodec(codecId),
+          makeNalSelf(makeNalSelf) {
 
 }
 
@@ -56,6 +58,19 @@ void HwAndroidCodec::release() {
 
 HwResult HwAndroidCodec::configure(HwBundle &format) {
     HwAbsCodec::configure(format);
+    if (encodeMode && !makeNalSelf) {
+        auto *codec = new HwAndroidCodec(codecId, true);
+        if (Hw::SUCCESS == codec->configure(format)) {
+            auto *buffer0 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_0);
+            auto *buffer1 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_1);
+            buffers[0] = HwBuffer::alloc(buffer0->size());
+            buffers[1] = HwBuffer::alloc(buffer1->size());
+            memcpy(buffers[0]->data(), buffer0->data(), buffer0->size());
+            memcpy(buffers[1]->data(), buffer1->data(), buffer1->size());
+        }
+        codec->release();
+        delete codec;
+    }
     int32_t width = format.getInt32(KEY_WIDTH);
     int32_t height = format.getInt32(KEY_HEIGHT);
     int32_t bitRate = (int32_t) format.getInt32(KEY_BIT_RATE);
@@ -107,7 +122,10 @@ HwResult HwAndroidCodec::configure(HwBundle &format) {
         return false;
     }
     AMediaFormat_delete(cf);
-    if (encodeMode) {
+    if (!encodeMode) {
+        return Hw::SUCCESS;
+    }
+    if (makeNalSelf) {
         HwVideoFrame *frame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12,
                                                width, height);
         int32_t offset = 0;
@@ -132,6 +150,7 @@ HwResult HwAndroidCodec::configure(HwBundle &format) {
                 return Hw::FAILED;
             }
         }
+
     }
     return Hw::SUCCESS;
 }
@@ -186,13 +205,13 @@ int32_t HwAndroidCodec::type() {
 }
 
 HwBuffer *HwAndroidCodec::getExtraBuffer(string key) {
-    if ("csd-0" == key) {
+    if (HwAbsCodec::KEY_CSD_0 == key) {
         return buffers[0];
-    } else if ("csd-1" == key) {
+    } else if (HwAbsCodec::KEY_CSD_1 == key) {
         return buffers[1];
-    } else if ("csd-3" == key) {
+    } else if (HwAbsCodec::KEY_CSD_2 == key) {
         return buffers[2];
-    } else if ("csd-4" == key) {
+    } else if (HwAbsCodec::KEY_CSD_3 == key) {
         return buffers[3];
     }
     return nullptr;

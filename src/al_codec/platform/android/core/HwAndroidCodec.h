@@ -40,7 +40,7 @@ public:
 
     static const int32_t HW_ANDROID_AVC;
 public:
-    HwAndroidCodec(int32_t codecId);
+    HwAndroidCodec(int32_t codecId, bool makeNalSelf = false);
 
     virtual ~HwAndroidCodec();
 
@@ -72,6 +72,7 @@ private:
     const int COLOR_FormatYUV420SemiPlanar = 21;
     const int BUFFER_FLAG_KEY_FRAME = 1;
     const int BUFFER_FLAG_CODEC_CONFIG = 2;
+    bool makeNalSelf = false;
     bool encodeMode = true;
     HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
     AMediaCodec *codec = nullptr;
