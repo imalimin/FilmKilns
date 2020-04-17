@@ -73,6 +73,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
             ${PROJECT_SOURCE_DIR}/sources/*.cpp
+            ${PROJECT_SOURCE_DIR}/core/*.cpp
             # Android platform
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/*.cpp
@@ -101,6 +102,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/*.cpp
             ${PROJECT_SOURCE_DIR}/sources/*.cpp
+            ${PROJECT_SOURCE_DIR}/core/*.cpp
     )
 endif ()
 message(STATUS "${SOURCES}")
