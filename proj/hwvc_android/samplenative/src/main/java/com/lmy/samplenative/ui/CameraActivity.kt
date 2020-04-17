@@ -30,7 +30,10 @@ class CameraActivity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_camera
     override fun initView() {
         surfaceView.fitsSystemWindows = true
-        path = "${externalCacheDir.path}/camera.mp4"
+        if(isNightMode()) {
+            optLayout.setBackgroundColor(resources.getColor(R.color.black_232))
+        }
+        path = "${externalCacheDir!!.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
         recorder?.setFormat(544, 960)
         recorder?.prepare()

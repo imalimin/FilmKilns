@@ -132,9 +132,9 @@ class Toolbar : androidx.appcompat.widget.Toolbar {
 
     private fun getField(fieldName: String): Any? {
         try {
-            val field = javaClass.superclass.getDeclaredField(fieldName)
-            field.isAccessible = true
-            return field.get(this)
+            val field = javaClass.superclass?.getDeclaredField(fieldName)
+            field?.isAccessible = true
+            return field?.get(this)
         } catch (e: NoSuchFieldException) {
             e.printStackTrace()
         } catch (e: IllegalAccessException) {

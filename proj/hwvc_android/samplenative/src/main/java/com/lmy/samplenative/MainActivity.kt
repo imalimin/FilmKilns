@@ -40,6 +40,9 @@ class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickList
         listView.adapter = adapter
         listView.addItemDecoration(ListItemDivider(this, DividerItemDecoration.VERTICAL))
         listView.addOnItemTouchListener(OnRecyclerItemClickListener(this, this))
+        if(isNightMode()) {
+            listView.setBackgroundColor(resources.getColor(R.color.black_232))
+        }
     }
 
     class Item(val name: String, val action: () -> Unit)

@@ -1,6 +1,7 @@
 package com.lmy.samplenative
 
 import android.content.ContentResolver
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -31,16 +32,20 @@ open abstract class BaseActivity : AppCompatActivity() {
 
     private fun showPermissionsDialog() {
         AlertDialog.Builder(this)
-                .setMessage("Please grant permission in the permission settings")
-                .setNegativeButton("cancel") { dialog, which -> finish() }
-                .setPositiveButton("enter") { dialog, which ->
-                    PermissionHelper.gotoPermissionManager(this@BaseActivity)
-                    finish()
-                }
-                .show()
+            .setMessage("Please grant permission in the permission settings")
+            .setNegativeButton("cancel") { dialog, which -> finish() }
+            .setPositiveButton("enter") { dialog, which ->
+                PermissionHelper.gotoPermissionManager(this@BaseActivity)
+                finish()
+            }
+            .show()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (null == grantResults || grantResults.isEmpty()) return
         when (requestCode) {
@@ -79,14 +84,17 @@ open abstract class BaseActivity : AppCompatActivity() {
                     val columns = cursor.columnNames
                     Log.i("BaseActivity", Arrays.toString(columns))
                     val index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA)
-                    val name = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                    val name =
+                        cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
                     val size = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.SIZE))
                     if (index > -1) {
                         data = cursor.getString(index)
                     } else if (!TextUtils.isEmpty(uri.path) && uri.path!!.contains(name)) {
                         //投机处理
                         val path = uri.path!!.substring(1)
-                        data = "${Environment.getExternalStorageDirectory().path}${path.substring(path.indexOf("/"), path.length)}"
+                        data = "${Environment.getExternalStorageDirectory().path}${path.substring(
+                            path.indexOf("/"), path.length
+                        )}"
                     }
                 }
                 cursor.close()
@@ -94,4 +102,7 @@ open abstract class BaseActivity : AppCompatActivity() {
         }
         return data
     }
+
+    fun isNightMode(): Boolean = Build.VERSION.SDK_INT >= 29 &&
+        Configuration.UI_MODE_NIGHT_YES == resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 }
