@@ -81,8 +81,8 @@ HwAbsVideoEncoder *AlEncoderBuilder::build() {
         }
     }
     AlLogI(TAG,
-           "Alloc encoder video(width=%d, height=%d, bitrate=%d, profile=%s), audio(fmt=%d, sample rate=%d, channels=%d), out=%s",
-           size.width, size.height, bitrate, profile.c_str(),
+           "Alloc encoder video(width=%d, height=%d, bitrate=%d, profile=%s, hardware=%d), audio(fmt=%d, sample rate=%d, channels=%d), out=%s",
+           size.width, size.height, bitrate, profile.c_str(), enableHardware,
            (int) audioFormat.getFormat(), audioFormat.getSampleRate(), audioFormat.getChannels(),
            output.c_str());
     encoder->setBitrate(bitrate);

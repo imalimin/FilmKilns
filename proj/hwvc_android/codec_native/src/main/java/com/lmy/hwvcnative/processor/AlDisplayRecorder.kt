@@ -86,11 +86,11 @@ class AlDisplayRecorder(
 
     override fun onNativeMessage(what: Int, arg1: Int) {
         when (what) {
-            HwCameraRecorder.EVENT_RELEASE -> {
+            EVENT_RELEASE -> {
                 vd?.release()
                 Log.i("AlDisplayRecorder", "release")
             }
-            HwCameraRecorder.EVENT_DRAW -> {
+            EVENT_DRAW -> {
                 vd?.draw()
                 val time = vd!!.timestamp()
                 if (lastTime > 0L) {

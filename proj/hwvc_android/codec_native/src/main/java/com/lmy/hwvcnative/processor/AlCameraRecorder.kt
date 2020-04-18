@@ -5,70 +5,70 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
-import android.view.SurfaceHolder
-import android.view.SurfaceView
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.devices.CameraWrapper
+import com.lmy.hwvcnative.entity.AlAudioParams
+import com.lmy.hwvcnative.entity.AlVideoParams
 import com.lmy.hwvcnative.filter.Filter
-import java.lang.RuntimeException
 
-class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvailableListener {
+class AlCameraRecorder(
+    private var vParams: AlVideoParams,
+    private var aParams: AlAudioParams
+) : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvailableListener {
     private var filter: Filter? = null
     private var camera: CameraWrapper? = null
-    private var prepared = false
     private var onRecordProgressListener: ((Long) -> Unit)? = null
     private val mHandler = Handler(Looper.getMainLooper())
     private var mCameraIndex = CameraWrapper.CameraIndex.FRONT
-    private var videoWidth = 544
-    private var videoHeight = 960
 
     init {
         handler = create()
+        if (!isNativeNull()) {
+            setFormat(
+                handler,
+                vParams.width,
+                vParams.height,
+                aParams.format,
+                aParams.channles,
+                aParams.sampleRate
+            )
+            setVideoBitLevel(handler, vParams.bitLevel)
+            setProfile(handler, vParams.profile)
+            setPreset(handler, vParams.preset)
+            setEnableHardware(handler, vParams.enableHardware)
+        }
     }
 
     fun setOutputFilePath(filePath: String) {
-        if (0L == handler) return
+        if (isNativeNull()) return
         setOutputFilePath(handler, filePath)
     }
 
-    fun setFormat(width: Int, height: Int, sampleFormat: Int = 102,
-                  channels: Int = 2, sampleRate: Int = 44100) {
-        if (0L == handler) return
-        videoWidth = width
-        videoHeight = height
-        setFormat(handler, videoWidth, videoHeight, sampleFormat, channels, sampleRate)
-    }
-
     fun release() {
-        if (0L == handler) return
+        if (isNativeNull()) return
         postEvent(handler, EVENT_RELEASE)
         release(handler)
         handler = 0L
     }
 
     fun swapCamera() {
-        if (0L == handler) return
+        if (isNativeNull()) return
         postEvent(handler, EVENT_SWAP)
     }
 
-    fun prepare() {
-        if (0L == handler) return
-//        postEvent(handler, EVENT_PREPARE)
-    }
-
     fun start() {
-        if (0L == handler) return
+        if (isNativeNull()) return
         start(handler)
     }
 
     fun pause() {
-        if (0L == handler) return
+        if (isNativeNull()) return
         pause(handler)
     }
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture) {
-        if (0L == handler) return
+        if (isNativeNull()) return
         postEvent(handler, EVENT_DRAW)
     }
 
@@ -79,8 +79,10 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
             EVENT_DRAW -> {
                 camera?.draw()
                 if (0L != handler) {
-                    invalidate(handler, camera!!.getMatrix(), camera!!.timestamp(),
-                            camera!!.cameraHeight, camera!!.cameraWidth)
+                    invalidate(
+                        handler, camera!!.getMatrix(), camera!!.timestamp(),
+                        camera!!.cameraHeight, camera!!.cameraWidth
+                    )
                 }
             }
             EVENT_SWAP -> {
@@ -98,9 +100,10 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
         if (null != camera || oesTex <= 0) {
             return
         }
-        Log.i("HwCameraRecorder:", "OES tex $oesTex")
-        camera = CameraWrapper.open(mCameraIndex, videoWidth, videoHeight,
-                oesTex, this)
+        Log.i("AlCameraRecorder:", "OES tex $oesTex")
+        camera = CameraWrapper.open(
+            mCameraIndex, vParams.width, vParams.height, oesTex, this
+        )
     }
 
     override fun setFilter(filter: Filter) {
@@ -146,15 +149,26 @@ class HwCameraRecorder : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvail
     private external fun pause(handler: Long)
     private external fun release(handler: Long)
     private external fun postEvent(handler: Long, what: Int)
-    private external fun invalidate(handler: Long, matrix: FloatArray, tsInNs: Long,
-                                    cw: Int, ch: Int)
+    private external fun invalidate(
+        handler: Long, matrix: FloatArray, tsInNs: Long,
+        cw: Int, ch: Int
+    )
 
     private external fun setOutputFilePath(handler: Long, filePath: String)
-    private external fun setFormat(handler: Long, width: Int, height: Int, sampleFormat: Int,
-                                   channels: Int, sampleRate: Int)
+    private external fun setFormat(
+        handler: Long, width: Int, height: Int, sampleFormat: Int,
+        channels: Int, sampleRate: Int
+    )
 
     private external fun setFilter(handler: Long, filter: Long)
     private external fun backward(handler: Long)
+    private external fun setVideoBitLevel(handler: Long, level: Int)
+
+    private external fun setProfile(handler: Long, profile: String)
+
+    private external fun setPreset(handler: Long, preset: String)
+
+    private external fun setEnableHardware(handler: Long, enable: Boolean)
 
     companion object {
         const val EVENT_PREPARE = 1

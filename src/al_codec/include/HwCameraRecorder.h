@@ -83,6 +83,14 @@ public:
 
     void setOnNativeReadyListener(OnNativeReadyListener l);
 
+    void setVideoBitLevel(int level);
+
+    void setProfile(std::string profile);
+
+    void setPreset(std::string preset);
+
+    void setEnableHardware(bool enable);
+
 private:
     bool _onOESTexNotify(AlMessage *msg);
 

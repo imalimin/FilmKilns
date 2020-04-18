@@ -96,6 +96,17 @@ private:
     /// \return
     bool _onSetPreset(AlMessage *msg);
 
+    /// 是否开启硬编
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | enable    | none      |  preset   |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onSetEnableHardware(AlMessage *msg);
+
     /// 音频格式
     /// FORMAT:
     /// +--------------------------------------------------+
@@ -163,6 +174,7 @@ private:
     int count = 0;
     bool initialized = false;
     std::deque<int64_t> mPtsQueue;
+    bool _enableHardware = false;
     AlFPSMeasurer fps;
 };
 

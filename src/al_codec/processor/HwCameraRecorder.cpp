@@ -128,3 +128,27 @@ bool HwCameraRecorder::_onRecordProgress(AlMessage *msg) {
     }
     return true;
 }
+
+void HwCameraRecorder::setVideoBitLevel(int level) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_BITRATE_LEVEL);
+    msg->arg1 = level;
+    postEvent(msg);
+}
+
+void HwCameraRecorder::setProfile(std::string profile) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_PROFILE);
+    msg->desc = profile;
+    postEvent(msg);
+}
+
+void HwCameraRecorder::setPreset(std::string preset) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_PRESET);
+    msg->desc = preset;
+    postEvent(msg);
+}
+
+void HwCameraRecorder::setEnableHardware(bool enable) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_ENABLE_HARD);
+    msg->arg1 = enable;
+    postEvent(msg);
+}

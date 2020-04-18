@@ -12,13 +12,13 @@
 extern "C" {
 #endif
 
-static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
+static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor_AlCameraRecorder",
                                               "onHandleMessage", "(II)V"};
 static JMethodDescription vRecordProgressDesc = {
-        "Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
+        "Java_com_lmy_hwvcnative_processor_AlCameraRecorder",
         "onRecordProgress", "(J)V"};
 static JMethodDescription midOnNativePrepared = {
-        "Java_com_lmy_hwvcnative_processor_HwCameraRecorder",
+        "Java_com_lmy_hwvcnative_processor_AlCameraRecorder",
         "onNativePrepared", "(I)V"};
 
 static HwCameraRecorder *getHandler(jlong handler) {
@@ -53,7 +53,7 @@ static void bindListener(jlong handler) {
 
 }
 
-JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_create
+JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_create
         (JNIEnv *env, jobject thiz) {
     HwCameraRecorder *p = new HwCameraRecorder();
     p->post([] {
@@ -65,7 +65,7 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_creat
     return handler;
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEvent
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_postEvent
         (JNIEnv *env, jobject thiz, jlong handler, jint what) {
     if (handler) {
         int w = what;
@@ -96,7 +96,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_postEv
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setOutputFilePath
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_setOutputFilePath
         (JNIEnv *env, jobject thiz, jlong handler, jstring filePath) {
     if (handler) {
         const char *pPilePath = env->GetStringUTFChars(filePath, JNI_FALSE);
@@ -106,7 +106,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setOut
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setFormat
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_setFormat
         (JNIEnv *env, jobject thiz, jlong handler, jint width, jint height, jint sampleFormat,
          jint channels, jint sampleRate) {
     if (handler) {
@@ -115,33 +115,33 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setFor
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_updateWindow
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_updateWindow
         (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
         getHandler(handler)->updateWindow(new HwAndroidWindow(env, surface));
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_start
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_start
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         getHandler(handler)->start();
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_pause
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_pause
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         getHandler(handler)->pause();
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_release
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         HwCameraRecorder *p = getHandler(handler);
         p->post([] {
-            AlLogI("Java_HwCameraRecorder", "release");
+            AlLogI("Java_AlCameraRecorder", "release");
             HwJavaNativeHelper::getInstance()->detachThread();
         });
         p->release();
@@ -150,7 +150,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_releas
     HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invalidate
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_invalidate
         (JNIEnv *env, jobject thiz, jlong handler, jfloatArray matrix, jlong tsInNs, jint cw,
          jint ch) {
     if (handler) {
@@ -164,17 +164,49 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_invali
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_setFilter
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_setFilter
         (JNIEnv *env, jobject thiz, jlong handler, jlong filter) {
     if (handler && filter) {
         getHandler(handler)->setFilter(reinterpret_cast<HwAbsFilter *>(filter));
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_HwCameraRecorder_backward
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_backward
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         getHandler(handler)->backward();
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_setVideoBitLevel
+        (JNIEnv *env, jobject thiz, jlong handler, jint level) {
+    if (handler) {
+        getHandler(handler)->setVideoBitLevel(level);
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_setProfile
+        (JNIEnv *env, jobject thiz, jlong handler, jstring profile) {
+    if (handler) {
+        const char *str = env->GetStringUTFChars(profile, JNI_FALSE);
+        getHandler(handler)->setProfile(std::string(str));
+        env->ReleaseStringUTFChars(profile, str);
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_setPreset
+        (JNIEnv *env, jobject thiz, jlong handler, jstring profile) {
+    if (handler) {
+        const char *str = env->GetStringUTFChars(profile, JNI_FALSE);
+        getHandler(handler)->setPreset(std::string(str));
+        env->ReleaseStringUTFChars(profile, str);
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_setEnableHardware
+        (JNIEnv *env, jobject thiz, jlong handler, jboolean enable) {
+    if (handler) {
+        getHandler(handler)->setEnableHardware(JNI_TRUE == enable);
     }
 }
 

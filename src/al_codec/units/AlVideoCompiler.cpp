@@ -31,6 +31,7 @@ AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
     al_reg_msg(MSG_VIDEO_OUTPUT_PROFILE, AlVideoCompiler::_onSetProfile);
     al_reg_msg(MSG_VIDEO_OUTPUT_PRESET, AlVideoCompiler::_onSetPreset);
     al_reg_msg(MSG_VIDEO_OUTPUT_MAX_SIZE, AlVideoCompiler::_onSetMaxSize);
+    al_reg_msg(MSG_VIDEO_OUTPUT_ENABLE_HARD, AlVideoCompiler::_onSetEnableHardware);
     al_reg_msg(MSG_MICROPHONE_FORMAT, AlVideoCompiler::_onFormat);
     al_reg_msg(MSG_TIMESTAMP, AlVideoCompiler::_onTimestamp);
 }
@@ -133,7 +134,7 @@ void AlVideoCompiler::_initialize() {
                 .setProfile(profile)
                 .setPreset(preset)
                 .setEnableAsyn(true)
-                .setEnableHardware(true)
+                .setEnableHardware(_enableHardware)
                 .build();
         if (nullptr == encoder) {
             AlLogE(TAG, "Prepare video encoder failed");
@@ -285,6 +286,14 @@ bool AlVideoCompiler::_onSetPreset(AlMessage *msg) {
         return true;
     }
     preset = msg->desc;
+    return true;
+}
+
+bool AlVideoCompiler::_onSetEnableHardware(AlMessage *msg) {
+    if (_isInitialized()) {
+        return true;
+    }
+    _enableHardware = static_cast<bool>(msg->arg1);
     return true;
 }
 

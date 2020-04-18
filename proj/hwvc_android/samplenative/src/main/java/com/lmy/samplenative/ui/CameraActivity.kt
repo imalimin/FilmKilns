@@ -6,7 +6,9 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
 import android.view.SurfaceHolder
-import com.lmy.hwvcnative.processor.HwCameraRecorder
+import com.lmy.hwvcnative.entity.AlAudioParams
+import com.lmy.hwvcnative.entity.AlVideoParams
+import com.lmy.hwvcnative.processor.AlCameraRecorder
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.FilterController
 import com.lmy.samplenative.R
@@ -21,7 +23,8 @@ import java.util.*
 
 class CameraActivity : BaseActivity() {
     private lateinit var mFilterController: FilterController
-    private var recorder: HwCameraRecorder? = HwCameraRecorder()
+    private var recorder: AlCameraRecorder? =
+        AlCameraRecorder(AlVideoParams(720, 1280), AlAudioParams())
     private var recording = false
     private var requestPreview = false
     private lateinit var path: String
@@ -30,13 +33,11 @@ class CameraActivity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_camera
     override fun initView() {
         surfaceView.fitsSystemWindows = true
-        if(isNightMode()) {
+        if (isNightMode()) {
             optLayout.setBackgroundColor(resources.getColor(R.color.black_232))
         }
         path = "${externalCacheDir!!.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
-        recorder?.setFormat(544, 960)
-        recorder?.prepare()
         recorder?.setOnRecordProgressListener {
             timeView.text = formator.format(Date(it / 1000))
         }
