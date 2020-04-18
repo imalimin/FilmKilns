@@ -111,16 +111,15 @@ void HwCameraInput::draw() {
 }
 
 void HwCameraInput::notify(int64_t tsInNs) {
-    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE, nullptr,
-                                       AlMessage::QUEUE_MODE_UNIQUE);
+    auto *m = AlMessage::obtain(MSG_TIMESTAMP);
+    m->arg2 = tsInNs;
+    postMessage(m);
+
+    AlMessage *msg = AlMessage::obtain(EVENT_COMMON_INVALIDATE);
     AlRenderParams params;
     params.setTransparent(true);
     msg->arg1 = params.toInt();
     postEvent(msg);
-
-    auto *m = AlMessage::obtain(MSG_TIMESTAMP);
-    m->arg2 = tsInNs;
-    postMessage(m);
 }
 
 void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {

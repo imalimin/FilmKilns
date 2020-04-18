@@ -176,7 +176,8 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
         lastTsInNs = tsInNs;
         videoFrame->setPicType(HwVideoFrame::HW_PIC_I);
     }
-    vTimestamp += (tsInNs - lastTsInNs);
+    auto delta = tsInNs - lastTsInNs;
+    vTimestamp += delta;
     lastTsInNs = tsInNs;
     videoFrame->setPts(vTimestamp / 1000);
     if (encoder) {
@@ -288,6 +289,12 @@ bool AlVideoCompiler::_onSetPreset(AlMessage *msg) {
 }
 
 bool AlVideoCompiler::_onTimestamp(AlMessage *msg) {
+    if (!_isInitialized()) {
+        return true;
+    }
+    if (!recording) {
+        return true;
+    }
     mPtsQueue.push_back(msg->arg2);
     return true;
 }

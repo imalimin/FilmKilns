@@ -7,8 +7,10 @@
 #include "Unit.h"
 #include "AlMessage.h"
 #include "StringUtils.h"
+#include "TimeUtils.h"
 
 #define TAG "UnitPipeline"
+#define DEBUG_SHOW_COST 0
 
 UnitPipeline::UnitPipeline(string name) {
     notified = false;
@@ -76,9 +78,17 @@ void UnitPipeline::_dispatch(AlMessage *msg) {
         _disDestroy(msg);
         return;
     }
+#if DEBUG_SHOW_COST
+    auto time = TimeUtils::getCurrentTimeUS();
+#endif
     for (auto *unit:units) {
         bool ret = unit->dispatch(msg);
     }
+#if DEBUG_SHOW_COST
+    AlLogI(TAG, "%s cost %"
+            PRId64,
+           kidRestore(msg->what).c_str(), (TimeUtils::getCurrentTimeUS() - time) / 1000);
+#endif
 }
 
 bool UnitPipeline::_disCreate(AlMessage *msg) {
