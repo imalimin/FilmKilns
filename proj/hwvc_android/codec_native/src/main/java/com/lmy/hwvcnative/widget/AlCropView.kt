@@ -5,15 +5,12 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 
 class AlCropView : View {
     enum class Loc { LT, LB, RB, RT, C }
 
     private val lt = PointF()
     private val rb = PointF()
-    private val lt0 = PointF()
-    private val rb0 = PointF()
     //Just for draw
     private val lb = PointF()
     private val rt = PointF()
@@ -24,9 +21,6 @@ class AlCropView : View {
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var strokeWidth: Float = 2f
     private var onChangeListener: OnChangeListener? = null
-    private var fixAlign = false
-    private val defaultSize = Point()
-    private val displaySize = Point()
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -47,10 +41,6 @@ class AlCropView : View {
         initialize()
     }
 
-    private fun align16(v: Int): Int {
-        return (v shr 4) + (v and 0xF shr 3) shl 4
-    }
-
     private fun initialize() {
         paint.color = Color.LTGRAY
         paint.strokeWidth = strokeWidth
@@ -58,25 +48,16 @@ class AlCropView : View {
         val height = 9f
         hRectF.set(0f, 0f, width, height)
         vRectF.set(0f, 0f, height, width)
-
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        wm.defaultDisplay.getRealSize(displaySize)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = View.MeasureSpec.getSize(widthMeasureSpec)
         val height = View.MeasureSpec.getSize(heightMeasureSpec)
-
-        defaultSize.x = align16(width * 2 / 3)
-        defaultSize.y = align16(height * 2 / 3)
-
-        lt.x = (width - defaultSize.x) / 2f
-        lt.y = (height - defaultSize.y) / 2f
-        rb.x = lt.x + defaultSize.x
-        rb.y = lt.y + defaultSize.y
-        lt0.set(lt)
-        rb0.set(rb)
+        lt.x = width / 4f
+        lt.y = height / 3f
+        rb.x = width * 3 / 4f
+        rb.y = height * 2 / 3f
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -91,30 +72,30 @@ class AlCropView : View {
                 val radius = hRectF.width()
                 val srcRect = RectF(-radius, -radius, radius, radius)
                 var rect = RectF(srcRect)
-                rect.offset(lt0.x, lt0.y)
+                rect.offset(lt.x, lt.y)
                 if (rect.contains(lastTouchPointF.x, lastTouchPointF.y)) {
                     loc = Loc.LT
                     return true
                 }
                 rect = RectF(srcRect)
-                rect.offset(lt0.x, rb0.y)
+                rect.offset(lt.x, rb.y)
                 if (rect.contains(lastTouchPointF.x, lastTouchPointF.y)) {
                     loc = Loc.LB
                     return true
                 }
                 rect = RectF(srcRect)
-                rect.offset(rb0.x, rb0.y)
+                rect.offset(rb.x, rb.y)
                 if (rect.contains(lastTouchPointF.x, lastTouchPointF.y)) {
                     loc = Loc.RB
                     return true
                 }
                 rect = RectF(srcRect)
-                rect.offset(rb0.x, lt0.y)
+                rect.offset(rb.x, lt.y)
                 if (rect.contains(lastTouchPointF.x, lastTouchPointF.y)) {
                     loc = Loc.RT
                     return true
                 }
-                rect = RectF(lt0.x, lt0.y, rb0.x, rb0.y)
+                rect = RectF(lt.x, lt.y, rb.x, rb.y)
                 if (rect.contains(lastTouchPointF.x, lastTouchPointF.y)) {
                     loc = Loc.C
                     return true
@@ -126,68 +107,34 @@ class AlCropView : View {
                     val dy = event.y - lastTouchPointF.y
                     when (loc) {
                         Loc.LT -> {
-                            lt0.offset(dx, dy)
-                            lt.set(lt0)
+                            lt.offset(dx, dy)
 
-                            lt0.x = Math.min(lt0.x, rb0.x - MIN_CROP_SIZE)
-                            lt0.y = Math.min(lt0.y, rb0.y - MIN_CROP_SIZE)
                             lt.x = Math.min(lt.x, rb.x - MIN_CROP_SIZE)
                             lt.y = Math.min(lt.y, rb.y - MIN_CROP_SIZE)
-
-                            if (fixAlign) {
-                                lt.x = rb0.x - align16((rb0.x - lt0.x).toInt())
-                                lt.y = rb0.y - align16((rb0.y - lt0.y).toInt())
-                            }
                         }
                         Loc.LB -> {
-                            lt0.offset(dx, 0f)
-                            rb0.offset(0f, dy)
                             lt.offset(dx, 0f)
                             rb.offset(0f, dy)
 
-                            lt0.x = Math.min(lt0.x, rb0.x - MIN_CROP_SIZE)
-                            rb0.y = Math.max(lt0.y + MIN_CROP_SIZE, rb0.y)
                             lt.x = Math.min(lt.x, rb.x - MIN_CROP_SIZE)
                             rb.y = Math.max(lt.y + MIN_CROP_SIZE, rb.y)
-
-                            if (fixAlign) {
-                                lt.x = rb0.x - align16((rb0.x - lt0.x).toInt())
-                                rb.y = lt0.y + align16((rb0.y - lt0.y).toInt())
-                            }
                         }
                         Loc.RB -> {
-                            rb0.offset(dx, dy)
                             rb.offset(dx, dy)
 
-                            rb0.x = Math.max(lt0.x + MIN_CROP_SIZE, rb0.x)
-                            rb0.y = Math.max(lt0.y + MIN_CROP_SIZE, rb0.y)
                             rb.x = Math.max(lt.x + MIN_CROP_SIZE, rb.x)
                             rb.y = Math.max(lt.y + MIN_CROP_SIZE, rb.y)
-
-                            if (fixAlign) {
-                                rb.x = lt0.x + align16((rb0.x - lt0.x).toInt())
-                                rb.y = lt0.y + align16((rb0.y - lt0.y).toInt())
-                            }
                         }
                         Loc.RT -> {
-                            rb0.offset(dx, 0f)
-                            lt0.offset(0f, dy)
                             rb.offset(dx, 0f)
                             lt.offset(0f, dy)
 
-                            rb0.x = Math.max(lt0.x + MIN_CROP_SIZE, rb0.x)
-                            lt0.y = Math.min(lt0.y, rb0.y - MIN_CROP_SIZE)
                             rb.x = Math.max(lt.x + MIN_CROP_SIZE, rb.x)
                             lt.y = Math.min(lt.y, rb.y - MIN_CROP_SIZE)
-
-                            if (fixAlign) {
-                                rb.x = lt0.x + align16((rb0.x - lt0.x).toInt())
-                                lt.y = rb0.y - align16((rb0.y - lt0.y).toInt())
-                            }
                         }
                         Loc.C -> {
-                            lt0.offset(dx, dy)
-                            rb0.offset(dx, dy)
+                            lt.offset(dx, dy)
+                            rb.offset(dx, dy)
                         }
                     }
                     checkBound()
@@ -202,13 +149,9 @@ class AlCropView : View {
     }
 
     private fun checkBound() {
-        lt0.x = Math.max(0f, lt0.x)
-        lt0.y = Math.max(0f, lt0.y)
         lt.x = Math.max(0f, lt.x)
         lt.y = Math.max(0f, lt.y)
 
-        rb0.x = Math.min(measuredWidth.toFloat(), rb0.x)
-        rb0.y = Math.min(measuredHeight.toFloat(), rb0.y)
         rb.x = Math.min(measuredWidth.toFloat(), rb.x)
         rb.y = Math.min(measuredHeight.toFloat(), rb.y)
     }
@@ -274,53 +217,18 @@ class AlCropView : View {
         canvas?.drawLine(start.x, start.y, end.x, end.y, paint)
     }
 
-    fun getCropRectF(considerStroke: Boolean = false): RectF {
-        val lt = PointF(this.lt.x, this.lt.y)
-        val rb = PointF(this.rb.x, this.rb.y)
-        if (considerStroke) {
-            lt.x += strokeWidth / 2f
-            lt.y += strokeWidth / 2f
-            rb.x -= strokeWidth / 2f
-            rb.y -= strokeWidth / 2f
-        }
-        return RectF(
-            lt.x / (measuredWidth / 2f) - 1f,
-            1f - lt.y / (measuredHeight / 2f),
-            rb.x / (measuredWidth / 2f) - 1f,
-            1f - rb.y / (measuredHeight / 2f)
-        )
-    }
-
-    fun getCropSizeOfPixels(): Point {
-        return Point((rb.x - lt.x).toInt(), (rb.y - lt.y).toInt())
-    }
-
-    fun getCropRectFInDisplay(considerStroke: Boolean = false): RectF {
-        val loc = IntArray(2)
-        getLocationOnScreen(loc)
-        val lt = PointF(loc[0] + this.lt.x, loc[1] + this.lt.y)
-        val rb = PointF(loc[0] + this.rb.x, loc[1] + this.rb.y)
-        if (considerStroke) {
-            lt.x += strokeWidth / 2f
-            lt.y += strokeWidth / 2f
-            rb.x -= strokeWidth / 2f
-            rb.y -= strokeWidth / 2f
-        }
-        return RectF(
-            lt.x / (displaySize.x / 2f) - 1f,
-            1f - lt.y / (displaySize.y / 2f),
-            rb.x / (displaySize.x / 2f) - 1f,
-            1f - rb.y / (displaySize.y / 2f)
-        )
-    }
+    fun getCropRectF(): RectF = RectF(
+        lt.x / (measuredWidth / 2f) - 1f,
+        1f - lt.y / (measuredHeight / 2f),
+        rb.x / (measuredWidth / 2f) - 1f,
+        1f - rb.y / (measuredHeight / 2f)
+    )
 
     fun reset() {
-        lt.x = (measuredWidth - defaultSize.x) / 2f
-        lt.y = (measuredHeight - defaultSize.y) / 2f
-        rb.x = lt.x + defaultSize.x
-        rb.y = lt.y + defaultSize.y
-        lt0.set(lt)
-        rb0.set(rb)
+        lt.x = measuredWidth / 4f
+        lt.y = measuredHeight / 4f
+        rb.x = measuredWidth * 3 / 4f
+        rb.y = measuredHeight * 3 / 4f
     }
 
     fun setOnChangeListener(listener: OnChangeListener) {
@@ -335,9 +243,6 @@ class AlCropView : View {
         })
     }
 
-    fun setFixAlign(fixAlign: Boolean) {
-        this.fixAlign = fixAlign
-    }
 
     interface OnChangeListener {
         fun onChange(view: View)
