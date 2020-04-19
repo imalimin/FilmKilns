@@ -53,7 +53,7 @@ bool AlULayerWithOpt::onOperatePaint(AlMessage *m) {
     auto *layer = findLayerModel(desc->layerId);
     if (layer) {
         /// 由于OpenGL绘制点shader点坐标和纹理坐标不一样，所以这里y取反
-        AlVec2 pointF = transWin2Layer(layer, desc->point.x, -desc->point.y);
+        AlVec2 pointF = transWin2Layer(layer, desc->point.x, desc->point.y);
         AlAbsMAction *action = nullptr;
         auto *actions = layer->getAllActions();
         size_t size = actions->size();
@@ -67,6 +67,7 @@ bool AlULayerWithOpt::onOperatePaint(AlMessage *m) {
             action = AlLayerActionFactory::paint(0.01f, AlColor(0xff0000));
             layer->addAction(action);
         }
+        pointF.y = -pointF.y;
         dynamic_cast<AlMPaintAction *>(action)->paint(pointF);
         if (!desc->painting) {
             dynamic_cast<AlMPaintAction *>(action)->newPath();

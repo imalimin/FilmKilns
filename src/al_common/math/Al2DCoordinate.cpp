@@ -65,8 +65,8 @@ void Al2DCoordinate::translate(AlVec2 *vec, Al2DCoordinate *dstCoord) {
     AlMatrix tMat;
     sMat.setScale(1 / (0 != dstCoord->scale.x ? dstCoord->scale.x : 1),
                   1 / (0 != dstCoord->scale.y ? dstCoord->scale.y : 1));
-    rMat.setRotation(-alpha);
-    tMat.setTranslate(-dstCoord->position.x * wide.x / 2, dstCoord->position.y * wide.y / 2);
+    rMat.setRotation(alpha);
+    tMat.setTranslate(-dstCoord->position.x * wide.x / 2, -dstCoord->position.y * wide.y / 2);
     /// 矩阵表示变换步骤时，刚好和实际顺序相反
     /// 缩放(sMat)->旋转(rMat)->位移(tMat) = vec * tMat * rMat * sMat
     tVec = tVec * tMat * rMat * sMat;
