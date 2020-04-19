@@ -413,7 +413,7 @@ class CanvasOptDialog(private var context: AlImageActivity, private var processo
                 context.showSelector(false)
             }
             1 -> {
-                processor?.setCanvas(1440, 2000)
+                processor?.setCanvas(1280, 720)
             }
         }
     }

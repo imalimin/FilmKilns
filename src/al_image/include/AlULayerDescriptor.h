@@ -56,9 +56,14 @@ private:
 
     void notifyCanvas(AlImageLayerDrawModel *description, int32_t flags);
 
+    void _measureLayerQuad(AlImageLayerModel *model, AlSize &size);
+
+    void _updateCanvasSize(int32_t width, int32_t height);
+
 private:
-    AlLayerMeasurer aMeasurer = AlLayerMeasurer::original();
     AlSize aCanvasSize;
+    AlOrthMatrix oMat;
+    AlMatrix tMat;
 };
 
 

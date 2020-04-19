@@ -52,19 +52,21 @@ public:
 
     void setScale(float scaleX, float scaleY);
 
-    AlVec2 getScale();
+    AlVec2 &getScale();
 
     void setRotation(AlRational &r);
 
-    AlRational getRotation();
+    AlRational &getRotation();
+
+    double getRadian();
 
     void postPosition(float x, float y);
 
     void setPosition(float x, float y);
 
-    AlVec2 getPosition();
+    AlVec2 &getPosition();
 
-    void setQuad(AlPointF leftTop, AlPointF leftBottom, AlPointF rightBottom, AlPointF rightTop);
+    void setQuad(AlVec2 &leftTop, AlVec2 &leftBottom, AlVec2 &rightBottom, AlVec2 &rightTop);
 
     AlQuad &getQuad();
 

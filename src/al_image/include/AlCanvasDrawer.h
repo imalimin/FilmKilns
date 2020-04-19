@@ -22,9 +22,7 @@ public:
 
     void setAlpha(float alpha);
 
-    void setMatrix(AlMatrix &matrix);
-
-    void setVertexRectF(AlRectF &rectF);
+    void setVertexQuad(AlQuad &quad);
 
     void setPositionQuad(AlQuad &quad);
 
@@ -38,11 +36,8 @@ private:
     void _resetUV();
 
 private:
-    AlRectF sRectF;
-    AlRectF dRectF;
     float vertex[8];
     float uv[8];
-    AlMatrix matrix;
     float alpha = 0.0;
 };
 

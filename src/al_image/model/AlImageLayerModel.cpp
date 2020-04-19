@@ -11,6 +11,7 @@
 #include "AlLayerActionFactory.h"
 #include "StringUtils.h"
 #include "AlAbsMFilterAction.h"
+#include "AlMath.h"
 #include "Logcat.h"
 
 #define TAG "AlImageLayerModel"
@@ -95,7 +96,7 @@ void AlImageLayerModel::setScale(float scaleX, float scaleY) {
     scale.y = scaleY;
 }
 
-AlVec2 AlImageLayerModel::getScale() {
+AlVec2 &AlImageLayerModel::getScale() {
     return scale;
 }
 
@@ -104,8 +105,12 @@ void AlImageLayerModel::setRotation(AlRational &r) {
     this->rotation.den = r.den;
 }
 
-AlRational AlImageLayerModel::getRotation() {
+AlRational &AlImageLayerModel::getRotation() {
     return rotation;
+}
+
+double AlImageLayerModel::getRadian() {
+    return rotation.toFloat() * AlMath::PI;
 }
 
 void AlImageLayerModel::setPosition(float x, float y) {
@@ -118,14 +123,12 @@ void AlImageLayerModel::postPosition(float x, float y) {
     position.y += y;
 }
 
-AlVec2 AlImageLayerModel::getPosition() {
+AlVec2 &AlImageLayerModel::getPosition() {
     return position;
 }
 
-void AlImageLayerModel::setQuad(AlPointF leftTop,
-                                AlPointF leftBottom,
-                                AlPointF rightBottom,
-                                AlPointF rightTop) {
+void AlImageLayerModel::setQuad(AlVec2 &leftTop, AlVec2 &leftBottom,
+                                AlVec2 &rightBottom, AlVec2 &rightTop) {
     quad.setLeftTop(leftTop.x, leftTop.y);
     quad.setLeftBottom(leftBottom.x, leftBottom.y);
     quad.setRightBottom(rightBottom.x, rightBottom.y);

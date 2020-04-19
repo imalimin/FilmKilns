@@ -116,10 +116,8 @@ HwResult AlImageCanvas::draw(AlImageLayerDrawModel *description) {
 
 void AlImageCanvas::_draw(AlImageLayerDrawModel *description) {
     mCanvasDrawer->setAlpha(description->alpha);
-    ///设置Drawer的变换矩阵
-    mCanvasDrawer->setMatrix(description->mat);
     ///设置纹理顶点
-    mCanvasDrawer->setVertexRectF(description->vertexRectF);
+    mCanvasDrawer->setVertexQuad(description->vertex);
 #ifdef ENABLE_CROP_DEBUG
     glViewport(0, 0, description->getLayerSize().width, description->getLayerSize().height);
     mLayerTex->update(nullptr, description->getLayerSize().width,

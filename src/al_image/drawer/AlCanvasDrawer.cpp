@@ -23,10 +23,9 @@ AlCanvasDrawer::~AlCanvasDrawer() {
 AlAbsGLProgram *AlCanvasDrawer::createProgram() {
     string vertex("attribute vec4 aPosition;\n"
                   "attribute vec4 aTextureCoord;\n"
-                  "uniform mat4 uTextureMatrix;\n"
                   "varying vec2 vTextureCoord;\n"
                   "void main() {\n"
-                  "    gl_Position = uTextureMatrix * aPosition;\n"
+                  "    gl_Position = aPosition;\n"
                   "    vTextureCoord = aTextureCoord.xy;\n"
                   "}");
     string fragment("precision mediump float;\n"
@@ -41,7 +40,6 @@ AlAbsGLProgram *AlCanvasDrawer::createProgram() {
 
 void AlCanvasDrawer::drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawStart(program, src, dest);
-    dynamic_cast<HwProgram *>(program)->updateMatrix(&matrix);
     dynamic_cast<HwProgram *>(program)->updateLocation(uv, vertex);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -57,19 +55,17 @@ void AlCanvasDrawer::setAlpha(float alpha) {
     this->alpha = alpha;
 }
 
-void AlCanvasDrawer::setMatrix(AlMatrix &matrix) {
-    this->matrix = matrix;
-}
-
-void AlCanvasDrawer::setVertexRectF(AlRectF &rectF) {
-    this->vertex[0] = rectF.left;
-    this->vertex[1] = rectF.top;
-    this->vertex[2] = rectF.right;
-    this->vertex[3] = rectF.top;
-    this->vertex[4] = rectF.left;
-    this->vertex[5] = rectF.bottom;
-    this->vertex[6] = rectF.right;
-    this->vertex[7] = rectF.bottom;
+void AlCanvasDrawer::setVertexQuad(AlQuad &quad) {
+    /// 坐标是正确的，但是不知道为什么用shader绘制上去是上下镜像的样子
+    quad.mirrorVertical();
+    this->vertex[0] = quad.leftTop().x;
+    this->vertex[1] = quad.leftTop().y;
+    this->vertex[2] = quad.rightTop().x;
+    this->vertex[3] = quad.rightTop().y;
+    this->vertex[4] = quad.leftBottom().x;
+    this->vertex[5] = quad.leftBottom().y;
+    this->vertex[6] = quad.rightBottom().x;
+    this->vertex[7] = quad.rightBottom().y;
 }
 
 void AlCanvasDrawer::setPositionQuad(AlQuad &quad) {
@@ -88,12 +84,17 @@ void AlCanvasDrawer::setPositionQuad(AlQuad &quad) {
 }
 
 void AlCanvasDrawer::_resetUV() {
-    this->uv[0] = 0.0f;
-    this->uv[1] = 1.0f;
-    this->uv[2] = 1.0f;
-    this->uv[3] = 1.0f;
-    this->uv[4] = 0.0f;
-    this->uv[5] = 0.0f;
-    this->uv[6] = 1.0f;
-    this->uv[7] = 0.0f;
+    AlQuad quad;
+    quad.setLeftTop(0.f, 1.f);
+    quad.setRightTop(1.f, 1.f);
+    quad.setRightBottom(1.f, 0.f);
+    quad.setLeftBottom(0.f, 0.f);
+    this->uv[0] = quad.leftTop().x;
+    this->uv[1] = quad.leftTop().y;
+    this->uv[2] = quad.rightTop().x;
+    this->uv[3] = quad.rightTop().y;
+    this->uv[4] = quad.leftBottom().x;
+    this->uv[5] = quad.leftBottom().y;
+    this->uv[6] = quad.rightBottom().x;
+    this->uv[7] = quad.rightBottom().y;
 }

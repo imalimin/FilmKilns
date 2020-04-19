@@ -39,6 +39,7 @@ public:
     float alpha = 1.0f;
     AlMatrix mat;
     AlRectF vertexRectF;
+    AlQuad vertex;
     AlQuad cropQuad;
 };
 

@@ -6,6 +6,9 @@
 */
 
 #include "AlQuad.h"
+#include "AlLogcat.h"
+
+#define TAG "AlQuad"
 
 AlQuad::AlQuad() : Object() {
     setLeftTop(0.0f, 0.0f);
@@ -65,19 +68,19 @@ void AlQuad::setRightTop(AlVec2 vec2) {
     setRightTop(vec2.x, vec2.y);
 }
 
-AlPointF AlQuad::leftTop() {
+AlPointF &AlQuad::leftTop() {
     return _leftTop;
 }
 
-AlPointF AlQuad::leftBottom() {
+AlPointF &AlQuad::leftBottom() {
     return _leftBottom;
 }
 
-AlPointF AlQuad::rightBottom() {
+AlPointF &AlQuad::rightBottom() {
     return _rightBottom;
 }
 
-AlPointF AlQuad::rightTop() {
+AlPointF &AlQuad::rightTop() {
     return _rightTop;
 }
 
@@ -114,4 +117,12 @@ AlQuad &AlQuad::mirrorHorizontal() {
 bool AlQuad::isZero() {
     return _leftTop.isZero() && _leftBottom.isZero()
            && _rightBottom.isZero() && _rightTop.isZero();
+}
+
+void AlQuad::dump() {
+    AlLogI(TAG, "top(%f,%f), (%f,%f)\nbot(%f,%f), (%f,%f)",
+           _leftTop.x, _leftTop.y,
+           _rightTop.x, _rightTop.y,
+           _leftBottom.x, _leftBottom.y,
+           _rightBottom.x, _rightBottom.y);
 }

@@ -35,13 +35,13 @@ public:
 
     void setRightTop(AlVec2 vec2);
 
-    AlPointF leftTop();
+    AlPointF &leftTop();
 
-    AlPointF leftBottom();
+    AlPointF &leftBottom();
 
-    AlPointF rightBottom();
+    AlPointF &rightBottom();
 
-    AlPointF rightTop();
+    AlPointF &rightTop();
 
     /// 碰撞检测
     /// \param pointF 进行检测的点
@@ -55,6 +55,8 @@ public:
     AlQuad &mirrorHorizontal();
 
     bool isZero();
+
+    void dump();
 
 private:
     AlPointF _leftTop;

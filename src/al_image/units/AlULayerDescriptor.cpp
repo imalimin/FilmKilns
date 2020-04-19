@@ -44,8 +44,7 @@ bool AlULayerDescriptor::onMeasure(AlMessage *msg) {
 }
 
 bool AlULayerDescriptor::onCanvasSizeUpdate(AlMessage *msg) {
-    aCanvasSize.width = msg->arg1;
-    aCanvasSize.height = static_cast<int>(msg->arg2);
+    _updateCanvasSize(msg->arg1, static_cast<int>(msg->arg2));
     return true;
 }
 
@@ -56,11 +55,9 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer,
         return Hw::FAILED;
     }
     AlSize layerSize(layer->getWidth(), layer->getHeight());
-    AlSize canvasSize = aCanvasSize;
     ///默认画布大小为最先添加的图层的大小
-    if (canvasSize.width <= 0 || canvasSize.height <= 0) {
-        canvasSize.width = layerSize.width;
-        canvasSize.height = layerSize.height;
+    if (aCanvasSize.width <= 0 || aCanvasSize.height <= 0) {
+        _updateCanvasSize(layerSize.width, layerSize.height);
     }
     ///Copy一份layer model送入opt进行测量，在测量过程中opt可能会改变model数据
     AlImgLayerDescription model(*(layerModel));
@@ -71,30 +68,46 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer,
     ///这里需要获取最新的layer size，不然会出错
     ///必须裁剪Operate会改变layer size，如果不更新则可能出现图像拉伸
     AlSize src = description->getLayerSize();
-    /// 对图层和画布进行正交投影计算，转换坐标系，保证图像旋转缩放不会变形，并得到归一化的区域
-    aMeasurer.updateOrthogonal(src, canvasSize);
-    /// 缩放旋转位移顺序不能乱
-    aMeasurer.setScale(model.getScale().x, model.getScale().y);
-    aMeasurer.setRotation(static_cast<float>(model.getRotation().toFloat() * AlMath::PI));
-    ///TODO 矩阵Y轴与正常坐标系Y轴相反
-    aMeasurer.setTranslate(model.getPosition().x, -model.getPosition().y);
-    aMeasurer.measure(*description);
-    description->tex = HwTexture::wrap(dynamic_cast<HwTexture *>(layer->getTexture()));
+
+    _measureLayerQuad(layerModel, src);
+    layerModel->getQuad().dump();
+    description->vertex.setLeftTop(layerModel->getQuad().leftTop());
+    description->vertex.setRightTop(layerModel->getQuad().rightTop());
+    description->vertex.setRightBottom(layerModel->getQuad().rightBottom());
+    description->vertex.setLeftBottom(layerModel->getQuad().leftBottom());
     description->alpha = model.getAlpha();
-    ///Update quad.
-    AlVec2 lt;
-    AlVec2 lb;
-    AlVec2 rb;
-    AlVec2 rt;
-    ///获得经过位移旋转缩放变换后图像的位置坐标
-    aMeasurer.measureTransLORectF(lt, lb, rb, rt);
-    layerModel->setQuad(lt, lb, rb, rt);
-    ///TODO 这里需要把Y轴翻转一次
-    layerModel->getQuad().mirrorVertical();
-    Logcat::i(TAG, "tran %f, %f", model.getPosition().x, model.getPosition().y);
-    Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lt.x, lt.y, rt.x, rt.y);
-    Logcat::i(TAG, "rect (%f,%f), (%f,%f)", lb.x, lb.y, rb.x, rb.y);
+    description->tex = HwTexture::wrap(dynamic_cast<HwTexture *>(layer->getTexture()));
     return ret;
+}
+
+void AlULayerDescriptor::_measureLayerQuad(AlImageLayerModel *model, AlSize &size) {
+    AlRectF rect(-size.width / 2,
+                 size.height / 2,
+                 size.width / 2,
+                 -size.height / 2);
+    oMat.reset();
+    oMat.update(-aCanvasSize.width / 2.f, aCanvasSize.width / 2.f,
+                -aCanvasSize.height / 2.f, aCanvasSize.height / 2.f, -1.0f, 1.0f);
+
+    AlVec4 lt(rect.left, rect.top);
+    AlVec4 rt(rect.right, rect.top);
+    AlVec4 rb(rect.right, rect.bottom);
+    AlVec4 lb(rect.left, rect.bottom);
+    tMat.reset();
+    tMat.setScale(model->getScale().x, model->getScale().y);
+    tMat.setRotation(static_cast<float>(-model->getRadian()));
+    tMat.setTranslate(model->getPosition().x * aCanvasSize.width / 2.f,
+                      model->getPosition().y * aCanvasSize.height / 2.f);
+    lt = lt * tMat;
+    rt = rt * tMat;
+    rb = rb * tMat;
+    lb = lb * tMat;
+
+    AlVec2 lt2 = (lt * oMat).xy();
+    AlVec2 rt2 = (rt * oMat).xy();
+    AlVec2 rb2 = (rb * oMat).xy();
+    AlVec2 lb2 = (lb * oMat).xy();
+    model->setQuad(lt2, lb2, rb2, rt2);
 }
 
 HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsMAction *> *opts,
@@ -113,9 +126,9 @@ HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsMAction *> *opts,
 }
 
 void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description, int32_t flags) {
-    Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, flags);
+//    Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, flags);
     AlRenderParams params(flags);
-    if(params.isReqClear()) {
+    if (params.isReqClear()) {
         AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
         msg->arg1 = params.isTransparent();
         msg->desc = "clear";
@@ -129,4 +142,9 @@ void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description, int32_
         sMsg->desc = "show";
         postEvent(sMsg);
     }
+}
+
+void AlULayerDescriptor::_updateCanvasSize(int32_t width, int32_t height) {
+    aCanvasSize.width = width;
+    aCanvasSize.height = height;
 }
