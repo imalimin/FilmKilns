@@ -67,7 +67,6 @@ bool AlULayerWithOpt::onOperatePaint(AlMessage *m) {
             action = AlLayerActionFactory::paint(0.01f, AlColor(0xff0000));
             layer->addAction(action);
         }
-        pointF.y = -pointF.y;
         dynamic_cast<AlMPaintAction *>(action)->paint(pointF);
         if (!desc->painting) {
             dynamic_cast<AlMPaintAction *>(action)->newPath();

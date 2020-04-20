@@ -67,7 +67,9 @@ AlAbsGLProgram *AlPaintFilter::createProgram() {
     string vertex("attribute vec4 aPosition;\n"
                   "uniform float size;\n"
                   "void main() {\n"
-                  "    gl_Position = aPosition;\n"
+                  "    vec4 pos = aPosition;\n"
+                  "    pos.y = -pos.y;\n"
+                  "    gl_Position = pos;\n"
                   "    gl_PointSize = size;\n"
                   "}");
     string fragment("precision mediump float;\n"
