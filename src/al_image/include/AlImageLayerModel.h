@@ -68,6 +68,8 @@ public:
 
     void setQuad(AlVec2 &leftTop, AlVec2 &leftBottom, AlVec2 &rightBottom, AlVec2 &rightTop);
 
+    void setQuad(const AlQuad &quad);
+
     AlQuad &getQuad();
 
     HwResult addAction(AlAbsMAction *opt);

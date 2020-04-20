@@ -56,7 +56,7 @@ private:
 
     void notifyCanvas(AlImageLayerDrawModel *description, int32_t flags);
 
-    void _measureLayerQuad(AlImageLayerModel *model, AlSize &size);
+    void _measureLayerQuad(AlImgLayerDescription &model);
 
     void _updateCanvasSize(int32_t width, int32_t height);
 

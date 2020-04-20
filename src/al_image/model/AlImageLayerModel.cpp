@@ -135,6 +135,10 @@ void AlImageLayerModel::setQuad(AlVec2 &leftTop, AlVec2 &leftBottom,
     quad.setRightTop(rightTop.x, rightTop.y);
 }
 
+void AlImageLayerModel::setQuad(const AlQuad &quad) {
+    this->quad = quad;
+}
+
 AlQuad &AlImageLayerModel::getQuad() {
     return quad;
 }

@@ -63,24 +63,22 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer,
     AlImgLayerDescription model(*(layerModel));
     model.setSize(layerSize);
     HwResult ret = _measureOperate(layerModel->getAllActions(), model, description);
-    description->setLayerSize(model.getSize());
-    ///经过各种各样的Operate后，layer size会被改变并更新到AlImageLayerDrawModel
-    ///这里需要获取最新的layer size，不然会出错
-    ///必须裁剪Operate会改变layer size，如果不更新则可能出现图像拉伸
-    AlSize src = description->getLayerSize();
+    _measureLayerQuad(model);
 
-    _measureLayerQuad(layerModel, src);
     layerModel->getQuad().dump();
-    description->vertex.setLeftTop(layerModel->getQuad().leftTop());
-    description->vertex.setRightTop(layerModel->getQuad().rightTop());
-    description->vertex.setRightBottom(layerModel->getQuad().rightBottom());
-    description->vertex.setLeftBottom(layerModel->getQuad().leftBottom());
+    layerModel->setQuad(model.getQuad());
+    description->vertex = model.getQuad();
     description->alpha = model.getAlpha();
     description->tex = HwTexture::wrap(dynamic_cast<HwTexture *>(layer->getTexture()));
+    description->setLayerSize(model.getSize());
     return ret;
 }
 
-void AlULayerDescriptor::_measureLayerQuad(AlImageLayerModel *model, AlSize &size) {
+void AlULayerDescriptor::_measureLayerQuad(AlImgLayerDescription &model) {
+    ///经过各种各样的Operate后，layer size会被改变并更新到AlImageLayerDrawModel
+    ///这里需要获取最新的layer size，不然会出错
+    ///必须裁剪Operate会改变layer size，如果不更新则可能出现图像拉伸
+    AlSize size = model.getSize();
     AlRectF rect(-size.width / 2,
                  size.height / 2,
                  size.width / 2,
@@ -94,10 +92,10 @@ void AlULayerDescriptor::_measureLayerQuad(AlImageLayerModel *model, AlSize &siz
     AlVec4 rb(rect.right, rect.bottom);
     AlVec4 lb(rect.left, rect.bottom);
     tMat.reset();
-    tMat.setScale(model->getScale().x, model->getScale().y);
-    tMat.setRotation(static_cast<float>(-model->getRadian()));
-    tMat.setTranslate(model->getPosition().x * aCanvasSize.width / 2.f,
-                      model->getPosition().y * aCanvasSize.height / 2.f);
+    tMat.setScale(model.getScale().x, model.getScale().y);
+    tMat.setRotation(static_cast<float>(-model.getRadian()));
+    tMat.setTranslate(model.getPosition().x * aCanvasSize.width / 2.f,
+                      model.getPosition().y * aCanvasSize.height / 2.f);
     lt = lt * tMat;
     rt = rt * tMat;
     rb = rb * tMat;
@@ -107,7 +105,7 @@ void AlULayerDescriptor::_measureLayerQuad(AlImageLayerModel *model, AlSize &siz
     AlVec2 rt2 = (rt * oMat).xy();
     AlVec2 rb2 = (rb * oMat).xy();
     AlVec2 lb2 = (lb * oMat).xy();
-    model->setQuad(lt2, lb2, rb2, rt2);
+    model.setQuad(lt2, lb2, rb2, rt2);
 }
 
 HwResult AlULayerDescriptor::_measureOperate(std::vector<AlAbsMAction *> *opts,

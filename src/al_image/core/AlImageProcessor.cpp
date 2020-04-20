@@ -175,7 +175,7 @@ int32_t AlImageProcessor::getLayer(float x, float y) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_ID,
                                   new AlOperateTrans(0, x, y));
     postEvent(msg);
-    mQueryLock.wait(500000);
+    mQueryLock.wait(50000);
     return mCurLayerId;
 }
 
