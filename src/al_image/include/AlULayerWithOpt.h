@@ -42,6 +42,7 @@ public:
 
     bool onAlignCropLayerCancel(AlMessage *m);
 
+    bool onOperatePaintPoint(AlMessage *m);
 };
 
 

@@ -65,7 +65,6 @@ HwResult AlULayerDescriptor::_measure(AlImageLayer *layer,
     HwResult ret = _measureOperate(layerModel->getAllActions(), model, description);
     _measureLayerQuad(model);
 
-    layerModel->getQuad().dump();
     layerModel->setQuad(model.getQuad());
     description->vertex = model.getQuad();
     description->alpha = model.getAlpha();

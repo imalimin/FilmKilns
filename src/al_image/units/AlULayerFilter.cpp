@@ -36,8 +36,6 @@ bool AlULayerFilter::onCreate(AlMessage *msg) {
     copyFilter->prepare();
     paintFilter = new AlPaintFilter();
     paintFilter->prepare();
-    dynamic_cast<AlPaintFilter *>(paintFilter)->setColor(AlColor(0x00ff0000));
-    dynamic_cast<AlPaintFilter *>(paintFilter)->setPaintSize(0.01f);
     return true;
 }
 
@@ -143,6 +141,8 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
             path->clear();
             delete path;
             glViewport(0, 0, fLayer->getWidth(), fLayer->getHeight());
+            dynamic_cast<AlPaintFilter *>(paintFilter)->setColor(AlColor(0x00ff0000));
+            dynamic_cast<AlPaintFilter *>(paintFilter)->setPaintSize(0.01f);
             paintFilter->draw(fLayer->getTexture(), fLayer->getTexture());
         }
         ++itr;

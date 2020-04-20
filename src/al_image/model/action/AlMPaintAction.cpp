@@ -11,7 +11,7 @@
 
 #define TAG "AlMPaintAction"
 
-AlMPaintAction::AlMPaintAction() : AlAbsMFilterAction(TYPE_MOSAIC) {
+AlMPaintAction::AlMPaintAction() : AlAbsMFilterAction(TYPE_PAINT) {
 //    paint(AlVec2(-0.5f, 0.0f));
 //    paint(AlVec2(0.0f, 0.5f));
 //    paint(AlVec2(0.5f, 0.0f));

@@ -16,29 +16,20 @@
 #include "AlOperateCrop.h"
 
 AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
-    registerEvent(EVENT_LAYER_QUERY_ID,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateQuery));
-    registerEvent(EVENT_LAYER_PAINT, reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperatePaint));
-    registerEvent(EVENT_LAYER_SCALE, reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateScale));
-    registerEvent(EVENT_LAYER_SCALE_POST,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperatePostScale));
-    registerEvent(EVENT_LAYER_ROTATE,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateRotate));
-    registerEvent(EVENT_LAYER_ROTATE_POST,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperatePostRotate));
-    registerEvent(EVENT_LAYER_TRANS, reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateTrans));
-    registerEvent(EVENT_LAYER_TRANS_POST,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperatePostTrans));
-    registerEvent(EVENT_LAYER_ALPHA,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onOperateAlpha));
-    registerEvent(EVENT_LAYER_CROP,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayer));
-    registerEvent(EVENT_LAYER_CROP_CANCEL,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onCropLayerCancel));
-    registerEvent(EVENT_LAYER_ALIGN_CROP,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onAlignCropLayer));
-    registerEvent(EVENT_LAYER_ALIGN_CROP_CANCEL,
-                  reinterpret_cast<EventFunc>(&AlULayerWithOpt::onAlignCropLayerCancel));
+    al_reg_msg(EVENT_LAYER_QUERY_ID, AlULayerWithOpt::onOperateQuery);
+    al_reg_msg(EVENT_LAYER_PAINT, AlULayerWithOpt::onOperatePaint);
+    al_reg_msg(EVENT_LAYER_SCALE, AlULayerWithOpt::onOperateScale);
+    al_reg_msg(EVENT_LAYER_SCALE_POST, AlULayerWithOpt::onOperatePostScale);
+    al_reg_msg(EVENT_LAYER_ROTATE, AlULayerWithOpt::onOperateRotate);
+    al_reg_msg(EVENT_LAYER_ROTATE_POST, AlULayerWithOpt::onOperatePostRotate);
+    al_reg_msg(EVENT_LAYER_TRANS, AlULayerWithOpt::onOperateTrans);
+    al_reg_msg(EVENT_LAYER_TRANS_POST, AlULayerWithOpt::onOperatePostTrans);
+    al_reg_msg(EVENT_LAYER_ALPHA, AlULayerWithOpt::onOperateAlpha);
+    al_reg_msg(EVENT_LAYER_CROP, AlULayerWithOpt::onCropLayer);
+    al_reg_msg(EVENT_LAYER_CROP_CANCEL, AlULayerWithOpt::onCropLayerCancel);
+    al_reg_msg(EVENT_LAYER_ALIGN_CROP, AlULayerWithOpt::onAlignCropLayer);
+    al_reg_msg(EVENT_LAYER_ALIGN_CROP_CANCEL, AlULayerWithOpt::onAlignCropLayerCancel);
+    al_reg_msg(MSG_LAYER_PAINT_POINT, AlULayerWithOpt::onOperatePaintPoint);
 }
 
 AlULayerWithOpt::~AlULayerWithOpt() {
@@ -244,6 +235,17 @@ bool AlULayerWithOpt::onAlignCropLayerCancel(AlMessage *m) {
     auto model = findLayerModel(desc->layerId);
     if (model && model->removeAlignCropAction()) {
         invalidate();
+    }
+    return true;
+}
+
+bool AlULayerWithOpt::onOperatePaintPoint(AlMessage *m) {
+    auto *desc = m->getObj<AlPaintDesc *>();
+    if (nullptr == desc) {
+        return true;
+    }
+    auto *layer = findLayerModel(desc->layerId);
+    if (layer) {
     }
     return true;
 }

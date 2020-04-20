@@ -23,7 +23,7 @@ al_class_ex(AlAbsMAction, AlAbsElemented) {
 public:
     static const std::string TYPE_CROP;
     static const std::string TYPE_ALIGN_CROP;
-    static const std::string TYPE_MOSAIC;
+    static const std::string TYPE_PAINT;
 public:
     AlAbsMAction(std::string type);
 

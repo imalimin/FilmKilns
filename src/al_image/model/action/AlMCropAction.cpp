@@ -12,8 +12,9 @@
 #include "Logcat.h"
 #include "AlCoordsTranslator.h"
 #include "StringUtils.h"
+#include "Al2DCoordinate.h"
 
-#define TAG "AlCropOperateModel"
+#define TAG "AlMCropAction"
 #define VAL_WIDTH                           "width"
 #define VAL_HEIGHT                          "height"
 #define TAG_SCALE                           "scale"
@@ -64,50 +65,43 @@ void AlMCropAction::setRect(float left, float top, float right, float bottom) {
 }
 
 HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
-                                     AlImageLayerDrawModel *description) {
+                                AlImageLayerDrawModel *description) {
     if (invalidate && canvasSize.width > 0 && canvasSize.height > 0) {
         invalidate = false;
         this->scale = layer.getScale();
         this->rotation = layer.getRotation();
         this->position = layer.getPosition();
         AlSize layerSize = layer.getSize();
-        AlRectF cropRectF = rectF;
-        AlPointF layerPos = this->position;
-        layerPos.x = -layerPos.x;
-        layerPos.y = -layerPos.y;
-        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
-        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
-        AlCoordsTranslator::translate(canvasSize, layerSize, layerPos.x, layerPos.y);
+        Al2DCoordinate cc, lc;
+        cc.setWide(canvasSize.width, canvasSize.height);
+        lc.setWide(layerSize.width, layerSize.height);
+        lc.setScale(scale.x, scale.y);
+        lc.setRotation(rotation);
+        lc.setPosition(position.x, position.y);
 
-        double alpha = -AlMath::PI * rotation.num / rotation.den;
-        cropSize = AlSize(layerSize.width * cropRectF.getWidth() / 2.0f,
-                          layerSize.height * cropRectF.getHeight() / 2.0f);
-        aMeasurer.updateOrthogonal(cropSize, layerSize);
-
-        float dx = (cropRectF.left + cropRectF.right) / 2.0f + layerPos.x;
-        float dy = (cropRectF.top + cropRectF.bottom) / 2.0f + layerPos.y;
-        dx /= scale.x;
-        dy /= scale.y;
-
-        if (cropSize.width / (float) cropSize.height > layerSize.width / (float) layerSize.height) {
-            aMeasurer.setScale(cropRectF.getWidth() / 2.0f / scale.x,
-                               cropRectF.getWidth() / 2.0f / scale.y);
-        } else {
-            aMeasurer.setScale(cropRectF.getHeight() / 2.0f / scale.x,
-                               cropRectF.getHeight() / 2.0f / scale.y);
-        }
-        aMeasurer.setRotation(alpha);
-        aMeasurer.setTranslate(dx, dy, alpha, 1, -1);
-
-        AlVec2 lt;
-        AlVec2 lb;
-        AlVec2 rb;
-        AlVec2 rt;
-        aMeasurer.measureTransLORectF(lt, lb, rb, rt);
+        AlVec2 lt(rectF.left, rectF.top);
+        AlVec2 lb(rectF.left, rectF.bottom);
+        AlVec2 rb(rectF.right, rectF.bottom);
+        AlVec2 rt(rectF.right, rectF.top);
+        cc.translate(&lt, &lc);
+        cc.translate(&lb, &lc);
+        cc.translate(&rb, &lc);
+        cc.translate(&rt, &lc);
         quad.setLeftTop((lt + 1.0f) / 2.0f);
         quad.setLeftBottom((lb + 1.0f) / 2.0f);
         quad.setRightBottom((rb + 1.0f) / 2.0f);
         quad.setRightTop((rt + 1.0f) / 2.0f);
+        quad.dump();
+        cropSize = AlSize(layerSize.width * (rb.x - lt.x) / 2.0f,
+                          layerSize.height * (lt.y - rb.y) / 2.0f);
+        AlLogI(TAG, "a: %dx%d", cropSize.width, cropSize.height);
+
+//        AlRectF cropRectF = rectF;
+//        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
+//        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
+//        cropSize = AlSize(layerSize.width * cropRectF.getWidth() / 2.0f,
+//                          layerSize.height * cropRectF.getHeight() / 2.0f);
+//        AlLogI(TAG, "b: %dx%d", cropSize.width, cropSize.height);
     }
 #ifndef ENABLE_CROP_DEBUG
     AlRational nr = AlRational();
