@@ -87,11 +87,7 @@ HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
         cc.translate(&rb, &lc);
         cc.translate(&rt, &lc);
         quad = AlQuad(lt, rt, rb, lb);
-        quad.mirrorVertical();
-        quad.setLeftTop((quad.leftTop() + 1.0f) / 2.0f);
-        quad.setLeftBottom((quad.leftBottom() + 1.0f) / 2.0f);
-        quad.setRightBottom((quad.rightBottom() + 1.0f) / 2.0f);
-        quad.setRightTop((quad.rightTop() + 1.0f) / 2.0f);
+        quad.dump();
         cropSize.height = std::sqrt(std::pow((lt.x - lb.x) * layerSize.width, 2.0) +
                                     std::pow((lt.y - lb.y) * layerSize.height, 2.0));
         cropSize.width = std::sqrt(std::pow((rb.x - lb.x) * layerSize.width, 2.0) +

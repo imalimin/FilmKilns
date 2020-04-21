@@ -36,6 +36,7 @@ private:
     void _resetUV();
 
 private:
+    AlMatrix matrix;
     float vertex[8];
     float uv[8];
     float alpha = 0.0;

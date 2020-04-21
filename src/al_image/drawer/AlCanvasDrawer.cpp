@@ -14,6 +14,8 @@
 
 AlCanvasDrawer::AlCanvasDrawer() : HwAbsFilter() {
     _resetUV();
+    /// 坐标是正确的，但是不知道为什么用shader绘制上去是上下镜像的样子，所以需要坐一个Y镜像
+    matrix.setScale(1.f, -1.f);
 }
 
 AlCanvasDrawer::~AlCanvasDrawer() {
@@ -23,9 +25,10 @@ AlCanvasDrawer::~AlCanvasDrawer() {
 AlAbsGLProgram *AlCanvasDrawer::createProgram() {
     string vertex("attribute vec4 aPosition;\n"
                   "attribute vec4 aTextureCoord;\n"
+                  "uniform mat4 uTextureMatrix;\n"
                   "varying vec2 vTextureCoord;\n"
                   "void main() {\n"
-                  "    gl_Position = aPosition;\n"
+                  "    gl_Position = uTextureMatrix * aPosition;\n"
                   "    vTextureCoord = aTextureCoord.xy;\n"
                   "}");
     string fragment("precision mediump float;\n"
@@ -40,6 +43,7 @@ AlAbsGLProgram *AlCanvasDrawer::createProgram() {
 
 void AlCanvasDrawer::drawStart(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) {
     HwAbsFilter::drawStart(program, src, dest);
+    dynamic_cast<HwProgram *>(program)->updateMatrix(&matrix);
     dynamic_cast<HwProgram *>(program)->updateLocation(uv, vertex);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -56,8 +60,6 @@ void AlCanvasDrawer::setAlpha(float alpha) {
 }
 
 void AlCanvasDrawer::setVertexQuad(AlQuad &quad) {
-    /// 坐标是正确的，但是不知道为什么用shader绘制上去是上下镜像的样子
-    quad.mirrorVertical();
     this->vertex[0] = quad.leftTop().x;
     this->vertex[1] = quad.leftTop().y;
     this->vertex[2] = quad.rightTop().x;
@@ -70,14 +72,20 @@ void AlCanvasDrawer::setVertexQuad(AlQuad &quad) {
 
 void AlCanvasDrawer::setPositionQuad(AlQuad &quad) {
     if (!quad.isZero()) {
-        this->uv[0] = quad.leftTop().x;
-        this->uv[1] = quad.leftTop().y;
-        this->uv[2] = quad.rightTop().x;
-        this->uv[3] = quad.rightTop().y;
-        this->uv[4] = quad.leftBottom().x;
-        this->uv[5] = quad.leftBottom().y;
-        this->uv[6] = quad.rightBottom().x;
-        this->uv[7] = quad.rightBottom().y;
+        quad.mirrorVertical();
+        quad.setLeftTop((quad.leftTop() + 1.0f) / 2.0f);
+        quad.setLeftBottom((quad.leftBottom() + 1.0f) / 2.0f);
+        quad.setRightBottom((quad.rightBottom() + 1.0f) / 2.0f);
+        quad.setRightTop((quad.rightTop() + 1.0f) / 2.0f);
+
+        this->uv[0] = quad.leftBottom().x;
+        this->uv[1] = quad.leftBottom().y;
+        this->uv[2] = quad.rightBottom().x;
+        this->uv[3] = quad.rightBottom().y;
+        this->uv[4] = quad.leftTop().x;
+        this->uv[5] = quad.leftTop().y;
+        this->uv[6] = quad.rightTop().x;
+        this->uv[7] = quad.rightTop().y;
     } else {
         _resetUV();
     }
@@ -85,16 +93,9 @@ void AlCanvasDrawer::setPositionQuad(AlQuad &quad) {
 
 void AlCanvasDrawer::_resetUV() {
     AlQuad quad;
-    quad.setLeftTop(0.f, 1.f);
+    quad.setLeftTop(-1.f, 1.f);
     quad.setRightTop(1.f, 1.f);
-    quad.setRightBottom(1.f, 0.f);
-    quad.setLeftBottom(0.f, 0.f);
-    this->uv[0] = quad.leftTop().x;
-    this->uv[1] = quad.leftTop().y;
-    this->uv[2] = quad.rightTop().x;
-    this->uv[3] = quad.rightTop().y;
-    this->uv[4] = quad.leftBottom().x;
-    this->uv[5] = quad.leftBottom().y;
-    this->uv[6] = quad.rightBottom().x;
-    this->uv[7] = quad.rightBottom().y;
+    quad.setRightBottom(1.f, -1.f);
+    quad.setLeftBottom(-1.f, -1.f);
+    setPositionQuad(quad);
 }
