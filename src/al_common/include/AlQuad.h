@@ -15,6 +15,8 @@ al_class(AlQuad) {
 public:
     AlQuad();
 
+    AlQuad(AlVec2 &lt, AlVec2 &rt, AlVec2 &rb, AlVec2 &lb);
+
     AlQuad(const AlQuad &o);
 
     virtual ~AlQuad();

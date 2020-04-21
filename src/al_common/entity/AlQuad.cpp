@@ -17,6 +17,13 @@ AlQuad::AlQuad() : Object() {
     setRightTop(0.0f, 0.0f);
 }
 
+AlQuad::AlQuad(AlVec2 &lt, AlVec2 &rt, AlVec2 &rb, AlVec2 &lb)
+        : Object(),
+          _leftTop(lt), _rightTop(rt),
+          _rightBottom(rb), _leftBottom(lb) {
+
+}
+
 AlQuad::AlQuad(const AlQuad &o) : Object(),
                                   _leftTop(o._leftTop),
                                   _leftBottom(o._leftBottom),
@@ -120,7 +127,7 @@ bool AlQuad::isZero() {
 }
 
 void AlQuad::dump() {
-    AlLogI(TAG, "top(%f,%f), (%f,%f)\nbot(%f,%f), (%f,%f)",
+    AlLogI(TAG, "\ntop(%f,%f), (%f,%f)\nbot(%f,%f), (%f,%f)",
            _leftTop.x, _leftTop.y,
            _rightTop.x, _rightTop.y,
            _leftBottom.x, _leftBottom.y,
