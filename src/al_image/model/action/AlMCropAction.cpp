@@ -95,6 +95,8 @@ HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
         cc.translate(&rb, &lc);
         cropSize.width = (rb.x - lt.x) * layerSize.width / 2;
         cropSize.height = (lt.y - rb.y) * layerSize.height / 2;
+        position.x = -position.x + (rectF.left + rectF.right) / 2.f;
+        position.y = -position.y + (rectF.top + rectF.bottom) / 2.f;
     }
 #ifndef ENABLE_CROP_DEBUG
     AlRational nr = AlRational();
@@ -103,7 +105,7 @@ HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
                                   nr.den);
 //    layer.setScale(layer.getScale().x / scale.x, layer.getScale().y / scale.y);
     layer.setRotation(nr);
-    layer.setPosition(layer.getPosition().x - position.x, layer.getPosition().y - position.y);
+    layer.setPosition(layer.getPosition().x + position.x, layer.getPosition().y + position.y);
     layer.setSize(cropSize);
 #endif
     description->cropQuad = quad;
