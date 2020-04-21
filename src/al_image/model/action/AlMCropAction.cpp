@@ -87,18 +87,21 @@ HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
         cc.translate(&rb, &lc);
         cc.translate(&rt, &lc);
         quad = AlQuad(lt, rt, rb, lb);
-        quad.dump();
-        cropSize.height = std::sqrt(std::pow((lt.x - lb.x) * layerSize.width, 2.0) +
-                                    std::pow((lt.y - lb.y) * layerSize.height, 2.0));
-        cropSize.width = std::sqrt(std::pow((rb.x - lb.x) * layerSize.width, 2.0) +
-                                   std::pow((rb.y - lb.y) * layerSize.height, 2.0));
+
+        lt = AlVec2(rectF.left, rectF.top);
+        rb = AlVec2(rectF.right, rectF.bottom);
+        lc.setRotation(AlRational(0, 1));
+        cc.translate(&lt, &lc);
+        cc.translate(&rb, &lc);
+        cropSize.width = (rb.x - lt.x) * layerSize.width / 2;
+        cropSize.height = (lt.y - rb.y) * layerSize.height / 2;
     }
 #ifndef ENABLE_CROP_DEBUG
     AlRational nr = AlRational();
     nr.den = 100000;
     nr.num = static_cast<int32_t>((layer.getRotation().toFloat() - this->rotation.toFloat()) *
                                   nr.den);
-    layer.setScale(layer.getScale().x / scale.x, layer.getScale().y / scale.y);
+//    layer.setScale(layer.getScale().x / scale.x, layer.getScale().y / scale.y);
     layer.setRotation(nr);
     layer.setPosition(layer.getPosition().x - position.x, layer.getPosition().y - position.y);
     layer.setSize(cropSize);
