@@ -89,15 +89,29 @@ void AlULayerFilter::_transCanvas2Layer(AlImageLayerModel *model, AlImageLayer *
     AlLogI(TAG, "pos(%f, %f), trans(%f, %f)", x, y, model->getPosition().x, model->getPosition().y);
 }
 
-void AlULayerFilter::_showDebugInfo(AlImageLayerModel *model, AlImageLayer *layer) {
-    AlPointF pointF(0.25f, 0.55f);
-    _transCanvas2Layer(model, layer, pointF.x, pointF.y);
-    std::vector<float> point(2);
-    point[0] = pointF.x;
-    point[1] = pointF.y;
+void AlULayerFilter::_showDebugInfo(AlImageLayerModel *model, AlImageLayer *src, AlImageLayer *dst) {
+    AlPointF lt(-0.016113f, 0.047887f);
+    AlPointF rb(0.870605f, -0.364090f);
+    AlPointF lb(lt.x, rb.y);
+    AlPointF rt(rb.x, lt.y);
+    _transCanvas2Layer(model, src, lt.x, lt.y);
+    _transCanvas2Layer(model, src, rb.x, rb.y);
+    _transCanvas2Layer(model, src, lb.x, lb.y);
+    _transCanvas2Layer(model, src, rt.x, rt.y);
+    std::vector<float> point(8);
+    point[0] = lt.x;
+    point[1] = lt.y;
+    point[2] = rb.x;
+    point[3] = rb.y;
+    point[4] = lb.x;
+    point[5] = lb.y;
+    point[6] = rt.x;
+    point[7] = rt.y;
     dynamic_cast<AlPaintFilter *>(paintFilter)->setPath(&point, true);
-    glViewport(0, 0, layer->getWidth(), layer->getHeight());
-    paintFilter->draw(layer->getTexture(), layer->getTexture());
+    glViewport(0, 0, dst->getWidth(), dst->getHeight());
+    dynamic_cast<AlPaintFilter *>(paintFilter)->setColor(AlColor(0x00ff0000));
+    dynamic_cast<AlPaintFilter *>(paintFilter)->setPaintSize(0.01f);
+    paintFilter->draw(nullptr, dst->getTexture());
 }
 
 bool AlULayerFilter::onCanvasSizeUpdate(AlMessage *msg) {
@@ -109,12 +123,12 @@ bool AlULayerFilter::onCanvasSizeUpdate(AlMessage *msg) {
 bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     Logcat::i(TAG, "%s(%d) layer size: %d", __FUNCTION__, __LINE__, layers.size());
     AlLayerPair *pair = msg->getObj<AlLayerPair *>();
-//    _showDebugInfo(pair->model, pair->layer);
     if (pair->model->countFilterAction() <= 0) {
         _notifyDescriptor(pair->layer, pair->model, msg->arg1);
         return true;
     }
     auto *fLayer = _findLayer(pair->model, pair->layer);
+//    _showDebugInfo(pair->model, pair->layer, fLayer);
     if (nullptr == fLayer) {
         _notifyDescriptor(pair->layer, pair->model, msg->arg1);
         return true;
@@ -143,7 +157,7 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
             glViewport(0, 0, fLayer->getWidth(), fLayer->getHeight());
             dynamic_cast<AlPaintFilter *>(paintFilter)->setColor(AlColor(0x00ff0000));
             dynamic_cast<AlPaintFilter *>(paintFilter)->setPaintSize(0.01f);
-            paintFilter->draw(fLayer->getTexture(), fLayer->getTexture());
+            paintFilter->draw(nullptr, fLayer->getTexture());
         }
         ++itr;
     }

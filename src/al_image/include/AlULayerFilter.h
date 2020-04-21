@@ -58,7 +58,7 @@ private:
     /// \return
     AlImageLayer *_findLayer(AlImageLayerModel *model, AlImageLayer *layer);
 
-    void _showDebugInfo(AlImageLayerModel *model, AlImageLayer *layer);
+    void _showDebugInfo(AlImageLayerModel *model, AlImageLayer *src, AlImageLayer *dst);
 
     void _translate(AlMatrix &mat, float transX, float transY, float &x, float &y);
 

@@ -10,6 +10,7 @@
 #include "AlMath.h"
 #include "AlTexManager.h"
 #include "AlPaintRoundFilter.h"
+#include "AlRotateFilter.h"
 #include "Logcat.h"
 
 constexpr int DIFF_SIZE = 100;
@@ -24,6 +25,8 @@ AlPaintFilter::~AlPaintFilter() {
         AlTexManager::instance()->recycle(&roundTex);
         roundTex = nullptr;
     }
+    delete copyFilter;
+    copyFilter = nullptr;
     path.clear();
 }
 
@@ -39,6 +42,10 @@ bool AlPaintFilter::prepare() {
         glViewport(0, 0, roundTex->getWidth(), roundTex->getHeight());
         filter->draw(roundTex, roundTex);
         delete filter;
+    }
+    if (nullptr == copyFilter) {
+        copyFilter = new AlRotateFilter();
+        copyFilter->prepare();
     }
     return ret;
 }
@@ -104,6 +111,9 @@ void AlPaintFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsT
 
 void AlPaintFilter::draw(HwAbsTexture *src, HwAbsTexture *dest) {
     if (roundTex) {
+        if (src) {
+            copyFilter->draw(src, dest);
+        }
         HwAbsFilter::draw(roundTex, dest);
     }
 }

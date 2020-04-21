@@ -72,9 +72,8 @@ HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
         this->rotation = layer.getRotation();
         this->position = layer.getPosition();
         AlSize layerSize = layer.getSize();
-        Al2DCoordinate cc, lc;
-        cc.setWide(canvasSize.width, canvasSize.height);
-        lc.setWide(layerSize.width, layerSize.height);
+        Al2DCoordinate cc(canvasSize.width, canvasSize.height);
+        Al2DCoordinate lc(layerSize.width, layerSize.height);
         lc.setScale(scale.x, scale.y);
         lc.setRotation(rotation);
         lc.setPosition(position.x, position.y);
@@ -91,17 +90,11 @@ HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
         quad.setLeftBottom((lb + 1.0f) / 2.0f);
         quad.setRightBottom((rb + 1.0f) / 2.0f);
         quad.setRightTop((rt + 1.0f) / 2.0f);
-        quad.dump();
-        cropSize = AlSize(layerSize.width * (rb.x - lt.x) / 2.0f,
-                          layerSize.height * (lt.y - rb.y) / 2.0f);
-        AlLogI(TAG, "a: %dx%d", cropSize.width, cropSize.height);
-
-//        AlRectF cropRectF = rectF;
-//        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.left, cropRectF.top);
-//        AlCoordsTranslator::translate(canvasSize, layerSize, cropRectF.right, cropRectF.bottom);
-//        cropSize = AlSize(layerSize.width * cropRectF.getWidth() / 2.0f,
-//                          layerSize.height * cropRectF.getHeight() / 2.0f);
-//        AlLogI(TAG, "b: %dx%d", cropSize.width, cropSize.height);
+        quad.mirrorVertical();
+        cropSize.height = std::sqrt(std::pow((lt.x - lb.x) * layerSize.width, 2.0) +
+                                    std::pow((lt.y - lb.y) * layerSize.height, 2.0));
+        cropSize.width = std::sqrt(std::pow((rb.x - lb.x) * layerSize.width, 2.0) +
+                                   std::pow((rb.y - lb.y) * layerSize.height, 2.0));
     }
 #ifndef ENABLE_CROP_DEBUG
     AlRational nr = AlRational();
@@ -113,10 +106,7 @@ HwResult AlMCropAction::measure(AlImgLayerDescription &layer,
     layer.setPosition(layer.getPosition().x - position.x, layer.getPosition().y - position.y);
     layer.setSize(cropSize);
 #endif
-    description->cropQuad.setLeftTop(quad.leftTop());
-    description->cropQuad.setLeftBottom(quad.leftBottom());
-    description->cropQuad.setRightBottom(quad.rightBottom());
-    description->cropQuad.setRightTop(quad.rightTop());
+    description->cropQuad = quad;
     return Hw::SUCCESS;
 }
 

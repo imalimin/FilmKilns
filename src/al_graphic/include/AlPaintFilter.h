@@ -40,6 +40,7 @@ private:
     void drawEnd(AlAbsGLProgram *program, HwAbsTexture *src, HwAbsTexture *dest) override;
 
 private:
+    HwAbsFilter *copyFilter = nullptr;
     HwAbsTexture *roundTex = nullptr;
     int32_t uSize = -1;
     int32_t uColor = -1;
