@@ -365,9 +365,7 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
 class EditOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
     : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Select"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
-            BottomSheetItem(2, R.mipmap.ic_launcher, "None")
+            BottomSheetItem(0, R.mipmap.ic_launcher, "Select")
     )
 
     override fun show(): BottomSheetDialog {
@@ -391,8 +389,7 @@ class CanvasOptDialog(private var context: AlImageActivity, private var processo
     : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf(
             BottomSheetItem(0, R.mipmap.ic_launcher, "Crop Canvas"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Resize to 720p"),
-            BottomSheetItem(2, R.mipmap.ic_launcher, "None")
+            BottomSheetItem(1, R.mipmap.ic_launcher, "Resize to 720p")
     )
 
     override fun show(): BottomSheetDialog {
@@ -436,11 +433,6 @@ class LayerInfoDialog(private var context: AlImageActivity, private var processo
         val opts = ArrayList<BottomSheetItem>()
         layers?.forEach {
             opts.add(BottomSheetItem(it.id, R.mipmap.ic_launcher, "${it.id}, ${it.width}x${it.height}"))
-        }
-        if (opts.size < 3) {
-            for (i in 0 until 3 - opts.size) {
-                opts.add(BottomSheetItem(-1, R.mipmap.ic_launcher, "-1, 0x0"))
-            }
         }
         val dialog = BottomSheetDialog(context, opts)
         dialog.onItemClickListener = this
