@@ -138,7 +138,10 @@ bool AlULayerFilter::onDoFilterAction(AlMessage *msg) {
     auto itr = actions->begin();
     while (actions->end() != itr) {
         AlAbsMFilterAction *action = dynamic_cast<AlAbsMFilterAction *>(*itr);
-        if (typeid(AlMPaintAction) == typeid(*action)) {
+        if (nullptr == action) {
+            AlLogW(TAG, "Null action");
+        }
+        if (nullptr != action && typeid(AlMPaintAction) == typeid(*action)) {
             if (pair->layer->getWidth() != fLayer->getWidth()
                 || pair->layer->getHeight() != fLayer->getHeight()) {
                 fLayer->getTexture()->update(nullptr,
