@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-#include "ff/libavcodec/avcodec.h"
+#include "libavcodec/avcodec.h"
 
 #ifdef __cplusplus
 }

@@ -15,10 +15,10 @@
 extern "C" {
 #endif
 
-#include "ff/libavcodec/avcodec.h"
-#include "ff/libavformat/avformat.h"
-#include "ff/libavutil/avutil.h"
-#include "ff/libswresample/swresample.h"
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/avutil.h"
+#include "libswresample/swresample.h"
 
 #ifdef __cplusplus
 }

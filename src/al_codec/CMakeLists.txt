@@ -11,7 +11,7 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_image/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
-            ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
+            ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/ffmpeg/include
             ${YUV}/include
             # android
             ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/encoder
@@ -23,7 +23,7 @@ else ()
             ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
-            ${CMAKE_CURRENT_SOURCE_DIR}/include/ff
+            ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/ffmpeg/include
             ${YUV}/include
     )
 endif ()

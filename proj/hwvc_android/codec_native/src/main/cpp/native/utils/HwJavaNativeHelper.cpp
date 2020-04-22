@@ -8,17 +8,16 @@
 #include "../include/HwJavaNativeHelper.h"
 #include "Thread.h"
 #include "StringUtils.h"
+#include "FFUtils.h"
 #include <sys/system_properties.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "ff/libavcodec/jni.h"
-
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     HwJavaNativeHelper::getInstance()->attach(vm);
-    av_jni_set_java_vm(vm, NULL);
+    FFUtils::attachJvm(vm);
     Logcat::i("HWVC", "HwJavaNativeHelper::getAndroidApi %d", HwJavaNativeHelper::getAndroidApi());
     return JNI_VERSION_1_6;
 }

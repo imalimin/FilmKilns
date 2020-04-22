@@ -8,18 +8,24 @@
 #ifndef HARDWAREVIDEOCODEC_FFUTILS_H
 #define HARDWAREVIDEOCODEC_FFUTILS_H
 
+#include "Object.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "ff/libavcodec/avcodec.h"
-#include "ff/libavformat/avformat.h"
-#include "ff/libavutil/avutil.h"
-#include "ff/libswresample/swresample.h"
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/avutil.h"
+#include "libswresample/swresample.h"
+#include "libavcodec/jni.h"
 
-namespace FFUtils {
-    int avSamplesCopy(AVFrame *dest, AVFrame *src);
-}
+class FFUtils : public Object {
+public:
+    static int avSamplesCopy(AVFrame *dest, AVFrame *src);
+
+    static void attachJvm(void *vm);
+};
 
 #ifdef __cplusplus
 }

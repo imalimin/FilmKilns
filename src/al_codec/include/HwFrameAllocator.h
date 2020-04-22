@@ -20,7 +20,7 @@ using namespace std;
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include "ff/libavformat/avformat.h"
+#include "libavformat/avformat.h"
 #ifdef __cplusplus
 }
 #endif

@@ -7,11 +7,8 @@
 
 #include "../include/FFUtils.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-int avSamplesCopy(AVFrame *dest, AVFrame *src) {
+int FFUtils::avSamplesCopy(AVFrame *dest, AVFrame *src) {
     av_free(dest->data[0]);
     av_samples_alloc(dest->data,
                      &dest->linesize[0],
@@ -23,6 +20,6 @@ int avSamplesCopy(AVFrame *dest, AVFrame *src) {
     return 0;
 }
 
-#ifdef __cplusplus
+void FFUtils::attachJvm(void *vm) {
+    av_jni_set_java_vm(vm, NULL);
 }
-#endif

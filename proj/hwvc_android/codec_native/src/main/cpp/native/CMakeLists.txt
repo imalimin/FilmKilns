@@ -8,6 +8,7 @@ include_directories(
         ${HWVC_PATH}/al_image/include
         ${HWVC_PATH}/al_codec/include
         ${HWVC_PATH}/al_graphic/include
+        ${HWVC_PATH}/al_codec/prebuild/shared/ffmpeg/include
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
