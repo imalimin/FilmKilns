@@ -68,7 +68,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy, s ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postTranslate(getCurrentLayer().id, dx, dy)
+//                processor?.postTranslate(getCurrentLayer().id, dx, dy)
             }
             if (paintBox.isChecked) {
                 processor?.paint(getCurrentLayer().id, PointF(x, y), 1 == s)
@@ -78,14 +78,14 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         surfaceView?.setOnScaleListener { v, ds, anchor ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postScale(getCurrentLayer().id, ds, anchor)
+//                processor?.postScale(getCurrentLayer().id, ds, anchor)
             }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnRotateListener { v, dr, anchor ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postRotation(getCurrentLayer().id, dr, anchor)
+                processor?.postRotation(getCurrentLayer().id, dr, PointF(-0.5f, 0.5f))
             } else {
                 alpha += (dr.num / dr.den.toDouble())
                 processor?.ensureAlignCrop(getCurrentLayer().id,

@@ -14,6 +14,7 @@
 #include "AlOperateTrans.h"
 #include "AlOperateAlpha.h"
 #include "AlOperateCrop.h"
+#include "AlMath.h"
 
 AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
     al_reg_msg(EVENT_LAYER_QUERY_ID, AlULayerWithOpt::onOperateQuery);
@@ -122,7 +123,18 @@ bool AlULayerWithOpt::onOperatePostRotate(AlMessage *m) {
     }
     auto *model = findLayerModel(desc->layerId);
     if (model) {
-        AlVec2 vec = transWin2Canvas(desc->anchor.x, desc->anchor.y);
+        AlVec2 anchor = transWin2Canvas(desc->anchor.x, desc->anchor.y);
+//        AlLogI("alimin", "%f, %f", anchor.x, anchor.y);
+        AlVec4 vec4(anchor.x - model->getPosition().x,
+                    anchor.y - model->getPosition().y);
+        AlMatrix mat;
+        mat.setRotation(static_cast<float>(desc->rotation.toFloat() * AlMath::PI));
+        vec4 = vec4 * mat;
+//        vec4.x += model->getPosition().x;
+//        vec4.y += model->getPosition().y;
+
+        model->setPosition(anchor.x + vec4.x,
+                           anchor.y - vec4.y);
         ///TODO 还可以提高精度
         auto nr = model->getRotation().toFloat() + desc->rotation.toFloat();
         auto rotation = AlRational(static_cast<int32_t>(nr * 100000), 100000);
