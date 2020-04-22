@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ANDROID_SDK=/Users/lmy/Library/Android/sdk
-ANDROID_NDK=/Users/lmy/Library/Android/android-ndk-r14b
+ANDROID_NDK=/Users/lmy/Library/Android/android-ndk-r16b
 
 build() {
     ARCH=$1
@@ -28,7 +28,7 @@ build() {
     -DANDROID_ABI=$ABI \
     -DCMAKE_LIBRARY_OUTPUT_DIRECTORY="./product/${ABI}" \
     -DCMAKE_BUILD_TYPE="Release" \
-    -DANDROID_PLATFORM="android-21" \
+    -DANDROID_PLATFORM="android-14" \
     -DANDROID_TOOLCHAIN="clang" \
     -DPNG_STATIC="ON" \
     -DPNG_SHARED="OFF"

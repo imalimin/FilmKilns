@@ -5,9 +5,9 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/AlEncoderBuilder.h"
-#include "../include/HwAsyncEncoder.h"
-#include "../include/HwFFmpegEncoder.h"
+#include "AlEncoderBuilder.h"
+#include "HwAsyncEncoder.h"
+#include "HwFFmpegEncoder.h"
 #include "../platform/android/encoder/HwAndroidEncoder.h"
 
 #define TAG "AlEncoderBuilder"
@@ -61,7 +61,42 @@ AlEncoderBuilder &AlEncoderBuilder::setOutput(std::string output) {
     return *this;
 }
 
+static void showEncoderInfo() {
+    std::string msg;
+    AVInputFormat *aif = av_iformat_next(nullptr);
+    msg.append("ENCODERS: ");
+    while (aif != nullptr) {
+        msg.append(aif->name);
+        msg.append(", ");
+        aif = aif->next;
+    }
+    AlLogI(TAG, "%s", msg.c_str());
+}
+
+static void showDecoderInfo() {
+    std::string msg;
+    msg.append("DECODERS: ");
+    AVOutputFormat *aof = av_oformat_next(nullptr);
+    while (aof != nullptr) {
+        msg.append(aof->name);
+        msg.append(", ");
+        aof = aof->next;
+    }
+    AlLogI(TAG, "%s", msg.c_str());
+}
+
+static void showFFInfo() {
+    av_register_all();
+    AlLogI(TAG, "FFmpeg ver %d.%d.%d",
+           LIBSWRESAMPLE_VERSION_MAJOR,
+           LIBSWRESAMPLE_VERSION_MINOR,
+           LIBSWRESAMPLE_VERSION_MICRO);
+    showEncoderInfo();
+    showDecoderInfo();
+}
+
 HwAbsVideoEncoder *AlEncoderBuilder::build() {
+    showFFInfo();
     if (0 != size.width % 16 || 0 != size.height % 16) {
         AlLogE(TAG, "Not align 16. %dx%d", size.width, size.height);
         return nullptr;
