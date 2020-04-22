@@ -128,12 +128,12 @@ bool AlULayerWithOpt::onOperatePostRotate(AlMessage *m) {
         AlVec4 vec4(anchor.x - model->getPosition().x,
                     anchor.y - model->getPosition().y);
         AlMatrix mat;
-        mat.setRotation(static_cast<float>(desc->rotation.toFloat() * AlMath::PI));
+        mat.setRotation(static_cast<float>(-desc->rotation.toFloat() * AlMath::PI));
         vec4 = vec4 * mat;
 //        vec4.x += model->getPosition().x;
 //        vec4.y += model->getPosition().y;
 
-        model->setPosition(anchor.x + vec4.x,
+        model->setPosition(anchor.x - vec4.x,
                            anchor.y - vec4.y);
         ///TODO 还可以提高精度
         auto nr = model->getRotation().toFloat() + desc->rotation.toFloat();
@@ -166,7 +166,7 @@ bool AlULayerWithOpt::onOperatePostTrans(AlMessage *m) {
     auto model = findLayerModel(desc->layerId);
     if (model) {
         AlVec2 vec = transWin2Canvas(desc->x, desc->y);
-        model->setPosition(model->getPosition().x + vec.x, model->getPosition().y + vec.y);
+        model->postPosition(vec.x, vec.y);
         invalidate();
     }
     return true;

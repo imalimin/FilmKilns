@@ -32,9 +32,9 @@ import kotlinx.android.synthetic.main.activity_al_image.*
 import java.io.File
 
 class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionListener,
-        SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener,
-        View.OnClickListener, AlImageProcessor.OnSaveListener,
-        AlImageProcessor.OnLayerInfoListener {
+    SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener,
+    View.OnClickListener, AlImageProcessor.OnSaveListener,
+    AlImageProcessor.OnLayerInfoListener {
 
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var processor: AlImageProcessor? = null
@@ -68,7 +68,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy, s ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-//                processor?.postTranslate(getCurrentLayer().id, dx, dy)
+                processor?.postTranslate(getCurrentLayer().id, dx, dy)
             }
             if (paintBox.isChecked) {
                 processor?.paint(getCurrentLayer().id, PointF(x, y), 1 == s)
@@ -78,18 +78,28 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
         }
         surfaceView?.setOnScaleListener { v, ds, anchor ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-//                processor?.postScale(getCurrentLayer().id, ds, anchor)
+                processor?.postScale(getCurrentLayer().id, ds, anchor)
             }
             //For crop debug
 //            ensureCropLayer()
         }
         surfaceView?.setOnRotateListener { v, dr, anchor ->
             if (!alignCropBox.isChecked && !paintBox.isChecked) {
-                processor?.postRotation(getCurrentLayer().id, dr, PointF(-0.5f, 0.5f))
+                processor?.postRotation(getCurrentLayer().id, dr, anchor)
+//                object : Thread() {
+//                    override fun run() {
+//                        while (running) {
+//                            processor?.postRotation(getCurrentLayer().id, AlRational(1, 180), PointF(-0.5f, 0.5f))
+//                            sleep(33)
+//                        }
+//                    }
+//                }.start()
             } else {
                 alpha += (dr.num / dr.den.toDouble())
-                processor?.ensureAlignCrop(getCurrentLayer().id,
-                        AlRational((alpha * 100000).toInt(), 100000))
+                processor?.ensureAlignCrop(
+                    getCurrentLayer().id,
+                    AlRational((alpha * 100000).toInt(), 100000)
+                )
             }
         }
         optBtn.setOnClickListener(this)
@@ -118,6 +128,8 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
 //        }
         openDefaultImage()
     }
+
+    private var running = true
 
     private fun openDefaultImage() {
         var uri = intent.data
@@ -178,6 +190,7 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
 
     override fun onDestroy() {
         super.onDestroy()
+        running = false
         surfaceView.holder.removeCallback(surfaceCallback)
     }
 
@@ -259,11 +272,17 @@ class AlImageActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionLi
     fun getOutputName(): String? = outputName
 
     override fun onSave(code: Int, msg: String?, path: String?) {
-        Toast.makeText(this@AlImageActivity,
-                "$msg code: $code",
-                Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this@AlImageActivity,
+            "$msg code: $code",
+            Toast.LENGTH_LONG
+        ).show()
         if (null != path || code != AlResult.SUCCESS) {
-            MediaScannerConnection.scanFile(this, Array<String>(1) { path!! }, null) { _: String, uri: Uri ->
+            MediaScannerConnection.scanFile(
+                this,
+                Array<String>(1) { path!! },
+                null
+            ) { _: String, uri: Uri ->
                 val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
                 mediaScanIntent.data = uri
                 sendBroadcast(mediaScanIntent)
@@ -301,12 +320,14 @@ interface IOptDialog {
     fun show(): BottomSheetDialog
 }
 
-class FileOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
-    : IOptDialog, BottomSheetItem.OnClickListener {
+class FileOptDialog(
+    private var context: AlImageActivity,
+    private var processor: AlImageProcessor?
+) : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Save"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Export"),
-            BottomSheetItem(2, R.mipmap.ic_launcher, "Import")
+        BottomSheetItem(0, R.mipmap.ic_launcher, "Save"),
+        BottomSheetItem(1, R.mipmap.ic_launcher, "Export"),
+        BottomSheetItem(2, R.mipmap.ic_launcher, "Import")
     )
 
     override fun show(): BottomSheetDialog {
@@ -329,17 +350,25 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
                     while (true) {
                         if (File(parent, "$outputName").exists()) {
                             ++count
-                            val suffix = outputName!!.substring(outputName.lastIndexOf("."), outputName.length)
-                            outputName = "${outputName.substring(0, outputName.lastIndexOf("."))}-${count}$suffix"
+                            val suffix = outputName!!.substring(
+                                outputName.lastIndexOf("."),
+                                outputName.length
+                            )
+                            outputName = "${outputName.substring(
+                                0,
+                                outputName.lastIndexOf(".")
+                            )}-${count}$suffix"
                             continue
                         }
                         break
                     }
                     processor?.save(File(parent, "$outputName").absolutePath)
                 } else {
-                    Toast.makeText(context,
-                            "Save finish failed. Add a layer first. Pls",
-                            Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "Save finish failed. Add a layer first. Pls",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
             1 -> {
@@ -349,9 +378,11 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
                     processor?.export("${File(parent, "${name}.alx").absoluteFile}")
                     Toast.makeText(context, "Export finish.", Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(context,
-                            "Save finish failed. Add a layer first. Pls",
-                            Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "Save finish failed. Add a layer first. Pls",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
             2 -> {
@@ -362,10 +393,14 @@ class FileOptDialog(private var context: AlImageActivity, private var processor:
 
 }
 
-class EditOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
-    : IOptDialog, BottomSheetItem.OnClickListener {
+class EditOptDialog(
+    private var context: AlImageActivity,
+    private var processor: AlImageProcessor?
+) : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Select")
+        BottomSheetItem(0, R.mipmap.ic_launcher, "Select"),
+        BottomSheetItem(1, R.mipmap.ic_launcher, "None"),
+        BottomSheetItem(2, R.mipmap.ic_launcher, "None")
     )
 
     override fun show(): BottomSheetDialog {
@@ -385,11 +420,14 @@ class EditOptDialog(private var context: AlImageActivity, private var processor:
 
 }
 
-class CanvasOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
-    : IOptDialog, BottomSheetItem.OnClickListener {
+class CanvasOptDialog(
+    private var context: AlImageActivity,
+    private var processor: AlImageProcessor?
+) : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Crop Canvas"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Resize to 720p")
+        BottomSheetItem(0, R.mipmap.ic_launcher, "Crop Canvas"),
+        BottomSheetItem(1, R.mipmap.ic_launcher, "Resize to 720p"),
+        BottomSheetItem(2, R.mipmap.ic_launcher, "None")
     )
 
     override fun show(): BottomSheetDialog {
@@ -404,8 +442,10 @@ class CanvasOptDialog(private var context: AlImageActivity, private var processo
             0 -> {
                 val rectF = context.getSelectRect()
                 if (null != rectF) {
-                    processor?.cropCanvas(rectF.left, rectF.top,
-                            rectF.right, rectF.bottom)
+                    processor?.cropCanvas(
+                        rectF.left, rectF.top,
+                        rectF.right, rectF.bottom
+                    )
                 }
                 context.showSelector(false)
             }
@@ -416,8 +456,10 @@ class CanvasOptDialog(private var context: AlImageActivity, private var processo
     }
 }
 
-class LayerInfoDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
-    : IOptDialog, BottomSheetItem.OnClickListener {
+class LayerInfoDialog(
+    private var context: AlImageActivity,
+    private var processor: AlImageProcessor?
+) : IOptDialog, BottomSheetItem.OnClickListener {
     private var layers: Array<AlLayer>? = null
     private var map: HashMap<Int, AlLayer>? = null
     fun show(layers: Array<AlLayer>): BottomSheetDialog {
@@ -432,7 +474,18 @@ class LayerInfoDialog(private var context: AlImageActivity, private var processo
     override fun show(): BottomSheetDialog {
         val opts = ArrayList<BottomSheetItem>()
         layers?.forEach {
-            opts.add(BottomSheetItem(it.id, R.mipmap.ic_launcher, "${it.id}, ${it.width}x${it.height}"))
+            opts.add(
+                BottomSheetItem(
+                    it.id,
+                    R.mipmap.ic_launcher,
+                    "${it.id}, ${it.width}x${it.height}"
+                )
+            )
+        }
+        if (opts.size < 3) {
+            for (i in 0 until 3 - opts.size) {
+                opts.add(BottomSheetItem(-1, R.mipmap.ic_launcher, "-1, 0x0"))
+            }
         }
         val dialog = BottomSheetDialog(context, opts)
         dialog.onItemClickListener = this
@@ -446,17 +499,19 @@ class LayerInfoDialog(private var context: AlImageActivity, private var processo
     }
 }
 
-class LayerOptDialog(private var context: AlImageActivity, private var processor: AlImageProcessor?)
-    : IOptDialog, BottomSheetItem.OnClickListener {
+class LayerOptDialog(
+    private var context: AlImageActivity,
+    private var processor: AlImageProcessor?
+) : IOptDialog, BottomSheetItem.OnClickListener {
     private val OPTS = arrayListOf(
-            BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
-            BottomSheetItem(1, R.mipmap.ic_launcher, "Rest Layer"),
-            BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer"),
-            BottomSheetItem(3, R.mipmap.ic_launcher, "Crop Layer"),
-            BottomSheetItem(4, R.mipmap.ic_launcher, "Clear Crop Layer"),
-            BottomSheetItem(5, R.mipmap.ic_launcher, "Move up"),
-            BottomSheetItem(6, R.mipmap.ic_launcher, "Move down"),
-            BottomSheetItem(7, R.mipmap.ic_launcher, "Show info")
+        BottomSheetItem(0, R.mipmap.ic_launcher, "Add Layer"),
+        BottomSheetItem(1, R.mipmap.ic_launcher, "Rest Layer"),
+        BottomSheetItem(2, R.mipmap.ic_launcher, "Delete Layer"),
+        BottomSheetItem(3, R.mipmap.ic_launcher, "Crop Layer"),
+        BottomSheetItem(4, R.mipmap.ic_launcher, "Clear Crop Layer"),
+        BottomSheetItem(5, R.mipmap.ic_launcher, "Move up"),
+        BottomSheetItem(6, R.mipmap.ic_launcher, "Move down"),
+        BottomSheetItem(7, R.mipmap.ic_launcher, "Show info")
     )
 
     override fun show(): BottomSheetDialog {
@@ -483,9 +538,11 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 processor?.cancelCropLayer(context.getCurrentLayer().id)
                 val rectF = context.getSelectRect()
                 if (null != rectF) {
-                    processor?.ensureCropLayer(context.getCurrentLayer().id,
-                            rectF.left, rectF.top,
-                            rectF.right, rectF.bottom)
+                    processor?.ensureCropLayer(
+                        context.getCurrentLayer().id,
+                        rectF.left, rectF.top,
+                        rectF.right, rectF.bottom
+                    )
                 }
                 context.showSelector(false)
             }
@@ -499,7 +556,7 @@ class LayerOptDialog(private var context: AlImageActivity, private var processor
                 processor?.moveLayerIndex(context.getCurrentLayer().id, 0)
             }
             7 -> {
-                processor?.queryLayerInfo()
+                processor?.postScale(context.getCurrentLayer().id, AlRational(3,1), PointF(0f,0f))
             }
         }
     }
