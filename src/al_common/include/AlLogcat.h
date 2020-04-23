@@ -8,16 +8,17 @@
 #ifndef HWVC_ANDROID_ALLOGCAT_H
 #define HWVC_ANDROID_ALLOGCAT_H
 
+#include "AlString.h"
+#include "stdio.h"
+#include <string>
+#include <stdarg.h>
+#include <inttypes.h>
+
 #ifdef ANDROID
 
 #include <android/log.h>
 
 #endif
-
-#include "stdio.h"
-#include <string>
-#include <stdarg.h>
-#include <inttypes.h>
 
 using namespace std;
 
@@ -30,22 +31,17 @@ public:
     static void w(const string &TAG, const string fmt, ...);
 };
 
-#define AlLogFormat(fmt_name, fmt)                                        \
-std::string fmt_name;                                                     \
-fmt_name.append("%s(%d): ");                                              \
-fmt_name.append(fmt);                                                     \
+#define AlLogFormat(fmt)                                                  \
+AlString().append("%s(%d): ").append(fmt).c_str()                       \
 
 #define AlLogI(tag, fmt, args...)                                         \
-AlLogFormat(log_format, fmt)                                              \
-AlLogcat::i(tag, log_format.c_str(), __FUNCTION__, __LINE__, ##args)      \
+AlLogcat::i(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
 
 #define AlLogE(tag, fmt, args...)                                         \
-AlLogFormat(log_format, fmt)                                              \
-AlLogcat::e(tag, log_format.c_str(), __FUNCTION__, __LINE__, ##args)      \
+AlLogcat::e(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
 
 #define AlLogW(tag, fmt, args...)                                         \
-AlLogFormat(log_format, fmt)                                              \
-AlLogcat::w(tag, log_format.c_str(), __FUNCTION__, __LINE__, ##args)      \
+AlLogcat::w(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
 
 
 #endif //HWVC_ANDROID_ALLOGCAT_H
