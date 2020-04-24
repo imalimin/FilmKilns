@@ -36,8 +36,8 @@ AlEncoderBuilder &AlEncoderBuilder::setEnableHardware(bool enable) {
     return *this;
 }
 
-AlEncoderBuilder &AlEncoderBuilder::setEnableAsyn(bool enable) {
-    this->enableAsyn = enable;
+AlEncoderBuilder &AlEncoderBuilder::setEnableAsync(bool enable) {
+    this->enableAsync = enable;
     return *this;
 }
 
@@ -102,7 +102,7 @@ HwAbsVideoEncoder *AlEncoderBuilder::build() {
         return nullptr;
     }
     HwAbsVideoEncoder *encoder = nullptr;
-    if (enableAsyn) {
+    if (enableAsync) {
         if (!enableHardware) {
             encoder = new HwAsyncEncoder();
         } else {

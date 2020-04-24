@@ -133,7 +133,7 @@ void AlVideoCompiler::_initialize() {
                 .setBitrate(size.width * size.height * bitLevel)
                 .setProfile(profile)
                 .setPreset(preset)
-                .setEnableAsyn(true)
+                .setEnableAsync(true)
                 .setEnableHardware(_enableHardware)
                 .build();
         if (nullptr == encoder) {

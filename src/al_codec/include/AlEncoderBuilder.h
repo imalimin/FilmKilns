@@ -31,7 +31,7 @@ public:
     /// Default true.
     /// \param enable
     /// \return
-    AlEncoderBuilder &setEnableAsyn(bool enable);
+    AlEncoderBuilder &setEnableAsync(bool enable);
 
     AlEncoderBuilder &setBitrate(int32_t rate);
 
@@ -47,7 +47,7 @@ private:
     AlSize size;
     HwSampleFormat audioFormat;
     bool enableHardware = false;
-    bool enableAsyn = true;
+    bool enableAsync = true;
     int32_t bitrate = 0;
     std::string profile;
     std::string preset;
