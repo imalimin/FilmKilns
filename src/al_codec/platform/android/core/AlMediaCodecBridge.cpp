@@ -5,13 +5,12 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWANDROIDCODECCOMPAT_H
-#define HWVC_ANDROID_HWANDROIDCODECCOMPAT_H
+#include "AlMediaCodecBridge.h"
 
+AlMediaCodecBridge::AlMediaCodecBridge() : Object() {
 
-class HwAndroidCodecCompat {
+}
 
-};
+AlMediaCodecBridge::~AlMediaCodecBridge() {
 
-
-#endif //HWVC_ANDROID_HWANDROIDCODECCOMPAT_H
+}
