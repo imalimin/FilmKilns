@@ -57,6 +57,11 @@ class AlDisplayRecorder(
         setPreset(handler, preset)
     }
 
+    fun setEnableHardware(enable: Boolean) {
+        if (isNativeNull()) return
+        setEnableHardware(handler, enable)
+    }
+
     fun setMaxSize(width: Int, height: Int) {
         if (isNativeNull()) return
         setMaxSize(handler, width, height)
@@ -166,6 +171,7 @@ class AlDisplayRecorder(
     private external fun setProfile(handler: Long, profile: String)
 
     private external fun setPreset(handler: Long, preset: String)
+    private external fun setEnableHardware(handler: Long, enable: Boolean)
 
     companion object {
         const val EVENT_PREPARE = 1

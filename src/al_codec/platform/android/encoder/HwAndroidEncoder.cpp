@@ -60,18 +60,22 @@ bool HwAndroidEncoder::configure() {
     /**
      * Audio codec
      */
-    HwBundle aBundle;
-    aBundle.putInt32(HwAbsCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
-    aBundle.putInt32(HwAbsCodec::KEY_CHANNELS, audioFormat.getChannels());
-    aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
-    aBundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
-    aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
-    if (Hw::SUCCESS != aCodec->configure(aBundle)) {
-        AlLogE(TAG, "failed to configure audio codec!");
-        release();
-        return false;
+    if (audioFormat.valid()) {
+        HwBundle aBundle;
+        aBundle.putInt32(HwAbsCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
+        aBundle.putInt32(HwAbsCodec::KEY_CHANNELS, audioFormat.getChannels());
+        aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
+        aBundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
+        aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
+        if (Hw::SUCCESS != aCodec->configure(aBundle)) {
+            AlLogE(TAG, "failed to configure audio codec!");
+            release();
+            return false;
+        }
+        aCodec->start();
+    } else {
+        AlLogW(TAG, "Without audio track.");
     }
-    aCodec->start();
     muxer = new HwFFMuxer();
     if (Hw::SUCCESS != muxer->configure(path, HwAbsMuxer::TYPE_MP4)) {
         AlLogE(TAG, "failed to configure muxer!");
@@ -87,11 +91,13 @@ bool HwAndroidEncoder::configure() {
         release();
         return false;
     }
-    aTrack = muxer->addTrack(aCodec);
-    if (HwAbsMuxer::TRACK_NONE == aTrack) {
-        AlLogE(TAG, "failed to add audio track!");
-        release();
-        return false;
+    if (aCodec) {
+        aTrack = muxer->addTrack(aCodec);
+        if (HwAbsMuxer::TRACK_NONE == aTrack) {
+            AlLogE(TAG, "failed to add audio track!");
+            release();
+            return false;
+        }
     }
     if (Hw::SUCCESS != muxer->start()) {
         AlLogE(TAG, "failed to start muxer!");

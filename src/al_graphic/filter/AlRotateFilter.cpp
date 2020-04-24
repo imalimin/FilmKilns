@@ -45,6 +45,8 @@ void AlRotateFilter::drawFirst(AlAbsGLProgram *program, HwAbsTexture *src, HwAbs
                 -1.0f, 1.0f,//LEFT,TOP
                 -1.0f, -1.0f,//LEFT,BOTTOM
         };
+    } else if (0.0 == r) {
+        vertex = nullptr;
     } else {
         Logcat::w(TAG, "%s(%d): Not support this angle yet.", __FUNCTION__, __LINE__);
     }

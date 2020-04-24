@@ -62,6 +62,8 @@ public:
 
     void setCameraSize(int32_t w, int32_t h);
 
+    void setEnableHardware(bool enable);
+
     /**
      * delete nearly video clip.
      */

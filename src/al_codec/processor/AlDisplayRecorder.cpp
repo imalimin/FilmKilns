@@ -133,6 +133,12 @@ void AlDisplayRecorder::setCameraSize(int32_t w, int32_t h) {
     postEvent(msg);
 }
 
+void AlDisplayRecorder::setEnableHardware(bool enable) {
+    auto *msg = AlMessage::obtain(MSG_VIDEO_OUTPUT_ENABLE_HARD);
+    msg->arg1 = enable;
+    postEvent(msg);
+}
+
 void AlDisplayRecorder::backward() {
     postEvent(AlMessage::obtain(MSG_VIDEO_COMPILER_BACKWARD));
 }

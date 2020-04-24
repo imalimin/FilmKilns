@@ -205,6 +205,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setMa
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_setEnableHardware
+        (JNIEnv *env, jobject thiz, jlong handler, jboolean enable) {
+    if (handler) {
+        getHandler(handler)->setEnableHardware(JNI_TRUE == enable);
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif
