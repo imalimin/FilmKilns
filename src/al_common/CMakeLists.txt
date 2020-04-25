@@ -66,6 +66,7 @@ file(
         ${PROJECT_SOURCE_DIR}/doc/*.cpp
         ${PROJECT_SOURCE_DIR}/doc/tinyxml/*.cpp
         ${PROJECT_SOURCE_DIR}/file/*.cpp
+        ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
         #Header
         ${PROJECT_SOURCE_DIR}/include/*.h
 )

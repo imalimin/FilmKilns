@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "HwJavaNativeHelper.h"
+#include "platform/android/AlJavaNativeHelper.h"
 #include "AlImageProcessor.h"
 #include "HwAndroidWindow.h"
 
@@ -29,9 +29,9 @@ static void bindListener(jlong handler) {
         jobject jObject = nullptr;
         JNIEnv *pEnv = nullptr;
         jmethodID mid = nullptr;
-        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-            HwJavaNativeHelper::getInstance()->findMethod(handler,
+        if (AlJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            AlJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            AlJavaNativeHelper::getInstance()->findMethod(handler,
                                                           mOnSave,
                                                           &mid)) {
             jstring jMsg = pEnv->NewStringUTF(msg);
@@ -47,9 +47,9 @@ static void bindListener(jlong handler) {
         jobject jObject = nullptr;
         JNIEnv *pEnv = nullptr;
         jmethodID mid = nullptr;
-        if (HwJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-            HwJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-            HwJavaNativeHelper::getInstance()->findMethod(handler,
+        if (AlJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
+            AlJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
+            AlJavaNativeHelper::getInstance()->findMethod(handler,
                                                           mOnLayerInfo,
                                                           &mid)) {
             jintArray jIds = pEnv->NewIntArray(ids.size());
@@ -71,10 +71,10 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_creat
         (JNIEnv *env, jobject thiz) {
     AlImageProcessor *p = new AlImageProcessor();
     p->post([] {
-        HwJavaNativeHelper::getInstance()->attachThread();
+        AlJavaNativeHelper::getInstance()->attachThread();
     });
     jlong handler = reinterpret_cast<jlong>(p);
-    HwJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
+    AlJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
     bindListener(handler);
     return handler;
 }
@@ -98,12 +98,12 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_releas
     if (handler) {
         AlImageProcessor *p = getHandler(handler);
         p->post([] {
-            HwJavaNativeHelper::getInstance()->detachThread();
+            AlJavaNativeHelper::getInstance()->detachThread();
         });
         p->release();
         delete p;
     }
-    HwJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
+    AlJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlImageProcessor_invalidate

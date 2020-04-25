@@ -5,32 +5,12 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwJavaNativeHelper.h"
+#include "AlJavaNativeHelper.h"
 #include "Thread.h"
 #include "StringUtils.h"
-#include "FFUtils.h"
 #include <sys/system_properties.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    HwJavaNativeHelper::getInstance()->attach(vm);
-    FFUtils::attachJvm(vm);
-    Logcat::i("HWVC", "HwJavaNativeHelper::getAndroidApi %d", HwJavaNativeHelper::getAndroidApi());
-    return JNI_VERSION_1_6;
-}
-
-JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
-    HwJavaNativeHelper::getInstance()->detach();
-}
-
-#ifdef __cplusplus
-}
-#endif
-
-string HwJavaNativeHelper::getClassName(JNIEnv *env, jobject object) {
+string AlJavaNativeHelper::getClassName(JNIEnv *env, jobject object) {
     jclass cls = env->FindClass("java/lang/Class");
     jmethodID mid_getName = env->GetMethodID(cls, "getName", "()Ljava/lang/String;");
     jstring name = static_cast<jstring>(env->CallObjectMethod(object, mid_getName));
@@ -41,67 +21,67 @@ string HwJavaNativeHelper::getClassName(JNIEnv *env, jobject object) {
     return nameStr;
 }
 
-int HwJavaNativeHelper::getAndroidApi() {
+int AlJavaNativeHelper::getAndroidApi() {
     string key = "ro.build.version.sdk";
     char value[128] = {0};
     int ret = __system_property_get(key.c_str(), value);
     if (ret <= 0) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::getAndroidApi failed.");
+        Logcat::e("HWVC", "AlJavaNativeHelper::getAndroidApi failed.");
         return 0;
     }
     return atoi(value);
 }
 
-HwJavaNativeHelper *HwJavaNativeHelper::instance = new HwJavaNativeHelper();
+AlJavaNativeHelper *AlJavaNativeHelper::instance = new AlJavaNativeHelper();
 
-HwJavaNativeHelper *HwJavaNativeHelper::getInstance() {
+AlJavaNativeHelper *AlJavaNativeHelper::getInstance() {
     return instance;
 }
 
-HwJavaNativeHelper::HwJavaNativeHelper() : Object() {
+AlJavaNativeHelper::AlJavaNativeHelper() : Object() {
 
 }
 
-HwJavaNativeHelper::HwJavaNativeHelper(const HwJavaNativeHelper &object) {
+AlJavaNativeHelper::AlJavaNativeHelper(const AlJavaNativeHelper &object) {
 
 }
 
-HwJavaNativeHelper::~HwJavaNativeHelper() {
+AlJavaNativeHelper::~AlJavaNativeHelper() {
 
 }
 
-HwJavaNativeHelper &HwJavaNativeHelper::operator=(const HwJavaNativeHelper &object) {
+AlJavaNativeHelper &AlJavaNativeHelper::operator=(const AlJavaNativeHelper &object) {
 
 }
 
 
-void HwJavaNativeHelper::attach(JavaVM *vm) {
+void AlJavaNativeHelper::attach(JavaVM *vm) {
     this->jvm = vm;
-    Logcat::i("HWVC", "HwJavaNativeHelper::attach");
+    Logcat::i("HWVC", "AlJavaNativeHelper::attach");
 }
 
-void HwJavaNativeHelper::detach() {
-    Logcat::i("HWVC", "HwJavaNativeHelper::detach");
+void AlJavaNativeHelper::detach() {
+    Logcat::i("HWVC", "AlJavaNativeHelper::detach");
     if (!objMap.empty()) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::detach. %d jobject leak.", objMap.size());
+        Logcat::e("HWVC", "AlJavaNativeHelper::detach. %d jobject leak.", objMap.size());
         objMap.clear();
     }
     if (!envMap.empty()) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::detach. %d JNIEnv leak.", objMap.size());
+        Logcat::e("HWVC", "AlJavaNativeHelper::detach. %d JNIEnv leak.", objMap.size());
         envMap.clear();
     }
     this->jvm = nullptr;
 }
 
-void HwJavaNativeHelper::registerAnObject(JNIEnv *env, jlong handler, jobject jHandler) {
-    Logcat::i("HWVC", "HwJavaNativeHelper::registerAnObject(%p, %p)", handler, jHandler);
+void AlJavaNativeHelper::registerAnObject(JNIEnv *env, jlong handler, jobject jHandler) {
+    Logcat::i("HWVC", "AlJavaNativeHelper::registerAnObject(%p, %p)", handler, jHandler);
     if (objMap.end() == objMap.find(handler)) {
         objMap.insert(pair<jlong, jobject>(handler, env->NewGlobalRef(jHandler)));
     }
 }
 
-void HwJavaNativeHelper::unregisterAnObject(JNIEnv *env, jlong handler) {
-    Logcat::i("HWVC", "HwJavaNativeHelper::unregisterAnObject(%p)", handler);
+void AlJavaNativeHelper::unregisterAnObject(JNIEnv *env, jlong handler) {
+    Logcat::i("HWVC", "AlJavaNativeHelper::unregisterAnObject(%p)", handler);
     auto itr = objMap.find(handler);
     if (objMap.end() != itr) {
         env->DeleteGlobalRef(itr->second);
@@ -109,49 +89,49 @@ void HwJavaNativeHelper::unregisterAnObject(JNIEnv *env, jlong handler) {
     }
 }
 
-bool HwJavaNativeHelper::attachThread() {
+bool AlJavaNativeHelper::attachThread() {
     if (!jvm) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::attachThread failed. Please call attach before.");
+        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread failed. Please call attach before.");
         return false;
     }
     long id = Thread::currentThreadId();
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::attachThread(%p) failed. Do not attach repeat.", id);
+        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread(%p) failed. Do not attach repeat.", id);
         return false;
     }
 //    int status = jvm->GetEnv(reinterpret_cast<void **>(&pEnv), JNI_VERSION_1_6);
     int status = jvm->AttachCurrentThread(&pEnv, NULL);
     if (status < 0) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::attachThread failed.");
+        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread failed.");
         return false;
     }
-    Logcat::i("HWVC", "HwJavaNativeHelper::attachThread(%p, %p)", id, pEnv);
+    Logcat::i("HWVC", "AlJavaNativeHelper::attachThread(%p, %p)", id, pEnv);
     envMap.insert(pair<long, JNIEnv *>(id, pEnv));
     return true;
 }
 
-void HwJavaNativeHelper::detachThread() {
+void AlJavaNativeHelper::detachThread() {
     if (!jvm) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::attachThread failed. Please call attach before.");
+        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread failed. Please call attach before.");
         return;
     }
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
         long id = Thread::currentThreadId();
-        Logcat::i("HWVC", "HwJavaNativeHelper::detachThread(%p)", id);
+        Logcat::i("HWVC", "AlJavaNativeHelper::detachThread(%p)", id);
         int status = jvm->DetachCurrentThread();
         if (status < 0) {
-            Logcat::e("HWVC", "HwJavaNativeHelper::detachThread failed.");
+            Logcat::e("HWVC", "AlJavaNativeHelper::detachThread failed.");
         }
         envMap.erase(envMap.find(id));
     } else {
         long id = Thread::currentThreadId();
-        Logcat::i("HWVC", "HwJavaNativeHelper::detachThread(%p) failed", id);
+        Logcat::i("HWVC", "AlJavaNativeHelper::detachThread(%p) failed", id);
     }
 }
 
-bool HwJavaNativeHelper::findEnv(JNIEnv **env) {
+bool AlJavaNativeHelper::findEnv(JNIEnv **env) {
 //    int status = jvm->GetEnv(reinterpret_cast<void **>(env), JNI_VERSION_1_6);
 //    if (status >= 0) {
 //        return true;
@@ -165,7 +145,7 @@ bool HwJavaNativeHelper::findEnv(JNIEnv **env) {
     return true;
 }
 
-bool HwJavaNativeHelper::findJObject(jlong handler, jobject *jObject) {
+bool AlJavaNativeHelper::findJObject(jlong handler, jobject *jObject) {
     auto itr = objMap.find(handler);
     if (objMap.end() == itr) {
         *jObject = nullptr;
@@ -175,7 +155,7 @@ bool HwJavaNativeHelper::findJObject(jlong handler, jobject *jObject) {
     return true;
 }
 
-bool HwJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jmethodID *methodID) {
+bool AlJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jmethodID *methodID) {
     jobject jObject = nullptr;
     JNIEnv *pEnv = nullptr;
     if (!findEnv(&pEnv)) {
@@ -202,7 +182,7 @@ bool HwJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jm
     return true;
 }
 
-bool HwJavaNativeHelper::callMethod(jlong handler, JMethodDescription method, ...) {
+bool AlJavaNativeHelper::callMethod(jlong handler, JMethodDescription method, ...) {
     va_list args;
     jobject jObject;
     JNIEnv *pEnv = nullptr;

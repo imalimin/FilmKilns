@@ -3,6 +3,7 @@ project(al_media LANGUAGES C CXX)
 set(HWVC_PATH ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
+        ${HWVC_PATH}/al_common
         ${HWVC_PATH}/al_common/include
         ${HWVC_PATH}/al_bitmap/include
         ${HWVC_PATH}/al_image/include

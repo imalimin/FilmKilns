@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWJAVANATIVEHELPER_H
-#define HWVC_ANDROID_HWJAVANATIVEHELPER_H
+#ifndef HWVC_ANDROID_ALJAVANATIVEHELPER_H
+#define HWVC_ANDROID_ALJAVANATIVEHELPER_H
 
 #include "Object.h"
 #include <jni.h>
@@ -30,16 +30,16 @@ typedef struct {
  * 4. helper.detachThread on child thread when you exit.
  * 5. Finally, helper.unregisterAnObject.
  */
-class HwJavaNativeHelper : public Object {
+class AlJavaNativeHelper : public Object {
 public:
     static string getClassName(JNIEnv *env, jobject object);
 
     static int getAndroidApi();
 
 public:
-    static HwJavaNativeHelper *getInstance();
+    static AlJavaNativeHelper *getInstance();
 
-    virtual ~HwJavaNativeHelper();
+    virtual ~AlJavaNativeHelper();
 
     void attach(JavaVM *vm);
 
@@ -62,14 +62,14 @@ public:
     bool callMethod(jlong handler, JMethodDescription method, ...);
 
 private:
-    HwJavaNativeHelper();
+    AlJavaNativeHelper();
 
-    HwJavaNativeHelper(const HwJavaNativeHelper &object);
+    AlJavaNativeHelper(const AlJavaNativeHelper &object);
 
-    HwJavaNativeHelper &operator=(const HwJavaNativeHelper &object);
+    AlJavaNativeHelper &operator=(const AlJavaNativeHelper &object);
 
 private:
-    static HwJavaNativeHelper *instance;
+    static AlJavaNativeHelper *instance;
     JavaVM *jvm = nullptr;
     map<jlong, jobject> objMap;
     map<long, JNIEnv *> envMap;
@@ -77,4 +77,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_HWJAVANATIVEHELPER_H
+#endif //HWVC_ANDROID_ALJAVANATIVEHELPER_H

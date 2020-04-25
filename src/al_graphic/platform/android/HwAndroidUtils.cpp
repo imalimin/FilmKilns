@@ -6,7 +6,7 @@
  */
 
 #include "HwAndroidUtils.h"
-#include "Logcat.h"
+#include "AlLogcat.h"
 #include <sys/system_properties.h>
 #include <cstdlib>
 
@@ -15,7 +15,7 @@ int HwAndroidUtils::getAndroidApi() {
     char value[128] = {0};
     int ret = __system_property_get(key.c_str(), value);
     if (ret <= 0) {
-        Logcat::e("HWVC", "HwJavaNativeHelper::getAndroidApi failed.");
+        AlLogI("HwAndroidUtils", "failed.");
         return 0;
     }
     return atoi(value);
