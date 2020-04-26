@@ -2,7 +2,7 @@ package com.lmy.hwvcnative.core
 
 import android.media.MediaCodec
 
-class AlMediaCodec {
+open class AlMediaCodec {
     private var codec: MediaCodec? = null
 
     companion object {

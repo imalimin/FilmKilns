@@ -128,7 +128,7 @@ HwAbsVideoEncoder *AlEncoderBuilder::build() {
         delete encoder;
         return nullptr;
     }
-//    auto *codec = new AlAndroidCodecCompat(AlCodec::H264);
-//    delete codec;
+    auto *codec = new AlAndroidCodecCompat(AlCodec::H264);
+    delete codec;
     return encoder;
 }

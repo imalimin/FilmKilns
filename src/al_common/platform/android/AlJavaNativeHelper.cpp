@@ -167,16 +167,13 @@ bool AlJavaNativeHelper::findStaticMethod(JMethodDescription method, jmethodID *
     string key = method.cls + method.name + method.sign;
     auto itr = sMethodMap.find(key);
     if (sMethodMap.end() == itr) {
-        std::string clsName("L");
-        clsName.append(method.cls);
-        clsName.append(";");
-        AlLogI(TAG, "%s", clsName.c_str());
-        jclass clazz = pEnv->FindClass(clsName.c_str());
+        AlLogI(TAG, "%s", method.cls.c_str());
+        jclass clazz = pEnv->FindClass(method.cls.c_str());
         if (nullptr == clazz) {
-            AlLogE(TAG, "failed for %s", clsName.c_str());
+            AlLogE(TAG, "failed for %s", method.cls.c_str());
             return false;
         }
-        jmethodID id = pEnv->GetMethodID(clazz, method.name.c_str(), method.sign.c_str());
+        jmethodID id = pEnv->GetStaticMethodID(clazz, method.name.c_str(), method.sign.c_str());
         pEnv->DeleteLocalRef(clazz);
         if (!id || pEnv->ExceptionCheck()) {
             *methodID = nullptr;

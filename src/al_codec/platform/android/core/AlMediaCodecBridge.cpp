@@ -10,30 +10,31 @@
 
 #define TAG "AlMediaCodecBridge"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-static JMethodDescription midCreate = {
-        "com/lmy/hwvcnative/core/AlMediaCodec",
-        "create", "()V"};
-
-#ifdef __cplusplus
-}
-#endif
-
 AlMediaCodecBridge::AlMediaCodecBridge() : Object() {
-    jHandler = AlJavaNativeHelper::getInstance()->callStaticObjectMethod(midCreate);
+    JNIEnv *env = nullptr;
+    if (!AlJavaNativeHelper::getInstance()->findEnv(&env)) {
+        AlLogI(TAG, "failed");
+        return;
+    }
+    jclass cls = env->FindClass("com/lmy/hwvcnative/core/AlMediaCodec");
+    if (nullptr == cls) {
+        AlLogI(TAG, "failed");
+        return;
+    }
+    auto mid = env->GetMethodID(cls, "<init>", "()V");
+    if (nullptr == mid) {
+        AlLogI(TAG, "failed");
+        return;
+    }
+    jHandler = env->NewObject(cls, mid);
     if (nullptr == jHandler) {
         AlLogI(TAG, "failed");
         return;
     }
-    JNIEnv *env = nullptr;
-    if (AlJavaNativeHelper::getInstance()->findEnv(&env)) {
-        AlJavaNativeHelper::getInstance()->registerAnObject(env,
-                                                            reinterpret_cast<jlong>(this),
-                                                            jHandler);
-    }
+    AlJavaNativeHelper::getInstance()->registerAnObject(env,
+                                                        reinterpret_cast<jlong>(this),
+                                                        jHandler);
+    env->DeleteLocalRef(cls);
     AlLogI(TAG, "success");
 }
 
