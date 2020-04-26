@@ -12,8 +12,9 @@
 extern "C" {
 #endif
 
-static JMethodDescription vPlayProgressDesc = {"Java_com_lmy_hwvcnative_processor_VideoProcessor",
-                                               "onPlayProgress", "(JJ)V"};
+static JMethodDescription vPlayProgressDesc = {
+        "com/lmy/hwvcnative/processor/VideoProcessor",
+        "onPlayProgress", "(JJ)V"};
 
 static HwVideoProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwVideoProcessor *>(handler);

@@ -14,13 +14,13 @@ extern "C" {
 #endif
 
 static JMethodDescription midOnNativeMessage = {
-        "Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
+        "com/lmy/hwvcnative/processor/AlDisplayRecorder",
         "onNativeMessage", "(II)V"};
 static JMethodDescription midOnRecordProgressDesc = {
-        "Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
+        "com/lmy/hwvcnative/processor/AlDisplayRecorder",
         "onRecordProgress", "(J)V"};
 static JMethodDescription midOnNativePrepared = {
-        "Java_com_lmy_hwvcnative_processor_AlDisplayRecorder",
+        "com/lmy/hwvcnative/processor/AlDisplayRecorder",
         "onNativePrepared", "(I)V"};
 
 static AlDisplayRecorder *getHandler(jlong handler) {

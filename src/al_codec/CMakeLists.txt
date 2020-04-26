@@ -7,6 +7,7 @@ if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
+            ${PROJECT_SOURCE_DIR}/../al_common/
             ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_image/include

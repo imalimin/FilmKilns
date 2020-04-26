@@ -14,8 +14,9 @@ using namespace std;
 extern "C" {
 #endif
 
-static JMethodDescription aPlayProgressDesc = {"Java_com_lmy_hwvcnative_processor_AudioProcessor",
-                                               "onPlayProgress", "(JJ)V"};
+static JMethodDescription aPlayProgressDesc = {
+        "com/lmy/hwvcnative/processor/AudioProcessor",
+        "onPlayProgress", "(JJ)V"};
 
 static HwAudioProcessor *getHandler(jlong handler) {
     return reinterpret_cast<HwAudioProcessor *>(handler);

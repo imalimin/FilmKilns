@@ -13,10 +13,12 @@
 extern "C" {
 #endif
 
-static JMethodDescription mOnSave = {"Java_com_lmy_hwvcnative_processor_AlImageProcessor",
-                                     "onSave", "(ILjava/lang/String;Ljava/lang/String;)V"};
-static JMethodDescription mOnLayerInfo = {"Java_com_lmy_hwvcnative_processor_AlImageProcessor",
-                                          "onLayerInfo", "([I[I[I)V"};
+static JMethodDescription mOnSave = {
+        "com/lmy/hwvcnative/processor/AlImageProcessor",
+        "onSave", "(ILjava/lang/String;Ljava/lang/String;)V"};
+static JMethodDescription mOnLayerInfo = {
+        "com/lmy/hwvcnative/processor/AlImageProcessor",
+        "onLayerInfo", "([I[I[I)V"};
 
 static AlImageProcessor *getHandler(jlong handler) {
     return reinterpret_cast<AlImageProcessor *>(handler);

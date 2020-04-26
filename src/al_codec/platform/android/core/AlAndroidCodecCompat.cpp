@@ -13,7 +13,8 @@ AlAndroidCodecCompat::AlAndroidCodecCompat(int32_t codecId, bool makeNalSelf)
 }
 
 AlAndroidCodecCompat::~AlAndroidCodecCompat() {
-
+    delete bridge;
+    bridge = nullptr;
 }
 
 HwResult AlAndroidCodecCompat::configure(HwBundle &format) {

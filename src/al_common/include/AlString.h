@@ -63,6 +63,8 @@ public:
 
     void clear();
 
+    AlString &replaceAll(const char *oldStr, const char *newStr);
+
 private:
     std::string _str;
 };

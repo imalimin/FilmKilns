@@ -57,9 +57,13 @@ public:
 
     bool findJObject(jlong handler, jobject *jObject);
 
+    bool findStaticMethod(JMethodDescription method, jmethodID *methodID);
+
     bool findMethod(jlong handler, JMethodDescription method, jmethodID *methodID);
 
     bool callMethod(jlong handler, JMethodDescription method, ...);
+
+    jobject callStaticObjectMethod(JMethodDescription method);
 
 private:
     AlJavaNativeHelper();
@@ -74,6 +78,8 @@ private:
     map<jlong, jobject> objMap;
     map<long, JNIEnv *> envMap;
     map<string, jmethodID> methodMap;
+    /// Static method map
+    map<string, jmethodID> sMethodMap;
 };
 
 

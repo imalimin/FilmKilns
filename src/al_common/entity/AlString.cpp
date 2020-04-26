@@ -86,3 +86,14 @@ size_t AlString::length() {
 void AlString::clear() {
     _str.clear();
 }
+
+AlString &AlString::replaceAll(const char *oldStr, const char *newStr) {
+    for (std::string::size_type pos(0); pos != std::string::npos; pos += strlen(newStr)) {
+        pos = _str.find(oldStr, pos);
+        if (pos != std::string::npos)
+            _str.replace(pos, strlen(oldStr), newStr);
+        else
+            break;
+    }
+    return *this;
+}

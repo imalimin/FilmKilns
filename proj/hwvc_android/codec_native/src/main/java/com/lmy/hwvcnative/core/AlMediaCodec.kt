@@ -2,11 +2,11 @@ package com.lmy.hwvcnative.core
 
 import android.media.MediaCodec
 
-class HwMediaCodec {
+class AlMediaCodec {
     private var codec: MediaCodec? = null
 
     companion object {
-        fun create(): HwMediaCodec = HwMediaCodec()
+        fun create(): AlMediaCodec = AlMediaCodec()
     }
 
     fun write(tex: Int, w: Int, h: Int) {

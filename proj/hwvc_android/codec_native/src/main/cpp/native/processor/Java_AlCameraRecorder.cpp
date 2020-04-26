@@ -12,13 +12,14 @@
 extern "C" {
 #endif
 
-static JMethodDescription cOnHandleMessage = {"Java_com_lmy_hwvcnative_processor_AlCameraRecorder",
-                                              "onHandleMessage", "(II)V"};
+static JMethodDescription cOnHandleMessage = {
+        "com/lmy/hwvcnative/processor/AlCameraRecorder",
+        "onHandleMessage", "(II)V"};
 static JMethodDescription vRecordProgressDesc = {
-        "Java_com_lmy_hwvcnative_processor_AlCameraRecorder",
+        "com/lmy/hwvcnative/processor/AlCameraRecorder",
         "onRecordProgress", "(J)V"};
 static JMethodDescription midOnNativePrepared = {
-        "Java_com_lmy_hwvcnative_processor_AlCameraRecorder",
+        "com/lmy/hwvcnative/processor/AlCameraRecorder",
         "onNativePrepared", "(I)V"};
 
 static HwCameraRecorder *getHandler(jlong handler) {

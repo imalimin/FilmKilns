@@ -8,7 +8,10 @@
 #include "AlJavaNativeHelper.h"
 #include "Thread.h"
 #include "StringUtils.h"
+#include "AlString.h"
 #include <sys/system_properties.h>
+
+#define TAG "AlJavaNativeHelper"
 
 string AlJavaNativeHelper::getClassName(JNIEnv *env, jobject object) {
     jclass cls = env->FindClass("java/lang/Class");
@@ -155,6 +158,39 @@ bool AlJavaNativeHelper::findJObject(jlong handler, jobject *jObject) {
     return true;
 }
 
+bool AlJavaNativeHelper::findStaticMethod(JMethodDescription method, jmethodID *methodID) {
+    JNIEnv *pEnv = nullptr;
+    if (!findEnv(&pEnv)) {
+        AlLogE(TAG, "failed");
+        return false;
+    }
+    string key = method.cls + method.name + method.sign;
+    auto itr = sMethodMap.find(key);
+    if (sMethodMap.end() == itr) {
+        std::string clsName("L");
+        clsName.append(method.cls);
+        clsName.append(";");
+        AlLogI(TAG, "%s", clsName.c_str());
+        jclass clazz = pEnv->FindClass(clsName.c_str());
+        if (nullptr == clazz) {
+            AlLogE(TAG, "failed for %s", clsName.c_str());
+            return false;
+        }
+        jmethodID id = pEnv->GetMethodID(clazz, method.name.c_str(), method.sign.c_str());
+        pEnv->DeleteLocalRef(clazz);
+        if (!id || pEnv->ExceptionCheck()) {
+            *methodID = nullptr;
+            AlLogE(TAG, "failed");
+            return false;
+        }
+        *methodID = id;
+        sMethodMap.insert(pair<string, jmethodID>(key, *methodID));
+    } else {
+        *methodID = itr->second;
+    }
+    return true;
+}
+
 bool AlJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jmethodID *methodID) {
     jobject jObject = nullptr;
     JNIEnv *pEnv = nullptr;
@@ -195,4 +231,28 @@ bool AlJavaNativeHelper::callMethod(jlong handler, JMethodDescription method, ..
     }
     va_end(args);
     return true;
+}
+
+jobject AlJavaNativeHelper::callStaticObjectMethod(JMethodDescription method) {
+    JNIEnv *pEnv = nullptr;
+    jmethodID methodID = nullptr;
+    std::string clsName("L");
+    clsName.append(method.cls);
+    clsName.append(";");
+    if (findEnv(&pEnv) &&
+        findStaticMethod(method, &methodID)) {
+        jclass clazz = pEnv->FindClass(clsName.c_str());
+        if (nullptr == clazz) {
+            AlLogE(TAG, "failed");
+            return nullptr;
+        }
+        auto obj = pEnv->CallStaticObjectMethod(clazz, methodID);
+        if (pEnv->ExceptionCheck()) {
+            AlLogE(TAG, "failed");
+            return nullptr;
+        }
+        return obj;
+    }
+    AlLogE(TAG, "failed");
+    return nullptr;
 }
