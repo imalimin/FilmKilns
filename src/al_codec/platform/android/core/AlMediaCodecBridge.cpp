@@ -16,7 +16,7 @@ AlMediaCodecBridge::AlMediaCodecBridge() : Object() {
         AlLogI(TAG, "failed");
         return;
     }
-    jclass cls = env->FindClass("com/lmy/hwvcnative/core/AlMediaCodec");
+    jclass cls = AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodec");
     if (nullptr == cls) {
         AlLogI(TAG, "failed");
         return;
@@ -27,6 +27,8 @@ AlMediaCodecBridge::AlMediaCodecBridge() : Object() {
         return;
     }
     jHandler = env->NewObject(cls, mid);
+    env->ExceptionCheck();
+    env->ExceptionClear();
     if (nullptr == jHandler) {
         AlLogI(TAG, "failed");
         return;
@@ -34,7 +36,6 @@ AlMediaCodecBridge::AlMediaCodecBridge() : Object() {
     AlJavaNativeHelper::getInstance()->registerAnObject(env,
                                                         reinterpret_cast<jlong>(this),
                                                         jHandler);
-    env->DeleteLocalRef(cls);
     AlLogI(TAG, "success");
 }
 

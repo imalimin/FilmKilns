@@ -29,7 +29,7 @@ int AlJavaNativeHelper::getAndroidApi() {
     char value[128] = {0};
     int ret = __system_property_get(key.c_str(), value);
     if (ret <= 0) {
-        Logcat::e("HWVC", "AlJavaNativeHelper::getAndroidApi failed.");
+        AlLogE(TAG, "failed.");
         return 0;
     }
     return atoi(value);
@@ -60,31 +60,66 @@ AlJavaNativeHelper &AlJavaNativeHelper::operator=(const AlJavaNativeHelper &obje
 
 void AlJavaNativeHelper::attach(JavaVM *vm) {
     this->jvm = vm;
-    Logcat::i("HWVC", "AlJavaNativeHelper::attach");
+    AlLogI(TAG, "success.");
 }
 
 void AlJavaNativeHelper::detach() {
-    Logcat::i("HWVC", "AlJavaNativeHelper::detach");
-    if (!objMap.empty()) {
-        Logcat::e("HWVC", "AlJavaNativeHelper::detach. %d jobject leak.", objMap.size());
-        objMap.clear();
+    JNIEnv *env = nullptr;
+    jvm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6);
+    this->jvm = nullptr;
+    if (nullptr == env) {
+        AlLogE(TAG, "failed.");
+        return;
     }
+    for (auto &itr : objMap) {
+        AlLogI(TAG, "%d jobject leak. Release now.", objMap.size());
+        env->DeleteGlobalRef(itr.second);
+    }
+    objMap.clear();
+    methodMap.clear();
+    sMethodMap.clear();
+    for (auto &itr : mClassMap) {
+        AlLogI(TAG, "%d jclass leak. Release now.", mClassMap.size());
+        env->DeleteGlobalRef(itr.second);
+    }
+    mClassMap.clear();
     if (!envMap.empty()) {
-        Logcat::e("HWVC", "AlJavaNativeHelper::detach. %d JNIEnv leak.", objMap.size());
+        AlLogI(TAG, "%d JNIEnv leak. Release now.", envMap.size());
         envMap.clear();
     }
-    this->jvm = nullptr;
+}
+
+jclass AlJavaNativeHelper::registerAnClass(const char *name) {
+    auto itr = mClassMap.find(name);
+    if (mClassMap.end() != itr) {
+        AlLogW(TAG, "Repeat register.");
+        return itr->second;
+    }
+    JNIEnv *env = nullptr;
+    jvm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6);
+    if (nullptr == env) {
+        AlLogE(TAG, "failed.");
+        return nullptr;
+    }
+    auto cls = env->FindClass(name);
+    if (nullptr == cls) {
+        AlLogE(TAG, "failed.");
+        return nullptr;
+    }
+    mClassMap.insert(pair<std::string, jclass>(name,
+            reinterpret_cast<jclass>(env->NewGlobalRef(cls))));
+    return cls;
 }
 
 void AlJavaNativeHelper::registerAnObject(JNIEnv *env, jlong handler, jobject jHandler) {
-    Logcat::i("HWVC", "AlJavaNativeHelper::registerAnObject(%p, %p)", handler, jHandler);
+    AlLogI(TAG, "%p, %p", handler, jHandler);
     if (objMap.end() == objMap.find(handler)) {
         objMap.insert(pair<jlong, jobject>(handler, env->NewGlobalRef(jHandler)));
     }
 }
 
 void AlJavaNativeHelper::unregisterAnObject(JNIEnv *env, jlong handler) {
-    Logcat::i("HWVC", "AlJavaNativeHelper::unregisterAnObject(%p)", handler);
+    AlLogI(TAG, "%p", handler);
     auto itr = objMap.find(handler);
     if (objMap.end() != itr) {
         env->DeleteGlobalRef(itr->second);
@@ -94,43 +129,43 @@ void AlJavaNativeHelper::unregisterAnObject(JNIEnv *env, jlong handler) {
 
 bool AlJavaNativeHelper::attachThread() {
     if (!jvm) {
-        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread failed. Please call attach before.");
+        AlLogE(TAG, "failed. Please call attach before.");
         return false;
     }
     long id = Thread::currentThreadId();
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
-        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread(%p) failed. Do not attach repeat.", id);
+        AlLogE(TAG, "%p failed. Do not attach repeat.", id);
         return false;
     }
 //    int status = jvm->GetEnv(reinterpret_cast<void **>(&pEnv), JNI_VERSION_1_6);
     int status = jvm->AttachCurrentThread(&pEnv, NULL);
     if (status < 0) {
-        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread failed.");
+        AlLogE(TAG, "failed.");
         return false;
     }
-    Logcat::i("HWVC", "AlJavaNativeHelper::attachThread(%p, %p)", id, pEnv);
+    AlLogI(TAG, "%p, %p", id, pEnv);
     envMap.insert(pair<long, JNIEnv *>(id, pEnv));
     return true;
 }
 
 void AlJavaNativeHelper::detachThread() {
     if (!jvm) {
-        Logcat::e("HWVC", "AlJavaNativeHelper::attachThread failed. Please call attach before.");
+        AlLogE(TAG, "failed. Please call attach before.");
         return;
     }
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
         long id = Thread::currentThreadId();
-        Logcat::i("HWVC", "AlJavaNativeHelper::detachThread(%p)", id);
+        AlLogI(TAG, "%p", id);
         int status = jvm->DetachCurrentThread();
         if (status < 0) {
-            Logcat::e("HWVC", "AlJavaNativeHelper::detachThread failed.");
+            AlLogE(TAG, "failed.");
         }
         envMap.erase(envMap.find(id));
     } else {
         long id = Thread::currentThreadId();
-        Logcat::i("HWVC", "AlJavaNativeHelper::detachThread(%p) failed", id);
+        AlLogI(TAG, "%p failed", id);
     }
 }
 
@@ -168,13 +203,12 @@ bool AlJavaNativeHelper::findStaticMethod(JMethodDescription method, jmethodID *
     auto itr = sMethodMap.find(key);
     if (sMethodMap.end() == itr) {
         AlLogI(TAG, "%s", method.cls.c_str());
-        jclass clazz = pEnv->FindClass(method.cls.c_str());
+        jclass clazz = registerAnClass(method.cls.c_str());
         if (nullptr == clazz) {
             AlLogE(TAG, "failed for %s", method.cls.c_str());
             return false;
         }
         jmethodID id = pEnv->GetStaticMethodID(clazz, method.name.c_str(), method.sign.c_str());
-        pEnv->DeleteLocalRef(clazz);
         if (!id || pEnv->ExceptionCheck()) {
             *methodID = nullptr;
             AlLogE(TAG, "failed");
@@ -213,43 +247,4 @@ bool AlJavaNativeHelper::findMethod(jlong handler, JMethodDescription method, jm
         *methodID = itr->second;
     }
     return true;
-}
-
-bool AlJavaNativeHelper::callMethod(jlong handler, JMethodDescription method, ...) {
-    va_list args;
-    jobject jObject;
-    JNIEnv *pEnv = nullptr;
-    jmethodID methodID = nullptr;
-    if (findEnv(&pEnv) &&
-        findJObject(handler, &jObject) &&
-        findMethod(handler, method, &methodID)) {
-        va_start(args, methodID);
-        pEnv->CallVoidMethod(jObject, methodID, args);
-    }
-    va_end(args);
-    return true;
-}
-
-jobject AlJavaNativeHelper::callStaticObjectMethod(JMethodDescription method) {
-    JNIEnv *pEnv = nullptr;
-    jmethodID methodID = nullptr;
-    std::string clsName("L");
-    clsName.append(method.cls);
-    clsName.append(";");
-    if (findEnv(&pEnv) &&
-        findStaticMethod(method, &methodID)) {
-        jclass clazz = pEnv->FindClass(clsName.c_str());
-        if (nullptr == clazz) {
-            AlLogE(TAG, "failed");
-            return nullptr;
-        }
-        auto obj = pEnv->CallStaticObjectMethod(clazz, methodID);
-        if (pEnv->ExceptionCheck()) {
-            AlLogE(TAG, "failed");
-            return nullptr;
-        }
-        return obj;
-    }
-    AlLogE(TAG, "failed");
-    return nullptr;
 }

@@ -45,6 +45,8 @@ public:
 
     void detach();
 
+    jclass registerAnClass(const char *name);
+
     void registerAnObject(JNIEnv *env, jlong handler, jobject jHandler);
 
     void unregisterAnObject(JNIEnv *env, jlong handler);
@@ -61,10 +63,6 @@ public:
 
     bool findMethod(jlong handler, JMethodDescription method, jmethodID *methodID);
 
-    bool callMethod(jlong handler, JMethodDescription method, ...);
-
-    jobject callStaticObjectMethod(JMethodDescription method);
-
 private:
     AlJavaNativeHelper();
 
@@ -75,11 +73,16 @@ private:
 private:
     static AlJavaNativeHelper *instance;
     JavaVM *jvm = nullptr;
+    /// Obj map
     map<jlong, jobject> objMap;
+    /// Env pointer map
     map<long, JNIEnv *> envMap;
+    /// Method map
     map<string, jmethodID> methodMap;
     /// Static method map
     map<string, jmethodID> sMethodMap;
+    /// Class map
+    map<string, jclass> mClassMap;
 };
 
 
