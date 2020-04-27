@@ -75,6 +75,7 @@ public:
 
 al_class(AlCodec) {
 public:
+    static constexpr int NONE = AV_CODEC_ID_NONE;
     static constexpr int H264 = AV_CODEC_ID_H264;
     static constexpr int AAC = AV_CODEC_ID_AAC;
 };

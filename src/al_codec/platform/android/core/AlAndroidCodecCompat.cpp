@@ -9,7 +9,7 @@
 
 AlAndroidCodecCompat::AlAndroidCodecCompat(int32_t codecId, bool makeNalSelf)
         : HwAbsCodec(codecId) {
-    bridge = new AlMediaCodecBridge();
+    bridge = new AlMediaCodecBridge(codecId, makeNalSelf);
 }
 
 AlAndroidCodecCompat::~AlAndroidCodecCompat() {
