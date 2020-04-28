@@ -30,6 +30,7 @@ build() {
     -DCMAKE_BUILD_TYPE="Release" \
     -DANDROID_PLATFORM="android-14" \
     -DANDROID_TOOLCHAIN="clang" \
+    -DPNG_ARM_NEON_OPT="2" \
     -DPNG_STATIC="ON" \
     -DPNG_SHARED="OFF"
 

@@ -15,6 +15,7 @@ extern "C" {
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     AlJavaNativeHelper::getInstance()->attach(vm);
     AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodec");
+    AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodecKt");
     FFUtils::attachJvm(vm);
     AlLogI("JNILoader", "AndroidApi: %d", AlJavaNativeHelper::getAndroidApi());
     return JNI_VERSION_1_6;

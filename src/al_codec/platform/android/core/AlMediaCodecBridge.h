@@ -15,45 +15,68 @@
 
 al_class(AlMediaCodecBridge) {
 public:
-    AlMediaCodecBridge(int32_t codecId, bool makeNalSelf = false);
+    al_class(Info) {
+    public:
+        Info();
+
+        ~Info();
+
+    public:
+        int offset = 0;
+        int size = 0;
+        long presentationTimeUs = 0;
+        int flags = 0;
+    };
+
+public:
+    AlMediaCodecBridge(std::string mime);
 
     ~AlMediaCodecBridge();
 
     HwResult configure(int w, int h, int bitrate, int format, int iFrameInterval, int fps);
 
-    HwBuffer *getExtraBuffer(std::string key);
+    HwResult start();
 
-    void flush();
+    HwResult stop();
+
+    HwResult flush();
 
     void release();
 
-    bool start();
+    int dequeueInputBuffer(long timeoutUs);
 
-    HwResult process(AlBuffer *buf, int64_t pts);
+    HwResult queueInputBuffer(int index, int offset, int size, long presentationTimeUs, int flags);
 
-    int32_t type();
+    AlBuffer *getInputBuffer(int index);
 
-    HwBuffer *getBuffer();
+    int dequeueOutputBuffer(AlMediaCodecBridge::Info &info, long timeoutUs);
 
-    void getBufferInfo(size_t &size, int64_t &presentationTimeUs, bool &keyFrame);
+    AlBuffer *getOutputBuffer(int index);
+
+    HwResult releaseOutputBuffer(int index, bool render);
+
+    AlBuffer *getOutputFormatBuffer(std::string name);
+
+    int getOutputFormatInteger(std::string name);
 
 private:
     jobject jHandler = nullptr;
-    int32_t codecId = AlCodec::NONE;
-    bool makeNalSelf = false;
-    HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
 
 private:
     static const JMethodDescription midInit;
     static const JMethodDescription midConfigure;
-    static const JMethodDescription midGetExtraBuffer;
+    static const JMethodDescription midStart;
+    static const JMethodDescription midStop;
     static const JMethodDescription midFlush;
     static const JMethodDescription midRelease;
-    static const JMethodDescription midStart;
-    static const JMethodDescription midProcess;
-    static const JMethodDescription midType;
-    static const JMethodDescription midGetBuffer;
-    static const JMethodDescription midGetBufferInfo;
+    static const JMethodDescription midDeqInput;
+    static const JMethodDescription midQueInput;
+    static const JMethodDescription midGetInput;
+    static const JMethodDescription midDeqOutput;
+    static const JMethodDescription midGetOutput;
+    static const JMethodDescription midReleaseOutput;
+    static const JMethodDescription midGetOutFmtBuf;
+    static const JMethodDescription midGetOutFmtInt;
 };
 
 

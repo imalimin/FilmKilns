@@ -11,7 +11,7 @@
 #include "HwVideoFrame.h"
 #include "libyuv.h"
 
-const int32_t HwAndroidCodec::HW_ANDROID_AVC = AV_CODEC_ID_H264;
+const int32_t HwAndroidCodec::HW_ANDROID_AVC = AlCodec::H264;
 
 HwAbsCodec *HwAndroidCodec::createDecoder(int32_t codecId) {
     HwAndroidCodec *c = new HwAndroidCodec(codecId);
@@ -248,6 +248,7 @@ HwResult HwAndroidCodec::push(uint8_t *data, size_t size, int64_t pts) {
                                                          pts, 0);
     if (media_status_t::AMEDIA_OK != result) {
         Logcat::e("HWVC", "HwAndroidCodec::push queue input buffer failed(%d)", result);
+        return Hw::FAILED;
     }
     Logcat::e("HWVC", "HwAndroidCodec::push failed bufIdx = %d", bufIdx);
     return Hw::SUCCESS;
