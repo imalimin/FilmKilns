@@ -33,8 +33,11 @@ public:
     virtual void flush() override;
 
 private:
+    static constexpr int COLOR_FormatYUV420Flexible = 0x7F420888;
     AlMediaCodecBridge *bridge = nullptr;
     bool makeNalSelf = false;
+    int32_t fps = 25;
+    HwPacket *packet = nullptr;
 };
 
 

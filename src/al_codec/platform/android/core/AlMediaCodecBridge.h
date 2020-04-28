@@ -31,6 +31,12 @@ public:
 
     HwResult process(AlBuffer *buf, int64_t pts);
 
+    int32_t type();
+
+    HwBuffer *getBuffer();
+
+    void getBufferInfo(size_t &size, int64_t &presentationTimeUs, bool &keyFrame);
+
 private:
     jobject jHandler = nullptr;
     int32_t codecId = AlCodec::NONE;
@@ -38,36 +44,16 @@ private:
     HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
 
 private:
-    static JMethodDescription midInit = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "<init>", "(IZZ)V"};
-    static JMethodDescription midConfigure = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "configure", "(IIIIII)Z"};
-    static JMethodDescription midGetExtraBuffer = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "getExtraBuffer", "(Ljava/lang/String;)Ljava/nio/ByteBuffer;"};
-    static JMethodDescription midFlush = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "flush", "()V"};
-    static JMethodDescription midRelease = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "release", "()V"};
-    static JMethodDescription midStart = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "start", "()Z"};
-    static JMethodDescription midProcess = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "process", "([BJ)I"};
-    static JMethodDescription midType = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "type", "()I"};
-    static JMethodDescription midGetBuffer = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "getBuffer", "()[B"};
-    static JMethodDescription midGetBufferInfo = {
-            "com/lmy/hwvcnative/core/AlMediaCodec",
-            "getBufferInfo", "()[J"};
+    static const JMethodDescription midInit;
+    static const JMethodDescription midConfigure;
+    static const JMethodDescription midGetExtraBuffer;
+    static const JMethodDescription midFlush;
+    static const JMethodDescription midRelease;
+    static const JMethodDescription midStart;
+    static const JMethodDescription midProcess;
+    static const JMethodDescription midType;
+    static const JMethodDescription midGetBuffer;
+    static const JMethodDescription midGetBufferInfo;
 };
 
 

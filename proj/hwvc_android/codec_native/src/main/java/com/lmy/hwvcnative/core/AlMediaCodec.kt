@@ -17,6 +17,7 @@ open class AlMediaCodec(
     private var codec: MediaCodec? = null
     private var buffers = arrayOfNulls<ByteBuffer?>(4)
     private lateinit var packet: ByteArray
+    private lateinit var pktBuf: ByteBuffer
     private val bufInfo = MediaCodec.BufferInfo()
 
     fun configure(
@@ -46,12 +47,33 @@ open class AlMediaCodec(
             codec?.start()
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.i(TAG, "configure failed.")
             return false
         }
         if (null == codec) {
+            Log.i(TAG, "configure failed.")
             return false
         }
         packet = ByteArray(w * h * 3 / 2)
+        pktBuf = ByteBuffer.allocateDirect(packet.size)
+
+        if (makeNalSelf) {
+            if (0 != push(packet, 0)) {
+                Log.i(TAG, "configure failed.")
+                return false
+            }
+            for (i in 0..59) {
+                pop(5000)
+                if (null != buffers[0] && null != buffers[1]) {
+                    break
+                }
+            }
+            if (null == buffers[0] || null == buffers[1]) {
+                Log.i(TAG, "configure failed.")
+                return false
+            }
+
+        }
         return true
     }
 
@@ -79,13 +101,19 @@ open class AlMediaCodec(
         return true
     }
 
-    fun process(data: ByteArray?, pts: Long): Int {
+    fun process(buf: ByteBuffer?, pts: Long): Int {
+        if (null == buf) {
+            return -1
+        }
+        buf.rewind()
+        val data = ByteArray(buf.remaining())
+        buf.get(data)
         var ret = push(data, pts)
         if (0 != ret) {
             Log.e(TAG, "HwAndroidCodec::process push failed.")
         }
         ret = pop(2000)
-        if (0 != ret) {
+        if (0 == ret) {
 //            if (encodeMode) {
 //                *pkt = hwPacket;
 //            } else {
@@ -179,11 +207,12 @@ open class AlMediaCodec(
             } else {
                 if (encodeMode) {
                     memcpy(packet, info.size)
-                    buf.rewind()
                     buf.get(packet, 4, info.size)
-                    bufInfo.size = info.size
+                    bufInfo.size = info.size + 4
                     bufInfo.flags = info.flags
                     bufInfo.presentationTimeUs = info.presentationTimeUs
+                    pktBuf.clear()
+                    pktBuf.put(packet, 0, bufInfo.size)
                 }
                 wrote = true
             }
@@ -193,8 +222,8 @@ open class AlMediaCodec(
         return if (wrote) 0 else -1
     }
 
-    fun getBuffer(): ByteArray {
-        return packet
+    fun getBuffer(): ByteBuffer {
+        return pktBuf
     }
 
     fun getBufferInfo(): LongArray {

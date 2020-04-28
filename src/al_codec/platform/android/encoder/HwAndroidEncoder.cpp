@@ -8,6 +8,7 @@
 #include "HwAndroidEncoder.h"
 #include "Logcat.h"
 #include "../core/HwAndroidCodec.h"
+#include "../core/AlAndroidCodecCompat.h"
 #include "HwFFMuxer.h"
 #include "HwFFCodec.h"
 #include "TimeUtils.h"
@@ -43,7 +44,7 @@ bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleForma
 }
 
 bool HwAndroidEncoder::configure() {
-    vCodec = new HwAndroidCodec(HwAndroidCodec::HW_ANDROID_AVC);
+    vCodec = new AlAndroidCodecCompat(HwAndroidCodec::HW_ANDROID_AVC);
     const int32_t fps = 30;
     HwBundle format;
     format.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
