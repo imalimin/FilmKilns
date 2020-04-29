@@ -35,6 +35,8 @@ public:
      */
     static AlLooper *myLooper();
 
+    static int64_t myLooperId();
+
     static void exit();
 
     void sendMessage(AlMessage *msg);

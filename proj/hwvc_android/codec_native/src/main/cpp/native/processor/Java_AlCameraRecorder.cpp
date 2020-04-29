@@ -92,6 +92,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_postEv
                         pEnv->CallVoidMethod(jObject, methodID, w, 0);
                 }
                 pEnv->ExceptionCheck();
+                pEnv->ExceptionClear();
             }
         });
     }

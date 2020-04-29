@@ -108,10 +108,11 @@ HwResult AlMediaCodecBridge::configure(int w, int h,
     AlLogI(TAG, "enter.");
     JNIEnv *env = nullptr;
     jmethodID mid = nullptr;
-    if (AlJavaNativeHelper::getInstance()->findEnv(&env) &&
-        AlJavaNativeHelper::getInstance()->findMethod(reinterpret_cast<jlong>(this),
-                                                      midConfigure,
-                                                      &mid)) {
+    bool ret0 = AlJavaNativeHelper::getInstance()->findEnv(&env);
+    bool ret1 = AlJavaNativeHelper::getInstance()->findMethod(reinterpret_cast<jlong>(this),
+                                                              midConfigure,
+                                                              &mid);
+    if (ret0 && ret1) {
         int ret = env->CallIntMethod(jHandler, mid, w, h, bitrate, format, iFrameInterval, fps);
         env->ExceptionCheck();
         env->ExceptionClear();
@@ -333,7 +334,7 @@ int AlMediaCodecBridge::getOutputFormatInteger(std::string name) {
     jmethodID mid = nullptr;
     if (AlJavaNativeHelper::getInstance()->findEnv(&env) &&
         AlJavaNativeHelper::getInstance()->findMethod(reinterpret_cast<jlong>(this),
-                                                      midGetOutFmtBuf,
+                                                      midGetOutFmtInt,
                                                       &mid)) {
         const char *str = name.c_str();
         jstring jstr = env->NewStringUTF(str);

@@ -29,6 +29,10 @@ AlLooper *AlLooper::myLooper() {
     return looper;
 }
 
+int64_t AlLooper::myLooperId() {
+    return reinterpret_cast<int64_t>(myLooper());
+}
+
 void AlLooper::loop() {
     myLooper()->_loop();
 }

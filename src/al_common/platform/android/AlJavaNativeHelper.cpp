@@ -10,6 +10,7 @@
 #include "StringUtils.h"
 #include "AlString.h"
 #include <sys/system_properties.h>
+#include <assert.h>
 
 #define TAG "AlJavaNativeHelper"
 
@@ -107,12 +108,13 @@ jclass AlJavaNativeHelper::registerAnClass(const char *name) {
         return nullptr;
     }
     mClassMap.insert(pair<std::string, jclass>(name,
-            reinterpret_cast<jclass>(env->NewGlobalRef(cls))));
+                                               reinterpret_cast<jclass>(env->NewGlobalRef(cls))));
     return cls;
 }
 
 void AlJavaNativeHelper::registerAnObject(JNIEnv *env, jlong handler, jobject jHandler) {
     AlLogI(TAG, "%p, %p", handler, jHandler);
+    assert(0 != handler);
     if (objMap.end() == objMap.find(handler)) {
         objMap.insert(pair<jlong, jobject>(handler, env->NewGlobalRef(jHandler)));
     }
