@@ -22,6 +22,10 @@ class cls : public parent \
 class cls : public Object \
 
 
+#define al_def_class(cls) al_class(cls)
+
+#define al_def_class_ex(cls, parent) al_class_ex(cls, parent)
+
 template<class T>
 class AlSPointer;
 

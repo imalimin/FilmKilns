@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "HwAbsCodec.h"
 #include "AlBuffer.h"
-#include "platform/android/AlJavaNativeHelper.h"
+#include "platform/android/AlJNIEnv.h"
 
 al_class(AlMediaCodecBridge) {
 public:
@@ -29,7 +29,7 @@ public:
     };
 
 public:
-    AlMediaCodecBridge(std::string mime);
+    AlMediaCodecBridge(const std::string &mime);
 
     ~AlMediaCodecBridge();
 
@@ -60,23 +60,20 @@ public:
     int getOutputFormatInteger(std::string name);
 
 private:
-    jobject jHandler = nullptr;
-
-private:
-    static const JMethodDescription midInit;
-    static const JMethodDescription midConfigure;
-    static const JMethodDescription midStart;
-    static const JMethodDescription midStop;
-    static const JMethodDescription midFlush;
-    static const JMethodDescription midRelease;
-    static const JMethodDescription midDeqInput;
-    static const JMethodDescription midQueInput;
-    static const JMethodDescription midGetInput;
-    static const JMethodDescription midDeqOutput;
-    static const JMethodDescription midGetOutput;
-    static const JMethodDescription midReleaseOutput;
-    static const JMethodDescription midGetOutFmtBuf;
-    static const JMethodDescription midGetOutFmtInt;
+    static const AlJNIObject::Method midInit;
+    static const AlJNIObject::Method midConfigure;
+    static const AlJNIObject::Method midStart;
+    static const AlJNIObject::Method midStop;
+    static const AlJNIObject::Method midFlush;
+    static const AlJNIObject::Method midRelease;
+    static const AlJNIObject::Method midDeqInput;
+    static const AlJNIObject::Method midQueInput;
+    static const AlJNIObject::Method midGetInput;
+    static const AlJNIObject::Method midDeqOutput;
+    static const AlJNIObject::Method midGetOutput;
+    static const AlJNIObject::Method midReleaseOutput;
+    static const AlJNIObject::Method midGetOutFmtBuf;
+    static const AlJNIObject::Method midGetOutFmtInt;
 };
 
 

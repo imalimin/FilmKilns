@@ -10,7 +10,7 @@
 #include "StringUtils.h"
 #include "AlString.h"
 #include <sys/system_properties.h>
-#include <assert.h>
+#include <cassert>
 
 #define TAG "AlJavaNativeHelper"
 

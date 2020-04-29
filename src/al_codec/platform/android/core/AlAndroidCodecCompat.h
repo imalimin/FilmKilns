@@ -13,7 +13,7 @@
 
 al_class_ex(AlAndroidCodecCompat, HwAbsCodec) {
 public:
-    AlAndroidCodecCompat(int32_t codecId, bool makeNalSelf = false);
+    AlAndroidCodecCompat(int32_t codecId);
 
     virtual ~AlAndroidCodecCompat();
 
@@ -33,6 +33,8 @@ public:
     virtual void flush() override;
 
 private:
+    AlAndroidCodecCompat(int32_t codecId, bool makeNalSelf);
+
     void release();
 
     HwResult push(uint8_t *data, size_t size, int64_t pts);

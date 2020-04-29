@@ -6,6 +6,7 @@
 */
 
 #include "platform/android/AlJavaNativeHelper.h"
+#include "platform/android/AlJNIEnv.h"
 #include "FFUtils.h"
 
 #ifdef __cplusplus
@@ -13,6 +14,9 @@ extern "C" {
 #endif
 
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+    AlJNIEnv::getInstance().attach(vm);
+    AlJNIEnv::getInstance().registerAnClass("com/lmy/hwvcnative/core/AlMediaCodec");
+    AlJNIEnv::getInstance().registerAnClass("com/lmy/hwvcnative/core/AlMediaCodecKt");
     AlJavaNativeHelper::getInstance()->attach(vm);
     AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodec");
     AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodecKt");
@@ -23,6 +27,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
     AlJavaNativeHelper::getInstance()->detach();
+    AlJNIEnv::getInstance().detach();
 }
 
 #ifdef __cplusplus

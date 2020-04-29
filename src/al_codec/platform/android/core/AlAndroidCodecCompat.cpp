@@ -12,6 +12,10 @@
 
 #define TAG "AlAndroidCodecCompat"
 
+AlAndroidCodecCompat::AlAndroidCodecCompat(int32_t codecId)
+        : AlAndroidCodecCompat(codecId, false) {
+}
+
 AlAndroidCodecCompat::AlAndroidCodecCompat(int32_t codecId, bool makeNalSelf)
         : HwAbsCodec(codecId),
           makeNalSelf(makeNalSelf) {
