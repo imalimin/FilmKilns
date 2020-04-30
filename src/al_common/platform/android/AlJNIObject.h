@@ -14,6 +14,60 @@
 #include <map>
 #include <vector>
 
+#define al_jni_call_void(o, m, args...)                       \
+jmethodID mid;                                                \
+if (o->findMid(m, &mid)) {                                    \
+    o->getEnv()->CallVoidMethod(o->getObject(), mid, ##args); \
+    o->getEnv()->ExceptionCheck();                            \
+    o->getEnv()->ExceptionClear();                            \
+}                                                             \
+
+#define al_jni_call_int(o, m, name, args...) \
+jmethodID mid;                                                      \
+jint name = -1;                                                     \
+if (o->findMid(m, &mid)) {                                          \
+    name = o->getEnv()->CallIntMethod(o->getObject(), mid, ##args); \
+    o->getEnv()->ExceptionCheck();                                  \
+    o->getEnv()->ExceptionClear();                                  \
+}                                                                   \
+
+#define al_jni_call_object(o, m, name, args...) \
+jmethodID mid; \
+jobject name = nullptr; \
+if (o->findMid(m, &mid)) { \
+    name = o->getEnv()->CallObjectMethod(o->getObject(), mid, ##args); \
+    o->getEnv()->ExceptionCheck(); \
+    o->getEnv()->ExceptionClear(); \
+} \
+
+#define al_jni_call_buffer(o, m, name, args...) \
+al_jni_call_object(o, m, o_##name, ##args) \
+AlBuffer *name = nullptr; \
+if (o_##name) { \
+    jlong capacity = o->getEnv()->GetDirectBufferCapacity(o_##name); \
+    void *buf = o->getEnv()->GetDirectBufferAddress(o_##name); \
+    if (nullptr == buf || 0 == capacity) { \
+        name = AlBuffer::wrap(static_cast<uint8_t *>(buf), static_cast<size_t>(capacity));\
+    } \
+} \
+
+
+#define al_jni_call_long_array(o, m, name, args...) \
+al_jni_call_object(o, m, o_##name, ##args) \
+std::vector<long> name; \
+if (o_##name) { \
+    jlongArray jArray = (jlongArray)o_##name;\
+    jsize len = o->getEnv()->GetArrayLength(jArray);\
+    jlong *array = o->getEnv()->GetLongArrayElements(jArray, 0);\
+    for (int i = 0; i < len; ++i) {\
+        name.emplace_back(array[i]);\
+    }\
+    o->getEnv()->ReleaseLongArrayElements(jArray, array, 0);\
+}\
+
+#define al_jni_call_test(name) \
+jobject o_##name; \
+
 class AlJNIObjCollection;
 
 al_def_class(AlJNIObject) {
@@ -34,15 +88,9 @@ public:
 
     bool findMid(const Method &m, jmethodID *mid);
 
-    int callIntMethod(const Method &m, ...);
+    JNIEnv *getEnv();
 
-    void callVoidMethod(const Method &m, ...);
-
-    jobject callObjectMethod(const Method &m, ...);
-
-    AlBuffer *callBufferMethod(const Method &m, ...);
-
-    std::vector<long> callLongArrayMethod(const Method &m, ...);
+    jobject getObject();
 
 private:
     JNIEnv *env = nullptr;

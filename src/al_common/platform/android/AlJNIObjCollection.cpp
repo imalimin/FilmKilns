@@ -14,15 +14,18 @@ AlJNIObjCollection::AlJNIObjCollection() : Object() {
 
 }
 
-AlJNIObjCollection::~AlJNIObjCollection() = default;
+AlJNIObjCollection::~AlJNIObjCollection() {
+    AlLogI(TAG, "left %d.", map.size());
+}
 
-bool AlJNIObjCollection::attach(JNIEnv *env, Object *o, jobject j) {
+bool AlJNIObjCollection::attach(JNIEnv *env, Object *o, jobject j, bool reqGlobalRef) {
     auto itr = map.find(o);
     if (map.end() != itr) {
         AlLogI(TAG, "failed. Attach repeat.");
         return false;
     }
-    map.insert(std::pair<Object *, AlJNIObject>(o, AlJNIObject(env, env->NewGlobalRef(j))));
+    jobject obj = reqGlobalRef ? env->NewGlobalRef(j) : j;
+    map.insert({o, new AlJNIObject(env, obj)});
     return true;
 }
 
@@ -32,7 +35,8 @@ void AlJNIObjCollection::detach(JNIEnv *env, Object *o) {
         AlLogI(TAG, "failed. Attach first pls.");
     }
     auto tmp = itr->second;
-    env->DeleteGlobalRef(tmp.o);
+    env->DeleteGlobalRef(tmp->o);
+    delete tmp;
     map.erase(itr);
 }
 
@@ -42,8 +46,7 @@ bool AlJNIObjCollection::findObj(Object *o, AlJNIObject **obj) {
         AlLogI(TAG, "failed. Attach first pls.");
         return false;
     }
-    auto tmp = itr->second;
-    *obj = &tmp;
+    *obj = itr->second;
     return true;
 }
 

@@ -19,10 +19,13 @@ AlJNIEnv &AlJNIEnv::getInstance() {
 }
 
 AlJNIEnv::AlJNIEnv() : Object() {
-
+    collection = new AlJNIObjCollection();
 }
 
-AlJNIEnv::~AlJNIEnv() = default;
+AlJNIEnv::~AlJNIEnv() {
+    delete collection;
+    collection = nullptr;
+}
 
 void AlJNIEnv::attach(JavaVM *vm) {
     this->jvm = vm;
@@ -56,7 +59,7 @@ bool AlJNIEnv::attachThread() {
         AlLogE(TAG, "%p failed. Do not attach repeat.", id);
         return false;
     }
-    jvm->GetEnv(reinterpret_cast<void **>(&pEnv), JNI_VERSION_1_6);
+    jvm->GetEnv(reinterpret_cast<void **>(&pEnv), VERSION);
     if (nullptr == pEnv) {
         int status = jvm->AttachCurrentThread(&pEnv, NULL);
         if (status < 0) {
@@ -99,9 +102,9 @@ jclass AlJNIEnv::registerAnClass(const char *name) {
         return itr->second;
     }
     JNIEnv *env = nullptr;
-    jvm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6);
+    jvm->GetEnv(reinterpret_cast<void **>(&env), VERSION);
     if (nullptr == env) {
-        AlLogE(TAG, "failed.");
+        AlLogE(TAG, "failed. Register on JNI_ONLoad pls.");
         return nullptr;
     }
     auto cls = env->FindClass(name);
@@ -109,8 +112,7 @@ jclass AlJNIEnv::registerAnClass(const char *name) {
         AlLogE(TAG, "failed.");
         return nullptr;
     }
-    mClassMap.insert(pair<std::string, jclass>(name,
-                                               reinterpret_cast<jclass>(env->NewGlobalRef(cls))));
+    mClassMap.insert({name, (jclass) env->NewGlobalRef(cls)});
     return cls;
 }
 
@@ -126,55 +128,29 @@ bool AlJNIEnv::findEnv(JNIEnv **env) {
     return true;
 }
 
-bool AlJNIEnv::attach(Object *o, jobject j) {
+bool AlJNIEnv::attach(Object *o, jobject j, bool reqGlobalRef) {
     if (nullptr == o) {
         AlLogI(TAG, "failed");
         return false;
     }
-    int64_t id = _currentId();
-    assert(0 != id);
     std::lock_guard<std::mutex> guard(atxObjMtx);
-    auto itr = map.find(id);
-    AlJNIObjCollection *collection = nullptr;
-    if (map.end() == itr) {
-        collection = new AlJNIObjCollection();
-        map.insert(std::pair<int64_t, AlJNIObjCollection *>(id, collection));
-    } else {
-        collection = itr->second;
-    }
     JNIEnv *env = nullptr;
     if (!findEnv(&env)) {
         AlLogI(TAG, "failed");
         return false;
     }
-    collection->attach(env, o, j);
+    collection->attach(env, o, j, reqGlobalRef);
     return true;
 }
 
 void AlJNIEnv::detach(Object *o) {
-    int64_t id = _currentId();
-    assert(0 != id);
     std::lock_guard<std::mutex> guard(atxObjMtx);
-    auto itr = map.find(id);
-    if (map.end() == itr) {
-        AlLogI(TAG, "failed. Looper is %p", id);
-        return;
-    }
-    auto *collection = itr->second;
-    if (nullptr == collection) {
-        AlLogI(TAG, "failed. Looper is %p", id);
-        return;
-    }
     JNIEnv *env = nullptr;
     if (!findEnv(&env)) {
         AlLogI(TAG, "failed");
         return;
     }
     collection->detach(env, o);
-    if (0 == collection->size()) {
-        map.erase(itr);
-        delete collection;
-    }
 }
 
 bool AlJNIEnv::findObj(Object *o, AlJNIObject **obj) {
@@ -182,20 +158,7 @@ bool AlJNIEnv::findObj(Object *o, AlJNIObject **obj) {
         AlLogI(TAG, "failed");
         return false;
     }
-    int64_t id = _currentId();
-    assert(0 != id);
     std::lock_guard<std::mutex> guard(atxObjMtx);
-    auto itr = map.find(id);
-    if (map.end() == itr) {
-        AlLogI(TAG, "failed. Looper is %p", id);
-        return false;
-    }
-    auto *collection = itr->second;
-    if (nullptr == collection) {
-        AlLogI(TAG, "failed. Looper is %p", id);
-        return false;
-    }
-
     return collection->findObj(o, obj);
 }
 

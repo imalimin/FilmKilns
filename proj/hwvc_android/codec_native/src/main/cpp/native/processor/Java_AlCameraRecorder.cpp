@@ -5,6 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 #include "platform/android/AlJNIEnv.h"
+#include "platform/android/AlJNIObject.h"
 #include "HwCameraRecorder.h"
 #include "HwAndroidWindow.h"
 
@@ -30,13 +31,13 @@ static void bindListener(HwCameraRecorder *p) {
     p->setRecordListener([p](int64_t timeInUs) {
         AlJNIObject *obj = nullptr;
         if (AlJNIEnv::getInstance().findObj(p, &obj)) {
-            obj->callVoidMethod(vRecordProgressDesc, static_cast<jlong>(timeInUs));
+            al_jni_call_void(obj, vRecordProgressDesc, timeInUs);
         }
     });
     p->setOnNativeReadyListener([p](int32_t oesTex) {
         AlJNIObject *obj = nullptr;
         if (AlJNIEnv::getInstance().findObj(p, &obj)) {
-            obj->callVoidMethod(midOnNativePrepared, static_cast<jint>(oesTex));
+            al_jni_call_void(obj, midOnNativePrepared, oesTex);
         }
     });
 
@@ -45,10 +46,11 @@ static void bindListener(HwCameraRecorder *p) {
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_create
         (JNIEnv *env, jobject thiz) {
     HwCameraRecorder *p = new HwCameraRecorder();
-    p->post([] {
+    auto obj = env->NewGlobalRef(thiz);
+    p->post([env, p, obj] {
         AlJNIEnv::getInstance().attachThread();
+        AlJNIEnv::getInstance().attach(p, obj, false);
     });
-    AlJNIEnv::getInstance().attach(p, thiz);
     bindListener(p);
     return reinterpret_cast<jlong>(p);
 }
@@ -60,7 +62,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_postEv
         p->runOnCameraContext([p, what]() {
             AlJNIObject *obj = nullptr;
             if (AlJNIEnv::getInstance().findObj(p, &obj)) {
-                obj->callVoidMethod(cOnHandleMessage, what);
+                al_jni_call_void(obj, cOnHandleMessage, what, 0);
             }
         });
     }
@@ -110,11 +112,11 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_releas
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         HwCameraRecorder *p = getHandler(handler);
-        p->post([] {
+        p->post([p] {
             AlLogI("Java_AlCameraRecorder", "release");
+            AlJNIEnv::getInstance().detach(p);
             AlJNIEnv::getInstance().detachThread();
         });
-        AlJNIEnv::getInstance().detach(p);
         p->release();
         delete p;
     }

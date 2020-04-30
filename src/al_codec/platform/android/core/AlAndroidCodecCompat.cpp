@@ -40,10 +40,10 @@ void AlAndroidCodecCompat::release() {
     hwPacket = nullptr;
     delete outFrame;
     outFrame = nullptr;
-    for (int i = 0; i < 4; ++i) {
-        if (buffers[i]) {
-            delete buffers[i];
-            buffers[i] = nullptr;
+    for (auto &buffer : buffers) {
+        if (buffer) {
+            delete buffer;
+            buffer = nullptr;
         }
     }
 }
@@ -82,7 +82,7 @@ HwResult AlAndroidCodecCompat::configure(HwBundle &format) {
     if (Hw::SUCCESS != bridge->start()) {
         LOGE(TAG, "codec start failed.");
         release();
-        return false;
+        return Hw::FAILED;
     }
     if (!encodeMode) {
         return Hw::SUCCESS;

@@ -19,7 +19,7 @@ public:
 
     ~AlJNIObjCollection();
 
-    bool attach(JNIEnv *env, Object *o, jobject j);
+    bool attach(JNIEnv *env, Object *o, jobject j, bool reqGlobalRef = true);
 
     void detach(JNIEnv *env, Object *o);
 
@@ -28,7 +28,7 @@ public:
     size_t size();
 
 private:
-    std::map<Object *, AlJNIObject> map;
+    std::map<Object *, AlJNIObject *> map;
 };
 
 

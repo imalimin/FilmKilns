@@ -61,7 +61,6 @@ AlMediaCodecBridge::Info::~Info() {
 }
 
 AlMediaCodecBridge::AlMediaCodecBridge(const std::string &mime) : Object() {
-    AlJNIEnv::getInstance().attachThread();
     JNIEnv *env = nullptr;
     if (!AlJNIEnv::getInstance().findEnv(&env)) {
         AlLogE(TAG, "failed");
@@ -107,8 +106,8 @@ HwResult AlMediaCodecBridge::configure(int w, int h,
     AlLogI(TAG, "enter.");
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return HwResult(obj->callIntMethod(midConfigure, w, h,
-                                           bitrate, format, iFrameInterval, fps));
+        al_jni_call_int(obj, midConfigure, ret, w, h, bitrate, format, iFrameInterval, fps);
+        return HwResult(ret);
     }
     AlLogE(TAG, "failed");
     return Hw::FAILED;
@@ -117,7 +116,8 @@ HwResult AlMediaCodecBridge::configure(int w, int h,
 HwResult AlMediaCodecBridge::start() {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return HwResult(obj->callIntMethod(midStart));
+        al_jni_call_int(obj, midStart, ret);
+        return HwResult(ret);
     }
     return Hw::FAILED;
 }
@@ -125,7 +125,8 @@ HwResult AlMediaCodecBridge::start() {
 HwResult AlMediaCodecBridge::stop() {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return HwResult(obj->callIntMethod(midStop));
+        al_jni_call_int(obj, midStop, ret);
+        return HwResult(ret);
     }
     AlLogE(TAG, "failed");
     return Hw::FAILED;
@@ -134,7 +135,8 @@ HwResult AlMediaCodecBridge::stop() {
 HwResult AlMediaCodecBridge::flush() {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return HwResult(obj->callIntMethod(midFlush));
+        al_jni_call_int(obj, midFlush, ret);
+        return HwResult(ret);
     }
     AlLogE(TAG, "failed");
     return Hw::FAILED;
@@ -143,7 +145,7 @@ HwResult AlMediaCodecBridge::flush() {
 void AlMediaCodecBridge::release() {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        obj->callVoidMethod(midRelease);
+        al_jni_call_void(obj, midRelease);
     }
     AlLogE(TAG, "failed");
 }
@@ -151,7 +153,8 @@ void AlMediaCodecBridge::release() {
 int AlMediaCodecBridge::dequeueInputBuffer(long timeoutUs) {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return obj->callIntMethod(midDeqInput, timeoutUs);
+        al_jni_call_int(obj, midDeqInput, ret, timeoutUs);
+        return ret;
     }
     AlLogE(TAG, "failed");
     return -1;
@@ -164,8 +167,8 @@ HwResult AlMediaCodecBridge::queueInputBuffer(int index,
                                               int flags) {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return HwResult(obj->callIntMethod(midQueInput, index, offset, size,
-                                           presentationTimeUs, flags));
+        al_jni_call_int(obj, midQueInput, ret, index, offset, size, presentationTimeUs, flags);
+        return HwResult(ret);
     }
     AlLogE(TAG, "failed");
     return Hw::SUCCESS;
@@ -174,7 +177,8 @@ HwResult AlMediaCodecBridge::queueInputBuffer(int index,
 AlBuffer *AlMediaCodecBridge::getInputBuffer(int index) {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return obj->callBufferMethod(midGetInput, index);
+        al_jni_call_buffer(obj, midGetInput, buf, index);
+        return buf;
     }
     AlLogE(TAG, "failed");
     return nullptr;
@@ -183,7 +187,7 @@ AlBuffer *AlMediaCodecBridge::getInputBuffer(int index) {
 int AlMediaCodecBridge::dequeueOutputBuffer(AlMediaCodecBridge::Info &info, long timeoutUs) {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        auto v = obj->callLongArrayMethod(midDeqOutput, timeoutUs);
+        al_jni_call_long_array(obj, midDeqOutput, v, timeoutUs);
         info.offset = static_cast<int>(v[1]);
         info.size = static_cast<int>(v[2]);
         info.presentationTimeUs = v[3];
@@ -197,7 +201,8 @@ int AlMediaCodecBridge::dequeueOutputBuffer(AlMediaCodecBridge::Info &info, long
 AlBuffer *AlMediaCodecBridge::getOutputBuffer(int index) {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return obj->callBufferMethod(midGetOutput, index);
+        al_jni_call_buffer(obj, midGetOutput, buf, index);
+        return buf;
     }
     AlLogE(TAG, "failed");
     return nullptr;
@@ -206,7 +211,8 @@ AlBuffer *AlMediaCodecBridge::getOutputBuffer(int index) {
 HwResult AlMediaCodecBridge::releaseOutputBuffer(int index, bool render) {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
-        return HwResult(obj->callIntMethod(midReleaseOutput, index, render));
+        al_jni_call_int(obj, midReleaseOutput, ret, index, render);
+        return HwResult(ret);
     }
     AlLogE(TAG, "failed");
     return Hw::FAILED;
@@ -222,8 +228,7 @@ AlBuffer *AlMediaCodecBridge::getOutputFormatBuffer(std::string name) {
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
         const char *str = name.c_str();
         jstring jstr = env->NewStringUTF(str);
-
-        auto buf = obj->callBufferMethod(midGetOutFmtBuf, jstr);
+        al_jni_call_buffer(obj, midGetOutFmtBuf, buf, jstr);
         env->ReleaseStringUTFChars(jstr, str);
         return buf;
     }
@@ -241,10 +246,9 @@ int AlMediaCodecBridge::getOutputFormatInteger(std::string name) {
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
         const char *str = name.c_str();
         jstring jstr = env->NewStringUTF(str);
-
-        auto buf = obj->callIntMethod(midGetOutFmtInt, jstr);
+        al_jni_call_int(obj, midGetOutFmtInt, ret, jstr)
         env->ReleaseStringUTFChars(jstr, str);
-        return buf;
+        return ret;
     }
     AlLogE(TAG, "failed");
     return 0;

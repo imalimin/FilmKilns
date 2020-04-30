@@ -36,7 +36,7 @@ public:
 
     bool findEnv(JNIEnv **env);
 
-    bool attach(Object *o, jobject j);
+    bool attach(Object *o, jobject j, bool reqGlobalRef = true);
 
     void detach(Object *o);
 
@@ -50,7 +50,7 @@ private:
     static const int VERSION;
     JavaVM *jvm = nullptr;
     std::map<string, jclass> mClassMap;
-    std::map<int64_t, AlJNIObjCollection *> map;
+    AlJNIObjCollection *collection = nullptr;
     std::map<int64_t, JNIEnv *> mEnvMap;
 
     std::mutex atxMtx;
