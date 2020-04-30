@@ -43,6 +43,9 @@ public:
     bool findObj(Object *o, AlJNIObject **obj);
 
 private:
+    int64_t _currentId();
+
+private:
     static AlJNIEnv *instance;
     static const int VERSION;
     JavaVM *jvm = nullptr;

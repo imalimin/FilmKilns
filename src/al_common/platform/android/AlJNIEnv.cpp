@@ -6,7 +6,7 @@
 */
 
 #include "AlJNIEnv.h"
-#include "AlLooper.h"
+#include "Thread.h"
 #include <cassert>
 
 #define TAG "AlJNIEnv"
@@ -48,7 +48,7 @@ bool AlJNIEnv::attachThread() {
         AlLogE(TAG, "failed. Please call attach before.");
         return false;
     }
-    int64_t id = AlLooper::myLooperId();
+    int64_t id = _currentId();
     assert(0 != id);
     std::lock_guard<std::mutex> guard(atxMtx);
     JNIEnv *pEnv = nullptr;
@@ -57,7 +57,7 @@ bool AlJNIEnv::attachThread() {
         return false;
     }
     jvm->GetEnv(reinterpret_cast<void **>(&pEnv), JNI_VERSION_1_6);
-    if(nullptr == pEnv) {
+    if (nullptr == pEnv) {
         int status = jvm->AttachCurrentThread(&pEnv, NULL);
         if (status < 0) {
             AlLogE(TAG, "failed.");
@@ -77,7 +77,7 @@ void AlJNIEnv::detachThread() {
     std::lock_guard<std::mutex> guard(atxMtx);
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
-        int64_t id = AlLooper::myLooperId();
+        int64_t id = _currentId();
         assert(0 != id);
         AlLogI(TAG, "%p", id);
         int status = jvm->DetachCurrentThread();
@@ -86,7 +86,7 @@ void AlJNIEnv::detachThread() {
         }
         mEnvMap.erase(mEnvMap.find(id));
     } else {
-        int64_t id = AlLooper::myLooperId();
+        int64_t id = _currentId();
         AlLogI(TAG, "failed. Looper is %p", id);
     }
 
@@ -115,7 +115,7 @@ jclass AlJNIEnv::registerAnClass(const char *name) {
 }
 
 bool AlJNIEnv::findEnv(JNIEnv **env) {
-    int64_t id = AlLooper::myLooperId();
+    int64_t id = _currentId();
     assert(0 != id);
     auto itr = mEnvMap.find(id);
     if (mEnvMap.end() == itr) {
@@ -131,7 +131,7 @@ bool AlJNIEnv::attach(Object *o, jobject j) {
         AlLogI(TAG, "failed");
         return false;
     }
-    int64_t id = AlLooper::myLooperId();
+    int64_t id = _currentId();
     assert(0 != id);
     std::lock_guard<std::mutex> guard(atxObjMtx);
     auto itr = map.find(id);
@@ -152,7 +152,7 @@ bool AlJNIEnv::attach(Object *o, jobject j) {
 }
 
 void AlJNIEnv::detach(Object *o) {
-    int64_t id = AlLooper::myLooperId();
+    int64_t id = _currentId();
     assert(0 != id);
     std::lock_guard<std::mutex> guard(atxObjMtx);
     auto itr = map.find(id);
@@ -182,7 +182,7 @@ bool AlJNIEnv::findObj(Object *o, AlJNIObject **obj) {
         AlLogI(TAG, "failed");
         return false;
     }
-    int64_t id = AlLooper::myLooperId();
+    int64_t id = _currentId();
     assert(0 != id);
     std::lock_guard<std::mutex> guard(atxObjMtx);
     auto itr = map.find(id);
@@ -191,10 +191,14 @@ bool AlJNIEnv::findObj(Object *o, AlJNIObject **obj) {
         return false;
     }
     auto *collection = itr->second;
-    if(nullptr == collection) {
+    if (nullptr == collection) {
         AlLogI(TAG, "failed. Looper is %p", id);
         return false;
     }
 
     return collection->findObj(o, obj);
+}
+
+int64_t AlJNIEnv::_currentId() {
+    return Thread::currentThreadId();
 }
