@@ -8,6 +8,7 @@
 #include "AlHandlerThread.h"
 #include "AlLooper.h"
 #include "Logcat.h"
+#include <sys/prctl.h>
 
 #define TAG "AlHandlerThread"
 
@@ -18,11 +19,13 @@ AlHandlerThread *AlHandlerThread::create(std::string name) {
 AlHandlerThread::AlHandlerThread(std::string name)
         : Object(),
           name(name),
+          mThread(thread(&AlHandlerThread::run, std::ref(*this))),
           exited(false),
           exiting(false) {
 }
 
 void AlHandlerThread::run() {
+    prctl(PR_SET_NAME, name.c_str());
     exited = false;
     exiting = false;
     AlLooper::prepare();
