@@ -70,7 +70,7 @@ jobject o_##name; \
 
 class AlJNIObjCollection;
 
-al_def_class(AlJNIObject) {
+al_def_class AlJNIObject al_extend Object {
 public:
     typedef struct {
         string cls;

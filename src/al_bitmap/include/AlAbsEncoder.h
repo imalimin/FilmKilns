@@ -14,7 +14,7 @@
 #include "AlBitmapInfo.h"
 #include "AlExif.h"
 
-al_interface(AlAbsEncoder) {
+al_interface AlAbsEncoder al_extend Object {
 public:
     AlAbsEncoder() : Object() {}
 

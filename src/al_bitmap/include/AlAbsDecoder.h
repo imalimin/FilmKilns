@@ -14,7 +14,7 @@
 #include "AlBuffer.h"
 #include "AlExif.h"
 
-al_interface(AlAbsDecoder) {
+al_interface AlAbsDecoder al_extend Object {
 public:
     AlAbsDecoder() : Object() {}
 

@@ -12,7 +12,7 @@
 #include "AlElement.h"
 #include "HwResult.h"
 
-al_interface(AlAbsElemented) {
+al_interface AlAbsElemented al_extend Object {
 public:
     AlAbsElemented() : Object() {};
 

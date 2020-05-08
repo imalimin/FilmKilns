@@ -15,34 +15,43 @@ AlJNIObjCollection::AlJNIObjCollection() : Object() {
 }
 
 AlJNIObjCollection::~AlJNIObjCollection() {
-    AlLogI(TAG, "left %d.", map.size());
+    AlLogI(TAG, "left %d.", size());
 }
 
 bool AlJNIObjCollection::attach(JNIEnv *env, Object *o, jobject j, bool reqGlobalRef) {
-    auto itr = map.find(o);
-    if (map.end() != itr) {
+    AlLogI(TAG, "start %p", this);
+    for (auto &it : mObjMap) {
+        AlLogI(TAG, "%p, %p", it.first, it.second);
+    }
+    auto itr = mObjMap.find(o);
+    if (mObjMap.end() != itr) {
         AlLogI(TAG, "failed. Attach repeat.");
         return false;
     }
     jobject obj = reqGlobalRef ? env->NewGlobalRef(j) : j;
-    map.insert({o, new AlJNIObject(env, obj)});
+    mObjMap.insert({o, new AlJNIObject(env, obj)});
+    AlLogI(TAG, "end %p", this);
+    for (auto &it : mObjMap) {
+        AlLogI(TAG, "%p, %p", it.first, it.second);
+    }
     return true;
 }
 
 void AlJNIObjCollection::detach(JNIEnv *env, Object *o) {
-    auto itr = map.find(o);
-    if (map.end() == itr) {
+    auto itr = mObjMap.find(o);
+    if (mObjMap.end() == itr) {
         AlLogI(TAG, "failed. Attach first pls.");
+        return;
     }
     auto tmp = itr->second;
     env->DeleteGlobalRef(tmp->o);
     delete tmp;
-    map.erase(itr);
+    mObjMap.erase(itr);
 }
 
 bool AlJNIObjCollection::findObj(Object *o, AlJNIObject **obj) {
-    auto itr = map.find(o);
-    if (map.end() == itr) {
+    auto itr = mObjMap.find(o);
+    if (mObjMap.end() == itr) {
         AlLogI(TAG, "failed. Attach first pls.");
         return false;
     }
@@ -51,5 +60,5 @@ bool AlJNIObjCollection::findObj(Object *o, AlJNIObject **obj) {
 }
 
 size_t AlJNIObjCollection::size() {
-    return map.size();
+    return mObjMap.size();
 }

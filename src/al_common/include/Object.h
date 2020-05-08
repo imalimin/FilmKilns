@@ -18,13 +18,9 @@ class cls : public parent \
 
 #define al_class(cls) al_class_ex(cls, Object)
 
-#define al_interface(cls) \
-class cls : public Object \
-
-
-#define al_def_class(cls) al_class(cls)
-
-#define al_def_class_ex(cls, parent) al_class_ex(cls, parent)
+#define al_def_class class
+#define al_interface class
+#define al_extend : public
 
 template<class T>
 class AlSPointer;

@@ -13,7 +13,7 @@
 #include "jni.h"
 #include <map>
 
-al_def_class(AlJNIObjCollection) {
+al_def_class AlJNIObjCollection al_extend Object {
 public:
     AlJNIObjCollection();
 
@@ -28,7 +28,7 @@ public:
     size_t size();
 
 private:
-    std::map<Object *, AlJNIObject *> map;
+    std::map<Object *, AlJNIObject *> mObjMap;
 };
 
 
