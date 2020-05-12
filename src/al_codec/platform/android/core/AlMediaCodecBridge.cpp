@@ -81,7 +81,7 @@ AlMediaCodecBridge::AlMediaCodecBridge(const std::string &mime) : Object() {
     const char *str = mime.c_str();
     jstring jstr = env->NewStringUTF(str);
     jobject handle = env->NewObject(cls, mid, jstr);
-    env->ReleaseStringUTFChars(jstr, str);
+    env->DeleteLocalRef(jstr);
     env->ExceptionCheck();
     env->ExceptionClear();
     if (nullptr == handle) {

@@ -45,9 +45,9 @@ al_jni_call_object(o, m, o_##name, ##args) \
 AlBuffer *name = nullptr; \
 if (o_##name) { \
     jlong capacity = o->getEnv()->GetDirectBufferCapacity(o_##name); \
-    void *buf = o->getEnv()->GetDirectBufferAddress(o_##name); \
-    if (nullptr == buf || 0 == capacity) { \
-        name = AlBuffer::wrap(static_cast<uint8_t *>(buf), static_cast<size_t>(capacity));\
+    void *ptr = o->getEnv()->GetDirectBufferAddress(o_##name); \
+    if (nullptr == ptr || 0 == capacity) { \
+        name = AlBuffer::wrap(static_cast<uint8_t *>(ptr), static_cast<size_t>(capacity));\
     } \
 } \
 
