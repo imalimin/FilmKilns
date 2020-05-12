@@ -27,8 +27,8 @@ distribution.
 #ifndef TIXML_STRING_INCLUDED
 #define TIXML_STRING_INCLUDED
 
-#include "../../../../../Android/android-ndk-r16b/sysroot/usr/include/assert.h"
-#include "../../../../../Android/android-ndk-r16b/sysroot/usr/include/string.h"
+#include <cassert>
+#include <string>
 
 /*	The support for explicit isn't that universal, and it isn't really
 	required - it is used to check that the TiXmlString class isn't incorrectly

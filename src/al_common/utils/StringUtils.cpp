@@ -2,8 +2,8 @@
 // Created by limin on 2019/6/29.
 //
 
-#include "../include/StringUtils.h"
-
+#include "StringUtils.h"
+#include <math.h>
 
 std::string StringUtils::trimLeft(const std::string &str, const std::string &token) {
     std::string t = str;

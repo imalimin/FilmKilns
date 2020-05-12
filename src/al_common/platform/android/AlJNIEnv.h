@@ -15,6 +15,24 @@
 #include <map>
 #include <mutex>
 
+//#define al_jni_interface_start(cls) \
+//#ifdef __cplusplus \
+//extern "C" { \
+//#endif \
+//#ifdef al_jni_class \
+//#undef al_jni_class \
+//#define al_jni_class Java_##cls \
+//
+//#define al_jni_interface_end \
+//#ifdef al_jni_class \
+//#undef al_jni_class \
+//#ifdef __cplusplus \
+//} \
+//#endif \
+//
+//#define al_jni_interface_def(method) \
+//##al_jni_class_##method \
+
 al_class(AlJNIEnv) {
 public:
     static AlJNIEnv &getInstance();

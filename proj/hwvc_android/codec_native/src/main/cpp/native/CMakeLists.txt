@@ -12,7 +12,7 @@ include_directories(
         ${HWVC_PATH}/al_codec/prebuild/shared/ffmpeg/include
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math -funroll-loops ")

@@ -24,7 +24,7 @@ include_directories(
 #        ${PREBUILD_STATIC}/libpng/include
 #)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ffast-math -funroll-loops ")
@@ -96,10 +96,8 @@ find_library(
         zlib
         z)
 
-target_link_libraries(
-        al_common
-        glm
-        OpenSLES
-        ${zlib}
-        ${log-lib}
-)
+set(SRC_LIBS al_common OpenSLES ${zlib} ${log-lib})
+if (ENABLE_GLM)
+    set(SRC_LIBS ${SRC_LIBS} glm)
+endif (ENABLE_GLM)
+target_link_libraries(${SRC_LIBS})
