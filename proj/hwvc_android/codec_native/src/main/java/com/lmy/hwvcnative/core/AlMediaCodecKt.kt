@@ -165,7 +165,10 @@ class AlMediaCodecKt(
 
     fun getOutputFormatBuffer(name: String): ByteBuffer? {
         checkOutputFormat()
-        return outputFormat!!.getByteBuffer(name)
+        val buf = outputFormat!!.getByteBuffer(name)
+        val tmp = ByteBuffer.allocateDirect(buf.capacity())
+        tmp.put(buf)
+        return tmp
     }
 
     fun getOutputFormatInteger(name: String): Int {

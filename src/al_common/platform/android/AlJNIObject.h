@@ -24,7 +24,6 @@ if (o->findMid(m, &mid)) {                                    \
 
 #define al_jni_call_int(o, m, name, args...) \
 jmethodID mid;                                                      \
-jint name = -1;                                                     \
 if (o->findMid(m, &mid)) {                                          \
     name = o->getEnv()->CallIntMethod(o->getObject(), mid, ##args); \
     o->getEnv()->ExceptionCheck();                                  \
@@ -33,7 +32,6 @@ if (o->findMid(m, &mid)) {                                          \
 
 #define al_jni_call_object(o, m, name, args...) \
 jmethodID mid; \
-jobject name = nullptr; \
 if (o->findMid(m, &mid)) { \
     name = o->getEnv()->CallObjectMethod(o->getObject(), mid, ##args); \
     o->getEnv()->ExceptionCheck(); \
@@ -41,20 +39,20 @@ if (o->findMid(m, &mid)) { \
 } \
 
 #define al_jni_call_buffer(o, m, name, args...) \
+jobject o_##name = nullptr; \
 al_jni_call_object(o, m, o_##name, ##args) \
-AlBuffer *name = nullptr; \
 if (o_##name) { \
     jlong capacity = o->getEnv()->GetDirectBufferCapacity(o_##name); \
     void *ptr = o->getEnv()->GetDirectBufferAddress(o_##name); \
-    if (nullptr == ptr || 0 == capacity) { \
+    if (nullptr != ptr && 0 != capacity) { \
         name = AlBuffer::wrap(static_cast<uint8_t *>(ptr), static_cast<size_t>(capacity));\
     } \
 } \
 
 
 #define al_jni_call_long_array(o, m, name, args...) \
+jobject o_##name = nullptr; \
 al_jni_call_object(o, m, o_##name, ##args) \
-std::vector<long> name; \
 if (o_##name) { \
     jlongArray jArray = (jlongArray)o_##name;\
     jsize len = o->getEnv()->GetArrayLength(jArray);\
