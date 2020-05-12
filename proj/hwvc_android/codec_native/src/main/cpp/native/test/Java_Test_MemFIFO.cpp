@@ -13,7 +13,7 @@ extern "C" {
 
 #define MemFIFOTest_FRAME_SIZE 8
 HwFIFOBuffer *fifo = nullptr;
-uint8_t *data = nullptr;
+uint8_t *dBuf = nullptr;
 int index = 'a';
 int pushCount = 0;
 int takeCount = 0;
@@ -22,20 +22,20 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_MemFIFOTest_push
         (JNIEnv *env, jobject thiz) {
     if (!fifo) {
         fifo = new HwFIFOBuffer(8 * MemFIFOTest_FRAME_SIZE);
-        data = new uint8_t[MemFIFOTest_FRAME_SIZE];
+        dBuf = new uint8_t[MemFIFOTest_FRAME_SIZE];
     }
     if (index > 'z') {
         index = 'a';
     }
-    memset(data, index, MemFIFOTest_FRAME_SIZE);
+    memset(dBuf, index, MemFIFOTest_FRAME_SIZE);
     ++pushCount;
     Logcat::i("HWVC", "MemFIFOTest_push: %c,%c,%c,%c,%c,%c,%c,%c, %d",
-              (char) data[0], (char) data[1],
-              (char) data[2], (char) data[3],
-              (char) data[4], (char) data[5],
-              (char) data[6], (char) data[7],
+              (char) dBuf[0], (char) dBuf[1],
+              (char) dBuf[2], (char) dBuf[3],
+              (char) dBuf[4], (char) dBuf[5],
+              (char) dBuf[6], (char) dBuf[7],
               pushCount);
-    fifo->push(data, MemFIFOTest_FRAME_SIZE, 6000);
+    fifo->push(dBuf, MemFIFOTest_FRAME_SIZE, 6000);
     ++index;
 }
 
@@ -61,9 +61,9 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_test_MemFIFOTest_release
         delete fifo;
         fifo = nullptr;
     }
-    if (data) {
-        delete[] data;
-        data = nullptr;
+    if (dBuf) {
+        delete[] dBuf;
+        dBuf = nullptr;
     }
 }
 
