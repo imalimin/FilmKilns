@@ -14,6 +14,8 @@ class AlMediaCodecKt(
 ) {
     private var codec: MediaCodec = MediaCodec.createEncoderByType(mime)
     private var outputFormat: MediaFormat? = null
+    private var iBuffer: ByteBuffer? = null
+    private var oBuffer: ByteBuffer? = null
 
     /**
      * @return AlResult
@@ -80,7 +82,6 @@ class AlMediaCodecKt(
 
     fun dequeueInputBuffer(timeoutUs: Long): Int {
         try {
-            MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED
             return codec.dequeueInputBuffer(timeoutUs)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -111,7 +112,8 @@ class AlMediaCodecKt(
 
     fun getInputBuffer(index: Int): ByteBuffer? {
         try {
-            return codec.getInputBuffer(index)
+            iBuffer = codec.getInputBuffer(index)
+            return iBuffer
         } catch (e: Exception) {
             e.printStackTrace()
             Log.i(TAG, "getInputBuffer failed.")
@@ -139,7 +141,8 @@ class AlMediaCodecKt(
 
     fun getOutputBuffer(index: Int): ByteBuffer? {
         try {
-            return codec.getInputBuffer(index)
+            oBuffer = codec.getOutputBuffer(index)
+            return oBuffer
         } catch (e: Exception) {
             e.printStackTrace()
             Log.i(TAG, "getOutputBuffer failed.")
