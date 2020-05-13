@@ -272,6 +272,8 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                 size_t ppsSize = 0;
                 AMediaFormat_getBuffer(format, "csd-0", reinterpret_cast<void **>(&sps), &spsSize);
                 AMediaFormat_getBuffer(format, "csd-1", reinterpret_cast<void **>(&pps), &ppsSize);
+                delete buffers[0];
+                delete buffers[1];
                 buffers[0] = HwBuffer::alloc(spsSize);
                 buffers[1] = HwBuffer::alloc(ppsSize);
                 memcpy(buffers[0]->data(), sps, spsSize);

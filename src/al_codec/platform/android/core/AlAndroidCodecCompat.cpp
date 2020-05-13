@@ -223,6 +223,8 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
                 auto *buf1 = bridge->getOutputFormatBuffer(HwAbsCodec::KEY_CSD_1);
                 AlObjectGuard guard0(reinterpret_cast<Object **>(&buf0));
                 AlObjectGuard guard1(reinterpret_cast<Object **>(&buf1));
+                delete buffers[0];
+                delete buffers[1];
                 buffers[0] = HwBuffer::alloc(buf0->size());
                 buffers[1] = HwBuffer::alloc(buf1->size());
                 memcpy(buffers[0]->data(), buf0->data(), buf0->size());
