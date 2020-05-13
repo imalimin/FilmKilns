@@ -33,7 +33,17 @@
 //#define al_jni_interface_def(method) \
 //##al_jni_class_##method \
 
-al_class(AlJNIEnv) {
+///         Z: boolean
+///         B: byte
+///         C: char
+///         S: short
+///         I: int
+///         J: long
+///         F: float
+///         D: double
+/// Lpackage;: Objetc
+///         V: void
+al_def_class AlJNIEnv al_extend Object {
 public:
     static AlJNIEnv &getInstance();
 

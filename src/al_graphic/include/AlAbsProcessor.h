@@ -12,6 +12,7 @@
 #include "AlPostMan.h"
 #include "Unit.h"
 #include "HwPair.h"
+#include "AlRunnable.h"
 #include <string>
 #include <initializer_list>
 
@@ -60,6 +61,8 @@ public:
 
     void release();
 
+    void release(AlRunnable *runnable);
+
     void post(function<void()> runnable);
 
 protected:
@@ -86,7 +89,7 @@ private:
     string name;
     AlPostMan *pipeline = nullptr;
     HwModelProvider *provider = nullptr;
-
+    AlRunnable *destroyRun = nullptr;
 };
 
 

@@ -22,6 +22,11 @@ AlAbsProcessor::~AlAbsProcessor() {
 }
 
 void AlAbsProcessor::release() {
+    release(AlRunnable::runEmptyArgs([]() {}));
+}
+
+void AlAbsProcessor::release(AlRunnable *runnable) {
+    this->destroyRun = runnable;
     delete pipeline;
     pipeline = nullptr;
     provider = nullptr;
@@ -33,6 +38,10 @@ void AlAbsProcessor::onCreate() {
 
 void AlAbsProcessor::onDestroy() {
     AlLogI(TAG, "");
+    if (destroyRun) {
+        (*destroyRun)(nullptr);
+        delete destroyRun;
+    }
 }
 
 void AlAbsProcessor::registerAnUnit(Unit *unit) {

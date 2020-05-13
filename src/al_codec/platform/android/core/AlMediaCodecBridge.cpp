@@ -44,7 +44,7 @@ const AlJNIObject::Method AlMediaCodecBridge::midGetOutput = {
         "getOutputBuffer", "(I)Ljava/nio/ByteBuffer;"};
 const AlJNIObject::Method AlMediaCodecBridge::midReleaseOutput = {
         "com/lmy/hwvcnative/core/AlMediaCodecKt",
-        "releaseOutputBuffer", "(IB)I"};
+        "releaseOutputBuffer", "(IZ)I"};
 const AlJNIObject::Method AlMediaCodecBridge::midGetOutFmtBuf = {
         "com/lmy/hwvcnative/core/AlMediaCodecKt",
         "getOutputFormatBuffer", "(Ljava/lang/String;)Ljava/nio/ByteBuffer;"};

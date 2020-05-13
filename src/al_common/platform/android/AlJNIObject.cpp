@@ -31,17 +31,23 @@ bool AlJNIObject::findMid(const AlJNIObject::Method &m, jmethodID *mid) {
     auto itr = map.find(key);
     if (map.end() == itr) {
         jclass cls = env->GetObjectClass(o);
+        *mid = nullptr;
         if (cls) {
             *mid = env->GetMethodID(cls, m.name.c_str(), m.sign.c_str());
-            map.insert({key, *mid});
-            env->DeleteLocalRef(cls);
-            return nullptr != *mid;
+            if (*mid) {
+                map.insert({key, *mid});
+            } else {
+                AlLogE(TAG, "Cannot find %s", key.c_str());
+            }
         }
+        env->DeleteLocalRef(cls);
+        env->ExceptionCheck();
+        env->ExceptionClear();
+        return nullptr != *mid;
     } else {
         *mid = itr->second;
         return true;
     }
-    return false;
 }
 
 JNIEnv *AlJNIObject::getEnv() {

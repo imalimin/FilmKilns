@@ -112,12 +112,11 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_releas
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         HwCameraRecorder *p = getHandler(handler);
-        p->post([p] {
+        p->release(AlRunnable::runEmptyArgs([p]() {
             AlLogI("Java_AlCameraRecorder", "release");
             AlJNIEnv::getInstance().detach(p);
             AlJNIEnv::getInstance().detachThread();
-        });
-        p->release();
+        }));
         delete p;
     }
 }
