@@ -113,6 +113,7 @@ class AlMediaCodecKt(
     fun getInputBuffer(index: Int): ByteBuffer? {
         try {
             iBuffer = codec.getInputBuffer(index)
+            iBuffer?.rewind()
             return iBuffer
         } catch (e: Exception) {
             e.printStackTrace()
@@ -142,6 +143,7 @@ class AlMediaCodecKt(
     fun getOutputBuffer(index: Int): ByteBuffer? {
         try {
             oBuffer = codec.getOutputBuffer(index)
+            oBuffer?.rewind()
             return oBuffer
         } catch (e: Exception) {
             e.printStackTrace()
@@ -155,7 +157,6 @@ class AlMediaCodecKt(
      */
     fun releaseOutputBuffer(index: Int, render: Boolean): Int {
         try {
-            MediaFormat.KEY_WIDTH
             codec.releaseOutputBuffer(index, render)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -169,8 +170,10 @@ class AlMediaCodecKt(
     fun getOutputFormatBuffer(name: String): ByteBuffer? {
         checkOutputFormat()
         val buf = outputFormat!!.getByteBuffer(name)
+        buf?.rewind()
         val tmp = ByteBuffer.allocateDirect(buf.capacity())
         tmp.put(buf)
+        tmp?.rewind()
         return tmp
     }
 
