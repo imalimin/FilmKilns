@@ -13,7 +13,7 @@
 #include "decode.h"
 #include "AlBuffer.h"
 
-al_class_ex(AlWebPEncoder, AlAbsEncoder) {
+al_class AlWebPEncoder al_extend AlAbsEncoder {
 public:
     AlWebPEncoder(std::string path);
 

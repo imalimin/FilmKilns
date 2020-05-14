@@ -18,7 +18,7 @@ class AlHandler;
 
 class AlMessageManager;
 
-al_class(AlMessage) {
+al_class AlMessage al_extend Object {
 public:
     int32_t what = 0;
     int32_t arg1 = 0;
@@ -73,7 +73,7 @@ public:
     static AlMessage *obtain(int32_t what, Object *obj, int16_t queueMode);
 };
 
-al_class(AlMessageManager) {
+al_class AlMessageManager al_extend Object {
 private:
     friend AlMessage;
 

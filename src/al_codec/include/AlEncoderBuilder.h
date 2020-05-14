@@ -13,7 +13,7 @@
 #include "HwSampleFormat.h"
 #include "HwAbsVideoEncoder.h"
 
-al_class(AlEncoderBuilder) {
+al_class AlEncoderBuilder al_extend Object {
 public:
     AlEncoderBuilder();
 

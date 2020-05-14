@@ -13,7 +13,7 @@
 #include <vector>
 
 ///马赛克
-al_class_ex(AlMosaicFilter, HwAbsFilter) {
+al_class AlMosaicFilter al_extend HwAbsFilter {
 public:
     AlMosaicFilter();
 

@@ -12,7 +12,7 @@
 #include "HwWindow.h"
 #include <atomic>
 
-al_class(Egl) {
+al_class Egl al_extend Object {
 public:
     static EGLContext currentContext();
 

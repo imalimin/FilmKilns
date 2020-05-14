@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlObjectGuard) {
+al_class AlObjectGuard al_extend Object {
 public:
     AlObjectGuard(Object **obj);
 

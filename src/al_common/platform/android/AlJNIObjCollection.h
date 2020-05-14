@@ -13,7 +13,7 @@
 #include "jni.h"
 #include <map>
 
-al_def_class AlJNIObjCollection al_extend Object {
+al_class AlJNIObjCollection al_extend Object {
 public:
     AlJNIObjCollection();
 

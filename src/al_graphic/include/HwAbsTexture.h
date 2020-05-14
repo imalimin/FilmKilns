@@ -14,7 +14,7 @@
 #include "HwAbsFBObject.h"
 #include "GLES2/gl2.h"
 
-al_class(AlTexDescription) {
+al_class AlTexDescription al_extend Object {
 public:
     enum WrapMode : int {
         REPEAT = 0,

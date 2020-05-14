@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlAbsContext) {
+al_class AlAbsContext al_extend Object {
 public:
     AlAbsContext();
 

@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlBuffer) {
+al_class AlBuffer al_extend Object {
 public:
     static AlBuffer *alloc(size_t size);
 

@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlFPSMeasurer) {
+al_class AlFPSMeasurer al_extend Object {
 public:
     AlFPSMeasurer();
 

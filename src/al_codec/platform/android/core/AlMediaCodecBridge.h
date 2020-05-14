@@ -13,9 +13,9 @@
 #include "AlBuffer.h"
 #include "platform/android/AlJNIEnv.h"
 
-al_class(AlMediaCodecBridge) {
+al_class AlMediaCodecBridge al_extend Object {
 public:
-    al_class(Info) {
+    al_class Info al_extend Object {
     public:
         Info();
 

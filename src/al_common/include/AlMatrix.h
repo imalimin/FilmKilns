@@ -15,7 +15,7 @@
 class AlVec4;
 
 /// [4x4] matrix
-al_class(AlMatrix) {
+al_class AlMatrix al_extend Object {
 public:
     static AlMatrix &fromArray(float *array);
 

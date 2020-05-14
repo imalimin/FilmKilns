@@ -13,7 +13,7 @@
 #include "AlSize.h"
 #include "AlRational.h"
 
-al_class(Al2DCoordinate) {
+al_class Al2DCoordinate al_extend Object {
 public:
     Al2DCoordinate(int32_t xWide = 0, int32_t yWide = 0);
 

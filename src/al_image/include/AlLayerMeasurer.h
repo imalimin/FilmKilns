@@ -23,7 +23,7 @@
 /// 3.GL变换矩阵
 /// 4.GL顶点
 /// 5.变换后新图像的四个位置坐标
-al_class(AlLayerMeasurer) {
+al_class AlLayerMeasurer al_extend Object {
 public:
     static AlLayerMeasurer &original();
 

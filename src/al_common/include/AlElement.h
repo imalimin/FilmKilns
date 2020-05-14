@@ -13,7 +13,7 @@
 #include <vector>
 #include <map>
 
-al_class(AlElement) {
+al_class AlElement al_extend Object {
 public:
     AlElement(std::string name);
 

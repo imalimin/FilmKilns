@@ -10,7 +10,7 @@
 
 #include "AlAbsEncoder.h"
 
-al_class_ex(AlBMPEncoder, AlAbsEncoder) {
+al_class AlBMPEncoder al_extend AlAbsEncoder {
 public:
     AlBMPEncoder();
 

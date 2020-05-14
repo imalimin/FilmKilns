@@ -23,7 +23,7 @@
 #include "AlRectLoc.h"
 #include <vector>
 
-al_class_ex(AlImageProcessor, AlAbsProcessor) {
+al_class AlImageProcessor al_extend AlAbsProcessor {
 public:
 public:
     ///code, msg, path

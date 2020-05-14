@@ -13,7 +13,7 @@
 #include "AlBitmapInfo.h"
 #include "HwResult.h"
 
-al_class(AlBitmap) {
+al_class AlBitmap al_extend Object {
 public:
     static AlBitmap *create(AlBitmapInfo info);
 

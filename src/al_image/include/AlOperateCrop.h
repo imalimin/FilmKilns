@@ -11,7 +11,7 @@
 #include "AlOperateDesc.h"
 #include "AlRectF.h"
 
-al_class_ex(AlOperateCrop, AlOperateDesc) {
+al_class AlOperateCrop al_extend AlOperateDesc {
 public:
     AlOperateCrop(int32_t layerId, float left, float top, float right, float bottom);
 

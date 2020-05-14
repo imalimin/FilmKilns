@@ -10,7 +10,7 @@
 
 #include "AlOperateDesc.h"
 
-al_class_ex(AlOperateAlpha, AlOperateDesc) {
+al_class AlOperateAlpha al_extend AlOperateDesc {
 public:
     AlOperateAlpha(int32_t layerId, float alpha);
 

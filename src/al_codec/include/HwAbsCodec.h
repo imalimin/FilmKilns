@@ -73,7 +73,7 @@ public:
     static const string KEY_CSD_3;
 };
 
-al_class(AlCodec) {
+al_class AlCodec al_extend Object {
 public:
     static constexpr int NONE = AV_CODEC_ID_NONE;
     static constexpr int H264 = AV_CODEC_ID_H264;

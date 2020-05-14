@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlVec2.h"
 
-al_class(AlPaintDesc) {
+al_class AlPaintDesc al_extend Object {
 public:
     AlPaintDesc(int32_t layerId, float x, float y, bool painting);
 

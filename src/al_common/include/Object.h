@@ -13,12 +13,7 @@
 
 using namespace std;
 
-#define al_class_ex(cls, parent) \
-class cls : public parent \
-
-#define al_class(cls) al_class_ex(cls, Object)
-
-#define al_def_class class
+#define al_class class
 #define al_interface class
 #define al_extend : public
 
@@ -47,7 +42,7 @@ private:
 };
 
 template<class T>
-al_class(AlSPointer) {
+al_class AlSPointer al_extend Object {
 public:
     AlSPointer(Object *obj);
 

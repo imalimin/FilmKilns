@@ -14,7 +14,7 @@
 
 using namespace std;
 
-al_class(AlString) {
+al_class AlString al_extend Object {
 public:
     static std::string valueOf(int32_t value);
 

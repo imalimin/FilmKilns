@@ -13,7 +13,7 @@
 #include "AlMatrix.h"
 #include "vector"
 
-al_class_ex(HwProgram, AlAbsGLProgram) {
+al_class HwProgram al_extend AlAbsGLProgram {
 public:
     static void calculateFitWinVertex(float *vertex,
                                       Size texSize,

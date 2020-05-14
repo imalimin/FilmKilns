@@ -10,7 +10,7 @@
 
 #include "AlMatrix.h"
 
-al_class_ex(AlOrthMatrix, AlMatrix) {
+al_class AlOrthMatrix al_extend AlMatrix {
 public:
     AlOrthMatrix();
 

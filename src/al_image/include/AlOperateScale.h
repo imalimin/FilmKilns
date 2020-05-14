@@ -12,7 +12,7 @@
 #include "AlRational.h"
 #include "AlVec2.h"
 
-al_class_ex(AlOperateScale, AlOperateDesc) {
+al_class AlOperateScale al_extend AlOperateDesc {
 public:
     AlOperateScale(int32_t layerId, AlRational scale, AlVec2 anchor);
 

@@ -16,7 +16,7 @@ class AlImageCanvas;
 
 class AlImageLayerManager;
 
-al_class(AlImageLayer) {
+al_class AlImageLayer al_extend Object {
 public:
     static AlImageLayer *create(HwAbsTexture *tex);
 

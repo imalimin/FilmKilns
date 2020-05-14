@@ -23,7 +23,7 @@
 #include "HwNormalFilter.h"
 #endif
 
-al_class(AlImageCanvas) {
+al_class AlImageCanvas al_extend Object {
 public:
     AlImageCanvas();
 

@@ -10,7 +10,7 @@
 
 #include "AlAbsEncoder.h"
 
-al_class_ex(AlJpegEncoder, AlAbsEncoder) {
+al_class AlJpegEncoder al_extend AlAbsEncoder {
 public:
     AlJpegEncoder(std::string path);
 

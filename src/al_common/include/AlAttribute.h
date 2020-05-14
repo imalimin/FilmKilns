@@ -11,7 +11,7 @@
 #include "Object.h"
 #include <map>
 
-al_class(AlAttribute) {
+al_class AlAttribute al_extend Object {
 public:
     AlAttribute(std::string &k, std::string &v);
 

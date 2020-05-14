@@ -14,7 +14,7 @@
 #include "AlAbsMAction.h"
 #include <map>
 
-al_class(AlFileExporter) {
+al_class AlFileExporter al_extend Object {
 public:
     AlFileExporter();
 

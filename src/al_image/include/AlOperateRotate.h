@@ -12,7 +12,7 @@
 #include "AlRational.h"
 #include "AlVec2.h"
 
-al_class_ex(AlOperateRotate, AlOperateDesc) {
+al_class AlOperateRotate al_extend AlOperateDesc {
 public:
     AlOperateRotate(int32_t layerId, AlRational rotation, AlVec2 anchor);
 

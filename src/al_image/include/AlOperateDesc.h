@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlOperateDesc) {
+al_class AlOperateDesc al_extend Object {
 public:
     enum class CoordIdx : int {
         UNKNOWN = 0,

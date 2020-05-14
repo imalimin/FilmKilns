@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlAbsElemented.h"
 
-al_class_ex(AlImageCanvasModel, AlAbsElemented) {
+al_class AlImageCanvasModel al_extend AlAbsElemented {
 public:
     AlImageCanvasModel();
 

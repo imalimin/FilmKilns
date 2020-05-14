@@ -10,7 +10,7 @@
 
 #include "HwAbsFilter.h"
 
-al_class_ex(AlPaintRoundFilter, HwAbsFilter) {
+al_class AlPaintRoundFilter al_extend HwAbsFilter {
 public:
     AlPaintRoundFilter();
 

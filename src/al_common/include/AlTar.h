@@ -11,9 +11,9 @@
 #include "Object.h"
 #include "AlBuffer.h"
 
-al_class(AlTar) {
+al_class AlTar al_extend Object {
 public:
-    al_class(AlArchive) {
+    al_class AlArchive al_extend Object {
     public:
         AlArchive();
 

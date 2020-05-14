@@ -11,7 +11,7 @@
 #include "AlImageLayer.h"
 #include "AlImageLayerModel.h"
 
-al_class(AlLayerPair) {
+al_class AlLayerPair al_extend Object {
 public:
     AlLayerPair(AlImageLayer *layer, AlImageLayerModel *model);
 

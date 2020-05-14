@@ -13,7 +13,7 @@
 #include "AlImageCanvasModel.h"
 #include "AlAbsMAction.h"
 
-al_class(AlFileImporter) {
+al_class AlFileImporter al_extend Object {
 public:
     AlFileImporter();
 

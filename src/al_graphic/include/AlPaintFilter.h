@@ -14,7 +14,7 @@
 #include "AlPaintRoundFilter.h"
 #include <vector>
 
-al_class_ex(AlPaintFilter, HwAbsFilter) {
+al_class AlPaintFilter al_extend HwAbsFilter {
 public:
     AlPaintFilter();
 

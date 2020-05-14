@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlLooper.h"
 
-al_class(AlHandler) {
+al_class AlHandler al_extend Object {
 public:
     typedef function<void(AlMessage *msg)> Callback;
 public:

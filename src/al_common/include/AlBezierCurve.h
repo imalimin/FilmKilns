@@ -12,7 +12,7 @@
 #include "AlVec2.h"
 #include <vector>
 
-al_class(AlBezierCurve) {
+al_class AlBezierCurve al_extend Object {
 public:
     static AlBezierCurve *createEmpty();
 

@@ -12,7 +12,7 @@
 #include "AlBezierCurve.h"
 #include "AlColor.h"
 
-al_class_ex(AlMPaintAction, AlAbsMFilterAction) {
+al_class AlMPaintAction al_extend AlAbsMFilterAction {
 public:
     AlMPaintAction();
 

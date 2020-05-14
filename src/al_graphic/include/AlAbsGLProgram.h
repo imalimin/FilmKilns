@@ -11,7 +11,7 @@
 
 #define HW_SHADER(...) #__VA_ARGS__
 
-al_class(AlAbsGLProgram) {
+al_class AlAbsGLProgram al_extend Object {
 public:
     AlAbsGLProgram(std::string *v, std::string *f);
 

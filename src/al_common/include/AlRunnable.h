@@ -11,7 +11,7 @@
 #include "Object.h"
 #include <functional>
 
-al_def_class AlRunnable al_extend Object {
+al_class AlRunnable al_extend Object {
 public:
     static AlRunnable *run(const std::function<void(Object *obj)> &runnable);
 

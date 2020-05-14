@@ -18,7 +18,7 @@
 
 /// 用于存放图层绘制信息
 /// {@link AlCanvasDrawer}根据此信息可以准确在画布上绘制图层
-al_class(AlImageLayerDrawModel) {
+al_class AlImageLayerDrawModel al_extend Object {
 public:
     AlImageLayerDrawModel();
 

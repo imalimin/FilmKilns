@@ -8,7 +8,7 @@
 #include "Object.h"
 #include "AlElement.h"
 
-al_class(AlXMLDocument) {
+al_class AlXMLDocument al_extend Object {
 public:
     static AlXMLDocument *fromFile(std::string file);
 

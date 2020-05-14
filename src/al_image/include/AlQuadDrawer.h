@@ -12,7 +12,7 @@
 #include "AlTexAllocator.h"
 #include "AlQuad.h"
 
-al_class_ex(AlQuadDrawer, HwNormalFilter) {
+al_class AlQuadDrawer al_extend HwNormalFilter {
 public:
     AlQuadDrawer();
 

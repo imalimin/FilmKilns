@@ -20,7 +20,7 @@
 /// +------------------------------------------------------------+
 /// | 2         | none                    | save as jpg/png/webp |
 /// +------------------------------------------------------------+
-al_class_ex(AlRenderParams, AlBinaryParams) {
+al_class AlRenderParams al_extend AlBinaryParams {
 public:
     AlRenderParams(int32_t flags = 0);
 

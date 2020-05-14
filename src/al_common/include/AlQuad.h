@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlPointF.h"
 
-al_class(AlQuad) {
+al_class AlQuad al_extend Object {
 public:
     AlQuad();
 

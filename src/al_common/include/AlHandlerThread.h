@@ -15,7 +15,7 @@
 #include <mutex>
 #include <condition_variable>
 
-al_class(AlHandlerThread) {
+al_class AlHandlerThread al_extend Object {
 public:
     static AlHandlerThread *create(std::string name);
 

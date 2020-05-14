@@ -14,7 +14,7 @@
 #include <vector>
 #include <map>
 
-al_class(AlImageLayerManager) {
+al_class AlImageLayerManager al_extend Object {
 public:
     AlImageLayerManager();
 

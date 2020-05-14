@@ -10,7 +10,7 @@
 
 #include "AlAbsEncoder.h"
 
-al_class_ex(AlPngEncoder, AlAbsEncoder) {
+al_class AlPngEncoder al_extend AlAbsEncoder {
 public:
     AlPngEncoder(std::string path);
 

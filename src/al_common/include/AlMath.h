@@ -11,7 +11,7 @@
 #include <cmath>
 #include "Object.h"
 
-al_class(AlMath) {
+al_class AlMath al_extend Object {
 public:
     static constexpr double PI = M_PI;
 

@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlVec2.h"
 
-al_class_ex(AlPointF, AlVec2) {
+al_class AlPointF al_extend AlVec2 {
 public:
     AlPointF(float x = 0.0f, float y = 0.0f);
 

@@ -13,7 +13,7 @@
 
 /// 保存AlImageLayerModel的备份，并且附加了图层大小属性，不会拷贝AlAbsOperateModel
 /// 用于送入AlAbsOperateModel进行测量兵改变图层属性，但不影响图层的原属性
-al_class_ex(AlImgLayerDescription, AlImageLayerModel) {
+al_class AlImgLayerDescription al_extend AlImageLayerModel {
 public:
     AlImgLayerDescription(const AlImgLayerDescription &o);
 

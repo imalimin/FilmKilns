@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlRational) {
+al_class AlRational al_extend Object {
 public:
     AlRational();
 

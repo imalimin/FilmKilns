@@ -14,7 +14,7 @@
 #include "AlVec2.h"
 #include "vector"
 
-al_class_ex(AlPointProgram, AlAbsGLProgram) {
+al_class AlPointProgram al_extend AlAbsGLProgram {
 public:
     static AlPointProgram *create(std::string *v, std::string *f);
 

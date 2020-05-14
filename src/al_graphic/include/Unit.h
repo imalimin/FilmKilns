@@ -176,7 +176,7 @@ private:
     friend class AlAbsGraph;
 
 public:
-    al_class(AlUnitSetting) {
+    al_class AlUnitSetting al_extend Object {
     public:
         AlUnitSetting(bool hosted = false);
 

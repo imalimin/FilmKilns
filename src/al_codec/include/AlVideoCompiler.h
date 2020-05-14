@@ -19,7 +19,7 @@
 #include <list>
 #include <vector>
 
-al_class_ex(AlVideoCompiler, Unit) {
+al_class AlVideoCompiler al_extend Unit {
 public:
     AlVideoCompiler(string alias);
 

@@ -10,7 +10,7 @@
 
 #include "AlAbsMAction.h"
 
-al_class_ex(AlMAlignCropAction, AlAbsMAction) {
+al_class AlMAlignCropAction al_extend AlAbsMAction {
 public:
     AlMAlignCropAction();
 

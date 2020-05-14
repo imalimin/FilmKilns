@@ -16,7 +16,7 @@ class AlMatrix;
 
 /// [1x4]
 /// [x,y,z,w]
-al_class(AlVec4) {
+al_class AlVec4 al_extend Object {
 public:
     AlVec4(AlVec2 vec2, float z = 0.0f, float w = 1.0f);
 

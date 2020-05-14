@@ -10,7 +10,7 @@
 
 #include "AlAbsMAction.h"
 
-al_class_ex(AlAbsMFilterAction, AlAbsMAction) {
+al_class AlAbsMFilterAction al_extend AlAbsMAction {
 public:
     AlAbsMFilterAction(std::string type);
 

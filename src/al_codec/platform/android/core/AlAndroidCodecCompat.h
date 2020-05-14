@@ -11,7 +11,7 @@
 #include "HwAbsCodec.h"
 #include "AlMediaCodecBridge.h"
 
-al_class_ex(AlAndroidCodecCompat, HwAbsCodec) {
+al_class AlAndroidCodecCompat al_extend HwAbsCodec {
 public:
     AlAndroidCodecCompat(int32_t codecId);
 

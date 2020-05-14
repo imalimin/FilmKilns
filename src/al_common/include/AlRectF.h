@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlRectF) {
+al_class AlRectF al_extend Object {
 public:
     AlRectF();
 

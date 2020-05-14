@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlBuffer.h"
 
-al_class(AlVBO) {
+al_class AlVBO al_extend Object {
 public:
     static AlVBO *alloc();
 

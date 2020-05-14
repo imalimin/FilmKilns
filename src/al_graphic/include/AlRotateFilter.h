@@ -12,7 +12,7 @@
 #include "AlRational.h"
 
 ///旋转纹理，只支持90的整数倍
-al_class_ex(AlRotateFilter, HwNormalFilter) {
+al_class AlRotateFilter al_extend HwNormalFilter {
 public:
     AlRotateFilter();
 

@@ -53,7 +53,7 @@ private:
     HwPair<string, V> hwPair;
 };
 
-al_class_ex(AlAbsProcessor, Unit) {
+al_class AlAbsProcessor al_extend Unit {
 public:
     AlAbsProcessor(string name);
 

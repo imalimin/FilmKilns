@@ -12,7 +12,7 @@
 #include "AlColorSpace.h"
 #include "AlRational.h"
 
-al_class(AlBitmapInfo) {
+al_class AlBitmapInfo al_extend Object {
 public:
     static int bitsPerPixel(AlColorSpace colorSpace);
 

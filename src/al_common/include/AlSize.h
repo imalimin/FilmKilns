@@ -10,7 +10,7 @@
 
 #include "Size.h"
 
-al_class_ex(AlSize, Size) {
+al_class AlSize al_extend Size {
 public:
     AlSize();
 

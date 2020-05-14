@@ -23,7 +23,7 @@ class AlAbsMAction;
 
 class AlFileImporter;
 
-al_class_ex(AlImageLayerModel, AlAbsElemented) {
+al_class AlImageLayerModel al_extend AlAbsElemented {
 public:
     static AlImageLayerModel *create(AlIdentityCreator *creator, const std::string path);
 

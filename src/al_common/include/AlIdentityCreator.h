@@ -11,7 +11,7 @@
 #include "Object.h"
 #include <mutex>
 
-al_class(AlIdentityCreator) {
+al_class AlIdentityCreator al_extend Object {
 public:
     static constexpr int32_t NONE_ID = -1;
 

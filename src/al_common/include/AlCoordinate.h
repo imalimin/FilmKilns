@@ -12,7 +12,7 @@
 #include "AlVec2.h"
 #include "AlMatrix.h"
 
-al_class(AlCoordinate) {
+al_class AlCoordinate al_extend Object {
 public:
     static AlCoordinate &create();
 

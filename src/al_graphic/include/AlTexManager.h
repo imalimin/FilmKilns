@@ -14,7 +14,7 @@
 #include <map>
 #include <mutex>
 
-al_class(AlTexManager) {
+al_class AlTexManager al_extend Object {
 public:
     static AlTexManager *instance();
 

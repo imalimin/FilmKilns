@@ -10,7 +10,7 @@
 
 #include "AlOperateDesc.h"
 
-al_class_ex(AlOperateTrans, AlOperateDesc) {
+al_class AlOperateTrans al_extend AlOperateDesc {
 public:
     AlOperateTrans(int32_t layerId, float x, float y);
 

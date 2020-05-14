@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlColor) {
+al_class AlColor al_extend Object {
 public:
     static AlColor from(std::string colorStr);
 

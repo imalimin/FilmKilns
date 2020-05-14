@@ -19,7 +19,7 @@
 #define TAG_ACTION                          "action"
 #define VAL_TYPE                            "type"
 
-al_class_ex(AlAbsMAction, AlAbsElemented) {
+al_class AlAbsMAction al_extend AlAbsElemented {
 public:
     static const std::string TYPE_CROP;
     static const std::string TYPE_ALIGN_CROP;

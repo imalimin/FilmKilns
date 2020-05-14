@@ -12,7 +12,7 @@
 #include "AlBuffer.h"
 #include "HwResult.h"
 
-al_class(AlIOUtils) {
+al_class AlIOUtils al_extend Object {
 public:
     static HwResult readFile(std::string *inFile, AlBuffer **outBuf);
 

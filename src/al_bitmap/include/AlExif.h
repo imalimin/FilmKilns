@@ -12,7 +12,7 @@
 
 /// Exif info.
 /// https://exiftool.org/TagNames/EXIF.html
-al_class(AlExif) {
+al_class AlExif al_extend Object {
 private:
     AlExif() : Object() {};
 

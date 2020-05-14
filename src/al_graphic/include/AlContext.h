@@ -10,7 +10,7 @@
 
 #include "AlAbsContext.h"
 
-al_class_ex(AlContext, AlAbsContext) {
+al_class AlContext al_extend AlAbsContext {
 public:
     AlContext();
 

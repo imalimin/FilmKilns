@@ -15,7 +15,7 @@
 #include "AlEgl.h"
 #include "AlMatrix.h"
 
-al_class_ex(AlDisplayRecorder, AlAbsProcessor) {
+al_class AlDisplayRecorder al_extend AlAbsProcessor {
 public:
     typedef function<void(int32_t)> OnNativeReadyListener;
 

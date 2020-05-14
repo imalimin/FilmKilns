@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlRectLoc) {
+al_class AlRectLoc al_extend Object {
 public:
     static AlRectLoc value(int32_t val);
 

@@ -11,7 +11,7 @@
 #include "AlAbsMAction.h"
 #include "AlColor.h"
 
-al_class(AlLayerActionFactory) {
+al_class AlLayerActionFactory al_extend Object {
 public:
     static AlAbsMAction *crop(float left, float top, float right, float bottom);
 

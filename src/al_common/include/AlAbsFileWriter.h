@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlAbsFileWriter) {
+al_class AlAbsFileWriter al_extend Object {
 public:
     AlAbsFileWriter(std::string path);
 

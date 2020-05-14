@@ -7,7 +7,7 @@
 
 #include "Object.h"
 
-al_class(ObjectBox) {
+al_class ObjectBox al_extend Object {
 public:
     static ObjectBox *box(void *ptr);
 

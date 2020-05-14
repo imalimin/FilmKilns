@@ -13,7 +13,7 @@
 #include "AlRational.h"
 #include "AlLayerMeasurer.h"
 
-al_class_ex(AlMCropAction, AlAbsMAction) {
+al_class AlMCropAction al_extend AlAbsMAction {
 public:
     AlMCropAction();
 

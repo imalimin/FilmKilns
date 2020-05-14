@@ -10,7 +10,7 @@
 
 #include "Object.h"
 
-al_class(AlBinaryParams) {
+al_class AlBinaryParams al_extend Object {
 public:
     AlBinaryParams(int32_t flags = 0);
 

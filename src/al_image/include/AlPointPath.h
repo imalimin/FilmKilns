@@ -13,7 +13,7 @@
 #include "AlBezierCurve.h"
 #include <vector>
 
-al_class(AlPointPath) {
+al_class AlPointPath al_extend Object {
 public:
     AlPointPath();
 

@@ -10,7 +10,7 @@
 
 #include "AlAbsFileWriter.h"
 
-al_class_ex(AlTextWriter, AlAbsFileWriter) {
+al_class AlTextWriter al_extend AlAbsFileWriter {
 public:
     AlTextWriter(std::string path, bool appendMode = false);
 

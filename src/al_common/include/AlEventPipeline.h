@@ -12,7 +12,7 @@
 #include "AlHandler.h"
 #include "AlHandlerThread.h"
 
-al_class(AlEventPipeline) {
+al_class AlEventPipeline al_extend Object {
 public:
     static AlEventPipeline *create(std::string name);
 

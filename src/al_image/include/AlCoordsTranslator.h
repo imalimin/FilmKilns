@@ -12,7 +12,7 @@
 #include "AlSize.h"
 #include "AlImageLayerModel.h"
 
-al_class(AlCoordsTranslator) {
+al_class AlCoordsTranslator al_extend Object {
 public:
     static void translate(AlSize src, AlSize target, float &x, float &y);
 

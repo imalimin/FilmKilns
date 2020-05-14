@@ -43,7 +43,7 @@
 ///         D: double
 /// Lpackage;: Objetc
 ///         V: void
-al_def_class AlJNIEnv al_extend Object {
+al_class AlJNIEnv al_extend Object {
 public:
     static AlJNIEnv &getInstance();
 
