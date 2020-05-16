@@ -278,7 +278,7 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
                     delete hwPacket;
                 }
                 memcpy(keyFrameBuf->data(), &info.size, 4);
-                memcpy(keyFrameBuf->data() + 4, buf, info.size);
+                memcpy(keyFrameBuf->data() + 4, buf->data(), info.size);
                 hwPacket = HwPacket::wrap(keyFrameBuf->data(), info.size + 4,
                                           info.presentationTimeUs,
                                           info.presentationTimeUs,
