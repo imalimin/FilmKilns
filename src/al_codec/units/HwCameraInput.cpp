@@ -40,22 +40,24 @@ HwCameraInput::~HwCameraInput() {
 bool HwCameraInput::onCreate(AlMessage *msg) {
     AlLogI(TAG, "");
     srcTex = HwTexture::allocOES();
-    string vertex("        attribute vec4 aPosition;\n"
-                  "        attribute vec4 aTextureCoord;\n"
-                  "        uniform mat4 uTextureMatrix;\n"
-                  "        varying vec2 vTextureCoord;\n"
-                  "        void main() {\n"
-                  "            gl_Position = aPosition;\n"
-                  "            vTextureCoord = (uTextureMatrix * aTextureCoord).xy;\n"
-                  "        }");
-    string fragment("        #extension GL_OES_EGL_image_external : require\n"
-                    "        precision mediump float;\n"
-                    "        varying mediump vec2 vTextureCoord;\n"
-                    "        uniform samplerExternalOES uTexture;\n"
-                    "        void main() {\n"
-                    "            vec4 color = vec4(texture2D(uTexture, vTextureCoord).rgb, 1.0);\n"
-                    "            gl_FragColor = color;\n"
-                    "        }");
+    string vertex(R"(
+        attribute vec4 aPosition;
+        attribute vec4 aTextureCoord;
+        uniform mat4 uTextureMatrix;
+        varying vec2 vTextureCoord;
+        void main() {
+            gl_Position = aPosition;
+            vTextureCoord = (uTextureMatrix * aTextureCoord).xy;
+        })");
+    string fragment(R"(
+        #extension GL_OES_EGL_image_external : require
+        precision mediump float;
+        varying mediump vec2 vTextureCoord;
+        uniform samplerExternalOES uTexture;
+        void main() {
+            vec4 color = vec4(texture2D(uTexture, vTextureCoord).rgb, 1.0);
+            gl_FragColor = color;
+        })");
     program = HwProgram::create(&vertex, &fragment);
     auto *m = AlMessage::obtain(MSG_CAMERA_OES_TEX_NOTIFY);
     m->ptr = srcTex.as<Object>();
