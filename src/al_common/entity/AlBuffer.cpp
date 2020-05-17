@@ -68,7 +68,7 @@ size_t AlBuffer::capacity() {
 }
 
 void AlBuffer::limit(size_t newLimit) {
-    assert(_limit < _capacity);
+    assert(_limit <= _capacity && _limit > 0);
     _limit = newLimit;
 }
 
