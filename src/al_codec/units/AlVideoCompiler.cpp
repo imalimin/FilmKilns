@@ -166,7 +166,8 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
                            videoFrame->getWidth() / 2,
                            videoFrame->getWidth(), videoFrame->getHeight());
     } else {
-        memcpy(videoFrame->data(), buf->data(), buf->size());
+        buf->rewind();
+        buf->get(videoFrame->data(), videoFrame->size());
     }
 #if 0
     Logcat::i("HWVC", "HwVideoOutput::write nv12 convert cost %lld",

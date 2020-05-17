@@ -12,6 +12,7 @@
 #include "HwFBObject.h"
 #include "HwTexture.h"
 #include "AlBitmapFactory.h"
+#include "AlColorSpace.h"
 
 AlUTexReader::AlUTexReader(const string &alias) : Unit(alias) {
     al_reg_msg(EVENT_SCREEN_DRAW_TEX, AlUTexReader::_onScreenDraw);
@@ -65,12 +66,42 @@ bool AlUTexReader::_onReqPixels(AlMessage *msg) {
         return true;
     }
     auto *srcTex = _resize(this->srcTex, msg->getObj<AlSize *>());
-    int format = msg->arg1;
-    switch (format) {
-        case 3: {
+    auto color = static_cast<AlColorSpace >(msg->arg1);
+    switch (color) {
+        case AlColorSpace::NV12: {
+            _yv12(srcTex);
+            break;
+        }
+        case AlColorSpace::RGBA:
+        default: {
+            _rgba(srcTex);
             break;
         }
     }
+    return true;
+}
+
+void AlUTexReader::_rgba(HwAbsTexture *srcTex) {
+    const int size = srcTex->getWidth() * srcTex->getHeight() * 4;
+    if (nullptr == pixels || pixels->capacity() < size) {
+        delete pixels;
+        pixels = AlBuffer::alloc(size);
+    }
+    pixels->rewind();
+    pixels->limit(size);
+
+    auto *m = AlMessage::obtain(MSG_TEX_READER_NOTIFY_PIXELS);
+    glFinish();
+    fbo->bindTex(srcTex);
+    fbo->bind();
+    if (fbo->read(pixels)) {
+        m->obj = AlBuffer::wrap(pixels);
+    }
+    fbo->unbind();
+    postMessage(m);
+}
+
+void AlUTexReader::_yv12(HwAbsTexture *srcTex) {
     if (nullptr == yuvFilter) {
         yuvFilter = new HwRGBA2NV12Filter();
         bool ret = yuvFilter->prepare();
@@ -79,21 +110,27 @@ bool AlUTexReader::_onReqPixels(AlMessage *msg) {
         desc.size.height = srcTex->getHeight() * 3 / 2;
         yuvTex = AlTexManager::instance()->alloc(desc);
         fbo = HwFBObject::alloc();
-        pixels = AlBuffer::alloc(yuvTex->getWidth() * yuvTex->getHeight() * 4);
     }
     glViewport(0, 0, yuvTex->getWidth(), yuvTex->getHeight());
     yuvFilter->draw(srcTex, yuvTex);
+
+    const int size = yuvTex->getWidth() * yuvTex->getHeight() * 4;
+    if (nullptr == pixels || pixels->capacity() < size) {
+        delete pixels;
+        pixels = AlBuffer::alloc(size);
+    }
+    pixels->rewind();
+    pixels->limit(size);
 
     auto *m = AlMessage::obtain(MSG_TEX_READER_NOTIFY_PIXELS);
     glFinish();
     fbo->bindTex(yuvTex);
     fbo->bind();
-    if (fbo->read(pixels->data())) {
-        m->obj = AlBuffer::wrap(pixels->data(), pixels->size());
+    if (fbo->read(pixels)) {
+        m->obj = AlBuffer::wrap(pixels);
     }
     fbo->unbind();
     postMessage(m);
-    return true;
 }
 
 HwAbsTexture *AlUTexReader::_resize(HwAbsTexture *srcTex, AlSize *size) {

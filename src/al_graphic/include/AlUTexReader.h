@@ -35,7 +35,11 @@ private:
     /// \return
     bool _onReqPixels(AlMessage *msg);
 
-    HwAbsTexture * _resize(HwAbsTexture *srcTex, AlSize *size);
+    HwAbsTexture *_resize(HwAbsTexture *srcTex, AlSize *size);
+
+    void _rgba(HwAbsTexture *srcTex);
+
+    void _yv12(HwAbsTexture *srcTex);
 
 private:
     HwAbsTexture *srcTex = nullptr;
