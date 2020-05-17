@@ -16,6 +16,8 @@ public:
 
     static AlBuffer *wrap(uint8_t *buf, size_t size);
 
+    static AlBuffer *wrap(AlBuffer *buf);
+
 private:
     AlBuffer(size_t size);
 
@@ -30,15 +32,30 @@ public:
 
     size_t size();
 
+    void rewind();
+
+    size_t remaining();
+
+    size_t capacity();
+
+    void limit(size_t newLimit);
+
     size_t put(AlBuffer *buf);
 
     size_t put(uint8_t *data, size_t size);
 
-    size_t get(uint8_t *data, int32_t offset, size_t size);
+    ///
+    /// \param dst dest buffer pointer
+    /// \param size request read count of byte.
+    /// \return zero for fail, or size for success.
+    size_t get(uint8_t *dst, size_t size);
 
 private:
     uint8_t *buf = nullptr;
     size_t _size = 0;
+    size_t _position = 0;
+    size_t _limit = 0;
+    size_t _capacity = 0;
     bool isRef = false;
 
 };

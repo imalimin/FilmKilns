@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwAbsFrame.h"
+#include "HwAbsFrame.h"
 
 HwAbsFrame::HwAbsFrame(size_t size) : Object() {
     buf = HwBuffer::alloc(size);

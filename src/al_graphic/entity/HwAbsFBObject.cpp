@@ -60,3 +60,10 @@ bool HwAbsFBObject::read(uint8_t *pixels) {
     unbind();
     return ret;
 }
+
+bool HwAbsFBObject::read(AlBuffer *pixels) {
+    if (nullptr == pixels) {
+        return false;
+    }
+    return read(pixels->data());
+}

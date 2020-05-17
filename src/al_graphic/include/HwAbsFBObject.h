@@ -10,6 +10,7 @@
 
 #include "Object.h"
 #include "Size.h"
+#include "AlBuffer.h"
 
 class HwAbsTexture;
 
@@ -28,6 +29,8 @@ public:
     void unbind();
 
     virtual bool read(uint8_t *pixels);
+
+    virtual bool read(AlBuffer *pixels);
 
 private:
     uint32_t fbo = 0;
