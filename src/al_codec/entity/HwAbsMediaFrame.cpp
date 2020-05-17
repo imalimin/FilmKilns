@@ -33,6 +33,10 @@ AVPixelFormat HwAbsMediaFrame::convertVideoFrameFormat(HwFrameFormat format) {
             return AV_PIX_FMT_YUV420P;
         case HwFrameFormat::HW_IMAGE_NV12:
             return AV_PIX_FMT_NV12;
+        case HwFrameFormat::HW_IMAGE_RGB:
+            return AV_PIX_FMT_RGB24;
+        case HwFrameFormat::HW_IMAGE_RGBA:
+            return AV_PIX_FMT_RGBA;
         default:
             return AV_PIX_FMT_NONE;
     }

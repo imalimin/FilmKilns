@@ -8,17 +8,18 @@
 #ifndef HWVC_ANDROID_HWFRAMEFORMAT_H
 #define HWVC_ANDROID_HWFRAMEFORMAT_H
 
+#include "AlColorSpace.h"
 /**
  * YUV420P: YV12(YYYYYYYY VV UU)/YU12/I420(YYYYYYYY UU VV)
  * YUV420SP: NV12(YYYYYYYY UVUV)/NV21(YYYYYYYY VUVU)
  */
 enum class HwFrameFormat : int {
     HW_FMT_NONE = -1,
-    HW_IMAGE_RGB,
-    HW_IMAGE_RGBA,
-    HW_IMAGE_YV12,     /** YUV420P. Called I420 on android. */
-    HW_IMAGE_NV12,     /** YUV420SP */
-    HW_IMAGE_END,    /** End flag of image formats. DO NOT USE if linking dynamically */
+    HW_IMAGE_RGB = static_cast<int>(AlColorSpace::RGB),
+    HW_IMAGE_RGBA = static_cast<int>(AlColorSpace::RGBA),
+    HW_IMAGE_YV12 = static_cast<int>(AlColorSpace::YV12),
+    HW_IMAGE_NV12 = static_cast<int>(AlColorSpace::NV12),
+    HW_IMAGE_END = static_cast<int>(AlColorSpace::END),    /** End flag of image formats. DO NOT USE if linking dynamically */
 
     HW_SAMPLE_U8 = 100,/** unsigned 8 bits */
     HW_SAMPLE_S16,     /** signed 16 bits */

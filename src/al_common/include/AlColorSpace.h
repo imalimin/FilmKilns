@@ -15,6 +15,7 @@ enum class AlColorSpace : int {
     YV12,      /** YUV420P. Called I420 on android. */
     NV12,      /** YUV420SP */
     GRAY,
+    END,      /** END flag. */
 };
 
 #endif //HWVC_ANDROID_ALCOLORSPACE_H
