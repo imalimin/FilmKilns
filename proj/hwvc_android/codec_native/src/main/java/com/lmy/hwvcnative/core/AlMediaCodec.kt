@@ -119,7 +119,7 @@ open class AlMediaCodec(
 //            } else {
 //                *frame = outFrame;
 //            }
-        } else if (-541478725 == ret) {
+        } else if (EOF == ret) {
             return ret
         }
         return ret
@@ -198,7 +198,7 @@ open class AlMediaCodec(
         }
         if (info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM > 0) {
             codec!!.releaseOutputBuffer(bufIdx, false)
-            return -541478725
+            return EOF
         }
         var wrote = false
         if (info.size > 0) {
@@ -248,6 +248,7 @@ open class AlMediaCodec(
 
     companion object {
         private const val TAG = "AlMediaCodec"
+        private const val EOF = -541478725
 
         fun getMime(codecId: Int): String {
             return MediaFormat.MIMETYPE_VIDEO_AVC

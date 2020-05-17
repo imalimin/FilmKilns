@@ -18,17 +18,21 @@ HwFFMuxer::~HwFFMuxer() {
 }
 
 void HwFFMuxer::release() {
-    tracks.clear();
     if (pFormatCtx) {
-        if (started) {
-            av_write_trailer(pFormatCtx);
+        if (started && 0 == av_write_trailer(pFormatCtx)) {
+            AlLogI(TAG, "close file success.");
+        } else {
+            AlLogE(TAG, "close file failed!");
         }
         if (!(pFormatCtx->flags & AVFMT_NOFILE)) {
-            avio_closep(&pFormatCtx->pb);
+            if (0 != avio_closep(&pFormatCtx->pb)) {
+                AlLogE(TAG, "close file failed!");
+            }
         }
         avformat_free_context(pFormatCtx);
         pFormatCtx = nullptr;
     }
+    tracks.clear();
     started = false;
 }
 
@@ -132,6 +136,9 @@ bool HwFFMuxer::copyExtraData(AVStream *stream, HwAbsCodec *codec) {
 //                FILE *fp = fopen("/sdcard/extra.data", "wb");
 //                fwrite(stream->codecpar->extradata, 1, stream->codecpar->extradata_size, fp);
 //                fclose(fp);
+            } else {
+                assert(false);
+                return false;
             }
             break;
         }
@@ -143,6 +150,8 @@ bool HwFFMuxer::copyExtraData(AVStream *stream, HwAbsCodec *codec) {
                 uint8_t *extra = static_cast<uint8_t *>(av_mallocz(esds->size()));
                 memcpy(extra, esds->data(), esds->size());
                 stream->codecpar->extradata = extra;
+            } else {
+                return false;
             }
             break;
         }

@@ -11,6 +11,8 @@
 #include "HwVideoFrame.h"
 #include "libyuv.h"
 
+#define TAG "HwAndroidCodec"
+
 const int32_t HwAndroidCodec::HW_ANDROID_AVC = AlCodec::H264;
 
 HwAbsCodec *HwAndroidCodec::createDecoder(int32_t codecId) {
@@ -104,20 +106,20 @@ HwResult HwAndroidCodec::configure(HwBundle &format) {
         codec = AMediaCodec_createDecoderByType(mime);
     }
     if (!codec) {
-        Logcat::e("HWVC", "HwAndroidCodec::configure codec alloc failed");
+        AlLogE(TAG, "codec alloc failed");
         AMediaFormat_delete(cf);
         return false;
     }
     media_status_t ret = AMediaCodec_configure(codec, cf, nullptr, nullptr,
                                                encodeMode ? AMEDIACODEC_CONFIGURE_FLAG_ENCODE : 0);
     if (media_status_t::AMEDIA_OK != ret) {
-        Logcat::e("HWVC", "HwAndroidCodec::configure codec configure failed(%d)", ret);
+        AlLogE(TAG, "codec alloc failed(%d)", ret);
         AMediaFormat_delete(cf);
         return false;
     }
     ret = AMediaCodec_start(codec);
     if (media_status_t::AMEDIA_OK != ret) {
-        Logcat::e("HWVC", "HwAndroidCodec::configure codec start failed(%d)", ret);
+        AlLogE(TAG, "codec alloc failed(%d)", ret);
         AMediaFormat_delete(cf);
         return false;
     }
@@ -135,18 +137,26 @@ HwResult HwAndroidCodec::configure(HwBundle &format) {
         offset += width * height / 4;
         memset(frame->data() + offset, 128, width * height / 4);
         frame->setPts(0);
-        if (Hw::SUCCESS != push(frame->data(), frame->size(), 0)) {
-            return Hw::FAILED;
-        }
+
+        bool pushed = false;
         for (int i = 0; i < 60; ++i) {
-            pop(5000);
-            if (buffers[0] && buffers[1]) {
-                break;
+            if (!pushed && Hw::SUCCESS == push(frame->data(), frame->size(), 0)) {
+                pushed = true;
+                if (0 != i) {
+                    AlLogW(TAG, "push index more than 1.");
+                }
+            }
+            if (pushed) {
+                pop(5000);
+                if (buffers[0] && buffers[1]) {
+                    break;
+                }
             }
         }
         delete frame;
-        if (HW_ANDROID_AVC == codecId) {
+        if (AlCodec::H264 == codecId) {
             if (!buffers[0] || !buffers[1]) {
+                AlLogE(TAG, "failed.");
                 return Hw::FAILED;
             }
         }
@@ -178,7 +188,7 @@ HwResult HwAndroidCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
     }
     HwResult ret = push(data, size, pts);
     if (Hw::SUCCESS != ret) {
-        Logcat::i("hwvc", "HwAndroidCodec::process push failed");
+        AlLogE(TAG, "push failed");
     }
     HwResult ret1 = pop(2000);
     if (Hw::SUCCESS == ret1) {
@@ -187,7 +197,7 @@ HwResult HwAndroidCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
         } else {
             *frame = outFrame;
         }
-    } else if (HwResult(-541478725) == ret1) {
+    } else if (Hw::IO_EOF == ret1) {
         return ret1;
     }
     return ret;
@@ -220,7 +230,7 @@ HwBuffer *HwAndroidCodec::getExtraBuffer(string key) {
 void HwAndroidCodec::flush() {
     media_status_t ret = AMediaCodec_flush(codec);
     if (media_status_t::AMEDIA_OK != ret) {
-        Logcat::e("HWVC", "HwAndroidCodec::flush failed(%d)", ret);
+        AlLogE(TAG, "flush failed(%d)", ret);
     }
 }
 
@@ -229,11 +239,12 @@ HwResult HwAndroidCodec::push(uint8_t *data, size_t size, int64_t pts) {
     if (bufIdx < 0) {
         return Hw::FAILED;
     }
-    if (!data) {
+    if (nullptr == data) {
+        AlLogI(TAG, "queue eof buffer.");
         media_status_t result = AMediaCodec_queueInputBuffer(codec, bufIdx, 0, 0, 0,
                                                              AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM);
         if (media_status_t::AMEDIA_OK != result) {
-            Logcat::e("HWVC", "HwAndroidCodec::push queue eof buffer failed(%d)", result);
+            AlLogE(TAG, "queue eof buffer failed(%d)", result);
         }
         return Hw::SUCCESS;
     }
@@ -247,10 +258,9 @@ HwResult HwAndroidCodec::push(uint8_t *data, size_t size, int64_t pts) {
                                                          0, bufSize,
                                                          pts, 0);
     if (media_status_t::AMEDIA_OK != result) {
-        Logcat::e("HWVC", "HwAndroidCodec::push queue input buffer failed(%d)", result);
+        AlLogE(TAG, "queue input buffer failed(%d)", result);
         return Hw::FAILED;
     }
-    Logcat::e("HWVC", "HwAndroidCodec::push failed bufIdx = %d", bufIdx);
     return Hw::SUCCESS;
 }
 
@@ -259,11 +269,11 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
     ssize_t bufIdx = AMediaCodec_dequeueOutputBuffer(codec, &info, waitInUS);
     switch (bufIdx) {
         case AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED: {
-            Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED");
+            AlLogI(TAG, "AMEDIACODEC_INFO_OUTPUT_BUFFERS_CHANGED");
             return Hw::FAILED;
         }
         case AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED: {
-            Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED");
+            AlLogI(TAG, "AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED");
             auto *format = AMediaCodec_getOutputFormat(codec);
             if (encodeMode) {
                 uint8_t *sps = nullptr;
@@ -296,11 +306,11 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
             return Hw::FAILED;
         }
         case AMEDIACODEC_INFO_TRY_AGAIN_LATER: {
-            Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_INFO_TRY_AGAIN_LATER");
+            AlLogI(TAG, "AMEDIACODEC_INFO_TRY_AGAIN_LATER");
             return Hw::FAILED;
         }
         case AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM: {
-            Logcat::i("HWVC", "HwAndroidCodec AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM");
+            AlLogI(TAG, "AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM");
             return Hw::FAILED;
         }
         default:
@@ -317,7 +327,7 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
     }
     if (info.flags & AMEDIACODEC_BUFFER_FLAG_END_OF_STREAM) {
         AMediaCodec_releaseOutputBuffer(codec, bufIdx, false);
-        return HwResult(-541478725);
+        return Hw::IO_EOF;
     }
     bool wrote = false;
     if (info.size > 0) {

@@ -44,7 +44,7 @@ bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleForma
 }
 
 bool HwAndroidEncoder::configure() {
-    vCodec = new AlAndroidCodecCompat(HwAndroidCodec::HW_ANDROID_AVC);
+    vCodec = new HwAndroidCodec(HwAndroidCodec::HW_ANDROID_AVC);
     const int32_t fps = 30;
     HwBundle format;
     format.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
@@ -138,14 +138,12 @@ bool HwAndroidEncoder::stop() {
 }
 
 void HwAndroidEncoder::release() {
-    if (vCodec) {
-        delete vCodec;
-        vCodec = nullptr;
-    }
-    if (muxer) {
-        delete muxer;
-        muxer = nullptr;
-    }
+    delete aCodec;
+    aCodec = nullptr;
+    delete vCodec;
+    vCodec = nullptr;
+    delete muxer;
+    muxer = nullptr;
     aTrack = HwAbsMuxer::TRACK_NONE;
     vTrack = HwAbsMuxer::TRACK_NONE;
 }

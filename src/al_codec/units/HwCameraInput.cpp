@@ -103,10 +103,10 @@ void HwCameraInput::draw() {
     if (mLayerTex) {
 //        AlLogI(TAG, "%d, %d", mLayerId, mLayerTex->texId());
         glViewport(0, 0, mLayerTex->getWidth(), mLayerTex->getHeight());
-        glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
         fbo->bindTex(mLayerTex);
         fbo->bind();
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
         program->draw(srcTex.as<HwAbsTexture>());
         fbo->unbind();
     }

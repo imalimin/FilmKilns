@@ -178,18 +178,12 @@ bool HwFFmpegEncoder::stop() {
 }
 
 void HwFFmpegEncoder::release() {
-    if (aCodec) {
-        delete aCodec;
-        aCodec = nullptr;
-    }
-    if (vCodec) {
-        delete vCodec;
-        vCodec = nullptr;
-    }
-    if (muxer) {
-        delete muxer;
-        muxer = nullptr;
-    }
+    delete aCodec;
+    aCodec = nullptr;
+    delete vCodec;
+    vCodec = nullptr;
+    delete muxer;
+    muxer = nullptr;
     aTrack = HwAbsMuxer::TRACK_NONE;
     vTrack = HwAbsMuxer::TRACK_NONE;
 }

@@ -34,6 +34,7 @@ public:
 namespace Hw {
     const HwResult SUCCESS = HwResult(0);
     const HwResult FAILED = HwResult(-1);
+    const HwResult IO_EOF = HwResult(-541478725);
 }
 
 #endif //HARDWAREVIDEOCODEC_HWRESULT_H

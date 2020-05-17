@@ -35,8 +35,8 @@ public:
     virtual void stop()=0;
 };
 namespace Hw {
-    const HwResult MEDIA_WAIT = HwResult(-1);
-    const HwResult MEDIA_EOF = HwResult(-541478725);
+    const HwResult MEDIA_WAIT = Hw::FAILED;
+    const HwResult MEDIA_EOF = Hw::IO_EOF;
     const HwResult MEDIA_SUCCESS = Hw::SUCCESS;
 }
 
