@@ -25,15 +25,24 @@ static const string FRAGMENT = HW_SHADER(
         uniform int width;
 
         float y(vec3 c) {
-            return c.r * 0.257 + c.g * 0.504 + c.b * 0.098 + 0.0625;
+            //BT601
+//            return 0.257 * c.r + 0.504 * c.g + 0.098 * c.b + 0.0625;
+            // BT709
+            return 0.183 * c.r + 0.614 * c.g + 0.062 * c.b + 0.0625;
         }
 
         float u(vec3 c) {
-            return -0.148 * c.r - 0.291 * c.g + 0.439 * c.b + 0.5000;
+            //BT601
+//            return -0.148 * c.r - 0.291 * c.g + 0.439 * c.b + 0.5000;
+            // BT709
+            return -0.101 * c.r - 0.339 * c.g + 0.439 * c.b + 0.5000;
         }
 
         float v(vec3 c) {
-            return 0.439 * c.r - 0.368 * c.g - 0.071 * c.b + 0.5000;
+            //BT601
+//            return 0.439 * c.r - 0.368 * c.g - 0.071 * c.b + 0.5000;
+            // BT709
+            return 0.439 * c.r - 0.399 * c.g - 0.040 * c.b + 0.5000;
         }
 
         float divide(float num1, float num2) {
