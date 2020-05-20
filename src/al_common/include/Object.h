@@ -17,6 +17,7 @@ using namespace std;
 #define al_interface class
 #define al_extend : public
 #define al_nullable
+#define AL_INSTANCE_OF(o1, o2) typeid(o1) != typeid(o2)
 
 template<class T>
 class AlSPointer;

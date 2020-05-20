@@ -68,7 +68,7 @@ bool AlVideoCompiler::_onScreenDraw(AlMessage *msg) {
             if (!mPtsQueue.empty()) {
                 int64_t pts = mPtsQueue.front();
                 mPtsQueue.pop_front();
-                _write(msg->getObj<HwAbsTexture *>(), pts);
+                _writeTex(msg->getObj<HwAbsTexture *>(), pts);
             } else {
                 AlLogW(TAG, "Encode failed. No pts or no buf.");
             }
@@ -91,7 +91,7 @@ bool AlVideoCompiler::_onWrite(AlMessage *msg) {
     if (buf && !mPtsQueue.empty()) {
         int64_t pts = mPtsQueue.front();
         mPtsQueue.pop_front();
-        _write(buf, pts);
+        _writeBuf(buf, pts);
     } else {
         AlLogW(TAG, "Encode failed. No pts or no buf.");
     }
@@ -159,7 +159,7 @@ void AlVideoCompiler::_initialize() {
     }
 }
 
-void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
+void AlVideoCompiler::_writeBuf(AlBuffer *buf, int64_t tsInNs) {
     if (!buf) {
         AlLogE(TAG, "failed. Buffer is null.");
         return;
@@ -202,7 +202,7 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
     }
 }
 
-void AlVideoCompiler::_write(HwAbsTexture *tex, int64_t tsInNs) {
+void AlVideoCompiler::_writeTex(HwAbsTexture *tex, int64_t tsInNs) {
     AlTexFrame *tFrame = new AlTexFrame(tex);
     tFrame->setPicType(HwVideoFrame::HW_PIC_DEF);
     if (lastTsInNs < 0) {
@@ -212,7 +212,7 @@ void AlVideoCompiler::_write(HwAbsTexture *tex, int64_t tsInNs) {
     auto delta = tsInNs - lastTsInNs;
     vTimestamp += delta;
     lastTsInNs = tsInNs;
-    tFrame->setPts(vTimestamp / 1000);
+    tFrame->setPts(vTimestamp);
     if (encoder) {
         encoder->write(tFrame);
     } else {

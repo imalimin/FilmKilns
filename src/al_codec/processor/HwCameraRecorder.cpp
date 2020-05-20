@@ -89,7 +89,8 @@ void HwCameraRecorder::setFilter(HwAbsFilter *filter) {
 }
 
 void HwCameraRecorder::runOnCameraContext(function<void()> func) {
-    postEvent(AlMessage::obtain(MSG_CAMERA_RUN, new AlRunnable([func](Object *o) {
+    postEvent(AlMessage::obtain(MSG_CAMERA_RUN, new AlRunnable([this, func](Object *o) {
+        this->aSharedContext->makeCurrent();
         func();
     })));
 }

@@ -142,9 +142,9 @@ private:
 
     bool _onBackward(AlMessage *msg);
 
-    void _write(AlBuffer *buf, int64_t tsInNs);
+    void _writeBuf(AlBuffer *buf, int64_t tsInNs);
 
-    void _write(HwAbsTexture *tex, int64_t tsInNs);
+    void _writeTex(HwAbsTexture *tex, int64_t tsInNs);
 
     int64_t getRecordTimeInUs();
 
