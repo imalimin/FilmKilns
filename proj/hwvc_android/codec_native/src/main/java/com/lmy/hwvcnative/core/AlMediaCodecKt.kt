@@ -6,6 +6,7 @@ import android.media.MediaCodecList
 import android.media.MediaFormat
 import android.os.Build
 import android.util.Log
+import android.view.Surface
 import com.lmy.hwvcnative.entity.AlResult
 import java.nio.ByteBuffer
 
@@ -26,7 +27,8 @@ class AlMediaCodecKt(
         bitrate: Int,
         format: Int,
         iFrameInterval: Int,
-        fps: Int
+        fps: Int,
+        flags: Int
     ): Int {
         val f = createVideoFormat(mime, w, h, bitrate, format, iFrameInterval, fps)
             ?: return AlResult.FAILED
@@ -38,6 +40,16 @@ class AlMediaCodecKt(
             return AlResult.FAILED
         }
         return AlResult.SUCCESS
+    }
+
+    fun createInputSurface(): Surface? {
+        try {
+            return codec.createInputSurface()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.i(TAG, "createSurface failed.")
+        }
+        return null
     }
 
     /**

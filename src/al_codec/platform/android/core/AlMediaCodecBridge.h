@@ -12,6 +12,7 @@
 #include "HwAbsCodec.h"
 #include "AlBuffer.h"
 #include "platform/android/AlJNIEnv.h"
+#include <android/native_window_jni.h>
 
 al_class AlMediaCodecBridge al_extend Object {
 public:
@@ -33,7 +34,9 @@ public:
 
     ~AlMediaCodecBridge();
 
-    HwResult configure(int w, int h, int bitrate, int format, int iFrameInterval, int fps);
+    HwResult configure(int w, int h, int bitrate, int format, int iFrameInterval, int fps, int flags);
+
+    ANativeWindow *createInputSurface();
 
     HwResult start();
 
@@ -62,6 +65,7 @@ public:
 private:
     static const AlJNIObject::Method midInit;
     static const AlJNIObject::Method midConfigure;
+    static const AlJNIObject::Method midInputSurface;
     static const AlJNIObject::Method midStart;
     static const AlJNIObject::Method midStop;
     static const AlJNIObject::Method midFlush;

@@ -71,7 +71,8 @@ HwResult AlAndroidCodecCompat::configure(HwBundle &format) {
     if (AlCodec::H264 == codecId) {
         fps = format.getInt32(KEY_FPS);
         if (encodeMode) {
-            bridge->configure(width, height, bitrate, COLOR_FormatYUV420Flexible, 3, fps);
+            bridge->configure(width, height, bitrate, COLOR_FormatYUV420Flexible,
+                              3, fps, CONFIGURE_FLAG_ENCODE);
         } else {
 //            HwBuffer *csd0Buf = dynamic_cast<HwBuffer *>(format.getObject("csd-0"));
 //            HwBuffer *csd1Buf = dynamic_cast<HwBuffer *>(format.getObject("csd-1"));

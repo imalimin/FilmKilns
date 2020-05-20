@@ -14,10 +14,13 @@ const AlJNIObject::Method AlMediaCodecBridge::midInit = {
         "<init>", "(Ljava/lang/String;)V"};
 const AlJNIObject::Method AlMediaCodecBridge::midConfigure = {
         "com/lmy/hwvcnative/core/AlMediaCodecKt",
-        "configure", "(IIIIII)I"};
+        "configure", "(IIIIIII)I"};
 const AlJNIObject::Method AlMediaCodecBridge::midStart = {
         "com/lmy/hwvcnative/core/AlMediaCodecKt",
         "start", "()I"};
+const AlJNIObject::Method AlMediaCodecBridge::midInputSurface = {
+        "com/lmy/hwvcnative/core/AlMediaCodecKt",
+        "createInputSurface", "()Landroid/view/Surface;"};
 const AlJNIObject::Method AlMediaCodecBridge::midStop = {
         "com/lmy/hwvcnative/core/AlMediaCodecKt",
         "stop", "()I"};
@@ -102,16 +105,31 @@ HwResult AlMediaCodecBridge::configure(int w, int h,
                                        int bitrate,
                                        int format,
                                        int iFrameInterval,
-                                       int fps) {
+                                       int fps,
+                                       int flags) {
     AlLogI(TAG, "enter.");
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
         jint ret = -1;
-        al_jni_call_int(obj, midConfigure, ret, w, h, bitrate, format, iFrameInterval, fps);
+        al_jni_call_int(obj, midConfigure, ret, w, h, bitrate, format, iFrameInterval, fps, flags);
         return HwResult(ret);
     }
     AlLogE(TAG, "failed");
     return Hw::FAILED;
+}
+
+ANativeWindow *AlMediaCodecBridge::createInputSurface() {
+    AlJNIObject *obj = nullptr;
+    if (AlJNIEnv::getInstance().findObj(this, &obj)) {
+        jobject jObject = nullptr;
+        al_jni_call_object(obj, midInputSurface, jObject);
+        JNIEnv *env = nullptr;
+        AlJNIEnv::getInstance().findEnv(&env);
+        if (jObject && env) {
+            return ANativeWindow_fromSurface(env, jObject);
+        }
+    }
+    return nullptr;
 }
 
 HwResult AlMediaCodecBridge::start() {

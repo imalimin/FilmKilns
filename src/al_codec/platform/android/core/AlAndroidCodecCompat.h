@@ -54,6 +54,7 @@ private:
     static constexpr int INFO_TRY_AGAIN_LATER = -1;
     static constexpr int INFO_OUTPUT_FORMAT_CHANGED = -2;
     static constexpr int INFO_OUTPUT_BUFFERS_CHANGED = -3;
+    static constexpr int CONFIGURE_FLAG_ENCODE = 1;
     AlMediaCodecBridge *bridge = nullptr;
 
     bool makeNalSelf = false;
