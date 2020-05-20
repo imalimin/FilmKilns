@@ -15,7 +15,8 @@ AlAndroidCodecCompat2::AlAndroidCodecCompat2(int32_t codecId) : AlAndroidCodecCo
 }
 
 AlAndroidCodecCompat2::~AlAndroidCodecCompat2() {
-
+    delete egl;
+    egl = nullptr;
 }
 
 HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
@@ -100,8 +101,9 @@ bool AlAndroidCodecCompat2::createProgram() {
         attribute vec4 aPosition;
         attribute vec2 aTextureCoord;
         varying vec2 vTextureCoord;
+        uniform mat4 uTextureMatrix;
         void main(){
-            gl_Position= aPosition;
+            gl_Position= uTextureMatrix * aPosition;
             vTextureCoord = aTextureCoord;
         })");
     string fragment(R"(
@@ -113,5 +115,9 @@ bool AlAndroidCodecCompat2::createProgram() {
             gl_FragColor = color;
         })");
     program = HwProgram::create(&vertex, &fragment);
+    auto *mat = new AlMatrix();
+    mat->setScale(1, -1);
+    static_cast<HwProgram *>(program)->updateMatrix(mat);
+    delete mat;
     return nullptr != program;
 }
