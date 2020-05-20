@@ -40,6 +40,10 @@ public:
     int32_t getPicType();
 
 private:
+    HwVideoFrame(const HwVideoFrame &o)
+            : HwAbsMediaFrame(o.allocator, HwFrameFormat::HW_FMT_NONE, 0) {};
+
+private:
     uint32_t width = 0;
     uint32_t height = 0;
     int32_t picType = HW_PIC_DEF;

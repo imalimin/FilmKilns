@@ -11,7 +11,11 @@
 #include "HwAbsCodec.h"
 #include "AlMediaCodecBridge.h"
 
+class AlAndroidCodecCompat2;
+
 al_class AlAndroidCodecCompat al_extend HwAbsCodec {
+public:
+    friend AlAndroidCodecCompat2;
 public:
     AlAndroidCodecCompat(int32_t codecId);
 
@@ -45,6 +49,7 @@ private:
     static constexpr int COLOR_FormatYUV420Planar = 19;
     static constexpr int COLOR_FormatYUV420SemiPlanar = 21;
     static constexpr int COLOR_FormatYUV420Flexible = 0x7F420888;
+    static constexpr int COLOR_FormatSurface = 0x7F000789;
     static constexpr int BUFFER_FLAG_SYNC_FRAME = 1;
     static constexpr int BUFFER_FLAG_KEY_FRAME = 1;
     static constexpr int BUFFER_FLAG_CODEC_CONFIG = 2;

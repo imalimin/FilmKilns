@@ -20,6 +20,12 @@ public:
 
     static AlEgl *window(HwWindow *win, EGLContext context = nullptr);
 
+#ifdef __ANDROID__
+
+    static al_nullable AlEgl *androidCodec(HwWindow *win, EGLContext context = nullptr);
+
+#endif
+
 public:
     virtual ~AlEgl();
 
@@ -48,7 +54,7 @@ private:
 
     AlEgl(const AlEgl &o) : Object() {};
 
-    void init(EGLContext context, HwWindow *win);
+    void init(EGLContext context, HwWindow *win, const int *config);
 
     EGLDisplay createDisplay(EGLNativeDisplayType display_id);
 

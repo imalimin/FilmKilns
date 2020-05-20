@@ -118,7 +118,7 @@ HwResult AlMediaCodecBridge::configure(int w, int h,
     return Hw::FAILED;
 }
 
-ANativeWindow *AlMediaCodecBridge::createInputSurface() {
+HwWindow *AlMediaCodecBridge::createInputSurface() {
     AlJNIObject *obj = nullptr;
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
         jobject jObject = nullptr;
@@ -126,7 +126,12 @@ ANativeWindow *AlMediaCodecBridge::createInputSurface() {
         JNIEnv *env = nullptr;
         AlJNIEnv::getInstance().findEnv(&env);
         if (jObject && env) {
-            return ANativeWindow_fromSurface(env, jObject);
+            auto *win = ANativeWindow_fromSurface(env, jObject);
+            HwWindow *hw = new HwWindow();
+            hw->setANativeWindow(ANativeWindow_fromSurface(env, jObject));
+            hw->setWidth(ANativeWindow_getWidth(win));
+            hw->setHeight(ANativeWindow_getHeight(win));
+            return hw;
         }
     }
     return nullptr;

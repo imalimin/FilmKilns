@@ -8,16 +8,26 @@
 #include "HwAbsFrame.h"
 
 HwAbsFrame::HwAbsFrame(size_t size) : Object() {
-    buf = HwBuffer::alloc(size);
-}
-
-HwAbsFrame::~HwAbsFrame() {
-    if (buf) {
-        delete buf;
-        buf = nullptr;
+    if (size > 0) {
+        buf = HwBuffer::alloc(size);
     }
 }
 
-uint8_t *HwAbsFrame::data() { return buf->data(); }
+HwAbsFrame::~HwAbsFrame() {
+    delete buf;
+    buf = nullptr;
+}
 
-size_t HwAbsFrame::size() { return buf->size(); }
+uint8_t *HwAbsFrame::data() {
+    if (buf) {
+        return buf->data();
+    }
+    return nullptr;
+}
+
+size_t HwAbsFrame::size() {
+    if (buf) {
+        return buf->size();
+    }
+    return 0;
+}

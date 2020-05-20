@@ -35,6 +35,20 @@ const int CONFIG_BUFFER[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                              EGL_STENCIL_SIZE, 0,
                              EGL_NONE};
 
+#ifdef __ANDROID__
+const int EGL_RECORDABLE_ANDROID = 0x3142;
+const int CONFIG_ANDROID[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                              EGL_RED_SIZE, 8,
+                              EGL_GREEN_SIZE, 8,
+                              EGL_BLUE_SIZE, 8,
+                              EGL_ALPHA_SIZE, 8,
+                              EGL_RECORDABLE_ANDROID, 1,
+                              EGL_DEPTH_SIZE, 0,
+                              EGL_STENCIL_SIZE, 0,
+                              EGL_NONE
+};
+#endif
+
 EGLContext AlEgl::currentContext() {
     EGLContext context = eglGetCurrentContext();
     if (EGL_NO_CONTEXT == context) {
@@ -45,15 +59,31 @@ EGLContext AlEgl::currentContext() {
 
 AlEgl *AlEgl::offScreen(EGLContext context) {
     AlEgl *egl = new AlEgl();
-    egl->init(context, nullptr);
+    egl->init(context, nullptr, CONFIG_BUFFER);
     return egl;
 }
 
 AlEgl *AlEgl::window(HwWindow *win, EGLContext context) {
     AlEgl *egl = new AlEgl();
-    egl->init(context, win);
+    if (win && win->getANativeWindow()) {
+        egl->init(context, win, CONFIG_WIN);
+    } else {
+        egl->init(context, win, CONFIG_BUFFER);
+    }
     return egl;
 }
+#ifdef __ANDROID__
+
+AlEgl *AlEgl::androidCodec(HwWindow *win, EGLContext context) {
+    if (nullptr == win || nullptr == win->getANativeWindow()) {
+        return nullptr;
+    }
+    AlEgl *egl = new AlEgl();
+    egl->init(context, win, CONFIG_ANDROID);
+    return egl;
+}
+
+#endif
 
 AlEgl::AlEgl() : Object() {
 
@@ -87,7 +117,7 @@ AlEgl::~AlEgl() {
 }
 
 
-void AlEgl::init(EGLContext context, HwWindow *win) {
+void AlEgl::init(EGLContext context, HwWindow *win, const int *config) {
     if (EGL_NO_DISPLAY != eglDisplay
         || EGL_NO_SURFACE != eglContext
         || EGL_NO_SURFACE != eglSurface) {
@@ -100,11 +130,7 @@ void AlEgl::init(EGLContext context, HwWindow *win) {
         Logcat::e(TAG, "$s failed", __func__);
         return;
     }
-    if (win && win->getANativeWindow()) {
-        createConfig(CONFIG_WIN);
-    } else {
-        createConfig(CONFIG_BUFFER);
-    }
+    createConfig(config);
     if (!this->eglConfig) {
         Logcat::e(TAG, "$s bad config", __func__);
         return;

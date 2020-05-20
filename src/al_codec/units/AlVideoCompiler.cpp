@@ -13,13 +13,14 @@
 #include "StringUtils.h"
 #include "HwVideoUtils.h"
 #include "AlMath.h"
+#include "AlTexFrame.h"
 #include "HwAndroidEncoder.h"
 
 #define TAG "AlVideoCompiler"
 
 AlVideoCompiler::AlVideoCompiler(string alias) : Unit(alias),
                                                  aFormat(HwFrameFormat::HW_SAMPLE_S32, 2, 44100) {
-    al_reg_msg(EVENT_CANVAS_DRAW_DONE, AlVideoCompiler::_onDrawDone);
+    al_reg_msg(EVENT_SCREEN_DRAW_TEX, AlVideoCompiler::_onScreenDraw);
     al_reg_msg(MSG_TEX_READER_NOTIFY_PIXELS, AlVideoCompiler::_onWrite);
     al_reg_msg(EVENT_COMMON_START, AlVideoCompiler::_onStart);
     al_reg_msg(EVENT_COMMON_PAUSE, AlVideoCompiler::_onPause);
@@ -61,13 +62,23 @@ bool AlVideoCompiler::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool AlVideoCompiler::_onDrawDone(AlMessage *msg) {
+bool AlVideoCompiler::_onScreenDraw(AlMessage *msg) {
     if (recording) {
-        auto *m = AlMessage::obtain(MSG_TEX_READER_REQ_PIXELS,
-                                    new AlSize(this->size),
-                                    AlMessage::QUEUE_MODE_FIRST_ALWAYS);
-        m->arg1 = static_cast<int32_t>(HwFrameFormat::HW_IMAGE_NV12);
-        postEvent(m);
+        if (_enableHardware && _enableTexture) {
+            if (!mPtsQueue.empty()) {
+                int64_t pts = mPtsQueue.front();
+                mPtsQueue.pop_front();
+                _write(msg->getObj<HwAbsTexture *>(), pts);
+            } else {
+                AlLogW(TAG, "Encode failed. No pts or no buf.");
+            }
+        } else {
+            auto *m = AlMessage::obtain(MSG_TEX_READER_REQ_PIXELS,
+                                        new AlSize(this->size),
+                                        AlMessage::QUEUE_MODE_FIRST_ALWAYS);
+            m->arg1 = static_cast<int32_t>(HwFrameFormat::HW_IMAGE_NV12);
+            postEvent(m);
+        }
     }
     return true;
 }
@@ -189,6 +200,25 @@ void AlVideoCompiler::_write(AlBuffer *buf, int64_t tsInNs) {
     } else {
         AlLogE(TAG, "failed. Video encoder encoder not init.");
     }
+}
+
+void AlVideoCompiler::_write(HwAbsTexture *tex, int64_t tsInNs) {
+    AlTexFrame *tFrame = new AlTexFrame(tex);
+    tFrame->setPicType(HwVideoFrame::HW_PIC_DEF);
+    if (lastTsInNs < 0) {
+        lastTsInNs = tsInNs;
+        tFrame->setPicType(HwVideoFrame::HW_PIC_I);
+    }
+    auto delta = tsInNs - lastTsInNs;
+    vTimestamp += delta;
+    lastTsInNs = tsInNs;
+    tFrame->setPts(vTimestamp / 1000);
+    if (encoder) {
+        encoder->write(tFrame);
+    } else {
+        AlLogE(TAG, "failed. Video encoder encoder not init.");
+    }
+    delete tFrame;
 }
 
 bool AlVideoCompiler::_onSamples(AlMessage *msg) {

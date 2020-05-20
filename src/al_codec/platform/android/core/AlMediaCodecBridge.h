@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "HwAbsCodec.h"
 #include "AlBuffer.h"
+#include "HwWindow.h"
 #include "platform/android/AlJNIEnv.h"
 #include <android/native_window_jni.h>
 
@@ -36,7 +37,7 @@ public:
 
     HwResult configure(int w, int h, int bitrate, int format, int iFrameInterval, int fps, int flags);
 
-    ANativeWindow *createInputSurface();
+    HwWindow *createInputSurface();
 
     HwResult start();
 

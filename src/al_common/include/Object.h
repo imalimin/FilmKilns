@@ -16,6 +16,7 @@ using namespace std;
 #define al_class class
 #define al_interface class
 #define al_extend : public
+#define al_nullable
 
 template<class T>
 class AlSPointer;

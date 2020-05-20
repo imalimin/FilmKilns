@@ -14,6 +14,7 @@
 #include "HwAudioFrame.h"
 #include "AlSize.h"
 #include "AlBuffer.h"
+#include "HwTexture.h"
 #include "AlFPSMeasurer.h"
 #include <atomic>
 #include <list>
@@ -129,7 +130,7 @@ private:
     /// \return
     bool _onTimestamp(AlMessage *msg);
 
-    bool _onDrawDone(AlMessage *msg);
+    bool _onScreenDraw(AlMessage *msg);
 
     bool _onSamples(AlMessage *msg);
 
@@ -142,6 +143,8 @@ private:
     bool _onBackward(AlMessage *msg);
 
     void _write(AlBuffer *buf, int64_t tsInNs);
+
+    void _write(HwAbsTexture *tex, int64_t tsInNs);
 
     int64_t getRecordTimeInUs();
 
@@ -174,7 +177,10 @@ private:
     int count = 0;
     bool initialized = false;
     std::deque<int64_t> mPtsQueue;
+    /// Enable hardware encode
     bool _enableHardware = false;
+    /// Enable encode texture. It will skip texture dump.
+    bool _enableTexture = true;
     AlFPSMeasurer fps;
 };
 
