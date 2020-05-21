@@ -103,6 +103,7 @@ HwAbsVideoEncoder *AlEncoderBuilder::build() {
     }
     HwAbsVideoEncoder *encoder = nullptr;
     HwAbsEncoder::Desc desc;
+    desc.aID = AlCodec::kID::AAC;
     desc.vID = AlCodec::kID::H264;
     desc.type = type;
     if (enableAsync) {

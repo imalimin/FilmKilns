@@ -141,7 +141,7 @@ void AlVideoCompiler::_initialize() {
         if (_enableHardware) {
             type = HwAbsEncoder::kType::HARD;
             if (_enableEncTex) {
-                HwAbsEncoder::kType::HARD_ENC_TEX;
+                type = HwAbsEncoder::kType::HARD_ENC_TEX;
             }
         }
         encoder = AlEncoderBuilder()

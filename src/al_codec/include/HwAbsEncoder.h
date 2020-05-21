@@ -18,7 +18,7 @@ using namespace std;
 AL_CLASS HwAbsEncoder AL_EXTEND Object {
 public:
     AL_ENUM kType : int {
-        SOFT = 1,
+        SOFT = 0,
         HARD,
         HARD_ENC_TEX
     };
