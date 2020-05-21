@@ -26,7 +26,7 @@ extern "C" {
 
 class HwFFmpegEncoder : public HwAbsVideoEncoder {
 public:
-    HwFFmpegEncoder();
+    HwFFmpegEncoder(const HwAbsEncoder::Desc &desc);
 
     virtual ~HwFFmpegEncoder();
 

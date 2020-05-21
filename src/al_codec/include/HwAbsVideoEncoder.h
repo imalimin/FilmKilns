@@ -13,7 +13,7 @@
 
 class HwAbsVideoEncoder : public HwAbsEncoder {
 public:
-    HwAbsVideoEncoder();
+    HwAbsVideoEncoder(const HwAbsEncoder::Desc &desc);
 
     virtual ~HwAbsVideoEncoder();
 

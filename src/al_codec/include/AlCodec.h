@@ -22,31 +22,10 @@ public:
         AAC = AV_CODEC_ID_AAC
     };
 
-    AL_ENUM kType : int {
-        SOFT = 1,
-        HARD,
-        HARD_ENC_TEX
-    };
-
     AL_ENUM kMediaType : int {
         UNKNOWN = 0,
         AUDIO = 1,
         VIDEO
-    };
-
-    AL_CLASS Desc AL_EXTEND Object {
-    public:
-        Desc();
-
-        Desc(kID id, kType type);
-
-        Desc(const Desc &o);
-
-        virtual ~Desc();
-
-    public:
-        kID id;
-        kType type;
     };
 
 public:

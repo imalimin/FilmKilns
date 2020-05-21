@@ -5,9 +5,9 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwAbsVideoEncoder.h"
+#include "HwAbsVideoEncoder.h"
 
-HwAbsVideoEncoder::HwAbsVideoEncoder() : HwAbsEncoder() {
+HwAbsVideoEncoder::HwAbsVideoEncoder(const HwAbsEncoder::Desc &desc) : HwAbsEncoder(desc) {
 
 }
 

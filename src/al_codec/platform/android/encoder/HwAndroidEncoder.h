@@ -30,7 +30,7 @@ extern "C" {
 
 class HwAndroidEncoder : public HwAbsVideoEncoder {
 public:
-    HwAndroidEncoder();
+    HwAndroidEncoder(const HwAbsEncoder::Desc &desc);
 
     virtual ~HwAndroidEncoder();
 

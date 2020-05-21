@@ -27,7 +27,7 @@ public:
     /// AlCodec::kType::SOFT
     /// \param type AlCodec::kType
     /// \return
-    AlEncoderBuilder &setEncoderType(AlCodec::kType type);
+    AlEncoderBuilder &setEncoderType(HwAbsEncoder::kType type);
 
     /// Default true.
     /// \param enable
@@ -47,7 +47,7 @@ public:
 private:
     AlSize size;
     HwSampleFormat audioFormat;
-    AlCodec::kType type = AlCodec::kType::SOFT;
+    HwAbsEncoder::kType type = HwAbsEncoder::kType::SOFT;
     bool enableAsync = true;
     int32_t bitrate = 0;
     std::string profile;

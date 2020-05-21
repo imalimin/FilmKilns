@@ -15,7 +15,7 @@
 
 class HwAsyncEncoder : public HwAbsVideoEncoder {
 public:
-    HwAsyncEncoder();
+    HwAsyncEncoder(const HwAbsEncoder::Desc &desc);
 
     virtual ~HwAsyncEncoder();
 

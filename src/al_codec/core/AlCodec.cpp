@@ -25,22 +25,6 @@ const string AlCodec::KEY_CSD_1 = "csd-1";
 const string AlCodec::KEY_CSD_2 = "csd-2";
 const string AlCodec::KEY_CSD_3 = "csd-3";
 
-AlCodec::Desc::Desc() : Object(), id(kID::NONE), type(kType::SOFT) {
-
-}
-
-AlCodec::Desc::Desc(AlCodec::kID id, AlCodec::kType type) : Object(), id(id), type(type) {
-
-}
-
-AlCodec::Desc::Desc(const Desc &o) : Object(), id(o.id), type(o.type) {
-
-}
-
-AlCodec::Desc::~Desc() {
-
-}
-
 AlCodec::AlCodec(AlCodec::kID id) : Object(), id(id) {
 
 }

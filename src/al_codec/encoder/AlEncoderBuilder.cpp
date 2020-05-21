@@ -31,7 +31,7 @@ AlEncoderBuilder &AlEncoderBuilder::setAudioFormat(HwSampleFormat &format) {
     return *this;
 }
 
-AlEncoderBuilder &AlEncoderBuilder::setEncoderType(AlCodec::kType type) {
+AlEncoderBuilder &AlEncoderBuilder::setEncoderType(HwAbsEncoder::kType type) {
     this->type = type;
     return *this;
 }
@@ -102,17 +102,20 @@ HwAbsVideoEncoder *AlEncoderBuilder::build() {
         return nullptr;
     }
     HwAbsVideoEncoder *encoder = nullptr;
+    HwAbsEncoder::Desc desc;
+    desc.vID = AlCodec::kID::H264;
+    desc.type = type;
     if (enableAsync) {
-        if (AlCodec::kType::SOFT == type) {
-            encoder = new HwAsyncEncoder();
+        if (HwAbsEncoder::kType::SOFT == type) {
+            encoder = new HwAsyncEncoder(desc);
         } else {
-            encoder = new HwAndroidEncoder();
+            encoder = new HwAndroidEncoder(desc);
         }
     } else {
-        if (AlCodec::kType::SOFT == type) {
-            encoder = new HwFFmpegEncoder();
+        if (HwAbsEncoder::kType::SOFT == type) {
+            encoder = new HwFFmpegEncoder(desc);
         } else {
-            encoder = new HwAndroidEncoder();
+            encoder = new HwAndroidEncoder(desc);
         }
     }
     AlLogI(TAG,

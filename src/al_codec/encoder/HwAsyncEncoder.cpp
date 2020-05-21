@@ -10,10 +10,10 @@
 
 #define TAG "HwAsyncEncoder"
 
-HwAsyncEncoder::HwAsyncEncoder() : HwAbsVideoEncoder() {
+HwAsyncEncoder::HwAsyncEncoder(const HwAbsEncoder::Desc &desc) : HwAbsVideoEncoder(desc) {
     pipeline = AlEventPipeline::create("HwAsyncFFEncoder");
     hwFrameAllocator = new HwFrameAllocator();
-    encoder = new HwFFmpegEncoder();
+    encoder = new HwFFmpegEncoder(desc);
 }
 
 HwAsyncEncoder::~HwAsyncEncoder() {

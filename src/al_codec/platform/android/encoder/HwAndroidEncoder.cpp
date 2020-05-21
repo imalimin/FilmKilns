@@ -16,7 +16,7 @@
 
 #define TAG "HwAndroidEncoder"
 
-HwAndroidEncoder::HwAndroidEncoder() : HwAbsVideoEncoder() {
+HwAndroidEncoder::HwAndroidEncoder(const HwAbsEncoder::Desc &desc) : HwAbsVideoEncoder(desc) {
 
 }
 
@@ -45,7 +45,15 @@ bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleForma
 }
 
 bool HwAndroidEncoder::configure() {
-    vCodec = new AlAndroidCodecCompat2(AlCodec::H264);
+    if (HwAbsEncoder::kType::HARD == getCodecDesc().type) {
+        vCodec = new AlAndroidCodecCompat(getCodecDesc().vID);
+    } else if (HwAbsEncoder::kType::HARD_ENC_TEX == getCodecDesc().type) {
+        vCodec = new AlAndroidCodecCompat2(getCodecDesc().vID);
+    } else {
+        AlLogE(TAG, "failed. Not support encoder type.");
+        release();
+        return false;
+    }
     const int32_t fps = 30;
     HwBundle format;
     format.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
@@ -68,7 +76,7 @@ bool HwAndroidEncoder::configure() {
         aBundle.putInt32(AlCodec::KEY_CHANNELS, audioFormat.getChannels());
         aBundle.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
         aBundle.putInt32(AlCodec::KEY_BIT_RATE, 64000);
-        aCodec = new HwFFCodec(AlCodec::kID::AAC);
+        aCodec = new HwFFCodec(getCodecDesc().aID);
         if (Hw::SUCCESS != aCodec->configure(aBundle)) {
             AlLogE(TAG, "failed to configure audio codec!");
             release();

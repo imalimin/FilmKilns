@@ -15,7 +15,7 @@
 
 #define TAG "HwFFmpegEncoder"
 
-HwFFmpegEncoder::HwFFmpegEncoder() : HwAbsVideoEncoder() {
+HwFFmpegEncoder::HwFFmpegEncoder(const HwAbsEncoder::Desc &desc) : HwAbsVideoEncoder(desc) {
 
 }
 
@@ -59,7 +59,7 @@ bool HwFFmpegEncoder::initialize() {
     bundle.putString(AlCodec::KEY_PRESET, this->preset);
     //For CRF
     bundle.putInt32(AlCodec::KEY_QUALITY, quality);
-    vCodec = new HwFFCodec(AlCodec::kID::H264);
+    vCodec = new HwFFCodec(getCodecDesc().vID);
     if (Hw::SUCCESS != vCodec->configure(bundle)) {
         AlLogE(TAG, "failed to configure video codec!");
         release();
@@ -75,7 +75,7 @@ bool HwFFmpegEncoder::initialize() {
         aBundle.putInt32(AlCodec::KEY_CHANNELS, audioFormat.getChannels());
         aBundle.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
         aBundle.putInt32(AlCodec::KEY_BIT_RATE, 64000);
-        aCodec = new HwFFCodec(AlCodec::kID::AAC);
+        aCodec = new HwFFCodec(getCodecDesc().aID);
         if (Hw::SUCCESS != aCodec->configure(aBundle)) {
             AlLogE(TAG, "failed to configure audio codec!");
             release();

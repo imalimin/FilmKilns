@@ -137,11 +137,11 @@ void AlVideoCompiler::_initialize() {
             size.height = AlMath::align16(height);
             AlLogI(TAG, "Scale size to %dx%d", size.width, size.height);
         }
-        AlCodec::kType type = AlCodec::kType::SOFT;
+        HwAbsEncoder::kType type = HwAbsEncoder::kType::SOFT;
         if (_enableHardware) {
-            type = AlCodec::kType::HARD;
+            type = HwAbsEncoder::kType::HARD;
             if (_enableEncTex) {
-                AlCodec::kType::HARD_ENC_TEX;
+                HwAbsEncoder::kType::HARD_ENC_TEX;
             }
         }
         encoder = AlEncoderBuilder()
