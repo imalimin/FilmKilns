@@ -13,14 +13,14 @@
 
 #define TAG "HwAndroidCodec"
 
-HwAbsCodec *HwAndroidCodec::createDecoder(AlCodec::kID id) {
+AlCodec *HwAndroidCodec::createDecoder(AlCodec::kID id) {
     HwAndroidCodec *c = new HwAndroidCodec(id);
     c->encodeMode = false;
     return c;
 }
 
 HwAndroidCodec::HwAndroidCodec(AlCodec::kID id, bool makeNalSelf)
-        : HwAbsCodec(id),
+        : AlCodec(id),
           makeNalSelf(makeNalSelf) {
 
 }
@@ -57,12 +57,12 @@ void HwAndroidCodec::release() {
 }
 
 HwResult HwAndroidCodec::configure(HwBundle &format) {
-    HwAbsCodec::configure(format);
+    AlCodec::configure(format);
     if (encodeMode && !makeNalSelf) {
-        auto *codec = new HwAndroidCodec(id, true);
+        auto *codec = new HwAndroidCodec(getCodecID(), true);
         if (Hw::SUCCESS == codec->configure(format)) {
-            auto *buffer0 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_0);
-            auto *buffer1 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_1);
+            auto *buffer0 = codec->getExtraBuffer(KEY_CSD_0);
+            auto *buffer1 = codec->getExtraBuffer(KEY_CSD_1);
             buffers[0] = HwBuffer::alloc(buffer0->size());
             buffers[1] = HwBuffer::alloc(buffer1->size());
             memcpy(buffers[0]->data(), buffer0->data(), buffer0->size());
@@ -76,7 +76,7 @@ HwResult HwAndroidCodec::configure(HwBundle &format) {
     int32_t bitRate = (int32_t) format.getInt32(KEY_BIT_RATE);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
     AMediaFormat *cf = AMediaFormat_new();
-    if (HW_ANDROID_AVC == codecId) {
+    if (AlCodec::kID::H264 == getCodecID()) {
         fps = format.getInt32(KEY_FPS);
         AMediaFormat_setString(cf, AMEDIAFORMAT_KEY_MIME, "video/avc");
         AMediaFormat_setInt32(cf, AMEDIAFORMAT_KEY_WIDTH, width);
@@ -152,7 +152,7 @@ HwResult HwAndroidCodec::configure(HwBundle &format) {
             }
         }
         delete frame;
-        if (AlCodec::H264 == codecId) {
+        if (AlCodec::H264 == getCodecID()) {
             if (!buffers[0] || !buffers[1]) {
                 AlLogE(TAG, "failed.");
                 return Hw::FAILED;
@@ -201,25 +201,14 @@ HwResult HwAndroidCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
     return ret;
 }
 
-int32_t HwAndroidCodec::type() {
-    switch (codecId) {
-        case HW_ANDROID_AVC: {
-            return 0;
-        }
-        default: {
-            return 0;
-        }
-    }
-}
-
 HwBuffer *HwAndroidCodec::getExtraBuffer(string key) {
-    if (HwAbsCodec::KEY_CSD_0 == key) {
+    if (KEY_CSD_0 == key) {
         return buffers[0];
-    } else if (HwAbsCodec::KEY_CSD_1 == key) {
+    } else if (KEY_CSD_1 == key) {
         return buffers[1];
-    } else if (HwAbsCodec::KEY_CSD_2 == key) {
+    } else if (KEY_CSD_2 == key) {
         return buffers[2];
-    } else if (HwAbsCodec::KEY_CSD_3 == key) {
+    } else if (KEY_CSD_3 == key) {
         return buffers[3];
     }
     return nullptr;

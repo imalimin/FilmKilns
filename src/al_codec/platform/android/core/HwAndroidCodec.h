@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWANDROIDCODEC_H
 #define HWVC_ANDROID_HWANDROIDCODEC_H
 
-#include "HwAbsCodec.h"
+#include "AlCodec.h"
 #include "HwBuffer.h"
 #include "media/NdkMediaCodec.h"
 
@@ -34,9 +34,9 @@ extern "C" {
  * mMediaCodec.setParameters(params);
  *
  */
-class HwAndroidCodec : public HwAbsCodec {
+class HwAndroidCodec : public AlCodec {
 public:
-    static HwAbsCodec *createDecoder(AlCodec::kID id);
+    static AlCodec *createDecoder(AlCodec::kID id);
 
 public:
     HwAndroidCodec(AlCodec::kID id, bool makeNalSelf = false);
@@ -51,8 +51,6 @@ public:
      * @param packet AvPacket.
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
-
-    virtual int32_t type() override;
 
     virtual HwBuffer *getExtraBuffer(string key) override;
 

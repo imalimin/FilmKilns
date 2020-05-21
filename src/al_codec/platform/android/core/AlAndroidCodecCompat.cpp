@@ -17,7 +17,7 @@ AlAndroidCodecCompat::AlAndroidCodecCompat(AlCodec::kID id)
 }
 
 AlAndroidCodecCompat::AlAndroidCodecCompat(AlCodec::kID id, bool makeNalSelf)
-        : HwAbsCodec(id),
+        : AlCodec(id),
           makeNalSelf(makeNalSelf) {
     bridge = new AlMediaCodecBridge("video/avc");
 }
@@ -49,12 +49,12 @@ void AlAndroidCodecCompat::release() {
 }
 
 HwResult AlAndroidCodecCompat::configure(HwBundle &format) {
-    HwAbsCodec::configure(format);
+    AlCodec::configure(format);
     if (encodeMode && !makeNalSelf) {
-        auto *codec = new AlAndroidCodecCompat(id, true);
+        auto *codec = new AlAndroidCodecCompat(getCodecID(), true);
         if (Hw::SUCCESS == codec->configure(format)) {
-            auto *buffer0 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_0);
-            auto *buffer1 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_1);
+            auto *buffer0 = codec->getExtraBuffer(KEY_CSD_0);
+            auto *buffer1 = codec->getExtraBuffer(KEY_CSD_1);
             buffers[0] = HwBuffer::alloc(buffer0->size());
             buffers[1] = HwBuffer::alloc(buffer1->size());
             memcpy(buffers[0]->data(), buffer0->data(), buffer0->size());
@@ -68,7 +68,7 @@ HwResult AlAndroidCodecCompat::configure(HwBundle &format) {
     int32_t bitrate = (int32_t) format.getInt32(KEY_BIT_RATE);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
 
-    if (AlCodec::H264 == id) {
+    if (AlCodec::kID::H264 == getCodecID()) {
         fps = format.getInt32(KEY_FPS);
         if (encodeMode) {
             bridge->configure(width, height, bitrate, COLOR_FormatYUV420Flexible,
@@ -115,7 +115,7 @@ HwResult AlAndroidCodecCompat::configure(HwBundle &format) {
             }
         }
         delete frame;
-        if (AlCodec::H264 == codecId) {
+        if (AlCodec::kID::H264 == getCodecID()) {
             if (!buffers[0] || !buffers[1]) {
                 AlLogE(TAG, "failed.");
                 return Hw::FAILED;
@@ -164,25 +164,14 @@ HwResult AlAndroidCodecCompat::process(HwAbsMediaFrame **frame, HwPacket **pkt) 
     return ret;
 }
 
-int32_t AlAndroidCodecCompat::type() {
-    switch (codecId) {
-        case AlCodec::H264: {
-            return 0;
-        }
-        default: {
-            return 0;
-        }
-    }
-}
-
 HwBuffer *AlAndroidCodecCompat::getExtraBuffer(string key) {
-    if (HwAbsCodec::KEY_CSD_0 == key) {
+    if (KEY_CSD_0 == key) {
         return buffers[0];
-    } else if (HwAbsCodec::KEY_CSD_1 == key) {
+    } else if (KEY_CSD_1 == key) {
         return buffers[1];
-    } else if (HwAbsCodec::KEY_CSD_2 == key) {
+    } else if (KEY_CSD_2 == key) {
         return buffers[2];
-    } else if (HwAbsCodec::KEY_CSD_3 == key) {
+    } else if (KEY_CSD_3 == key) {
         return buffers[3];
     }
     return nullptr;
@@ -229,8 +218,8 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
         case INFO_OUTPUT_FORMAT_CHANGED: {
             AlLogI(TAG, "INFO_OUTPUT_FORMAT_CHANGED");
             if (encodeMode) {
-                auto *buf0 = bridge->getOutputFormatBuffer(HwAbsCodec::KEY_CSD_0);
-                auto *buf1 = bridge->getOutputFormatBuffer(HwAbsCodec::KEY_CSD_1);
+                auto *buf0 = bridge->getOutputFormatBuffer(KEY_CSD_0);
+                auto *buf1 = bridge->getOutputFormatBuffer(KEY_CSD_1);
                 AlObjectGuard guard0(reinterpret_cast<Object **>(&buf0));
                 AlObjectGuard guard1(reinterpret_cast<Object **>(&buf1));
                 delete buffers[0];
@@ -240,8 +229,8 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
                 memcpy(buffers[0]->data(), buf0->data(), buf0->size());
                 memcpy(buffers[1]->data(), buf1->data(), buf1->size());
             } else {
-                int width = bridge->getOutputFormatInteger(HwAbsCodec::KEY_WIDTH);
-                int height = bridge->getOutputFormatInteger(HwAbsCodec::KEY_HEIGHT);
+                int width = bridge->getOutputFormatInteger(KEY_WIDTH);
+                int height = bridge->getOutputFormatInteger(KEY_HEIGHT);
                 stride = bridge->getOutputFormatInteger("stride");
                 int32_t color = bridge->getOutputFormatInteger("color-format");
                 HwFrameFormat colorFmt;

@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWANDROIDENCODER_H
 
 #include "HwAbsVideoEncoder.h"
-#include "HwAbsCodec.h"
+#include "AlCodec.h"
 #include "HwAbsMuxer.h"
 #include "AlFPSMeasurer.h"
 #include <mutex>
@@ -57,8 +57,8 @@ private:
     string path;
     int width = 0, height = 0;
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
-    HwAbsCodec *vCodec = nullptr;
-    HwAbsCodec *aCodec = nullptr;
+    AlCodec *vCodec = nullptr;
+    AlCodec *aCodec = nullptr;
     HwAbsMuxer *muxer = nullptr;
     int32_t vTrack = HwAbsMuxer::TRACK_NONE, aTrack = HwAbsMuxer::TRACK_NONE;
     bool firstVideoFrameWrite = false;

@@ -54,7 +54,21 @@ HwResult AlCodec::configure(HwBundle &format) {
     return Hw::SUCCESS;
 }
 
-int32_t AlCodec::getCodecId() { return id; }
+AlCodec::kID AlCodec::getCodecID() { return id; }
 
 HwBundle &AlCodec::getFormat() { return format; }
+
+AlCodec::kMediaType AlCodec::getMediaType() {
+    switch (getCodecID()) {
+        case AlCodec::kID::H264: {
+            return AlCodec::kMediaType::VIDEO;
+        }
+        case AlCodec::kID::AAC: {
+            return AlCodec::kMediaType::AUDIO;
+        }
+        default: {
+            return AlCodec::kMediaType::UNKNOWN;
+        }
+    }
+}
 

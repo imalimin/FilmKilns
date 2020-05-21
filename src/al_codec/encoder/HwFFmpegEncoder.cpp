@@ -50,15 +50,15 @@ bool HwFFmpegEncoder::initialize() {
      */
     const int32_t fps = 30;
     HwBundle bundle;
-    bundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
-    bundle.putInt32(HwAbsCodec::KEY_WIDTH, width);
-    bundle.putInt32(HwAbsCodec::KEY_HEIGHT, height);
-    bundle.putInt32(HwAbsCodec::KEY_BIT_RATE, this->bitrate);
-    bundle.putInt32(HwAbsCodec::KEY_FPS, fps);
-    bundle.putString(HwAbsCodec::KEY_PROFILE, this->profile);
-    bundle.putString(HwAbsCodec::KEY_PRESET, this->preset);
+    bundle.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
+    bundle.putInt32(AlCodec::KEY_WIDTH, width);
+    bundle.putInt32(AlCodec::KEY_HEIGHT, height);
+    bundle.putInt32(AlCodec::KEY_BIT_RATE, this->bitrate);
+    bundle.putInt32(AlCodec::KEY_FPS, fps);
+    bundle.putString(AlCodec::KEY_PROFILE, this->profile);
+    bundle.putString(AlCodec::KEY_PRESET, this->preset);
     //For CRF
-    bundle.putInt32(HwAbsCodec::KEY_QUALITY, quality);
+    bundle.putInt32(AlCodec::KEY_QUALITY, quality);
     vCodec = new HwFFCodec(AlCodec::kID::H264);
     if (Hw::SUCCESS != vCodec->configure(bundle)) {
         AlLogE(TAG, "failed to configure video codec!");
@@ -71,11 +71,11 @@ bool HwFFmpegEncoder::initialize() {
          * Audio codec
          */
         HwBundle aBundle;
-        aBundle.putInt32(HwAbsCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
-        aBundle.putInt32(HwAbsCodec::KEY_CHANNELS, audioFormat.getChannels());
-        aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
-        aBundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
-        aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
+        aBundle.putInt32(AlCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
+        aBundle.putInt32(AlCodec::KEY_CHANNELS, audioFormat.getChannels());
+        aBundle.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
+        aBundle.putInt32(AlCodec::KEY_BIT_RATE, 64000);
+        aCodec = new HwFFCodec(AlCodec::kID::AAC);
         if (Hw::SUCCESS != aCodec->configure(aBundle)) {
             AlLogE(TAG, "failed to configure audio codec!");
             release();

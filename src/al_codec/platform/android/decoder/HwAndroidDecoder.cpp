@@ -73,11 +73,11 @@ bool HwAndroidDecoder::configure() {
     HwBuffer *csd0Buf = HwBuffer::wrap(csd0, csd0Size);
     HwBuffer *csd1Buf = HwBuffer::wrap(csd1, csd1Size);
     HwBundle bundle;
-    bundle.putInt32(HwAbsCodec::KEY_WIDTH, mWidth);
-    bundle.putInt32(HwAbsCodec::KEY_HEIGHT, mHeight);
+    bundle.putInt32(AlCodec::KEY_WIDTH, mWidth);
+    bundle.putInt32(AlCodec::KEY_HEIGHT, mHeight);
     bundle.putObject("csd-0", csd0Buf);
     bundle.putObject("csd-1", csd1Buf);
-    codec = HwAndroidCodec::createDecoder(HwAndroidCodec::HW_ANDROID_AVC);
+    codec = HwAndroidCodec::createDecoder(AlCodec::kID::H264);
     if (Hw::SUCCESS != codec->configure(bundle)) {
         delete csd0Buf;
         delete csd1Buf;

@@ -10,7 +10,7 @@
 
 #include "Object.h"
 #include "HwResult.h"
-#include "HwAbsCodec.h"
+#include "AlCodec.h"
 #include "HwPacket.h"
 
 class HwAbsMuxer : public Object {
@@ -27,7 +27,7 @@ public:
      * add an audio or video track.
      * @return audio or video track id
      */
-    virtual int32_t addTrack(HwAbsCodec *codec)=0;
+    virtual int32_t addTrack(AlCodec *codec)=0;
 
     /**
      * @param track track id

@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_ALMEDIACODECBRIDGE_H
 
 #include "Object.h"
-#include "HwAbsCodec.h"
+#include "AlCodec.h"
 #include "AlBuffer.h"
 #include "HwWindow.h"
 #include "platform/android/AlJNIEnv.h"

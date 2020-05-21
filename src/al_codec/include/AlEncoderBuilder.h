@@ -12,7 +12,7 @@
 #include "AlSize.h"
 #include "HwSampleFormat.h"
 #include "HwAbsVideoEncoder.h"
-#include "HwAbsCodec.h"
+#include "AlCodec.h"
 
 al_class AlEncoderBuilder al_extend Object {
 public:

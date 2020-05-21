@@ -20,12 +20,12 @@ AlAndroidCodecCompat2::~AlAndroidCodecCompat2() {
 }
 
 HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
-    HwAbsCodec::configure(format);
+    AlCodec::configure(format);
     if (encodeMode) {
-        auto *codec = new AlAndroidCodecCompat(id, true);
+        auto *codec = new AlAndroidCodecCompat(getCodecID(), true);
         if (Hw::SUCCESS == codec->configure(format)) {
-            auto *buffer0 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_0);
-            auto *buffer1 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_1);
+            auto *buffer0 = codec->getExtraBuffer(KEY_CSD_0);
+            auto *buffer1 = codec->getExtraBuffer(KEY_CSD_1);
             buffers[0] = HwBuffer::alloc(buffer0->size());
             buffers[1] = HwBuffer::alloc(buffer1->size());
             memcpy(buffers[0]->data(), buffer0->data(), buffer0->size());
@@ -39,7 +39,7 @@ HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
     int32_t bitrate = (int32_t) format.getInt32(KEY_BIT_RATE);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
 
-    if (AlCodec::H264 == id) {
+    if (AlCodec::kID::H264 == getCodecID()) {
         fps = format.getInt32(KEY_FPS);
         if (encodeMode) {
             bridge->configure(width, height, bitrate, COLOR_FormatSurface,

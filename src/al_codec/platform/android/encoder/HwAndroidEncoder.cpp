@@ -48,12 +48,12 @@ bool HwAndroidEncoder::configure() {
     vCodec = new AlAndroidCodecCompat2(AlCodec::H264);
     const int32_t fps = 30;
     HwBundle format;
-    format.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
-    format.putInt32(HwAbsCodec::KEY_WIDTH, width);
-    format.putInt32(HwAbsCodec::KEY_HEIGHT, height);
-    format.putInt32(HwAbsCodec::KEY_BIT_RATE, width * height * 3);
-    format.putInt32(HwAbsCodec::KEY_FPS, fps);
-    format.putInt32(HwAbsCodec::KEY_QUALITY, 15);
+    format.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
+    format.putInt32(AlCodec::KEY_WIDTH, width);
+    format.putInt32(AlCodec::KEY_HEIGHT, height);
+    format.putInt32(AlCodec::KEY_BIT_RATE, width * height * 3);
+    format.putInt32(AlCodec::KEY_FPS, fps);
+    format.putInt32(AlCodec::KEY_QUALITY, 15);
     if (Hw::SUCCESS != vCodec->configure(format)) {
         AlLogE(TAG, "failed to configure video codec!");
         release();
@@ -64,11 +64,11 @@ bool HwAndroidEncoder::configure() {
      */
     if (audioFormat.valid()) {
         HwBundle aBundle;
-        aBundle.putInt32(HwAbsCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
-        aBundle.putInt32(HwAbsCodec::KEY_CHANNELS, audioFormat.getChannels());
-        aBundle.putInt32(HwAbsCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
-        aBundle.putInt32(HwAbsCodec::KEY_BIT_RATE, 64000);
-        aCodec = new HwFFCodec(AV_CODEC_ID_AAC);
+        aBundle.putInt32(AlCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
+        aBundle.putInt32(AlCodec::KEY_CHANNELS, audioFormat.getChannels());
+        aBundle.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
+        aBundle.putInt32(AlCodec::KEY_BIT_RATE, 64000);
+        aCodec = new HwFFCodec(AlCodec::kID::AAC);
         if (Hw::SUCCESS != aCodec->configure(aBundle)) {
             AlLogE(TAG, "failed to configure audio codec!");
             release();

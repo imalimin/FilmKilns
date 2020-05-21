@@ -8,11 +8,11 @@
 #ifndef HWVC_ANDROID_HWANDROIDDECODER_H
 #define HWVC_ANDROID_HWANDROIDDECODER_H
 
-#include "../../../include/AbsAudioDecoder.h"
-#include "../../../include/AbsVideoDecoder.h"
-#include "../../../include/HwAbsMediaFrame.h"
-#include "../../../include/HwFrameAllocator.h"
-#include "../../../include/HwAbsCodec.h"
+#include "AbsAudioDecoder.h"
+#include "AbsVideoDecoder.h"
+#include "HwAbsMediaFrame.h"
+#include "HwFrameAllocator.h"
+#include "AlCodec.h"
 #include "media/NdkMediaCodec.h"
 #include "media/NdkMediaExtractor.h"
 
@@ -61,16 +61,11 @@ private:
     void handleAction();
 
 private:
-    const int COLOR_FormatYUV420Flexible = 0x7F420888;
-    const int COLOR_FormatYUV420Planar = 19;
-    const int COLOR_FormatYUV420SemiPlanar = 21;
-    const int BUFFER_FLAG_KEY_FRAME = 1;
-    const int BUFFER_FLAG_CODEC_CONFIG = 2;
     string path;
     AMediaFormat *vFmt = nullptr;
     AMediaFormat *aFmt = nullptr;
     AMediaExtractor *extractor = nullptr;
-    HwAbsCodec *codec = nullptr;
+    AlCodec *codec = nullptr;
     HwBuffer *vSampleBuf = nullptr;
     bool eof = false;
     int64_t videoDurationUs = -1;

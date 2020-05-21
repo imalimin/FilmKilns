@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWFFCODEC_H
 #define HWVC_ANDROID_HWFFCODEC_H
 
-#include "HwAbsCodec.h"
+#include "AlCodec.h"
 #include "HwAudioTranslator.h"
 #include "HwBuffer.h"
 
@@ -21,7 +21,7 @@ extern "C" {
 #include "libavutil/avutil.h"
 #include "libswresample/swresample.h"
 
-class HwFFCodec : public HwAbsCodec {
+class HwFFCodec : public AlCodec {
 public:
     HwFFCodec(AlCodec::kID id);
 
@@ -36,11 +36,11 @@ public:
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
-    virtual int32_t type() override;
-
     virtual HwBuffer *getExtraBuffer(string key) override;
 
     virtual void flush() override;
+
+    virtual AlCodec::kMediaType getMediaType() override;
 
 private:
     void release();

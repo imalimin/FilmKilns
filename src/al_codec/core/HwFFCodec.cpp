@@ -13,7 +13,7 @@
 
 #define TAG "HwFFCodec"
 
-HwFFCodec::HwFFCodec(AlCodec::kID id) : HwAbsCodec(id) {
+HwFFCodec::HwFFCodec(AlCodec::kID id) : AlCodec(id) {
 
 }
 
@@ -53,11 +53,11 @@ void HwFFCodec::release() {
 }
 
 HwResult HwFFCodec::configure(HwBundle &format) {
-    HwAbsCodec::configure(format);
-    if (getCodecId() == AlCodec::kID::NONE) {
+    AlCodec::configure(format);
+    if (getCodecID() == AlCodec::kID::NONE) {
         return Hw::FAILED;
     }
-    AVCodecID id = static_cast<AVCodecID>(getCodecId());
+    AVCodecID id = static_cast<AVCodecID>(getCodecID());
     AVCodec *pCodec = avcodec_find_encoder(id);
     if (!pCodec) {
         AlLogE(TAG, "could not find %d codec!", id);
@@ -146,8 +146,8 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
         //0 - 51
 //        av_dict_set_int(&param, "crf", getFormat().getInt32(KEY_QUALITY), 0);  // or abr,qp
         //ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow and placebo.
-        av_dict_set(&param, "preset", getFormat().getString(HwAbsCodec::KEY_PRESET).c_str(), 0);
-        av_dict_set(&param, "profile", getFormat().getString(HwAbsCodec::KEY_PROFILE).c_str(), 0);
+        av_dict_set(&param, "preset", getFormat().getString(AlCodec::KEY_PRESET).c_str(), 0);
+        av_dict_set(&param, "profile", getFormat().getString(AlCodec::KEY_PROFILE).c_str(), 0);
         av_dict_set(&param, "tune", "zerolatency", 0);
     }
     int ret = avcodec_open2(ctx, codec, &param);
@@ -226,28 +226,28 @@ void HwFFCodec::_configureBitrate(int32_t bitrate) {
     ctx->bit_rate = bitrate;
 }
 
-int32_t HwFFCodec::type() {
+AlCodec::kMediaType HwFFCodec::getMediaType() {
     switch (ctx->codec_type) {
         case AVMEDIA_TYPE_VIDEO: {
-            return 0;
+            return AlCodec::kMediaType::VIDEO;
         }
         case AVMEDIA_TYPE_AUDIO: {
-            return 1;
+            return AlCodec::kMediaType::AUDIO;
         }
         default: {
-            return 0;
+            return AlCodec::kMediaType::UNKNOWN;
         }
     }
 }
 
 HwBuffer *HwFFCodec::getExtraBuffer(string key) {
-    if (HwAbsCodec::KEY_CSD_0 == key) {
+    if (KEY_CSD_0 == key) {
         return buffers[0];
-    } else if (HwAbsCodec::KEY_CSD_1 == key) {
+    } else if (KEY_CSD_1 == key) {
         return buffers[1];
-    } else if (HwAbsCodec::KEY_CSD_2 == key) {
+    } else if (KEY_CSD_2 == key) {
         return buffers[2];
-    } else if (HwAbsCodec::KEY_CSD_3 == key) {
+    } else if (KEY_CSD_3 == key) {
         return buffers[3];
     }
     return nullptr;

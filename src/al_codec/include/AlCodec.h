@@ -23,9 +23,15 @@ public:
     };
 
     AL_ENUM kType : int {
-        SOFT = 0,
+        SOFT = 1,
         HARD,
         HARD_ENC_TEX
+    };
+
+    AL_ENUM kMediaType : int {
+        UNKNOWN = 0,
+        AUDIO = 1,
+        VIDEO
     };
 
     AL_CLASS Desc AL_EXTEND Object {
@@ -42,6 +48,7 @@ public:
         kID id;
         kType type;
     };
+
 public:
     AlCodec(AlCodec::kID id);
 
@@ -51,20 +58,17 @@ public:
 
     virtual HwResult start() = 0;
 
-    virtual int32_t getCodecId();
+    virtual AlCodec::kID getCodecID();
 
     virtual HwBundle &getFormat();
+
+    virtual AlCodec::kMediaType getMediaType();
 
     /**
      * For encoder. HwAbsMediaFrame in & AVPacket out.
      * For decoder. AVPacket in & HwAbsMediaFrame out.
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) = 0;
-
-    /**
-     * @return 0 for video. 1 for audio. Other invalid.
-     */
-    virtual int32_t type() = 0;
 
     /**
      * @param key csd-0\csd-1\csd-2
@@ -74,9 +78,12 @@ public:
 
     virtual void flush() = 0;
 
-protected:
+private:
     AlCodec::kID id;
+
+protected:
     HwBundle format;
+
 public:
     static const string KEY_MIME;
     static const string KEY_FORMAT;

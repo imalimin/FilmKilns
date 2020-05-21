@@ -11,8 +11,8 @@
 #include "HwAbsVideoEncoder.h"
 #include "HwResult.h"
 #include "HwAbsMediaFrame.h"
-#include "../include/HwAbsMuxer.h"
-#include "../include/HwAbsCodec.h"
+#include "HwAbsMuxer.h"
+#include "AlCodec.h"
 #include <mutex>
 
 #ifdef __cplusplus
@@ -57,8 +57,8 @@ private:
     HwSampleFormat audioFormat = HwSampleFormat::NONE;
     int32_t aTrack = HwAbsMuxer::TRACK_NONE, vTrack = HwAbsMuxer::TRACK_NONE;
     HwAbsMuxer *muxer = nullptr;
-    HwAbsCodec *vCodec = nullptr;
-    HwAbsCodec *aCodec = nullptr;
+    AlCodec *vCodec = nullptr;
+    AlCodec *aCodec = nullptr;
     bool firstVideoFrameWrite = false;
     int64_t sampleCount = 0;
     std::mutex lock;

@@ -8,12 +8,12 @@
 #ifndef HWVC_ANDROID_ALANDROIDCODECCOMPAT_H
 #define HWVC_ANDROID_ALANDROIDCODECCOMPAT_H
 
-#include "HwAbsCodec.h"
+#include "AlCodec.h"
 #include "AlMediaCodecBridge.h"
 
 class AlAndroidCodecCompat2;
 
-al_class AlAndroidCodecCompat al_extend HwAbsCodec {
+al_class AlAndroidCodecCompat al_extend AlCodec {
 public:
     friend AlAndroidCodecCompat2;
 public:
@@ -29,8 +29,6 @@ public:
      * @param packet AvPacket.
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
-
-    virtual int32_t type() override;
 
     virtual HwBuffer *getExtraBuffer(string key) override;
 

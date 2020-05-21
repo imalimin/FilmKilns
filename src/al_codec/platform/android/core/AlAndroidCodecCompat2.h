@@ -23,7 +23,7 @@ public:
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
 private:
-    AlAndroidCodecCompat2(const AlAndroidCodecCompat2 &o) : AlAndroidCodecCompat(o.id) {};
+    AlAndroidCodecCompat2(const AlAndroidCodecCompat2 &o) : AlAndroidCodecCompat(AlCodec::kID::NONE) {};
 
     bool createProgram();
 
