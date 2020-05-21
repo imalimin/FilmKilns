@@ -23,7 +23,7 @@ extern "C" {
 
 class HwFFCodec : public HwAbsCodec {
 public:
-    HwFFCodec(int32_t codecId);
+    HwFFCodec(AlCodec::kID id);
 
     virtual ~HwFFCodec();
 

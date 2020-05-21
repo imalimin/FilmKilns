@@ -59,7 +59,7 @@ bool HwFFmpegEncoder::initialize() {
     bundle.putString(HwAbsCodec::KEY_PRESET, this->preset);
     //For CRF
     bundle.putInt32(HwAbsCodec::KEY_QUALITY, quality);
-    vCodec = new HwFFCodec(AV_CODEC_ID_H264);
+    vCodec = new HwFFCodec(AlCodec::kID::H264);
     if (Hw::SUCCESS != vCodec->configure(bundle)) {
         AlLogE(TAG, "failed to configure video codec!");
         release();

@@ -17,7 +17,7 @@ al_class AlAndroidCodecCompat al_extend HwAbsCodec {
 public:
     friend AlAndroidCodecCompat2;
 public:
-    AlAndroidCodecCompat(int32_t codecId);
+    AlAndroidCodecCompat(AlCodec::kID id);
 
     virtual ~AlAndroidCodecCompat();
 
@@ -37,7 +37,7 @@ public:
     virtual void flush() override;
 
 private:
-    AlAndroidCodecCompat(int32_t codecId, bool makeNalSelf);
+    AlAndroidCodecCompat(AlCodec::kID id, bool makeNalSelf);
 
     void release();
 

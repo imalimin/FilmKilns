@@ -12,6 +12,7 @@
 #include "AlSize.h"
 #include "HwSampleFormat.h"
 #include "HwAbsVideoEncoder.h"
+#include "HwAbsCodec.h"
 
 al_class AlEncoderBuilder al_extend Object {
 public:
@@ -23,10 +24,10 @@ public:
 
     AlEncoderBuilder &setAudioFormat(HwSampleFormat &format);
 
-    /// Default false.
-    /// \param enable
+    /// AlCodec::kType::SOFT
+    /// \param type AlCodec::kType
     /// \return
-    AlEncoderBuilder &setEnableHardware(bool enable);
+    AlEncoderBuilder &setEncoderType(AlCodec::kType type);
 
     /// Default true.
     /// \param enable
@@ -46,7 +47,7 @@ public:
 private:
     AlSize size;
     HwSampleFormat audioFormat;
-    bool enableHardware = false;
+    AlCodec::kType type = AlCodec::kType::SOFT;
     bool enableAsync = true;
     int32_t bitrate = 0;
     std::string profile;

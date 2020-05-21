@@ -13,7 +13,7 @@
 
 #define TAG "HwFFCodec"
 
-HwFFCodec::HwFFCodec(int32_t codecId) : HwAbsCodec(codecId) {
+HwFFCodec::HwFFCodec(AlCodec::kID id) : HwAbsCodec(id) {
 
 }
 
@@ -54,10 +54,10 @@ void HwFFCodec::release() {
 
 HwResult HwFFCodec::configure(HwBundle &format) {
     HwAbsCodec::configure(format);
-    if (codecId <= AV_CODEC_ID_NONE) {
+    if (getCodecId() == AlCodec::kID::NONE) {
         return Hw::FAILED;
     }
-    AVCodecID id = static_cast<AVCodecID>(codecId);
+    AVCodecID id = static_cast<AVCodecID>(getCodecId());
     AVCodec *pCodec = avcodec_find_encoder(id);
     if (!pCodec) {
         AlLogE(TAG, "could not find %d codec!", id);

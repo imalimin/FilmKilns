@@ -13,16 +13,14 @@
 
 #define TAG "HwAndroidCodec"
 
-const int32_t HwAndroidCodec::HW_ANDROID_AVC = AlCodec::H264;
-
-HwAbsCodec *HwAndroidCodec::createDecoder(int32_t codecId) {
-    HwAndroidCodec *c = new HwAndroidCodec(codecId);
+HwAbsCodec *HwAndroidCodec::createDecoder(AlCodec::kID id) {
+    HwAndroidCodec *c = new HwAndroidCodec(id);
     c->encodeMode = false;
     return c;
 }
 
-HwAndroidCodec::HwAndroidCodec(int32_t codecId, bool makeNalSelf)
-        : HwAbsCodec(codecId),
+HwAndroidCodec::HwAndroidCodec(AlCodec::kID id, bool makeNalSelf)
+        : HwAbsCodec(id),
           makeNalSelf(makeNalSelf) {
 
 }
@@ -61,7 +59,7 @@ void HwAndroidCodec::release() {
 HwResult HwAndroidCodec::configure(HwBundle &format) {
     HwAbsCodec::configure(format);
     if (encodeMode && !makeNalSelf) {
-        auto *codec = new HwAndroidCodec(codecId, true);
+        auto *codec = new HwAndroidCodec(id, true);
         if (Hw::SUCCESS == codec->configure(format)) {
             auto *buffer0 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_0);
             auto *buffer1 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_1);

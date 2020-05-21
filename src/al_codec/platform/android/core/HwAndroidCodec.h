@@ -36,11 +36,10 @@ extern "C" {
  */
 class HwAndroidCodec : public HwAbsCodec {
 public:
-    static HwAbsCodec *createDecoder(int32_t codecId);
+    static HwAbsCodec *createDecoder(AlCodec::kID id);
 
-    static const int32_t HW_ANDROID_AVC;
 public:
-    HwAndroidCodec(int32_t codecId, bool makeNalSelf = false);
+    HwAndroidCodec(AlCodec::kID id, bool makeNalSelf = false);
 
     virtual ~HwAndroidCodec();
 

@@ -83,6 +83,7 @@ public:
 
 private:
     HwFrameFormat format = HwFrameFormat::HW_FMT_NONE;
+    /// Preview time in US.
     int64_t pts;
 };
 

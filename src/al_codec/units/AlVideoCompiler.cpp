@@ -64,7 +64,7 @@ bool AlVideoCompiler::onDestroy(AlMessage *msg) {
 
 bool AlVideoCompiler::_onScreenDraw(AlMessage *msg) {
     if (recording) {
-        if (_enableHardware && _enableTexture) {
+        if (_enableHardware && _enableEncTex) {
             if (!mPtsQueue.empty()) {
                 int64_t pts = mPtsQueue.front();
                 mPtsQueue.pop_front();
@@ -137,6 +137,13 @@ void AlVideoCompiler::_initialize() {
             size.height = AlMath::align16(height);
             AlLogI(TAG, "Scale size to %dx%d", size.width, size.height);
         }
+        AlCodec::kType type = AlCodec::kType::SOFT;
+        if (_enableHardware) {
+            type = AlCodec::kType::HARD;
+            if (_enableEncTex) {
+                AlCodec::kType::HARD_ENC_TEX;
+            }
+        }
         encoder = AlEncoderBuilder()
                 .setOutput(path)
                 .setSize(size)
@@ -145,7 +152,7 @@ void AlVideoCompiler::_initialize() {
                 .setProfile(profile)
                 .setPreset(preset)
                 .setEnableAsync(true)
-                .setEnableHardware(_enableHardware)
+                .setEncoderType(type)
                 .build();
         if (nullptr == encoder) {
             AlLogE(TAG, "Prepare video encoder failed");
@@ -212,7 +219,7 @@ void AlVideoCompiler::_writeTex(HwAbsTexture *tex, int64_t tsInNs) {
     auto delta = tsInNs - lastTsInNs;
     vTimestamp += delta;
     lastTsInNs = tsInNs;
-    tFrame->setPts(vTimestamp);
+    tFrame->setPts(vTimestamp / 1000);
     if (encoder) {
         encoder->write(tFrame);
     } else {

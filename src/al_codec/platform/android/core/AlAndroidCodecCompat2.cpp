@@ -10,7 +10,7 @@
 
 #define TAG "AlAndroidCodecCompat2"
 
-AlAndroidCodecCompat2::AlAndroidCodecCompat2(int32_t codecId) : AlAndroidCodecCompat(codecId) {
+AlAndroidCodecCompat2::AlAndroidCodecCompat2(AlCodec::kID id) : AlAndroidCodecCompat(id) {
 
 }
 
@@ -22,7 +22,7 @@ AlAndroidCodecCompat2::~AlAndroidCodecCompat2() {
 HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
     HwAbsCodec::configure(format);
     if (encodeMode) {
-        auto *codec = new AlAndroidCodecCompat(codecId, true);
+        auto *codec = new AlAndroidCodecCompat(id, true);
         if (Hw::SUCCESS == codec->configure(format)) {
             auto *buffer0 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_0);
             auto *buffer1 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_1);
@@ -39,7 +39,7 @@ HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
     int32_t bitrate = (int32_t) format.getInt32(KEY_BIT_RATE);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
 
-    if (AlCodec::H264 == codecId) {
+    if (AlCodec::H264 == id) {
         fps = format.getInt32(KEY_FPS);
         if (encodeMode) {
             bridge->configure(width, height, bitrate, COLOR_FormatSurface,
@@ -80,7 +80,7 @@ HwResult AlAndroidCodecCompat2::process(HwAbsMediaFrame **frame, HwPacket **pkt)
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     program->draw(tFrame->tex());
-    egl->setTimestamp(pts);
+    egl->setTimestamp(pts * 1000);
     egl->swapBuffers();
 
     HwResult ret1 = pop(2000);

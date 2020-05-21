@@ -180,7 +180,7 @@ private:
     /// Enable hardware encode
     bool _enableHardware = false;
     /// Enable encode texture. It will skip texture dump.
-    bool _enableTexture = true;
+    bool _enableEncTex = true;
     AlFPSMeasurer fps;
 };
 

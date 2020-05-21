@@ -13,11 +13,17 @@
 
 using namespace std;
 
-#define al_class class
-#define al_interface class
-#define al_extend : public
-#define al_nullable
+#define AL_CLASS class
+#define AL_INTERFACE class
+#define AL_EXTEND : public
+#define AL_NULLABLE
+#define AL_ENUM enum
 #define AL_INSTANCE_OF(o1, o2) typeid(o1) != typeid(o2)
+
+#define al_class AL_CLASS
+#define al_interface AL_INTERFACE
+#define al_extend AL_EXTEND
+#define al_nullable AL_NULLABLE
 
 template<class T>
 class AlSPointer;

@@ -8,76 +8,13 @@
 #ifndef HWVC_ANDROID_HWABSCODEC_H
 #define HWVC_ANDROID_HWABSCODEC_H
 
-#include "Object.h"
-#include "HwResult.h"
-#include "HwBundle.h"
-#include "HwAbsMediaFrame.h"
-#include "HwPacket.h"
+#include "AlCodec.h"
 
-class HwAbsCodec : public Object {
+class HwAbsCodec : public AlCodec {
 public:
-    HwAbsCodec(int32_t codecId);
+    HwAbsCodec(AlCodec::kID id);
 
     virtual  ~HwAbsCodec();
-
-    virtual HwResult configure(HwBundle &format);
-
-    virtual HwResult start() = 0;
-
-    virtual int32_t getCodecId();
-
-    virtual HwBundle &getFormat();
-
-    /**
-     * For encoder. HwAbsMediaFrame in & AVPacket out.
-     * For decoder. AVPacket in & HwAbsMediaFrame out.
-     */
-    virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) = 0;
-
-    /**
-     * @return 0 for video. 1 for audio. Other invalid.
-     */
-    virtual int32_t type() = 0;
-
-    /**
-     * @param key csd-0\csd-1\csd-2
-     * @return buffer.
-     */
-    virtual HwBuffer *getExtraBuffer(string key) = 0;
-
-    virtual void flush() = 0;
-
-protected:
-    int32_t codecId = INT32_MIN;
-    HwBundle format;
-public:
-    static const string KEY_MIME;
-    static const string KEY_FORMAT;
-    static const string KEY_PROFILE;
-    static const string KEY_PRESET;
-    static const string KEY_LEVEL;
-    static const string KEY_BIT_RATE;
-    // Video
-    static const string KEY_WIDTH;
-    static const string KEY_HEIGHT;
-    static const string KEY_FPS;
-    static const string KEY_QUALITY;
-    //Audio
-    static const string KEY_SAMPLE_RATE;
-    static const string KEY_CHANNELS;
-    static const string KEY_FRAME_SIZE;
-
-    static const string KEY_CSD_0;
-    static const string KEY_CSD_1;
-    static const string KEY_CSD_2;
-    static const string KEY_CSD_3;
-};
-
-al_class AlCodec al_extend Object {
-public:
-    static constexpr int NONE = AV_CODEC_ID_NONE;
-    static constexpr int H264 = AV_CODEC_ID_H264;
-    static constexpr int AAC = AV_CODEC_ID_AAC;
 };
 
 

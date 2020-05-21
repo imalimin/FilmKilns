@@ -14,7 +14,7 @@
 
 al_class AlAndroidCodecCompat2 al_extend AlAndroidCodecCompat {
 public:
-    AlAndroidCodecCompat2(int32_t codecId);
+    AlAndroidCodecCompat2(AlCodec::kID id);
 
     virtual ~AlAndroidCodecCompat2();
 
@@ -23,6 +23,8 @@ public:
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
 private:
+    AlAndroidCodecCompat2(const AlAndroidCodecCompat2 &o) : AlAndroidCodecCompat(o.id) {};
+
     bool createProgram();
 
 private:

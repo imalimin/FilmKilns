@@ -12,12 +12,12 @@
 
 #define TAG "AlAndroidCodecCompat"
 
-AlAndroidCodecCompat::AlAndroidCodecCompat(int32_t codecId)
-        : AlAndroidCodecCompat(codecId, false) {
+AlAndroidCodecCompat::AlAndroidCodecCompat(AlCodec::kID id)
+        : AlAndroidCodecCompat(id, false) {
 }
 
-AlAndroidCodecCompat::AlAndroidCodecCompat(int32_t codecId, bool makeNalSelf)
-        : HwAbsCodec(codecId),
+AlAndroidCodecCompat::AlAndroidCodecCompat(AlCodec::kID id, bool makeNalSelf)
+        : HwAbsCodec(id),
           makeNalSelf(makeNalSelf) {
     bridge = new AlMediaCodecBridge("video/avc");
 }
@@ -51,7 +51,7 @@ void AlAndroidCodecCompat::release() {
 HwResult AlAndroidCodecCompat::configure(HwBundle &format) {
     HwAbsCodec::configure(format);
     if (encodeMode && !makeNalSelf) {
-        auto *codec = new AlAndroidCodecCompat(codecId, true);
+        auto *codec = new AlAndroidCodecCompat(id, true);
         if (Hw::SUCCESS == codec->configure(format)) {
             auto *buffer0 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_0);
             auto *buffer1 = codec->getExtraBuffer(HwAbsCodec::KEY_CSD_1);
@@ -68,7 +68,7 @@ HwResult AlAndroidCodecCompat::configure(HwBundle &format) {
     int32_t bitrate = (int32_t) format.getInt32(KEY_BIT_RATE);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
 
-    if (AlCodec::H264 == codecId) {
+    if (AlCodec::H264 == id) {
         fps = format.getInt32(KEY_FPS);
         if (encodeMode) {
             bridge->configure(width, height, bitrate, COLOR_FormatYUV420Flexible,

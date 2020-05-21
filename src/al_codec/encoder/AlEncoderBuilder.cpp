@@ -31,8 +31,8 @@ AlEncoderBuilder &AlEncoderBuilder::setAudioFormat(HwSampleFormat &format) {
     return *this;
 }
 
-AlEncoderBuilder &AlEncoderBuilder::setEnableHardware(bool enable) {
-    this->enableHardware = enable;
+AlEncoderBuilder &AlEncoderBuilder::setEncoderType(AlCodec::kType type) {
+    this->type = type;
     return *this;
 }
 
@@ -103,21 +103,21 @@ HwAbsVideoEncoder *AlEncoderBuilder::build() {
     }
     HwAbsVideoEncoder *encoder = nullptr;
     if (enableAsync) {
-        if (!enableHardware) {
+        if (AlCodec::kType::SOFT == type) {
             encoder = new HwAsyncEncoder();
         } else {
             encoder = new HwAndroidEncoder();
         }
     } else {
-        if (!enableHardware) {
+        if (AlCodec::kType::SOFT == type) {
             encoder = new HwFFmpegEncoder();
         } else {
             encoder = new HwAndroidEncoder();
         }
     }
     AlLogI(TAG,
-           "Alloc encoder video(width=%d, height=%d, bitrate=%d, profile=%s, hardware=%d), audio(fmt=%d, sample rate=%d, channels=%d), out=%s",
-           size.width, size.height, bitrate, profile.c_str(), enableHardware,
+           "Alloc encoder video(width=%d, height=%d, bitrate=%d, profile=%s, enc_type=%d), audio(fmt=%d, sample rate=%d, channels=%d), out=%s",
+           size.width, size.height, bitrate, profile.c_str(), type,
            (int) audioFormat.getFormat(), audioFormat.getSampleRate(), audioFormat.getChannels(),
            output.c_str());
     encoder->setBitrate(bitrate);
