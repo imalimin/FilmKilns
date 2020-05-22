@@ -14,7 +14,7 @@ AlBitmapInfo::AlBitmapInfo(const AlBitmapInfo &o) : Object(),
                                                     width(o.width),
                                                     height(o.height),
                                                     depth(o.depth),
-                                                    colorSpace(o.colorSpace),
+                                                    colorFormat(o.colorFormat),
                                                     rotation(o.rotation) {
 };
 
@@ -23,13 +23,13 @@ AlBitmapInfo::~AlBitmapInfo() {
 }
 
 void AlBitmapInfo::dump() {
-    Logcat::i("AlBitmapInfo", "%s(%d): %dx%d, depth=%d, colorSpace=%d, rotation=%f",
+    Logcat::i("AlBitmapInfo", "%s(%d): %dx%d, depth=%d, colorFormat=%d, rotation=%f",
               __FUNCTION__,
               __LINE__,
               width,
               height,
               depth,
-              colorSpace,
+              colorFormat,
               rotation.toFloat());
 }
 
@@ -37,23 +37,23 @@ void AlBitmapInfo::reset() {
     width = 0;
     height = 0;
     depth = 0;
-    colorSpace = AlColorSpace::NONE;
+    colorFormat = AlColorFormat::NONE;
 }
 
 bool AlBitmapInfo::isNull() {
-    return width <= 0 || height <= 0 || depth <= 0 || AlColorSpace::NONE == colorSpace;
+    return width <= 0 || height <= 0 || depth <= 0 || AlColorFormat::NONE == colorFormat;
 }
 
-int AlBitmapInfo::bitsPerPixel(AlColorSpace colorSpace) {
-    switch (colorSpace) {
-        case AlColorSpace::GRAY:
+int AlBitmapInfo::bitsPerPixel(AlColorFormat colorFormat) {
+    switch (colorFormat) {
+        case AlColorFormat::GRAY:
             return 8;
-        case AlColorSpace::YV12:
-        case AlColorSpace::NV12:
+        case AlColorFormat::YV12:
+        case AlColorFormat::NV12:
             return 12;
-        case AlColorSpace::RGB:
+        case AlColorFormat::RGB:
             return 24;
-        case AlColorSpace::RGBA:
+        case AlColorFormat::RGBA:
             return 32;
         default:
             return 0;

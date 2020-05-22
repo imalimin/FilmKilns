@@ -30,7 +30,7 @@ HwResult AlBMPEncoder::process(AlBuffer *buf, AlBitmapInfo *info, std::string pa
     }
 
     AlMemoryUtils::rgba2bgra(buf->data(), info->width, info->height, 4);
-    uint16_t depthInBit = static_cast<uint16_t>(AlBitmapInfo::bitsPerPixel(info->colorSpace));
+    uint16_t depthInBit = static_cast<uint16_t>(AlBitmapInfo::bitsPerPixel(info->colorFormat));
     Header header = {0, 0, 0, 0, 0};
     InfoHeader infoHeader = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     header.type = 0x4d42;

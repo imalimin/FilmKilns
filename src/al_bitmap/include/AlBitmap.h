@@ -9,7 +9,7 @@
 #define HARDWAREVIDEOCODEC_HWBITMAP_H
 
 #include "Object.h"
-#include "AlColorSpace.h"
+#include "AlColorFormat.h"
 #include "AlBitmapInfo.h"
 #include "HwResult.h"
 
@@ -17,14 +17,14 @@ al_class AlBitmap al_extend Object {
 public:
     static AlBitmap *create(AlBitmapInfo info);
 
-    static AlBitmap *create(int width, int height, AlColorSpace format);
+    static AlBitmap *create(int width, int height, AlColorFormat format);
 
-    static float getImageFormatBytes(AlColorSpace format);
+    static float getImageFormatBytes(AlColorFormat format);
 
 private:
     AlBitmap(AlBitmapInfo &info);
 
-    AlBitmap(int width, int height, uint32_t depth, AlColorSpace format);
+    AlBitmap(int width, int height, uint32_t depth, AlColorFormat format);
 
     AlBitmap(const AlBitmap &e) : Object() {};
 
@@ -38,7 +38,7 @@ public:
     /**
      * 改变HwBitmap大小和格式，用于内存复用
      */
-    HwResult resize(int width, int height, AlColorSpace format);
+    HwResult resize(int width, int height, AlColorFormat format);
 
     /**
      * 获取指向图片像素内存的指针

@@ -99,7 +99,7 @@ HwResult AlPngDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     info->width = this->info.width;
     info->height = this->info.height;
     info->depth = this->info.depth;
-    info->colorSpace = this->info.colorSpace;
+    info->colorFormat = this->info.colorFormat;
     *buf = AlBuffer::alloc(info->width * info->height * 4);
     int color_type = png_get_color_type(handler, infoHandler);
     int channels = png_get_channels(handler, infoHandler);
@@ -131,7 +131,7 @@ void AlPngDecoder::getInfo(AlBitmapInfo &info, std::string &path) {
     info.width = png_get_image_width(handler, infoHandler);
     info.height = png_get_image_height(handler, infoHandler);
     info.depth = png_get_bit_depth(handler, infoHandler);
-    info.colorSpace = AlColorSpace::RGBA;
+    info.colorFormat = AlColorFormat::RGBA;
     fclose(file);
 }
 
@@ -164,5 +164,5 @@ void AlPngDecoder::getInfo(AlBitmapInfo &info, AlBuffer *buf) {
     info.width = png_get_image_width(handler, infoHandler);
     info.height = png_get_image_height(handler, infoHandler);
     info.depth = png_get_bit_depth(handler, infoHandler);
-    info.colorSpace = AlColorSpace::RGBA;
+    info.colorFormat = AlColorFormat::RGBA;
 }

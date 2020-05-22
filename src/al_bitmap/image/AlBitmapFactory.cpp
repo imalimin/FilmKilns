@@ -109,7 +109,7 @@ HwResult AlBitmapFactory::save(int32_t w, int32_t h, AlBuffer *buf,
     info.width = w;
     info.height = h;
     info.depth = 4;
-    info.colorSpace = AlColorSpace::RGBA;
+    info.colorFormat = AlColorFormat::RGBA;
     AlAbsEncoder *encoder = nullptr;
     switch (_getFileSuffix(path)) {
         case FORMAT_PNG: {

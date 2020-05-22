@@ -33,7 +33,7 @@ AlBitmapInfo AlWebPDecoder::getInfo() {
     info.width = features.width;
     info.height = features.height;
     info.depth = 8;
-    info.colorSpace = AlColorSpace::RGBA;
+    info.colorFormat = AlColorFormat::RGBA;
     return info;
 }
 

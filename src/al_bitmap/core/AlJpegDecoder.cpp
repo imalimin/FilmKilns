@@ -115,7 +115,7 @@ AlBitmapInfo AlJpegDecoder::getInfo() {
     info.width = cinfo.image_width;
     info.height = cinfo.image_height;
     info.depth = 8;
-    info.colorSpace = AlColorSpace::RGBA;
+    info.colorFormat = AlColorFormat::RGBA;
     jpeg_destroy_decompress(&cinfo);
     fclose(file);
     return info;
@@ -143,7 +143,7 @@ HwResult AlJpegDecoder::process(AlBuffer **buf, AlBitmapInfo *info) {
     tjDecompress2(handle, buffer, length, (*buf)->data(), info->width, 0, info->height, fmt, flags);
     delete[]buffer;
     info->depth = 8;
-    info->colorSpace = AlColorSpace::RGBA;
+    info->colorFormat = AlColorFormat::RGBA;
     return Hw::SUCCESS;
 }
 

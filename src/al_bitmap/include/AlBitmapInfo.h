@@ -9,12 +9,12 @@
 #define HWVC_ANDROID_HWBITMAPINFO_H
 
 #include "Object.h"
-#include "AlColorSpace.h"
+#include "AlColorFormat.h"
 #include "AlRational.h"
 
 al_class AlBitmapInfo al_extend Object {
 public:
-    static int bitsPerPixel(AlColorSpace colorSpace);
+    static int bitsPerPixel(AlColorFormat colorFormat);
 
 public:
     AlBitmapInfo();
@@ -34,7 +34,7 @@ public:
     int32_t height = 0;
     /// Bits per color channel.
     uint32_t depth = 8;
-    AlColorSpace colorSpace = AlColorSpace::NONE;
+    AlColorFormat colorFormat = AlColorFormat::NONE;
     ///表示需要旋转多少弧度才能正向像是，顺时针方向为正向(CW)
     AlRational rotation = AlRational();
 };

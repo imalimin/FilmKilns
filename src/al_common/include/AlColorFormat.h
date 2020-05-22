@@ -5,10 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef HWVC_ANDROID_ALCOLORSPACE_H
-#define HWVC_ANDROID_ALCOLORSPACE_H
+#ifndef HWVC_ANDROID_ALCOLORFORMAT_H
+#define HWVC_ANDROID_ALCOLORFORMAT_H
 
-enum class AlColorSpace : int {
+#include "Object.h"
+AL_ENUM AlColorFormat : int {
     NONE = -1,
     RGB,
     RGBA,
@@ -18,4 +19,4 @@ enum class AlColorSpace : int {
     END,      /** END flag. */
 };
 
-#endif //HWVC_ANDROID_ALCOLORSPACE_H
+#endif //HWVC_ANDROID_ALCOLORFORMAT_H

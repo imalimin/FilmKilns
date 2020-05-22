@@ -12,7 +12,7 @@
 #include "HwFBObject.h"
 #include "HwTexture.h"
 #include "AlBitmapFactory.h"
-#include "AlColorSpace.h"
+#include "AlColorFormat.h"
 
 AlUTexReader::AlUTexReader(const string &alias) : Unit(alias) {
     al_reg_msg(EVENT_SCREEN_DRAW_TEX, AlUTexReader::_onScreenDraw);
@@ -66,13 +66,13 @@ bool AlUTexReader::_onReqPixels(AlMessage *msg) {
         return true;
     }
     auto *srcTex = _resize(this->srcTex, msg->getObj<AlSize *>());
-    auto color = static_cast<AlColorSpace >(msg->arg1);
+    auto color = static_cast<AlColorFormat >(msg->arg1);
     switch (color) {
-        case AlColorSpace::NV12: {
+        case AlColorFormat::NV12: {
             _yv12(srcTex);
             break;
         }
-        case AlColorSpace::RGBA:
+        case AlColorFormat::RGBA:
         default: {
             _rgba(srcTex);
             break;
