@@ -52,7 +52,7 @@ HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
         }
     }
     auto *win = bridge->createInputSurface();
-    egl = AlEgl::androidCodec(win, AlEgl::currentContext());
+    egl = AlEgl::androidCodec(TAG, win, AlEgl::currentContext());
     if (nullptr == egl || Hw::SUCCESS != bridge->start()) {
         AlLogE(TAG, "codec start failed.");
         release();

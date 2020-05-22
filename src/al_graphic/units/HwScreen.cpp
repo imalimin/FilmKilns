@@ -88,7 +88,7 @@ void HwScreen::initWindow(NativeWindow *nw) {
     if (!egl) {
         if (nw) {
             EGLContext c = AlEgl::currentContext();
-            egl = AlEgl::window(nw->win, c);
+            egl = AlEgl::window(TAG, nw->win, c);
             Logcat::i(TAG, "Screen::init EGL with context %p, size %d x %d",
                       c, egl->width(), egl->height());
         } else {

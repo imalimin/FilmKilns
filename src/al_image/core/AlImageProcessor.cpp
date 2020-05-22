@@ -59,7 +59,7 @@ AlImageProcessor::~AlImageProcessor() {
 void AlImageProcessor::onCreate() {
     AlAbsProcessor::onCreate();
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
-    this->aBaseCtx = AlEgl::offScreen();
+    this->aBaseCtx = AlEgl::offScreen(TAG);
     this->context = new AlContext();
 //    this->putObject("AL_CONTEXT", this->context)
 //            .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS, ALIAS_OF_SCREEN});

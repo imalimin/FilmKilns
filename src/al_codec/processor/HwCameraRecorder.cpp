@@ -40,7 +40,7 @@ HwCameraRecorder::~HwCameraRecorder() {
 
 void HwCameraRecorder::onCreate() {
     AlAbsProcessor::onCreate();
-    aSharedContext = AlEgl::offScreen();
+    aSharedContext = AlEgl::offScreen(TAG);
 }
 
 void HwCameraRecorder::onDestroy() {

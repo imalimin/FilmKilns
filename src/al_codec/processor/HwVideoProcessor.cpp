@@ -14,6 +14,8 @@
 #include "ObjectBox.h"
 #include <string>
 
+#define TAG "HwVideoProcessor"
+
 HwVideoProcessor::HwVideoProcessor() : AlAbsProcessor("VideoProcessor") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new HwVideoInput(ALIAS_OF_VIDEO));
@@ -29,7 +31,7 @@ HwVideoProcessor::~HwVideoProcessor() {
 
 void HwVideoProcessor::onCreate() {
     AlAbsProcessor::onCreate();
-    this->aBaseCtx = AlEgl::offScreen();
+    this->aBaseCtx = AlEgl::offScreen(TAG);
 }
 
 void HwVideoProcessor::onDestroy() {

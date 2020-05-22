@@ -45,7 +45,7 @@ AlDisplayRecorder::~AlDisplayRecorder() {
 
 void AlDisplayRecorder::onCreate() {
     AlAbsProcessor::onCreate();
-    aSharedContext = AlEgl::offScreen();
+    aSharedContext = AlEgl::offScreen(TAG);
 }
 
 void AlDisplayRecorder::onDestroy() {

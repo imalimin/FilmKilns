@@ -16,13 +16,15 @@ al_class AlEgl al_extend Object {
 public:
     static EGLContext currentContext();
 
-    static AlEgl *offScreen(EGLContext context = nullptr);
+    static AlEgl *offScreen(std::string alias, EGLContext context = nullptr);
 
-    static AlEgl *window(HwWindow *win, EGLContext context = nullptr);
+    static AlEgl *window(std::string alias, HwWindow *win, EGLContext context = nullptr);
 
 #ifdef __ANDROID__
 
-    static al_nullable AlEgl *androidCodec(HwWindow *win, EGLContext context = nullptr);
+    static AL_NULLABLE AlEgl *androidCodec(std::string alias,
+                                           HwWindow *win,
+                                           EGLContext context = nullptr);
 
 #endif
 
@@ -50,9 +52,9 @@ public:
 #endif
 
 private:
-    AlEgl();
+    AlEgl(const std::string &alias);
 
-    AlEgl(const AlEgl &o) : Object() {};
+    AlEgl(const AlEgl &o) : Object(), alias(o.alias) {};
 
     void init(EGLContext context, HwWindow *win, const int *config);
 
@@ -75,6 +77,8 @@ private:
                                                                     EGLSurface surface,
                                                                     khronos_stime_nanoseconds_t time);
 
+private:
+    std::string alias;
     HwWindow *win = nullptr;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
     EGLConfig eglConfig = nullptr;
