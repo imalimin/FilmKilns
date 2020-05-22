@@ -82,7 +82,7 @@ AlTexAllocator *AlTexManager::_find(int64_t looper) {
 bool AlTexManager::_checkEnv(int64_t &looper) {
     auto *l = AlLooper::myLooper();
     if (nullptr == l || EGL_NO_CONTEXT == AlEgl::currentContext()) {
-        AlLogI(TAG, "failed. looper=%p", l);
+        AlLogE(TAG, "failed. looper=%p", l);
         looper = 0;
         return false;
     }

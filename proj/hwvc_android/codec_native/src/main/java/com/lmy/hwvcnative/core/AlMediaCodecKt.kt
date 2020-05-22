@@ -30,7 +30,6 @@ class AlMediaCodecKt(
         fps: Int,
         flags: Int
     ): Int {
-        MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
         val f = createVideoFormat(mime, w, h, bitrate, format, iFrameInterval, fps)
             ?: return AlResult.FAILED
         try {

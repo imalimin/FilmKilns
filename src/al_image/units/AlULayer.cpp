@@ -53,7 +53,6 @@ bool AlULayer::onCreate(AlMessage *msg) {
 }
 
 bool AlULayer::onDestroy(AlMessage *msg) {
-    Logcat::e(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     mLayerManager.clear();
     return true;
 }

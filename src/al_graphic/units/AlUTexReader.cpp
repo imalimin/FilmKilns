@@ -31,8 +31,14 @@ bool AlUTexReader::onDestroy(AlMessage *msg) {
     resizeFilter = nullptr;
     delete yuvFilter;
     yuvFilter = nullptr;
-    AlTexManager::instance()->recycle(&resizeTex);
-    AlTexManager::instance()->recycle(&yuvTex);
+    if (resizeTex) {
+        AlTexManager::instance()->recycle(&resizeTex);
+        resizeTex = nullptr;
+    }
+    if (yuvTex) {
+        AlTexManager::instance()->recycle(&yuvTex);
+        resizeTex = nullptr;
+    }
     delete fbo;
     fbo = nullptr;
     delete pixels;
