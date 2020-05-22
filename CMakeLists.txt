@@ -23,6 +23,12 @@ set(WARNING_CONFIGS
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 #endif ()
 #
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    message(STATUS "Release mode.")
+else ()
+    message(STATUS "Debug mode.")
+    add_definitions(-D__AL_DEBUG__)
+endif ()
 
 add_subdirectory(${SRC_PATH_ROOT}/al_common)
 add_subdirectory(${SRC_PATH_ROOT}/al_bitmap)
