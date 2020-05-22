@@ -5,10 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWFFMPEGENCODER_H
-#define HWVC_ANDROID_HWFFMPEGENCODER_H
+#ifndef HWVC_ANDROID_ALFFENCODER_H
+#define HWVC_ANDROID_ALFFENCODER_H
 
-#include "HwAbsVideoEncoder.h"
+#include "AlAbsVideoEncoder.h"
 #include "HwResult.h"
 #include "HwAbsMediaFrame.h"
 #include "HwAbsMuxer.h"
@@ -24,11 +24,11 @@ extern "C" {
 #include "libavutil/avutil.h"
 #include "libswresample/swresample.h"
 
-class HwFFmpegEncoder : public HwAbsVideoEncoder {
+AL_CLASS AlFFEncoder AL_EXTEND AlAbsVideoEncoder {
 public:
-    HwFFmpegEncoder(const HwAbsEncoder::Desc &desc);
+    AlFFEncoder(const AlAbsEncoder::Desc &desc);
 
-    virtual ~HwFFmpegEncoder();
+    virtual ~AlFFEncoder();
 
     virtual void setBitrate(int32_t rate) override;
 
@@ -75,4 +75,4 @@ private:
 #endif
 
 
-#endif //HWVC_ANDROID_HWFFMPEGENCODER_H
+#endif //HWVC_ANDROID_ALFFENCODER_H

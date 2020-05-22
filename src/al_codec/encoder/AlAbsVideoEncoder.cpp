@@ -5,4 +5,12 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwAbsAudioEncoder.h"
+#include "AlAbsVideoEncoder.h"
+
+AlAbsVideoEncoder::AlAbsVideoEncoder(const AlAbsEncoder::Desc &desc) : AlAbsEncoder(desc) {
+
+}
+
+AlAbsVideoEncoder::~AlAbsVideoEncoder() {
+
+}

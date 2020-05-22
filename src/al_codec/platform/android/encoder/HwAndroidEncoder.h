@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_HWANDROIDENCODER_H
 #define HWVC_ANDROID_HWANDROIDENCODER_H
 
-#include "HwAbsVideoEncoder.h"
+#include "AlAbsVideoEncoder.h"
 #include "AlCodec.h"
 #include "HwAbsMuxer.h"
 #include "AlFPSMeasurer.h"
@@ -28,9 +28,9 @@ extern "C" {
 }
 #endif
 
-class HwAndroidEncoder : public HwAbsVideoEncoder {
+class HwAndroidEncoder : public AlAbsVideoEncoder {
 public:
-    HwAndroidEncoder(const HwAbsEncoder::Desc &desc);
+    HwAndroidEncoder(const AlAbsEncoder::Desc &desc);
 
     virtual ~HwAndroidEncoder();
 

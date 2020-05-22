@@ -5,37 +5,37 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwFFmpegEncoder.h"
+#include "AlFFEncoder.h"
 #include "Logcat.h"
-#include "../include/HwVideoFrame.h"
-#include "../include/HwAudioFrame.h"
-#include "../include/HwFFMuxer.h"
-#include "../include/HwFFCodec.h"
+#include "HwVideoFrame.h"
+#include "HwAudioFrame.h"
+#include "HwFFMuxer.h"
+#include "HwFFCodec.h"
 #include "TimeUtils.h"
 
 #define TAG "HwFFmpegEncoder"
 
-HwFFmpegEncoder::HwFFmpegEncoder(const HwAbsEncoder::Desc &desc) : HwAbsVideoEncoder(desc) {
+AlFFEncoder::AlFFEncoder(const AlAbsEncoder::Desc &desc) : AlAbsVideoEncoder(desc) {
 
 }
 
-HwFFmpegEncoder::~HwFFmpegEncoder() {
+AlFFEncoder::~AlFFEncoder() {
     release();
 }
 
-void HwFFmpegEncoder::setBitrate(int32_t rate) {
+void AlFFEncoder::setBitrate(int32_t rate) {
     this->bitrate = rate;
 }
 
-void HwFFmpegEncoder::setProfile(std::string profile) {
+void AlFFEncoder::setProfile(std::string profile) {
     this->profile = profile;
 }
 
-void HwFFmpegEncoder::setPreset(std::string preset) {
+void AlFFEncoder::setPreset(std::string preset) {
     this->preset = preset;
 }
 
-bool HwFFmpegEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
+bool AlFFEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     this->path = path;
     this->width = width;
     this->height = height;
@@ -43,7 +43,7 @@ bool HwFFmpegEncoder::prepare(string path, int width, int height, HwSampleFormat
     return initialize();
 }
 
-bool HwFFmpegEncoder::initialize() {
+bool AlFFEncoder::initialize() {
     av_register_all();
     /**
      * Video codec
@@ -116,7 +116,7 @@ bool HwFFmpegEncoder::initialize() {
     return true;
 }
 
-HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
+HwResult AlFFEncoder::write(HwAbsMediaFrame *frame) {
     lock_guard<std::mutex> guard(lock);
     HwPacket *packet = nullptr;
     if (frame->isAudio() && aCodec && muxer) {
@@ -152,7 +152,7 @@ HwResult HwFFmpegEncoder::write(HwAbsMediaFrame *frame) {
     return Hw::FAILED;
 }
 
-bool HwFFmpegEncoder::stop() {
+bool AlFFEncoder::stop() {
 //    int ret;
 //    int got_picture;
 //    if (!(pVideoStream->codec->codec->capabilities & AV_CODEC_CAP_DELAY)) {
@@ -177,7 +177,7 @@ bool HwFFmpegEncoder::stop() {
     return true;
 }
 
-void HwFFmpegEncoder::release() {
+void AlFFEncoder::release() {
     delete aCodec;
     aCodec = nullptr;
     delete vCodec;

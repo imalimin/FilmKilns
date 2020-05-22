@@ -5,18 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwAsyncEncoder.h"
-#include "../include/HwFFmpegEncoder.h"
+#include "include/AlAsyncEncoder.h"
+#include "include/AlFFEncoder.h"
 
 #define TAG "HwAsyncEncoder"
 
-HwAsyncEncoder::HwAsyncEncoder(const HwAbsEncoder::Desc &desc) : HwAbsVideoEncoder(desc) {
+AlAsyncEncoder::AlAsyncEncoder(const AlAbsEncoder::Desc &desc) : AlAbsVideoEncoder(desc) {
     pipeline = AlEventPipeline::create("HwAsyncFFEncoder");
     hwFrameAllocator = new HwFrameAllocator();
-    encoder = new HwFFmpegEncoder(desc);
+    encoder = new AlFFEncoder(desc);
 }
 
-HwAsyncEncoder::~HwAsyncEncoder() {
+AlAsyncEncoder::~AlAsyncEncoder() {
     if (encoder) {
         delete encoder;
         encoder = nullptr;
@@ -31,19 +31,19 @@ HwAsyncEncoder::~HwAsyncEncoder() {
     }
 }
 
-void HwAsyncEncoder::setBitrate(int32_t rate) {
+void AlAsyncEncoder::setBitrate(int32_t rate) {
     encoder->setBitrate(rate);
 }
 
-void HwAsyncEncoder::setProfile(std::string profile) {
+void AlAsyncEncoder::setProfile(std::string profile) {
     encoder->setProfile(profile);
 }
 
-void HwAsyncEncoder::setPreset(std::string preset) {
+void AlAsyncEncoder::setPreset(std::string preset) {
     encoder->setPreset(preset);
 }
 
-bool HwAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
+bool AlAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat audioFormat) {
     if (encoder) {
         looping = encoder->prepare(path, width, height, audioFormat);
         loop();
@@ -52,7 +52,7 @@ bool HwAsyncEncoder::prepare(string path, int width, int height, HwSampleFormat 
     return false;
 }
 
-HwResult HwAsyncEncoder::write(HwAbsMediaFrame *frame) {
+HwResult AlAsyncEncoder::write(HwAbsMediaFrame *frame) {
     if (vQueue.size() >= MAX_V_FRAME_CACHE && frame->isVideo()) {
         _dropFrame();
         AlLogE(TAG, "Lack of cache, vQueue(%d), aQueue(%d), Skip Video Frame: pts=%"
@@ -73,7 +73,7 @@ HwResult HwAsyncEncoder::write(HwAbsMediaFrame *frame) {
     return Hw::FAILED;
 }
 
-void HwAsyncEncoder::write() {
+void AlAsyncEncoder::write() {
     while (tQueue.empty()) {
         writeBlock.wait();
         if (!looping) {
@@ -99,7 +99,7 @@ void HwAsyncEncoder::write() {
     simpleLock.unlock();
 }
 
-void HwAsyncEncoder::loop() {
+void AlAsyncEncoder::loop() {
     simpleLock.lock();
     if (!looping) {
         simpleLock.unlock();
@@ -114,7 +114,7 @@ void HwAsyncEncoder::loop() {
     });
 }
 
-bool HwAsyncEncoder::stop() {
+bool AlAsyncEncoder::stop() {
     simpleLock.lock();
     looping = false;
     bool ret = false;
@@ -126,11 +126,11 @@ bool HwAsyncEncoder::stop() {
     return ret;
 }
 
-void HwAsyncEncoder::release() {
+void AlAsyncEncoder::release() {
     if (encoder) {
         return encoder->release();
     }
 }
 
-void HwAsyncEncoder::_dropFrame() {
+void AlAsyncEncoder::_dropFrame() {
 }

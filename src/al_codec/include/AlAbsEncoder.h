@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWABSENCODER_H
-#define HWVC_ANDROID_HWABSENCODER_H
+#ifndef HWVC_ANDROID_ALABSENCODER_H
+#define HWVC_ANDROID_ALABSENCODER_H
 
 #include "Object.h"
 #include "HwResult.h"
@@ -15,7 +15,7 @@
 
 using namespace std;
 
-AL_CLASS HwAbsEncoder AL_EXTEND Object {
+AL_CLASS AlAbsEncoder AL_EXTEND Object {
 public:
     AL_ENUM kType : int {
         SOFT = 0,
@@ -40,9 +40,9 @@ public:
     };
 
 public:
-    HwAbsEncoder(const HwAbsEncoder::Desc &desc);
+    AlAbsEncoder(const AlAbsEncoder::Desc &desc);
 
-    virtual ~HwAbsEncoder();
+    virtual ~AlAbsEncoder();
 
     virtual HwResult write(HwAbsMediaFrame *frame) = 0;
 
@@ -50,14 +50,14 @@ public:
 
     virtual void release() = 0;
 
-    virtual HwAbsEncoder::Desc getCodecDesc();
+    virtual AlAbsEncoder::Desc getCodecDesc();
 
 private:
-    HwAbsEncoder(const HwAbsEncoder &o) : Object() {};
+    AlAbsEncoder(const AlAbsEncoder &o) : Object() {};
 
 private:
-    HwAbsEncoder::Desc desc;
+    AlAbsEncoder::Desc desc;
 };
 
 
-#endif //HWVC_ANDROID_HWABSENCODER_H
+#endif //HWVC_ANDROID_ALABSENCODER_H

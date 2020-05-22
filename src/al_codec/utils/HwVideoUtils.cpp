@@ -170,7 +170,7 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
                                            AV_TIME_BASE_Q,
                                            AV_ROUND_NEAR_INF);
 //            if (iCtx->vTrackIndex == avPacket->stream_index) {
-//                Logcat::i("hwvc", "HwFFmpegEncoder::write %lld, %d", pts,
+//                Logcat::i("hwvc", "AlFFEncoder::write %lld, %d", pts,
 //                          avPacket->flags & AV_PKT_FLAG_KEY);
 //            }
             if (!contains(&trimIns, &trimOuts, pts)) {

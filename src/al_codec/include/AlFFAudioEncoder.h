@@ -5,13 +5,13 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWFFAUDIOENCODER_H
-#define HWVC_ANDROID_HWFFAUDIOENCODER_H
+#ifndef HWVC_ANDROID_ALFFAUDIOENCODER_H
+#define HWVC_ANDROID_ALFFAUDIOENCODER_H
 
 
-class HwFFAudioEncoder {
+class AlFFAudioEncoder {
 
 };
 
 
-#endif //HWVC_ANDROID_HWFFAUDIOENCODER_H
+#endif //HWVC_ANDROID_ALFFAUDIOENCODER_H

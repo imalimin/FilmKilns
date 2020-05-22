@@ -5,12 +5,13 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "HwAbsVideoEncoder.h"
+#ifndef HWVC_ANDROID_ALABSAUDIOENCODER_H
+#define HWVC_ANDROID_ALABSAUDIOENCODER_H
 
-HwAbsVideoEncoder::HwAbsVideoEncoder(const HwAbsEncoder::Desc &desc) : HwAbsEncoder(desc) {
 
-}
+class AlAbsAudioEncoder {
 
-HwAbsVideoEncoder::~HwAbsVideoEncoder() {
+};
 
-}
+
+#endif //HWVC_ANDROID_ALABSAUDIOENCODER_H

@@ -16,7 +16,7 @@
 
 #define TAG "HwAndroidEncoder"
 
-HwAndroidEncoder::HwAndroidEncoder(const HwAbsEncoder::Desc &desc) : HwAbsVideoEncoder(desc) {
+HwAndroidEncoder::HwAndroidEncoder(const AlAbsEncoder::Desc &desc) : AlAbsVideoEncoder(desc) {
 
 }
 
@@ -45,12 +45,12 @@ bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleForma
 }
 
 bool HwAndroidEncoder::configure() {
-    if (HwAbsEncoder::kType::HARD == getCodecDesc().type) {
+    if (AlAbsEncoder::kType::HARD == getCodecDesc().type) {
         vCodec = new AlAndroidCodecCompat(getCodecDesc().vID);
-    } else if (HwAbsEncoder::kType::HARD_ENC_TEX == getCodecDesc().type) {
+    } else if (AlAbsEncoder::kType::HARD_ENC_TEX == getCodecDesc().type) {
         vCodec = new AlAndroidCodecCompat2(getCodecDesc().vID);
     } else {
-        AlLogE(TAG, "failed. Not support encoder type.");
+        AlLogE(TAG, "failed. Not support this encoder type.");
         release();
         return false;
     }

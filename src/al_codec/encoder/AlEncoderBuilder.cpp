@@ -6,8 +6,8 @@
 */
 
 #include "AlEncoderBuilder.h"
-#include "HwAsyncEncoder.h"
-#include "HwFFmpegEncoder.h"
+#include "AlAsyncEncoder.h"
+#include "AlFFEncoder.h"
 #include "platform/android/encoder/HwAndroidEncoder.h"
 
 #define TAG "AlEncoderBuilder"
@@ -31,7 +31,7 @@ AlEncoderBuilder &AlEncoderBuilder::setAudioFormat(HwSampleFormat &format) {
     return *this;
 }
 
-AlEncoderBuilder &AlEncoderBuilder::setEncoderType(HwAbsEncoder::kType type) {
+AlEncoderBuilder &AlEncoderBuilder::setEncoderType(AlAbsEncoder::kType type) {
     this->type = type;
     return *this;
 }
@@ -95,26 +95,26 @@ static void showFFInfo() {
     showDecoderInfo();
 }
 
-HwAbsVideoEncoder *AlEncoderBuilder::build() {
+AlAbsVideoEncoder *AlEncoderBuilder::build() {
     showFFInfo();
     if (0 != size.width % 16 || 0 != size.height % 16) {
         AlLogE(TAG, "Not align 16. %dx%d", size.width, size.height);
         return nullptr;
     }
-    HwAbsVideoEncoder *encoder = nullptr;
-    HwAbsEncoder::Desc desc;
+    AlAbsVideoEncoder *encoder = nullptr;
+    AlAbsEncoder::Desc desc;
     desc.aID = AlCodec::kID::AAC;
     desc.vID = AlCodec::kID::H264;
     desc.type = type;
     if (enableAsync) {
-        if (HwAbsEncoder::kType::SOFT == type) {
-            encoder = new HwAsyncEncoder(desc);
+        if (AlAbsEncoder::kType::SOFT == type) {
+            encoder = new AlAsyncEncoder(desc);
         } else {
             encoder = new HwAndroidEncoder(desc);
         }
     } else {
-        if (HwAbsEncoder::kType::SOFT == type) {
-            encoder = new HwFFmpegEncoder(desc);
+        if (AlAbsEncoder::kType::SOFT == type) {
+            encoder = new AlFFEncoder(desc);
         } else {
             encoder = new HwAndroidEncoder(desc);
         }

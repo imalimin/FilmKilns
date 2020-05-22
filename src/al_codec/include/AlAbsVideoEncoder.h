@@ -5,17 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWABSVIDEOENCODER_H
-#define HWVC_ANDROID_HWABSVIDEOENCODER_H
+#ifndef HWVC_ANDROID_ALABSVIDEOENCODER_H
+#define HWVC_ANDROID_ALABSVIDEOENCODER_H
 
-#include "HwAbsEncoder.h"
+#include "AlAbsEncoder.h"
 #include "HwSampleFormat.h"
 
-class HwAbsVideoEncoder : public HwAbsEncoder {
+class AlAbsVideoEncoder : public AlAbsEncoder {
 public:
-    HwAbsVideoEncoder(const HwAbsEncoder::Desc &desc);
+    AlAbsVideoEncoder(const AlAbsEncoder::Desc &desc);
 
-    virtual ~HwAbsVideoEncoder();
+    virtual ~AlAbsVideoEncoder();
 
     virtual bool prepare(string path, int width, int height, HwSampleFormat audioFormat) = 0;
 
@@ -27,4 +27,4 @@ public:
 };
 
 
-#endif //HWVC_ANDROID_HWABSVIDEOENCODER_H
+#endif //HWVC_ANDROID_ALABSVIDEOENCODER_H

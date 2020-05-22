@@ -8,16 +8,16 @@
 #ifndef HWVC_ANDROID_HWASYNFFENCODER_H
 #define HWVC_ANDROID_HWASYNFFENCODER_H
 
-#include "HwAbsVideoEncoder.h"
+#include "AlAbsVideoEncoder.h"
 #include "AlEventPipeline.h"
 #include "HwFrameAllocator.h"
 #include <queue>
 
-class HwAsyncEncoder : public HwAbsVideoEncoder {
+class AlAsyncEncoder : public AlAbsVideoEncoder {
 public:
-    HwAsyncEncoder(const HwAbsEncoder::Desc &desc);
+    AlAsyncEncoder(const AlAbsEncoder::Desc &desc);
 
-    virtual ~HwAsyncEncoder();
+    virtual ~AlAsyncEncoder();
 
     virtual void setBitrate(int32_t rate) override;
 
@@ -42,7 +42,7 @@ private:
 
 private:
     const int MAX_V_FRAME_CACHE = 32;
-    HwAbsVideoEncoder *encoder = nullptr;
+    AlAbsVideoEncoder *encoder = nullptr;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     AlEventPipeline *pipeline = nullptr;
     std::queue<HwAbsMediaFrame *> vQueue;

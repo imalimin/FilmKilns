@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWAUDIOCOMPILER_H
 
 #include "Unit.h"
-#include "HwFFAudioEncoder.h"
+#include "AlFFAudioEncoder.h"
 #include "WAVRawMuxer.h"
 
 class HwAudioCompiler : public Unit {
@@ -25,7 +25,7 @@ public:
     bool eventReceiveData(AlMessage *msg);
 
 private:
-    HwFFAudioEncoder *encoder = nullptr;
+    AlFFAudioEncoder *encoder = nullptr;
     WAVRawMuxer *muxer = nullptr;
 };
 

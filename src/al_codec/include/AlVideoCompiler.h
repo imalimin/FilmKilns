@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_HWVIDEOOUTPUT_H
 
 #include "Unit.h"
-#include "HwAbsVideoEncoder.h"
+#include "AlAbsVideoEncoder.h"
 #include "HwVideoFrame.h"
 #include "HwAudioFrame.h"
 #include "AlSize.h"
@@ -164,7 +164,7 @@ private:
     std::string profile = "High";
     std::string preset = "superfast";
     HwSampleFormat aFormat;
-    HwAbsVideoEncoder *encoder = nullptr;
+    AlAbsVideoEncoder *encoder = nullptr;
     HwVideoFrame *videoFrame = nullptr;
     HwAudioFrame *audioFrame = nullptr;
     int64_t countOfSample = 0;

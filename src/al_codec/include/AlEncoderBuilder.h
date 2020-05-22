@@ -11,7 +11,7 @@
 #include "Object.h"
 #include "AlSize.h"
 #include "HwSampleFormat.h"
-#include "HwAbsVideoEncoder.h"
+#include "AlAbsVideoEncoder.h"
 #include "AlCodec.h"
 
 al_class AlEncoderBuilder al_extend Object {
@@ -27,7 +27,7 @@ public:
     /// AlCodec::kType::SOFT
     /// \param type AlCodec::kType
     /// \return
-    AlEncoderBuilder &setEncoderType(HwAbsEncoder::kType type);
+    AlEncoderBuilder &setEncoderType(AlAbsEncoder::kType type);
 
     /// Default true.
     /// \param enable
@@ -42,12 +42,12 @@ public:
 
     AlEncoderBuilder &setOutput(std::string output);
 
-    HwAbsVideoEncoder *build();
+    AlAbsVideoEncoder *build();
 
 private:
     AlSize size;
     HwSampleFormat audioFormat;
-    HwAbsEncoder::kType type = HwAbsEncoder::kType::SOFT;
+    AlAbsEncoder::kType type = AlAbsEncoder::kType::SOFT;
     bool enableAsync = true;
     int32_t bitrate = 0;
     std::string profile;
