@@ -25,11 +25,11 @@
 
 AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("AlDisplayRecorder") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new AlUOESTexInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new AlUTexReader(ALIAS_OF_READER));
-    registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerEvent(MSG_CAMERA_OES_TEX_NOTIFY,
                   reinterpret_cast<EventFunc>(&AlDisplayRecorder::_onOESTexNotify));
     registerEvent(MSG_VIDEO_COMPILER_TIME,

@@ -67,7 +67,7 @@ void AlPaintFilter::setPaintSize(float size) {
 }
 
 void AlPaintFilter::setColor(AlColor color) {
-    this->color = color;
+this->color = color;
 }
 
 AlAbsGLProgram *AlPaintFilter::createProgram() {
@@ -87,6 +87,7 @@ AlAbsGLProgram *AlPaintFilter::createProgram() {
                     "    gl_FragColor = color * c;\n"
                     "}");
     AlAbsGLProgram *program = AlPointProgram::create(&vertex, &fragment);
+    AL_CHECK(nullptr != program, nullptr);
     uSize = program->getUniformLocation("size");
     uColor = program->getUniformLocation("color");
     return program;

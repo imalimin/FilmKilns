@@ -22,11 +22,13 @@
 
 HwCameraRecorder::HwCameraRecorder() : AlAbsProcessor("HwCameraRecorder") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    /// 由于AlVideoCompiler可能会使用硬编进行纹理编码，此时会有EGL环境
+    /// 故顺序尽可能考前，否则释放EGL时会把context设置为none，影响其它模块的纹理释放
+    registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new AlUTexReader(ALIAS_OF_READER));
-    registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerEvent(MSG_CAMERA_OES_TEX_NOTIFY,
                   reinterpret_cast<EventFunc>(&HwCameraRecorder::_onOESTexNotify));
     registerEvent(MSG_VIDEO_COMPILER_TIME,

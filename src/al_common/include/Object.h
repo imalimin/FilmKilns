@@ -20,10 +20,14 @@ using namespace std;
 #define AL_ENUM enum class
 #define AL_INSTANCE_OF(o1, o2) typeid(o1) != typeid(o2)
 
+#define AL_CHECK(flag, ret) \
+if(!(flag)) { \
+    return (ret); \
+} \
+
 #define al_class AL_CLASS
 #define al_interface AL_INTERFACE
 #define al_extend AL_EXTEND
-#define al_nullable AL_NULLABLE
 
 template<class T>
 class AlSPointer;
