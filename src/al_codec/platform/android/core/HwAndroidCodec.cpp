@@ -152,7 +152,7 @@ HwResult HwAndroidCodec::configure(HwBundle &format) {
             }
         }
         delete frame;
-        if (AlCodec::H264 == getCodecID()) {
+        if (AlCodec::kID::H264 == getCodecID()) {
             if (!buffers[0] || !buffers[1]) {
                 AlLogE(TAG, "failed.");
                 return Hw::FAILED;

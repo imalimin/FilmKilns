@@ -17,7 +17,7 @@ using namespace std;
 #define AL_INTERFACE class
 #define AL_EXTEND : public
 #define AL_NULLABLE
-#define AL_ENUM enum
+#define AL_ENUM enum class
 #define AL_INSTANCE_OF(o1, o2) typeid(o1) != typeid(o2)
 
 #define al_class AL_CLASS
