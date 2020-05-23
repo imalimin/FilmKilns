@@ -15,7 +15,7 @@
 #include "log.h"
 #include "functional"
 
-class AlMessageQueue : public Object {
+AL_CLASS AlMessageQueue AL_EXTEND Object {
 public:
     AlMessageQueue();
 
@@ -27,11 +27,9 @@ public:
 
     AlMessage *take();
 
-    int size();
+    size_t size();
 
     bool empty();
-
-    void pop();
 
     void notify();
 

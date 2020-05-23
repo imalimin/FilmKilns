@@ -60,8 +60,6 @@ private:
 
     AlMessage *_take();
 
-    void _pop();
-
 private:
     std::atomic_bool exiting, exited, exitSafely;
     std::atomic_bool looping;

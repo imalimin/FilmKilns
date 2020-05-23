@@ -99,7 +99,6 @@ void AlLooper::_loop() {
             }
             delete msg;
         }
-        _pop();
         if (exitSafely) {
             if (exiting && 0 == queue.size()) {
                 break;
@@ -116,7 +115,6 @@ void AlLooper::_loop() {
         if (msg) {
             delete msg;
         }
-        queue.pop();
     }
     queue.clear();
     Logcat::i("AlLooper", "%s(%d) clear message cost %lld us.", __FUNCTION__, __LINE__,
@@ -131,14 +129,6 @@ AlMessage *AlLooper::_take() {
         return queue.take();
     } else {
         return queueLevel0.take();
-    }
-}
-
-void AlLooper::_pop() {
-    if (queueLevel0.empty()) {
-        return queue.pop();
-    } else {
-        return queueLevel0.pop();
     }
 }
 

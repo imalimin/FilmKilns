@@ -76,12 +76,8 @@ AlMessage *AlMessageQueue::take() {
     return e;
 }
 
-int AlMessageQueue::size() {
+size_t AlMessageQueue::size() {
     return queue.size();
-};
-
-void AlMessageQueue::pop() {
-//    queue->pop();
 }
 
 void AlMessageQueue::notify() {
@@ -117,8 +113,9 @@ void AlMessageQueue::removeAllMessage(const int what) {
     while (itr != queue.end()) {
         AlMessage *e = *itr;
         if (what == e->what) {
-            queue.remove(e);
             delete e;
+            itr = queue.erase(itr);
+            continue;
         }
         ++itr;
     }
