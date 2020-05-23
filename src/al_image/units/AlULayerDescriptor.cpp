@@ -127,7 +127,6 @@ void AlULayerDescriptor::notifyCanvas(AlImageLayerDrawModel *description, int32_
     AlRenderParams params(flags);
     if (params.isReqClear()) {
         AlMessage *msg = AlMessage::obtain(EVENT_LAYER_RENDER_CLEAR);
-        msg->arg1 = params.isTransparent();
         msg->desc = "clear";
         postEvent(msg);
     }

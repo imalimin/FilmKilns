@@ -32,8 +32,12 @@ public:
 
     bool isRenderScreen();
 
+    /// @deprecated
+    /// \param value
     void setTransparent(bool value);
 
+    /// @deprecated
+    /// \param value
     bool isTransparent();
 
     void setReqClear(bool value);

@@ -61,6 +61,10 @@ void AlImageProcessor::onCreate() {
     Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
     this->aBaseCtx = AlEgl::offScreen(TAG);
     this->context = new AlContext();
+
+    AlMessage *msg = AlMessage::obtain(MSG_CANVAS_SET_BG);
+    msg->arg1 = static_cast<int32_t>(AlImageCanvas::kBGType::GRID);
+    postEvent(msg);
 //    this->putObject("AL_CONTEXT", this->context)
 //            .to({ALIAS_OF_LAYER, ALIAS_OF_DESCRIPTOR, ALIAS_OF_CANVAS, ALIAS_OF_SCREEN});
 }

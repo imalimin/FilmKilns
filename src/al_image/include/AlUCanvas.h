@@ -39,7 +39,7 @@ private:
     /// +--------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 |
     /// +--------------------------------------+
-    /// | none         | bool      | none      |
+    /// | none         | none      | none      |
     /// +--------------------------------------+
     /// \param msg
     /// \return
@@ -77,6 +77,17 @@ private:
     /// \param msg
     /// \return
     bool onSave(AlMessage *m);
+
+    /// 设置画布背景样式
+    /// FORMAT:
+    /// +--------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |
+    /// +--------------------------------------------------+
+    /// | none         | kBGType  | none      | out path  |
+    /// +--------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool onSetBackground(AlMessage *m);
 
     bool onEncodeFinish(AlMessage *msg);
 

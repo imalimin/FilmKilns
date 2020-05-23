@@ -23,7 +23,15 @@
 #include "HwNormalFilter.h"
 #endif
 
-al_class AlImageCanvas al_extend Object {
+AL_CLASS AlImageCanvas AL_EXTEND Object {
+public:
+    AL_ENUM kBGType : int {
+        NONE = 0,
+        BLACK,
+        WHITE,
+        GRID,
+    };
+
 public:
     AlImageCanvas();
 
@@ -45,6 +53,8 @@ public:
 
     HwResult read(AlBuffer *buf);
 
+    void setBGType(AlImageCanvas::kBGType type);
+
 private:
     AlImageCanvas(const AlImageCanvas &e) : Object() {};
 
@@ -53,6 +63,7 @@ private:
     void _drawDebug();
 
 private:
+    kBGType mBGType;
     HwAbsFBObject *fbo = nullptr;
     /// Manager by AlTexAllocator. DON`T delete here.
     HwAbsTexture *mCanvasTex = nullptr;

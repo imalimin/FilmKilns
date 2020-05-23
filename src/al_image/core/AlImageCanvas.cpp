@@ -14,7 +14,7 @@
 
 #define TAG "AlImageCanvas"
 
-AlImageCanvas::AlImageCanvas() : Object() {
+AlImageCanvas::AlImageCanvas() : Object(), mBGType(kBGType::NONE) {
 
 }
 
@@ -79,12 +79,18 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color) {
 
 void AlImageCanvas::clear(bool transparent) {
     if (mCanvasTex) {
+        AlColor color(0x00000000);
+        if (kBGType::BLACK == mBGType) {
+            color = AlColor(0x00000000);
+        } else if (kBGType::WHITE == mBGType) {
+            color = AlColor(0x00ffffff);
+        }
         glViewport(0, 0, mCanvasTex->getWidth(), mCanvasTex->getHeight());
-        if (!transparent && mBgDrawer) {
+        if (kBGType::GRID == mBGType && mBgDrawer) {
             mBgDrawer->draw(mCanvasTex);
         } else {
             fbo->bind();
-            glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+            glClearColor(color.rf(), color.gf(), color.bf(), color.af());
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             fbo->unbind();
         }
@@ -155,4 +161,8 @@ void AlImageCanvas::_drawDebug() {
     point[3] = 0.55f;
     paintFilter->setPath(&point, true);
     paintFilter->draw(mCanvasTex, mCanvasTex);
+}
+
+void AlImageCanvas::setBGType(AlImageCanvas::kBGType type) {
+    this->mBGType = type;
 }

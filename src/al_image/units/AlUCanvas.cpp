@@ -14,17 +14,13 @@
 #define TAG "AlUCanvas"
 
 AlUCanvas::AlUCanvas(const string &alias) : Unit(alias) {
-    registerEvent(EVENT_CANVAS_RESIZE,
-                  reinterpret_cast<EventFunc>(&AlUCanvas::onResize));
-    registerEvent(EVENT_LAYER_RENDER_CLEAR,
-                  reinterpret_cast<EventFunc>(&AlUCanvas::onClear));
-    registerEvent(EVENT_LAYER_RENDER_DRAW,
-                  reinterpret_cast<EventFunc>(&AlUCanvas::onDraw));
-    registerEvent(EVENT_LAYER_RENDER_SHOW,
-                  reinterpret_cast<EventFunc>(&AlUCanvas::onShow));
-    registerEvent(EVENT_CANVAS_SAVE, reinterpret_cast<EventFunc>(&AlUCanvas::onSave));
-    registerEvent(EVENT_IMAGE_CODEC_ENCODE_NOTIFY,
-                  reinterpret_cast<EventFunc>(&AlUCanvas::onEncodeFinish));
+    al_reg_msg(EVENT_CANVAS_RESIZE, AlUCanvas::onResize);
+    al_reg_msg(EVENT_LAYER_RENDER_CLEAR, AlUCanvas::onClear);
+    al_reg_msg(EVENT_LAYER_RENDER_DRAW, AlUCanvas::onDraw);
+    al_reg_msg(EVENT_LAYER_RENDER_SHOW, AlUCanvas::onShow);
+    al_reg_msg(EVENT_CANVAS_SAVE, AlUCanvas::onSave);
+    al_reg_msg(MSG_CANVAS_SET_BG, AlUCanvas::onSetBackground);
+    al_reg_msg(EVENT_IMAGE_CODEC_ENCODE_NOTIFY, AlUCanvas::onEncodeFinish);
 }
 
 AlUCanvas::~AlUCanvas() {
@@ -121,6 +117,12 @@ void AlUCanvas::_notifyDrawDone() {
     auto *msg = AlMessage::obtain(EVENT_CANVAS_DRAW_DONE);
     msg->arg1 = mDrawCount;
     postEvent(msg);
+}
+
+bool AlUCanvas::onSetBackground(AlMessage *m) {
+    AlImageCanvas::kBGType type = static_cast<AlImageCanvas::kBGType>(m->arg1);
+    mCanvas.setBGType(type);
+    return true;
 }
 
 bool AlUCanvas::onEncodeFinish(AlMessage *msg) {
