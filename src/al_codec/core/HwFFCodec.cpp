@@ -78,6 +78,31 @@ HwResult HwFFCodec::configure(HwBundle &format) {
             }
             break;
         }
+        case AV_CODEC_ID_GIF: {
+            // Configure
+            ctx->codec_id = id;
+            ctx->codec_type = AVMEDIA_TYPE_VIDEO;
+            ctx->pix_fmt = AV_PIX_FMT_RGB24;
+            ctx->width = getFormat().getInt32(KEY_WIDTH);
+            ctx->height = getFormat().getInt32(KEY_HEIGHT);
+            ctx->time_base = {1, getFormat().getInt32(KEY_FPS)};
+            ctx->framerate = {getFormat().getInt32(KEY_FPS), 1};
+            _configureBitrate(getFormat().getInt32(KEY_BIT_RATE));
+
+            ctx->gop_size = 15;
+            ctx->thread_count = 0;
+            ctx->max_b_frames = 2;
+            ctx->codec = pCodec;
+            ctx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+            int len = ctx->extradata_size;
+            int ret = avcodec_open2(ctx, pCodec, nullptr);
+            if (ret < 0) {
+                AlLogE(TAG, "could not open %d codec!", ctx->codec_id);
+                release();
+                return Hw::FAILED;
+            }
+            break;
+        }
         case AV_CODEC_ID_AAC_LATM:
         case AV_CODEC_ID_AAC: {
             if (!configureAudio(id, pCodec)) {

@@ -6,6 +6,6 @@ class AlVideoParams(
     var bitLevel: Int = 3,
     var profile: String = "Main",
     var preset: String = "superfast",
-    var enableHardware: Boolean = true
+    var enableHardware: Boolean = false
 ) {
 }
