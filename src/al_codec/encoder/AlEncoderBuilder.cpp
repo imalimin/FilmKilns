@@ -110,13 +110,17 @@ AlAbsVideoEncoder *AlEncoderBuilder::build() {
         if (AlAbsEncoder::kType::SOFT == type) {
             encoder = new AlAsyncEncoder(desc);
         } else {
-            encoder = new HwAndroidEncoder(desc);
+            if (AlCodec::kID::H264 == desc.vID) {
+                encoder = new HwAndroidEncoder(desc);
+            }
         }
     } else {
         if (AlAbsEncoder::kType::SOFT == type) {
             encoder = new AlFFEncoder(desc);
         } else {
-            encoder = new HwAndroidEncoder(desc);
+            if (AlCodec::kID::H264 == desc.vID) {
+                encoder = new HwAndroidEncoder(desc);
+            }
         }
     }
     AlLogI(TAG,

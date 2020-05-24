@@ -19,7 +19,8 @@ public:
     AL_ENUM kID : int {
         NONE = AV_CODEC_ID_NONE,
         H264 = AV_CODEC_ID_H264,
-        AAC = AV_CODEC_ID_AAC
+        AAC = AV_CODEC_ID_AAC,
+        GIF = AV_CODEC_ID_GIF
     };
 
     AL_ENUM kMediaType : int {
