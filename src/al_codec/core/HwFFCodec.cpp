@@ -82,7 +82,7 @@ HwResult HwFFCodec::configure(HwBundle &format) {
             // Configure
             ctx->codec_id = id;
             ctx->codec_type = AVMEDIA_TYPE_VIDEO;
-            ctx->pix_fmt = AV_PIX_FMT_RGB24;
+            ctx->pix_fmt = AV_PIX_FMT_PAL8 ;
             ctx->width = getFormat().getInt32(KEY_WIDTH);
             ctx->height = getFormat().getInt32(KEY_HEIGHT);
             ctx->time_base = {1, getFormat().getInt32(KEY_FPS)};
