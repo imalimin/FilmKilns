@@ -41,7 +41,7 @@
 #include "libavutil/hwcontext.h"
 #include "libavutil/pixfmt.h"
 #include "libavutil/rational.h"
-#include "libavutil/thread.h"
+//#include "libavutil/thread.h"
 #include "libavutil/threadmessage.h"
 
 #include "libswresample/swresample.h"
@@ -664,5 +664,8 @@ int hw_device_setup_for_decode(InputStream *ist);
 int hw_device_setup_for_encode(OutputStream *ost);
 
 int hwaccel_decode_init(AVCodecContext *avctx);
+
+int _exec(int argc, char **argv);
+int ff_main(int argc, char **argv);
 
 #endif /* FFTOOLS_FFMPEG_H */

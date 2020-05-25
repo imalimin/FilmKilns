@@ -921,6 +921,7 @@ static void add_input_streams(OptionsContext *o, AVFormatContext *ic)
 
 static void assert_file_overwrite(const char *filename)
 {
+#ifndef __ANDROID__
     const char *proto_name = avio_find_protocol_name(filename);
 
     if (file_overwrite && no_file_overwrite) {
@@ -960,6 +961,7 @@ static void assert_file_overwrite(const char *filename)
              }
         }
     }
+#endif
 }
 
 static void dump_attachment(AVStream *st, const char *filename)

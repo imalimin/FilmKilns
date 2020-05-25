@@ -9,6 +9,7 @@
 #define HARDWAREVIDEOCODEC_FFUTILS_H
 
 #include "Object.h"
+#include <pthread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,6 +26,10 @@ public:
     static int avSamplesCopy(AVFrame *dest, AVFrame *src);
 
     static void attachJvm(void *vm);
+
+    static int exec(std::string cmd);
+
+private:
 };
 
 #ifdef __cplusplus

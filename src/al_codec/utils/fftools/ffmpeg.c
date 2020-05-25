@@ -41,7 +41,7 @@
 #endif
 
 #include "libavformat/avformat.h"
-#include "libavdevice/avdevice.h"
+//#include "libavdevice/avdevice.h"
 #include "libswresample/swresample.h"
 #include "libavutil/opt.h"
 #include "libavutil/channel_layout.h"
@@ -49,22 +49,24 @@
 #include "libavutil/samplefmt.h"
 #include "libavutil/fifo.h"
 #include "libavutil/hwcontext.h"
-#include "libavutil/internal.h"
+//#include "libavutil/internal.h"
 #include "libavutil/intreadwrite.h"
 #include "libavutil/dict.h"
 #include "libavutil/display.h"
 #include "libavutil/mathematics.h"
 #include "libavutil/pixdesc.h"
 #include "libavutil/avstring.h"
-#include "libavutil/libm.h"
+//#include "libavutil/libm.h"
 #include "libavutil/imgutils.h"
 #include "libavutil/timestamp.h"
 #include "libavutil/bprint.h"
 #include "libavutil/time.h"
-#include "libavutil/thread.h"
+//#include "libavutil/thread.h"
 #include "libavutil/threadmessage.h"
-#include "libavcodec/mathops.h"
-#include "libavformat/os_support.h"
+//#include "libavcodec/mathops.h"
+//#include "libavformat/os_support.h"
+#include <pthread.h>
+#include <setjmp.h>
 
 # include "libavfilter/avfilter.h"
 # include "libavfilter/buffersrc.h"
@@ -106,6 +108,25 @@
 
 #include "libavutil/avassert.h"
 
+/* median of 3 */
+#ifndef mid_pred
+#define mid_pred mid_pred
+static inline av_const int mid_pred(int a, int b, int c)
+{
+    if(a>b){
+        if(c>b){
+            if(c>a) b=a;
+            else    b=c;
+        }
+    }else{
+        if(b>c){
+            if(c>a) b=c;
+            else    b=a;
+        }
+    }
+    return b;
+}
+#endif
 const char program_name[] = "ffmpeg";
 const int program_birth_year = 2000;
 
@@ -1246,13 +1267,13 @@ static void do_video_out(OutputFile *of,
             ost->forced_keyframes_expr_const_values[FKF_T] = pts_time;
             res = av_expr_eval(ost->forced_keyframes_pexpr,
                                ost->forced_keyframes_expr_const_values, NULL);
-            ff_dlog(NULL, "force_key_frame: n:%f n_forced:%f prev_forced_n:%f t:%f prev_forced_t:%f -> res:%f\n",
-                    ost->forced_keyframes_expr_const_values[FKF_N],
-                    ost->forced_keyframes_expr_const_values[FKF_N_FORCED],
-                    ost->forced_keyframes_expr_const_values[FKF_PREV_FORCED_N],
-                    ost->forced_keyframes_expr_const_values[FKF_T],
-                    ost->forced_keyframes_expr_const_values[FKF_PREV_FORCED_T],
-                    res);
+//            ff_dlog(NULL, "force_key_frame: n:%f n_forced:%f prev_forced_n:%f t:%f prev_forced_t:%f -> res:%f\n",
+//                    ost->forced_keyframes_expr_const_values[FKF_N],
+//                    ost->forced_keyframes_expr_const_values[FKF_N_FORCED],
+//                    ost->forced_keyframes_expr_const_values[FKF_PREV_FORCED_N],
+//                    ost->forced_keyframes_expr_const_values[FKF_T],
+//                    ost->forced_keyframes_expr_const_values[FKF_PREV_FORCED_T],
+//                    res);
             if (res) {
                 forced_keyframe = 1;
                 ost->forced_keyframes_expr_const_values[FKF_PREV_FORCED_N] =
@@ -4840,7 +4861,51 @@ static void log_callback_null(void *ptr, int level, const char *fmt, va_list vl)
 {
 }
 
-int main(int argc, char **argv)
+static void ff_reset() {
+    vstats_file = NULL;
+    nb_frames_dup = 0;
+    nb_frames_drop = 0;
+    memset(&decode_error_stat, 0, sizeof(decode_error_stat));
+    progress_avio = NULL;
+    subtitle_out = NULL;
+    input_streams = NULL;
+    nb_input_streams = 0;
+    input_files = NULL;
+    nb_input_files = 0;
+    output_streams = NULL;
+    nb_output_streams = 0;
+    output_files = NULL;
+    nb_output_files = 0;
+    filtergraphs = NULL;
+    nb_filtergraphs = 0;
+#if HAVE_TERMIOS_H
+    memset(&oldtty, 0, sizeof(oldtty));
+    restore_tty = 0;
+#endif
+    received_sigterm = 0;
+    transcode_init_done = 0;
+    ffmpeg_exited = 0;
+    main_return_code = 0;
+}
+
+jmp_buf ff_exit;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+int _exec(int argc, char **argv) {
+
+    int ret = pthread_mutex_trylock(&mutex);
+    if (ret != 0) {
+        return ret;
+    }
+    ff_reset();
+    register_exit(ffmpeg_cleanup);
+    ret = setjmp(ff_exit);
+    if (ret == 0) {
+        return ff_main(argc, argv);
+    }
+    return ret == 0xFFFFFFFF ? 0 : ret;
+}
+
+int ff_main(int argc, char **argv)
 {
     int i, ret;
     BenchmarkTimeStamps ti;
@@ -4861,9 +4926,12 @@ int main(int argc, char **argv)
         argv++;
     }
 
+    avcodec_register_all();
 #if CONFIG_AVDEVICE
     avdevice_register_all();
 #endif
+    avfilter_register_all();
+    av_register_all();
     avformat_network_init();
 
     show_banner(argc, argv, options);
