@@ -32,39 +32,41 @@ void FFUtils::attachJvm(void *vm) {
     av_jni_set_java_vm(vm, NULL);
 }
 
-int FFUtils::exec(std::string cmd) {
-    int pos = cmd.find(" ");
-    std::string subStr = "";
-    vector<string> listArgv;
+static void parseArgv(std::string cmd, std::vector<std::string> &vec) {
+    size_t pos = cmd.find(" ");
+    std::string arg;
     while (pos != string::npos) {
         if (pos > 0 && cmd[pos - 1] == '\\') {
-            subStr += cmd.substr(0, pos - 1);
-            subStr += " ";
+            arg += cmd.substr(0, pos - 1);
+            arg += " ";
         } else {
-            subStr += cmd.substr(0, pos);
-            listArgv.push_back(subStr);
-            subStr = "";
+            arg += cmd.substr(0, pos);
+            vec.push_back(arg);
+            arg = "";
         }
         cmd = cmd.substr(pos + 1);
         pos = cmd.find(" ");
     }
-    if (cmd.size() + subStr.length()) {
-        listArgv.push_back(subStr + cmd);
+    if (cmd.size() + arg.length()) {
+        vec.push_back(arg + cmd);
     }
+}
 
-    int argc = listArgv.size();
-    char **argv = (char **) malloc(sizeof(char *) * (argc + 1));
+int FFUtils::exec(std::string cmd) {
+    std::vector<std::string> vec;
+    parseArgv(cmd, vec);
+
+    int argc = static_cast<int>(vec.size());
+    char **argv = new char *[argc + 1];
     for (int i = 0; i < argc; ++i) {
-        argv[i] = (char *) malloc(sizeof(char) * listArgv[i].size() + 1);
-        strcpy(argv[i], listArgv[i].c_str());
+        argv[i] = new char[vec[i].size() + 1];;
+        strcpy(argv[i], vec[i].c_str());
     }
     argv[argc] = nullptr;
     int ret = _exec(argc, argv);
-
     for (int i = 0; i < argc; ++i) {
-        free(argv[i]);
+        delete[] argv[i];
     }
-    free(argv);
-
+    delete[] argv;
     return ret;
 }
