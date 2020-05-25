@@ -7,13 +7,14 @@ if (ANDROID)
     include_directories(
             ${PROJECT_SOURCE_DIR}
             ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../al_common/
+            ${PROJECT_SOURCE_DIR}/../al_common
             ${PROJECT_SOURCE_DIR}/../al_common/include
             ${PROJECT_SOURCE_DIR}/../al_graphic/include
             ${PROJECT_SOURCE_DIR}/../al_image/include
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
             ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/ffmpeg/include
             ${YUV}/include
+            ${PROJECT_SOURCE_DIR}/utils
             # android
             ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/encoder
     )
@@ -26,6 +27,7 @@ else ()
             ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
             ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/ffmpeg/include
             ${YUV}/include
+            ${PROJECT_SOURCE_DIR}/utils
     )
 endif ()
 
@@ -102,6 +104,8 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/translator/*.cpp
             ${PROJECT_SOURCE_DIR}/muxer/*.cpp
             ${PROJECT_SOURCE_DIR}/core/*.cpp
+            #fftools
+            ${PROJECT_SOURCE_DIR}/utils/fftools/*.c
             #Header
             ${PROJECT_SOURCE_DIR}/include/*.h
             # android
@@ -124,6 +128,8 @@ else ()
             ${PROJECT_SOURCE_DIR}/translator/*.cpp
             ${PROJECT_SOURCE_DIR}/muxer/*.cpp
             ${PROJECT_SOURCE_DIR}/core/*.cpp
+            #fftools
+            ${PROJECT_SOURCE_DIR}/utils/fftools/*.c
     )
 endif ()
 
