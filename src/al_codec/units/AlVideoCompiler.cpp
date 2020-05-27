@@ -144,7 +144,6 @@ void AlVideoCompiler::_initialize() {
                 type = AlAbsEncoder::kType::HARD_ENC_TEX;
             }
         }
-        aFormat = HwSampleFormat::NONE;
         encoder = AlEncoderBuilder()
                 .setOutput(path)
                 .setSize(size)

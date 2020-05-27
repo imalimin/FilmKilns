@@ -36,7 +36,7 @@ class CameraActivity : BaseActivity() {
         if (isNightMode()) {
             optLayout.setBackgroundColor(resources.getColor(R.color.black_232))
         }
-        path = "${externalCacheDir!!.path}/camera.gif"
+        path = "${externalCacheDir!!.path}/camera.mp4"
         recorder?.setOutputFilePath(path)
         recorder?.setOnRecordProgressListener {
             timeView.text = formator.format(Date(it / 1000))

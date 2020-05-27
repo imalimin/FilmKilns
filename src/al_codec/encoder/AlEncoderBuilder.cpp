@@ -104,7 +104,7 @@ AlAbsVideoEncoder *AlEncoderBuilder::build() {
     AlAbsVideoEncoder *encoder = nullptr;
     AlAbsEncoder::Desc desc;
     desc.aID = AlCodec::kID::AAC;
-    desc.vID = AlCodec::kID::GIF;
+    desc.vID = AlCodec::kID::H264;
     desc.type = type;
     if (enableAsync) {
         if (AlAbsEncoder::kType::SOFT == type) {
