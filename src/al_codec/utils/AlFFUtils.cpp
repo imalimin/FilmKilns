@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FFUtils.h"
+#include "AlFFUtils.h"
 #include <vector>
 
 #ifdef __cplusplus
@@ -16,7 +16,7 @@ extern "C" {
 }
 #endif
 
-int FFUtils::avSamplesCopy(AVFrame *dest, AVFrame *src) {
+int AlFFUtils::avSamplesCopy(AVFrame *dest, AVFrame *src) {
     av_free(dest->data[0]);
     av_samples_alloc(dest->data,
                      &dest->linesize[0],
@@ -28,7 +28,7 @@ int FFUtils::avSamplesCopy(AVFrame *dest, AVFrame *src) {
     return 0;
 }
 
-void FFUtils::attachJvm(void *vm) {
+void AlFFUtils::attachJvm(void *vm) {
     av_jni_set_java_vm(vm, NULL);
 }
 
@@ -52,7 +52,7 @@ static void parseArgv(std::string cmd, std::vector<std::string> &vec) {
     }
 }
 
-int FFUtils::exec(std::string cmd) {
+int AlFFUtils::exec(std::string cmd) {
     std::vector<std::string> vec;
     parseArgv(cmd, vec);
 

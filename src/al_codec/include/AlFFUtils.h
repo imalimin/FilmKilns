@@ -21,7 +21,7 @@ extern "C" {
 #include "libswresample/swresample.h"
 #include "libavcodec/jni.h"
 
-class FFUtils : public Object {
+AL_CLASS AlFFUtils AL_EXTEND Object {
 public:
     static int avSamplesCopy(AVFrame *dest, AVFrame *src);
 

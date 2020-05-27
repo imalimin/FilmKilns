@@ -7,7 +7,7 @@
 
 #include "platform/android/AlJavaNativeHelper.h"
 #include "platform/android/AlJNIEnv.h"
-#include "FFUtils.h"
+#include "AlFFUtils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +20,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     AlJavaNativeHelper::getInstance()->attach(vm);
     AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodec");
     AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodecKt");
-    FFUtils::attachJvm(vm);
+    AlFFUtils::attachJvm(vm);
     AlLogI("JNILoader", "AndroidApi: %d", AlJavaNativeHelper::getAndroidApi());
     return JNI_VERSION_1_6;
 }

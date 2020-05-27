@@ -83,6 +83,7 @@
         <activity android:name=".ui.BitmapActivity" />
         <activity android:name=".ui.AudioRecordAndMuxActivity" />
         <activity android:name=".ui.AlDisplayActivity" />
+        <activity android:name=".ui.FFCMDActivity" />
     </application>
 
 </manifest>

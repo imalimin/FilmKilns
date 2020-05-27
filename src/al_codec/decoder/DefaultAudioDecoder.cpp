@@ -5,19 +5,11 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/DefaultAudioDecoder.h"
-#include <cassert>
+#include "DefaultAudioDecoder.h"
+#include "AlFFUtils.h"
 #include "Logcat.h"
+#include <cassert>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "../include/FFUtils.h"
-
-#ifdef __cplusplus
-}
-#endif
 
 DefaultAudioDecoder::DefaultAudioDecoder() : AbsAudioDecoder() {
     hwFrameAllocator = new HwFrameAllocator();
