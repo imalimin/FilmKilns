@@ -177,6 +177,8 @@ int         nb_output_files   = 0;
 
 FilterGraph **filtergraphs;
 int        nb_filtergraphs;
+jmp_buf ff_exit;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 #if HAVE_TERMIOS_H
 
@@ -652,6 +654,8 @@ static void ffmpeg_cleanup(int ret)
     }
     term_exit();
     ffmpeg_exited = 1;
+
+    pthread_mutex_unlock(&mutex);
 }
 
 void remove_avoptions(AVDictionary **a, AVDictionary *b)
@@ -4888,8 +4892,6 @@ static void ff_reset() {
     main_return_code = 0;
 }
 
-jmp_buf ff_exit;
-static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 int _exec(int argc, char **argv) {
 
     int ret = pthread_mutex_trylock(&mutex);
