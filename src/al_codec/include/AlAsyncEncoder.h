@@ -11,7 +11,7 @@
 #include "AlAbsVideoEncoder.h"
 #include "AlEventPipeline.h"
 #include "HwFrameAllocator.h"
-#include <queue>
+#include "AlSafeQueue.h"
 
 class AlAsyncEncoder : public AlAbsVideoEncoder {
 public:
@@ -43,10 +43,10 @@ private:
     AlAbsVideoEncoder *encoder = nullptr;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     AlEventPipeline *pipeline = nullptr;
-    std::queue<HwAbsMediaFrame *> vQueue;
-    std::queue<HwAbsMediaFrame *> aQueue;
-    std::queue<bool> tQueue;
-    SimpleLock simpleLock;
+    AlSafeQueue<HwAbsMediaFrame *> vQueue;
+    AlSafeQueue<HwAbsMediaFrame *> aQueue;
+    AlSafeQueue<bool> tQueue;
+    std::mutex mtx;
     SimpleLock writeBlock;
     bool looping = false;
     std::atomic_bool released;

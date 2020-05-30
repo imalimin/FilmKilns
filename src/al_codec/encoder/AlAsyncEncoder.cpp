@@ -71,14 +71,14 @@ HwResult AlAsyncEncoder::write(HwAbsMediaFrame *frame) {
     }
     HwAbsMediaFrame *temp = hwFrameAllocator->ref(frame);
     if (temp) {
-        simpleLock.lock();
-        if (temp->isAudio()) {
-            aQueue.push(temp);
-        } else {
-            vQueue.push(temp);
+        {
+            if (temp->isAudio()) {
+                aQueue.push(temp);
+            } else {
+                vQueue.push(temp);
+            }
+            tQueue.push(temp->isAudio());
         }
-        tQueue.push(temp->isAudio());
-        simpleLock.unlock();
         writeBlock.notify();
         return Hw::SUCCESS;
     }
@@ -92,32 +92,27 @@ void AlAsyncEncoder::write() {
             return;
         }
     }
-    simpleLock.lock();
     if (looping && encoder && !aQueue.empty() && !vQueue.empty() && !tQueue.empty()) {
         HwAbsMediaFrame *frame = nullptr;
-        if (tQueue.front()) {
-            frame = aQueue.front();
-            aQueue.pop();
+        if (tQueue.pop()) {
+            frame = aQueue.pop();
         } else {
-            frame = vQueue.front();
-            vQueue.pop();
+            frame = vQueue.pop();
         }
-        tQueue.pop();
         if (frame) {
             encoder->write(frame);
             frame->recycle();
         }
     }
-    simpleLock.unlock();
 }
 
 void AlAsyncEncoder::loop() {
-    simpleLock.lock();
-    if (!looping) {
-        simpleLock.unlock();
-        return;
+    {
+        std::lock_guard<std::mutex> guard(mtx);
+        if (!looping) {
+            return;
+        }
     }
-    simpleLock.unlock();
     if (!pipeline)
         return;
     pipeline->queueEvent([this]() {
@@ -127,13 +122,14 @@ void AlAsyncEncoder::loop() {
 }
 
 bool AlAsyncEncoder::stop() {
-    simpleLock.lock();
-    looping = false;
     bool ret = false;
-    if (encoder) {
-        ret = encoder->stop();
+    {
+        std::lock_guard<std::mutex> guard(mtx);
+        looping = false;
+        if (encoder) {
+            ret = encoder->stop();
+        }
     }
-    simpleLock.unlock();
     writeBlock.notify();
     return ret;
 }
