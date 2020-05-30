@@ -38,8 +38,6 @@ private:
 
     void write();
 
-    void _dropFrame();
-
 private:
     const int MAX_V_FRAME_CACHE = 32;
     AlAbsVideoEncoder *encoder = nullptr;
@@ -51,6 +49,7 @@ private:
     SimpleLock simpleLock;
     SimpleLock writeBlock;
     bool looping = false;
+    std::atomic_bool released;
 };
 
 
