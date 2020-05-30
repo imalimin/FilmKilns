@@ -25,6 +25,8 @@ private:
 
     AlEventPipeline(AlEventPipeline &e) : Object() {}
 
+    void setup(AlLooper *looper);
+
 public:
     ~AlEventPipeline();
 

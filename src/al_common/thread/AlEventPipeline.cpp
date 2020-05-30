@@ -17,24 +17,12 @@ AlEventPipeline *AlEventPipeline::create(AlLooper *looper) {
 }
 
 AlEventPipeline::AlEventPipeline(std::string name) : Object() {
-    exited = false;
     mThread = AlHandlerThread::create(name);
-    mHandler = new AlHandler(mThread->getLooper(), [](AlMessage *msg) {
-        auto *run = msg->getObj<AlRunnable *>();
-        if (run) {
-            (*run)(nullptr);
-        }
-    });
+    setup(mThread->getLooper());
 }
 
 AlEventPipeline::AlEventPipeline(AlLooper *looper) {
-    exited = false;
-    mHandler = new AlHandler(looper, [](AlMessage *msg) {
-        auto *run = msg->getObj<AlRunnable *>();
-        if (run) {
-            (*run)(nullptr);
-        }
-    });
+    setup(looper);
 }
 
 AlEventPipeline::~AlEventPipeline() {
@@ -46,6 +34,18 @@ AlEventPipeline::~AlEventPipeline() {
     mThread = nullptr;
     delete mHandler;
     mHandler = nullptr;
+}
+
+void AlEventPipeline::setup(AlLooper *looper) {
+    exited = false;
+    mHandler = new AlHandler(looper, [](AlMessage *msg) {
+        if (msg->obj) {
+            auto *run = msg->getObj<AlRunnable *>();
+            if (run) {
+                (*run)(nullptr);
+            }
+        }
+    });
 }
 
 void AlEventPipeline::queueEvent(function<void()> func) {
