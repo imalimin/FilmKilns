@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWCAMERARECORDER_H
-#define HWVC_ANDROID_HWCAMERARECORDER_H
+#ifndef HWVC_ANDROID_ALCAMERARECORDER_H
+#define HWVC_ANDROID_ALCAMERARECORDER_H
 
 #include "AlAbsProcessor.h"
 #include "HwWindow.h"
@@ -37,14 +37,14 @@
  *        |                     |                      |                  |                    |
  *
  */
-class HwCameraRecorder : public AlAbsProcessor {
+AL_CLASS AlCameraRecorder AL_EXTEND AlAbsProcessor {
 public:
     typedef function<void(int32_t)> OnNativeReadyListener;
 
 public:
-    HwCameraRecorder();
+    AlCameraRecorder();
 
-    virtual ~HwCameraRecorder();
+    virtual ~AlCameraRecorder();
 
     virtual void onCreate() override;
 
@@ -110,4 +110,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_HWCAMERARECORDER_H
+#endif //HWVC_ANDROID_ALCAMERARECORDER_H

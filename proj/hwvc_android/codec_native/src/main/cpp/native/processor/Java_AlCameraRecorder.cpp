@@ -6,7 +6,7 @@
 */
 #include "platform/android/AlJNIEnv.h"
 #include "platform/android/AlJNIObject.h"
-#include "HwCameraRecorder.h"
+#include "AlCameraRecorder.h"
 #include "HwAndroidWindow.h"
 
 #ifdef __cplusplus
@@ -23,11 +23,11 @@ static AlJNIObject::Method midOnNativePrepared = {
         "com/lmy/hwvcnative/processor/AlCameraRecorder",
         "onNativePrepared", "(I)V"};
 
-static HwCameraRecorder *getHandler(jlong handler) {
-    return reinterpret_cast<HwCameraRecorder *>(handler);
+static AlCameraRecorder *getHandler(jlong handler) {
+    return reinterpret_cast<AlCameraRecorder *>(handler);
 }
 
-static void bindListener(HwCameraRecorder *p) {
+static void bindListener(AlCameraRecorder *p) {
     p->setRecordListener([p](int64_t timeInUs) {
         AlJNIObject *obj = nullptr;
         if (AlJNIEnv::getInstance().findObj(p, &obj)) {
@@ -45,7 +45,7 @@ static void bindListener(HwCameraRecorder *p) {
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_create
         (JNIEnv *env, jobject thiz) {
-    HwCameraRecorder *p = new HwCameraRecorder();
+    AlCameraRecorder *p = new AlCameraRecorder();
     auto obj = env->NewGlobalRef(thiz);
     p->post([env, p, obj] {
         AlJNIEnv::getInstance().attachThread();
@@ -111,7 +111,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_pause
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_release
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
-        HwCameraRecorder *p = getHandler(handler);
+        AlCameraRecorder *p = getHandler(handler);
         p->release(AlRunnable::runEmptyArgs([p]() {
             AlLogI("Java_AlCameraRecorder", "release");
             AlJNIEnv::getInstance().detach(p);

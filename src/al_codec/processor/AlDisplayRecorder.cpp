@@ -21,21 +21,18 @@
 #include "AlIdentityCreator.h"
 #include "AlMath.h"
 
-#define TAG "HwCameraRecorder"
+#define TAG "AlDisplayRecorder"
 
-AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("AlDisplayRecorder") {
+AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("TAG") {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new AlUOESTexInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new AlUTexReader(ALIAS_OF_READER));
-    registerEvent(MSG_CAMERA_OES_TEX_NOTIFY,
-                  reinterpret_cast<EventFunc>(&AlDisplayRecorder::_onOESTexNotify));
-    registerEvent(MSG_VIDEO_COMPILER_TIME,
-                  reinterpret_cast<EventFunc>(&AlDisplayRecorder::_onRecordProgress));
-    registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
-                  reinterpret_cast<EventFunc>(&AlDisplayRecorder::_onCanvasUpdate));
+    al_reg_msg(MSG_CAMERA_OES_TEX_NOTIFY, AlDisplayRecorder::_onOESTexNotify);
+    al_reg_msg(MSG_VIDEO_COMPILER_TIME, AlDisplayRecorder::_onRecordProgress);
+    al_reg_msg(EVENT_LAYER_MEASURE_CANVAS_NOTIFY, AlDisplayRecorder::_onCanvasUpdate);
 }
 
 AlDisplayRecorder::~AlDisplayRecorder() {

@@ -5,8 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwCameraInput.h"
-#include <GLES2/gl2.h>
+#include "AlCameraInput.h"
 #include "Egl.h"
 #include "NativeWindow.h"
 #include "HwFBObject.h"
@@ -17,27 +16,23 @@
 #include "AlTexManager.h"
 #include "AlRenderParams.h"
 #include "AlOperateScale.h"
+#include <GLES2/gl2.h>
 
-#define TAG "HwCameraInput"
+#define TAG "AlCameraInput"
 
-HwCameraInput::HwCameraInput(string alias) : Unit(alias), srcTex(nullptr) {
-    registerEvent(EVENT_CAMERA_INVALIDATE,
-                  reinterpret_cast<EventFunc>(&HwCameraInput::_onInvalidate));
-    registerEvent(MSG_CAMERA_UPDATE_SIZE,
-                  reinterpret_cast<EventFunc>(&HwCameraInput::_onUpdateSize));
-    registerEvent(MSG_CAMERA_RUN,
-                  reinterpret_cast<EventFunc>(&HwCameraInput::_onRun));
-    registerEvent(EVENT_LAYER_QUERY_ID_NOTIFY,
-                  reinterpret_cast<EventFunc>(&HwCameraInput::_onLayerNotify));
-    registerEvent(MSG_VIDEO_OUTPUT_SIZE,
-                  reinterpret_cast<EventFunc>(&HwCameraInput::_onOutputSize));
+AlCameraInput::AlCameraInput(string alias) : Unit(alias), srcTex(nullptr) {
+    al_reg_msg(EVENT_CAMERA_INVALIDATE, AlCameraInput::_onInvalidate);
+    al_reg_msg(MSG_CAMERA_UPDATE_SIZE, AlCameraInput::_onUpdateSize);
+    al_reg_msg(MSG_CAMERA_RUN, AlCameraInput::_onRun);
+    al_reg_msg(EVENT_LAYER_QUERY_ID_NOTIFY, AlCameraInput::_onLayerNotify);
+    al_reg_msg(MSG_VIDEO_OUTPUT_SIZE, AlCameraInput::_onOutputSize);
 }
 
-HwCameraInput::~HwCameraInput() {
+AlCameraInput::~AlCameraInput() {
 
 }
 
-bool HwCameraInput::onCreate(AlMessage *msg) {
+bool AlCameraInput::onCreate(AlMessage *msg) {
     AlLogI(TAG, "");
     srcTex = HwTexture::allocOES();
     string vertex(R"(
@@ -65,7 +60,7 @@ bool HwCameraInput::onCreate(AlMessage *msg) {
     return true;
 }
 
-bool HwCameraInput::onDestroy(AlMessage *msg) {
+bool AlCameraInput::onDestroy(AlMessage *msg) {
     AlLogI(TAG, "");
     srcTex.release();
     delete fbo;
@@ -77,7 +72,7 @@ bool HwCameraInput::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool HwCameraInput::_onInvalidate(AlMessage *msg) {
+bool AlCameraInput::_onInvalidate(AlMessage *msg) {
     if (nullptr == mLayerTex) {
         if (!fbo) {
             auto *m = AlMessage::obtain(MSG_LAYER_ADD_EMPTY,
@@ -99,7 +94,7 @@ bool HwCameraInput::_onInvalidate(AlMessage *msg) {
     return true;
 }
 
-void HwCameraInput::draw() {
+void AlCameraInput::draw() {
     if (mLayerTex) {
 //        AlLogI(TAG, "%d, %d", mLayerId, mLayerTex->texId());
         glViewport(0, 0, mLayerTex->getWidth(), mLayerTex->getHeight());
@@ -112,7 +107,7 @@ void HwCameraInput::draw() {
     }
 }
 
-void HwCameraInput::notify(int64_t tsInNs) {
+void AlCameraInput::notify(int64_t tsInNs) {
     auto *m = AlMessage::obtain(MSG_TIMESTAMP);
     m->arg2 = tsInNs;
     postMessage(m);
@@ -124,18 +119,18 @@ void HwCameraInput::notify(int64_t tsInNs) {
     postEvent(msg);
 }
 
-void HwCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
+void AlCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
     program->updateMatrix(matrix);
 }
 
-bool HwCameraInput::_onUpdateSize(AlMessage *msg) {
+bool AlCameraInput::_onUpdateSize(AlMessage *msg) {
     cameraSize.width = msg->ptr.as<AlSize>()->width;
     cameraSize.height = msg->ptr.as<AlSize>()->height;
 //    AlLogI(TAG, "%dx%d", cameraSize.width, cameraSize.height);
     return true;
 }
 
-bool HwCameraInput::_onRun(AlMessage *msg) {
+bool AlCameraInput::_onRun(AlMessage *msg) {
     auto *func = msg->getObj<AlRunnable *>();
     if (func) {
         (*func)(nullptr);
@@ -143,7 +138,7 @@ bool HwCameraInput::_onRun(AlMessage *msg) {
     return true;
 }
 
-bool HwCameraInput::_onLayerNotify(AlMessage *msg) {
+bool AlCameraInput::_onLayerNotify(AlMessage *msg) {
     mLayerId = msg->arg1;
     if (nullptr == mLayerTex) {
         mLayerTex = HwTexture::wrap(msg->getObj<HwAbsTexture *>());
@@ -161,7 +156,7 @@ bool HwCameraInput::_onLayerNotify(AlMessage *msg) {
     return true;
 }
 
-bool HwCameraInput::_onOutputSize(AlMessage *msg) {
+bool AlCameraInput::_onOutputSize(AlMessage *msg) {
     auto size = msg->getObj<AlSize *>();
     if (size) {
         outSize.width = size->width;

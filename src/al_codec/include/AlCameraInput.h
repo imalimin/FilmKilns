@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_HWCAMERAINPUT_H
-#define HWVC_ANDROID_HWCAMERAINPUT_H
+#ifndef HWVC_ANDROID_ALCAMERAINPUT_H
+#define HWVC_ANDROID_ALCAMERAINPUT_H
 
 #include "Unit.h"
 #include "AlEgl.h"
@@ -14,11 +14,11 @@
 #include "HwAbsFBObject.h"
 #include "HwProgram.h"
 
-class HwCameraInput : public Unit {
+AL_CLASS AlCameraInput AL_EXTEND Unit {
 public:
-    HwCameraInput(string alias);
+    AlCameraInput(string alias);
 
-    virtual ~HwCameraInput();
+    virtual ~AlCameraInput();
 
 private:
     bool onCreate(AlMessage *msg) override;
@@ -53,4 +53,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_HWCAMERAINPUT_H
+#endif //HWVC_ANDROID_ALCAMERAINPUT_H
