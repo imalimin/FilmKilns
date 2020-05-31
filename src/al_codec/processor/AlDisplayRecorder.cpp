@@ -5,10 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/AlDisplayRecorder.h"
-#include "../include/HwMicrophone.h"
-#include "include/AlVideoCompiler.h"
-#include "../include/AlUOESTexInput.h"
+#include "AlDisplayRecorder.h"
+#include "HwMicrophone.h"
+#include "AlVideoCompiler.h"
+#include "AlUOESTexInput.h"
 #include "AlGImage.h"
 #include "AlUTexReader.h"
 #include "HwScreen.h"
@@ -122,7 +122,8 @@ void AlDisplayRecorder::setFilter(HwAbsFilter *filter) {
 }
 
 void AlDisplayRecorder::runOnCameraContext(function<void()> func) {
-    postEvent(AlMessage::obtain(MSG_CAMERA_RUN, new AlRunnable([func](Object *o) {
+    postEvent(AlMessage::obtain(MSG_CAMERA_RUN, new AlRunnable([this, func](Object *o) {
+        this->aSharedContext->makeCurrent();
         func();
     })));
 }

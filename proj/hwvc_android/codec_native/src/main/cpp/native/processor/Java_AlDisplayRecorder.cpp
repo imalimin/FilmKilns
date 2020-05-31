@@ -5,7 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "platform/android/AlJavaNativeHelper.h"
+#include "platform/android/AlJNIEnv.h"
+#include "platform/android/AlJNIObject.h"
 #include "AlDisplayRecorder.h"
 #include "HwAndroidWindow.h"
 
@@ -13,13 +14,13 @@
 extern "C" {
 #endif
 
-static JMethodDescription midOnNativeMessage = {
+static AlJNIObject::Method midOnNativeMessage = {
         "com/lmy/hwvcnative/processor/AlDisplayRecorder",
         "onNativeMessage", "(II)V"};
-static JMethodDescription midOnRecordProgressDesc = {
+static AlJNIObject::Method midOnRecordProgressDesc = {
         "com/lmy/hwvcnative/processor/AlDisplayRecorder",
         "onRecordProgress", "(J)V"};
-static JMethodDescription midOnNativePrepared = {
+static AlJNIObject::Method midOnNativePrepared = {
         "com/lmy/hwvcnative/processor/AlDisplayRecorder",
         "onNativePrepared", "(I)V"};
 
@@ -27,29 +28,17 @@ static AlDisplayRecorder *getHandler(jlong handler) {
     return reinterpret_cast<AlDisplayRecorder *>(handler);
 }
 
-static void bindListener(jlong handler) {
-    getHandler(handler)->setRecordListener([handler](int64_t timeInUs) {
-        jobject jObject = nullptr;
-        JNIEnv *pEnv = nullptr;
-        jmethodID mid = nullptr;
-        if (AlJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-            AlJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-            AlJavaNativeHelper::getInstance()->findMethod(handler,
-                                                          midOnRecordProgressDesc,
-                                                          &mid)) {
-            pEnv->CallVoidMethod(jObject, mid, static_cast<jlong>(timeInUs));
+static void bindListener(AlDisplayRecorder *p) {
+    p->setRecordListener([p](int64_t timeInUs) {
+        AlJNIObject *obj = nullptr;
+        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+            al_jni_call_void(obj, midOnRecordProgressDesc, timeInUs);
         }
     });
-    getHandler(handler)->setOnNativeReadyListener([handler](int32_t oesTex) {
-        jobject jObject = nullptr;
-        JNIEnv *pEnv = nullptr;
-        jmethodID mid = nullptr;
-        if (AlJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-            AlJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-            AlJavaNativeHelper::getInstance()->findMethod(handler,
-                                                          midOnNativePrepared,
-                                                          &mid)) {
-            pEnv->CallVoidMethod(jObject, mid, static_cast<jint>(oesTex));
+    p->setOnNativeReadyListener([p](int32_t oesTex) {
+        AlJNIObject *obj = nullptr;
+        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+            al_jni_call_void(obj, midOnNativePrepared, oesTex);
         }
     });
 
@@ -58,40 +47,22 @@ static void bindListener(jlong handler) {
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_create
         (JNIEnv *env, jobject thiz) {
     auto *p = new AlDisplayRecorder();
-    p->post([] {
-        AlJavaNativeHelper::getInstance()->attachThread();
+    auto obj = env->NewGlobalRef(thiz);
+    p->post([env, p, obj] {
+        AlJNIEnv::getInstance().attachThread();
+        AlJNIEnv::getInstance().attach(p, obj, false);
     });
-    jlong handler = reinterpret_cast<jlong>(p);
-    AlJavaNativeHelper::getInstance()->registerAnObject(env, handler, thiz);
-    bindListener(handler);
-    return handler;
+    bindListener(p);
+    return reinterpret_cast<jlong>(p);
 }
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_postEvent
         (JNIEnv *env, jobject thiz, jlong handler, jint what) {
     if (handler) {
-        int w = what;
-        getHandler(handler)->runOnCameraContext([handler, w]() {
-            jobject jObject = nullptr;
-            JNIEnv *pEnv = nullptr;
-            jmethodID mid = nullptr;
-            if (AlJavaNativeHelper::getInstance()->findEnv(&pEnv) &&
-                AlJavaNativeHelper::getInstance()->findJObject(handler, &jObject) &&
-                AlJavaNativeHelper::getInstance()->findMethod(handler,
-                                                              midOnNativeMessage,
-                                                              &mid)) {
-                switch (w) {
-                    case 4: {
-                        pEnv->CallVoidMethod(jObject, mid, w, 0);
-                        break;
-                    }
-                    case 2: {
-                        pEnv->CallVoidMethod(jObject, mid, w, 0);
-                        break;
-                    }
-                    default:
-                        pEnv->CallVoidMethod(jObject, mid, w, 0);
-                }
-                pEnv->ExceptionCheck();
+        auto *p = getHandler(handler);
+        p->runOnCameraContext([p, what]() {
+            AlJNIObject *obj = nullptr;
+            if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+                al_jni_call_void(obj, midOnNativeMessage, what, 0);
             }
         });
     }
@@ -141,14 +112,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_relea
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         auto *p = getHandler(handler);
-        p->post([] {
+        p->release(AlRunnable::runEmptyArgs([p]() {
             AlLogI("Java_AlDisplayRecorder", "release");
-            AlJavaNativeHelper::getInstance()->detachThread();
-        });
-        p->release();
+            AlJNIEnv::getInstance().detach(p);
+            AlJNIEnv::getInstance().detachThread();
+        }));
         delete p;
     }
-    AlJavaNativeHelper::getInstance()->unregisterAnObject(env, handler);
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_invalidate

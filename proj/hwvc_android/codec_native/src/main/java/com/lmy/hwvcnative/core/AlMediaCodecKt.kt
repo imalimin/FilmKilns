@@ -7,9 +7,11 @@ import android.media.MediaFormat
 import android.os.Build
 import android.util.Log
 import android.view.Surface
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.entity.AlResult
 import java.nio.ByteBuffer
 
+@Keep
 class AlMediaCodecKt(
     private val mime: String
 ) {
