@@ -91,6 +91,8 @@ private:
     AlEgl *aSharedContext = nullptr;
     OnNativeReadyListener onNativeReadyListener = nullptr;
     function<void(int64_t)> onRecordListener;
+    std::atomic_bool reqStartRecord;
+    std::atomic_bool cropDone;
 };
 
 

@@ -23,7 +23,9 @@
 
 #define TAG "AlDisplayRecorder"
 
-AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("TAG") {
+AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("TAG"),
+                                         reqStartRecord(false),
+                                         cropDone(true) {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
@@ -57,7 +59,11 @@ void AlDisplayRecorder::updateWindow(HwWindow *win) {
 }
 
 void AlDisplayRecorder::start() {
-    postEvent(AlMessage::obtain(EVENT_COMMON_START));
+    if (cropDone) {
+        postEvent(AlMessage::obtain(EVENT_COMMON_START));
+    } else {
+        reqStartRecord = true;
+    }
 }
 
 void AlDisplayRecorder::pause() {
@@ -106,6 +112,7 @@ void AlDisplayRecorder::setMaxSize(int width, int height) {
 }
 
 void AlDisplayRecorder::cropOutputSize(float left, float top, float right, float bottom) {
+    cropDone = false;
     auto *opt = new AlOperateCrop(AlIdentityCreator::NONE_ID, left, top, right, bottom);
     opt->coordIdx = AlOperateDesc::CoordIdx::CANVAS;
     auto *msg = AlMessage::obtain(EVENT_CANVAS_CROP, opt, AlMessage::QUEUE_MODE_UNIQUE);
@@ -171,5 +178,10 @@ bool AlDisplayRecorder::_onCanvasUpdate(AlMessage *msg) {
     int32_t height = static_cast<int>(msg->arg2);
     postMessage(AlMessage::obtain(MSG_VIDEO_OUTPUT_SIZE, new AlSize(width, height),
                                   AlMessage::QUEUE_MODE_FIRST_ALWAYS));
+    cropDone = true;
+    if (reqStartRecord) {
+        start();
+        reqStartRecord = false;
+    }
     return true;
 }
