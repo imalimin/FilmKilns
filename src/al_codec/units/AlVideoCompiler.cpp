@@ -160,8 +160,10 @@ void AlVideoCompiler::_initialize() {
         }
         videoFrame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12,
                                       size.width, size.height);
-        audioFrame = new HwAudioFrame(nullptr, aFormat.getFormat(), aFormat.getChannels(),
-                                      aFormat.getSampleRate(), 1024);
+        if (aFormat.valid()) {
+            audioFrame = new HwAudioFrame(nullptr, aFormat.getFormat(), aFormat.getChannels(),
+                                          aFormat.getSampleRate(), 1024);
+        }
         initialized = true;
     }
 }

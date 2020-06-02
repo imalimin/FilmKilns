@@ -7,7 +7,7 @@
 
 #include <Size.h>
 #include "AlCameraRecorder.h"
-#include "HwMicrophone.h"
+#include "AlMicrophone.h"
 #include "AlVideoCompiler.h"
 #include "AlCameraInput.h"
 #include "AlGImage.h"
@@ -25,7 +25,7 @@ AlCameraRecorder::AlCameraRecorder() : AlAbsProcessor(TAG) {
     /// 由于AlVideoCompiler可能会使用硬编进行纹理编码，此时会有EGL环境
     /// 故顺序尽可能考前，否则释放EGL时会把context设置为none，影响其它模块的纹理释放
     registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
-    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new AlMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new AlCameraInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new AlUTexReader(ALIAS_OF_READER));

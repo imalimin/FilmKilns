@@ -6,7 +6,7 @@
 */
 
 #include "AlDisplayRecorder.h"
-#include "HwMicrophone.h"
+#include "AlMicrophone.h"
 #include "AlVideoCompiler.h"
 #include "AlUOESTexInput.h"
 #include "AlGImage.h"
@@ -28,7 +28,7 @@ AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("TAG"),
                                          cropDone(true) {
     registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
-    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new AlMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new AlUOESTexInput(ALIAS_OF_CAMERA));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new AlUTexReader(ALIAS_OF_READER));

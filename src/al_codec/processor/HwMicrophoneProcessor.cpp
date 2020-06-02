@@ -5,13 +5,13 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwMicrophoneProcessor.h"
-#include "../include/HwMicrophone.h"
-#include "../include/HwAudioCompiler.h"
+#include "HwMicrophoneProcessor.h"
+#include "AlMicrophone.h"
+#include "HwAudioCompiler.h"
 #include "ObjectBox.h"
 
 HwMicrophoneProcessor::HwMicrophoneProcessor() : HwAbsProcessor("HwMicrophoneProcessor") {
-    registerAnUnit(new HwMicrophone(ALIAS_OF_MIC));
+    registerAnUnit(new AlMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new HwAudioCompiler(ALIAS_OF_COMPILER));
 }
 

@@ -13,11 +13,11 @@
 #include "HwAudioFrame.h"
 #include "HwSampleFormat.h"
 
-class HwMicrophone : public Unit {
+AL_CLASS AlMicrophone AL_EXTEND Unit {
 public:
-    HwMicrophone(string alias);
+    AlMicrophone(std::string alias);
 
-    virtual ~HwMicrophone();
+    virtual ~AlMicrophone();
 
     bool onCreate(AlMessage *msg) override;
 
