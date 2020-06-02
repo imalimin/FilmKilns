@@ -22,7 +22,7 @@ public:
     virtual size_t size();
 
 private:
-    HwBuffer *buf;
+    HwBuffer *buf = nullptr;
 };
 
 
