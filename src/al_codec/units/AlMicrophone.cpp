@@ -15,7 +15,7 @@
 AlMicrophone::AlMicrophone(string alias) : Unit(alias),
                                            format(HwFrameFormat::HW_SAMPLE_S32, 2, 44100) {
     al_reg_msg(MSG_MICROPHONE_FORMAT, AlMicrophone::_onFormat);
-    al_reg_msg(EVENT_COMMON_START, AlMicrophone::_onPause);
+    al_reg_msg(EVENT_COMMON_START, AlMicrophone::_onStart);
     al_reg_msg(EVENT_COMMON_PAUSE, AlMicrophone::_onPause);
     al_reg_msg(EVENT_MICROPHONE_LOOP, AlMicrophone::_onLoop);
 }
