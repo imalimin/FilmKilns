@@ -8,7 +8,7 @@
 #include "AlImageProcessor.h"
 #include "AlUImageCodec.h"
 #include "AlGImage.h"
-#include "HwScreen.h"
+#include "AlScreen.h"
 #include "ObjectBox.h"
 #include "AlLayerActionFactory.h"
 #include "AlMCropAction.h"
@@ -35,7 +35,7 @@ AlImageProcessor::AlImageProcessor() : AlAbsProcessor("AlImageProcessor") {
 //        }
 //        tar_free(archive);
 //    }
-    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new AlScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new AlUImageCodec(ALIAS_OF_IMAGE));
     registerAnUnit(new AlGImage(ALIAS_OF_IMAGE_GRAPH));
     registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,

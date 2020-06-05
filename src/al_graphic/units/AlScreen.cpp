@@ -2,26 +2,26 @@
 // Created by mingyi.li on 2018/12/25.
 //
 
-#include "HwScreen.h"
+#include "AlScreen.h"
 #include "NormalDrawer.h"
 #include "HwProgram.h"
 #include "Size.h"
 #include "ObjectBox.h"
 #include "Logcat.h"
 
-#define TAG "HwScreen"
+#define TAG "AlScreen"
 
-HwScreen::HwScreen(string alias) : Unit(alias) {
-    registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&HwScreen::eventDraw));
-    registerEvent(EVENT_SCREEN_DRAW_TEX, reinterpret_cast<EventFunc>(&HwScreen::onDrawTex));
+AlScreen::AlScreen(string alias) : Unit(alias) {
+    registerEvent(EVENT_SCREEN_DRAW, reinterpret_cast<EventFunc>(&AlScreen::eventDraw));
+    registerEvent(EVENT_SCREEN_DRAW_TEX, reinterpret_cast<EventFunc>(&AlScreen::onDrawTex));
     registerEvent(EVENT_SCREEN_UPDATE_WINDOW,
-                  reinterpret_cast<EventFunc>(&HwScreen::eventUpdateWindow));
+                  reinterpret_cast<EventFunc>(&AlScreen::eventUpdateWindow));
 }
 
-HwScreen::~HwScreen() {
+AlScreen::~AlScreen() {
 }
 
-bool HwScreen::onDestroy(AlMessage *msg) {
+bool AlScreen::onDestroy(AlMessage *msg) {
     if (egl) {
         egl->makeCurrent();
     }
@@ -32,18 +32,17 @@ bool HwScreen::onDestroy(AlMessage *msg) {
     return true;
 }
 
-bool HwScreen::onCreate(AlMessage *msg) {
-    Logcat::i(TAG, "Screen::onCreate");
+bool AlScreen::onCreate(AlMessage *msg) {
     return true;
 }
 
-bool HwScreen::eventUpdateWindow(AlMessage *msg) {
+bool AlScreen::eventUpdateWindow(AlMessage *msg) {
     NativeWindow *nw = msg->getObj<NativeWindow *>();
     if (nullptr == egl) {
         initWindow(nw);
     } else {
         if (egl->updateWindow(nw->win)) {
-            Logcat::i(TAG, "%s(%d): updateWindow failed", __FUNCTION__, __LINE__);
+            AlLogI(TAG, "failed");
         }
     }
     this->width = nw->win->getWidth();
@@ -55,7 +54,7 @@ bool HwScreen::eventUpdateWindow(AlMessage *msg) {
     return true;
 }
 
-bool HwScreen::eventDraw(AlMessage *msg) {
+bool AlScreen::eventDraw(AlMessage *msg) {
     if (nullptr == egl) {
         return true;
     }
@@ -70,7 +69,7 @@ bool HwScreen::eventDraw(AlMessage *msg) {
     return true;
 }
 
-bool HwScreen::onDrawTex(AlMessage *msg) {
+bool AlScreen::onDrawTex(AlMessage *msg) {
     if (nullptr == egl) {
         return true;
     }
@@ -83,15 +82,14 @@ bool HwScreen::onDrawTex(AlMessage *msg) {
     return true;
 }
 
-void HwScreen::initWindow(NativeWindow *nw) {
+void AlScreen::initWindow(NativeWindow *nw) {
     if (!egl) {
         if (nw) {
             EGLContext c = AlEgl::currentContext();
             egl = AlEgl::window(TAG, nw->win, c);
-            Logcat::i(TAG, "Screen::init EGL with context %p, size %d x %d",
-                      c, egl->width(), egl->height());
+            AlLogI(TAG, "with context %p, size %d x %d", c, egl->width(), egl->height());
         } else {
-            Logcat::e(TAG, "Screen::init EGL ERROR");
+            AlLogI(TAG, "failed");
         }
         egl->makeCurrent();
         drawer = new NormalDrawer();
@@ -101,10 +99,8 @@ void HwScreen::initWindow(NativeWindow *nw) {
     }
 }
 
-void HwScreen::draw(GLuint texture) {
+void AlScreen::draw(GLuint texture) {
 //    string glslVersion = (const char *) glGetString(GL_SHADING_LANGUAGE_VERSION);
-//    LOGE("version: %s", glslVersion.c_str());
-//    Logcat::i(TAG, "Screen::eventDraw %d, %dx%d", texture, egl->width(), egl->height());
     glViewport(0, 0, egl->width(), egl->height());
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -112,7 +108,7 @@ void HwScreen::draw(GLuint texture) {
     egl->swapBuffers();
 }
 
-void HwScreen::setScaleType(int dw, int dh) {
+void AlScreen::setScaleType(int dw, int dh) {
     float *texCoordinate = new float[8]{
             0.0f, 0.0f,//LEFT,BOTTOM
             1.0f, 0.0f,//RIGHT,BOTTOM

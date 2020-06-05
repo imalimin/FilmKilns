@@ -4,20 +4,19 @@
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
 */
-#include "../include/HwVideoProcessor.h"
-#include "../include/HwVideoInput.h"
-#include "../include/HwSpeaker.h"
+#include "HwVideoProcessor.h"
+#include "HwVideoInput.h"
+#include "HwSpeaker.h"
 #include "AlGImage.h"
 #include "HwRender.h"
-#include "HwScreen.h"
+#include "AlScreen.h"
 #include "NativeWindow.h"
 #include "ObjectBox.h"
-#include <string>
 
 #define TAG "HwVideoProcessor"
 
 HwVideoProcessor::HwVideoProcessor() : AlAbsProcessor("VideoProcessor") {
-    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new AlScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new HwVideoInput(ALIAS_OF_VIDEO));
     registerAnUnit(new AlGImage(ALIAS_OF_RENDER));
     registerAnUnit(new HwSpeaker(ALIAS_OF_SPEAKER, HwAudioDeviceMode::LowLatency));

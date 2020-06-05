@@ -11,7 +11,7 @@
 #include "AlUOESTexInput.h"
 #include "AlGImage.h"
 #include "AlUTexReader.h"
-#include "HwScreen.h"
+#include "AlScreen.h"
 #include "ObjectBox.h"
 #include "NativeWindow.h"
 #include "HwTexture.h"
@@ -26,7 +26,7 @@
 AlDisplayRecorder::AlDisplayRecorder() : AlAbsProcessor("TAG"),
                                          reqStartRecord(false),
                                          cropDone(true) {
-    registerAnUnit(new HwScreen(ALIAS_OF_SCREEN));
+    registerAnUnit(new AlScreen(ALIAS_OF_SCREEN));
     registerAnUnit(new AlVideoCompiler(ALIAS_OF_COMPILER));
     registerAnUnit(new AlMicrophone(ALIAS_OF_MIC));
     registerAnUnit(new AlUOESTexInput(ALIAS_OF_CAMERA));

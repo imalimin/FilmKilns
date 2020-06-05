@@ -95,6 +95,7 @@ bool UnitPipeline::_disCreate(AlMessage *msg) {
 //    std::lock_guard<std::mutex> guard(mtx);
     while (!units0.empty()) {
         auto *u = units0.front();
+        AlLogI(TAG, "%s will be create.", u->toString().c_str());
         bool ret = u->dispatch(msg);
         units0.pop_front();
         units.emplace_back(u);
