@@ -13,9 +13,7 @@
 
 AlAbsProcessor::AlAbsProcessor(string name) : Unit(name, Unit::AlUnitSetting(true)), name(name) {
     pipeline = AlPostMan::create(name);
-    provider = new HwModelProvider(ALIAS_OF_MODEL_PROVIDER);
     registerAnUnit(this);
-    registerAnUnit(provider);
 }
 
 AlAbsProcessor::~AlAbsProcessor() {
@@ -29,7 +27,6 @@ void AlAbsProcessor::release(AlRunnable *runnable) {
     this->destroyRun = runnable;
     delete pipeline;
     pipeline = nullptr;
-    provider = nullptr;
 }
 
 void AlAbsProcessor::onCreate() {
@@ -46,7 +43,6 @@ void AlAbsProcessor::onDestroy() {
 
 void AlAbsProcessor::registerAnUnit(Unit *unit) {
     if (pipeline) {
-        unit->setModelProvider(provider);
         pipeline->registerAnUnit(unit);
     } else {
         AlLogI(TAG, "failed. You must call startPipeline first.");
@@ -60,26 +56,6 @@ void AlAbsProcessor::post(function<void()> runnable) {
         }));
         postEvent(msg);
     }
-}
-
-HwPairBuilder<int32_t> AlAbsProcessor::putInt32(string key, int32_t value) {
-    return HwPairBuilder<int32_t>(pipeline, HwModelProvider::EVENT_PUT_INT32,
-                                  HwPair<string, int32_t>(key, value));
-}
-
-HwPairBuilder<int64_t> AlAbsProcessor::putInt64(string key, int64_t value) {
-    return HwPairBuilder<int64_t>(pipeline, HwModelProvider::EVENT_PUT_INT64,
-                                  HwPair<string, int64_t>(key, value));
-}
-
-HwPairBuilder<string> AlAbsProcessor::putString(string key, string value) {
-    return HwPairBuilder<string>(pipeline, HwModelProvider::EVENT_PUT_STRING,
-                                 HwPair<string, string>(key, value));
-}
-
-HwPairBuilder<Object *> AlAbsProcessor::putObject(string key, Object *value) {
-    return HwPairBuilder<Object *>(pipeline, HwModelProvider::EVENT_PUT_OBJECT,
-                                   HwPair<string, Object *>(key, value));
 }
 
 bool AlAbsProcessor::onCreate(AlMessage *msg) {

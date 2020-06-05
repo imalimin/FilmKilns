@@ -31,7 +31,7 @@ Unit::Unit(string alias, AlUnitSetting setting) : alias(alias), setting(setting)
 }
 
 Unit::~Unit() {
-    LOGI("~Unit(%s)", alias.c_str());
+    AlLogI(TAG, "%s", alias.c_str());
     if (eventMap.empty()) return;
     for (auto itr = eventMap.rbegin(); itr != eventMap.rend(); itr++) {
         delete itr->second;

@@ -22,7 +22,6 @@ HwScreen::~HwScreen() {
 }
 
 bool HwScreen::onDestroy(AlMessage *msg) {
-    Logcat::i(TAG, "Screen::onDestroy");
     if (egl) {
         egl->makeCurrent();
     }

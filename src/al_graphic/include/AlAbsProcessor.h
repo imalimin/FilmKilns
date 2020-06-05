@@ -13,8 +13,6 @@
 #include "Unit.h"
 #include "HwPair.h"
 #include "AlRunnable.h"
-#include <string>
-#include <initializer_list>
 
 template<typename V>
 class HwPairBuilder : public Object {
@@ -76,19 +74,9 @@ protected:
 
     void registerAnUnit(Unit *unit);
 
-    HwPairBuilder<int32_t> putInt32(string key, int32_t value);
-
-    HwPairBuilder<int64_t> putInt64(string key, int64_t value);
-
-    HwPairBuilder<string> putString(string key, string value);
-
-    HwPairBuilder<Object *> putObject(string key, Object *value);
-
 private:
-    const string ALIAS_OF_MODEL_PROVIDER = "ModelProvider";
     string name;
     AlPostMan *pipeline = nullptr;
-    HwModelProvider *provider = nullptr;
     AlRunnable *destroyRun = nullptr;
 };
 
