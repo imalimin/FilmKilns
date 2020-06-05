@@ -140,7 +140,10 @@ void AlUTexReader::_yv12(HwAbsTexture *srcTex) {
 }
 
 HwAbsTexture *AlUTexReader::_resize(HwAbsTexture *srcTex, AlSize *size) {
-    if (size && size->width != srcTex->getWidth() && size->height != srcTex->getHeight()) {
+    if (nullptr == size) {
+        return srcTex;
+    }
+    if (size->width != srcTex->getWidth() || size->height != srcTex->getHeight()) {
         if (nullptr == resizeFilter) {
             resizeFilter = new AlRotateFilter();
             resizeFilter->prepare();
