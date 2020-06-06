@@ -36,7 +36,7 @@ bool AlUCanvas::onDestroy(AlMessage *msg) {
 }
 
 bool AlUCanvas::onResize(AlMessage *m) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogI(TAG, "");
     auto *size = m->getObj<AlSize *>();
     if (nullptr == size) {
         return true;
@@ -46,7 +46,7 @@ bool AlUCanvas::onResize(AlMessage *m) {
 }
 
 bool AlUCanvas::onClear(AlMessage *m) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogD(TAG, "");
     mCanvas.clear(1 == m->arg1);
     mDrawCount = 0;
     postEvent(AlMessage::obtain(EVENT_CANVAS_CLEAR_DONE));
@@ -57,7 +57,7 @@ bool AlUCanvas::onDraw(AlMessage *m) {
     if (nullptr == m->obj) {
         return true;
     }
-    Logcat::i(TAG, "%s(%d): %d", __FUNCTION__, __LINE__, m->arg1);
+    AlLogD(TAG, "%d", m->arg1);
     AlImageLayerDrawModel *description = dynamic_cast<AlImageLayerDrawModel *>(m->obj);
     _newDefaultCanvas(description->getLayerSize());
     _draw(description);
@@ -73,10 +73,10 @@ bool AlUCanvas::onDraw(AlMessage *m) {
 }
 
 bool AlUCanvas::onShow(AlMessage *m) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogD(TAG, "");
     auto tex = mCanvas.getOutput();
     if (nullptr == tex) {
-        Logcat::e(TAG, "%s(%d): Empty canvas", __FUNCTION__, __LINE__);
+        AlLogE(TAG, "Empty canvas");
         return true;
     }
     AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_DRAW_TEX);
@@ -86,7 +86,7 @@ bool AlUCanvas::onShow(AlMessage *m) {
 }
 
 bool AlUCanvas::onSave(AlMessage *m) {
-    Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
+    AlLogI(TAG, "");
     mOutputPath = m->desc;
     return true;
 }

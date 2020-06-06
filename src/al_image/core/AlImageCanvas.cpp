@@ -94,9 +94,7 @@ void AlImageCanvas::clear(bool transparent) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             fbo->unbind();
         }
-        Logcat::i(TAG, "%s(%d) Canvas clear. Size %dx%d",
-                  __FUNCTION__, __LINE__,
-                  mCanvasTex->getWidth(), mCanvasTex->getHeight());
+        AlLogD(TAG, "Size %dx%d", mCanvasTex->getWidth(), mCanvasTex->getHeight());
     }
 }
 

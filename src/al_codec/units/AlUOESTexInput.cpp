@@ -85,7 +85,7 @@ bool AlUOESTexInput::_onInvalidate(AlMessage *msg) {
         }
         return true;
     }
-    AlLogI(TAG, "%dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
+    AlLogD(TAG, "%dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
            cameraSize.width, cameraSize.height);
     int64_t tsInNs = msg->arg2;
     if (msg->obj) {
@@ -157,7 +157,7 @@ bool AlUOESTexInput::_onLayerNotify(AlMessage *msg) {
         desc->scaleY.num = -desc->scaleY.num;
         postEvent(AlMessage::obtain(EVENT_LAYER_SCALE, desc));
     }
-    AlLogI(TAG, "%d", mLayerId);
+    AlLogD(TAG, "%d", mLayerId);
     return true;
 }
 
@@ -166,7 +166,7 @@ bool AlUOESTexInput::_onOutputSize(AlMessage *msg) {
     if (size) {
         outSize.width = size->width;
         outSize.height = size->height;
-        AlLogI(TAG, "%dx%d", outSize.width, outSize.height);
+        AlLogD(TAG, "%dx%d", outSize.width, outSize.height);
     }
     return true;
 }

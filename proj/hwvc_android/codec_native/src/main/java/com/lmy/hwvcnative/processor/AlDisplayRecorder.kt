@@ -104,7 +104,7 @@ class AlDisplayRecorder(
                     }
                 }
                 lastTime = time
-                Log.i("AlDisplayRecorder", "draw $time")
+//                Log.i("AlDisplayRecorder", "draw $time")
                 if (0L != handler) {
                     invalidate(handler, vd!!.matrix(), time, dw, dh)
                 }

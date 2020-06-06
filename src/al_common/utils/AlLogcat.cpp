@@ -7,12 +7,38 @@
 
 #include "AlLogcat.h"
 
-void AlLogcat::i(const string &TAG, const string fmt, ...) {
+void AlLogcat::v(const string &TAG, const string fmt, ...) {
 #ifdef HWDEBUG
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
     __android_log_vprint(ANDROID_LOG_VERBOSE, TAG.c_str(), fmt.c_str(), args);
+#else
+    printf(fmt.c_str(), args);
+#endif
+    va_end(args);
+#endif
+}
+
+void AlLogcat::d(const string &TAG, const string fmt, ...) {
+#ifdef HWDEBUG
+    va_list args;
+    va_start(args, fmt);
+#ifdef ANDROID
+    __android_log_vprint(ANDROID_LOG_DEBUG, TAG.c_str(), fmt.c_str(), args);
+#else
+    printf(fmt.c_str(), args);
+#endif
+    va_end(args);
+#endif
+}
+
+void AlLogcat::i(const string &TAG, const string fmt, ...) {
+#ifdef HWDEBUG
+    va_list args;
+    va_start(args, fmt);
+#ifdef ANDROID
+    __android_log_vprint(ANDROID_LOG_INFO, TAG.c_str(), fmt.c_str(), args);
 #else
     printf(fmt.c_str(), args);
 #endif

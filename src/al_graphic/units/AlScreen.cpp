@@ -42,7 +42,7 @@ bool AlScreen::eventUpdateWindow(AlMessage *msg) {
         initWindow(nw);
     } else {
         if (egl->updateWindow(nw->win)) {
-            AlLogI(TAG, "failed");
+            AlLogE(TAG, "failed");
         }
     }
     this->width = nw->win->getWidth();
@@ -89,7 +89,7 @@ void AlScreen::initWindow(NativeWindow *nw) {
             egl = AlEgl::window(TAG, nw->win, c);
             AlLogI(TAG, "with context %p, size %d x %d", c, egl->width(), egl->height());
         } else {
-            AlLogI(TAG, "failed");
+            AlLogE(TAG, "failed");
         }
         egl->makeCurrent();
         drawer = new NormalDrawer();

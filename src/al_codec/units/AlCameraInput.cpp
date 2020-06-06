@@ -82,7 +82,7 @@ bool AlCameraInput::_onInvalidate(AlMessage *msg) {
         }
         return true;
     }
-    AlLogI(TAG, "%dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
+    AlLogD(TAG, "%dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
            cameraSize.width, cameraSize.height);
     int64_t tsInNs = msg->arg2;
     if (msg->obj) {
