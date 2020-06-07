@@ -6,26 +6,31 @@
  */
 package com.lmy.hwvcnative.devices
 
+import android.graphics.Point
 import android.graphics.SurfaceTexture
 import android.hardware.Camera
+import android.hardware.camera2.CameraManager
 import android.util.Log
 import java.lang.RuntimeException
 
 /**
  * Created by aliminabc@gmail.com on 2018/3/21.
  */
-class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
-                                        private val reqWidth: Int,
-                                        private val reqHeight: Int,
-                                        private val tex: Int,
-                                        private var onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener) {
-    enum class CameraIndex { BACK, FRONT }
+class CameraWrapper private constructor(
+    index: AlAbsCamera.CameraIndex,
+    private val reqWidth: Int,
+    private val reqHeight: Int,
+    private val tex: Int,
+    private var onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener
+) : AlAbsCamera {
     companion object {
         private val PREPARE = 0x1
         const val TAG = "CameraWrapper"
-        fun open(index: CameraWrapper.CameraIndex, width: Int, height: Int, tex: Int,
-                 onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener)
-                : CameraWrapper {
+        fun open(
+            manager: CameraManager?,
+            index: AlAbsCamera.CameraIndex, width: Int, height: Int, tex: Int,
+            onFrameAvailableListener: SurfaceTexture.OnFrameAvailableListener
+        ): AlAbsCamera {
             if (width <= 0 || width <= 0) {
                 throw RuntimeException("Preview size must greater than 0")
             }
@@ -35,7 +40,7 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
 
     private var mCamera: Camera? = null
     private var mCameras = 0
-    private var mCameraIndex: CameraIndex? = null
+    private var mCameraIndex: AlAbsCamera.CameraIndex? = null
     private val surface: SurfaceTexture
     private var transformMatrix: FloatArray = FloatArray(16)
     var cameraWidth = 0
@@ -47,16 +52,21 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
         openCamera(index)
     }
 
-    fun switchCamera(index: CameraIndex) {
+    override fun switchCamera(index: AlAbsCamera.CameraIndex) {
         openCamera(index)
     }
 
-    private fun openCamera(index: CameraIndex) {
-        val tmp = if (index == CameraIndex.FRONT && mCameras < 2) {//如果没有前置摄像头，则强制使用后置摄像头
-            CameraIndex.BACK
-        } else {
-            index
-        }
+    override fun getCameraSize(): Point {
+        return Point(cameraWidth, cameraHeight)
+    }
+
+    private fun openCamera(index: AlAbsCamera.CameraIndex) {
+        val tmp =
+            if (index == AlAbsCamera.CameraIndex.FRONT && mCameras < 2) {//如果没有前置摄像头，则强制使用后置摄像头
+                AlAbsCamera.CameraIndex.BACK
+            } else {
+                index
+            }
         if (null != mCameraIndex && mCameraIndex == tmp) //如果已经打开过摄像头，并且当前已经是index，则不做改变
             return
         mCameraIndex = tmp
@@ -74,7 +84,7 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
     }
 
     private fun getCameraIndex(): Int {
-        if (mCameraIndex == CameraIndex.FRONT)
+        if (mCameraIndex == AlAbsCamera.CameraIndex.FRONT)
             return Camera.CameraInfo.CAMERA_FACING_FRONT
         return Camera.CameraInfo.CAMERA_FACING_BACK
     }
@@ -103,19 +113,21 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
         CameraHelper.setAntibanding(cameraParam, Camera.Parameters.ANTIBANDING_AUTO)
         CameraHelper.setVideoStabilization(cameraParam, true)
         val size = cameraParam.previewSize
-        cameraWidth = size.width;
-        cameraHeight = size.height
+        cameraWidth = size.height
+        cameraHeight = size.width
         val fps = IntArray(2)
         cameraParam.getPreviewFpsRange(fps)
-        Log.i(TAG, "Camera config: Size(${cameraWidth}x$cameraHeight\n" +
-                "Format(${cameraParam.previewFormat})\n" +
-                "FocusMode(${cameraParam.focusMode})\n" +
-                "Fps(${fps[0]}-${fps[1]})\n" +
-                "AutoExposureLock(${cameraParam.autoExposureLock})\n" +
-                "SceneMode(${cameraParam.sceneMode})\n" +
-                "FlashMode(${cameraParam.flashMode})\n" +
-                "Antibanding(${cameraParam.antibanding})\n" +
-                "VideoStabilization(${cameraParam.videoStabilization})")
+        Log.i(
+            TAG, "Camera config: Size(${cameraWidth}x$cameraHeight\n" +
+                    "Format(${cameraParam.previewFormat})\n" +
+                    "FocusMode(${cameraParam.focusMode})\n" +
+                    "Fps(${fps[0]}-${fps[1]})\n" +
+                    "AutoExposureLock(${cameraParam.autoExposureLock})\n" +
+                    "SceneMode(${cameraParam.sceneMode})\n" +
+                    "FlashMode(${cameraParam.flashMode})\n" +
+                    "Antibanding(${cameraParam.antibanding})\n" +
+                    "VideoStabilization(${cameraParam.videoStabilization})"
+        )
         try {
             mCamera!!.parameters = cameraParam
             Log.i(TAG, "Camera config")
@@ -145,7 +157,7 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
     }
 
     //Run on egl thread
-    fun release() {
+    override fun release() {
 //        GLEventPipeline.INSTANCE.queueEvent(Runnable {
         stopPreview()
         releaseTexture()
@@ -186,15 +198,15 @@ class CameraWrapper private constructor(index: CameraWrapper.CameraIndex,
         Log.i(TAG, "releaseTexture")
     }
 
-    fun draw() {
+    override fun draw() {
         surface.updateTexImage()
         surface.getTransformMatrix(transformMatrix)
     }
 
-    fun getMatrix(): FloatArray = transformMatrix
+    override fun getMatrix(): FloatArray = transformMatrix
 
     /**
      * @return nanoseconds
      */
-    fun timestamp(): Long = surface.timestamp
+    override fun timestamp(): Long = surface.timestamp
 }

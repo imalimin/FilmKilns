@@ -23,8 +23,7 @@ import java.util.*
 
 class CameraActivity : BaseActivity() {
     private lateinit var mFilterController: FilterController
-    private var recorder: AlCameraRecorder? =
-        AlCameraRecorder(AlVideoParams(720, 1280), AlAudioParams())
+    private var recorder: AlCameraRecorder? = null
     private var recording = false
     private var requestPreview = false
     private lateinit var path: String
@@ -37,6 +36,7 @@ class CameraActivity : BaseActivity() {
             optLayout.setBackgroundColor(resources.getColor(R.color.black_232))
         }
         path = "${externalCacheDir!!.path}/camera.mp4"
+        recorder = AlCameraRecorder(applicationContext, AlVideoParams(720, 1280), AlAudioParams())
         recorder?.setOutputFilePath(path)
         recorder?.setOnRecordProgressListener {
             timeView.text = formator.format(Date(it / 1000))

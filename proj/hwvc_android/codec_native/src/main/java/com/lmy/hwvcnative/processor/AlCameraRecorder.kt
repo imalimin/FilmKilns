@@ -1,26 +1,30 @@
 package com.lmy.hwvcnative.processor
 
+import android.content.Context
 import android.graphics.SurfaceTexture
+import android.hardware.camera2.CameraManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.FilterSupport
-import com.lmy.hwvcnative.devices.CameraWrapper
+import com.lmy.hwvcnative.devices.AlAbsCamera
+import com.lmy.hwvcnative.devices.AlCameraFactory
 import com.lmy.hwvcnative.entity.AlAudioParams
 import com.lmy.hwvcnative.entity.AlVideoParams
 import com.lmy.hwvcnative.filter.Filter
 
 class AlCameraRecorder(
+    private val ctx: Context,
     private var vParams: AlVideoParams,
     private var aParams: AlAudioParams
 ) : CPPObject(), FilterSupport, SurfaceTexture.OnFrameAvailableListener {
     private var filter: Filter? = null
-    private var camera: CameraWrapper? = null
+    private var camera: AlAbsCamera? = null
     private var onRecordProgressListener: ((Long) -> Unit)? = null
     private val mHandler = Handler(Looper.getMainLooper())
-    private var mCameraIndex = CameraWrapper.CameraIndex.FRONT
+    private var mCameraIndex = AlAbsCamera.CameraIndex.FRONT
 
     init {
         handler = create()
@@ -81,15 +85,15 @@ class AlCameraRecorder(
                 if (0L != handler) {
                     invalidate(
                         handler, camera!!.getMatrix(), camera!!.timestamp(),
-                        camera!!.cameraHeight, camera!!.cameraWidth
+                        camera!!.getCameraSize().x, camera!!.getCameraSize().y
                     )
                 }
             }
             EVENT_SWAP -> {
-                mCameraIndex = if (CameraWrapper.CameraIndex.FRONT == mCameraIndex)
-                    CameraWrapper.CameraIndex.BACK
+                mCameraIndex = if (AlAbsCamera.CameraIndex.FRONT == mCameraIndex)
+                    AlAbsCamera.CameraIndex.BACK
                 else {
-                    CameraWrapper.CameraIndex.FRONT
+                    AlAbsCamera.CameraIndex.FRONT
                 }
                 camera?.switchCamera(mCameraIndex)
             }
@@ -101,7 +105,8 @@ class AlCameraRecorder(
             return
         }
         Log.i("AlCameraRecorder:", "OES tex $oesTex")
-        camera = CameraWrapper.open(
+        camera = AlCameraFactory.create(
+            ctx.getSystemService(Context.CAMERA_SERVICE) as CameraManager,
             mCameraIndex, vParams.width, vParams.height, oesTex, this
         )
     }
