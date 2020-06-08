@@ -13,6 +13,7 @@
 #include "HwBundle.h"
 #include "HwAbsMediaFrame.h"
 #include "HwPacket.h"
+#include "AlBuffer.h"
 
 class AlCodec : public Object {
 public:
@@ -54,7 +55,7 @@ public:
      * @param key csd-0\csd-1\csd-2
      * @return buffer.
      */
-    virtual HwBuffer *getExtraBuffer(string key) = 0;
+    virtual AlBuffer *getExtraData() = 0;
 
     virtual void flush() = 0;
 

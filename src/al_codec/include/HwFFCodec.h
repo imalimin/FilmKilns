@@ -36,7 +36,7 @@ public:
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
-    virtual HwBuffer *getExtraBuffer(string key) override;
+    virtual AlBuffer *getExtraData() override;
 
     virtual void flush() override;
 
@@ -62,7 +62,7 @@ private:
      * Just for audio codec.
      */
     HwAudioTranslator *translator = nullptr;
-    HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
+    AlBuffer *mExtraData = nullptr;
     int64_t vLastPts = 0;
 };
 

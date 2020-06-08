@@ -21,19 +21,7 @@ AlAndroidCodecCompat2::~AlAndroidCodecCompat2() {
 
 HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
     AlCodec::configure(format);
-    if (encodeMode) {
-        auto *codec = new AlAndroidCodecCompat(getCodecID(), true);
-        if (Hw::SUCCESS == codec->configure(format)) {
-            auto *buffer0 = codec->getExtraBuffer(KEY_CSD_0);
-            auto *buffer1 = codec->getExtraBuffer(KEY_CSD_1);
-            buffers[0] = HwBuffer::alloc(buffer0->size());
-            buffers[1] = HwBuffer::alloc(buffer1->size());
-            memcpy(buffers[0]->data(), buffer0->data(), buffer0->size());
-            memcpy(buffers[1]->data(), buffer1->data(), buffer1->size());
-        }
-        codec->release();
-        delete codec;
-    }
+    mExtraData = AlAndroidCodecCompat::makeExtraData(getCodecID(), format);
     int32_t width = format.getInt32(KEY_WIDTH);
     int32_t height = format.getInt32(KEY_HEIGHT);
     int32_t bitrate = (int32_t) format.getInt32(KEY_BIT_RATE);

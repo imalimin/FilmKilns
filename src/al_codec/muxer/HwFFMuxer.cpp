@@ -120,43 +120,23 @@ int32_t HwFFMuxer::addTrack(AlCodec *codec) {
 }
 
 bool HwFFMuxer::copyExtraData(AVStream *stream, AlCodec *codec) {
-    switch (stream->codecpar->codec_id) {
-        case AV_CODEC_ID_H264: {
-            HwBuffer *sps = codec->getExtraBuffer("csd-0");
-            HwBuffer *pps = codec->getExtraBuffer("csd-1");
-            if (sps && pps) {
-                stream->codecpar->extradata_size = sps->size() + pps->size();
-                int32_t offset = 0;
-                uint8_t *extra = static_cast<uint8_t *>(av_mallocz(
-                        stream->codecpar->extradata_size));
-                memcpy(extra + offset, sps->data(), sps->size());
-                offset += sps->size();
-                memcpy(extra + offset, pps->data(), pps->size());
-                stream->codecpar->extradata = extra;
+    auto *buf = codec->getExtraData();
+    if (buf && buf->size() > 0) {
+        buf->rewind();
+        stream->codecpar->extradata_size = static_cast<int>(buf->remaining());
+        stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(buf->remaining()));
+        buf->get(stream->codecpar->extradata, buf->remaining());
+        AlLogI(TAG, "Copy extra data size(%d)", buf->remaining());
 //                FILE *fp = fopen("/sdcard/extra.data", "wb");
 //                fwrite(stream->codecpar->extradata, 1, stream->codecpar->extradata_size, fp);
 //                fclose(fp);
-            } else {
-                assert(false);
-                return false;
-            }
-            break;
+    } else {
+        if (AV_CODEC_ID_H264 == stream->codecpar->codec_id ||
+            AV_CODEC_ID_AAC_LATM == stream->codecpar->codec_id ||
+            AV_CODEC_ID_AAC == stream->codecpar->codec_id) {
+            assert(false);
         }
-        case AV_CODEC_ID_AAC_LATM:
-        case AV_CODEC_ID_AAC: {
-            HwBuffer *esds = codec->getExtraBuffer("csd-0");
-            if (esds) {
-                stream->codecpar->extradata_size = esds->size();
-                uint8_t *extra = static_cast<uint8_t *>(av_mallocz(esds->size()));
-                memcpy(extra, esds->data(), esds->size());
-                stream->codecpar->extradata = extra;
-            } else {
-                return false;
-            }
-            break;
-        }
-        default:
-            break;
+        return false;
     }
     return true;
 }

@@ -16,6 +16,9 @@ class AlAndroidCodecCompat2;
 al_class AlAndroidCodecCompat al_extend AlCodec {
 public:
     friend AlAndroidCodecCompat2;
+
+    static AlBuffer *makeExtraData(AlCodec::kID id, HwBundle &format);
+
 public:
     AlAndroidCodecCompat(AlCodec::kID id);
 
@@ -30,13 +33,11 @@ public:
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
-    virtual HwBuffer *getExtraBuffer(string key) override;
+    virtual AlBuffer *getExtraData() override;
 
     virtual void flush() override;
 
 private:
-    AlAndroidCodecCompat(AlCodec::kID id, bool makeNalSelf);
-
     void release();
 
     HwResult push(uint8_t *data, size_t size, int64_t pts);
@@ -60,9 +61,9 @@ private:
     static constexpr int CONFIGURE_FLAG_ENCODE = 1;
     AlMediaCodecBridge *bridge = nullptr;
 
-    bool makeNalSelf = false;
-    bool encodeMode = true;
-    HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
+    bool mReqExtraData = true;
+    bool isEncodeMode = true;
+    AlBuffer *mExtraData = nullptr;
     HwBuffer *keyFrameBuf = nullptr;
     HwPacket *hwPacket = nullptr;
     HwAbsMediaFrame *outFrame = nullptr;

@@ -38,8 +38,10 @@ class HwAndroidCodec : public AlCodec {
 public:
     static AlCodec *createDecoder(AlCodec::kID id);
 
+    static AlBuffer *makeExtraData(AlCodec::kID id, HwBundle &format);
+
 public:
-    HwAndroidCodec(AlCodec::kID id, bool makeNalSelf = false);
+    HwAndroidCodec(AlCodec::kID id);
 
     virtual ~HwAndroidCodec();
 
@@ -52,7 +54,7 @@ public:
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
-    virtual HwBuffer *getExtraBuffer(string key) override;
+    virtual AlBuffer *getExtraData() override;
 
     virtual void flush() override;
 
@@ -69,9 +71,10 @@ private:
     const int COLOR_FormatYUV420SemiPlanar = 21;
     const int BUFFER_FLAG_KEY_FRAME = 1;
     const int BUFFER_FLAG_CODEC_CONFIG = 2;
-    bool makeNalSelf = false;
-    bool encodeMode = true;
-    HwBuffer *buffers[4] = {nullptr, nullptr, nullptr, nullptr};
+
+    bool mReqExtraData = true;
+    bool isEncodeMode = true;
+    AlBuffer *mExtraData = nullptr;
     AMediaCodec *codec = nullptr;
     HwBuffer *keyFrameBuf = nullptr;
     HwPacket *hwPacket = nullptr;

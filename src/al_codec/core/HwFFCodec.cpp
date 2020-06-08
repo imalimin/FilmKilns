@@ -44,12 +44,8 @@ void HwFFCodec::release() {
         delete translator;
         translator = nullptr;
     }
-    for (int i = 0; i < 4; ++i) {
-        if (buffers[i]) {
-            delete buffers[i];
-            buffers[i] = nullptr;
-        }
-    }
+    delete mExtraData;
+    mExtraData = nullptr;
 }
 
 HwResult HwFFCodec::configure(HwBundle &format) {
@@ -82,7 +78,7 @@ HwResult HwFFCodec::configure(HwBundle &format) {
             // Configure
             ctx->codec_id = id;
             ctx->codec_type = AVMEDIA_TYPE_VIDEO;
-            ctx->pix_fmt = AV_PIX_FMT_PAL8 ;
+            ctx->pix_fmt = AV_PIX_FMT_PAL8;
             ctx->width = getFormat().getInt32(KEY_WIDTH);
             ctx->height = getFormat().getInt32(KEY_HEIGHT);
             ctx->time_base = {1, getFormat().getInt32(KEY_FPS)};
@@ -215,34 +211,11 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
 }
 
 bool HwFFCodec::parseExtraData() {
-    if (AV_CODEC_ID_H264 == ctx->codec_id) {
-        int32_t spsPos = -1, ppsPos = -1;
-        const uint8_t *extradata = ctx->extradata;
-        for (int i = 0; i < ctx->extradata_size; ++i) {
-            if (BinaryUtils::match(&extradata[i], {0x00, 0x00, 0x00, 0x01})) {
-                if (spsPos < 0) {
-                    spsPos = i;
-                    continue;
-                }
-                if (ppsPos < 0) {
-                    ppsPos = i;
-                    break;
-                }
-            }
-        }
-        if (spsPos < 0 || ppsPos < 0) {
-            AlLogE(TAG, "could not find sps & pps!");
-            return false;
-        }
-        buffers[0] = HwBuffer::alloc(ppsPos - spsPos);
-        buffers[1] = HwBuffer::alloc(ctx->extradata_size - ppsPos);
-        memcpy(buffers[0]->data(), ctx->extradata + spsPos, buffers[0]->size());
-        memcpy(buffers[1]->data(), ctx->extradata + ppsPos, buffers[1]->size());
-    } else if (AV_CODEC_ID_AAC == ctx->codec_id || AV_CODEC_ID_AAC_LATM == ctx->codec_id) {
-        if (ctx->extradata_size > 0) {
-            buffers[0] = HwBuffer::alloc(ctx->extradata_size);
-            memcpy(buffers[0]->data(), ctx->extradata, buffers[0]->size());
-        }
+    if (ctx->extradata && ctx->extradata_size > 0) {
+        delete mExtraData;
+        mExtraData = AlBuffer::alloc(ctx->extradata_size);
+        mExtraData->put(ctx->extradata, ctx->extradata_size);
+        mExtraData->rewind();
     }
     return true;
 }
@@ -265,17 +238,8 @@ AlCodec::kMediaType HwFFCodec::getMediaType() {
     }
 }
 
-HwBuffer *HwFFCodec::getExtraBuffer(string key) {
-    if (KEY_CSD_0 == key) {
-        return buffers[0];
-    } else if (KEY_CSD_1 == key) {
-        return buffers[1];
-    } else if (KEY_CSD_2 == key) {
-        return buffers[2];
-    } else if (KEY_CSD_3 == key) {
-        return buffers[3];
-    }
-    return nullptr;
+AlBuffer *HwFFCodec::getExtraData() {
+    return mExtraData;
 }
 
 void HwFFCodec::flush() {
