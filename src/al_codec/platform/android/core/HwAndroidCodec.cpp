@@ -202,15 +202,15 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
             AlLogI(TAG, "AMEDIACODEC_INFO_OUTPUT_FORMAT_CHANGED");
             auto *format = AMediaCodec_getOutputFormat(codec);
             if (isEncodeMode) {
-                uint8_t *csds[4];
-                size_t csdLens[4];
+                uint8_t *csds[4] = {nullptr, nullptr, nullptr, nullptr};
+                size_t csdLens[4] = {0, 0, 0, 0};
                 AMediaFormat_getBuffer(format, "csd-0", reinterpret_cast<void **>(&csds[0]),
                                        &csdLens[0]);
-                AMediaFormat_getBuffer(format, "csd-0", reinterpret_cast<void **>(&csds[1]),
+                AMediaFormat_getBuffer(format, "csd-1", reinterpret_cast<void **>(&csds[1]),
                                        &csdLens[1]);
-                AMediaFormat_getBuffer(format, "csd-0", reinterpret_cast<void **>(&csds[2]),
+                AMediaFormat_getBuffer(format, "csd-2", reinterpret_cast<void **>(&csds[2]),
                                        &csdLens[2]);
-                AMediaFormat_getBuffer(format, "csd-0", reinterpret_cast<void **>(&csds[3]),
+                AMediaFormat_getBuffer(format, "csd-3", reinterpret_cast<void **>(&csds[3]),
                                        &csdLens[3]);
 
 

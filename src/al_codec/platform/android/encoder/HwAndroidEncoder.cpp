@@ -46,7 +46,7 @@ bool HwAndroidEncoder::prepare(string path, int width, int height, HwSampleForma
 
 bool HwAndroidEncoder::configure() {
     if (AlAbsEncoder::kType::HARD == getCodecDesc().type) {
-        vCodec = new HwAndroidCodec(getCodecDesc().vID);
+        vCodec = new AlAndroidCodecCompat(getCodecDesc().vID);
     } else if (AlAbsEncoder::kType::HARD_ENC_TEX == getCodecDesc().type) {
         vCodec = new AlAndroidCodecCompat2(getCodecDesc().vID);
     } else {
