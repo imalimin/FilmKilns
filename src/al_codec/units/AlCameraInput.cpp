@@ -55,14 +55,15 @@ bool AlCameraInput::onCreate(AlMessage *msg) {
         })");
     program = HwProgram::create(&vertex, &fragment);
     auto *m = AlMessage::obtain(MSG_CAMERA_OES_TEX_NOTIFY);
-    m->ptr = srcTex.as<Object>();
+    m->obj = HwTexture::wrap(srcTex);
     postMessage(m);
     return true;
 }
 
 bool AlCameraInput::onDestroy(AlMessage *msg) {
     AlLogI(TAG, "");
-    srcTex.release();
+    delete srcTex;
+    srcTex = nullptr;
     delete fbo;
     fbo = nullptr;
     if (program) {
@@ -102,7 +103,7 @@ void AlCameraInput::draw() {
         fbo->bind();
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
-        program->draw(srcTex.as<HwAbsTexture>());
+        program->draw(srcTex);
         fbo->unbind();
     }
 }
@@ -124,8 +125,11 @@ void AlCameraInput::updateMatrix(int32_t w, int32_t h, AlMatrix *matrix) {
 }
 
 bool AlCameraInput::_onUpdateSize(AlMessage *msg) {
-    cameraSize.width = msg->ptr.as<AlSize>()->width;
-    cameraSize.height = msg->ptr.as<AlSize>()->height;
+    auto *size = msg->getObj<AlSize *>();
+    if (size) {
+        cameraSize.width = size->width;
+        cameraSize.height = size->height;
+    }
 //    AlLogI(TAG, "%dx%d", cameraSize.width, cameraSize.height);
     return true;
 }

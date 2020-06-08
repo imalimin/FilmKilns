@@ -52,7 +52,7 @@ AlMessage::AlMessage(int32_t what,
 AlMessage::AlMessage(int32_t what,
                      Object *obj,
                      int16_t queueMode)
-        : Object(), ptr(nullptr) {
+        : Object() {
     this->what = what;
     this->obj = obj;
     this->arg1 = 0;

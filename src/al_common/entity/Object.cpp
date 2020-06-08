@@ -16,11 +16,3 @@ Object::~Object() {
 std::string Object::toString() {
     return std::string(typeid(*this).name());
 }
-
-void Object::ref() {
-    ++countOfRef;
-}
-
-void Object::unref() {
-    --countOfRef;
-}

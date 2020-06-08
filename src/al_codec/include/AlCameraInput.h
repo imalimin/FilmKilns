@@ -45,7 +45,7 @@ private:
 private:
     AlSize cameraSize;
     AlSize outSize;
-    AlSPointer<HwAbsTexture> srcTex;
+    HwAbsTexture *srcTex;
     HwAbsFBObject *fbo = nullptr;
     HwProgram *program = nullptr;
     HwAbsTexture *mLayerTex = nullptr;

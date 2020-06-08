@@ -134,7 +134,7 @@ void AlDisplayRecorder::runOnCameraContext(function<void()> func) {
 
 void AlDisplayRecorder::setCameraSize(int32_t w, int32_t h) {
     AlMessage *msg = AlMessage::obtain(MSG_CAMERA_UPDATE_SIZE);
-    msg->ptr = new AlSize(w, h);
+    msg->obj = new AlSize(w, h);
     postEvent(msg);
 }
 
@@ -157,7 +157,7 @@ void AlDisplayRecorder::setOnNativeReadyListener(OnNativeReadyListener l) {
 }
 
 bool AlDisplayRecorder::_onOESTexNotify(AlMessage *msg) {
-    auto *tex = msg->ptr.as<HwAbsTexture>();
+    auto *tex = msg->getObj<HwAbsTexture *>();
     if (tex && onNativeReadyListener) {
         oesTex = tex->texId();
         AlLogI(TAG, "%d", oesTex);
