@@ -18,7 +18,7 @@ public:
 
     virtual ~AlAndroidCodecCompat2();
 
-    virtual HwResult configure(HwBundle &format) override;
+    virtual HwResult configure(AlBundle &format) override;
 
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
 
@@ -28,7 +28,7 @@ private:
     bool createProgram();
 
 private:
-    bool encodeMode = true;
+    bool isEncodeMode = true;
     AlEgl *egl = nullptr;
     AlAbsGLProgram *program = nullptr;
 };

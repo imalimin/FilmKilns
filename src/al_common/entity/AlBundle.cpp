@@ -23,18 +23,38 @@ if (map.end() != itr && itr->second) { \
   } \
 } \
 
+
 AlBundle::AlBundle() : Object() {
 
 }
 
 AlBundle::AlBundle(const AlBundle &o) : Object() {
-
+    auto itr = map.begin();
+    while (map.end() != itr) {
+        if (AL_INSTANCE_OF(itr->second, AlInteger *)) {
+            put(itr->first, dynamic_cast<AlInteger *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlLong *)) {
+            put(itr->first, dynamic_cast<AlLong *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlFloat *)) {
+            put(itr->first, dynamic_cast<AlFloat *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlDouble *)) {
+            put(itr->first, dynamic_cast<AlDouble *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlByte *)) {
+            put(itr->first, dynamic_cast<AlByte *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlChar *)) {
+            put(itr->first, dynamic_cast<AlChar *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlString *)) {
+            put(itr->first, dynamic_cast<AlString *>(itr->second)->str());
+        }
+        ++itr;
+    }
 }
 
 AlBundle::~AlBundle() {
     auto itr = map.begin();
     while (map.end() != itr) {
         delete itr->second;
+        ++itr;
     }
     map.clear();
 }
@@ -82,7 +102,13 @@ bool AlBundle::put(std::string key, std::string val) {
 }
 
 int32_t AlBundle::get(std::string key, int32_t def) {
-    GET_PRI(AlInteger)
+    auto itr = map.find(key);
+    if (map.end() != itr && itr->second) {
+        AlInteger *val = dynamic_cast<AlInteger *>(itr->second);
+        if (val) {
+            return val->value();
+        }
+    }
     return def;
 }
 
@@ -128,4 +154,8 @@ void AlBundle::remove(std::string key) {
         delete itr->second;
         map.erase(itr);
     }
+}
+
+bool AlBundle::contains(std::string key) {
+    return map.end() != map.find(key);
 }

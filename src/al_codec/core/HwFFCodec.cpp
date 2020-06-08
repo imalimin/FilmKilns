@@ -48,7 +48,7 @@ void HwFFCodec::release() {
     mExtraData = nullptr;
 }
 
-HwResult HwFFCodec::configure(HwBundle &format) {
+HwResult HwFFCodec::configure(AlBundle &format) {
     AlCodec::configure(format);
     if (getCodecID() == AlCodec::kID::NONE) {
         return Hw::FAILED;
@@ -79,11 +79,11 @@ HwResult HwFFCodec::configure(HwBundle &format) {
             ctx->codec_id = id;
             ctx->codec_type = AVMEDIA_TYPE_VIDEO;
             ctx->pix_fmt = AV_PIX_FMT_PAL8;
-            ctx->width = getFormat().getInt32(KEY_WIDTH);
-            ctx->height = getFormat().getInt32(KEY_HEIGHT);
-            ctx->time_base = {1, getFormat().getInt32(KEY_FPS)};
-            ctx->framerate = {getFormat().getInt32(KEY_FPS), 1};
-            _configureBitrate(getFormat().getInt32(KEY_BIT_RATE));
+            ctx->width = getFormat().get(KEY_WIDTH, INT32_MIN);
+            ctx->height = getFormat().get(KEY_HEIGHT, INT32_MIN);
+            ctx->time_base = {1, getFormat().get(KEY_FPS, INT32_MIN)};
+            ctx->framerate = {getFormat().get(KEY_FPS, INT32_MIN), 1};
+            _configureBitrate(getFormat().get(KEY_BIT_RATE, INT32_MIN));
 
             ctx->gop_size = 15;
             ctx->thread_count = 0;
@@ -110,16 +110,24 @@ HwResult HwFFCodec::configure(HwBundle &format) {
         default:
             return Hw::FAILED;
     }
+    if (ctx->extradata && ctx->extradata_size > 0) {
+        delete mExtraData;
+        mExtraData = AlBuffer::alloc(ctx->extradata_size);
+        mExtraData->put(ctx->extradata, ctx->extradata_size);
+        mExtraData->rewind();
+        getFormat().put(KEY_EXTRA_DATA, (int64_t) mExtraData);
+    }
     //Copy parameters.
-    getFormat().putInt32(KEY_PROFILE, ctx->profile);
-    getFormat().putInt32(KEY_LEVEL, ctx->level);
-    getFormat().putInt32(KEY_BIT_RATE, static_cast<int32_t>(ctx->bit_rate));
-    getFormat().putInt32(KEY_FRAME_SIZE, ctx->frame_size);
+    getFormat().remove(KEY_PROFILE);
+    getFormat().put(KEY_PROFILE, ctx->profile);
+    getFormat().put(KEY_LEVEL, ctx->level);
+    getFormat().put(KEY_BIT_RATE, static_cast<int32_t>(ctx->bit_rate));
+    getFormat().put(KEY_FRAME_SIZE, ctx->frame_size);
 
     avFrame = av_frame_alloc();
     avPacket = av_packet_alloc();
     if (ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
-        const int32_t &f = format.getInt32(KEY_FORMAT);
+        const int32_t &f = format.get(KEY_FORMAT, INT32_MIN);
         translator = new HwAudioTranslator(HwSampleFormat(HwFrameFormat::HW_SAMPLE_FLTP,
                                                           ctx->channels,
                                                           ctx->sample_rate),
@@ -139,12 +147,12 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     ctx->codec_id = id;
     ctx->codec_type = AVMEDIA_TYPE_VIDEO;
     ctx->pix_fmt = HwAbsMediaFrame::convertVideoFrameFormat(
-            (HwFrameFormat) getFormat().getInt32(KEY_FORMAT));
-    ctx->width = getFormat().getInt32(KEY_WIDTH);
-    ctx->height = getFormat().getInt32(KEY_HEIGHT);
-    ctx->time_base = {1, getFormat().getInt32(KEY_FPS)};
-    ctx->framerate = {getFormat().getInt32(KEY_FPS), 1};
-    _configureBitrate(getFormat().getInt32(KEY_BIT_RATE));
+            (HwFrameFormat) getFormat().get(KEY_FORMAT, INT32_MIN));
+    ctx->width = getFormat().get(KEY_WIDTH, INT32_MIN);
+    ctx->height = getFormat().get(KEY_HEIGHT, INT32_MIN);
+    ctx->time_base = {1, getFormat().get(KEY_FPS, INT32_MIN)};
+    ctx->framerate = {getFormat().get(KEY_FPS, INT32_MIN), 1};
+    _configureBitrate(getFormat().get(KEY_BIT_RATE, INT32_MIN));
 
     ctx->gop_size = 15;
 //    pCodecCtx->ticks_per_frame = 2;
@@ -167,8 +175,8 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
         //0 - 51
 //        av_dict_set_int(&param, "crf", getFormat().getInt32(KEY_QUALITY), 0);  // or abr,qp
         //ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow and placebo.
-        av_dict_set(&param, "preset", getFormat().getString(AlCodec::KEY_PRESET).c_str(), 0);
-        av_dict_set(&param, "profile", getFormat().getString(AlCodec::KEY_PROFILE).c_str(), 0);
+        av_dict_set(&param, "preset", getFormat().get(AlCodec::KEY_PRESET, "").c_str(), 0);
+        av_dict_set(&param, "profile", getFormat().get(AlCodec::KEY_PROFILE, "").c_str(), 0);
         av_dict_set(&param, "tune", "zerolatency", 0);
     }
     int ret = avcodec_open2(ctx, codec, &param);
@@ -178,16 +186,16 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
         release();
         return false;
     }
-    return parseExtraData();
+    return true;
 }
 
 bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
     ctx->codec_id = id;
     ctx->codec_type = AVMEDIA_TYPE_AUDIO;
     ctx->sample_fmt = AV_SAMPLE_FMT_FLTP;
-    ctx->bit_rate = getFormat().getInt32(KEY_BIT_RATE);
-    ctx->sample_rate = getFormat().getInt32(KEY_SAMPLE_RATE);
-    ctx->channels = getFormat().getInt32(KEY_CHANNELS);
+    ctx->bit_rate = getFormat().get(KEY_BIT_RATE, INT32_MIN);
+    ctx->sample_rate = getFormat().get(KEY_SAMPLE_RATE, INT32_MIN);
+    ctx->channels = getFormat().get(KEY_CHANNELS, INT32_MIN);
     ctx->channel_layout = static_cast<uint64_t>(
             av_get_default_channel_layout(ctx->channels));
     ctx->time_base = {1, ctx->sample_rate};
@@ -206,16 +214,6 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
         }
         AlLogE(TAG, "could not open audio codec: %s", strerror(AVUNERROR(ret)));
         return false;
-    }
-    return parseExtraData();
-}
-
-bool HwFFCodec::parseExtraData() {
-    if (ctx->extradata && ctx->extradata_size > 0) {
-        delete mExtraData;
-        mExtraData = AlBuffer::alloc(ctx->extradata_size);
-        mExtraData->put(ctx->extradata, ctx->extradata_size);
-        mExtraData->rewind();
     }
     return true;
 }
@@ -236,10 +234,6 @@ AlCodec::kMediaType HwFFCodec::getMediaType() {
             return AlCodec::kMediaType::UNKNOWN;
         }
     }
-}
-
-AlBuffer *HwFFCodec::getExtraData() {
-    return mExtraData;
 }
 
 void HwFFCodec::flush() {

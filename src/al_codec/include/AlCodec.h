@@ -10,7 +10,7 @@
 
 #include "Object.h"
 #include "HwResult.h"
-#include "HwBundle.h"
+#include "AlBundle.h"
 #include "HwAbsMediaFrame.h"
 #include "HwPacket.h"
 #include "AlBuffer.h"
@@ -35,13 +35,13 @@ public:
 
     virtual  ~AlCodec();
 
-    virtual HwResult configure(HwBundle &format);
+    virtual HwResult configure(AlBundle &format);
 
     virtual HwResult start() = 0;
 
     virtual AlCodec::kID getCodecID();
 
-    virtual HwBundle &getFormat();
+    virtual AlBundle &getFormat();
 
     virtual AlCodec::kMediaType getMediaType();
 
@@ -51,19 +51,11 @@ public:
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) = 0;
 
-    /**
-     * @param key csd-0\csd-1\csd-2
-     * @return buffer.
-     */
-    virtual AlBuffer *getExtraData() = 0;
-
     virtual void flush() = 0;
 
 private:
     AlCodec::kID id;
-
-protected:
-    HwBundle format;
+    AlBundle format;
 
 public:
     static const string KEY_MIME;
@@ -86,6 +78,7 @@ public:
     static const string KEY_CSD_1;
     static const string KEY_CSD_2;
     static const string KEY_CSD_3;
+    static const string KEY_EXTRA_DATA;
 };
 
 

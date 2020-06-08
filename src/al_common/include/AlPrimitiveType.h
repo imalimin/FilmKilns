@@ -82,9 +82,10 @@ public:
     }
 };
 
-AL_CLASS AlLong AL_EXTEND AlPrimitiveType<long> {
+AL_CLASS AlLong AL_EXTEND AlPrimitiveType<int64_t> {
 public:
-    AlLong(long value) : AlPrimitiveType(value) {
+    static constexpr int64_t ZERO = 0L;
+    AlLong(int64_t value) : AlPrimitiveType(value) {
 
     }
 

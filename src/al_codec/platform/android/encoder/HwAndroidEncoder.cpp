@@ -55,13 +55,13 @@ bool HwAndroidEncoder::configure() {
         return false;
     }
     const int32_t fps = 30;
-    HwBundle format;
-    format.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
-    format.putInt32(AlCodec::KEY_WIDTH, width);
-    format.putInt32(AlCodec::KEY_HEIGHT, height);
-    format.putInt32(AlCodec::KEY_BIT_RATE, width * height * 3);
-    format.putInt32(AlCodec::KEY_FPS, fps);
-    format.putInt32(AlCodec::KEY_QUALITY, 15);
+    AlBundle format;
+    format.put(AlCodec::KEY_FORMAT, static_cast<int32_t>(HwFrameFormat::HW_IMAGE_YV12));
+    format.put(AlCodec::KEY_WIDTH, width);
+    format.put(AlCodec::KEY_HEIGHT, height);
+    format.put(AlCodec::KEY_BIT_RATE, width * height * 3);
+    format.put(AlCodec::KEY_FPS, fps);
+    format.put(AlCodec::KEY_QUALITY, 15);
     if (Hw::SUCCESS != vCodec->configure(format)) {
         AlLogE(TAG, "failed to configure video codec!");
         release();
@@ -71,11 +71,11 @@ bool HwAndroidEncoder::configure() {
      * Audio codec
      */
     if (audioFormat.valid()) {
-        HwBundle aBundle;
-        aBundle.putInt32(AlCodec::KEY_SAMPLE_RATE, audioFormat.getSampleRate());
-        aBundle.putInt32(AlCodec::KEY_CHANNELS, audioFormat.getChannels());
-        aBundle.putInt32(AlCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
-        aBundle.putInt32(AlCodec::KEY_BIT_RATE, 64000);
+        AlBundle aBundle;
+        aBundle.put(AlCodec::KEY_SAMPLE_RATE, (int32_t) audioFormat.getSampleRate());
+        aBundle.put(AlCodec::KEY_CHANNELS, audioFormat.getChannels());
+        aBundle.put(AlCodec::KEY_FORMAT, static_cast<int32_t>(audioFormat.getFormat()));
+        aBundle.put(AlCodec::KEY_BIT_RATE, 64000);
         aCodec = new HwFFCodec(getCodecDesc().aID);
         if (Hw::SUCCESS != aCodec->configure(aBundle)) {
             AlLogE(TAG, "failed to configure audio codec!");

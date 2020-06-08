@@ -21,13 +21,17 @@ extern "C" {
 #include "libavutil/avutil.h"
 #include "libswresample/swresample.h"
 
+#ifdef __cplusplus
+}
+#endif
+
 class HwFFCodec : public AlCodec {
 public:
     HwFFCodec(AlCodec::kID id);
 
     virtual ~HwFFCodec();
 
-    virtual HwResult configure(HwBundle &format) override;
+    virtual HwResult configure(AlBundle &format) override;
 
     virtual HwResult start() override;
 
@@ -35,8 +39,6 @@ public:
      * @param packet AvPacket
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
-
-    virtual AlBuffer *getExtraData() override;
 
     virtual void flush() override;
 
@@ -48,8 +50,6 @@ private:
     bool configureVideo(AVCodecID id, AVCodec *codec);
 
     bool configureAudio(AVCodecID id, AVCodec *codec);
-
-    bool parseExtraData();
 
     void _configureBitrate(int32_t bitrate);
 
@@ -65,9 +65,5 @@ private:
     AlBuffer *mExtraData = nullptr;
     int64_t vLastPts = 0;
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif //HWVC_ANDROID_HWFFCODEC_H

@@ -24,6 +24,7 @@ const string AlCodec::KEY_CSD_0 = "csd-0";
 const string AlCodec::KEY_CSD_1 = "csd-1";
 const string AlCodec::KEY_CSD_2 = "csd-2";
 const string AlCodec::KEY_CSD_3 = "csd-3";
+const string AlCodec::KEY_EXTRA_DATA = "extra_data";
 
 AlCodec::AlCodec(AlCodec::kID id) : Object(), id(id) {
 
@@ -33,14 +34,14 @@ AlCodec::~AlCodec() {
 
 }
 
-HwResult AlCodec::configure(HwBundle &format) {
+HwResult AlCodec::configure(AlBundle &format) {
     this->format = format;
     return Hw::SUCCESS;
 }
 
 AlCodec::kID AlCodec::getCodecID() { return id; }
 
-HwBundle &AlCodec::getFormat() { return format; }
+AlBundle &AlCodec::getFormat() { return format; }
 
 AlCodec::kMediaType AlCodec::getMediaType() {
     switch (getCodecID()) {

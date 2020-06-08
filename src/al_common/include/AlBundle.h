@@ -49,6 +49,8 @@ public:
 
     void remove(std::string key);
 
+    bool contains(std::string key);
+
 private:
     void _put(std::string &key, Object *val);
 

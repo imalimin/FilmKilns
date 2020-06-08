@@ -66,13 +66,13 @@ HwResult HwFFMuxer::start() {
 }
 
 void HwFFMuxer::setInt32Parameter(int32_t &param, int32_t value) {
-    if (HwBundle::VALUE_NONE != value) {
+    if (INT32_MIN != value) {
         param = value;
     }
 }
 
 void HwFFMuxer::setInt64Parameter(int64_t &param, int64_t value) {
-    if (HwBundle::VALUE_NONE != value) {
+    if (INT64_MIN != value) {
         param = value;
     }
 }
@@ -89,18 +89,19 @@ int32_t HwFFMuxer::addTrack(AlCodec *codec) {
     // See avcodec_parameters_from_context
     stream->codecpar->codec_id = static_cast<AVCodecID>(codec->getCodecID());
     setInt32Parameter(stream->codecpar->profile,
-                      codec->getFormat().getInt32(AlCodec::KEY_PROFILE));
-    setInt32Parameter(stream->codecpar->level, codec->getFormat().getInt32(AlCodec::KEY_LEVEL));
+                      codec->getFormat().get(AlCodec::KEY_PROFILE, INT32_MIN));
+    setInt32Parameter(stream->codecpar->level,
+                      codec->getFormat().get(AlCodec::KEY_LEVEL, INT32_MIN));
     setInt64Parameter(stream->codecpar->bit_rate,
-                      codec->getFormat().getInt32(AlCodec::KEY_BIT_RATE));
+                      codec->getFormat().get(AlCodec::KEY_BIT_RATE, INT32_MIN));
     if (AlCodec::kMediaType::AUDIO == codec->getMediaType()) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
         setInt32Parameter(stream->codecpar->sample_rate,
-                          codec->getFormat().getInt32(AlCodec::KEY_SAMPLE_RATE));
+                          codec->getFormat().get(AlCodec::KEY_SAMPLE_RATE, INT32_MIN));
         setInt32Parameter(stream->codecpar->channels,
-                          codec->getFormat().getInt32(AlCodec::KEY_CHANNELS));
+                          codec->getFormat().get(AlCodec::KEY_CHANNELS, INT32_MIN));
         setInt32Parameter(stream->codecpar->frame_size,
-                          codec->getFormat().getInt32(AlCodec::KEY_FRAME_SIZE));
+                          codec->getFormat().get(AlCodec::KEY_FRAME_SIZE, INT32_MIN));
         stream->codecpar->channel_layout = static_cast<uint64_t>(
                 av_get_default_channel_layout(stream->codecpar->channels));
         stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
@@ -108,9 +109,9 @@ int32_t HwFFMuxer::addTrack(AlCodec *codec) {
     } else if (AlCodec::kMediaType::VIDEO == codec->getMediaType()) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
         setInt32Parameter(stream->codecpar->width,
-                          codec->getFormat().getInt32(AlCodec::KEY_WIDTH));
+                          codec->getFormat().get(AlCodec::KEY_WIDTH, INT32_MIN));
         setInt32Parameter(stream->codecpar->height,
-                          codec->getFormat().getInt32(AlCodec::KEY_HEIGHT));
+                          codec->getFormat().get(AlCodec::KEY_HEIGHT, INT32_MIN));
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
 //        stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
     }
@@ -120,7 +121,8 @@ int32_t HwFFMuxer::addTrack(AlCodec *codec) {
 }
 
 bool HwFFMuxer::copyExtraData(AVStream *stream, AlCodec *codec) {
-    auto *buf = codec->getExtraData();
+    AlBuffer *buf = reinterpret_cast<AlBuffer *>(codec->getFormat()
+            .get(AlCodec::KEY_EXTRA_DATA, AlLong::ZERO));
     if (buf && buf->size() > 0) {
         buf->rewind();
         stream->codecpar->extradata_size = static_cast<int>(buf->remaining());

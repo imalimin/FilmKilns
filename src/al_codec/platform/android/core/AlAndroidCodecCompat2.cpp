@@ -19,17 +19,20 @@ AlAndroidCodecCompat2::~AlAndroidCodecCompat2() {
     egl = nullptr;
 }
 
-HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
+HwResult AlAndroidCodecCompat2::configure(AlBundle &format) {
     AlCodec::configure(format);
-    mExtraData = AlAndroidCodecCompat::makeExtraData(getCodecID(), format);
-    int32_t width = format.getInt32(KEY_WIDTH);
-    int32_t height = format.getInt32(KEY_HEIGHT);
-    int32_t bitrate = (int32_t) format.getInt32(KEY_BIT_RATE);
+    if (isEncodeMode) {
+        mExtraData = AlAndroidCodecCompat::makeExtraData(getCodecID(), format);
+        getFormat().put(KEY_EXTRA_DATA, (int64_t) mExtraData);
+    }
+    int32_t width = format.get(KEY_WIDTH, INT32_MIN);
+    int32_t height = format.get(KEY_HEIGHT, INT32_MIN);
+    int32_t bitrate = (int32_t) format.get(KEY_BIT_RATE, INT32_MIN);
     this->keyFrameBuf = HwBuffer::alloc(static_cast<size_t>(width * height * 3 / 2));
 
     if (AlCodec::kID::H264 == getCodecID()) {
-        fps = format.getInt32(KEY_FPS);
-        if (encodeMode) {
+        fps = format.get(KEY_FPS, INT32_MIN);
+        if (isEncodeMode) {
             bridge->configure(width, height, bitrate, COLOR_FormatSurface,
                               3, fps, CONFIGURE_FLAG_ENCODE);
         } else {
@@ -73,7 +76,7 @@ HwResult AlAndroidCodecCompat2::process(HwAbsMediaFrame **frame, HwPacket **pkt)
 
     HwResult ret1 = pop(2000);
     if (Hw::SUCCESS == ret1) {
-        if (encodeMode) {
+        if (isEncodeMode) {
             *pkt = hwPacket;
         } else {
             *frame = outFrame;

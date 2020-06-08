@@ -17,14 +17,14 @@ al_class AlAndroidCodecCompat al_extend AlCodec {
 public:
     friend AlAndroidCodecCompat2;
 
-    static AlBuffer *makeExtraData(AlCodec::kID id, HwBundle &format);
+    static AlBuffer *makeExtraData(AlCodec::kID id, AlBundle &format);
 
 public:
     AlAndroidCodecCompat(AlCodec::kID id);
 
     virtual ~AlAndroidCodecCompat();
 
-    virtual HwResult configure(HwBundle &format) override;
+    virtual HwResult configure(AlBundle &format) override;
 
     virtual HwResult start() override;
 
@@ -32,8 +32,6 @@ public:
      * @param packet AvPacket.
      */
     virtual HwResult process(HwAbsMediaFrame **frame, HwPacket **pkt) override;
-
-    virtual AlBuffer *getExtraData() override;
 
     virtual void flush() override;
 

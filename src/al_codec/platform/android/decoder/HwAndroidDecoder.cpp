@@ -72,11 +72,11 @@ bool HwAndroidDecoder::configure() {
     AMediaFormat_getBuffer(vFmt, "csd-1", reinterpret_cast<void **>(&csd1), &csd1Size);
     HwBuffer *csd0Buf = HwBuffer::wrap(csd0, csd0Size);
     HwBuffer *csd1Buf = HwBuffer::wrap(csd1, csd1Size);
-    HwBundle bundle;
-    bundle.putInt32(AlCodec::KEY_WIDTH, mWidth);
-    bundle.putInt32(AlCodec::KEY_HEIGHT, mHeight);
-    bundle.putObject("csd-0", csd0Buf);
-    bundle.putObject("csd-1", csd1Buf);
+    AlBundle bundle;
+    bundle.put(AlCodec::KEY_WIDTH, mWidth);
+    bundle.put(AlCodec::KEY_HEIGHT, mHeight);
+//    bundle.put(AlCodec::KEY_EXTRA_DATA, csd0Buf);
+//    bundle.putObject("csd-1", csd1Buf);
     codec = HwAndroidCodec::createDecoder(AlCodec::kID::H264);
     if (Hw::SUCCESS != codec->configure(bundle)) {
         delete csd0Buf;
