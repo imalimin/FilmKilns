@@ -18,7 +18,7 @@ using namespace std;
 #define AL_EXTEND : public
 #define AL_NULLABLE
 #define AL_ENUM enum class
-#define AL_INSTANCE_OF(o1, o2) typeid(o1) != typeid(o2)
+#define AL_INSTANCE_OF(o1, o2) (nullptr != dynamic_cast<o2>(o1))
 
 #define AL_CHECK(flag, ret) \
 if(!(flag)) { \

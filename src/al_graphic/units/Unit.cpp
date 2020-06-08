@@ -24,7 +24,7 @@ bool Event::handle(Unit *unit, AlMessage *msg) {
     return (unit->*handler)(msg);
 }
 
-Unit::Unit(string alias, AlUnitSetting setting) : alias(alias), setting(setting) {
+Unit::Unit(string alias, AlUnitSetting setting) : Object(), alias(alias), setting(setting) {
     created = false;
     registerEvent(EVENT_COMMON_PREPARE, reinterpret_cast<EventFunc>(&Unit::onCreate));
     registerEvent(EVENT_COMMON_RELEASE, reinterpret_cast<EventFunc>(&Unit::onDestroy));

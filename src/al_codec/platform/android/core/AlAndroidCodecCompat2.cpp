@@ -52,7 +52,7 @@ HwResult AlAndroidCodecCompat2::configure(HwBundle &format) {
 }
 
 HwResult AlAndroidCodecCompat2::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
-    if (nullptr == frame || nullptr == *frame || AL_INSTANCE_OF(AlTexFrame, **frame)) {
+    if (nullptr == frame || nullptr == *frame || !AL_INSTANCE_OF(*frame, AlTexFrame *)) {
         return Hw::FAILED;
     }
     if (nullptr == program) {
