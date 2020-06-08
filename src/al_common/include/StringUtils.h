@@ -50,6 +50,10 @@ public:
 
     static std::string valueOf(double value);
 
+    static std::string valueOf(char value);
+
+    static std::string valueOf(uint8_t value);
+
     static bool isEmpty(std::string *str);
 
     static int32_t toInt(const char *str);

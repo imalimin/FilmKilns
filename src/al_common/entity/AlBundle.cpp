@@ -159,3 +159,19 @@ void AlBundle::remove(std::string key) {
 bool AlBundle::contains(std::string key) {
     return map.end() != map.find(key);
 }
+
+std::string AlBundle::toString() {
+    std::string sb;
+    sb.append("{");
+    auto itr = map.begin();
+    while (map.end() != itr) {
+        sb.append("\"");
+        sb.append(itr->first);
+        sb.append("\":");
+        sb.append(itr->second->toString());
+        sb.append(", ");
+        ++itr;
+    }
+    sb.append("}");
+    return sb;
+}

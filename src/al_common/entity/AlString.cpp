@@ -97,3 +97,7 @@ AlString &AlString::replaceAll(const char *oldStr, const char *newStr) {
     }
     return *this;
 }
+
+std::string AlString::toString() {
+    return str();
+}

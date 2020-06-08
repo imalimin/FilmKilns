@@ -65,6 +65,8 @@ public:
 
     AlString &replaceAll(const char *oldStr, const char *newStr);
 
+    virtual std::string toString() override;
+
 private:
     std::string _str;
 };

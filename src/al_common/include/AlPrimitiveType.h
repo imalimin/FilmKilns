@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALPRIMITIVETYPE_H
 
 #include "Object.h"
+#include "StringUtils.h"
 
 template<typename T>
 AL_CLASS AlPrimitiveType AL_EXTEND Object {
@@ -27,6 +28,10 @@ public:
 
     virtual ~AlPrimitiveType() {
 
+    }
+
+    virtual std::string toString() override {
+        return StringUtils::valueOf(_value);
     }
 
     bool operator==(const AlPrimitiveType &o) const {

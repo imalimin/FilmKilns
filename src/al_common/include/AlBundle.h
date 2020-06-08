@@ -51,6 +51,8 @@ public:
 
     bool contains(std::string key);
 
+    virtual std::string toString() override;
+
 private:
     void _put(std::string &key, Object *val);
 

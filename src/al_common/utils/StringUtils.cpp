@@ -75,6 +75,14 @@ std::string StringUtils::valueOf(double value) {
     return valueOf<double>(value);
 }
 
+std::string StringUtils::valueOf(char value) {
+    return valueOf<char>(value);
+}
+
+std::string StringUtils::valueOf(uint8_t value) {
+    return valueOf<uint8_t>(value);
+}
+
 bool StringUtils::isEmpty(std::string *str) {
     return nullptr == str || "" == *str || str->empty();
 }
