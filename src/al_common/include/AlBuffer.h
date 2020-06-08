@@ -23,7 +23,9 @@ private:
 
     AlBuffer(uint8_t *refBuf, size_t size);
 
-    AlBuffer(const AlBuffer &e) : Object() {};
+    AlBuffer(const AlBuffer &o);
+
+    void _movePosition(size_t offset);
 
 public:
     virtual ~AlBuffer();

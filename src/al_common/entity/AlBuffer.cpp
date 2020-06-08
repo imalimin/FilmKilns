@@ -16,29 +16,38 @@ AlBuffer *AlBuffer::wrap(uint8_t *buf, size_t size) {
 }
 
 AlBuffer *AlBuffer::wrap(AlBuffer *buf) {
-    auto *b = new AlBuffer(buf->buf, buf->_size);
-    b->_limit = buf->_limit;
-    b->_capacity = buf->_capacity;
-    b->_position = buf->_position;
-    return b;
+    return new AlBuffer(*buf);
 }
 
-AlBuffer::AlBuffer(size_t size) : Object() {
-    this->_size = size;
-    this->_limit = size;
-    this->_capacity = size;
-    this->_position = 0;
-    this->buf = new uint8_t[size];
-    this->isRef = false;
+AlBuffer::AlBuffer(size_t size)
+        : Object(),
+          _size(size),
+          _limit(size),
+          _capacity(size),
+          _position(0),
+          buf(new uint8_t[size]),
+          isRef(false) {
 }
 
-AlBuffer::AlBuffer(uint8_t *refBuf, size_t size) : Object() {
-    this->_size = size;
-    this->_limit = size;
-    this->_capacity = size;
-    this->_position = 0;
-    this->buf = refBuf;
-    this->isRef = true;
+AlBuffer::AlBuffer(uint8_t *refBuf, size_t size)
+        : Object(),
+          _size(size),
+          _limit(size),
+          _capacity(size),
+          _position(0),
+          buf(refBuf),
+          isRef(true) {
+}
+
+AlBuffer::AlBuffer(const AlBuffer &o)
+        : Object(),
+          _size(o._size),
+          _limit(o._limit),
+          _capacity(o._capacity),
+          _position(o._position),
+          buf(o.buf),
+          isRef(true) {
+
 }
 
 AlBuffer::~AlBuffer() {
@@ -76,20 +85,25 @@ uint8_t *AlBuffer::data() { return this->buf + this->_position; }
 
 size_t AlBuffer::put(AlBuffer *buf) {
     if (!buf) return 0;
-    size_t s = min(buf->size(), size());
-    memcpy(data(), buf->data(), s);
-    return s;
+    return put(buf->data(), buf->remaining());
 }
 
 size_t AlBuffer::put(uint8_t *data, size_t size) {
-    if (!data || size <= 0) return 0;
-    size_t s = min(size, this->size());
-    memcpy(this->data(), data, s);
-    return s;
+    if (nullptr == data || size <= 0) return 0;
+    if (size > remaining()) {
+        return 0;
+    }
+    memcpy(this->data(), data, size);
+    _movePosition(size);
+    return size;
 }
 
 size_t AlBuffer::get(uint8_t *dst, size_t size) {
-    if (nullptr == dst || size <= 0 || this->remaining() > size) return 0;
+    if (nullptr == dst || size <= 0 || size > remaining()) return 0;
     memcpy(dst, this->data(), size);
     return size;
+}
+
+void AlBuffer::_movePosition(size_t offset) {
+    _position += offset;
 }
