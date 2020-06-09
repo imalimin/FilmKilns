@@ -56,7 +56,7 @@ public:
 
 private:
     AlCodec::kID id;
-    AlBundle *format = nullptr;
+    std::shared_ptr<AlBundle> format = nullptr;
 
 public:
     static const string KEY_MIME;

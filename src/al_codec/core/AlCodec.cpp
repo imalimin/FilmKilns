@@ -33,12 +33,10 @@ AlCodec::AlCodec(AlCodec::kID id) : Object(), id(id) {
 }
 
 AlCodec::~AlCodec() {
-    delete format;
-    format = nullptr;
 }
 
 HwResult AlCodec::configure(AlBundle &format) {
-    this->format = new AlBundle(format);
+    this->format = std::make_shared<AlBundle>(format);
     this->format->put(KEY_CODEC_ID, (int32_t) getCodecID());
     this->format->put(KEY_MEDIA_TYPE, (int32_t) getMediaType());
     return Hw::SUCCESS;
