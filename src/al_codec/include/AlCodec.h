@@ -24,10 +24,11 @@ public:
         GIF = AV_CODEC_ID_GIF
     };
 
+    /// Same with AVMEDIA_TYPE_AUDIO/AVMEDIA_TYPE_VIDEO
     AL_ENUM kMediaType : int {
-        UNKNOWN = 0,
-        AUDIO = 1,
-        VIDEO
+        UNKNOWN = -1,
+        VIDEO,
+        AUDIO,
     };
 
 public:
@@ -55,10 +56,12 @@ public:
 
 private:
     AlCodec::kID id;
-    AlBundle format;
+    AlBundle *format = nullptr;
 
 public:
     static const string KEY_MIME;
+    static const string KEY_CODEC_ID;
+    static const string KEY_MEDIA_TYPE;
     static const string KEY_FORMAT;
     static const string KEY_PROFILE;
     static const string KEY_PRESET;

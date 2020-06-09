@@ -118,11 +118,24 @@ HwResult HwFFCodec::configure(AlBundle &format) {
         getFormat().put(KEY_EXTRA_DATA, (int64_t) mExtraData);
     }
     //Copy parameters.
-    getFormat().remove(KEY_PROFILE);
     getFormat().put(KEY_PROFILE, ctx->profile);
     getFormat().put(KEY_LEVEL, ctx->level);
     getFormat().put(KEY_BIT_RATE, static_cast<int32_t>(ctx->bit_rate));
     getFormat().put(KEY_FRAME_SIZE, ctx->frame_size);
+    switch (ctx->codec_type) {
+        case AVMEDIA_TYPE_VIDEO: {
+            getFormat().put(KEY_MEDIA_TYPE, (int32_t) AlCodec::kMediaType::VIDEO);
+            break;
+        }
+        case AVMEDIA_TYPE_AUDIO: {
+            getFormat().put(KEY_MEDIA_TYPE, (int32_t) AlCodec::kMediaType::AUDIO);
+            break;
+        }
+        default: {
+            getFormat().put(KEY_MEDIA_TYPE, (int32_t) AlCodec::kMediaType::UNKNOWN);
+            break;
+        }
+    }
 
     avFrame = av_frame_alloc();
     avPacket = av_packet_alloc();
@@ -220,20 +233,6 @@ bool HwFFCodec::configureAudio(AVCodecID id, AVCodec *codec) {
 
 void HwFFCodec::_configureBitrate(int32_t bitrate) {
     ctx->bit_rate = bitrate;
-}
-
-AlCodec::kMediaType HwFFCodec::getMediaType() {
-    switch (ctx->codec_type) {
-        case AVMEDIA_TYPE_VIDEO: {
-            return AlCodec::kMediaType::VIDEO;
-        }
-        case AVMEDIA_TYPE_AUDIO: {
-            return AlCodec::kMediaType::AUDIO;
-        }
-        default: {
-            return AlCodec::kMediaType::UNKNOWN;
-        }
-    }
 }
 
 void HwFFCodec::flush() {

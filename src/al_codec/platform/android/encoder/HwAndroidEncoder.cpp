@@ -95,14 +95,14 @@ bool HwAndroidEncoder::configure() {
     /**
      * Muxer start
      */
-    vTrack = muxer->addTrack(vCodec);
+    vTrack = muxer->addTrack(vCodec->getFormat());
     if (HwAbsMuxer::TRACK_NONE == vTrack) {
         AlLogE(TAG, "failed to add video track!");
         release();
         return false;
     }
     if (aCodec) {
-        aTrack = muxer->addTrack(aCodec);
+        aTrack = muxer->addTrack(aCodec->getFormat());
         if (HwAbsMuxer::TRACK_NONE == aTrack) {
             AlLogE(TAG, "failed to add audio track!");
             release();

@@ -244,6 +244,7 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
                 AlLogI(TAG, "Got extra data size(%d), remaining(%d)", mExtraData->size(),
                        mExtraData->remaining());
                 mExtraData->rewind();
+                getFormat().put(AlCodec::KEY_EXTRA_DATA, (int64_t) mExtraData);
             } else {
                 int width = 0, height = 0;
                 AMediaFormat_getInt32(format, AMEDIAFORMAT_KEY_WIDTH, &width);

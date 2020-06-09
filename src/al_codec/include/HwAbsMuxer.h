@@ -27,7 +27,7 @@ public:
      * add an audio or video track.
      * @return audio or video track id
      */
-    virtual int32_t addTrack(AlCodec *codec)=0;
+    virtual int32_t addTrack(AlBundle &format) = 0;
 
     /**
      * @param track track id

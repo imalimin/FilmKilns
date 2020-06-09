@@ -8,6 +8,8 @@
 #include "AlCodec.h"
 
 const string AlCodec::KEY_MIME = "media-mime";
+const string AlCodec::KEY_CODEC_ID = "media-codec-id";
+const string AlCodec::KEY_MEDIA_TYPE = "media-type";
 const string AlCodec::KEY_FORMAT = "media-format";
 const string AlCodec::KEY_PROFILE = "media-profile";
 const string AlCodec::KEY_PRESET = "media-preset";
@@ -31,17 +33,20 @@ AlCodec::AlCodec(AlCodec::kID id) : Object(), id(id) {
 }
 
 AlCodec::~AlCodec() {
-
+    delete format;
+    format = nullptr;
 }
 
 HwResult AlCodec::configure(AlBundle &format) {
-    this->format = AlBundle(format);
+    this->format = new AlBundle(format);
+    this->format->put(KEY_CODEC_ID, (int32_t) getCodecID());
+    this->format->put(KEY_MEDIA_TYPE, (int32_t) getMediaType());
     return Hw::SUCCESS;
 }
 
 AlCodec::kID AlCodec::getCodecID() { return id; }
 
-AlBundle &AlCodec::getFormat() { return format; }
+AlBundle &AlCodec::getFormat() { return *format; }
 
 AlCodec::kMediaType AlCodec::getMediaType() {
     switch (getCodecID()) {

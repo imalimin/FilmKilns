@@ -77,53 +77,53 @@ void HwFFMuxer::setInt64Parameter(int64_t &param, int64_t value) {
     }
 }
 
-int32_t HwFFMuxer::addTrack(AlCodec *codec) {
-    if (!codec) {
-        return TRACK_NONE;
-    }
-    AlLogI(TAG, codec->getFormat().toString());
+int32_t HwFFMuxer::addTrack(AlBundle &format) {
+    AlLogI(TAG, format.toString());
     AVStream *stream = avformat_new_stream(pFormatCtx, nullptr);
     if (!stream) {
         return TRACK_NONE;
     }
 
     // See avcodec_parameters_from_context
-    stream->codecpar->codec_id = static_cast<AVCodecID>(codec->getCodecID());
+    stream->codecpar->codec_id = static_cast<AVCodecID>(format.get(AlCodec::KEY_CODEC_ID,
+                                                                   INT32_MIN));
     setInt32Parameter(stream->codecpar->profile,
-                      codec->getFormat().get(AlCodec::KEY_PROFILE, INT32_MIN));
+                      format.get(AlCodec::KEY_PROFILE, INT32_MIN));
     setInt32Parameter(stream->codecpar->level,
-                      codec->getFormat().get(AlCodec::KEY_LEVEL, INT32_MIN));
+                      format.get(AlCodec::KEY_LEVEL, INT32_MIN));
     setInt64Parameter(stream->codecpar->bit_rate,
-                      codec->getFormat().get(AlCodec::KEY_BIT_RATE, INT32_MIN));
-    if (AlCodec::kMediaType::AUDIO == codec->getMediaType()) {
+                      format.get(AlCodec::KEY_BIT_RATE, INT32_MIN));
+    AlCodec::kMediaType type = static_cast<AlCodec::kMediaType>(
+            format.get(AlCodec::KEY_MEDIA_TYPE,
+                       (int32_t) AlCodec::kMediaType::UNKNOWN));
+    if (AlCodec::kMediaType::AUDIO == type) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
         setInt32Parameter(stream->codecpar->sample_rate,
-                          codec->getFormat().get(AlCodec::KEY_SAMPLE_RATE, INT32_MIN));
+                          format.get(AlCodec::KEY_SAMPLE_RATE, INT32_MIN));
         setInt32Parameter(stream->codecpar->channels,
-                          codec->getFormat().get(AlCodec::KEY_CHANNELS, INT32_MIN));
+                          format.get(AlCodec::KEY_CHANNELS, INT32_MIN));
         setInt32Parameter(stream->codecpar->frame_size,
-                          codec->getFormat().get(AlCodec::KEY_FRAME_SIZE, INT32_MIN));
+                          format.get(AlCodec::KEY_FRAME_SIZE, INT32_MIN));
         stream->codecpar->channel_layout = static_cast<uint64_t>(
                 av_get_default_channel_layout(stream->codecpar->channels));
         stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
 //        stream->time_base = {1, stream->codecpar->sample_rate};
-    } else if (AlCodec::kMediaType::VIDEO == codec->getMediaType()) {
+    } else if (AlCodec::kMediaType::VIDEO == type) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
         setInt32Parameter(stream->codecpar->width,
-                          codec->getFormat().get(AlCodec::KEY_WIDTH, INT32_MIN));
+                          format.get(AlCodec::KEY_WIDTH, INT32_MIN));
         setInt32Parameter(stream->codecpar->height,
-                          codec->getFormat().get(AlCodec::KEY_HEIGHT, INT32_MIN));
+                          format.get(AlCodec::KEY_HEIGHT, INT32_MIN));
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
-//        stream->time_base = {1, codec->getFormat()->getInt32(HwAbsCodec::KEY_FPS)};
+//        stream->time_base = {1, format.get(HwAbsCodec::KEY_FPS, INT32_MIN)};
     }
-    copyExtraData(stream, codec);
+    copyExtraData(stream, format);
     tracks.push_back(stream);
-    return tracks.size() - 1;
+    return tracks.empty() ? TRACK_NONE : tracks.size() - 1;
 }
 
-bool HwFFMuxer::copyExtraData(AVStream *stream, AlCodec *codec) {
-    AlBuffer *buf = reinterpret_cast<AlBuffer *>(codec->getFormat()
-            .get(AlCodec::KEY_EXTRA_DATA, AlLong::ZERO));
+bool HwFFMuxer::copyExtraData(AVStream *stream, AlBundle &format) {
+    AlBuffer *buf = reinterpret_cast<AlBuffer *>(format.get(AlCodec::KEY_EXTRA_DATA, AlLong::ZERO));
     if (buf && buf->size() > 0) {
         buf->rewind();
         stream->codecpar->extradata_size = static_cast<int>(buf->remaining());

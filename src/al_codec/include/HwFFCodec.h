@@ -42,8 +42,6 @@ public:
 
     virtual void flush() override;
 
-    virtual AlCodec::kMediaType getMediaType() override;
-
 private:
     void release();
 

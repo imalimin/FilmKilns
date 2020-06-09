@@ -49,6 +49,7 @@ HwResult AlAndroidCodecCompat::configure(AlBundle &format) {
     AlCodec::configure(format);
     if (isEncodeMode && mReqExtraData) {
         mExtraData = makeExtraData(getCodecID(), format);
+        getFormat().put(KEY_EXTRA_DATA, (int64_t) mExtraData);
     }
     int32_t width = format.get(KEY_WIDTH, INT32_MIN);
     int32_t height = format.get(KEY_HEIGHT, INT32_MIN);
@@ -200,6 +201,7 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
                 AlLogI(TAG, "Got extra data size(%d), remaining(%d)", mExtraData->size(),
                        mExtraData->remaining());
                 mExtraData->rewind();
+                getFormat().put(AlCodec::KEY_EXTRA_DATA, (int64_t) mExtraData);
             } else {
                 int width = bridge->getOutputFormatInteger(KEY_WIDTH);
                 int height = bridge->getOutputFormatInteger(KEY_HEIGHT);

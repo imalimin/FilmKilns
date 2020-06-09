@@ -34,7 +34,7 @@ public:
 
     virtual HwResult start();
 
-    virtual int32_t addTrack(AlCodec *codec) override;
+    virtual int32_t addTrack(AlBundle &format) override;
 
     /**
      * @param packet AvPacket
@@ -44,7 +44,7 @@ public:
 private:
     void release();
 
-    bool copyExtraData(AVStream *stream, AlCodec *codec);
+    bool copyExtraData(AVStream *stream, AlBundle &format);
 
     void setInt32Parameter(int32_t &param, int32_t value);
 

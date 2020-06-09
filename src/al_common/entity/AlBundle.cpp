@@ -10,8 +10,10 @@
 #include "AlLogcat.h"
 
 #define PUT_PRI(_pri) \
-if (map.end() != map.find(key)) { \
-  return false; \
+auto itr = map.find(key); \
+if (map.end() != itr) { \
+  delete itr->second; \
+  map.erase(itr); \
 } \
 _put(key, new _pri(val)); \
 
@@ -31,7 +33,6 @@ AlBundle::AlBundle() : Object() {
 }
 
 AlBundle::AlBundle(const AlBundle &o) : Object() {
-    AlLogI(TAG, "AlBundle copy");
     auto itr = o.map.begin();
     while (o.map.end() != itr) {
         if (AL_INSTANCE_OF(itr->second, AlInteger *)) {
@@ -60,34 +61,6 @@ AlBundle::~AlBundle() {
         ++itr;
     }
     map.clear();
-}
-
-AlBundle &AlBundle::clone() {
-    AlLogI(TAG, "AlBundle clone");
-    static AlBundle *bundle;
-    if (bundle == nullptr) {
-        bundle = new AlBundle();
-    }
-    auto itr = map.begin();
-    while (map.end() != itr) {
-        if (AL_INSTANCE_OF(itr->second, AlInteger *)) {
-            bundle->put(itr->first, dynamic_cast<AlInteger *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlLong *)) {
-            bundle->put(itr->first, dynamic_cast<AlLong *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlFloat *)) {
-            bundle->put(itr->first, dynamic_cast<AlFloat *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlDouble *)) {
-            bundle->put(itr->first, dynamic_cast<AlDouble *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlByte *)) {
-            bundle->put(itr->first, dynamic_cast<AlByte *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlChar *)) {
-            bundle->put(itr->first, dynamic_cast<AlChar *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlString *)) {
-            bundle->put(itr->first, dynamic_cast<AlString *>(itr->second)->str());
-        }
-        ++itr;
-    }
-    return *bundle;
 }
 
 void AlBundle::_put(std::string &key, Object *val) {
@@ -130,13 +103,7 @@ bool AlBundle::put(std::string key, std::string val) {
 }
 
 int32_t AlBundle::get(std::string key, int32_t def) {
-    auto itr = map.find(key);
-    if (map.end() != itr && itr->second) {
-        AlInteger *val = dynamic_cast<AlInteger *>(itr->second);
-        if (val) {
-            return val->value();
-        }
-    }
+    GET_PRI(AlInteger)
     return def;
 }
 
