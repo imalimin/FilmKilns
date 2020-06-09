@@ -7,6 +7,7 @@
 
 #include "AlBundle.h"
 #include "AlString.h"
+#include "AlLogcat.h"
 
 #define PUT_PRI(_pri) \
 if (map.end() != map.find(key)) { \
@@ -23,14 +24,16 @@ if (map.end() != itr && itr->second) { \
   } \
 } \
 
+#define TAG "AlBundle"
 
 AlBundle::AlBundle() : Object() {
 
 }
 
 AlBundle::AlBundle(const AlBundle &o) : Object() {
-    auto itr = map.begin();
-    while (map.end() != itr) {
+    AlLogI(TAG, "AlBundle copy");
+    auto itr = o.map.begin();
+    while (o.map.end() != itr) {
         if (AL_INSTANCE_OF(itr->second, AlInteger *)) {
             put(itr->first, dynamic_cast<AlInteger *>(itr->second)->value());
         } else if (AL_INSTANCE_OF(itr->second, AlLong *)) {
@@ -57,6 +60,34 @@ AlBundle::~AlBundle() {
         ++itr;
     }
     map.clear();
+}
+
+AlBundle &AlBundle::clone() {
+    AlLogI(TAG, "AlBundle clone");
+    static AlBundle *bundle;
+    if (bundle == nullptr) {
+        bundle = new AlBundle();
+    }
+    auto itr = map.begin();
+    while (map.end() != itr) {
+        if (AL_INSTANCE_OF(itr->second, AlInteger *)) {
+            bundle->put(itr->first, dynamic_cast<AlInteger *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlLong *)) {
+            bundle->put(itr->first, dynamic_cast<AlLong *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlFloat *)) {
+            bundle->put(itr->first, dynamic_cast<AlFloat *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlDouble *)) {
+            bundle->put(itr->first, dynamic_cast<AlDouble *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlByte *)) {
+            bundle->put(itr->first, dynamic_cast<AlByte *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlChar *)) {
+            bundle->put(itr->first, dynamic_cast<AlChar *>(itr->second)->value());
+        } else if (AL_INSTANCE_OF(itr->second, AlString *)) {
+            bundle->put(itr->first, dynamic_cast<AlString *>(itr->second)->str());
+        }
+        ++itr;
+    }
+    return *bundle;
 }
 
 void AlBundle::_put(std::string &key, Object *val) {
@@ -94,10 +125,7 @@ bool AlBundle::put(std::string key, char val) {
 }
 
 bool AlBundle::put(std::string key, std::string val) {
-    if (map.end() != map.find(key)) {
-        return false;
-    }
-    _put(key, new AlString(val));
+    PUT_PRI(AlString)
     return true;
 }
 

@@ -35,7 +35,7 @@ AlCodec::~AlCodec() {
 }
 
 HwResult AlCodec::configure(AlBundle &format) {
-    this->format = format;
+    this->format = AlBundle(format);
     return Hw::SUCCESS;
 }
 

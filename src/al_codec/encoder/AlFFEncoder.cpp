@@ -13,7 +13,7 @@
 #include "HwFFCodec.h"
 #include "TimeUtils.h"
 
-#define TAG "HwFFmpegEncoder"
+#define TAG "AlFFEncoder"
 
 AlFFEncoder::AlFFEncoder(const AlAbsEncoder::Desc &desc) : AlAbsVideoEncoder(desc) {
 
@@ -85,6 +85,8 @@ bool AlFFEncoder::initialize() {
     } else {
         AlLogW(TAG, "Without audio track.");
     }
+    AlLogI(TAG, vCodec->getFormat().toString());
+    AlLogI(TAG, aCodec->getFormat().toString());
     muxer = new HwFFMuxer();
     if (Hw::SUCCESS != muxer->configure(path, HwAbsMuxer::TYPE_MP4)) {
         AlLogE(TAG, "failed to configure muxer!");

@@ -81,6 +81,7 @@ int32_t HwFFMuxer::addTrack(AlCodec *codec) {
     if (!codec) {
         return TRACK_NONE;
     }
+    AlLogI(TAG, codec->getFormat().toString());
     AVStream *stream = avformat_new_stream(pFormatCtx, nullptr);
     if (!stream) {
         return TRACK_NONE;

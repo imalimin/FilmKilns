@@ -19,6 +19,8 @@ public:
 
     virtual ~AlBundle();
 
+    AlBundle &clone();
+
     bool put(std::string key, int32_t val);
 
     bool put(std::string key, int64_t val);
