@@ -17,8 +17,6 @@ al_class AlAndroidCodecCompat al_extend AlCodec {
 public:
     friend AlAndroidCodecCompat2;
 
-    static AlBuffer *makeExtraData(AlCodec::kID id, AlBundle &format);
-
 public:
     AlAndroidCodecCompat(AlCodec::kID id);
 
@@ -59,9 +57,7 @@ private:
     static constexpr int CONFIGURE_FLAG_ENCODE = 1;
     AlMediaCodecBridge *bridge = nullptr;
 
-    bool mReqExtraData = true;
     bool isEncodeMode = true;
-    AlBuffer *mExtraData = nullptr;
     HwBuffer *keyFrameBuf = nullptr;
     HwPacket *hwPacket = nullptr;
     HwAbsMediaFrame *outFrame = nullptr;

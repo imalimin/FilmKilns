@@ -38,8 +38,6 @@ class HwAndroidCodec : public AlCodec {
 public:
     static AlCodec *createDecoder(AlCodec::kID id);
 
-    static AlBuffer *makeExtraData(AlCodec::kID id, AlBundle &format);
-
 public:
     HwAndroidCodec(AlCodec::kID id);
 
@@ -70,9 +68,7 @@ private:
     const int BUFFER_FLAG_KEY_FRAME = 1;
     const int BUFFER_FLAG_CODEC_CONFIG = 2;
 
-    bool mReqExtraData = true;
     bool isEncodeMode = true;
-    AlBuffer *mExtraData = nullptr;
     AMediaCodec *codec = nullptr;
     HwBuffer *keyFrameBuf = nullptr;
     HwPacket *hwPacket = nullptr;

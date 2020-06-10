@@ -41,16 +41,10 @@ void AlAndroidCodecCompat::release() {
     hwPacket = nullptr;
     delete outFrame;
     outFrame = nullptr;
-    delete mExtraData;
-    mExtraData = nullptr;
 }
 
 HwResult AlAndroidCodecCompat::configure(AlBundle &format) {
     AlCodec::configure(format);
-    if (isEncodeMode && mReqExtraData) {
-        mExtraData = makeExtraData(getCodecID(), format);
-        getFormat().put(KEY_EXTRA_DATA, (int64_t) mExtraData);
-    }
     int32_t width = format.get(KEY_WIDTH, INT32_MIN);
     int32_t height = format.get(KEY_HEIGHT, INT32_MIN);
     int32_t bitrate = format.get(KEY_BIT_RATE, INT32_MIN);
@@ -158,51 +152,7 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
         }
         case INFO_OUTPUT_FORMAT_CHANGED: {
             AlLogI(TAG, "INFO_OUTPUT_FORMAT_CHANGED");
-            if (isEncodeMode) {
-                auto *buf0 = bridge->getOutputFormatBuffer(KEY_CSD_0);
-                auto *buf1 = bridge->getOutputFormatBuffer(KEY_CSD_1);
-                auto *buf2 = bridge->getOutputFormatBuffer(KEY_CSD_2);
-                auto *buf3 = bridge->getOutputFormatBuffer(KEY_CSD_3);
-                AlObjectGuard guard0(reinterpret_cast<Object **>(&buf0));
-                AlObjectGuard guard1(reinterpret_cast<Object **>(&buf1));
-                AlObjectGuard guard2(reinterpret_cast<Object **>(&buf2));
-                AlObjectGuard guard3(reinterpret_cast<Object **>(&buf3));
-
-                size_t size = 0;
-                if (buf0) {
-                    size += buf0->size();
-                }
-                if (buf1) {
-                    size += buf1->size();
-                }
-                if (buf2) {
-                    size += buf2->size();
-                }
-                if (buf3) {
-                    size += buf3->size();
-                }
-                if (size > 0) {
-                    delete mExtraData;
-                    mExtraData = AlBuffer::alloc(size);
-                }
-
-                if (buf0) {
-                    mExtraData->put(buf0);
-                }
-                if (buf1) {
-                    mExtraData->put(buf1);
-                }
-                if (buf2) {
-                    mExtraData->put(buf2);
-                }
-                if (buf3) {
-                    mExtraData->put(buf3);
-                }
-                AlLogI(TAG, "Got extra data size(%d), remaining(%d)", mExtraData->size(),
-                       mExtraData->remaining());
-                mExtraData->rewind();
-                getFormat().put(AlCodec::KEY_EXTRA_DATA, (int64_t) mExtraData);
-            } else {
+            if (!isEncodeMode) {
                 int width = bridge->getOutputFormatInteger(KEY_WIDTH);
                 int height = bridge->getOutputFormatInteger(KEY_HEIGHT);
                 stride = bridge->getOutputFormatInteger("stride");
@@ -241,11 +191,12 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
         bridge->releaseOutputBuffer(bufIdx, false);
         return Hw::IO_EOF;
     }
-    bool wrote = false;
     if (info.size > 0) {
         if (info.flags & BUFFER_FLAG_CODEC_CONFIG) {
             AlLogI(TAG, "Got extra data(%d)", info.size);
-            wrote = false;
+            memcpy(keyFrameBuf->data(), buf->data(), info.size);
+            hwPacket = HwPacket::wrap(keyFrameBuf->data(), info.size, 0, 0,
+                                      HwPacket::FLAG_CONFIG);
         } else {
             if (isEncodeMode) {
                 if (hwPacket) {
@@ -286,59 +237,8 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
                     }
                 }
             }
-            wrote = true;
         }
     }
     bridge->releaseOutputBuffer(bufIdx, false);
-    return wrote ? Hw::SUCCESS : Hw::FAILED;
-}
-
-AlBuffer *AlAndroidCodecCompat::makeExtraData(AlCodec::kID id, AlBundle &format) {
-    AlBundle bundle = format;
-    AlBuffer *buf = nullptr;
-    auto *codec = new AlAndroidCodecCompat(id);
-    codec->mReqExtraData = false;
-    if (Hw::SUCCESS == codec->configure(bundle)) {
-        int32_t width = format.get(KEY_WIDTH, INT32_MIN);
-        int32_t height = format.get(KEY_HEIGHT, INT32_MIN);
-        HwVideoFrame *frame = new HwVideoFrame(nullptr, HwFrameFormat::HW_IMAGE_YV12,
-                                               width, height);
-        int32_t offset = 0;
-        memset(frame->data() + offset, 0, width * height);
-        offset += width * height;
-        memset(frame->data() + offset, 128, width * height / 4);
-        offset += width * height / 4;
-        memset(frame->data() + offset, 128, width * height / 4);
-        frame->setPts(0);
-
-        bool pushed = false;
-        for (int i = 0; i < 60; ++i) {
-            if (!pushed && Hw::SUCCESS == codec->push(frame->data(), frame->size(), 0)) {
-                pushed = true;
-                if (0 != i) {
-                    AlLogW(TAG, "push index more than 1.");
-                }
-            }
-            if (pushed) {
-                codec->pop(5000);
-                if (codec->getFormat().contains(AlCodec::KEY_EXTRA_DATA)) {
-                    break;
-                }
-            }
-        }
-        delete frame;
-        if (AlCodec::kID::H264 == id && !codec->getFormat().contains(AlCodec::KEY_EXTRA_DATA)) {
-            AlLogE(TAG, "failed.");
-            return nullptr;
-        }
-
-        AlBuffer *extra = reinterpret_cast<AlBuffer *>(codec->getFormat()
-                .get(AlCodec::KEY_EXTRA_DATA, AlLong::ZERO));
-        buf = AlBuffer::alloc(extra->size());
-        buf->put(extra);
-        buf->rewind();
-    }
-    codec->release();
-    delete codec;
-    return buf;
+    return Hw::SUCCESS;
 }

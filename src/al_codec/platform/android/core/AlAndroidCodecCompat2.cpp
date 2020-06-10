@@ -21,10 +21,6 @@ AlAndroidCodecCompat2::~AlAndroidCodecCompat2() {
 
 HwResult AlAndroidCodecCompat2::configure(AlBundle &format) {
     AlCodec::configure(format);
-    if (isEncodeMode) {
-        mExtraData = AlAndroidCodecCompat::makeExtraData(getCodecID(), format);
-        getFormat().put(KEY_EXTRA_DATA, (int64_t) mExtraData);
-    }
     int32_t width = format.get(KEY_WIDTH, INT32_MIN);
     int32_t height = format.get(KEY_HEIGHT, INT32_MIN);
     int32_t bitrate = (int32_t) format.get(KEY_BIT_RATE, INT32_MIN);
