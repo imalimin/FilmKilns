@@ -136,7 +136,7 @@ HwResult HwFFCodec::configure(AlBundle &format) {
             break;
         }
     }
-
+    reqExtraData = true;
     avFrame = av_frame_alloc();
     avPacket = av_packet_alloc();
     if (ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
@@ -297,6 +297,15 @@ HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
             return Hw::FAILED;
     }
     av_packet_unref(avPacket);
+    if(reqExtraData) {
+        if (hwPacket) {
+            delete hwPacket;
+        }
+        hwPacket = HwPacket::wrap(ctx->extradata, ctx->extradata_size, 0, 0, HwPacket::FLAG_CONFIG);
+        *pkt = hwPacket;
+        reqExtraData = false;
+        return Hw::SUCCESS;
+    }
     int ret = avcodec_receive_packet(ctx, avPacket);
     if (AVERROR(EAGAIN) == ret) {
         AlLogE(TAG, "wait(%s)", strerror(AVUNERROR(ret)));

@@ -62,6 +62,7 @@ private:
     HwAudioTranslator *translator = nullptr;
     AlBuffer *mExtraData = nullptr;
     int64_t vLastPts = 0;
+    bool reqExtraData = true;
 };
 
 #endif //HWVC_ANDROID_HWFFCODEC_H

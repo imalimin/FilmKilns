@@ -123,13 +123,14 @@ HwResult AlFFEncoder::write(HwAbsMediaFrame *frame) {
     HwPacket *packet = nullptr;
     if (frame->isAudio() && aCodec && muxer) {
         // Ensure that the first frame is video.
-        if (!firstVideoFrameWrite) {
-            return Hw::FAILED;
-        }
 //        sampleCount += aCodec->getFrameSize();
+        repeatAudio:
         aCodec->process(&frame, &packet);
         if (packet) {
             muxer->write(aTrack, packet);
+            if (packet->getFlags() & HwPacket::FLAG_CONFIG) {
+                goto repeatAudio;
+            }
         }
         return Hw::SUCCESS;
     } else if (frame->isVideo() && vCodec && muxer) {
@@ -144,10 +145,13 @@ HwResult AlFFEncoder::write(HwAbsMediaFrame *frame) {
             }
         }
         lastTime = time;
+        repeatVideo:
         vCodec->process(&frame, &packet);
         if (packet) {
             muxer->write(vTrack, packet);
-            firstVideoFrameWrite = true;
+            if (packet->getFlags() & HwPacket::FLAG_CONFIG) {
+                goto repeatVideo;
+            }
         }
         return Hw::SUCCESS;
     }

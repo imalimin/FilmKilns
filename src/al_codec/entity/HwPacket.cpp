@@ -19,7 +19,9 @@ HwPacket *HwPacket::wrap(AVPacket *pkt) {
 
 HwPacket *HwPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags) {
     HwPacket *p = new HwPacket();
-    p->buf = HwBuffer::wrap(buf, size);
+    if (buf && size > 0) {
+        p->buf = HwBuffer::wrap(buf, size);
+    }
     p->pts = pts;
     p->dts = dts;
     p->duration = 1;
@@ -76,3 +78,7 @@ int64_t HwPacket::getDts() { return dts; }
 int64_t HwPacket::getDuration() { return duration; }
 
 void HwPacket::setDuration(int64_t duration) { this->duration = duration; }
+
+int32_t HwPacket::getFlags() {
+    return flags;
+}

@@ -19,7 +19,7 @@ HwFFMuxer::~HwFFMuxer() {
 
 void HwFFMuxer::release() {
     if (pFormatCtx) {
-        if (started && 0 == av_write_trailer(pFormatCtx)) {
+        if (state >= kState::CONFIGURED && 0 == av_write_trailer(pFormatCtx)) {
             AlLogI(TAG, "close file success.");
         } else {
             AlLogE(TAG, "close file failed!");
@@ -33,7 +33,8 @@ void HwFFMuxer::release() {
         pFormatCtx = nullptr;
     }
     tracks.clear();
-    started = false;
+    state = kState::IDL;
+    AlLogI(TAG, "enter state IDL");
 }
 
 HwResult HwFFMuxer::configure(string filePath, string type) {
@@ -50,18 +51,12 @@ HwResult HwFFMuxer::configure(string filePath, string type) {
 }
 
 HwResult HwFFMuxer::start() {
-    if (avio_open2(&pFormatCtx->pb, filePath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
-        AlLogE(TAG, "failed to open output file!");
-        release();
-        return Hw::FAILED;
+    mTrackConfigured.resize(tracks.size());
+    for (int i = 0; i < mTrackConfigured.size(); ++i) {
+        mTrackConfigured[i] = false;
     }
-    int ret = avformat_write_header(pFormatCtx, nullptr);
-    if (ret < 0) {
-        AlLogE(TAG, "failed to write header, %s", strerror(AVUNERROR(ret)));
-        release();
-        return Hw::FAILED;
-    }
-    started = true;
+    state = kState::CONFIGURED;
+    AlLogI(TAG, "enter state CONFIGURED");
     return Hw::SUCCESS;
 }
 
@@ -117,35 +112,59 @@ int32_t HwFFMuxer::addTrack(AlBundle &format) {
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
 //        stream->time_base = {1, format.get(HwAbsCodec::KEY_FPS, INT32_MIN)};
     }
-    copyExtraData(stream, format);
     tracks.push_back(stream);
     return tracks.empty() ? TRACK_NONE : tracks.size() - 1;
 }
 
-bool HwFFMuxer::copyExtraData(AVStream *stream, AlBundle &format) {
-    AlBuffer *buf = reinterpret_cast<AlBuffer *>(format.get(AlCodec::KEY_EXTRA_DATA, AlLong::ZERO));
-    if (buf && buf->size() > 0) {
-        buf->rewind();
-        stream->codecpar->extradata_size = static_cast<int>(buf->remaining());
-        stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(buf->remaining()));
-        buf->get(stream->codecpar->extradata, buf->remaining());
-        AlLogI(TAG, "Copy extra data size(%d)", buf->remaining());
-//                FILE *fp = fopen("/sdcard/extra.data", "wb");
-//                fwrite(stream->codecpar->extradata, 1, stream->codecpar->extradata_size, fp);
-//                fclose(fp);
-    } else {
-        if (AV_CODEC_ID_H264 == stream->codecpar->codec_id ||
-            AV_CODEC_ID_AAC_LATM == stream->codecpar->codec_id ||
-            AV_CODEC_ID_AAC == stream->codecpar->codec_id) {
-            assert(false);
-        }
+bool HwFFMuxer::_configure(int32_t track, HwPacket *pkt) {
+    AVStream *stream = tracks[track];
+    if (nullptr == stream || nullptr == pkt) {
         return false;
+    }
+    /// 有些Codec可能不需要extra data，所以不需要copy，仅仅作为一个标记即可
+    if (pkt->size() > 0) {
+        stream->codecpar->extradata_size = static_cast<int>(pkt->size());
+        stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(pkt->size()));
+        memcpy(stream->codecpar->extradata, pkt->data(), stream->codecpar->extradata_size);
+    }
+    AlLogI(TAG, "track(%d), extra data size(%d)", stream->index, stream->codecpar->extradata_size);
+    mTrackConfigured[track] = true;
+    for (int i = 0; i < mTrackConfigured.size(); ++i) {
+        if (!mTrackConfigured[i]) {
+            break;
+        }
+        if (mTrackConfigured[i] && i == mTrackConfigured.size() - 1) {
+            if (avio_open2(&pFormatCtx->pb, filePath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
+                AlLogE(TAG, "failed to open output file!");
+                release();
+                return false;
+            }
+            int ret = avformat_write_header(pFormatCtx, nullptr);
+            if (ret < 0) {
+                AlLogE(TAG, "failed to write header, %s", strerror(AVUNERROR(ret)));
+                release();
+                return false;
+            }
+            state = kState::RUNNING;
+            AlLogI(TAG, "enter state RUNNING");
+        }
     }
     return true;
 }
 
 HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
-    if (!started || !pkt || track > tracks.size() - 1 || !pFormatCtx) {
+    if (track > tracks.size() - 1 ||
+        track <= TRACK_NONE || nullptr == pkt) {
+        return Hw::FAILED;
+    }
+    if (kState::CONFIGURED == state && pkt->getFlags() & HwPacket::FLAG_CONFIG) {
+        HwResult ret = Hw::FAILED;
+        if (_configure(track, pkt)) {
+            ret = Hw::SUCCESS;
+        }
+        return ret;
+    }
+    if (kState::RUNNING != state) {
         return Hw::FAILED;
     }
     pkt->ref(&avPacket);
@@ -154,8 +173,8 @@ HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
     // pts / cq * bq
     av_packet_rescale_ts(avPacket, AV_TIME_BASE_Q, tb);
     if (tracks[track]->cur_dts >= avPacket->dts) {
-        AlLogE(TAG, "will failed cur_dts(%lld), dts(%lld), idx(%d)), try reset correctly.",
-               tracks[track]->cur_dts, avPacket->dts, avPacket->stream_index);
+        AlLogE(TAG, "will failed cur_dts(%lld), pts(%lld), dts(%lld), idx(%d)), try reset correctly.",
+               tracks[track]->cur_dts, avPacket->pts, avPacket->dts, avPacket->stream_index);
         avPacket->dts += 1;
     }
     int ret = av_interleaved_write_frame(pFormatCtx, avPacket);

@@ -27,6 +27,15 @@ extern "C" {
  */
 class HwPacket : public Object {
 public:
+    /// Same with AV_PKT_FLAG_KEY/AV_PKT_FLAG_CORRUPT...
+    static constexpr int32_t FLAG_KEY = 0x0001;
+    static constexpr int32_t FLAG_CORRUPT = 0x0002;
+    static constexpr int32_t FLAG_DISCARD = 0x0004;
+    static constexpr int32_t FLAG_TRUSTED = 0x0008;
+    static constexpr int32_t FLAG_DISPOSABLE = 0x0010;
+    static constexpr int32_t FLAG_CONFIG = 0x0020;
+
+public:
     static HwPacket *wrap(AVPacket *pkt);
 
     static HwPacket *wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);
@@ -49,6 +58,8 @@ public:
     void setDuration(int64_t duration);
 
     bool ref(AVPacket **pkt);
+
+    int32_t getFlags();
 
 private:
     HwPacket();

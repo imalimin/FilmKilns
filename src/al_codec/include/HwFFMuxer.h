@@ -25,6 +25,12 @@ extern "C" {
 #endif
 
 class HwFFMuxer : public HwAbsMuxer {
+private:
+    enum class kState : int {
+        IDL = 0,
+        CONFIGURED,
+        RUNNING
+    };
 public:
     HwFFMuxer();
 
@@ -44,16 +50,17 @@ public:
 private:
     void release();
 
-    bool copyExtraData(AVStream *stream, AlBundle &format);
+    bool _configure(int32_t track, HwPacket *pkt);
 
     void setInt32Parameter(int32_t &param, int32_t value);
 
     void setInt64Parameter(int64_t &param, int64_t value);
 
 private:
-    bool started = false;
+    kState state = kState::IDL;
     AVFormatContext *pFormatCtx = nullptr;
-    vector<AVStream *> tracks;
+    std::vector<AVStream *> tracks;
+    std::vector<bool> mTrackConfigured;
     AVPacket *avPacket = nullptr;
 };
 
