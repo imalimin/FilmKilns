@@ -82,3 +82,38 @@ void HwPacket::setDuration(int64_t duration) { this->duration = duration; }
 int32_t HwPacket::getFlags() {
     return flags;
 }
+
+std::string HwPacket::getFlagsStr() {
+    std::string str;
+    if(flags & FLAG_CONFIG) {
+        str.append("C");
+    } else {
+        str.append("_");
+    }
+    if(flags & FLAG_DISPOSABLE) {
+        str.append("D");
+    } else {
+        str.append("_");
+    }
+    if(flags & FLAG_TRUSTED) {
+        str.append("T");
+    } else {
+        str.append("_");
+    }
+    if(flags & FLAG_DISCARD) {
+        str.append("D");
+    } else {
+        str.append("_");
+    }
+    if(flags & FLAG_CORRUPT) {
+        str.append("T");
+    } else {
+        str.append("_");
+    }
+    if(flags & FLAG_KEY) {
+        str.append("K");
+    } else {
+        str.append("_");
+    }
+    return str;
+}

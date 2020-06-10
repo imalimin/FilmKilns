@@ -61,6 +61,8 @@ public:
 
     int32_t getFlags();
 
+    std::string getFlagsStr();
+
 private:
     HwPacket();
 

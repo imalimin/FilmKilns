@@ -240,6 +240,7 @@ void HwFFCodec::flush() {
 }
 
 HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
+    *pkt = nullptr;
     int64_t duration = 1;
     switch (ctx->codec_type) {
         case AVMEDIA_TYPE_VIDEO: {

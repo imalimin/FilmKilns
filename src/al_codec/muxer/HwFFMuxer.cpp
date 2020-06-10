@@ -134,7 +134,8 @@ bool HwFFMuxer::_configure(int32_t track, HwPacket *pkt) {
             break;
         }
         if (mTrackConfigured[i] && i == mTrackConfigured.size() - 1) {
-            if (avio_open2(&pFormatCtx->pb, filePath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) < 0) {
+            if (avio_open2(&pFormatCtx->pb, filePath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) <
+                0) {
                 AlLogE(TAG, "failed to open output file!");
                 release();
                 return false;
@@ -173,8 +174,10 @@ HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
     // pts / cq * bq
     av_packet_rescale_ts(avPacket, AV_TIME_BASE_Q, tb);
     if (tracks[track]->cur_dts >= avPacket->dts) {
-        AlLogE(TAG, "will failed cur_dts(%lld), pts(%lld), dts(%lld), idx(%d)), try reset correctly.",
-               tracks[track]->cur_dts, avPacket->pts, avPacket->dts, avPacket->stream_index);
+        AlLogE(TAG,
+               "will failed cur_dts(%lld), pts(%lld), dts(%lld), idx(%d), flags(%s), try reset correctly.",
+               tracks[track]->cur_dts, avPacket->pts, avPacket->dts, avPacket->stream_index,
+               pkt->getFlagsStr().c_str());
         avPacket->dts += 1;
     }
     int ret = av_interleaved_write_frame(pFormatCtx, avPacket);
