@@ -3,31 +3,26 @@ project(al_codec LANGUAGES C CXX)
 set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared")
 set(FFMPEG ${PREBUILD_SHARED}/ffmpeg)
 set(YUV ${PREBUILD_SHARED}/yuv)
+
+set(INCLUDES
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/../al_common
+        ${PROJECT_SOURCE_DIR}/../al_common/include
+        ${PROJECT_SOURCE_DIR}/../al_graphic/include
+        ${PROJECT_SOURCE_DIR}/../al_image/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
+        ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/ffmpeg/include
+        ${YUV}/include
+        )
 if (ANDROID)
-    include_directories(
-            ${PROJECT_SOURCE_DIR}
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../al_common
-            ${PROJECT_SOURCE_DIR}/../al_common/include
-            ${PROJECT_SOURCE_DIR}/../al_graphic/include
-            ${PROJECT_SOURCE_DIR}/../al_image/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
-            ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/ffmpeg/include
-            ${YUV}/include
+    set(INCLUDES
+            ${INCLUDES}
             # android
             ${CMAKE_CURRENT_SOURCE_DIR}/platform/android/encoder
-    )
-else ()
-    include_directories(
-            ${PROJECT_SOURCE_DIR}
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../al_common/include
-            ${PROJECT_SOURCE_DIR}/../al_graphic/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/include/x264
-            ${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared/ffmpeg/include
-            ${YUV}/include
-    )
-endif ()
+            )
+endif (ANDROID)
+include_directories(${INCLUDES})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
@@ -66,108 +61,64 @@ message(STATUS "al_codec CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 #        PROPERTIES IMPORTED_LOCATION
 #        "${PREBUILD_STATIC}/libx264.a")
 
-add_library(
-        hwffmpeg
-        SHARED
-        IMPORTED)
-set_target_properties(
-        hwffmpeg
-        PROPERTIES IMPORTED_LOCATION
+add_library(hwffmpeg SHARED IMPORTED)
+set_target_properties(hwffmpeg PROPERTIES IMPORTED_LOCATION
         "${FFMPEG}/libs/${ANDROID_ABI}/libhwffmpeg.so")
 
-add_library(
-        yuv
-        SHARED
-        IMPORTED)
-set_target_properties(
-        yuv
-        PROPERTIES IMPORTED_LOCATION
+add_library(yuv SHARED IMPORTED)
+set_target_properties(yuv PROPERTIES IMPORTED_LOCATION
         "${YUV}/libs/${ANDROID_ABI}/libyuv.so")
 
 #------------------SHARED END----------------------
 
+file(GLOB SOURCES
+        ${PROJECT_SOURCE_DIR}/*.cpp
+        ${PROJECT_SOURCE_DIR}/decoder/*.cpp
+        ${PROJECT_SOURCE_DIR}/encoder/*.cpp
+        ${PROJECT_SOURCE_DIR}/entity/*.cpp
+        ${PROJECT_SOURCE_DIR}/utils/*.cpp
+        ${PROJECT_SOURCE_DIR}/sources/*.cpp
+        ${PROJECT_SOURCE_DIR}/processor/*.cpp
+        ${PROJECT_SOURCE_DIR}/units/*.cpp
+        ${PROJECT_SOURCE_DIR}/translator/*.cpp
+        ${PROJECT_SOURCE_DIR}/muxer/*.cpp
+        ${PROJECT_SOURCE_DIR}/core/*.cpp
+        #fftools
+        ${PROJECT_SOURCE_DIR}/utils/fftools/*.c
+        #Header
+        ${PROJECT_SOURCE_DIR}/include/*.h
+        )
 if (ANDROID)
-    file(
-            GLOB
-            SOURCES
-            # common
-            ${PROJECT_SOURCE_DIR}/*cpp
-            ${PROJECT_SOURCE_DIR}/decoder/*.cpp
-            ${PROJECT_SOURCE_DIR}/encoder/*.cpp
-            ${PROJECT_SOURCE_DIR}/entity/*.cpp
-            ${PROJECT_SOURCE_DIR}/utils/*.cpp
-            ${PROJECT_SOURCE_DIR}/sources/*.cpp
-            ${PROJECT_SOURCE_DIR}/processor/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/*.cpp
-            ${PROJECT_SOURCE_DIR}/translator/*.cpp
-            ${PROJECT_SOURCE_DIR}/muxer/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/*.cpp
-            #fftools
-            ${PROJECT_SOURCE_DIR}/utils/fftools/*.c
-            #Header
-            ${PROJECT_SOURCE_DIR}/include/*.h
-            # android
+    file(GLOB
+            SOURCES_ANDROID
             ${PROJECT_SOURCE_DIR}/platform/android/decoder/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/encoder/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/core/*.cpp
-    )
-else ()
-    file(
-            GLOB
-            SOURCES
-            ${PROJECT_SOURCE_DIR}/*cpp
-            ${PROJECT_SOURCE_DIR}/decoder/*.cpp
-            ${PROJECT_SOURCE_DIR}/encoder/*.cpp
-            ${PROJECT_SOURCE_DIR}/entity/*.cpp
-            ${PROJECT_SOURCE_DIR}/utils/*.cpp
-            ${PROJECT_SOURCE_DIR}/sources/*.cpp
-            ${PROJECT_SOURCE_DIR}/processor/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/*.cpp
-            ${PROJECT_SOURCE_DIR}/translator/*.cpp
-            ${PROJECT_SOURCE_DIR}/muxer/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/*.cpp
-            #fftools
-            ${PROJECT_SOURCE_DIR}/utils/fftools/*.c
-    )
-endif ()
+            )
+    set(SOURCES
+            ${SOURCES}
+            ${SOURCES_ANDROID}
+            )
+endif (ANDROID)
 
-add_library( # Sets the name of the library.
+add_library(al_codec SHARED ${SOURCES})
+
+set(MODULES
         al_codec
-
-        # Sets the library as a shared library.
-        SHARED
-
-        # Provides a relative path to your source file(s).
-        ${SOURCES}
+        al_common
+        al_graphic
+        al_image
+        hwffmpeg
+        yuv
         )
-
 if (ANDROID)
-    find_library( # Sets the name of the path variable.
-            log-lib
-
-            # Specifies the name of the NDK library that
-            # you want CMake to locate.
-            log)
-
-    target_link_libraries( # Specifies the target library.
-            al_codec
-            al_common
-            al_graphic
-            al_image
-            hwffmpeg
-            yuv
+    find_library(log-lib log)
+    set(MODULES
+            ${MODULES}
             mediandk
             OpenMAXAL
             android
-            # Links the target library to the log library
-            # included in the NDK.
-            ${log-lib})
-else ()
-    target_link_libraries( # Specifies the target library.
-            al_codec
-            al_common
-            al_graphic
-            al_image
-            hwffmpeg
-            yuv)
-endif ()
+            ${log-lib}
+            )
+endif (ANDROID)
+target_link_libraries(${MODULES})
