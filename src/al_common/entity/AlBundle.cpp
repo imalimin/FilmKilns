@@ -56,7 +56,6 @@ AlBundle::AlBundle(const AlBundle &o) : Object() {
 }
 
 AlBundle::~AlBundle() {
-    AlLogI(TAG, "%s", toString().c_str());
     auto itr = map.begin();
     while (map.end() != itr) {
         delete *(itr->second.release());
