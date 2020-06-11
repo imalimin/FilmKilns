@@ -8,7 +8,7 @@
 #include "AlLogcat.h"
 
 void AlLogcat::v(const string &TAG, const string fmt, ...) {
-#ifdef HWDEBUG
+#ifdef __AL_DEBUG__
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -21,7 +21,7 @@ void AlLogcat::v(const string &TAG, const string fmt, ...) {
 }
 
 void AlLogcat::d(const string &TAG, const string fmt, ...) {
-#ifdef HWDEBUG
+#ifdef __AL_DEBUG__
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -34,7 +34,7 @@ void AlLogcat::d(const string &TAG, const string fmt, ...) {
 }
 
 void AlLogcat::i(const string &TAG, const string fmt, ...) {
-#ifdef HWDEBUG
+#ifdef __AL_DEBUG__
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -47,7 +47,7 @@ void AlLogcat::i(const string &TAG, const string fmt, ...) {
 }
 
 void AlLogcat::e(const string &TAG, const string fmt, ...) {
-#ifdef HWDEBUG
+#ifdef __AL_DEBUG__
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -60,7 +60,7 @@ void AlLogcat::e(const string &TAG, const string fmt, ...) {
 }
 
 void AlLogcat::w(const string &TAG, const string fmt, ...) {
-#ifdef HWDEBUG
+#ifdef __AL_DEBUG__
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID

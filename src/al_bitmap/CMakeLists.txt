@@ -1,12 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(al_bitmap LANGUAGES C CXX)
 
-option(HWDEBUG "Whether show opengl logs." ON)
-if (HWDEBUG)
-    add_definitions(-DHWDEBUG)
-    message(STATUS "Show debug logs。")
-endif ()
-
 set(PREBUILD_STATIC ${PROJECT_SOURCE_DIR}/prebuild/static)
 set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
 set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
