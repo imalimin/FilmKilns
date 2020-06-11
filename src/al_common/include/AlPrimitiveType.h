@@ -10,6 +10,7 @@
 
 #include "Object.h"
 #include "StringUtils.h"
+#include "AlLogcat.h"
 
 template<typename T>
 AL_CLASS AlPrimitiveType AL_EXTEND Object {
@@ -83,7 +84,7 @@ public:
     }
 
     virtual ~AlInteger() {
-
+        AlLogI("AlInteger", "");
     }
 };
 

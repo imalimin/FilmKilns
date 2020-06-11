@@ -54,10 +54,7 @@ public:
     virtual std::string toString() override;
 
 private:
-    void _put(std::string &key, Object *val);
-
-private:
-    std::map<std::string, Object *> map;
+    std::map<std::string, std::unique_ptr<Object *>> map;
 };
 
 

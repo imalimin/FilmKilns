@@ -12,15 +12,16 @@
 #define PUT_PRI(_pri) \
 auto itr = map.find(key); \
 if (map.end() != itr) { \
-  delete itr->second; \
+  delete *(itr->second.release()); \
   map.erase(itr); \
 } \
-_put(key, new _pri(val)); \
+auto ptr = std::make_unique<Object *>(new _pri(val)); \
+map.insert(make_pair(key, std::move(ptr))); \
 
 #define GET_PRI(_pri) \
 auto itr = map.find(key); \
 if (map.end() != itr && itr->second) { \
-  _pri *val = dynamic_cast<_pri *>(itr->second); \
+  _pri *val = dynamic_cast<_pri *>(*itr->second); \
   if (val) { \
     return val->value(); \
   } \
@@ -29,42 +30,39 @@ if (map.end() != itr && itr->second) { \
 #define TAG "AlBundle"
 
 AlBundle::AlBundle() : Object() {
-
 }
 
 AlBundle::AlBundle(const AlBundle &o) : Object() {
     auto itr = o.map.begin();
     while (o.map.end() != itr) {
-        if (AL_INSTANCE_OF(itr->second, AlInteger *)) {
-            put(itr->first, dynamic_cast<AlInteger *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlLong *)) {
-            put(itr->first, dynamic_cast<AlLong *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlFloat *)) {
-            put(itr->first, dynamic_cast<AlFloat *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlDouble *)) {
-            put(itr->first, dynamic_cast<AlDouble *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlByte *)) {
-            put(itr->first, dynamic_cast<AlByte *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlChar *)) {
-            put(itr->first, dynamic_cast<AlChar *>(itr->second)->value());
-        } else if (AL_INSTANCE_OF(itr->second, AlString *)) {
-            put(itr->first, dynamic_cast<AlString *>(itr->second)->str());
+        Object *obj = *itr->second;
+        if (AL_INSTANCE_OF(obj, AlInteger *)) {
+            put(itr->first, dynamic_cast<AlInteger *>(obj)->value());
+        } else if (AL_INSTANCE_OF(obj, AlLong *)) {
+            put(itr->first, dynamic_cast<AlLong *>(obj)->value());
+        } else if (AL_INSTANCE_OF(obj, AlFloat *)) {
+            put(itr->first, dynamic_cast<AlFloat *>(obj)->value());
+        } else if (AL_INSTANCE_OF(obj, AlDouble *)) {
+            put(itr->first, dynamic_cast<AlDouble *>(obj)->value());
+        } else if (AL_INSTANCE_OF(obj, AlByte *)) {
+            put(itr->first, dynamic_cast<AlByte *>(obj)->value());
+        } else if (AL_INSTANCE_OF(obj, AlChar *)) {
+            put(itr->first, dynamic_cast<AlChar *>(obj)->value());
+        } else if (AL_INSTANCE_OF(obj, AlString *)) {
+            put(itr->first, dynamic_cast<AlString *>(obj)->str());
         }
         ++itr;
     }
 }
 
 AlBundle::~AlBundle() {
+    AlLogI(TAG, "%s", toString().c_str());
     auto itr = map.begin();
     while (map.end() != itr) {
-        delete itr->second;
+        delete *(itr->second.release());
         ++itr;
     }
     map.clear();
-}
-
-void AlBundle::_put(std::string &key, Object *val) {
-    map.insert(make_pair(key, val));
 }
 
 bool AlBundle::put(std::string key, int32_t val) {
@@ -135,7 +133,7 @@ char AlBundle::get(std::string key, char def) {
 std::string AlBundle::get(std::string key, std::string def) {
     auto itr = map.find(key);
     if (map.end() != itr && itr->second) {
-        AlString *val = dynamic_cast<AlString *>(itr->second);
+        AlString *val = dynamic_cast<AlString *>(*itr->second);
         if (val) {
             return val->str();
         }
@@ -146,7 +144,7 @@ std::string AlBundle::get(std::string key, std::string def) {
 void AlBundle::remove(std::string key) {
     auto itr = map.find(key);
     if (map.end() != itr) {
-        delete itr->second;
+        delete *(itr->second.release());
         map.erase(itr);
     }
 }
@@ -163,7 +161,7 @@ std::string AlBundle::toString() {
         sb.append("\"");
         sb.append(itr->first);
         sb.append("\":");
-        sb.append(itr->second->toString());
+        sb.append((*itr->second)->toString());
         sb.append(", ");
         ++itr;
     }
