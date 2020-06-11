@@ -175,8 +175,8 @@ HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
     av_packet_rescale_ts(avPacket, AV_TIME_BASE_Q, tb);
     if (tracks[track]->cur_dts >= avPacket->dts) {
         AlLogE(TAG,
-               "will failed cur_dts(%lld), pts(%lld), dts(%lld), idx(%d), flags(%s), try reset correctly.",
-               tracks[track]->cur_dts, avPacket->pts, avPacket->dts, avPacket->stream_index,
+               "will failed track(%d) cur_dts(%lld), pts(%lld), dts(%lld), idx(%d), flags(%s), try reset correctly.",
+               track, tracks[track]->cur_dts, avPacket->pts, avPacket->dts, avPacket->stream_index,
                pkt->getFlagsStr().c_str());
         avPacket->dts += 1;
     }
