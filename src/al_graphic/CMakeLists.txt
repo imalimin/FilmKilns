@@ -1,24 +1,23 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(al_graphic LANGUAGES C CXX)
+
+set(INCLUDES
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/../al_common/include
+        ${PROJECT_SOURCE_DIR}/../al_bitmap/include
+        )
 if (ANDROID)
-    include_directories(
-            ${PROJECT_SOURCE_DIR}
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../al_common/include
-            ${PROJECT_SOURCE_DIR}/../al_bitmap/include
+    set(INCLUDES
+            ${INCLUDES}
             ${PROJECT_SOURCE_DIR}/platform/android
             ${PROJECT_SOURCE_DIR}/platform/android/buffer
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/loader
             ${PROJECT_SOURCE_DIR}/platform/android/entity
-    )
-else ()
-    include_directories(
-            ${PROJECT_SOURCE_DIR}
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../al_common/include
-            ${PROJECT_SOURCE_DIR}/../al_bitmap/include
-    )
-endif ()
+            )
+endif (ANDROID)
+include_directories(${INCLUDES})
+
 option(GL_DEBUG "Whether show opengl logs." ON)
 if (GL_DEBUG)
     add_definitions(-DGL_DEBUG)
@@ -57,23 +56,25 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "al_render CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
+file(GLOB SOURCES
+        ${PROJECT_SOURCE_DIR}/*.cpp
+        ${PROJECT_SOURCE_DIR}/entity/*.cpp
+        ${PROJECT_SOURCE_DIR}/filter/*.cpp
+        ${PROJECT_SOURCE_DIR}/drawer/*.cpp
+        ${PROJECT_SOURCE_DIR}/egl/*.cpp
+        ${PROJECT_SOURCE_DIR}/units/*.cpp
+        ${PROJECT_SOURCE_DIR}/units/image/*.cpp
+        ${PROJECT_SOURCE_DIR}/processor/*.cpp
+        ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
+        ${PROJECT_SOURCE_DIR}/platform/*.cpp
+        ${PROJECT_SOURCE_DIR}/sources/*.cpp
+        ${PROJECT_SOURCE_DIR}/core/*.cpp
+        #Header
+        ${PROJECT_SOURCE_DIR}/include/*.h
+        )
 if (ANDROID)
-    message(STATUS "hwrender android platform.")
-    file(
-            GLOB
-            SOURCES
-            ${PROJECT_SOURCE_DIR}/*.cpp
-            ${PROJECT_SOURCE_DIR}/entity/*.cpp
-            ${PROJECT_SOURCE_DIR}/filter/*.cpp
-            ${PROJECT_SOURCE_DIR}/drawer/*.cpp
-            ${PROJECT_SOURCE_DIR}/egl/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/image/*.cpp
-            ${PROJECT_SOURCE_DIR}/processor/*.cpp
-            ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/platform/*.cpp
-            ${PROJECT_SOURCE_DIR}/sources/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/*.cpp
+    file(GLOB
+            SOURCES_ANDROID
             # Android platform
             ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
             ${PROJECT_SOURCE_DIR}/platform/android/buffer/*.cpp
@@ -82,63 +83,29 @@ if (ANDROID)
             ${PROJECT_SOURCE_DIR}/texture/HwAbsFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwFrameBuffer.cpp
             ${PROJECT_SOURCE_DIR}/texture/HwAndroidFrameBuffer.cpp
-            #Header
-            ${PROJECT_SOURCE_DIR}/include/*.h
-    )
-else ()
-    # TODO other platform
-    message(STATUS "hwrender IOS platform.")
-    file(
-            GLOB
-            SOURCES
-            ${PROJECT_SOURCE_DIR}/*.cpp
-            ${PROJECT_SOURCE_DIR}/entity/*.cpp
-            ${PROJECT_SOURCE_DIR}/filter/*.cpp
-            ${PROJECT_SOURCE_DIR}/drawer/*.cpp
-            ${PROJECT_SOURCE_DIR}/egl/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/image/*.cpp
-            ${PROJECT_SOURCE_DIR}/processor/*.cpp
-            ${PROJECT_SOURCE_DIR}/processor/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/platform/*.cpp
-            ${PROJECT_SOURCE_DIR}/sources/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/*.cpp
-    )
-endif ()
-message(STATUS "${SOURCES}")
-add_library( # Sets the name of the library.
+            )
+    set(SOURCES
+            ${SOURCES}
+            ${SOURCES_ANDROID}
+            )
+endif (ANDROID)
+
+add_library(al_graphic SHARED ${SOURCES})
+
+set(MODULES
         al_graphic
-
-        # Sets the library as a shared library.
-        SHARED
-
-        # Provides a relative path to your source file(s).
-        ${SOURCES}
+        al_bitmap
+        al_common
         )
 
 if (ANDROID)
-    find_library( # Sets the name of the path variable.
-            log-lib
-
-            # Specifies the name of the NDK library that
-            # you want CMake to locate.
-            log)
-    target_link_libraries( # Specifies the target library.
-            al_graphic
-            al_bitmap
-            al_common
-            # Links the target library to the log library
-            # included in the NDK.
-            #        GLESv1_CM
+    find_library(log-lib log)
+    set(MODULES
+            ${MODULES}
             GLESv2
             EGL
             android
             jnigraphics
-            ${log-lib})
-else ()
-    # TODO other platform
-    target_link_libraries( # Specifies the target library.
-            al_graphic
-            al_bitmap
-            al_common)
-endif ()
+            )
+endif (ANDROID)
+target_link_libraries(${MODULES})

@@ -5,13 +5,17 @@ set(PREBUILD_STATIC ${PROJECT_SOURCE_DIR}/prebuild/static)
 set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
 set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 
-# 引入cpufeatures模块
-include_directories(
+set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/../glm
-)
+        )
+if (ENABLE_GLM)
+    set(INCLUDES ${INCLUDES}
+            ${PROJECT_SOURCE_DIR}/../glm
+            )
+endif (ENABLE_GLM)
+include_directories(${INCLUDES})
 
 #include_directories(
 #        ${PREBUILD_STATIC}/libturbojpeg/include
@@ -45,9 +49,7 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "al_common CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
-file(
-        GLOB
-        SOURCES
+file(GLOB SOURCES
         ${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c
         ${PROJECT_SOURCE_DIR}/*.cpp
         ${PROJECT_SOURCE_DIR}/entity/*.cpp
@@ -63,7 +65,7 @@ file(
         ${PROJECT_SOURCE_DIR}/platform/android/*.cpp
         #Header
         ${PROJECT_SOURCE_DIR}/include/*.h
-)
+        )
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
     add_definitions("-DHAVE_NEON=1")
@@ -75,11 +77,7 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
                    -Wno-static-in-inline")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
-add_library(
-        al_common
-        SHARED
-        ${SOURCES}
-)
+add_library(al_common SHARED ${SOURCES})
 
 find_library(
         log-lib
@@ -90,8 +88,8 @@ find_library(
         zlib
         z)
 
-set(SRC_LIBS al_common OpenSLES ${zlib} ${log-lib})
+set(MODULES al_common OpenSLES ${zlib} ${log-lib})
 if (ENABLE_GLM)
-    set(SRC_LIBS ${SRC_LIBS} glm)
+    set(SRC_LIBS ${MODULES} glm)
 endif (ENABLE_GLM)
-target_link_libraries(${SRC_LIBS})
+target_link_libraries(${MODULES})

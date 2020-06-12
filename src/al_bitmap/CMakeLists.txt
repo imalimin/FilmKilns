@@ -6,14 +6,15 @@ set(JPGE ${PREBUILD_STATIC}/libturbojpeg/libs/${ANDROID_ABI})
 set(PNG ${PREBUILD_STATIC}/libpng/libs/${ANDROID_ABI})
 set(WEBP ${PREBUILD_STATIC}/libwebp/libs/${ANDROID_ABI})
 
-include_directories(
+set(INCLUDES
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../al_common/include
         ${PREBUILD_STATIC}/libturbojpeg/include
         ${PREBUILD_STATIC}/libpng/include
         ${PREBUILD_STATIC}/libwebp/include
-)
+        )
+include_directories(${INCLUDES})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
@@ -85,36 +86,24 @@ set_target_properties(
 
 #------------------STATIC END----------------------
 
-file(
-        GLOB
-        SOURCES
+file(GLOB SOURCES
         ${PROJECT_SOURCE_DIR}/core/*.cpp
         ${PROJECT_SOURCE_DIR}/image/*.cpp
         #Header
         ${PROJECT_SOURCE_DIR}/include/*.h
 )
-
-add_library(
-        al_bitmap
-        SHARED
-        ${SOURCES}
-)
+add_library(al_bitmap SHARED ${SOURCES})
 
 find_library(
         log-lib
         log)
 
-# libpng需要zlib依赖
-find_library(
-        zlib
-        z)
-
-target_link_libraries(
+set(MODULES
         al_bitmap
         al_common
-        #        libjpeg
         libturbojpeg
         libpng16
         libwebp
         ${log-lib}
-)
+        )
+target_link_libraries(${MODULES})

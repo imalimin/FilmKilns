@@ -1,21 +1,14 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(al_image LANGUAGES C CXX)
-if (ANDROID)
-    include_directories(
-            ${PROJECT_SOURCE_DIR}
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../al_common/include
-            ${PROJECT_SOURCE_DIR}/../al_graphic/include
-            ${PROJECT_SOURCE_DIR}/../al_bitmap/include
-    )
-else ()
-    include_directories(
-            ${PROJECT_SOURCE_DIR}/include
-            ${PROJECT_SOURCE_DIR}/../al_common/include
-            ${PROJECT_SOURCE_DIR}/../al_graphic/include
-            ${PROJECT_SOURCE_DIR}/../al_bitmap/include
-    )
-endif ()
+set(INCLUDES
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/../al_common/include
+        ${PROJECT_SOURCE_DIR}/../al_graphic/include
+        ${PROJECT_SOURCE_DIR}/../al_bitmap/include
+        )
+include_directories(${INCLUDES})
+
 option(ENABLE_CROP_DEBUG "Enable layer crop debug." OFF)
 if (ENABLE_CROP_DEBUG)
     add_definitions(-DENABLE_CROP_DEBUG)
@@ -48,61 +41,33 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "al_render CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
-if (ANDROID)
-    message(STATUS "hwrender android platform.")
-    file(
-            GLOB
-            SOURCES
-            ${PROJECT_SOURCE_DIR}/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/file/*.cpp
-            ${PROJECT_SOURCE_DIR}/drawer/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/action/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/entity/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/graph/*.cpp
-            #Header
-            ${PROJECT_SOURCE_DIR}/include/*.h
-    )
-else ()
-    #TODO other platform
-    file(
-            GLOB
-            SOURCES
-            ${PROJECT_SOURCE_DIR}/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/*.cpp
-            ${PROJECT_SOURCE_DIR}/core/file/*.cpp
-            ${PROJECT_SOURCE_DIR}/drawer/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/action/*.cpp
-            ${PROJECT_SOURCE_DIR}/model/entity/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/*.cpp
-            ${PROJECT_SOURCE_DIR}/units/graph/*.cpp
-    )
-endif ()
-message(STATUS "${SOURCES}")
-add_library(
-        al_image
-        SHARED
-        ${SOURCES}
-)
+file(GLOB SOURCES
+        ${PROJECT_SOURCE_DIR}/*.cpp
+        ${PROJECT_SOURCE_DIR}/core/*.cpp
+        ${PROJECT_SOURCE_DIR}/core/file/*.cpp
+        ${PROJECT_SOURCE_DIR}/drawer/*.cpp
+        ${PROJECT_SOURCE_DIR}/model/*.cpp
+        ${PROJECT_SOURCE_DIR}/model/action/*.cpp
+        ${PROJECT_SOURCE_DIR}/model/entity/*.cpp
+        ${PROJECT_SOURCE_DIR}/units/*.cpp
+        ${PROJECT_SOURCE_DIR}/units/graph/*.cpp
+        #Header
+        ${PROJECT_SOURCE_DIR}/include/*.h
+        )
 
+add_library(al_image SHARED ${SOURCES})
+
+set(MODULES
+        al_image
+        al_common
+        al_bitmap
+        al_graphic
+        )
 if (ANDROID)
-    find_library(
-            log-lib
-            log)
-    target_link_libraries(
-            al_image
-            al_common
-            al_bitmap
-            al_graphic
-            ${log-lib})
-else ()
-    # TODO other platform
-    target_link_libraries(
-            al_image
-            al_common
-            al_bitmap
-            hwvc_render)
-endif ()
+    find_library(log-lib log)
+    set(MODULES
+            ${MODULES}
+            ${log-lib}
+            )
+endif (ANDROID)
+target_link_libraries(${MODULES})
