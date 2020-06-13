@@ -14,7 +14,7 @@ import android.view.Surface
 
 class AlCamera2(
     private val manager: CameraManager?,
-    private val index: AlAbsCamera.CameraIndex,
+    private var index: AlAbsCamera.CameraIndex,
     private val reqWidth: Int,
     private val reqHeight: Int,
     private val tex: Int,
@@ -72,6 +72,8 @@ class AlCamera2(
         if (mIndexMap.containsKey(index)) {
             setupPreviewSize()
             manager?.openCamera(mIndexMap[index]!!, callback, handler)
+        } else {
+            throw RuntimeException("Could not find camera.")
         }
     }
 
@@ -95,7 +97,7 @@ class AlCamera2(
             surfaceTexture?.setDefaultBufferSize(cameraSize.y, cameraSize.x)
             Log.i(TAG, "setupPreviewSize ${cameraSize.x}x${cameraSize.y}, ${map?.isOutputSupportedFor(surface)}")
         } else {
-            throw RuntimeException("Could not fin any preview size.")
+            throw RuntimeException("Could not find any preview size.")
         }
     }
 
@@ -148,6 +150,10 @@ class AlCamera2(
     }
 
     override fun switchCamera(index: AlAbsCamera.CameraIndex) {
+        this.index = index
+        closeSession()
+        close()
+        open()
     }
 
     override fun release() {
