@@ -15,6 +15,7 @@ class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickList
     private val ITEMS = arrayListOf(
         Item("New Image Editor") { startActivity(Intent(this, AlImageActivity::class.java)) },
         Item("Audio Player") { startActivity(Intent(this, AudioActivity::class.java)) },
+        Item("Video V2") { startActivity(Intent(this, AlVideoV2Activity::class.java)) },
         Item("Video Player") { startActivity(Intent(this, VideoActivity::class.java)) },
         Item("Audio Recorder & Mux") { startActivity(Intent(this, AudioRecordAndMuxActivity::class.java)) },
         Item("Video Recorder") { startActivity(Intent(this, CameraActivity::class.java)) },

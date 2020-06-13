@@ -91,6 +91,7 @@
         <activity android:name=".ui.AudioRecordAndMuxActivity" />
         <activity android:name=".ui.AlDisplayActivity" />
         <activity android:name=".ui.FFCMDActivity" />
+        <activity android:name=".ui.AlVideoV2Activity" />
     </application>
 
 </manifest>
