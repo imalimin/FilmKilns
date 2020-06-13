@@ -105,14 +105,14 @@ class AlScrollSurfaceView : SurfaceView {
                     if (abs(delta) > minRotateVelocity && ACTION.IDL == action) {
                         action = ACTION.ROTATE
                     }
-                    if (ACTION.ROTATE == action) {
-                        onRotateListener?.onRotate(
-                            this@AlScrollSurfaceView,
-                            AlRational((delta * PRECISIONS / Math.PI).toInt(), PRECISIONS),
-                            anchor
-                        )
-                        previousRotate = rotate
-                    }
+//                    if (ACTION.ROTATE == action) {
+                    onRotateListener?.onRotate(
+                        this@AlScrollSurfaceView,
+                        AlRational((delta * PRECISIONS / Math.PI).toInt(), PRECISIONS),
+                        anchor
+                    )
+                    previousRotate = rotate
+//                    }
                 }
             }
         }
@@ -281,9 +281,9 @@ class AlScrollSurfaceView : SurfaceView {
             if (ACTION.IDL == action) {
                 action = ACTION.SCALE
             }
-            if (ACTION.SCALE != action) {
-                return super.onScale(detector)
-            }
+//            if (ACTION.SCALE != action) {
+//                return super.onScale(detector)
+//            }
             val num = (detector.scaleFactor * PRECISIONS).toInt()
             val den = (previousScaleFactor * PRECISIONS).toInt()
             val anchor = PointF(
