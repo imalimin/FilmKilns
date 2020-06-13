@@ -20,28 +20,21 @@
 #define TAG "AlULayer"
 
 AlULayer::AlULayer(string alias) : Unit(alias) {
-    registerEvent(EVENT_COMMON_INVALIDATE, reinterpret_cast<EventFunc>(&AlULayer::onInvalidate));
-    registerEvent(EVENT_LAYER_ADD, reinterpret_cast<EventFunc>(&AlULayer::onAddLayer));
-    registerEvent(EVENT_LAYER_REMOVE, reinterpret_cast<EventFunc>(&AlULayer::onRemoveLayer));
-    registerEvent(EVENT_LAYER_MOVE, reinterpret_cast<EventFunc>(&AlULayer::onMoveLayer));
-    registerEvent(EVENT_LAYER_IMPORT, reinterpret_cast<EventFunc>(&AlULayer::onImport));
-    registerEvent(EVENT_LAYER_EXPORT, reinterpret_cast<EventFunc>(&AlULayer::onExport));
-    registerEvent(EVENT_AIMAGE_REDO, reinterpret_cast<EventFunc>(&AlULayer::onRedo));
-    registerEvent(EVENT_AIMAGE_UNDO, reinterpret_cast<EventFunc>(&AlULayer::onUndo));
-    registerEvent(EVENT_LAYER_MEASURE_CANVAS_NOTIFY,
-                  reinterpret_cast<EventFunc>(&AlULayer::_onCanvasUpdate));
-    registerEvent(EVENT_SCREEN_UPDATE_NOTIFY,
-                  reinterpret_cast<EventFunc>(&AlULayer::_onWindowUpdate));
-    registerEvent(EVENT_CANVAS_CROP,
-                  reinterpret_cast<EventFunc>(&AlULayer::onCropCanvas));
-    registerEvent(MSG_LAYER_RESIZE_CANVAS,
-                  reinterpret_cast<EventFunc>(&AlULayer::onResizeCanvas));
-    registerEvent(EVENT_IMAGE_CODEC_DECODE_NOTIFY,
-                  reinterpret_cast<EventFunc>(&AlULayer::onReceiveImage));
-    registerEvent(EVENT_LAYER_QUERY_INFO,
-                  reinterpret_cast<EventFunc>(&AlULayer::onQueryInfo));
-    registerEvent(MSG_LAYER_ADD_EMPTY,
-                  reinterpret_cast<EventFunc>(&AlULayer::onAddLayerEmpty));
+    al_reg_msg(EVENT_COMMON_INVALIDATE, AlULayer::onInvalidate);
+    al_reg_msg(EVENT_LAYER_ADD, AlULayer::onAddLayer);
+    al_reg_msg(EVENT_LAYER_REMOVE, AlULayer::onRemoveLayer);
+    al_reg_msg(EVENT_LAYER_MOVE, AlULayer::onMoveLayer);
+    al_reg_msg(EVENT_LAYER_IMPORT, AlULayer::onImport);
+    al_reg_msg(EVENT_LAYER_EXPORT, AlULayer::onExport);
+    al_reg_msg(EVENT_AIMAGE_REDO, AlULayer::onRedo);
+    al_reg_msg(EVENT_AIMAGE_UNDO, AlULayer::onUndo);
+    al_reg_msg(EVENT_LAYER_MEASURE_CANVAS_NOTIFY, AlULayer::_onCanvasUpdate);
+    al_reg_msg(EVENT_SCREEN_UPDATE_NOTIFY, AlULayer::_onWindowUpdate);
+    al_reg_msg(EVENT_CANVAS_CROP, AlULayer::onCropCanvas);
+    al_reg_msg(MSG_LAYER_RESIZE_CANVAS, AlULayer::onResizeCanvas);
+    al_reg_msg(EVENT_IMAGE_CODEC_DECODE_NOTIFY, AlULayer::onReceiveImage);
+    al_reg_msg(EVENT_LAYER_QUERY_INFO, AlULayer::onQueryInfo);
+    al_reg_msg(MSG_LAYER_ADD_EMPTY, AlULayer::onAddLayerEmpty);
 }
 
 AlULayer::~AlULayer() {

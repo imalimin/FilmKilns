@@ -141,7 +141,7 @@ static constexpr int MSG_TEX_READER_NOTIFY_PIXELS = KID('A', 'T', 'R', 0x02);
 #include <map>
 
 #define al_def_unit(cls, parent) \
-class cls : public parent \
+AL_CLASS cls AL_EXTEND parent \
 
 #define al_def_msg(name) \
 bool name(AlMessage *m); \
