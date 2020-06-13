@@ -91,6 +91,7 @@ bool AlUImageCodec::onEncode(AlMessage *msg) {
     m->arg2 = Hw::SUCCESS.code;
     m->desc = msg->desc; //Feedback image file path.
     postEvent(m);
+    AlLogI(TAG, "done %s", msg->desc.c_str());
     return true;
 }
 

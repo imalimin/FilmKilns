@@ -56,6 +56,8 @@ public:
 
     void dump();
 
+    std::string toString() override;
+
 private:
     void _set(int32_t row, int32_t col, float val);
 

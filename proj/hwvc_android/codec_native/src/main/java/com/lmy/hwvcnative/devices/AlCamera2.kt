@@ -75,16 +75,27 @@ class AlCamera2(
         }
     }
 
+    private fun close() {
+        device?.close()
+    }
+
+    @Throws
     private fun setupPreviewSize() {
         val characteristics = manager?.getCameraCharacteristics(mIndexMap[index]!!)
         val map = characteristics?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-        val sizes = map?.getOutputSizes(ImageFormat.JPEG)
+        var sizes = map?.getOutputSizes(ImageFormat.YUV_420_888)
+        if(null != map && map.isOutputSupportedFor(ImageFormat.YUV_420_888)) {
+            sizes = map.getOutputSizes(ImageFormat.JPEG)
+        }
         if (null != sizes) {
             val size = AlAbsCamera.chooseBestSize(sizes, reqWidth, reqHeight)
             cameraSize.x = size.width
             cameraSize.y = size.height
-            surfaceTexture?.setDefaultBufferSize(cameraSize.x, cameraSize.y)
-            Log.i(TAG, "setupPreviewSize ${cameraSize.x}x${cameraSize.y}")
+            ///需要再反过来
+            surfaceTexture?.setDefaultBufferSize(cameraSize.y, cameraSize.x)
+            Log.i(TAG, "setupPreviewSize ${cameraSize.x}x${cameraSize.y}, ${map?.isOutputSupportedFor(surface)}")
+        } else {
+            throw RuntimeException("Could not fin any preview size.")
         }
     }
 
@@ -112,8 +123,13 @@ class AlCamera2(
         }
     }
 
+    private fun closeSession() {
+        session?.stopRepeating()
+        session?.close()
+    }
+
     private fun startPreview() {
-        val builder = device?.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
+        val builder = device?.createCaptureRequest(CameraDevice.TEMPLATE_RECORD)
         builder?.addTarget(surface!!)
         builder?.set(
             CaptureRequest.CONTROL_AF_MODE,
@@ -136,8 +152,8 @@ class AlCamera2(
 
     override fun release() {
         Log.i(TAG, "release")
-        session?.close()
-        device?.close()
+        closeSession()
+        close()
         surface?.release()
         surfaceTexture?.release()
     }

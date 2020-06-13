@@ -13,6 +13,7 @@
 #include "HwTexture.h"
 #include "HwAbsFBObject.h"
 #include "HwProgram.h"
+#include "AlFPSMeasurer.h"
 
 AL_CLASS AlCameraInput AL_EXTEND Unit {
 public:
@@ -50,6 +51,7 @@ private:
     HwProgram *program = nullptr;
     HwAbsTexture *mLayerTex = nullptr;
     int32_t mLayerId = -1;
+    AlFPSMeasurer fps;
 };
 
 

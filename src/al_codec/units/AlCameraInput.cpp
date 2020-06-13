@@ -83,8 +83,9 @@ bool AlCameraInput::_onInvalidate(AlMessage *msg) {
         }
         return true;
     }
-    AlLogD(TAG, "%dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
-           cameraSize.width, cameraSize.height);
+//    AlLogD(TAG, "%dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
+//           cameraSize.width, cameraSize.height);
+    fps.record(TAG);
     int64_t tsInNs = msg->arg2;
     if (msg->obj) {
         AlMatrix *m = msg->getObj<AlMatrix *>();
@@ -97,7 +98,7 @@ bool AlCameraInput::_onInvalidate(AlMessage *msg) {
 
 void AlCameraInput::draw() {
     if (mLayerTex) {
-//        AlLogI(TAG, "%d, %d", mLayerId, mLayerTex->texId());
+//        AlLogD(TAG, "%d, %d", mLayerId, mLayerTex->texId());
         glViewport(0, 0, mLayerTex->getWidth(), mLayerTex->getHeight());
         fbo->bindTex(mLayerTex);
         fbo->bind();
@@ -157,6 +158,8 @@ bool AlCameraInput::_onLayerNotify(AlMessage *msg) {
         postEvent(AlMessage::obtain(EVENT_LAYER_SCALE, desc));
     }
     AlLogI(TAG, "%d", mLayerId);
+    AlLogI(TAG, "%dx%d, %dx%d, %dx%d", mLayerTex->getWidth(), mLayerTex->getHeight(),
+           cameraSize.width, cameraSize.height, outSize.width, outSize.height);
     return true;
 }
 

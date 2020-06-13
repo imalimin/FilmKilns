@@ -115,6 +115,8 @@ class CameraWrapper private constructor(
         val size = cameraParam.previewSize
         cameraWidth = size.height
         cameraHeight = size.width
+        ///需要再反过来
+        surface.setDefaultBufferSize(cameraHeight, cameraWidth)
         val fps = IntArray(2)
         cameraParam.getPreviewFpsRange(fps)
         Log.i(

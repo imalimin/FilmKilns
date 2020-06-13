@@ -114,6 +114,19 @@ AlVec4 AlMatrix::operator*(const AlVec4 &v) {
     return vec;
 }
 
+std::string AlMatrix::toString() {
+    std::string str;
+    str.append("\n");
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            str.append(AlString::valueOf(get(i, j)));
+            str.append(",");
+        }
+        str.append("\n");
+    }
+    return str;
+}
+
 void AlMatrix::dump() {
     Logcat::i(TAG, "1: {%f, %f, %f, %f}", get(0, 0), get(0, 1), get(0, 2), get(0, 3));
     Logcat::i(TAG, "2: {%f, %f, %f, %f}", get(1, 0), get(1, 1), get(1, 2), get(1, 3));
