@@ -54,7 +54,7 @@ public:
     virtual std::string toString() override;
 
 private:
-    std::map<std::string, std::unique_ptr<Object *>> map;
+    std::map<std::string, std::unique_ptr<Object>> map;
 };
 
 

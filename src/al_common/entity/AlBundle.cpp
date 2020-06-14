@@ -12,16 +12,15 @@
 #define PUT_PRI(_pri) \
 auto itr = map.find(key); \
 if (map.end() != itr) { \
-  delete *(itr->second.release()); \
   map.erase(itr); \
 } \
-auto ptr = std::make_unique<Object *>(new _pri(val)); \
+auto ptr = std::make_unique<_pri>(val); \
 map.insert(make_pair(key, std::move(ptr))); \
 
 #define GET_PRI(_pri) \
 auto itr = map.find(key); \
 if (map.end() != itr && itr->second) { \
-  _pri *val = dynamic_cast<_pri *>(*itr->second); \
+  _pri *val = dynamic_cast<_pri *>(itr->second.get()); \
   if (val) { \
     return val->value(); \
   } \
@@ -35,7 +34,7 @@ AlBundle::AlBundle() : Object() {
 AlBundle::AlBundle(const AlBundle &o) : Object() {
     auto itr = o.map.begin();
     while (o.map.end() != itr) {
-        Object *obj = *itr->second;
+        Object *obj = itr->second.get();
         if (AL_INSTANCE_OF(obj, AlInteger *)) {
             put(itr->first, dynamic_cast<AlInteger *>(obj)->value());
         } else if (AL_INSTANCE_OF(obj, AlLong *)) {
@@ -56,11 +55,6 @@ AlBundle::AlBundle(const AlBundle &o) : Object() {
 }
 
 AlBundle::~AlBundle() {
-    auto itr = map.begin();
-    while (map.end() != itr) {
-        delete *(itr->second.release());
-        ++itr;
-    }
     map.clear();
 }
 
@@ -132,7 +126,7 @@ char AlBundle::get(std::string key, char def) {
 std::string AlBundle::get(std::string key, std::string def) {
     auto itr = map.find(key);
     if (map.end() != itr && itr->second) {
-        AlString *val = dynamic_cast<AlString *>(*itr->second);
+        AlString *val = dynamic_cast<AlString *>(itr->second.get());
         if (val) {
             return val->str();
         }
@@ -143,7 +137,6 @@ std::string AlBundle::get(std::string key, std::string def) {
 void AlBundle::remove(std::string key) {
     auto itr = map.find(key);
     if (map.end() != itr) {
-        delete *(itr->second.release());
         map.erase(itr);
     }
 }
@@ -160,7 +153,7 @@ std::string AlBundle::toString() {
         sb.append("\"");
         sb.append(itr->first);
         sb.append("\":");
-        sb.append((*itr->second)->toString());
+        sb.append((itr->second.get())->toString());
         sb.append(", ");
         ++itr;
     }
