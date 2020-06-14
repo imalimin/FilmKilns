@@ -18,7 +18,7 @@ AlIdentityCreator::~AlIdentityCreator() {
     this->cur = NONE_ID;
 }
 
-int32_t AlIdentityCreator::generate() {
+AlID AlIdentityCreator::generate() {
     std::lock_guard<std::mutex> guard(mtx);
     ++this->cur;
     return this->cur;

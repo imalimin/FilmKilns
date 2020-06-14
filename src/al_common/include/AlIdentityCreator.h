@@ -11,15 +11,17 @@
 #include "Object.h"
 #include <mutex>
 
-al_class AlIdentityCreator al_extend Object {
+typedef int32_t AlID;
+
+AL_CLASS AlIdentityCreator AL_EXTEND Object {
 public:
-    static constexpr int32_t NONE_ID = -1;
+    static constexpr AlID NONE_ID = -1;
 
     AlIdentityCreator();
 
     virtual ~AlIdentityCreator();
 
-    int32_t generate();
+    AlID generate();
 
     void reset(int32_t cur = 0);
 

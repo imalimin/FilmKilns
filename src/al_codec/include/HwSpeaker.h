@@ -20,7 +20,7 @@ public:
 
     virtual ~HwSpeaker();
 
-    bool onDestroy(AlMessage *msg);
+    bool onDestroy(AlMessage *msg) override;
 
     bool onCreate(AlMessage *msg) override;
 

@@ -133,6 +133,11 @@ static constexpr int EVENT_IMAGE_CODEC_ENCODE_NOTIFY = KID('I', 'C', 'D', 0x03);
 static constexpr int MSG_TEX_READER_REQ_PIXELS = KID('A', 'T', 'R', 0x01);
 static constexpr int MSG_TEX_READER_NOTIFY_PIXELS = KID('A', 'T', 'R', 0x02);
 
+static constexpr int MSG_TIMELINE_HEARTBEAT = KID('A', 'T', 'L', 0x01);
+static constexpr int MSG_TIMELINE_SET_HZ_IN_US = KID('A', 'T', 'L', 0x02);
+
+static constexpr int MSG_SEQUENCE_TRACK_ADD = KID('A', 'S', 'Q', 0x01);
+
 #include "Object.h"
 #include "UnitPipeline.h"
 #include "AlMessage.h"

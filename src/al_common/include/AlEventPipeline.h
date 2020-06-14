@@ -18,6 +18,8 @@ public:
 
     static AlEventPipeline *create(AlLooper *looper);
 
+    static void sleep(int32_t us);
+
 private:
     AlEventPipeline(std::string name);
 

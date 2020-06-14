@@ -21,6 +21,10 @@ AlEventPipeline::AlEventPipeline(std::string name) : Object() {
     setup(mThread->getLooper());
 }
 
+void AlEventPipeline::sleep(int32_t us) {
+    this_thread::sleep_for(chrono::nanoseconds(us * 1000));
+}
+
 AlEventPipeline::AlEventPipeline(AlLooper *looper) {
     setup(looper);
 }
