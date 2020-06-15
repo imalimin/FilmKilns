@@ -6,9 +6,14 @@
 */
 
 #include "AlUAudios.h"
+#include "AlLogcat.h"
+#include "AsynAudioDecoder.h"
+#include "StringUtils.h"
+
+#define TAG "AlUAudios"
 
 AlUAudios::AlUAudios(const std::string alias) : Unit(alias) {
-
+    al_reg_msg(MSG_AUDIOS_ADD, AlUAudios::_onAddTrack);
 }
 
 AlUAudios::~AlUAudios() {
@@ -20,5 +25,44 @@ bool AlUAudios::onCreate(AlMessage *msg) {
 }
 
 bool AlUAudios::onDestroy(AlMessage *msg) {
+    map.clear();
     return true;
+}
+
+bool AlUAudios::_onAddTrack(AlMessage *msg) {
+    AlLogI(TAG, "");
+    auto *clip = dynamic_cast<AlMediaClip *>(msg->sp.get());
+    auto duration = _create(clip);
+    if (duration > 0) {
+        auto msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD_NOTIFY);
+        msg1->arg1 = clip->id();
+        msg1->arg2 = duration;
+        postMessage(msg1);
+    }
+    return true;
+}
+
+int64_t AlUAudios::_create(AlMediaClip *clip) {
+    if (nullptr == clip || AlIdentityCreator::NONE_ID == clip->id()) {
+        AlLogI(TAG, "failed. Invalid clip.");
+        return 0;
+    }
+    if (AlAbsInputDescriptor::kType::FILE != clip->getInputDescriptor()->type()) {
+        AlLogI(TAG, "failed. Not support input type.");
+        return 0;
+    }
+    std::string path = clip->getInputDescriptor()->path();
+    if (StringUtils::isEmpty(&path)) {
+        AlLogI(TAG, "failed. Invalid path(%s).", path.c_str());
+        return 0;
+    }
+    std::unique_ptr<AsynAudioDecoder> decoder = std::make_unique<AsynAudioDecoder>();
+    if (!decoder->prepare(path)) {
+        AlLogI(TAG, "failed. Decoder prepare failed.");
+        return 0;
+    }
+    auto duration = decoder->getDuration();
+    decoder->start();
+    map.insert(make_pair(clip->id(), std::move(decoder)));
+    return duration;
 }

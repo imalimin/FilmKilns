@@ -24,3 +24,7 @@ AlAbsInputDescriptor::~AlAbsInputDescriptor() {
 AlAbsInputDescriptor::kType AlAbsInputDescriptor::type() {
     return _type;
 }
+
+std::string AlAbsInputDescriptor::path() {
+    return std::string("");
+}

@@ -21,3 +21,7 @@ AlFileDescriptor::AlFileDescriptor(const AlFileDescriptor &o)
 AlFileDescriptor::~AlFileDescriptor() {
 
 }
+
+std::string AlFileDescriptor::path() {
+    return _path;
+}

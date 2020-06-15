@@ -13,6 +13,7 @@
 AlUSequence::AlUSequence(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_HEARTBEAT, AlUSequence::_onHeartbeat);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD, AlUSequence::_onAddTrack);
+    al_reg_msg(MSG_AUDIOS_TRACK_ADD_NOTIFY, AlUSequence::_onAddTrackDone);
 }
 
 AlUSequence::~AlUSequence() {
@@ -28,27 +29,55 @@ bool AlUSequence::onDestroy(AlMessage *msg) {
 }
 
 bool AlUSequence::_onHeartbeat(AlMessage *msg) {
-    auto array = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
-    _findClipsByTime(*array, msg->arg2);
-    if (!array->empty()) {
-        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
-        msg1->sp = array;
-        postMessage(msg1);
-    }
+//    auto array = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
+//    _findClipsByTime(*array, msg->arg2);
+//    if (!array->empty()) {
+//        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
+//        msg1->sp = array;
+//        postMessage(msg1);
+//    }
     return true;
 }
 
 bool AlUSequence::_onAddTrack(AlMessage *msg) {
     auto type = (AlCodec::kMediaType) msg->arg1;
     AlFileDescriptor descriptor(msg->desc);
-    AlID id = creator.generate();
-    auto track = std::make_unique<AlMediaTrack>(id, type);
-    track->addClip(creator.generate(), descriptor);
-    tracks.insert(std::make_pair(id, std::move(track)));
+    auto track = std::make_unique<AlMediaTrack>(creator.generate(), type);
+    AlID clipID = track->addClip(creator.generate(), descriptor);
+    auto clip = track->findClip(clipID);
+    if (clip) {
+        auto *msg1 = AlMessage::obtain(MSG_AUDIOS_ADD);
+        msg1->sp = std::make_shared<AlMediaClip>(*clip);
+        postMessage(msg1);
+    }
+    tracks.insert(std::make_pair(track->id(), std::move(track)));
     AlLogI(TAG, "type(%d), path(%s)", type, msg->desc.c_str());
     return true;
 }
 
+bool AlUSequence::_onAddTrackDone(AlMessage *msg) {
+    AlLogI(TAG, "duration %" PRId64, msg->arg2);
+    AlID id = msg->arg1;
+    int64_t duration = msg->arg2;
+    auto *clip = _findClip(id);
+    if (clip) {
+        clip->setSeqIn(0);
+        clip->setTrimIn(0);
+        clip->setDuration(duration);
+    }
+    return true;
+}
+
+AlMediaClip *AlUSequence::_findClip(AlID id) {
+    auto itr = this->tracks.begin();
+    while (this->tracks.end() != itr) {
+        auto *clip = itr->second->findClip(id);
+        if (clip) {
+            return clip;
+        }
+    }
+    return nullptr;
+}
 
 void AlUSequence::_findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array,
                                    int64_t timeInUS) {

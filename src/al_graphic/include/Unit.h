@@ -141,6 +141,11 @@ static constexpr int MSG_SEQUENCE_TRACK_ADD = KID('A', 'S', 'Q', 0x01);
 static constexpr int MSG_SEQUENCE_BEAT_AUDIO = KID('A', 'S', 'Q', 0x02);
 static constexpr int MSG_SEQUENCE_BEAT_VIDEO = KID('A', 'S', 'Q', 0x03);
 
+static constexpr int MSG_AUDIOS_ADD = KID('A', 'A', 'S', 0x01);
+static constexpr int MSG_AUDIOS_TRACK_ADD_NOTIFY = KID('A', 'A', 'S', 0x02);
+
+static constexpr int MSG_VIDEOS_ADD = KID('A', 'V', 'S', 0x01);
+
 #include "Object.h"
 #include "UnitPipeline.h"
 #include "AlMessage.h"

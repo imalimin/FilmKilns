@@ -21,6 +21,7 @@ AlMediaTrack::AlMediaTrack(const AlMediaTrack &o)
 
 AlMediaTrack::~AlMediaTrack() {
     clips.clear();
+    AlLogI(TAG, "");
 }
 
 AlID AlMediaTrack::id() {
@@ -57,9 +58,9 @@ int64_t AlMediaTrack::getDuration() {
     return timeInUS;
 }
 
-AlID AlMediaTrack::addClip(AlID id, const AlAbsInputDescriptor &o) {
+AlID AlMediaTrack::addClip(AlID id, const AlFileDescriptor &o) {
     auto itr = clips.find(id);
-    if (clips.end() == itr) {
+    if (clips.end() != itr) {
         AlLogW(TAG, "Clip(id=%d) existed.", id);
         return AlIdentityCreator::NONE_ID;
     }

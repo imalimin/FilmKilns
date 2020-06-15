@@ -28,6 +28,10 @@ private:
 
     bool _onAddTrack(AlMessage *msg);
 
+    bool _onAddTrackDone(AlMessage *msg);
+
+    AlMediaClip *_findClip(AlID id);
+
     void _findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array, int64_t timeInUS);
 
 private:

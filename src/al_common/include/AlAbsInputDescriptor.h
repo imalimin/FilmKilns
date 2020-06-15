@@ -25,6 +25,8 @@ public:
 
     kType type();
 
+    virtual std::string path();
+
 private:
     kType _type = kType::UNKNOWN;
 };

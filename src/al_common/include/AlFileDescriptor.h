@@ -18,6 +18,8 @@ public:
 
     virtual ~AlFileDescriptor();
 
+    virtual std::string path() override;
+
 private:
     std::string _path;
 };

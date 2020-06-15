@@ -41,7 +41,7 @@ bool AlUTimeline::_onSetDurationUS(AlMessage *msg) {
 
 void AlUTimeline::_heartbeat() {
     pipe->queueEvent([this]() {
-        auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT);
+        auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, AlMessage::QUEUE_MODE_UNIQUE);
         msg->arg2 = this->mCurTimeInUS;
         this->postMessage(msg);
         this->mCurTimeInUS += this->hzInUS;

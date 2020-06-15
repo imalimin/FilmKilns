@@ -31,7 +31,7 @@ public:
 
     int64_t getDuration();
 
-    AlID addClip(AlID id, const AlAbsInputDescriptor &o);
+    AlID addClip(AlID id, const AlFileDescriptor &o);
 
     AlMediaClip *findClip(AlID id);
 

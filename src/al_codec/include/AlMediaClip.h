@@ -13,7 +13,7 @@
 
 AL_CLASS AlMediaClip AL_EXTEND Object {
 public:
-    AlMediaClip(int32_t id, const AlAbsInputDescriptor &o);
+    AlMediaClip(int32_t id, const AlFileDescriptor &descriptor);
 
     AlMediaClip(const AlMediaClip &o);
 
@@ -37,10 +37,11 @@ public:
 
     int64_t getDuration();
 
+    std::shared_ptr<AlFileDescriptor> getInputDescriptor();
 
 private:
     int32_t _id = INT32_MIN;
-    std::shared_ptr<AlAbsInputDescriptor> iDescriptor;
+    std::shared_ptr<AlFileDescriptor> iDescriptor;
     int64_t seqIn = 0;
     int64_t trimIn = 0;
     int64_t duration = 0;

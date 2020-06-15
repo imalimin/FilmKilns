@@ -6,14 +6,15 @@
 */
 
 #include "AlMediaClip.h"
+
 #include "AlLogcat.h"
 
 #define TAG "AlMediaClip"
 
-AlMediaClip::AlMediaClip(int32_t id, const AlAbsInputDescriptor &o)
+AlMediaClip::AlMediaClip(int32_t id, const AlFileDescriptor &descriptor)
         : Object(),
           _id(id),
-          iDescriptor(std::move(std::make_shared<AlAbsInputDescriptor>(o))) {
+          iDescriptor(std::make_shared<AlFileDescriptor>(descriptor)) {
 
 }
 
@@ -23,8 +24,7 @@ AlMediaClip::AlMediaClip(const AlMediaClip &o)
           seqIn(o.seqIn),
           trimIn(o.trimIn),
           duration(o.duration),
-          iDescriptor(std::move(std::make_shared<AlAbsInputDescriptor>(*o.iDescriptor))) {
-
+          iDescriptor(std::make_shared<AlFileDescriptor>(*o.iDescriptor)) {
 }
 
 AlMediaClip::~AlMediaClip() {
@@ -65,4 +65,8 @@ void AlMediaClip::setDuration(int64_t timeInUS) {
 
 int64_t AlMediaClip::getDuration() {
     return duration;
+}
+
+std::shared_ptr<AlFileDescriptor> AlMediaClip::getInputDescriptor() {
+    return iDescriptor;
 }

@@ -9,6 +9,10 @@
 #define HWVC_ANDROID_ALUAUDIOS_H
 
 #include "Unit.h"
+#include "AlMediaClip.h"
+#include "AbsAudioDecoder.h"
+#include "AlIdentityCreator.h"
+#include <map>
 
 al_def_unit(AlUAudios, Unit) {
 public:
@@ -19,6 +23,14 @@ public:
     virtual bool onCreate(AlMessage *msg) override;
 
     virtual bool onDestroy(AlMessage *msg) override;
+
+private:
+    bool _onAddTrack(AlMessage *msg);
+
+    int64_t _create(AlMediaClip *clip);
+
+private:
+    std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
 };
 
 
