@@ -10,21 +10,37 @@
 
 #include "Object.h"
 #include "AlMediaClip.h"
-#include "AlAbsInputDescriptor.h"
-#include <vector>
+#include "AlCodec.h"
+#include "AlIdentityCreator.h"
+#include "AlVector.h"
+#include <map>
 
 AL_CLASS AlMediaTrack AL_EXTEND Object {
 public:
-    AlMediaTrack();
+    AlMediaTrack(AlID id, AlCodec::kMediaType type);
 
     AlMediaTrack(const AlMediaTrack &o);
 
     virtual ~AlMediaTrack();
 
+    AlID id();
+
+    int64_t getSeqIn();
+
+    int64_t getSeqOut();
+
+    int64_t getDuration();
+
+    AlID addClip(AlID id, const AlAbsInputDescriptor &o);
+
+    AlMediaClip *findClip(AlID id);
+
+    size_t findClips(AlVector<std::shared_ptr<AlMediaClip>> &array, int64_t timeInUS);
+
 private:
-    std::vector<std::unique_ptr<AlMediaClip>> clips;
-    int32_t _id = INT32_MIN;
-    std::shared_ptr<AlAbsInputDescriptor> iDescriptor;
+    std::map<AlID, std::unique_ptr<AlMediaClip>> clips;
+    AlID _id = AlIdentityCreator::NONE_ID;
+    AlCodec::kMediaType _type;
 };
 
 

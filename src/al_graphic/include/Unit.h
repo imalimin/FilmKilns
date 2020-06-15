@@ -135,8 +135,11 @@ static constexpr int MSG_TEX_READER_NOTIFY_PIXELS = KID('A', 'T', 'R', 0x02);
 
 static constexpr int MSG_TIMELINE_HEARTBEAT = KID('A', 'T', 'L', 0x01);
 static constexpr int MSG_TIMELINE_SET_HZ_IN_US = KID('A', 'T', 'L', 0x02);
+static constexpr int MSG_TIMELINE_SET_DURATION = KID('A', 'T', 'L', 0x03);
 
 static constexpr int MSG_SEQUENCE_TRACK_ADD = KID('A', 'S', 'Q', 0x01);
+static constexpr int MSG_SEQUENCE_BEAT_AUDIO = KID('A', 'S', 'Q', 0x02);
+static constexpr int MSG_SEQUENCE_BEAT_VIDEO = KID('A', 'S', 'Q', 0x03);
 
 #include "Object.h"
 #include "UnitPipeline.h"

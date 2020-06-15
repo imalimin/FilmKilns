@@ -26,7 +26,7 @@ public:
     string desc;
     /// Will be delete after cycle.
     Object *obj = nullptr;
-    std::shared_ptr<Object *> sp;
+    std::shared_ptr<Object> sp;
     int16_t queueMode = QUEUE_MODE_NORMAL;
 private:
     friend AlLooper;

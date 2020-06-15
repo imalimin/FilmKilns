@@ -7,6 +7,7 @@
 
 #include "AlMessage.h"
 #include "ObjectBox.h"
+#include "AlLogcat.h"
 
 AlMessage *AlMessage::obtain(int32_t what) {
     return obtain(what, nullptr, QUEUE_MODE_NORMAL);
@@ -89,14 +90,15 @@ void AlMessageManager::recycle(AlMessage *msg) {
         return;
     }
     std::lock_guard<std::mutex> guard(poolMtx);
-    if (msg->obj) {
-        msg->what = -1;
-        msg->arg1 = 0;
-        msg->arg2 = 0;
-        msg->desc = "Undef";
-        msg->queueMode = AlMessage::QUEUE_MODE_NORMAL;
-        delete msg->obj;
-        msg->obj = nullptr;
+    msg->what = -1;
+    msg->arg1 = 0;
+    msg->arg2 = 0;
+    msg->desc = "Undef";
+    msg->queueMode = AlMessage::QUEUE_MODE_NORMAL;
+    delete msg->obj;
+    msg->obj = nullptr;
+    if (msg->sp.unique()) {
+        std::shared_ptr<Object> sp = std::move(msg->sp);
     }
     pool.push(msg);
 }

@@ -12,6 +12,7 @@
 
 AlUTimeline::AlUTimeline(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_SET_HZ_IN_US, AlUTimeline::_onSetHzInUS);
+    al_reg_msg(MSG_TIMELINE_SET_DURATION, AlUTimeline::_onSetDurationUS);
     pipe = std::shared_ptr<AlEventPipeline>(AlEventPipeline::create(TAG));
 }
 
@@ -33,9 +34,17 @@ bool AlUTimeline::_onSetHzInUS(AlMessage *msg) {
     return true;
 }
 
+bool AlUTimeline::_onSetDurationUS(AlMessage *msg) {
+    mDurationInUS = msg->arg2;
+    return true;
+}
+
 void AlUTimeline::_heartbeat() {
     pipe->queueEvent([this]() {
-        this->postMessage(AlMessage::obtain(MSG_TIMELINE_HEARTBEAT));
+        auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT);
+        msg->arg2 = this->mCurTimeInUS;
+        this->postMessage(msg);
+        this->mCurTimeInUS += this->hzInUS;
         AlEventPipeline::sleep(this->hzInUS);
         this->_heartbeat();
     });

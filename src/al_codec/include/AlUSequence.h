@@ -11,6 +11,7 @@
 #include "Unit.h"
 #include "AlMediaTrack.h"
 #include "AlIdentityCreator.h"
+#include "AlVector.h"
 
 al_def_unit(AlUSequence, Unit) {
 public:
@@ -26,6 +27,8 @@ private:
     bool _onHeartbeat(AlMessage *msg);
 
     bool _onAddTrack(AlMessage *msg);
+
+    void _findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array, int64_t timeInUS);
 
 private:
     AlIdentityCreator creator;

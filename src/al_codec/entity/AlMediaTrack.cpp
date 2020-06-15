@@ -6,14 +6,85 @@
 */
 
 #include "AlMediaTrack.h"
+#include "AlLogcat.h"
+#include "AlMath.h"
 
-AlMediaTrack::AlMediaTrack() : Object() {
+#define TAG "AlMediaTrack"
+
+AlMediaTrack::AlMediaTrack(AlID id, AlCodec::kMediaType type)
+        : Object(), _id(id), _type(type) {
 }
 
-AlMediaTrack::AlMediaTrack(const AlMediaTrack &o) : Object(), _id(o._id) {
-
+AlMediaTrack::AlMediaTrack(const AlMediaTrack &o)
+        : Object(), _id(o._id), _type(o._type) {
 }
 
 AlMediaTrack::~AlMediaTrack() {
+    clips.clear();
+}
 
+AlID AlMediaTrack::id() {
+    return _id;
+}
+
+int64_t AlMediaTrack::getSeqIn() {
+    int64_t timeInUS = 0;
+    auto itr = clips.begin();
+    while (clips.end() != itr) {
+        timeInUS = std::max(timeInUS, itr->second->getSeqIn());
+        ++itr;
+    }
+    return timeInUS;
+}
+
+int64_t AlMediaTrack::getSeqOut() {
+    int64_t timeInUS = 0;
+    auto itr = clips.begin();
+    while (clips.end() != itr) {
+        timeInUS = std::max(timeInUS, itr->second->getSeqOut());
+        ++itr;
+    }
+    return timeInUS;
+}
+
+int64_t AlMediaTrack::getDuration() {
+    int64_t timeInUS = 0;
+    auto itr = clips.begin();
+    while (clips.end() != itr) {
+        timeInUS += itr->second->getDuration();
+        ++itr;
+    }
+    return timeInUS;
+}
+
+AlID AlMediaTrack::addClip(AlID id, const AlAbsInputDescriptor &o) {
+    auto itr = clips.find(id);
+    if (clips.end() == itr) {
+        AlLogW(TAG, "Clip(id=%d) existed.", id);
+        return AlIdentityCreator::NONE_ID;
+    }
+    auto clip = std::make_unique<AlMediaClip>(id, o);
+    clips.emplace(std::make_pair(id, std::move(clip)));
+    return id;
+}
+
+AlMediaClip *AlMediaTrack::findClip(AlID id) {
+    auto itr = clips.find(id);
+    if (clips.end() == itr) {
+        return nullptr;
+    }
+    return itr->second.get();
+}
+
+size_t AlMediaTrack::findClips(AlVector<std::shared_ptr<AlMediaClip>> &array, int64_t timeInUS) {
+    size_t count = 0;
+    auto itr = clips.begin();
+    while (clips.end() != itr) {
+        if (timeInUS >= itr->second->getSeqIn() && timeInUS < itr->second->getSeqOut()) {
+            array.push_back(std::make_shared<AlMediaClip>(*itr->second));
+            ++count;
+        }
+        ++itr;
+    }
+    return count;
 }

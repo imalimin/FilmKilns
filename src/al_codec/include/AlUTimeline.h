@@ -32,12 +32,24 @@ private:
     /// \param msg
     /// \return
     bool _onSetHzInUS(AlMessage *msg);
+    /// 设置时间轴长度
+    /// FORMAT:
+    /// +-------------------------------------------+
+    /// | msg::obj     | msg::arg1 |    msg::arg2   |
+    /// +-------------------------------------------+
+    /// | none         |           | duration in US |
+    /// +-------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onSetDurationUS(AlMessage *msg);
 
     void _heartbeat();
 
 private:
     std::shared_ptr<AlEventPipeline> pipe;
     int32_t hzInUS = 1000000;
+    int64_t mDurationInUS = 0;
+    int64_t mCurTimeInUS = 0;
 };
 
 

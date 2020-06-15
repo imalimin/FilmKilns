@@ -6,15 +6,63 @@
 */
 
 #include "AlMediaClip.h"
+#include "AlLogcat.h"
 
-AlMediaClip::AlMediaClip() : Object() {
+#define TAG "AlMediaClip"
+
+AlMediaClip::AlMediaClip(int32_t id, const AlAbsInputDescriptor &o)
+        : Object(),
+          _id(id),
+          iDescriptor(std::move(std::make_shared<AlAbsInputDescriptor>(o))) {
 
 }
 
-AlMediaClip::AlMediaClip(const AlMediaClip &o) : Object(), _id(o._id) {
+AlMediaClip::AlMediaClip(const AlMediaClip &o)
+        : Object(),
+          _id(o._id),
+          seqIn(o.seqIn),
+          trimIn(o.trimIn),
+          duration(o.duration),
+          iDescriptor(std::move(std::make_shared<AlAbsInputDescriptor>(*o.iDescriptor))) {
 
 }
 
 AlMediaClip::~AlMediaClip() {
+    AlLogI(TAG, "");
+}
 
+int32_t AlMediaClip::id() {
+    return _id;
+}
+
+void AlMediaClip::setSeqIn(int64_t timeInUS) {
+    seqIn = timeInUS;
+}
+
+int64_t AlMediaClip::getSeqIn() {
+    return seqIn;
+}
+
+int64_t AlMediaClip::getSeqOut() {
+    return seqIn + duration;
+}
+
+void AlMediaClip::setTrimIn(int64_t timeInUS) {
+    trimIn = timeInUS;
+}
+
+int64_t AlMediaClip::getTrimIn() {
+    return trimIn;
+}
+
+int64_t AlMediaClip::getTrimOut() {
+    return trimIn + duration;
+}
+
+void AlMediaClip::setDuration(int64_t timeInUS) {
+    duration = timeInUS;
+}
+
+int64_t AlMediaClip::getDuration() {
+    return duration;
 }
