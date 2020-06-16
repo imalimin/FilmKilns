@@ -10,6 +10,10 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
+import com.lmy.hwvcnative.devices.entity.CamMetadata
+import com.lmy.hwvcnative.devices.entity.kFacing
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class AlCamera2(
@@ -27,7 +31,7 @@ class AlCamera2(
     private var surface: Surface? = null
     private val transformMatrix: FloatArray = FloatArray(16)
     private val cameraSize = Point()
-    private val mIndexMap = hashMapOf<AlAbsCamera.CameraIndex, String>()
+    private val mCameraList = ArrayList<CamMetadata>()
     private val callback = object : CameraDevice.StateCallback() {
         override fun onOpened(camera: CameraDevice) {
             Log.i(TAG, "onOpened")
@@ -53,28 +57,48 @@ class AlCamera2(
         try {
             manager?.cameraIdList?.forEach {
                 val characteristics = manager.getCameraCharacteristics(it)
-                val idx = when (characteristics.get(CameraCharacteristics.LENS_FACING)) {
-                    CameraCharacteristics.LENS_FACING_FRONT -> AlAbsCamera.CameraIndex.FRONT
-                    CameraCharacteristics.LENS_FACING_BACK -> AlAbsCamera.CameraIndex.BACK
+                val focalDistance =
+                    characteristics.get(CameraCharacteristics.LENS_INFO_HYPERFOCAL_DISTANCE) ?: 0f
+                val face = characteristics.get(CameraCharacteristics.LENS_FACING)
+                Log.i(TAG, "$face")
+                val facing = when (face) {
+                    CameraCharacteristics.LENS_FACING_FRONT -> kFacing.FRONT
+                    CameraCharacteristics.LENS_FACING_BACK -> kFacing.BACK
                     else -> return@forEach
                 }
-                mIndexMap[idx] = it
+                mCameraList.add(CamMetadata(it, facing, focalDistance))
             }
+            Log.i(TAG, mCameraList.toString())
             open()
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
+    private fun getDefaultCamera(index: AlAbsCamera.CameraIndex): CamMetadata {
+        val idx = if (AlAbsCamera.CameraIndex.FRONT == index) kFacing.FRONT else kFacing.BACK
+        val list = ArrayList<CamMetadata>()
+        mCameraList.forEach {
+            if (idx == it.facing) {
+                list.add(it)
+            }
+        }
+        if (1 == list.size) {
+            return list[0]
+        }
+        if (list.size > 1) {
+            list.sortByDescending { it.focalDistance }
+            return list[list.size / 2]
+        }
+        return mCameraList[0]
+    }
+
     @Throws
     @SuppressLint("MissingPermission")
     private fun open() {
-        if (mIndexMap.containsKey(index)) {
-            setupPreviewSize()
-            manager?.openCamera(mIndexMap[index]!!, callback, handler)
-        } else {
-            throw RuntimeException("Could not find camera.")
-        }
+        val meta = getDefaultCamera(index)
+        setupPreviewSize()
+        manager?.openCamera(meta.id, callback, handler)
     }
 
     private fun close() {
@@ -83,10 +107,10 @@ class AlCamera2(
 
     @Throws
     private fun setupPreviewSize() {
-        val characteristics = manager?.getCameraCharacteristics(mIndexMap[index]!!)
+        val characteristics = manager?.getCameraCharacteristics(getDefaultCamera(index).id)
         val map = characteristics?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
         var sizes = map?.getOutputSizes(ImageFormat.YUV_420_888)
-        if(null != map && map.isOutputSupportedFor(ImageFormat.YUV_420_888)) {
+        if (null != map && map.isOutputSupportedFor(ImageFormat.YUV_420_888)) {
             sizes = map.getOutputSizes(ImageFormat.JPEG)
         }
         if (null != sizes) {
@@ -95,7 +119,12 @@ class AlCamera2(
             cameraSize.y = size.height
             ///需要再反过来
             surfaceTexture?.setDefaultBufferSize(cameraSize.y, cameraSize.x)
-            Log.i(TAG, "setupPreviewSize ${cameraSize.x}x${cameraSize.y}, ${map?.isOutputSupportedFor(surface)}")
+            Log.i(
+                TAG,
+                "setupPreviewSize ${cameraSize.x}x${cameraSize.y}, ${map?.isOutputSupportedFor(
+                    surface
+                )}"
+            )
         } else {
             throw RuntimeException("Could not find any preview size.")
         }
@@ -137,6 +166,10 @@ class AlCamera2(
             CaptureRequest.CONTROL_AF_MODE,
             CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO
         )
+//        builder?.set(
+//            CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE,
+//            CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_ON
+//        )
         if (null != builder) {
             session?.setRepeatingRequest(
                 builder.build(),
