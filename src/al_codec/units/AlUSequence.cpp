@@ -56,14 +56,15 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
 }
 
 bool AlUSequence::_onAddTrackDone(AlMessage *msg) {
-    AlLogI(TAG, "duration %" PRId64, msg->arg2);
     AlID id = msg->arg1;
     int64_t duration = msg->arg2;
+    AlLogI(TAG, "id(%d), duration(%" PRId64 ")", id, duration);
     auto *clip = _findClip(id);
     if (clip) {
         clip->setSeqIn(0);
         clip->setTrimIn(0);
         clip->setDuration(duration);
+        _notifyTimeline();
     }
     return true;
 }
@@ -85,4 +86,19 @@ void AlUSequence::_findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array
     while (this->tracks.end() != itr) {
         itr->second->findClips(array, timeInUS);
     }
+}
+
+void AlUSequence::_notifyTimeline() {
+    int32_t hzInUS = 0;
+    int64_t durationInUS = 0;
+    auto itr = this->tracks.begin();
+    while (this->tracks.end() != itr) {
+        durationInUS = std::max(itr->second->getSeqOut(), durationInUS);
+    }
+    auto *msg0 = AlMessage::obtain(MSG_TIMELINE_SET_DURATION);
+    msg0->arg2 = durationInUS;
+    postMessage(msg0);
+    auto *msg1 = AlMessage::obtain(MSG_TIMELINE_SET_HZ_IN_US);
+    msg1->arg1 = hzInUS;
+    postMessage(msg1);
 }

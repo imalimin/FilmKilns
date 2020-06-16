@@ -44,25 +44,30 @@ bool AlUAudios::_onAddTrack(AlMessage *msg) {
 
 int64_t AlUAudios::_create(AlMediaClip *clip) {
     if (nullptr == clip || AlIdentityCreator::NONE_ID == clip->id()) {
-        AlLogI(TAG, "failed. Invalid clip.");
+        AlLogE(TAG, "failed. Invalid clip.");
         return 0;
     }
     if (AlAbsInputDescriptor::kType::FILE != clip->getInputDescriptor()->type()) {
-        AlLogI(TAG, "failed. Not support input type.");
+        AlLogE(TAG, "failed. Not support input type.");
         return 0;
     }
     std::string path = clip->getInputDescriptor()->path();
     if (StringUtils::isEmpty(&path)) {
-        AlLogI(TAG, "failed. Invalid path(%s).", path.c_str());
+        AlLogE(TAG, "failed. Invalid path(%s).", path.c_str());
         return 0;
     }
     std::unique_ptr<AsynAudioDecoder> decoder = std::make_unique<AsynAudioDecoder>();
     if (!decoder->prepare(path)) {
-        AlLogI(TAG, "failed. Decoder prepare failed.");
+        AlLogE(TAG, "failed. Decoder prepare failed.");
         return 0;
     }
     auto duration = decoder->getDuration();
     decoder->start();
+    AlLogI(TAG, "%" PRId64 ", %d, %d, %d, %s",
+           decoder->getDuration(),
+           decoder->getChannels(),
+           decoder->getSampleHz(),
+           decoder->getSampleFormat(), path.c_str());
     map.insert(make_pair(clip->id(), std::move(decoder)));
     return duration;
 }

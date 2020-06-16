@@ -34,6 +34,8 @@ private:
 
     void _findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array, int64_t timeInUS);
 
+    void _notifyTimeline();
+
 private:
     AlIdentityCreator creator;
     std::map<int32_t, std::unique_ptr<AlMediaTrack>> tracks;

@@ -5,8 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/AsynAudioDecoder.h"
+#include "AsynAudioDecoder.h"
 #include "TimeUtils.h"
+
+#define TAG "AsynAudioDecoder"
 
 AsynAudioDecoder::AsynAudioDecoder() : AbsAudioDecoder() {
     playing = false;
@@ -16,21 +18,27 @@ AsynAudioDecoder::AsynAudioDecoder() : AbsAudioDecoder() {
 }
 
 AsynAudioDecoder::~AsynAudioDecoder() {
+    AlLogI(TAG, "0");
     stop();
+    AlLogI(TAG, "1");
     if (pipeline) {
         delete pipeline;
         pipeline = nullptr;
     }
+    AlLogI(TAG, "2");
     releaseLock.lock();
     if (decoder) {
         delete decoder;
         decoder = nullptr;
     }
+    AlLogI(TAG, "3");
     if (hwFrameAllocator) {
         delete hwFrameAllocator;
         hwFrameAllocator = nullptr;
     }
+    AlLogI(TAG, "4");
     releaseLock.unlock();
+    AlLogI(TAG, "5");
 }
 
 bool AsynAudioDecoder::prepare(string path) {

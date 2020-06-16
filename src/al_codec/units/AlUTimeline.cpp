@@ -36,6 +36,7 @@ bool AlUTimeline::_onSetHzInUS(AlMessage *msg) {
 
 bool AlUTimeline::_onSetDurationUS(AlMessage *msg) {
     mDurationInUS = msg->arg2;
+    AlLogI(TAG, "%" PRId64, mDurationInUS);
     return true;
 }
 
