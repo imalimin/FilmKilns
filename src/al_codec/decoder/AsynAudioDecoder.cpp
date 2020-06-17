@@ -48,7 +48,7 @@ bool AsynAudioDecoder::prepare(string path) {
     }
     if (decoder) {
         if (!decoder->prepare(path)) {
-            Logcat::e("HWVC", "AsynAudioDecoder::prepare failed");
+            AlLogE(TAG, "failed");
             delete decoder;
             decoder = nullptr;
             return false;
@@ -93,13 +93,13 @@ void AsynAudioDecoder::stop() {
 
 void AsynAudioDecoder::loop() {
     if (!playing || !pipeline) {
-        Logcat::i("HWVC", "AsynAudioDecoder::loop skip loop");
+        AlLogI(TAG, "skip loop");
         return;
     }
     pipeline->queueEvent([this] {
         if (!grab()) {
             stop();
-            Logcat::i("HWVC", "AsynAudioDecoder::loop EOF");
+            AlLogI(TAG, "loop EOF");
             return;
         }
         loop();
@@ -128,7 +128,7 @@ bool AsynAudioDecoder::grab() {
         grabLock.wait();
         return true;
     }
-//    Logcat::i("HWVC", "HwFrameAllocator::info: cache %d", cache.size());
+//    AlLogD(TAG, "cache %d", cache.size());
     HwAbsMediaFrame *frame = nullptr;
     HwResult ret = Hw::MEDIA_WAIT;
     releaseLock.lock();
