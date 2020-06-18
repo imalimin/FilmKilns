@@ -25,6 +25,11 @@ bool AlUAudios::onCreate(AlMessage *msg) {
 }
 
 bool AlUAudios::onDestroy(AlMessage *msg) {
+    auto itr = map.begin();
+    while (map.end() != itr) {
+        itr->second->stop();
+        ++itr;
+    }
     map.clear();
     return true;
 }
