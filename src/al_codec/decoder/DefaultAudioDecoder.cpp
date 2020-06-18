@@ -10,6 +10,7 @@
 #include "Logcat.h"
 #include <cassert>
 
+#define TAG "DefaultAudioDecoder"
 
 DefaultAudioDecoder::DefaultAudioDecoder() : AbsAudioDecoder() {
     hwFrameAllocator = new HwFrameAllocator();
@@ -73,13 +74,18 @@ bool DefaultAudioDecoder::prepare(string path) {
               "DefaultAudioDecoder::prepare(duration=%lld channels=%d, sampleHz=%d, frameSize=%d)",
               getAudioDuration(), getChannels(), getSampleHz(), aCodecContext->frame_size);
     outSampleFormat = getBestSampleFormat(aCodecContext->sample_fmt);
-    translator = new HwAudioTranslator(
-            HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(outSampleFormat),
-                           getChannels(),
-                           getSampleHz()),
-            HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(aCodecContext->sample_fmt),
-                           getChannels(),
-                           getSampleHz()));
+    if (outSampleFormat != aCodecContext->sample_fmt) {
+        translator = new HwAudioTranslator(
+                HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(outSampleFormat),
+                               getChannels(),
+                               getSampleHz()),
+                HwSampleFormat(
+                        HwAbsMediaFrame::convertToAudioFrameFormat(aCodecContext->sample_fmt),
+                        getChannels(),
+                        getSampleHz()));
+    } else {
+        AlLogI(TAG, "Skip resample.");
+    }
     //准备资源
     avPacket = av_packet_alloc();
     audioFrame = av_frame_alloc();
@@ -246,8 +252,8 @@ bool DefaultAudioDecoder::openTrack(int track, AVCodecContext **context) {
 }
 
 HwAbsMediaFrame *DefaultAudioDecoder::resample(AVFrame *avFrame) {
-    if (!translator) {
-        return nullptr;
+    if (nullptr == translator || aCodecContext->sample_fmt == outSampleFormat) {
+        return hwFrameAllocator->ref(avFrame);
     }
     AVFrame *outFrame = nullptr;
     if (translator->translate(&outFrame, &avFrame)) {

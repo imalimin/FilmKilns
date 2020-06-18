@@ -16,10 +16,10 @@ HwSampleFormat::HwSampleFormat(HwFrameFormat format,
     this->sampleRate = sampleRate;
 }
 
-HwSampleFormat::HwSampleFormat(const HwSampleFormat &format) : Object() {
-    this->format = format.format;
-    this->channels = format.channels;
-    this->sampleRate = format.sampleRate;
+HwSampleFormat::HwSampleFormat(const HwSampleFormat &o) : Object() {
+    this->format = o.format;
+    this->channels = o.channels;
+    this->sampleRate = o.sampleRate;
 }
 
 HwSampleFormat::~HwSampleFormat() {
@@ -34,11 +34,17 @@ uint16_t HwSampleFormat::getChannels() { return channels; }
 
 uint32_t HwSampleFormat::getSampleRate() { return sampleRate; }
 
-HwSampleFormat &HwSampleFormat::operator=(const HwSampleFormat &format) {
-    this->format = format.format;
-    this->channels = format.channels;
-    this->sampleRate = format.sampleRate;
+HwSampleFormat &HwSampleFormat::operator=(const HwSampleFormat &o) {
+    this->format = o.format;
+    this->channels = o.channels;
+    this->sampleRate = o.sampleRate;
     return *this;
+}
+
+bool HwSampleFormat::operator==(const HwSampleFormat &o) {
+    return this->format == o.format &&
+           this->channels == o.channels &&
+           this->sampleRate == o.sampleRate;
 }
 
 size_t HwSampleFormat::getBytesPerSample() {

@@ -69,15 +69,13 @@ bool HwAudioTranslator::translate(AVFrame **dest, AVFrame **src) {
         outFrame->pts = 0;
         int ret = av_frame_get_buffer(outFrame, 0);
         if (0 != ret) {
-            AlLogE(TAG, "failed. avFrame alloc failed: %s",
-                      this, strerror(AVUNERROR(ret)));
+            AlLogE(TAG, "failed. avFrame alloc failed: %s", this, strerror(AVUNERROR(ret)));
             return false;
         }
     }
     int ret = swr_convert_frame(swrContext, outFrame, src[0]);
     if (0 != ret) {
-        AlLogE(TAG, "translator(%p) failed: %s",
-                  this, strerror(AVUNERROR(ret)));
+        AlLogE(TAG, "translator(%p) failed: %s", this, strerror(AVUNERROR(ret)));
         return false;
     }
     outFrame->pts = (*src)->pts;

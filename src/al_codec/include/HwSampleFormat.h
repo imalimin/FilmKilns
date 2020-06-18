@@ -12,7 +12,7 @@ class HwSampleFormat : public Object {
 public:
     HwSampleFormat(HwFrameFormat format, uint16_t channels, uint32_t sampleRate);
 
-    HwSampleFormat(const HwSampleFormat &format);
+    HwSampleFormat(const HwSampleFormat &o);
 
     virtual ~HwSampleFormat();
 
@@ -22,7 +22,9 @@ public:
 
     HwFrameFormat getFormat();
 
-    HwSampleFormat &operator=(const HwSampleFormat &format);
+    HwSampleFormat &operator=(const HwSampleFormat &o);
+
+    bool operator==(const HwSampleFormat &o);
 
     size_t getBytesPerSample();
 
