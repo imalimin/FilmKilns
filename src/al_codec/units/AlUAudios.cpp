@@ -9,11 +9,13 @@
 #include "AlLogcat.h"
 #include "AsynAudioDecoder.h"
 #include "StringUtils.h"
+#include "AlVector.h"
 
 #define TAG "AlUAudios"
 
 AlUAudios::AlUAudios(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_AUDIOS_ADD, AlUAudios::_onAddTrack);
+    al_reg_msg(MSG_SEQUENCE_BEAT_AUDIO, AlUAudios::_onBeat);
 }
 
 AlUAudios::~AlUAudios() {
@@ -25,10 +27,8 @@ bool AlUAudios::onCreate(AlMessage *msg) {
 }
 
 bool AlUAudios::onDestroy(AlMessage *msg) {
-    auto itr = map.begin();
-    while (map.end() != itr) {
-        itr->second->stop();
-        ++itr;
+    for (auto &it : map) {
+        it.second->stop();
     }
     map.clear();
     return true;
@@ -43,6 +43,27 @@ bool AlUAudios::_onAddTrack(AlMessage *msg) {
         msg1->arg1 = clip->id();
         msg1->arg2 = duration;
         postMessage(msg1);
+    }
+    return true;
+}
+
+bool AlUAudios::_onBeat(AlMessage *msg) {
+    auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
+    HwAbsMediaFrame *frame = nullptr;
+    for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
+        auto decoder = _findDecoder(itr->get());
+        while (decoder) {
+            HwResult ret = decoder->grab(&frame);
+            if (nullptr == frame && Hw::MEDIA_EOF != ret) {
+                continue;
+            }
+            if (frame->isAudio()) {
+                AlMessage *msg0 = AlMessage::obtain(EVENT_SPEAKER_FEED);
+                msg0->obj = frame->clone();
+                postEvent(msg0);
+            }
+            break;
+        }
     }
     return true;
 }
@@ -75,4 +96,15 @@ int64_t AlUAudios::_create(AlMediaClip *clip) {
            decoder->getSampleFormat(), path.c_str());
     map.insert(make_pair(clip->id(), std::move(decoder)));
     return duration;
+}
+
+AbsAudioDecoder *AlUAudios::_findDecoder(AlMediaClip *clip) {
+    if (nullptr == clip) {
+        return nullptr;
+    }
+    auto itr = map.find(clip->id());
+    if (map.end() == itr) {
+        return nullptr;
+    }
+    return itr->second.get();
 }

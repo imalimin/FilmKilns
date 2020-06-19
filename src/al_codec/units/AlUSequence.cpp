@@ -29,13 +29,13 @@ bool AlUSequence::onDestroy(AlMessage *msg) {
 }
 
 bool AlUSequence::_onHeartbeat(AlMessage *msg) {
-//    auto array = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
-//    _findClipsByTime(*array, msg->arg2);
-//    if (!array->empty()) {
-//        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
-//        msg1->sp = array;
-//        postMessage(msg1);
-//    }
+    auto clips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
+    _findClipsByTime(*clips, msg->arg2);
+    if (!clips->empty()) {
+        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
+        msg1->sp = clips;
+        postMessage(msg1);
+    }
     return true;
 }
 
@@ -70,9 +70,8 @@ bool AlUSequence::_onAddTrackDone(AlMessage *msg) {
 }
 
 AlMediaClip *AlUSequence::_findClip(AlID id) {
-    auto itr = this->tracks.begin();
-    while (this->tracks.end() != itr) {
-        auto *clip = itr->second->findClip(id);
+    for (auto &track : this->tracks) {
+        auto *clip = track.second->findClip(id);
         if (clip) {
             return clip;
         }
@@ -82,16 +81,15 @@ AlMediaClip *AlUSequence::_findClip(AlID id) {
 
 void AlUSequence::_findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array,
                                    int64_t timeInUS) {
-    auto itr = this->tracks.begin();
-    while (this->tracks.end() != itr) {
-        itr->second->findClips(array, timeInUS);
+    for (auto &track : this->tracks) {
+        track.second->findClips(array, timeInUS);
     }
 }
 
 void AlUSequence::_notifyTimeline() {
     int32_t hzInUS = 0;
     int64_t durationInUS = 0;
-    for (auto & track : this->tracks) {
+    for (auto &track : this->tracks) {
         durationInUS = std::max(track.second->getSeqOut(), durationInUS);
     }
     auto *msg0 = AlMessage::obtain(MSG_TIMELINE_SET_DURATION);

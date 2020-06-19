@@ -27,7 +27,11 @@ public:
 private:
     bool _onAddTrack(AlMessage *msg);
 
+    bool _onBeat(AlMessage *msg);
+
     int64_t _create(AlMediaClip *clip);
+
+    AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
 
 private:
     std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
