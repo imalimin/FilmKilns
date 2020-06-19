@@ -91,9 +91,8 @@ void AlUSequence::_findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array
 void AlUSequence::_notifyTimeline() {
     int32_t hzInUS = 0;
     int64_t durationInUS = 0;
-    auto itr = this->tracks.begin();
-    while (this->tracks.end() != itr) {
-        durationInUS = std::max(itr->second->getSeqOut(), durationInUS);
+    for (auto & track : this->tracks) {
+        durationInUS = std::max(track.second->getSeqOut(), durationInUS);
     }
     auto *msg0 = AlMessage::obtain(MSG_TIMELINE_SET_DURATION);
     msg0->arg2 = durationInUS;

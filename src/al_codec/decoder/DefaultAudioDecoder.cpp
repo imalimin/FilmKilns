@@ -237,7 +237,7 @@ bool DefaultAudioDecoder::openTrack(int track, AVCodecContext **context) {
     *context = avcodec_alloc_context3(codec);
     avcodec_parameters_to_context(*context, avCodecParameters);
     if (avcodec_open2(*context, codec, NULL) < 0) {
-        Logcat::e("HWVC", "Couldn't open codec.");
+        AlLogE(TAG, "Couldn't open codec.");
         return false;
     }
     string typeName = "unknown";
@@ -246,7 +246,7 @@ bool DefaultAudioDecoder::openTrack(int track, AVCodecContext **context) {
     } else if (AVMEDIA_TYPE_AUDIO == codec->type) {
         typeName = "audio";
     }
-    Logcat::e("HWVC", "Open %s track with %s, fmt=%d, frameSize=%d", typeName.c_str(), codec->name,
+    AlLogI(TAG, "Open %s track with %s, fmt=%d, frameSize=%d", typeName.c_str(), codec->name,
               avCodecParameters->format, avCodecParameters->frame_size);
     return true;
 }
