@@ -36,12 +36,15 @@ bool AlUAudios::onDestroy(AlMessage *msg) {
 
 bool AlUAudios::_onAddTrack(AlMessage *msg) {
     AlLogI(TAG, "");
-    auto *clip = dynamic_cast<AlMediaClip *>(msg->sp.get());
-    auto duration = _create(clip);
+    auto clip = std::static_pointer_cast<AlMediaClip>(msg->sp);
+    int64_t duration = 0;
+    int64_t frameDuration = 0;
+    _create(clip.get(), duration, frameDuration);
     if (duration > 0) {
+        clip->setDuration(duration);
+        clip->setFrameDuration(frameDuration);
         auto msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD_NOTIFY);
-        msg1->arg1 = clip->id();
-        msg1->arg2 = duration;
+        msg1->sp = clip;
         postMessage(msg1);
     }
     return true;
@@ -68,26 +71,33 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
     return true;
 }
 
-int64_t AlUAudios::_create(AlMediaClip *clip) {
+void AlUAudios::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration) {
     if (nullptr == clip || AlIdentityCreator::NONE_ID == clip->id()) {
         AlLogE(TAG, "failed. Invalid clip.");
-        return 0;
+        return;
     }
     if (AlAbsInputDescriptor::kType::FILE != clip->getInputDescriptor()->type()) {
         AlLogE(TAG, "failed. Not support input type.");
-        return 0;
+        return;
     }
     std::string path = clip->getInputDescriptor()->path();
     if (StringUtils::isEmpty(&path)) {
         AlLogE(TAG, "failed. Invalid path(%s).", path.c_str());
-        return 0;
+        return;
     }
     std::unique_ptr<AsynAudioDecoder> decoder = std::make_unique<AsynAudioDecoder>();
     if (!decoder->prepare(path)) {
         AlLogE(TAG, "failed. Decoder prepare failed.");
-        return 0;
+        return;
     }
-    auto duration = decoder->getDuration();
+
+    duration = decoder->getDuration();
+    auto frameSize = decoder->getSamplesPerBuffer();
+    if (frameSize <= 0) {
+        frameSize = 1024;
+    }
+    frameDuration = 1e6 * frameSize / decoder->getSampleHz();
+
     decoder->start();
     AlLogI(TAG, "%" PRId64 ", %d, %d, %d, %s",
            decoder->getDuration(),
@@ -95,7 +105,6 @@ int64_t AlUAudios::_create(AlMediaClip *clip) {
            decoder->getSampleHz(),
            decoder->getSampleFormat(), path.c_str());
     map.insert(make_pair(clip->id(), std::move(decoder)));
-    return duration;
 }
 
 AbsAudioDecoder *AlUAudios::_findDecoder(AlMediaClip *clip) {

@@ -29,7 +29,7 @@ private:
 
     bool _onBeat(AlMessage *msg);
 
-    int64_t _create(AlMediaClip *clip);
+    void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
 
     AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
 

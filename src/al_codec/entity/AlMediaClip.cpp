@@ -67,6 +67,14 @@ int64_t AlMediaClip::getDuration() {
     return duration;
 }
 
+void AlMediaClip::setFrameDuration(int64_t timeInUS) {
+    frameDuration = timeInUS;
+}
+
+int64_t AlMediaClip::getFrameDuration() {
+    return frameDuration;
+}
+
 std::shared_ptr<AlFileDescriptor> AlMediaClip::getInputDescriptor() {
     return iDescriptor;
 }

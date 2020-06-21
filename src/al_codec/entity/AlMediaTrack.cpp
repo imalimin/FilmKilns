@@ -50,10 +50,16 @@ int64_t AlMediaTrack::getSeqOut() {
 
 int64_t AlMediaTrack::getDuration() {
     int64_t timeInUS = 0;
-    auto itr = clips.begin();
-    while (clips.end() != itr) {
-        timeInUS += itr->second->getDuration();
-        ++itr;
+    for (auto &clip : clips) {
+        timeInUS += clip.second->getDuration();
+    }
+    return timeInUS;
+}
+
+int64_t AlMediaTrack::getMinFrameDuration() {
+    int64_t timeInUS = INT64_MAX;
+    for (auto &clip : clips) {
+        timeInUS = std::min<int64_t>(clip.second->getFrameDuration(), timeInUS);
     }
     return timeInUS;
 }

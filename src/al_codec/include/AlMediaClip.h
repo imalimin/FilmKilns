@@ -37,6 +37,10 @@ public:
 
     int64_t getDuration();
 
+    void setFrameDuration(int64_t timeInUS);
+
+    int64_t getFrameDuration();
+
     std::shared_ptr<AlFileDescriptor> getInputDescriptor();
 
 private:
@@ -45,6 +49,7 @@ private:
     int64_t seqIn = 0;
     int64_t trimIn = 0;
     int64_t duration = 0;
+    int64_t frameDuration = 0;
 };
 
 

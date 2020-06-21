@@ -47,7 +47,7 @@ private:
 
 private:
     std::shared_ptr<AlEventPipeline> pipe;
-    int32_t hzInUS = 1000000;
+    int32_t hzInUS = 0;
     int64_t mDurationInUS = 0;
     int64_t mCurTimeInUS = 0;
 };

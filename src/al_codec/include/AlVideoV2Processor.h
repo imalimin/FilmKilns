@@ -23,11 +23,18 @@ public:
 
     int32_t addTrack(AlCodec::kMediaType type, std::string path);
 
+    void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
+
+private:
+    bool _onTimelineInUS(AlMessage *msg);
+
 private:
     const std::string ALIAS_TIMELINE = "TIMELINE_OF_VIDEO2";
     const std::string ALIAS_SEQUENCE = "SEQUENCE_OF_VIDEO2";
     const std::string ALIAS_AUDIOS = "SEQUENCE_OF_AUDIOS";
     const std::string ALIAS_SPEAKER = "SEQUENCE_OF_SPEAKER";
+
+    function<void(int64_t, int64_t)> playProgressListener = nullptr;
 };
 
 

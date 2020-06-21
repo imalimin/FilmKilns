@@ -13,8 +13,21 @@
 extern "C" {
 #endif
 
+static AlJNIObject::Method midOnNativeMessage = {
+        "com/lmy/hwvcnative/processor/AlVideoV2Processor",
+        "onDispatchNativeMessage", "(IIJJ)V"};
+
 static AlVideoV2Processor *getHandler(jlong handler) {
     return reinterpret_cast<AlVideoV2Processor *>(handler);
+}
+
+static void bindListener(AlVideoV2Processor *p) {
+    p->setPlayProgressListener([p](int64_t timeInUS, int64_t duration) {
+        AlJNIObject *obj = nullptr;
+        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+            al_jni_call_void(obj, midOnNativeMessage, 0, 0, timeInUS, duration);
+        }
+    });
 }
 
 JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_create
@@ -25,6 +38,7 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_cre
         AlJNIEnv::getInstance().attachThread();
         AlJNIEnv::getInstance().attach(p, obj, false);
     });
+    bindListener(p);
     return reinterpret_cast<jlong>(p);
 }
 

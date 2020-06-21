@@ -1,8 +1,11 @@
 package com.lmy.hwvcnative.processor
 
+import android.util.Log
 import com.lmy.hwvcnative.CPPObject
 
 class AlVideoV2Processor : CPPObject() {
+    private var onPlayProgressListener: ((timeInUS: Long, duration: Long) -> Unit)? = null
+
     init {
         handler = create()
     }
@@ -17,6 +20,19 @@ class AlVideoV2Processor : CPPObject() {
     fun addTrack(type: Int, path: String) {
         if (!isNativeNull()) {
             addTrack(handler, type, path)
+        }
+    }
+
+    fun setOnPlayProgressListener(l: (timeInUS: Long, duration: Long) -> Unit) {
+        onPlayProgressListener = l
+    }
+
+    private fun onDispatchNativeMessage(what: Int, arg0: Int, arg1: Long, arg2: Long) {
+        Log.i("AlVideoV2Processor", "$what, $arg0, $arg1, $arg2")
+        when (what) {
+            0 -> {
+                onPlayProgressListener?.invoke(arg1, arg2)
+            }
         }
     }
 
