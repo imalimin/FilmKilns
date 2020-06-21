@@ -53,6 +53,9 @@ void AlUTimeline::_heartbeat() {
         msg->arg2 = this->mCurTimeInUS;
         this->postMessage(msg);
         this->mCurTimeInUS += this->hzInUS;
+        if (this->mCurTimeInUS > this->mDurationInUS) {
+            this->mCurTimeInUS = 0;
+        }
         AlEventPipeline::sleep(this->hzInUS);
         this->_heartbeat();
     });

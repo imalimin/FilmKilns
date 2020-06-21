@@ -33,6 +33,7 @@ bool AlUSequence::_onHeartbeat(AlMessage *msg) {
     _findClipsByTime(*clips, msg->arg2);
     if (!clips->empty()) {
         auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
+        msg1->arg2 = msg->arg2;
         msg1->sp = clips;
         postMessage(msg1);
     }

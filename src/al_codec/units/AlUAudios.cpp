@@ -51,12 +51,22 @@ bool AlUAudios::_onAddTrack(AlMessage *msg) {
 }
 
 bool AlUAudios::_onBeat(AlMessage *msg) {
+    auto timeInUS = msg->arg2;
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     HwAbsMediaFrame *frame = nullptr;
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         auto decoder = _findDecoder(itr->get());
+        if (decoder && 0 == timeInUS) {
+            AlLogI(TAG, "seek 0.");
+            decoder->seek(timeInUS);
+            decoder->start();
+        }
         while (decoder) {
             HwResult ret = decoder->grab(&frame);
+            if (Hw::MEDIA_EOF == ret) {
+                AlLogI(TAG, "EOF");
+                break;
+            }
             if (nullptr == frame && Hw::MEDIA_EOF != ret) {
                 continue;
             }
