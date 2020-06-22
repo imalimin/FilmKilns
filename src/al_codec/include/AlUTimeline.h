@@ -45,8 +45,11 @@ private:
 
     void _heartbeat();
 
+    void _sendBeat();
+
 private:
     std::shared_ptr<AlEventPipeline> pipe;
+    int64_t mLastBeatTimestampInUS = 0;
     int32_t hzInUS = 0;
     int64_t mDurationInUS = 0;
     int64_t mCurTimeInUS = 0;

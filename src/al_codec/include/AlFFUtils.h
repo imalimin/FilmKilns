@@ -26,6 +26,8 @@ extern "C" {
 }
 #endif
 
+static std::once_flag onceFlag;
+
 AL_CLASS AlFFUtils AL_EXTEND Object {
 public:
     static int init();
@@ -37,7 +39,6 @@ public:
     static int exec(std::string cmd);
 
 private:
-    static std::once_flag onceFlag;
 };
 
 #endif //HARDWAREVIDEOCODEC_FFUTILS_H

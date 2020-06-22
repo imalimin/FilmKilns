@@ -7,6 +7,7 @@
 
 #include "AlUTimeline.h"
 #include "Thread.h"
+#include "TimeUtils.h"
 
 #define TAG "AlUTimeline"
 
@@ -49,14 +50,24 @@ void AlUTimeline::_heartbeat() {
     }
 
     pipe->queueEvent([this]() {
-        auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, AlMessage::QUEUE_MODE_UNIQUE);
-        msg->arg2 = this->mCurTimeInUS;
-        this->postMessage(msg);
-        this->mCurTimeInUS += this->hzInUS;
-        if (this->mCurTimeInUS > this->mDurationInUS) {
-            this->mCurTimeInUS = 0;
-        }
-        AlEventPipeline::sleep(this->hzInUS);
+        this->_sendBeat();
+        auto time = TimeUtils::getCurrentTimeUS();
+        auto sleepTime = this->mLastBeatTimestampInUS > 0 ? (this->hzInUS -
+                                                             (time - this->mLastBeatTimestampInUS))
+                                                          : this->hzInUS;
+        this->mLastBeatTimestampInUS = time;
+        AlEventPipeline::sleep(sleepTime);
         this->_heartbeat();
     });
+}
+
+void AlUTimeline::_sendBeat() {
+    auto mode = AlMessage::QUEUE_MODE_UNIQUE | AlMessage::QUEUE_MODE_FIRST_ALWAYS;
+    auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, mode);
+    msg->arg2 = this->mCurTimeInUS;
+    this->postMessage(msg);
+    this->mCurTimeInUS += this->hzInUS;
+    if (this->mCurTimeInUS > this->mDurationInUS) {
+        this->mCurTimeInUS = 0;
+    }
 }
