@@ -33,6 +33,8 @@ private:
 
     AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
 
+    void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);
+
 private:
     std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
 };

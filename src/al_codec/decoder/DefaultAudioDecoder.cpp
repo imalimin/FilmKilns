@@ -12,7 +12,7 @@
 
 #define TAG "DefaultAudioDecoder"
 
-DefaultAudioDecoder::DefaultAudioDecoder() : AbsAudioDecoder() {
+DefaultAudioDecoder::DefaultAudioDecoder() : AbsAudioDecoder(), oFormat(HwSampleFormat::NONE) {
     hwFrameAllocator = new HwFrameAllocator();
 }
 
@@ -48,7 +48,6 @@ bool DefaultAudioDecoder::prepare(string path) {
     Logcat::i("HWVC", "DefaultAudioDecoder::prepare: %s", path.c_str());
     this->path = path;
     av_register_all();
-    printCodecInfo();
     pFormatCtx = avformat_alloc_context();
     //打开输入视频文件
     if (avformat_open_input(&pFormatCtx, path.c_str(), NULL, NULL) != 0) {
@@ -70,19 +69,21 @@ bool DefaultAudioDecoder::prepare(string path) {
         Logcat::e("HWVC", "******** Open audio track failed. *********");
         return false;
     }
+    _checkFormat();
     Logcat::e("HWVC",
               "DefaultAudioDecoder::prepare(duration=%lld channels=%d, sampleHz=%d, frameSize=%d)",
-              getAudioDuration(), getChannels(), getSampleHz(), aCodecContext->frame_size);
-    outSampleFormat = getBestSampleFormat(aCodecContext->sample_fmt);
-    if (outSampleFormat != aCodecContext->sample_fmt) {
+              getAudioDuration(), getChannels(), getSampleHz(), getSamplesPerBuffer());
+    if (oFormat.getAVFormat() != aCodecContext->sample_fmt ||
+        oFormat.getSampleRate() != aCodecContext->sample_rate ||
+        oFormat.getChannels() != aCodecContext->channels) {
         translator = new HwAudioTranslator(
-                HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(outSampleFormat),
+                HwSampleFormat(oFormat.getFormat(),
                                getChannels(),
                                getSampleHz()),
                 HwSampleFormat(
                         HwAbsMediaFrame::convertToAudioFrameFormat(aCodecContext->sample_fmt),
-                        getChannels(),
-                        getSampleHz()));
+                        aCodecContext->channels,
+                        aCodecContext->sample_rate));
     } else {
         AlLogI(TAG, "Skip resample.");
     }
@@ -169,22 +170,30 @@ void DefaultAudioDecoder::seek(int64_t us) {
     eof = false;
 }
 
+void DefaultAudioDecoder::setOutSampleFormat(HwSampleFormat format) {
+    oFormat = format;
+}
+
 int DefaultAudioDecoder::getChannels() {
-    return aCodecContext->channels;
+    return oFormat.getChannels();
 }
 
 int DefaultAudioDecoder::getSampleHz() {
-    return aCodecContext->sample_rate;
+    return oFormat.getSampleRate();
 }
 
 int DefaultAudioDecoder::getSampleFormat() {
     assert(aCodecContext);
-    return outSampleFormat;
+    return oFormat.getAVFormat();
 }
 
 int DefaultAudioDecoder::getSamplesPerBuffer() {
     assert(aCodecContext);
-    return aCodecContext->frame_size;
+    int32_t size = aCodecContext->frame_size;
+    if (0 == size) {
+        size = 1024;
+    }
+    return size * (int32_t) oFormat.getSampleRate() / aCodecContext->sample_rate;
 }
 
 int64_t DefaultAudioDecoder::getAudioDuration() {
@@ -247,12 +256,12 @@ bool DefaultAudioDecoder::openTrack(int track, AVCodecContext **context) {
         typeName = "audio";
     }
     AlLogI(TAG, "Open %s track with %s, fmt=%d, frameSize=%d", typeName.c_str(), codec->name,
-              avCodecParameters->format, avCodecParameters->frame_size);
+           avCodecParameters->format, avCodecParameters->frame_size);
     return true;
 }
 
 HwAbsMediaFrame *DefaultAudioDecoder::resample(AVFrame *avFrame) {
-    if (nullptr == translator || aCodecContext->sample_fmt == outSampleFormat) {
+    if (nullptr == translator) {
         return hwFrameAllocator->ref(avFrame);
     }
     AVFrame *outFrame = nullptr;
@@ -281,32 +290,6 @@ AVSampleFormat DefaultAudioDecoder::getBestSampleFormat(AVSampleFormat in) {
     return out;
 }
 
-void DefaultAudioDecoder::printCodecInfo() {
-    char info[1024] = {0};
-    AVCodec *c_temp = av_codec_next(NULL);
-    while (c_temp != NULL) {
-        if (c_temp->decode != NULL) {
-            sprintf(info, "%s[Dec]", info);
-        } else {
-            sprintf(info, "%s[Enc]", info);
-        }
-        switch (c_temp->type) {
-            case AVMEDIA_TYPE_VIDEO:
-                sprintf(info, "%s[Video]", info);
-                break;
-            case AVMEDIA_TYPE_AUDIO:
-                sprintf(info, "%s[Audio]", info);
-                break;
-            default:
-                sprintf(info, "%s[Other]", info);
-                break;
-        }
-        sprintf(info, "%s[%10s]\n", info, c_temp->name);
-        c_temp = c_temp->next;
-    }
-    Logcat::e("HWVC", "%s", info);
-}
-
 void DefaultAudioDecoder::start() {
 
 }
@@ -317,4 +300,21 @@ void DefaultAudioDecoder::pause() {
 
 void DefaultAudioDecoder::stop() {
 
+}
+
+void DefaultAudioDecoder::_checkFormat() {
+    HwFrameFormat format = oFormat.getFormat();
+    int32_t sampleHz = oFormat.getSampleRate();
+    int32_t channels = oFormat.getChannels();
+    if (HwFrameFormat::HW_FMT_NONE == format) {
+        format = HwAbsMediaFrame::convertToAudioFrameFormat(
+                getBestSampleFormat(aCodecContext->sample_fmt));
+    }
+    if (sampleHz <= 0) {
+        sampleHz = aCodecContext->sample_rate;
+    }
+    if (channels <= 0) {
+        channels = aCodecContext->channels;
+    }
+    oFormat = HwSampleFormat(format, channels, sampleHz);
 }

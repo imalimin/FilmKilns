@@ -291,6 +291,10 @@ void DefaultVideoDecoder::printCodecInfo() {
     LOGI("%s", info);
 }
 
+void DefaultVideoDecoder::setOutSampleFormat(HwSampleFormat format) {
+
+}
+
 int DefaultVideoDecoder::getChannels() {
     return aCodecContext ? aCodecContext->channels : 0;
 }

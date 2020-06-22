@@ -161,6 +161,12 @@ HwResult AsynAudioDecoder::grab(HwAbsMediaFrame **frame) {
     return Hw::SUCCESS;
 }
 
+void AsynAudioDecoder::setOutSampleFormat(HwSampleFormat format) {
+    if (decoder) {
+        return decoder->setOutSampleFormat(format);
+    }
+}
+
 int AsynAudioDecoder::getChannels() {
     if (decoder) {
         return decoder->getChannels();

@@ -56,10 +56,8 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
     HwAbsMediaFrame *frame = nullptr;
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         auto decoder = _findDecoder(itr->get());
-        if (decoder && 0 == timeInUS) {
-            AlLogI(TAG, "seek 0.");
-            decoder->seek(timeInUS);
-            decoder->start();
+        if (0 == timeInUS) {
+            _seek(decoder, timeInUS);
         }
         while (decoder) {
             HwResult ret = decoder->grab(&frame);
@@ -96,6 +94,7 @@ void AlUAudios::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
         return;
     }
     std::unique_ptr<AsynAudioDecoder> decoder = std::make_unique<AsynAudioDecoder>();
+    decoder->setOutSampleFormat(HwSampleFormat(HwFrameFormat::HW_SAMPLE_S16, 2, 44100));
     if (!decoder->prepare(path)) {
         AlLogE(TAG, "failed. Decoder prepare failed.");
         return;
@@ -103,9 +102,6 @@ void AlUAudios::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
 
     duration = decoder->getDuration();
     auto frameSize = decoder->getSamplesPerBuffer();
-    if (frameSize <= 0) {
-        frameSize = 1024;
-    }
     frameDuration = 1e6 * frameSize / decoder->getSampleHz();
 
     decoder->start();
@@ -126,4 +122,12 @@ AbsAudioDecoder *AlUAudios::_findDecoder(AlMediaClip *clip) {
         return nullptr;
     }
     return itr->second.get();
+}
+
+void AlUAudios::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
+    if (decoder) {
+        AlLogI(TAG, "seek to %" PRId64, timeInUS);
+        decoder->seek(timeInUS);
+        decoder->start();
+    }
 }

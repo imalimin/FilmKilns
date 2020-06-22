@@ -9,22 +9,25 @@
 #define HARDWAREVIDEOCODEC_ABSAUDIODECODER_H
 
 #include "AbsDecoder.h"
+#include "HwSampleFormat.h"
 
-class AbsAudioDecoder : virtual public AbsDecoder {
+AL_INTERFACE AbsAudioDecoder : virtual public AbsDecoder {
 public:
     AbsAudioDecoder();
 
     virtual ~AbsAudioDecoder();
 
-    virtual int getChannels()=0;
+    virtual void setOutSampleFormat(HwSampleFormat format) = 0;
 
-    virtual int getSampleHz()=0;
+    virtual int getChannels() = 0;
 
-    virtual int getSampleFormat()=0;
+    virtual int getSampleHz() = 0;
 
-    virtual int getSamplesPerBuffer()=0;
+    virtual int getSampleFormat() = 0;
 
-    virtual int64_t getAudioDuration()=0;
+    virtual int getSamplesPerBuffer() = 0;
+
+    virtual int64_t getAudioDuration() = 0;
 };
 
 

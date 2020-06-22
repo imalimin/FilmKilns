@@ -30,6 +30,10 @@ HwSampleFormat::~HwSampleFormat() {
 
 HwFrameFormat HwSampleFormat::getFormat() { return format; }
 
+int32_t HwSampleFormat::getAVFormat() {
+    return HwAbsMediaFrame::convertAudioFrameFormat(getFormat());
+}
+
 uint16_t HwSampleFormat::getChannels() { return channels; }
 
 uint32_t HwSampleFormat::getSampleRate() { return sampleRate; }

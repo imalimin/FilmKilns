@@ -158,6 +158,10 @@ void AsynVideoDecoder::stop() {
     grabLock.notify();
 }
 
+void AsynVideoDecoder::setOutSampleFormat(HwSampleFormat format) {
+
+}
+
 int AsynVideoDecoder::getChannels() {
     if (decoder) {
         return decoder->getChannels();

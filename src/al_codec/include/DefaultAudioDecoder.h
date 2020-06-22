@@ -34,12 +34,14 @@ public:
 
     virtual bool prepare(string path) override;
 
-    void seek(int64_t us);
+    void seek(int64_t us) override;
 
     /**
      * @return 1: video, 2: audio, 0: failed
      */
     virtual HwResult grab(HwAbsMediaFrame **frame) override;
+
+    virtual void setOutSampleFormat(HwSampleFormat format) override;
 
     virtual int getChannels() override;
 
@@ -68,12 +70,11 @@ private:
 
     void matchPts(AVFrame *frame, int track);
 
-    void printCodecInfo();
-
     void handleAction();
 
+    void _checkFormat();
+
 private:
-    bool enableDebug = false;
     string path;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     AVFormatContext *pFormatCtx = nullptr;
@@ -83,7 +84,7 @@ private:
     AVPacket *avPacket = nullptr;
     AVFrame *audioFrame = nullptr;
     HwAbsMediaFrame *outHwFrame = nullptr;
-    AVSampleFormat outSampleFormat = AV_SAMPLE_FMT_S16;
+    HwSampleFormat oFormat;
     AVRational outputTimeBase = AVRational{1, 1000000};
     int64_t audioDurationUs = -1;
     int64_t durationUs = -1;

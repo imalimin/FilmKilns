@@ -41,6 +41,8 @@ public:
      */
     HwResult grab(HwAbsMediaFrame **frame) override;
 
+    virtual void setOutSampleFormat(HwSampleFormat format) override;
+
     virtual int getChannels() override;
 
     virtual int getSampleHz() override;

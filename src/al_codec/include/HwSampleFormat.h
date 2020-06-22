@@ -22,6 +22,8 @@ public:
 
     HwFrameFormat getFormat();
 
+    int32_t getAVFormat();
+
     HwSampleFormat &operator=(const HwSampleFormat &o);
 
     bool operator==(const HwSampleFormat &o);
