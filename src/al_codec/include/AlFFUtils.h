@@ -10,6 +10,7 @@
 
 #include "Object.h"
 #include <pthread.h>
+#include <mutex>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,8 +22,14 @@ extern "C" {
 #include "libswresample/swresample.h"
 #include "libavcodec/jni.h"
 
+#ifdef __cplusplus
+}
+#endif
+
 AL_CLASS AlFFUtils AL_EXTEND Object {
 public:
+    static int init();
+
     static int avSamplesCopy(AVFrame *dest, AVFrame *src);
 
     static void attachJvm(void *vm);
@@ -30,10 +37,7 @@ public:
     static int exec(std::string cmd);
 
 private:
+    static std::once_flag onceFlag;
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif //HARDWAREVIDEOCODEC_FFUTILS_H

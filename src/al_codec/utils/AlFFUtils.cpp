@@ -16,6 +16,14 @@ extern "C" {
 }
 #endif
 
+int AlFFUtils::init() {
+    std::call_once(onceFlag, []() {
+        av_register_all();
+        avcodec_register_all();
+    });
+    return 0;
+}
+
 int AlFFUtils::avSamplesCopy(AVFrame *dest, AVFrame *src) {
     av_free(dest->data[0]);
     av_samples_alloc(dest->data,
