@@ -13,7 +13,7 @@ class AlVideoV2Activity : BaseActivity() {
     private val processor: AlVideoV2Processor? = AlVideoV2Processor()
     override fun getLayoutResource(): Int = R.layout.activity_video_v2
     override fun initView() {
-        processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today.wav")
+        processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today.m4a")
         processor?.setOnPlayProgressListener { timeInUS, duration ->
             runOnUiThread {
                 seekBar.progress = (timeInUS * 100 / duration).toInt()
