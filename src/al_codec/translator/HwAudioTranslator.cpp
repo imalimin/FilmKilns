@@ -67,14 +67,6 @@ bool HwAudioTranslator::translate(AVFrame **dest, AVFrame **src) {
         outFrame->channel_layout = av_get_default_channel_layout(outFormat.getChannels());
         outFrame->sample_rate = outFormat.getSampleRate();
         outFrame->pts = 0;
-        auto size = av_samples_get_buffer_size(outFrame->linesize,
-                                               outFrame->channels,
-                                               outFrame->nb_samples,
-                                               (AVSampleFormat) outFrame->format,
-                                               0);
-        auto *data = (uint8_t *) av_malloc(size);
-        avcodec_fill_audio_frame(outFrame, outFrame->channels, (AVSampleFormat) outFrame->format,
-                                 data, size, 0);
     }
     int ret = swr_convert_frame(swrContext, outFrame, src[0]);
     if (0 != ret) {
