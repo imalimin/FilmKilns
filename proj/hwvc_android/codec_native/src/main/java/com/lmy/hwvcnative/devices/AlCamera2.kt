@@ -56,17 +56,23 @@ class AlCamera2(
         surfaceTexture?.setOnFrameAvailableListener(onFrameAvailableListener)
         try {
             manager?.cameraIdList?.forEach {
-                val characteristics = manager.getCameraCharacteristics(it)
-                val focalDistance =
-                    characteristics.get(CameraCharacteristics.LENS_INFO_HYPERFOCAL_DISTANCE) ?: 0f
-                val face = characteristics.get(CameraCharacteristics.LENS_FACING)
+                val cc = manager.getCameraCharacteristics(it)
+                var focalDistance = cc.get(CameraCharacteristics.LENS_INFO_HYPERFOCAL_DISTANCE)
+                if (null == focalDistance) {
+                    focalDistance = 0f
+                }
+                var lensLengths = cc.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
+                if (null == lensLengths || lensLengths.isEmpty()) {
+                    lensLengths = floatArrayOf(0f)
+                }
+                val face = cc.get(CameraCharacteristics.LENS_FACING)
                 Log.i(TAG, "$face")
                 val facing = when (face) {
                     CameraCharacteristics.LENS_FACING_FRONT -> kFacing.FRONT
                     CameraCharacteristics.LENS_FACING_BACK -> kFacing.BACK
                     else -> return@forEach
                 }
-                mCameraList.add(CamMetadata(it, facing, focalDistance))
+                mCameraList.add(CamMetadata(it, facing, focalDistance, lensLengths[0]))
             }
             Log.i(TAG, mCameraList.toString())
             open()
@@ -87,8 +93,9 @@ class AlCamera2(
             return list[0]
         }
         if (list.size > 1) {
-            list.sortByDescending { it.focalDistance }
-            return list[list.size / 2]
+            list.sortByDescending { it.lensLength }
+            //选择focal length中间值摄像头
+            return list[(list.size - 1) / 2]
         }
         return mCameraList[0]
     }
@@ -97,6 +104,7 @@ class AlCamera2(
     @SuppressLint("MissingPermission")
     private fun open() {
         val meta = getDefaultCamera(index)
+        Log.i(TAG, "Select camera $meta")
         setupPreviewSize()
         manager?.openCamera(meta.id, callback, handler)
     }

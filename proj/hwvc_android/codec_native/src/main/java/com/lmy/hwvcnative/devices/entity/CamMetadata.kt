@@ -1,11 +1,10 @@
 package com.lmy.hwvcnative.devices.entity
 
-import android.annotation.SuppressLint
-
-class CamMetadata(
+data class CamMetadata(
     var id: String,
     var facing: kFacing,
-    var focalDistance: Float
+    var focalDistance: Float,
+    var lensLength: Float
 )
 
 enum class kFacing {
