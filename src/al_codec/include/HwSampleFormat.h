@@ -28,6 +28,8 @@ public:
 
     bool operator==(const HwSampleFormat &o);
 
+    bool operator!=(const HwSampleFormat &o);
+
     size_t getBytesPerSample();
 
     bool valid();

@@ -51,6 +51,12 @@ bool HwSampleFormat::operator==(const HwSampleFormat &o) {
            this->sampleRate == o.sampleRate;
 }
 
+bool HwSampleFormat::operator!=(const HwSampleFormat &o) {
+    return this->format != o.format ||
+           this->channels != o.channels ||
+           this->sampleRate != o.sampleRate;
+}
+
 size_t HwSampleFormat::getBytesPerSample() {
     return static_cast<size_t>(HwAbsMediaFrame::getBytesPerSample(format) * channels);
 }

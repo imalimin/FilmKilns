@@ -118,7 +118,7 @@ bool AsynAudioDecoder::grab() {
     if (!decoder) {
         return false;
     }
-    if (cache.size() >= 10) {
+    if (cache.size() >= CACHE_SIZE) {
         grabLock.wait();
         return true;
     }

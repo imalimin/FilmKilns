@@ -84,6 +84,7 @@ private:
     AVPacket *avPacket = nullptr;
     AVFrame *audioFrame = nullptr;
     HwAbsMediaFrame *outHwFrame = nullptr;
+    HwSampleFormat sFormat;
     HwSampleFormat oFormat;
     AVRational outputTimeBase = AVRational{1, 1000000};
     int64_t audioDurationUs = -1;

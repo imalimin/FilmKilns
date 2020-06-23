@@ -63,6 +63,7 @@ private:
     void clear();
 
 private:
+    const int CACHE_SIZE = 5;
     HwFrameAllocator *hwFrameAllocator = nullptr;
     AbsAudioDecoder *decoder = nullptr;
 //    HwAndroidAudioDecoder *decoder = nullptr;
