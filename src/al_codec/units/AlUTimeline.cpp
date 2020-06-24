@@ -62,7 +62,8 @@ void AlUTimeline::_heartbeat() {
 }
 
 void AlUTimeline::_sendBeat() {
-    auto mode = AlMessage::QUEUE_MODE_UNIQUE | AlMessage::QUEUE_MODE_FIRST_ALWAYS;
+    // 如果QUEUE_MODE_FIRST_ALWAYS会影响数据流传递，所以使用QUEUE_MODE_UNIQUE即可
+    auto mode = AlMessage::QUEUE_MODE_UNIQUE;
     auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, mode);
     msg->arg2 = this->mCurTimeInUS;
     this->postMessage(msg);
