@@ -11,16 +11,15 @@
 #include "Object.h"
 #include "HwResult.h"
 #include "HwAudioFrame.h"
+#include <map>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "libavcodec/avcodec.h"
-#include "libavformat/avformat.h"
-#include "libavutil/avutil.h"
-#include "libswresample/swresample.h"
-#include "libavcodec/jni.h"
+#include <libavutil/audio_fifo.h>
+#include <libavutil/samplefmt.h>
+#include <libswresample/swresample.h>
 
 #ifdef __cplusplus
 }
@@ -38,9 +37,17 @@ public:
 
     HwResult pop(HwAbsMediaFrame **frame);
 
+    HwResult remove(int32_t track);
+
+    size_t samplesOfTrack(int32_t track);
+
 private:
     AlAudioPoolMixer(const AlAudioPoolMixer &o) : Object() {};
+
+    HwResult _findFIFOByTrack(int32_t track, AVAudioFifo **fifo);
+
 private:
+    std::map<int32_t, AVAudioFifo *> map;
 };
 
 
