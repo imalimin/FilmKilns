@@ -67,12 +67,12 @@ void AlUTimeline::_heartbeat() {
 
     pipe->queueEvent([this]() {
         this->_sendBeat();
-        auto time = TimeUtils::getCurrentTimeUS();
         auto sleepTime = this->mLastBeatTimestampInUS > 0 ? (this->hzInUS -
-                                                             (time - this->mLastBeatTimestampInUS))
+                                                             (TimeUtils::getCurrentTimeUS() -
+                                                              this->mLastBeatTimestampInUS))
                                                           : this->hzInUS;
-        this->mLastBeatTimestampInUS = time;
         AlEventPipeline::sleep(sleepTime);
+        this->mLastBeatTimestampInUS = TimeUtils::getCurrentTimeUS();
         this->_heartbeat();
     });
 }
