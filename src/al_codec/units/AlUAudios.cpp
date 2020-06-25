@@ -59,7 +59,7 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
     if (nullptr == mixer) {
         return true;
     }
-    auto timeInUS = msg->arg2;
+    mCurTimeInUS = msg->arg2;
     HwAbsMediaFrame *frame = nullptr;
     mixer->clearSelect();
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
@@ -70,8 +70,8 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
             continue;
         }
         auto decoder = _findDecoder(clip);
-        if (0 == timeInUS) {
-            _seek(decoder, timeInUS);
+        if (0 == mCurTimeInUS) {
+            _seek(decoder, mCurTimeInUS);
         }
         while (decoder) {
             HwResult ret = decoder->grab(&frame);
@@ -127,6 +127,9 @@ void AlUAudios::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
     frameDuration = 1e6 * frameSize / decoder->getSampleHz();
 
     decoder->start();
+    auto timeInUS = std::min<int64_t>(mCurTimeInUS, duration);
+    timeInUS = std::max<int64_t>(0, timeInUS);
+    decoder->seek(timeInUS);
     AlLogI(TAG, "%" PRId64 ", %d, %d, %d, %s",
            decoder->getDuration(),
            decoder->getChannels(),

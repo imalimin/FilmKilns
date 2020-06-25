@@ -28,6 +28,10 @@ AlID AlMediaTrack::id() {
     return _id;
 }
 
+AlCodec::kMediaType AlMediaTrack::type() {
+    return _type;
+}
+
 int64_t AlMediaTrack::getSeqIn() {
     int64_t timeInUS = 0;
     auto itr = clips.begin();

@@ -25,6 +25,8 @@ public:
 
     AlID id();
 
+    AlCodec::kMediaType type();
+
     int64_t getSeqIn();
 
     int64_t getSeqOut();

@@ -41,6 +41,7 @@ private:
     std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
     HwSampleFormat format;
     AlAudioPoolMixer *mixer = nullptr;
+    int64_t mCurTimeInUS = 0;
 };
 
 

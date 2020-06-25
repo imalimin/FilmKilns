@@ -30,7 +30,7 @@ bool AlUSequence::onDestroy(AlMessage *msg) {
 
 bool AlUSequence::_onHeartbeat(AlMessage *msg) {
     auto clips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
-    _findClipsByTime(*clips, msg->arg2);
+    _findClipsByTime(AlCodec::kMediaType::AUDIO, *clips, msg->arg2);
     if (!clips->empty()) {
         auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
         msg1->arg2 = msg->arg2;
@@ -82,10 +82,13 @@ AlMediaClip *AlUSequence::_findClip(AlID id) {
     return nullptr;
 }
 
-void AlUSequence::_findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array,
+void AlUSequence::_findClipsByTime(AlCodec::kMediaType type,
+                                   AlVector<std::shared_ptr<AlMediaClip>> &array,
                                    int64_t timeInUS) {
     for (auto &track : this->tracks) {
-        track.second->findClips(array, timeInUS);
+        if (type == track.second->type()) {
+            track.second->findClips(array, timeInUS);
+        }
     }
 }
 

@@ -32,7 +32,9 @@ private:
 
     AlMediaClip *_findClip(AlID id);
 
-    void _findClipsByTime(AlVector<std::shared_ptr<AlMediaClip>> &array, int64_t timeInUS);
+    void _findClipsByTime(AlCodec::kMediaType type,
+                          AlVector<std::shared_ptr<AlMediaClip>> &array,
+                          int64_t timeInUS);
 
     void _notifyTimeline();
 

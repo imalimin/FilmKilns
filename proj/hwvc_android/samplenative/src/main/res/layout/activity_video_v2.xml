@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    android:fitsSystemWindows="false">
+    android:fitsSystemWindows="false"
+    android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@android:drawable/ic_media_ff" />
+    <com.lmy.common.widget.SquareLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </com.lmy.common.widget.SquareLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,4 +41,17 @@
             android:text="00:00"
             android:textColor="#ffffff" />
     </LinearLayout>
-</RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/addBtn"
+            style="@style/Widget.UIFabric.Button.Borderless"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="ADD" />
+    </FrameLayout>
+</LinearLayout>
