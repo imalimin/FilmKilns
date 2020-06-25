@@ -46,7 +46,7 @@ private:
 
     bool _onStart(AlMessage *msg);
 
-    bool _onStop(AlMessage *msg);
+    bool _onPause(AlMessage *msg);
 
     void _heartbeat();
 

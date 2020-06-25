@@ -71,10 +71,10 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_star
     }
 }
 
-JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_stop
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_pause
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
-        getHandler(handler)->stop();
+        getHandler(handler)->pause();
     }
 }
 

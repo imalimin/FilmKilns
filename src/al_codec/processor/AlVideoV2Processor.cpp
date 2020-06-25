@@ -55,8 +55,8 @@ void AlVideoV2Processor::start() {
     postMessage(AlMessage::obtain(MSG_TIMELINE_START));
 }
 
-void AlVideoV2Processor::stop() {
-    postMessage(AlMessage::obtain(MSG_TIMELINE_STOP));
+void AlVideoV2Processor::pause() {
+    postMessage(AlMessage::obtain(MSG_TIMELINE_PAUSE));
 }
 
 void AlVideoV2Processor::setPlayProgressListener(function<void(int64_t, int64_t)> listener) {

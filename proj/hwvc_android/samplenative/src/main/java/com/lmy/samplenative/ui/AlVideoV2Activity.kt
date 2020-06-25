@@ -9,9 +9,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AlVideoV2Activity : BaseActivity() {
+    override fun getLayoutResource(): Int = R.layout.activity_video_v2
     private val fmt = SimpleDateFormat("mm:ss")
     private val processor: AlVideoV2Processor? = AlVideoV2Processor()
-    override fun getLayoutResource(): Int = R.layout.activity_video_v2
+    private var playing: Boolean = true
     override fun initView() {
         processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/hw_test.m4a")
         processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today.m4a")
@@ -22,13 +23,21 @@ class AlVideoV2Activity : BaseActivity() {
             }
         }
         playBtn.setOnClickListener {
+            if (playing) {
+                playBtn.setImageResource(android.R.drawable.ic_media_play)
+                processor?.pause()
+            } else {
+                playBtn.setImageResource(android.R.drawable.ic_media_pause)
+                processor?.start()
+            }
+            playing = !playing
         }
         processor?.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        processor?.stop()
+        processor?.pause()
         processor?.release()
     }
 }

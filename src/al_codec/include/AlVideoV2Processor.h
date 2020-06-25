@@ -25,7 +25,7 @@ public:
 
     void start();
 
-    void stop();
+    void pause();
 
     void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 

@@ -29,9 +29,9 @@ class AlVideoV2Processor : CPPObject() {
         }
     }
 
-    fun stop() {
+    fun pause() {
         if (!isNativeNull()) {
-            stop(handler)
+            pause(handler)
         }
     }
 
@@ -52,7 +52,7 @@ class AlVideoV2Processor : CPPObject() {
     private external fun release(handle: Long)
     private external fun addTrack(handle: Long, type: Int, path: String)
     private external fun start(handle: Long)
-    private external fun stop(handle: Long)
+    private external fun pause(handle: Long)
 }
 
 object MediaType {
