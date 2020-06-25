@@ -86,7 +86,7 @@ file(GLOB SOURCES
         #fftools
         ${PROJECT_SOURCE_DIR}/utils/fftools/*.c
         #Header
-        ${PROJECT_SOURCE_DIR}/include/*.h
+#        ${PROJECT_SOURCE_DIR}/include/*.h
         )
 if (ANDROID)
     file(GLOB

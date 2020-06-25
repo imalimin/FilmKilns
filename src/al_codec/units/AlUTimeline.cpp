@@ -32,7 +32,7 @@ bool AlUTimeline::onDestroy(AlMessage *msg) {
 
 bool AlUTimeline::_onSetHzInUS(AlMessage *msg) {
 //    hzInUS = msg->arg1;
-    hzInUS = 21333;
+    hzInUS = 23219;
     return true;
 }
 

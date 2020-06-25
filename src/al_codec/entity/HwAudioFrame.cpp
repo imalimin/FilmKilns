@@ -5,8 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwAudioFrame.h"
+#include "HwAudioFrame.h"
 #include "Logcat.h"
+
+HwAudioFrame::HwAudioFrame(HwFrameFormat format,
+                           uint16_t channels,
+                           uint32_t sampleRate,
+                           uint64_t sampleCount)
+        : HwAudioFrame(nullptr, format, channels, sampleRate, sampleCount) {
+}
 
 HwAudioFrame::HwAudioFrame(HwSourcesAllocator *allocator,
                            HwFrameFormat format,

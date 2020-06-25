@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "HwResult.h"
 #include "HwAudioFrame.h"
+#include "HwSampleFormat.h"
 #include <map>
 
 #ifdef __cplusplus
@@ -27,27 +28,32 @@ extern "C" {
 
 AL_CLASS AlAudioPoolMixer AL_EXTEND Object {
 public:
-    AlAudioPoolMixer();
+    AlAudioPoolMixer(const HwSampleFormat &format);
 
     virtual ~AlAudioPoolMixer();
 
-    HwResult put(int32_t track, HwAudioFrame *frame);
+    HwResult put(int32_t track, HwAudioFrame *f);
 
-    HwResult request(size_t nbSamples);
-
-    HwResult pop(HwAbsMediaFrame **frame);
+    HwResult pop(size_t nbSamples, HwAbsMediaFrame **f);
 
     HwResult remove(int32_t track);
 
-    size_t samplesOfTrack(int32_t track);
+    int32_t samplesOfTrack(int32_t track);
 
 private:
-    AlAudioPoolMixer(const AlAudioPoolMixer &o) : Object() {};
+    AlAudioPoolMixer(const AlAudioPoolMixer &o) : Object(), format(HwSampleFormat::NONE) {};
 
-    HwResult _findFIFOByTrack(int32_t track, AVAudioFifo **fifo);
+    HwResult _findFifoOByTrack(int32_t track, AVAudioFifo **fifo);
+
+    HwResult _request(size_t nbSamples);
+
+    void _checkFrame(HwAudioFrame **ff, int32_t nbSamples);
 
 private:
+    HwSampleFormat format;
     std::map<int32_t, AVAudioFifo *> map;
+    HwAudioFrame *frame = nullptr;
+    HwAudioFrame *cache = nullptr;
 };
 
 

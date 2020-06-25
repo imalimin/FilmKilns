@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALUAUDIOS_H
 
 #include "Unit.h"
+#include "AlAudioPoolMixer.h"
 #include "AlMediaClip.h"
 #include "AbsAudioDecoder.h"
 #include "AlIdentityCreator.h"
@@ -36,7 +37,10 @@ private:
     void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);
 
 private:
+    const int FRAME_SIZE = 1024;
     std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
+    HwSampleFormat format;
+    AlAudioPoolMixer *mixer = nullptr;
 };
 
 

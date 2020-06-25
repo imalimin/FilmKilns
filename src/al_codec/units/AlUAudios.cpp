@@ -13,7 +13,9 @@
 
 #define TAG "AlUAudios"
 
-AlUAudios::AlUAudios(const std::string alias) : Unit(alias) {
+AlUAudios::AlUAudios(const std::string alias)
+        : Unit(alias),
+          format(HwFrameFormat::HW_SAMPLE_S16, 2, 44100) {
     al_reg_msg(MSG_AUDIOS_ADD, AlUAudios::_onAddTrack);
     al_reg_msg(MSG_SEQUENCE_BEAT_AUDIO, AlUAudios::_onBeat);
 }
@@ -23,10 +25,13 @@ AlUAudios::~AlUAudios() {
 }
 
 bool AlUAudios::onCreate(AlMessage *msg) {
+    mixer = new AlAudioPoolMixer(format);
     return true;
 }
 
 bool AlUAudios::onDestroy(AlMessage *msg) {
+    delete mixer;
+    mixer = nullptr;
     for (auto &it : map) {
         it.second->stop();
     }
@@ -51,11 +56,19 @@ bool AlUAudios::_onAddTrack(AlMessage *msg) {
 }
 
 bool AlUAudios::_onBeat(AlMessage *msg) {
+    if (nullptr == mixer) {
+        return true;
+    }
     auto timeInUS = msg->arg2;
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     HwAbsMediaFrame *frame = nullptr;
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
-        auto decoder = _findDecoder(itr->get());
+        auto *clip = itr->get();
+        auto count = mixer->samplesOfTrack(clip->id());
+        if (count >= FRAME_SIZE) {
+            continue;
+        }
+        auto decoder = _findDecoder(clip);
         if (0 == timeInUS) {
             _seek(decoder, timeInUS);
         }
@@ -69,12 +82,19 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
                 continue;
             }
             if (frame->isAudio()) {
-                AlMessage *msg0 = AlMessage::obtain(EVENT_SPEAKER_FEED);
-                msg0->obj = frame->clone();
-                postEvent(msg0);
+                mixer->put(clip->id(), dynamic_cast<HwAudioFrame *>(frame));
+                if (mixer->samplesOfTrack(itr->get()->id()) < FRAME_SIZE) {
+                    continue;
+                }
             }
             break;
         }
+    }
+    frame = nullptr;
+    if (Hw::OK == mixer->pop(FRAME_SIZE, &frame)) {
+        AlMessage *msg0 = AlMessage::obtain(EVENT_SPEAKER_FEED);
+        msg0->obj = frame->clone();
+        postEvent(msg0);
     }
     return true;
 }
@@ -94,7 +114,7 @@ void AlUAudios::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
         return;
     }
     std::unique_ptr<AsynAudioDecoder> decoder = std::make_unique<AsynAudioDecoder>();
-    decoder->setOutSampleFormat(HwSampleFormat(HwFrameFormat::HW_SAMPLE_S16, 2, 44100));
+    decoder->setOutSampleFormat(format);
     if (!decoder->prepare(path)) {
         AlLogE(TAG, "failed. Decoder prepare failed.");
         return;
