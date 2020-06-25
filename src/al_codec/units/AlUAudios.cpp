@@ -60,8 +60,9 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         return true;
     }
     auto timeInUS = msg->arg2;
-    auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     HwAbsMediaFrame *frame = nullptr;
+    mixer->clearSelect();
+    auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         auto *clip = itr->get();
         auto count = mixer->samplesOfTrack(clip->id());
@@ -83,6 +84,7 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
             }
             if (frame->isAudio()) {
                 mixer->put(clip->id(), dynamic_cast<HwAudioFrame *>(frame));
+                mixer->select(clip->id());
                 if (mixer->samplesOfTrack(itr->get()->id()) < FRAME_SIZE) {
                     continue;
                 }

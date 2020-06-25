@@ -13,6 +13,7 @@ class AlVideoV2Activity : BaseActivity() {
     private val processor: AlVideoV2Processor? = AlVideoV2Processor()
     override fun getLayoutResource(): Int = R.layout.activity_video_v2
     override fun initView() {
+        processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/hw_test.m4a")
         processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today.m4a")
         processor?.setOnPlayProgressListener { timeInUS, duration ->
             runOnUiThread {
@@ -22,10 +23,12 @@ class AlVideoV2Activity : BaseActivity() {
         }
         playBtn.setOnClickListener {
         }
+        processor?.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        processor?.stop()
         processor?.release()
     }
 }

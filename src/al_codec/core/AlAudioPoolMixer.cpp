@@ -23,17 +23,17 @@ AlAudioPoolMixer::~AlAudioPoolMixer() {
     map.clear();
 }
 
-HwResult AlAudioPoolMixer::put(int32_t track, HwAudioFrame *f) {
-    if (nullptr == f || track <= 0) {
+HwResult AlAudioPoolMixer::put(int32_t clip, HwAudioFrame *f) {
+    if (nullptr == f || clip <= 0) {
         return Hw::FAILED;
     }
     AVAudioFifo *fifo = nullptr;
-    if (Hw::OK != _findFifoOByTrack(track, &fifo)) {
+    if (Hw::OK != _findFifoOByClip(clip, &fifo)) {
         fifo = av_audio_fifo_alloc(
                 HwAbsMediaFrame::convertAudioFrameFormat(f->getFormat()),
                 f->getChannels(),
                 f->getSampleCount() * 3);
-        map.insert(std::make_pair(track, fifo));
+        map.insert(std::make_pair(clip, fifo));
     }
     uint8_t *data = f->data();
     av_audio_fifo_write(fifo, reinterpret_cast<void **>(&data), f->getSampleCount());
@@ -59,8 +59,8 @@ HwResult AlAudioPoolMixer::pop(size_t nbSamples, HwAbsMediaFrame **f) {
     return Hw::OK;
 }
 
-HwResult AlAudioPoolMixer::remove(int32_t track) {
-    auto itr = map.find(track);
+HwResult AlAudioPoolMixer::remove(int32_t clip) {
+    auto itr = map.find(clip);
     if (map.end() == itr) {
         return Hw::FAILED;
     }
@@ -73,9 +73,9 @@ HwResult AlAudioPoolMixer::remove(int32_t track) {
     return Hw::OK;
 }
 
-int32_t AlAudioPoolMixer::samplesOfTrack(int32_t track) {
+int32_t AlAudioPoolMixer::samplesOfTrack(int32_t clip) {
     AVAudioFifo *fifo = nullptr;
-    if (Hw::OK == _findFifoOByTrack(track, &fifo)) {
+    if (Hw::OK == _findFifoOByClip(clip, &fifo)) {
         return av_audio_fifo_size(fifo);
     }
     return -1;
@@ -85,16 +85,21 @@ HwResult AlAudioPoolMixer::_request(size_t nbSamples) {
     if (map.empty()) {
         return Hw::FAILED;
     }
+    HwResult ret = Hw::FAILED;
     for (auto itr = map.begin(); map.end() != itr; ++itr) {
+        if (sClips.end() == std::find(sClips.begin(), sClips.end(), itr->first)) {
+            continue;
+        }
         if (av_audio_fifo_size(itr->second) < nbSamples) {
             return Hw::FAILED;
         }
+        ret = Hw::OK;
     }
-    return Hw::OK;
+    return ret;
 }
 
-HwResult AlAudioPoolMixer::_findFifoOByTrack(int32_t track, AVAudioFifo **fifo) {
-    auto itr = map.find(track);
+HwResult AlAudioPoolMixer::_findFifoOByClip(int32_t clip, AVAudioFifo **fifo) {
+    auto itr = map.find(clip);
     if (map.end() == itr) {
         return Hw::FAILED;
     }
@@ -118,4 +123,12 @@ void AlAudioPoolMixer::_checkFrame(HwAudioFrame **ff, int32_t nbSamples) {
                                format.getSampleRate(),
                                nbSamples);
     }
+}
+
+void AlAudioPoolMixer::clearSelect() {
+    sClips.clear();
+}
+
+void AlAudioPoolMixer::select(int32_t clip) {
+    sClips.emplace_back(clip);
 }

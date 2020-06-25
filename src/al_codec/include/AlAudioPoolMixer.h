@@ -13,6 +13,7 @@
 #include "HwAudioFrame.h"
 #include "HwSampleFormat.h"
 #include <map>
+#include <vector>
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,18 +33,25 @@ public:
 
     virtual ~AlAudioPoolMixer();
 
-    HwResult put(int32_t track, HwAudioFrame *f);
+    HwResult put(int32_t clip, HwAudioFrame *f);
 
     HwResult pop(size_t nbSamples, HwAbsMediaFrame **f);
 
-    HwResult remove(int32_t track);
+    HwResult remove(int32_t clip);
 
-    int32_t samplesOfTrack(int32_t track);
+    int32_t samplesOfTrack(int32_t clip);
+
+    /// Clear select mark.
+    void clearSelect();
+
+    /// Mark pop this clip
+    /// \param clip id
+    void select(int32_t clip);
 
 private:
     AlAudioPoolMixer(const AlAudioPoolMixer &o) : Object(), format(HwSampleFormat::NONE) {};
 
-    HwResult _findFifoOByTrack(int32_t track, AVAudioFifo **fifo);
+    HwResult _findFifoOByClip(int32_t clip, AVAudioFifo **fifo);
 
     HwResult _request(size_t nbSamples);
 
@@ -51,6 +59,8 @@ private:
 
 private:
     HwSampleFormat format;
+    /// Selected clips.
+    std::vector<int32_t> sClips;
     std::map<int32_t, AVAudioFifo *> map;
     HwAudioFrame *frame = nullptr;
     HwAudioFrame *cache = nullptr;
