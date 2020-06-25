@@ -23,6 +23,10 @@ public:
 
     int32_t addTrack(AlCodec::kMediaType type, std::string path);
 
+    void start();
+
+    void stop();
+
     void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 
 private:

@@ -14,6 +14,8 @@
 AlUTimeline::AlUTimeline(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_SET_HZ_IN_US, AlUTimeline::_onSetHzInUS);
     al_reg_msg(MSG_TIMELINE_SET_DURATION, AlUTimeline::_onSetDurationUS);
+    al_reg_msg(MSG_TIMELINE_START, AlUTimeline::_onStart);
+    al_reg_msg(MSG_TIMELINE_STOP, AlUTimeline::_onStop);
     pipe = std::shared_ptr<AlEventPipeline>(AlEventPipeline::create(TAG));
 }
 
@@ -22,7 +24,6 @@ AlUTimeline::~AlUTimeline() {
 }
 
 bool AlUTimeline::onCreate(AlMessage *msg) {
-    _heartbeat();
     return true;
 }
 
@@ -42,7 +43,21 @@ bool AlUTimeline::_onSetDurationUS(AlMessage *msg) {
     return true;
 }
 
+bool AlUTimeline::_onStart(AlMessage *msg) {
+    beating = true;
+    _heartbeat();
+    return true;
+}
+
+bool AlUTimeline::_onStop(AlMessage *msg) {
+    beating = false;
+    return true;
+}
+
 void AlUTimeline::_heartbeat() {
+    if (!beating) {
+        return;
+    }
     if (mDurationInUS > 0) {
         auto *msg = AlMessage::obtain(MSG_TIMELINE_PROGRESS_NOTIFY, AlMessage::QUEUE_MODE_UNIQUE);
         msg->arg1 = mCurTimeInUS * 1e6 / mDurationInUS;

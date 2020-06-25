@@ -64,6 +64,20 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_addT
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_start
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        getHandler(handler)->start();
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_stop
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        getHandler(handler)->stop();
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif

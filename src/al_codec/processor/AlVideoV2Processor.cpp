@@ -51,6 +51,14 @@ int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path)
     return 0;
 }
 
+void AlVideoV2Processor::start() {
+    postMessage(AlMessage::obtain(MSG_TIMELINE_START));
+}
+
+void AlVideoV2Processor::stop() {
+    postMessage(AlMessage::obtain(MSG_TIMELINE_STOP));
+}
+
 void AlVideoV2Processor::setPlayProgressListener(function<void(int64_t, int64_t)> listener) {
     playProgressListener = std::move(listener);
 }

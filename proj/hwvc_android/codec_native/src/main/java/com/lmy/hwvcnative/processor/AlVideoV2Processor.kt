@@ -23,6 +23,18 @@ class AlVideoV2Processor : CPPObject() {
         }
     }
 
+    fun start() {
+        if (!isNativeNull()) {
+            start(handler)
+        }
+    }
+
+    fun stop() {
+        if (!isNativeNull()) {
+            stop(handler)
+        }
+    }
+
     fun setOnPlayProgressListener(l: (timeInUS: Long, duration: Long) -> Unit) {
         onPlayProgressListener = l
     }
@@ -39,6 +51,8 @@ class AlVideoV2Processor : CPPObject() {
     private external fun create(): Long
     private external fun release(handle: Long)
     private external fun addTrack(handle: Long, type: Int, path: String)
+    private external fun start(handle: Long)
+    private external fun stop(handle: Long)
 }
 
 object MediaType {

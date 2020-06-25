@@ -32,6 +32,7 @@ private:
     /// \param msg
     /// \return
     bool _onSetHzInUS(AlMessage *msg);
+
     /// 设置时间轴长度
     /// FORMAT:
     /// +-------------------------------------------+
@@ -43,6 +44,10 @@ private:
     /// \return
     bool _onSetDurationUS(AlMessage *msg);
 
+    bool _onStart(AlMessage *msg);
+
+    bool _onStop(AlMessage *msg);
+
     void _heartbeat();
 
     void _sendBeat();
@@ -53,6 +58,7 @@ private:
     int32_t hzInUS = 0;
     int64_t mDurationInUS = 0;
     int64_t mCurTimeInUS = 0;
+    bool beating = false;
 };
 
 
