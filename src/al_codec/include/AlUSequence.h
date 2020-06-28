@@ -30,6 +30,8 @@ private:
 
     bool _onAddTrackDone(AlMessage *msg);
 
+    bool _onTimelineEnd(AlMessage *msg);
+
     AlMediaClip *_findClip(AlID id);
 
     void _findClipsByTime(AlCodec::kMediaType type,

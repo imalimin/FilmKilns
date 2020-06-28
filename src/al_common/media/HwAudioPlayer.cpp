@@ -298,3 +298,10 @@ void HwAudioPlayer::destroyEngine() {
         ownEngine = false;
     }
 }
+
+size_t HwAudioPlayer::getCacheSamples() {
+    if (nullptr == fifo) {
+        return 0;
+    }
+    return fifo->size() / getChannels() / getFormat();
+}

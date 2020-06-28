@@ -309,3 +309,14 @@ void DefaultAudioDecoder::_checkFormat() {
     }
     oFormat = HwSampleFormat(format, channels, sampleHz);
 }
+
+int64_t DefaultAudioDecoder::getAudioStartTime() {
+    if (audioTrack >= 0 && pFormatCtx) {
+        auto startTime = pFormatCtx->streams[audioTrack]->start_time;
+        return av_rescale_q_rnd(startTime,
+                                pFormatCtx->streams[audioTrack]->time_base,
+                                outputTimeBase,
+                                AV_ROUND_NEAR_INF);
+    }
+    return 0;
+}

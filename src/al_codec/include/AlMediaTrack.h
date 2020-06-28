@@ -39,7 +39,16 @@ public:
 
     AlMediaClip *findClip(AlID id);
 
+    /// Find clips by time in us.
+    /// \param array clips copy.
+    /// \param timeInUS
+    /// \return
     size_t findClips(AlVector<std::shared_ptr<AlMediaClip>> &array, int64_t timeInUS);
+
+    /// Find all clips.
+    /// \param array clips copy.
+    /// \return
+    size_t findAllClips(AlVector<std::shared_ptr<AlMediaClip>> &array);
 
 private:
     std::map<AlID, std::unique_ptr<AlMediaClip>> clips;

@@ -63,6 +63,8 @@ public:
 
     virtual int64_t getDuration() override;
 
+    virtual int64_t getAudioStartTime() override;
+
 private:
     void loop();
 

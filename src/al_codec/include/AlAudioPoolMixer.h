@@ -35,6 +35,8 @@ public:
 
     HwResult put(int32_t clip, HwAudioFrame *f);
 
+    HwResult put(int32_t clip, HwSampleFormat &format, uint8_t *data, int nbSamples);
+
     HwResult pop(size_t nbSamples, HwAbsMediaFrame **f);
 
     HwResult remove(int32_t clip);

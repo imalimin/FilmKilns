@@ -99,3 +99,12 @@ size_t AlMediaTrack::findClips(AlVector<std::shared_ptr<AlMediaClip>> &array, in
     }
     return count;
 }
+
+size_t AlMediaTrack::findAllClips(AlVector<std::shared_ptr<AlMediaClip>> &array) {
+    size_t count = 0;
+    for (auto &clip : this->clips) {
+        array.push_back(std::make_shared<AlMediaClip>(*clip.second));
+        ++count;
+    }
+    return count;
+}

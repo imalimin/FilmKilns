@@ -43,10 +43,17 @@ bool AlVideoV2Processor::_onTimelineInUS(AlMessage *msg) {
     return true;
 }
 
-int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path) {
+int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
+                                     int64_t seqInInUS, int64_t seqOutInUS,
+                                     int64_t trimInInUS, int64_t trimOutInUS) {
+    AlFileDescriptor descriptor(std::move(path));
+    auto clip = std::make_shared<AlMediaClip>(0, descriptor);
+    clip->setSeqIn(seqInInUS);
+    clip->setTrimIn(trimInInUS);
+
     AlMessage *msg = AlMessage::obtain(MSG_SEQUENCE_TRACK_ADD);
     msg->arg1 = (int32_t) type;
-    msg->desc = std::move(path);
+    msg->sp = clip;
     postMessage(msg);
     return 0;
 }

@@ -30,11 +30,17 @@ private:
 
     bool _onBeat(AlMessage *msg);
 
+    bool _onEnd(AlMessage *msg);
+
     void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
 
     AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
 
     void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);
+
+    HwResult _correct(AbsAudioDecoder *decoder);
+
+    HwResult _offsetDynamic(AlMediaClip *clip, AbsAudioDecoder *decoder, int64_t curFramePts);
 
 private:
     const int FRAME_SIZE = 1024;

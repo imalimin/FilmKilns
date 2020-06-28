@@ -17,9 +17,16 @@ class AlVideoV2Processor : CPPObject() {
         }
     }
 
-    fun addTrack(type: Int, path: String) {
+    fun addTrack(
+        type: Int,
+        path: String,
+        seqInInUS: Long,
+        seqOutInUS: Long = 0,
+        trimInInUS: Long = 0,
+        trimOutInUS: Long = 0
+    ) {
         if (!isNativeNull()) {
-            addTrack(handler, type, path)
+            addTrack(handler, type, path, seqInInUS, seqOutInUS, trimInInUS, trimOutInUS)
         }
     }
 
@@ -50,7 +57,16 @@ class AlVideoV2Processor : CPPObject() {
 
     private external fun create(): Long
     private external fun release(handle: Long)
-    private external fun addTrack(handle: Long, type: Int, path: String)
+    private external fun addTrack(
+        handle: Long,
+        type: Int,
+        path: String,
+        seqIn: Long,
+        seqOut: Long,
+        trimIn: Long,
+        trimOut: Long
+    )
+
     private external fun start(handle: Long)
     private external fun pause(handle: Long)
 }

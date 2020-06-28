@@ -55,6 +55,8 @@ public:
 
     virtual int64_t getDuration() override;
 
+    virtual int64_t getAudioStartTime() override;
+
     virtual void start() override;
 
     virtual void pause() override;

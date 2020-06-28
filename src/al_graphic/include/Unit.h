@@ -139,6 +139,8 @@ static constexpr int MSG_TIMELINE_SET_DURATION = KID('A', 'T', 'L', 0x03);
 static constexpr int MSG_TIMELINE_PROGRESS_NOTIFY = KID('A', 'T', 'L', 0x04);
 static constexpr int MSG_TIMELINE_START = KID('A', 'T', 'L', 0x05);
 static constexpr int MSG_TIMELINE_PAUSE = KID('A', 'T', 'L', 0x06);
+static constexpr int MSG_TIMELINE_BEGIN = KID('A', 'T', 'L', 0x07);
+static constexpr int MSG_TIMELINE_END = KID('A', 'T', 'L', 0x08);
 
 static constexpr int MSG_SEQUENCE_TRACK_ADD = KID('A', 'S', 'Q', 0x01);
 static constexpr int MSG_SEQUENCE_BEAT_AUDIO = KID('A', 'S', 'Q', 0x02);
@@ -146,6 +148,7 @@ static constexpr int MSG_SEQUENCE_BEAT_VIDEO = KID('A', 'S', 'Q', 0x03);
 
 static constexpr int MSG_AUDIOS_ADD = KID('A', 'A', 'S', 0x01);
 static constexpr int MSG_AUDIOS_TRACK_ADD_NOTIFY = KID('A', 'A', 'S', 0x02);
+static constexpr int MSG_AUDIOS_END = KID('A', 'A', 'S', 0x03);
 
 static constexpr int MSG_VIDEOS_ADD = KID('A', 'V', 'S', 0x01);
 

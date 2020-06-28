@@ -6,6 +6,9 @@
 */
 
 #include "AlAudioPoolMixer.h"
+#include "AlLogcat.h"
+
+#define TAG "AlAudioPoolMixer"
 
 AlAudioPoolMixer::AlAudioPoolMixer(const HwSampleFormat &format)
         : Object(),
@@ -35,9 +38,37 @@ HwResult AlAudioPoolMixer::put(int32_t clip, HwAudioFrame *f) {
                 f->getSampleCount() * 3);
         map.insert(std::make_pair(clip, fifo));
     }
+    if (av_audio_fifo_space(fifo) < f->getSampleCount() * 3) {
+        if (0 != av_audio_fifo_realloc(fifo, f->getSampleCount() * 3)) {
+            AlLogW(TAG, "failed.");
+        }
+    }
     uint8_t *data = f->data();
     av_audio_fifo_write(fifo, reinterpret_cast<void **>(&data), f->getSampleCount());
     return Hw::OK;
+}
+
+HwResult AlAudioPoolMixer::put(int32_t clip, HwSampleFormat &format,
+                               uint8_t *data, int nbSamples) {
+    if (clip <= 0 || nullptr == data || nbSamples <= 0) {
+        return Hw::FAILED;
+    }
+    AVAudioFifo *fifo = nullptr;
+    if (Hw::OK != _findFifoOByClip(clip, &fifo)) {
+        fifo = av_audio_fifo_alloc(
+                HwAbsMediaFrame::convertAudioFrameFormat(format.getFormat()),
+                format.getChannels(),
+                nbSamples * 3);
+        map.insert(std::make_pair(clip, fifo));
+    }
+    if (av_audio_fifo_space(fifo) < nbSamples * 3) {
+        if (0 != av_audio_fifo_realloc(fifo, nbSamples * 3)) {
+            AlLogW(TAG, "failed.");
+        }
+    }
+    av_audio_fifo_write(fifo, reinterpret_cast<void **>(&data), nbSamples);
+    return Hw::OK;
+
 }
 
 HwResult AlAudioPoolMixer::pop(size_t nbSamples, HwAbsMediaFrame **f) {

@@ -21,7 +21,9 @@ public:
 
     virtual void onDestroy() override;
 
-    int32_t addTrack(AlCodec::kMediaType type, std::string path);
+    int32_t addTrack(AlCodec::kMediaType type, std::string path,
+                     int64_t seqInInUS, int64_t seqOutInUS,
+                     int64_t trimInInUS, int64_t trimOutInUS);
 
     void start();
 

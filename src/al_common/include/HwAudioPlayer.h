@@ -54,6 +54,8 @@ public:
 
     void bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf);
 
+    size_t getCacheSamples();
+
 private:
     SimpleLock lock;
     std::queue<ObjectBox *> pcmList;

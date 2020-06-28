@@ -218,3 +218,7 @@ int64_t AsynVideoDecoder::getDuration() {
     }
     return -1;
 }
+
+int64_t AsynVideoDecoder::getAudioStartTime() {
+    return 0;
+}

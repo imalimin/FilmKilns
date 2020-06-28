@@ -28,6 +28,8 @@ public:
     virtual int getSamplesPerBuffer() = 0;
 
     virtual int64_t getAudioDuration() = 0;
+
+    virtual int64_t getAudioStartTime() = 0;
 };
 
 

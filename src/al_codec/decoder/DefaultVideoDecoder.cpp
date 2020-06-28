@@ -390,6 +390,10 @@ void DefaultVideoDecoder::stop() {
 
 }
 
+int64_t DefaultVideoDecoder::getAudioStartTime() {
+    return 0;
+}
+
 #ifdef __cplusplus
 }
 #endif

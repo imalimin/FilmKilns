@@ -12,6 +12,7 @@
 
 AlUSequence::AlUSequence(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_HEARTBEAT, AlUSequence::_onHeartbeat);
+    al_reg_msg(MSG_TIMELINE_END, AlUSequence::_onTimelineEnd);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD, AlUSequence::_onAddTrack);
     al_reg_msg(MSG_AUDIOS_TRACK_ADD_NOTIFY, AlUSequence::_onAddTrackDone);
 }
@@ -42,11 +43,14 @@ bool AlUSequence::_onHeartbeat(AlMessage *msg) {
 
 bool AlUSequence::_onAddTrack(AlMessage *msg) {
     auto type = (AlCodec::kMediaType) msg->arg1;
-    AlFileDescriptor descriptor(msg->desc);
+    auto tmp = std::static_pointer_cast<AlMediaClip>(msg->sp);
+
     auto track = std::make_unique<AlMediaTrack>(creator.generate(), type);
-    AlID clipID = track->addClip(creator.generate(), descriptor);
-    auto clip = track->findClip(clipID);
+    AlID clipID = track->addClip(creator.generate(), *(tmp->getInputDescriptor()));
+    auto *clip = track->findClip(clipID);
     if (clip) {
+        clip->setSeqIn(tmp->getSeqIn());
+        clip->setTrimIn(tmp->getTrimIn());
         auto *msg1 = AlMessage::obtain(MSG_AUDIOS_ADD);
         msg1->sp = std::make_shared<AlMediaClip>(*clip);
         postMessage(msg1);
@@ -63,11 +67,24 @@ bool AlUSequence::_onAddTrackDone(AlMessage *msg) {
     AlLogI(TAG, "id(%d), duration(%" PRId64 ")", id, duration);
     auto *clip = _findClip(id);
     if (clip) {
-        clip->setSeqIn(0);
-        clip->setTrimIn(0);
         clip->setDuration(duration);
         clip->setFrameDuration(tmp->getFrameDuration());
         _notifyTimeline();
+    }
+    return true;
+}
+
+bool AlUSequence::_onTimelineEnd(AlMessage *msg) {
+    auto aClips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
+    for (auto &track : this->tracks) {
+        if (AlCodec::kMediaType::AUDIO == track.second->type()) {
+            track.second->findAllClips(*aClips);
+        }
+    }
+    if(!aClips->empty()) {
+        auto *msg1 = AlMessage::obtain(MSG_AUDIOS_END);
+        msg1->sp = aClips;
+        postMessage(msg1);
     }
     return true;
 }

@@ -33,7 +33,7 @@ bool AlUTimeline::onDestroy(AlMessage *msg) {
 
 bool AlUTimeline::_onSetHzInUS(AlMessage *msg) {
 //    hzInUS = msg->arg1;
-    hzInUS = 23219;
+    hzInUS = 23220;
     return true;
 }
 
@@ -78,6 +78,9 @@ void AlUTimeline::_heartbeat() {
 }
 
 void AlUTimeline::_sendBeat() {
+    if (0 == this->mCurTimeInUS) {
+        postMessage(AlMessage::obtain(MSG_TIMELINE_BEGIN, AlMessage::QUEUE_MODE_UNIQUE));
+    }
     // 如果QUEUE_MODE_FIRST_ALWAYS会影响数据流传递，所以使用QUEUE_MODE_UNIQUE即可
     auto mode = AlMessage::QUEUE_MODE_UNIQUE;
     auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, mode);
@@ -85,6 +88,9 @@ void AlUTimeline::_sendBeat() {
     this->postMessage(msg);
     this->mCurTimeInUS += this->hzInUS;
     if (this->mCurTimeInUS > this->mDurationInUS) {
+        auto *msg1 = AlMessage::obtain(MSG_TIMELINE_END, AlMessage::QUEUE_MODE_UNIQUE);
+        msg1->arg2 = this->mDurationInUS;
+        postMessage(msg1);
         this->mCurTimeInUS = 0;
     }
 }
