@@ -44,6 +44,12 @@ class AlVideoV2Activity : BaseActivity() {
         addBtn.setOnClickListener {
             mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/hw_test.m4a", 10000000)
         }
+        delBtn.setOnClickListener {
+            if (null != mCurTrackID) {
+                processor?.removeTrack(mCurTrackID!!)
+            }
+            mCurTrackID = -1
+        }
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {

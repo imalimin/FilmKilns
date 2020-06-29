@@ -28,6 +28,8 @@ public:
 private:
     bool _onAddTrack(AlMessage *msg);
 
+    bool _onRemoveTrack(AlMessage *msg);
+
     bool _onBeat(AlMessage *msg);
 
     bool _onEnd(AlMessage *msg);

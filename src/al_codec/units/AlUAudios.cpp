@@ -17,6 +17,7 @@ AlUAudios::AlUAudios(const std::string alias)
         : Unit(alias),
           format(HwFrameFormat::HW_SAMPLE_S16, 2, 44100) {
     al_reg_msg(MSG_AUDIOS_TRACK_ADD, AlUAudios::_onAddTrack);
+    al_reg_msg(MSG_AUDIOS_TRACK_REMOVE, AlUAudios::_onRemoveTrack);
     al_reg_msg(MSG_SEQUENCE_BEAT_AUDIO, AlUAudios::_onBeat);
     al_reg_msg(MSG_AUDIOS_END, AlUAudios::_onEnd);
 }
@@ -56,6 +57,17 @@ bool AlUAudios::_onAddTrack(AlMessage *msg) {
     return true;
 }
 
+bool AlUAudios::_onRemoveTrack(AlMessage *msg) {
+    auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
+    for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
+        auto it = map.find((*itr)->id());
+        if (map.end() != it) {
+            map.erase(it);
+        }
+    }
+    return true;
+}
+
 bool AlUAudios::_onBeat(AlMessage *msg) {
     if (nullptr == mixer) {
         return true;
@@ -78,9 +90,9 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         }
         _correct(clip, decoder, curTimeMap);
 
-        HwAbsMediaFrame *frame = nullptr;
         bool offsetDone = false;
         while (decoder) {
+            HwAbsMediaFrame *frame = nullptr;
             HwResult ret = decoder->grab(&frame);
             if (Hw::MEDIA_EOF == ret) {
                 AlLogI(TAG, "EOF");
@@ -179,7 +191,8 @@ void AlUAudios::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
     }
 }
 
-HwResult AlUAudios::_correct(AlMediaClip *clip, AbsAudioDecoder *decoder, std::map<AlID, int64_t> &map) {
+HwResult AlUAudios::_correct(AlMediaClip *clip, AbsAudioDecoder *decoder,
+                             std::map<AlID, int64_t> &map) {
     int64_t curTime = 0;
     auto itr = map.find(clip->id());
     if (map.end() != itr) {

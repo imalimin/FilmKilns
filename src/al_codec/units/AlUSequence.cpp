@@ -67,9 +67,11 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
 bool AlUSequence::_onRemoveTrack(AlMessage *msg) {
     auto itr = tracks.find(msg->arg1);
     if (tracks.end() != itr) {
+        auto clips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
+        itr->second->findAllClips(*clips);
         tracks.erase(itr);
         auto *msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_REMOVE);
-        msg1->arg1 = itr->second->id();
+        msg1->sp = clips;
         postMessage(msg1);
     }
     return true;
