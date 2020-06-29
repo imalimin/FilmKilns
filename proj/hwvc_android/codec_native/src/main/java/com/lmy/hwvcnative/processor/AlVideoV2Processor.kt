@@ -24,10 +24,11 @@ class AlVideoV2Processor : CPPObject() {
         seqOutInUS: Long = 0,
         trimInInUS: Long = 0,
         trimOutInUS: Long = 0
-    ) {
+    ): Int {
         if (!isNativeNull()) {
-            addTrack(handler, type, path, seqInInUS, seqOutInUS, trimInInUS, trimOutInUS)
+            return addTrack(handler, type, path, seqInInUS, seqOutInUS, trimInInUS, trimOutInUS)
         }
+        return -1
     }
 
     fun start() {
@@ -71,7 +72,7 @@ class AlVideoV2Processor : CPPObject() {
         seqOut: Long,
         trimIn: Long,
         trimOut: Long
-    )
+    ): Int
 
     private external fun start(handle: Long)
     private external fun pause(handle: Long)

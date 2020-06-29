@@ -22,6 +22,7 @@ AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
     registerAnUnit(new HwSpeaker(ALIAS_SPEAKER));
 
     al_reg_msg(MSG_TIMELINE_PROGRESS_NOTIFY, AlVideoV2Processor::_onTimelineInUS);
+    al_reg_msg(MSG_SEQUENCE_TRACK_ADD_DONE, AlVideoV2Processor::_onAddTrackDone);
 }
 
 AlVideoV2Processor::~AlVideoV2Processor() {
@@ -43,6 +44,12 @@ bool AlVideoV2Processor::_onTimelineInUS(AlMessage *msg) {
     return true;
 }
 
+bool AlVideoV2Processor::_onAddTrackDone(AlMessage *msg) {
+    mCurTrackID = msg->arg1;
+    mCurTrackIDLock.notify();
+    return true;
+}
+
 int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
                                      int64_t seqInInUS, int64_t seqOutInUS,
                                      int64_t trimInInUS, int64_t trimOutInUS) {
@@ -55,7 +62,8 @@ int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
     msg->arg1 = (int32_t) type;
     msg->sp = clip;
     postMessage(msg);
-    return 0;
+    mCurTrackIDLock.wait();
+    return mCurTrackID;
 }
 
 void AlVideoV2Processor::start() {

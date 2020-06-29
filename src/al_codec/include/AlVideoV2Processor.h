@@ -36,6 +36,8 @@ public:
 private:
     bool _onTimelineInUS(AlMessage *msg);
 
+    bool _onAddTrackDone(AlMessage *msg);
+
 private:
     const std::string ALIAS_TIMELINE = "TIMELINE_OF_VIDEO2";
     const std::string ALIAS_SEQUENCE = "SEQUENCE_OF_VIDEO2";
@@ -43,6 +45,8 @@ private:
     const std::string ALIAS_SPEAKER = "SEQUENCE_OF_SPEAKER";
 
     function<void(int64_t, int64_t)> playProgressListener = nullptr;
+    int32_t mCurTrackID = -1;
+    SimpleLock mCurTrackIDLock;
 };
 
 

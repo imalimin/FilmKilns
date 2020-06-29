@@ -55,6 +55,9 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
         msg1->sp = std::make_shared<AlMediaClip>(*clip);
         postMessage(msg1);
     }
+    auto *msg2 = AlMessage::obtain(MSG_SEQUENCE_TRACK_ADD_DONE);
+    msg2->arg1 = track->id();
+    postMessage(msg2);
     tracks.insert(std::make_pair(track->id(), std::move(track)));
     AlLogI(TAG, "type(%d), path(%s)", type, msg->desc.c_str());
     return true;

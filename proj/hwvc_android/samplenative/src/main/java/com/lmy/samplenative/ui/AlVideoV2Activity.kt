@@ -15,8 +15,9 @@ class AlVideoV2Activity : BaseActivity() {
     private val processor: AlVideoV2Processor? = AlVideoV2Processor()
     private var playing: Boolean = true
     private var duration: Long = -1
+    private var mCurTrackID: Int? = -1
     override fun initView() {
-        processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 0)
+        mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 0)
         processor?.setOnPlayProgressListener { timeInUS, duration ->
             this.duration = duration
             runOnUiThread {
@@ -41,7 +42,7 @@ class AlVideoV2Activity : BaseActivity() {
             playing = !playing
         }
         addBtn.setOnClickListener {
-            processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/hw_test.m4a", 10000000)
+            mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/hw_test.m4a", 10000000)
         }
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
