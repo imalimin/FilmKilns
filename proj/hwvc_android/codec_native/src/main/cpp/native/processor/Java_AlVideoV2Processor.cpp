@@ -80,6 +80,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_paus
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_seek
+        (JNIEnv *env, jobject thiz, jlong handler, jlong timeInUS) {
+    if (handler) {
+        getHandler(handler)->seek(timeInUS);
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif

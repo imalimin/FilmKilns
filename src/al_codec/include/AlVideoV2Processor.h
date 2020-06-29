@@ -29,6 +29,8 @@ public:
 
     void pause();
 
+    void seek(int64_t timeInUS);
+
     void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
 
 private:

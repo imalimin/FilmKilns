@@ -61,7 +61,8 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         return true;
     }
     mCurTimeInUS = msg->arg2;
-    HwAbsMediaFrame *frame = nullptr;
+    auto curTimeMap = mCurTimeMap;
+    mCurTimeMap.clear();
     mixer->clearSelect();
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
@@ -75,7 +76,9 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         if (nullptr == decoder) {
             continue;
         }
+        _correct(clip, decoder, curTimeMap);
 
+        HwAbsMediaFrame *frame = nullptr;
         bool offsetDone = false;
         while (decoder) {
             HwResult ret = decoder->grab(&frame);
@@ -98,11 +101,12 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
                 if (mixer->samplesOfTrack(itr->get()->id()) < FRAME_SIZE) {
                     continue;
                 }
+                mCurTimeMap.insert(std::make_pair(clip->id(), frame->getPts()));
             }
             break;
         }
     }
-    frame = nullptr;
+    HwAbsMediaFrame *frame = nullptr;
     if (Hw::OK == mixer->pop(FRAME_SIZE, &frame)) {
         AlMessage *msg0 = AlMessage::obtain(EVENT_SPEAKER_FEED);
         msg0->obj = frame->clone();
@@ -175,7 +179,20 @@ void AlUAudios::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
     }
 }
 
-HwResult AlUAudios::_correct(AbsAudioDecoder *decoder) {
+HwResult AlUAudios::_correct(AlMediaClip *clip, AbsAudioDecoder *decoder, std::map<AlID, int64_t> &map) {
+    int64_t curTime = 0;
+    auto itr = map.find(clip->id());
+    if (map.end() != itr) {
+        curTime = std::min(itr->second, decoder->getDuration());
+    }
+    int64_t delta = curTime + clip->getSeqIn() - mCurTimeInUS;
+    float scale = std::abs(delta) * decoder->getSampleHz() /
+                  (decoder->getSamplesPerBuffer() * 1e6f);
+    if (scale >= 3) {
+        AlLogW(TAG, "Seek clip(%d) from(%" PRId64 ") to(%" PRId64 ")",
+               clip->id(), curTime, mCurTimeInUS - clip->getSeqIn());
+        _seek(decoder, mCurTimeInUS - clip->getSeqIn());
+    }
     return Hw::OK;
 }
 
@@ -194,11 +211,11 @@ HwResult AlUAudios::_offsetDynamic(AlMediaClip *clip, AbsAudioDecoder *decoder,
 
             memset(data, 0, len);
             mixer->put(clip->id(), format, data, nb);
-            AlLogW(TAG, "Track(%d) offset -%d", clip->id(), nb);
+            AlLogW(TAG, "Offset clip(%d) -%d", clip->id(), nb);
             delete[] data;
         } else if (delta < 0) {
             int32_t nb = std::abs(delta) * format.getSampleRate() / 1e6;
-            AlLogW(TAG, "Track(%d) offset +%d", clip->id(), nb);
+            AlLogW(TAG, "Offset clip(%d) +%d", clip->id(), nb);
         }
         return Hw::OK;
     }

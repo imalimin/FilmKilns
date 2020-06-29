@@ -38,13 +38,14 @@ private:
 
     void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);
 
-    HwResult _correct(AbsAudioDecoder *decoder);
+    HwResult _correct(AlMediaClip *clip, AbsAudioDecoder *decoder, std::map<AlID, int64_t> &map);
 
     HwResult _offsetDynamic(AlMediaClip *clip, AbsAudioDecoder *decoder, int64_t curFramePts);
 
 private:
     const int FRAME_SIZE = 1024;
     std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
+    std::map<AlID, int64_t> mCurTimeMap;
     HwSampleFormat format;
     AlAudioPoolMixer *mixer = nullptr;
     int64_t mCurTimeInUS = 0;

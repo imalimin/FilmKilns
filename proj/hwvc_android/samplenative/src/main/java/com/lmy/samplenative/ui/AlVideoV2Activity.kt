@@ -1,5 +1,6 @@
 package com.lmy.samplenative.ui
 
+import android.widget.SeekBar
 import com.lmy.hwvcnative.processor.AlVideoV2Processor
 import com.lmy.hwvcnative.processor.MediaType
 import com.lmy.samplenative.BaseActivity
@@ -13,9 +14,11 @@ class AlVideoV2Activity : BaseActivity() {
     private val fmt = SimpleDateFormat("mm:ss")
     private val processor: AlVideoV2Processor? = AlVideoV2Processor()
     private var playing: Boolean = true
+    private var duration: Long = -1
     override fun initView() {
         processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 0)
         processor?.setOnPlayProgressListener { timeInUS, duration ->
+            this.duration = duration
             runOnUiThread {
                 seekBar.progress = (timeInUS * 100 / duration).toInt()
                 timeView.text =
@@ -40,6 +43,21 @@ class AlVideoV2Activity : BaseActivity() {
         addBtn.setOnClickListener {
             processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/hw_test.m4a", 10000000)
         }
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    processor?.seek(duration * progress.toLong() / 100)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                processor?.pause()
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                processor?.start()
+            }
+        })
     }
 
     override fun onDestroy() {

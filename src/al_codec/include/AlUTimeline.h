@@ -48,6 +48,8 @@ private:
 
     bool _onPause(AlMessage *msg);
 
+    bool _onSeek(AlMessage *msg);
+
     void _heartbeat();
 
     void _sendBeat();

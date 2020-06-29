@@ -42,6 +42,12 @@ class AlVideoV2Processor : CPPObject() {
         }
     }
 
+    fun seek(timeInUS: Long) {
+        if (!isNativeNull()) {
+            seek(handler, timeInUS)
+        }
+    }
+
     fun setOnPlayProgressListener(l: (timeInUS: Long, duration: Long) -> Unit) {
         onPlayProgressListener = l
     }
@@ -69,6 +75,7 @@ class AlVideoV2Processor : CPPObject() {
 
     private external fun start(handle: Long)
     private external fun pause(handle: Long)
+    private external fun seek(handle: Long, timeInUS: Long)
 }
 
 object MediaType {

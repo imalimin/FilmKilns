@@ -66,6 +66,12 @@ void AlVideoV2Processor::pause() {
     postMessage(AlMessage::obtain(MSG_TIMELINE_PAUSE));
 }
 
+void AlVideoV2Processor::seek(int64_t timeInUS) {
+    auto *msg = AlMessage::obtain(MSG_TIMELINE_SEEK);
+    msg->arg2 = timeInUS;
+    postMessage(msg);
+}
+
 void AlVideoV2Processor::setPlayProgressListener(function<void(int64_t, int64_t)> listener) {
     playProgressListener = std::move(listener);
 }

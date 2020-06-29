@@ -16,6 +16,7 @@ AlUTimeline::AlUTimeline(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_SET_DURATION, AlUTimeline::_onSetDurationUS);
     al_reg_msg(MSG_TIMELINE_START, AlUTimeline::_onStart);
     al_reg_msg(MSG_TIMELINE_PAUSE, AlUTimeline::_onPause);
+    al_reg_msg(MSG_TIMELINE_SEEK, AlUTimeline::_onSeek);
     pipe = std::shared_ptr<AlEventPipeline>(AlEventPipeline::create(TAG));
 }
 
@@ -51,6 +52,17 @@ bool AlUTimeline::_onStart(AlMessage *msg) {
 
 bool AlUTimeline::_onPause(AlMessage *msg) {
     beating = false;
+    return true;
+}
+
+bool AlUTimeline::_onSeek(AlMessage *msg) {
+    if (hzInUS > 0) {
+        int64_t cur = msg->arg2 / hzInUS * hzInUS;
+        if (cur >= mDurationInUS) {
+            cur = 0;
+        }
+        mCurTimeInUS = cur;
+    }
     return true;
 }
 
