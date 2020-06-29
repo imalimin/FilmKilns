@@ -31,6 +31,12 @@ class AlVideoV2Processor : CPPObject() {
         return -1
     }
 
+    fun removeTrack(trackID: Int) {
+        if (!isNativeNull()) {
+            removeTrack(handler, trackID)
+        }
+    }
+
     fun start() {
         if (!isNativeNull()) {
             start(handler)
@@ -73,7 +79,7 @@ class AlVideoV2Processor : CPPObject() {
         trimIn: Long,
         trimOut: Long
     ): Int
-
+    private external fun removeTrack(handle: Long,trackID: Int)
     private external fun start(handle: Long)
     private external fun pause(handle: Long)
     private external fun seek(handle: Long, timeInUS: Long)

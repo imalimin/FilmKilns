@@ -28,6 +28,8 @@ private:
 
     bool _onAddTrack(AlMessage *msg);
 
+    bool _onRemoveTrack(AlMessage *msg);
+
     bool _onAddTrackDone(AlMessage *msg);
 
     bool _onTimelineEnd(AlMessage *msg);

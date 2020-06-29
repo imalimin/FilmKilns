@@ -62,10 +62,17 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_addT
     if (handler) {
         const char *ptr = env->GetStringUTFChars(path, JNI_FALSE);
         track = getHandler(handler)->addTrack((AlCodec::kMediaType) type, std::string(ptr),
-                                      seqIn, seqOut, trimIn, trimOut);
+                                              seqIn, seqOut, trimIn, trimOut);
         env->ReleaseStringUTFChars(path, ptr);
     }
     return track;
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_removeTrack
+        (JNIEnv *env, jobject thiz, jlong handler, jint trackID) {
+    if (handler) {
+        getHandler(handler)->removeTrack(trackID);
+    }
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_start

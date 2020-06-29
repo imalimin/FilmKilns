@@ -23,6 +23,7 @@ AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
 
     al_reg_msg(MSG_TIMELINE_PROGRESS_NOTIFY, AlVideoV2Processor::_onTimelineInUS);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD_DONE, AlVideoV2Processor::_onAddTrackDone);
+    al_reg_msg(MSG_SEQUENCE_TRACK_REMOVE_DONE, AlVideoV2Processor::_onRemoveTrackDone);
 }
 
 AlVideoV2Processor::~AlVideoV2Processor() {
@@ -50,6 +51,10 @@ bool AlVideoV2Processor::_onAddTrackDone(AlMessage *msg) {
     return true;
 }
 
+bool AlVideoV2Processor::_onRemoveTrackDone(AlMessage *msg) {
+    return true;
+}
+
 int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
                                      int64_t seqInInUS, int64_t seqOutInUS,
                                      int64_t trimInInUS, int64_t trimOutInUS) {
@@ -64,6 +69,12 @@ int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
     postMessage(msg);
     mCurTrackIDLock.wait();
     return mCurTrackID;
+}
+
+void AlVideoV2Processor::removeTrack(int32_t trackID) {
+    AlMessage *msg = AlMessage::obtain(MSG_SEQUENCE_TRACK_REMOVE);
+    msg->arg1 = trackID;
+    postMessage(msg);
 }
 
 void AlVideoV2Processor::start() {

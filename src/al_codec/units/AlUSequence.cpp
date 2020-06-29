@@ -14,7 +14,8 @@ AlUSequence::AlUSequence(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_HEARTBEAT, AlUSequence::_onHeartbeat);
     al_reg_msg(MSG_TIMELINE_END, AlUSequence::_onTimelineEnd);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD, AlUSequence::_onAddTrack);
-    al_reg_msg(MSG_AUDIOS_TRACK_ADD_NOTIFY, AlUSequence::_onAddTrackDone);
+    al_reg_msg(MSG_SEQUENCE_TRACK_REMOVE, AlUSequence::_onRemoveTrack);
+    al_reg_msg(MSG_AUDIOS_TRACK_ADD_DONE, AlUSequence::_onAddTrackDone);
 }
 
 AlUSequence::~AlUSequence() {
@@ -51,7 +52,7 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
     if (clip) {
         clip->setSeqIn(tmp->getSeqIn());
         clip->setTrimIn(tmp->getTrimIn());
-        auto *msg1 = AlMessage::obtain(MSG_AUDIOS_ADD);
+        auto *msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD);
         msg1->sp = std::make_shared<AlMediaClip>(*clip);
         postMessage(msg1);
     }
@@ -60,6 +61,17 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
     postMessage(msg2);
     tracks.insert(std::make_pair(track->id(), std::move(track)));
     AlLogI(TAG, "type(%d), path(%s)", type, msg->desc.c_str());
+    return true;
+}
+
+bool AlUSequence::_onRemoveTrack(AlMessage *msg) {
+    auto itr = tracks.find(msg->arg1);
+    if (tracks.end() != itr) {
+        tracks.erase(itr);
+        auto *msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_REMOVE);
+        msg1->arg1 = itr->second->id();
+        postMessage(msg1);
+    }
     return true;
 }
 
@@ -84,7 +96,7 @@ bool AlUSequence::_onTimelineEnd(AlMessage *msg) {
             track.second->findAllClips(*aClips);
         }
     }
-    if(!aClips->empty()) {
+    if (!aClips->empty()) {
         auto *msg1 = AlMessage::obtain(MSG_AUDIOS_END);
         msg1->sp = aClips;
         postMessage(msg1);

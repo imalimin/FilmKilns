@@ -25,6 +25,8 @@ public:
                      int64_t seqInInUS, int64_t seqOutInUS,
                      int64_t trimInInUS, int64_t trimOutInUS);
 
+    void removeTrack(int32_t trackID);
+
     void start();
 
     void pause();
@@ -37,6 +39,8 @@ private:
     bool _onTimelineInUS(AlMessage *msg);
 
     bool _onAddTrackDone(AlMessage *msg);
+
+    bool _onRemoveTrackDone(AlMessage *msg);
 
 private:
     const std::string ALIAS_TIMELINE = "TIMELINE_OF_VIDEO2";

@@ -16,7 +16,7 @@
 AlUAudios::AlUAudios(const std::string alias)
         : Unit(alias),
           format(HwFrameFormat::HW_SAMPLE_S16, 2, 44100) {
-    al_reg_msg(MSG_AUDIOS_ADD, AlUAudios::_onAddTrack);
+    al_reg_msg(MSG_AUDIOS_TRACK_ADD, AlUAudios::_onAddTrack);
     al_reg_msg(MSG_SEQUENCE_BEAT_AUDIO, AlUAudios::_onBeat);
     al_reg_msg(MSG_AUDIOS_END, AlUAudios::_onEnd);
 }
@@ -49,7 +49,7 @@ bool AlUAudios::_onAddTrack(AlMessage *msg) {
     if (duration > 0) {
         clip->setDuration(duration);
         clip->setFrameDuration(frameDuration);
-        auto msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD_NOTIFY);
+        auto msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD_DONE);
         msg1->sp = clip;
         postMessage(msg1);
     }
