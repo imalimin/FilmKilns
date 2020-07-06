@@ -8,6 +8,7 @@
 #include "AlFFUtils.h"
 #include <cassert>
 #include "log.h"
+#include "AlFFUtils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,8 +56,7 @@ DefaultVideoDecoder::~DefaultVideoDecoder() {
 
 bool DefaultVideoDecoder::prepare(string path) {
     this->path = path;
-    av_register_all();
-    printCodecInfo();
+    AlFFUtils::init();
     pFormatCtx = avformat_alloc_context();
     //打开输入视频文件
     if (avformat_open_input(&pFormatCtx, path.c_str(), NULL, NULL) != 0) {
