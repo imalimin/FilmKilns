@@ -50,7 +50,6 @@ private:
 
     function<void(int64_t, int64_t)> playProgressListener = nullptr;
     int32_t mCurTrackID = -1;
-    SimpleLock mCurTrackIDLock;
 };
 
 

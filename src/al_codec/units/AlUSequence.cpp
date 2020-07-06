@@ -7,6 +7,7 @@
 
 #include "AlUSequence.h"
 #include "AlCodec.h"
+#include "AlFuture.h"
 
 #define TAG "AlUSequence"
 
@@ -44,7 +45,8 @@ bool AlUSequence::_onHeartbeat(AlMessage *msg) {
 
 bool AlUSequence::_onAddTrack(AlMessage *msg) {
     auto type = (AlCodec::kMediaType) msg->arg1;
-    auto tmp = std::static_pointer_cast<AlMediaClip>(msg->sp);
+    auto bundle = std::static_pointer_cast<AlFuture>(msg->sp);
+    auto tmp = std::static_pointer_cast<AlMediaClip>(bundle->sp);
 
     auto track = std::make_unique<AlMediaTrack>(creator.generate(), type);
     AlID clipID = track->addClip(creator.generate(), *(tmp->getInputDescriptor()));
@@ -56,6 +58,7 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
         msg1->sp = std::make_shared<AlMediaClip>(*clip);
         postMessage(msg1);
     }
+//    bundle->putInt(track->id());
     auto *msg2 = AlMessage::obtain(MSG_SEQUENCE_TRACK_ADD_DONE);
     msg2->arg1 = track->id();
     postMessage(msg2);

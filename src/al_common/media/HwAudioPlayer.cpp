@@ -9,6 +9,8 @@
 #include "../include/ObjectBox.h"
 #include "../include/TimeUtils.h"
 
+#define TAG "HwAudioPlayer"
+
 void bufferQueueCallback(SLAndroidSimpleBufferQueueItf slBufferQueueItf, void *context) {
     HwAudioPlayer *player = static_cast<HwAudioPlayer *>(context);
     player->bufferEnqueue(slBufferQueueItf);
@@ -233,6 +235,7 @@ void HwAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf
         delete buf;
         return;
     }
+    AlLogW(TAG, "Play silence data.");
     uint8_t *buffer = new uint8_t[getBufferByteSize()];
     memset(buffer, 0, getBufferByteSize());
     (*slBufferQueueItf)->Enqueue(bufferQueueItf, buffer, getBufferByteSize());

@@ -7,11 +7,12 @@
 
 #include "AlVideoV2Processor.h"
 
-#include <utility>
 #include "AlUTimeline.h"
 #include "AlUSequence.h"
 #include "AlUAudios.h"
 #include "HwSpeaker.h"
+#include "AlFuture.h"
+#include "TimeUtils.h"
 
 #define TAG "AlVideoV2Processor"
 
@@ -47,7 +48,6 @@ bool AlVideoV2Processor::_onTimelineInUS(AlMessage *msg) {
 
 bool AlVideoV2Processor::_onAddTrackDone(AlMessage *msg) {
     mCurTrackID = msg->arg1;
-    mCurTrackIDLock.notify();
     return true;
 }
 
@@ -63,12 +63,17 @@ int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
     clip->setSeqIn(seqInInUS);
     clip->setTrimIn(trimInInUS);
 
+    auto *bundle = new AlFuture();
+    bundle->sp = clip;
+
     AlMessage *msg = AlMessage::obtain(MSG_SEQUENCE_TRACK_ADD);
     msg->arg1 = (int32_t) type;
     msg->sp = clip;
     postMessage(msg);
-    mCurTrackIDLock.wait();
-    return mCurTrackID;
+    auto time = TimeUtils::getCurrentTimeUS();
+//    auto id = bundle->get(-1);
+    AlLogI(TAG, "id=%d, cost=%" PRId64, 0, time);
+    return 0;
 }
 
 void AlVideoV2Processor::removeTrack(int32_t trackID) {
