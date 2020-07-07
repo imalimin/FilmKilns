@@ -63,17 +63,14 @@ int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
     clip->setSeqIn(seqInInUS);
     clip->setTrimIn(trimInInUS);
 
-    auto *bundle = new AlFuture();
+    auto bundle = std::make_shared<AlFuture>();
     bundle->sp = clip;
 
     AlMessage *msg = AlMessage::obtain(MSG_SEQUENCE_TRACK_ADD);
     msg->arg1 = (int32_t) type;
-    msg->sp = clip;
+    msg->sp = bundle;
     postMessage(msg);
-    auto time = TimeUtils::getCurrentTimeUS();
-//    auto id = bundle->get(-1);
-    AlLogI(TAG, "id=%d, cost=%" PRId64, 0, time);
-    return 0;
+    return bundle->get(-1);
 }
 
 void AlVideoV2Processor::removeTrack(int32_t trackID) {

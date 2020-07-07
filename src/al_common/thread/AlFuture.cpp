@@ -32,12 +32,8 @@ AlFuture::~AlFuture() {
 
 }
 
-bool AlFuture::putInt(int32_t val) {
-    std::unique_lock<std::mutex> lck(mtx);
-    bool ret = bundle.put(TAG, val);
-    done = true;
-    cond.notify_all();
-    return ret;
+bool AlFuture::put(int32_t val) {
+    AL_SYNC_BUNDLE_PUT
 }
 
 bool AlFuture::put(int64_t val) {

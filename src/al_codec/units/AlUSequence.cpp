@@ -58,7 +58,7 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
         msg1->sp = std::make_shared<AlMediaClip>(*clip);
         postMessage(msg1);
     }
-//    bundle->putInt(track->id());
+    bundle->put(track->id());
     auto *msg2 = AlMessage::obtain(MSG_SEQUENCE_TRACK_ADD_DONE);
     msg2->arg1 = track->id();
     postMessage(msg2);

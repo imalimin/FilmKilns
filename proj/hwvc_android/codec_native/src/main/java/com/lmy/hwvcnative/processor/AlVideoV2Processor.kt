@@ -60,7 +60,7 @@ class AlVideoV2Processor : CPPObject() {
     }
 
     private fun onDispatchNativeMessage(what: Int, arg0: Int, arg1: Long, arg2: Long) {
-        Log.i("AlVideoV2Processor", "$what, $arg0, $arg1, $arg2")
+//        Log.d("AlVideoV2Processor", "$what, $arg0, $arg1, $arg2")
         when (what) {
             0 -> {
                 onPlayProgressListener?.invoke(arg1, arg2)

@@ -20,7 +20,7 @@ public:
 
     virtual ~AlFuture();
 
-    bool putInt(int32_t val);
+    bool put(int32_t val);
 
     bool put(int64_t val);
 
