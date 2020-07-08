@@ -10,6 +10,7 @@
 
 #include "Unit.h"
 #include "AlEventPipeline.h"
+#include "AlRational.h"
 
 al_def_unit(AlUTimeline, Unit) {
 public:
@@ -50,6 +51,8 @@ private:
 
     bool _onSeek(AlMessage *msg);
 
+    bool _onTimeAdd(AlMessage *msg);
+
     void _heartbeat();
 
     void _sendBeat();
@@ -61,6 +64,8 @@ private:
     int64_t mDurationInUS = 0;
     int64_t mCurTimeInUS = 0;
     bool beating = false;
+    int64_t mBaseTime = 0;
+    AlRational timebase;
 };
 
 

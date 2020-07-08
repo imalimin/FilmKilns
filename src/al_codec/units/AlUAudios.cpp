@@ -95,6 +95,13 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
             HwAbsMediaFrame *frame = nullptr;
             HwResult ret = decoder->grab(&frame);
             if (Hw::MEDIA_EOF == ret) {
+                int nb = FRAME_SIZE - count;
+                int64_t len = nb * format.getChannels()
+                              * HwAbsMediaFrame::getBytesPerSample(format.getFormat());
+                auto *data = new uint8_t[len];
+                memset(data, 0, len);
+                mixer->put(clip->id(), format, data, nb);
+                delete[] data;
                 AlLogI(TAG, "EOF");
                 break;
             }
@@ -102,11 +109,11 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
                 continue;
             }
             if (frame->isAudio()) {
-                if (!offsetDone) {
-                    if (Hw::OK == _offsetDynamic(clip, decoder, frame->getPts())) {
-                        offsetDone = true;
-                    }
-                }
+//                if (!offsetDone) {
+//                    if (Hw::OK == _offsetDynamic(clip, decoder, frame->getPts())) {
+//                        offsetDone = true;
+//                    }
+//                }
 
                 mixer->put(clip->id(), dynamic_cast<HwAudioFrame *>(frame));
                 mixer->select(clip->id());
@@ -123,6 +130,10 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         AlMessage *msg0 = AlMessage::obtain(EVENT_SPEAKER_FEED);
         msg0->obj = frame->clone();
         postEvent(msg0);
+
+        AlMessage *msg1 = AlMessage::obtain(MSG_TIMELINE_ADD);
+        msg1->arg1 = FRAME_SIZE;
+        postEvent(msg1);
     }
     return true;
 }

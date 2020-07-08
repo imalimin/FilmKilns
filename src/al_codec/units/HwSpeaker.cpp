@@ -7,12 +7,15 @@
 
 #include <libavutil/samplefmt.h>
 #include "../include/HwSpeaker.h"
+#include "AlLogcat.h"
+
+#define TAG "HwSpeaker"
 
 HwSpeaker::HwSpeaker(string alias) : HwSpeaker(alias, HwAudioDeviceMode::Normal) {
 }
 
 HwSpeaker::HwSpeaker(string alias, HwAudioDeviceMode mode) : Unit(alias), mode(mode) {
-    registerEvent(EVENT_SPEAKER_FEED, reinterpret_cast<EventFunc>(&HwSpeaker::eventFeed));
+    al_reg_msg(EVENT_SPEAKER_FEED, HwSpeaker::eventFeed);
 }
 
 HwSpeaker::~HwSpeaker() {
@@ -43,6 +46,9 @@ bool HwSpeaker::eventFeed(AlMessage *msg) {
 //                      frame->getSampleCount(),
 //                      frame->getDataSize());
             player->write(frame->data(), frame->size(), 1000000);
+            auto *msg1 = AlMessage::obtain(MSG_SPEAKER_FEED_DONE);
+            msg1->arg1 = frame->getSampleCount();
+            postMessage(msg1);
         }
     }
     return false;
