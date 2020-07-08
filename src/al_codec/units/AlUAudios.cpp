@@ -10,6 +10,7 @@
 #include "AsynAudioDecoder.h"
 #include "StringUtils.h"
 #include "AlVector.h"
+#include "AlBuffer.h"
 
 #define TAG "AlUAudios"
 
@@ -98,10 +99,11 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
                 int nb = FRAME_SIZE - count;
                 int64_t len = nb * format.getChannels()
                               * HwAbsMediaFrame::getBytesPerSample(format.getFormat());
-                auto *data = new uint8_t[len];
-                memset(data, 0, len);
-                mixer->put(clip->id(), format, data, nb);
-                delete[] data;
+                auto *buf = AlBuffer::alloc(len);
+                memset(buf->data(), 0, buf->size());
+                mixer->put(clip->id(), format, buf->data(), nb);
+                delete buf;
+                mixer->select(clip->id());
                 AlLogI(TAG, "EOF");
                 break;
             }
@@ -134,6 +136,8 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         AlMessage *msg1 = AlMessage::obtain(MSG_TIMELINE_ADD);
         msg1->arg1 = FRAME_SIZE;
         postEvent(msg1);
+    } else {
+        AlLogI(TAG, "Leak samples! %d clips", clips->size());
     }
     return true;
 }
