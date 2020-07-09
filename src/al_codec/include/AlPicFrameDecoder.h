@@ -66,6 +66,7 @@ private:
     HwFrameAllocator *hwFrameAllocator = nullptr;
     string path;
     AVFormatContext *pFormatCtx = nullptr;
+    AVCodecContext *vCtx = nullptr;
     int vTrack = -1;
     AVPacket *vPacket = nullptr;
     AVFrame *vFrame = nullptr;

@@ -23,6 +23,10 @@ AlPicFrameDecoder::~AlPicFrameDecoder() {
         av_frame_free(&vFrame);
         vFrame = nullptr;
     }
+    if (vCtx) {
+        avcodec_close(vCtx);
+        vCtx = nullptr;
+    }
     if (pFormatCtx) {
         avformat_close_input(&pFormatCtx);
         avformat_free_context(pFormatCtx);
@@ -55,6 +59,18 @@ bool AlPicFrameDecoder::prepare(string path) {
     //获取视频文件信息
     if (avformat_find_stream_info(pFormatCtx, NULL) < 0) {
         AlLogE(TAG, "failed. Couldn't find stream information.");
+        return false;
+    }
+//    vCtx = pFormatCtx->streams[vTrack]->codec;
+    auto *codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
+    if (nullptr == codec) {
+        AlLogE(TAG, "failed. Couldn't find codec.");
+        return false;
+    }
+    vCtx = avcodec_alloc_context3(codec);
+    avcodec_parameters_to_context(vCtx, pFormatCtx->streams[vTrack]->codecpar);
+    if (avcodec_open2(vCtx, codec, NULL) < 0) {
+        AlLogE(TAG, "failed. Couldn't open codec.");
         return false;
     }
     vPacket = av_packet_alloc();
@@ -100,7 +116,7 @@ void AlPicFrameDecoder::seek(int64_t us) {
 
 void AlPicFrameDecoder::_handleAction() {
     if (actionSeekInUs >= 0) {
-        avcodec_flush_buffers(pFormatCtx->streams[vTrack]->codec);
+        avcodec_flush_buffers(vCtx);
         int ret = avformat_seek_file(pFormatCtx, -1, INT64_MIN,
                                      actionSeekInUs, INT64_MAX,
                                      AVSEEK_FLAG_BACKWARD);
@@ -108,7 +124,7 @@ void AlPicFrameDecoder::_handleAction() {
             AlLogE(TAG, "failed");
             return;
         }
-        avcodec_flush_buffers(pFormatCtx->streams[vTrack]->codec);
+        avcodec_flush_buffers(vCtx);
         AlLogI(TAG, "seek: %lld", actionSeekInUs);
         actionSeekInUs = -1;
     }
@@ -120,7 +136,7 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
         int ret = av_read_frame(pFormatCtx, vPacket);
         if (0 == ret) {
             if (vTrack == vPacket->stream_index) {
-                avcodec_send_packet(pFormatCtx->streams[vTrack]->codec, vPacket);
+                avcodec_send_packet(vCtx, vPacket);
             } else {
                 continue;
             }
@@ -130,7 +146,7 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
             eof = true;
         }
         //尝试去缓冲区中获取解码完成的视频帧
-        if (0 == avcodec_receive_frame(pFormatCtx->streams[vTrack]->codec, vFrame)) {
+        if (0 == avcodec_receive_frame(vCtx, vFrame)) {
             vFrame->pts = av_rescale_q_rnd(vFrame->pts,
                                            pFormatCtx->streams[vTrack]->time_base,
                                            oRational,
