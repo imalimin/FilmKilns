@@ -11,7 +11,7 @@
 
 #define TAG "AlMediaTrack"
 
-AlMediaTrack::AlMediaTrack(AlID id, AlCodec::kMediaType type)
+AlMediaTrack::AlMediaTrack(AlID id, AlMediaTrack::kType type)
         : Object(), _id(id), _type(type) {
 }
 
@@ -28,7 +28,7 @@ AlID AlMediaTrack::id() {
     return _id;
 }
 
-AlCodec::kMediaType AlMediaTrack::type() {
+AlMediaTrack::kType AlMediaTrack::type() {
     return _type;
 }
 

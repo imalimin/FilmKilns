@@ -10,14 +10,21 @@
 
 #include "Object.h"
 #include "AlMediaClip.h"
-#include "AlCodec.h"
 #include "AlIdentityCreator.h"
 #include "AlVector.h"
 #include <map>
 
 AL_CLASS AlMediaTrack AL_EXTEND Object {
 public:
-    AlMediaTrack(AlID id, AlCodec::kMediaType type);
+    AL_ENUM kType : int {
+        UNKNOWN = -1,
+        VIDEO,
+        AUDIO,
+        VIDEO_REF,
+        AUDIO_REF
+    };
+public:
+    AlMediaTrack(AlID id, AlMediaTrack::kType type);
 
     AlMediaTrack(const AlMediaTrack &o);
 
@@ -25,7 +32,7 @@ public:
 
     AlID id();
 
-    AlCodec::kMediaType type();
+    AlMediaTrack::kType type();
 
     int64_t getSeqIn();
 
@@ -53,7 +60,7 @@ public:
 private:
     std::map<AlID, std::unique_ptr<AlMediaClip>> clips;
     AlID _id = AlIdentityCreator::NONE_ID;
-    AlCodec::kMediaType _type;
+    AlMediaTrack::kType _type;
 };
 
 

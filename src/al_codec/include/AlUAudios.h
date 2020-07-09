@@ -13,6 +13,7 @@
 #include "AlMediaClip.h"
 #include "AbsAudioDecoder.h"
 #include "AlIdentityCreator.h"
+#include "AlBuffer.h"
 #include <map>
 
 al_def_unit(AlUAudios, Unit) {
@@ -44,6 +45,8 @@ private:
 
     HwResult _offsetDynamic(AlMediaClip *clip, AbsAudioDecoder *decoder, int64_t curFramePts);
 
+    HwResult _putSilence(AlMediaClip *clip, int nbSamples);
+
 private:
     const int FRAME_SIZE = 1024;
     std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
@@ -51,6 +54,7 @@ private:
     HwSampleFormat format;
     AlAudioPoolMixer *mixer = nullptr;
     int64_t mCurTimeInUS = 0;
+    AlBuffer *pSilenceBuf = nullptr;
 };
 
 

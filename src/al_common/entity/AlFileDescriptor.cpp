@@ -7,6 +7,8 @@
 
 #include "AlFileDescriptor.h"
 
+const AlFileDescriptor AlFileDescriptor::EMPTY = AlFileDescriptor("/empty");
+
 AlFileDescriptor::AlFileDescriptor(std::string path)
         : AlAbsInputDescriptor(kType::FILE),
           _path(path) {
@@ -24,4 +26,12 @@ AlFileDescriptor::~AlFileDescriptor() {
 
 std::string AlFileDescriptor::path() {
     return _path;
+}
+
+bool AlFileDescriptor::operator==(const AlFileDescriptor &o) {
+    return o._path == this->_path;
+}
+
+bool AlFileDescriptor::equals(const AlFileDescriptor &o) {
+    return o._path == this->_path;
 }

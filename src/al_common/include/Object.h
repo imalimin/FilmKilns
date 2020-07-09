@@ -38,6 +38,8 @@ public:
 
     virtual ~Object();
 
+    virtual bool equals(const Object &o);
+
     virtual std::string toString();
 
 };

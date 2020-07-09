@@ -24,7 +24,6 @@ AlUAudios::AlUAudios(const std::string alias)
 }
 
 AlUAudios::~AlUAudios() {
-
 }
 
 bool AlUAudios::onCreate(AlMessage *msg) {
@@ -33,6 +32,8 @@ bool AlUAudios::onCreate(AlMessage *msg) {
 }
 
 bool AlUAudios::onDestroy(AlMessage *msg) {
+    delete pSilenceBuf;
+    pSilenceBuf = nullptr;
     delete mixer;
     mixer = nullptr;
     for (auto &it : map) {
@@ -85,6 +86,10 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
             mixer->select(clip->id());
             continue;
         }
+        if (clip->getInputDescriptor()->equals(AlFileDescriptor::EMPTY)) {
+            _putSilence(clip, FRAME_SIZE - count);
+            continue;
+        }
         auto decoder = _findDecoder(clip);
         if (nullptr == decoder) {
             continue;
@@ -96,14 +101,7 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
             HwAbsMediaFrame *frame = nullptr;
             HwResult ret = decoder->grab(&frame);
             if (Hw::MEDIA_EOF == ret) {
-                int nb = FRAME_SIZE - count;
-                int64_t len = nb * format.getChannels()
-                              * HwAbsMediaFrame::getBytesPerSample(format.getFormat());
-                auto *buf = AlBuffer::alloc(len);
-                memset(buf->data(), 0, buf->size());
-                mixer->put(clip->id(), format, buf->data(), nb);
-                delete buf;
-                mixer->select(clip->id());
+                _putSilence(clip, FRAME_SIZE - count);
                 AlLogI(TAG, "EOF");
                 break;
             }
@@ -248,4 +246,19 @@ HwResult AlUAudios::_offsetDynamic(AlMediaClip *clip, AbsAudioDecoder *decoder,
         return Hw::OK;
     }
     return Hw::FAILED;
+}
+
+HwResult AlUAudios::_putSilence(AlMediaClip *clip, int nbSamples) {
+    if (nullptr == clip || nbSamples <= 0) {
+        return Hw::FAILED;
+    }
+    if (nullptr == pSilenceBuf) {
+        int64_t len = FRAME_SIZE * format.getChannels()
+                      * HwAbsMediaFrame::getBytesPerSample(format.getFormat());
+        pSilenceBuf = AlBuffer::alloc(len);
+        memset(pSilenceBuf->data(), 0, pSilenceBuf->size());
+    }
+    mixer->put(clip->id(), format, pSilenceBuf->data(), std::min(nbSamples, FRAME_SIZE));
+    mixer->select(clip->id());
+    return Hw::SUCCESS;
 }

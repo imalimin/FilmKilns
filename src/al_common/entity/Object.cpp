@@ -13,6 +13,10 @@ Object::Object() {
 Object::~Object() {
 }
 
+bool Object::equals(const Object &o) {
+    return this == &o;
+}
+
 std::string Object::toString() {
     return std::string(typeid(*this).name());
 }

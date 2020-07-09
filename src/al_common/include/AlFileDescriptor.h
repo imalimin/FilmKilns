@@ -12,6 +12,9 @@
 
 AL_INTERFACE AlFileDescriptor AL_EXTEND AlAbsInputDescriptor {
 public:
+    static const AlFileDescriptor EMPTY;
+
+public:
     AlFileDescriptor(std::string path);
 
     AlFileDescriptor(const AlFileDescriptor &o);
@@ -19,6 +22,10 @@ public:
     virtual ~AlFileDescriptor();
 
     virtual std::string path() override;
+
+    virtual bool operator==(const AlFileDescriptor &o);
+
+    virtual bool equals(const AlFileDescriptor &o);
 
 private:
     std::string _path;

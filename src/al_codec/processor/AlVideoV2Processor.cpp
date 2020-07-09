@@ -55,7 +55,7 @@ bool AlVideoV2Processor::_onRemoveTrackDone(AlMessage *msg) {
     return true;
 }
 
-int32_t AlVideoV2Processor::addTrack(AlCodec::kMediaType type, std::string path,
+int32_t AlVideoV2Processor::addTrack(AlMediaTrack::kType type, std::string path,
                                      int64_t seqInInUS, int64_t seqOutInUS,
                                      int64_t trimInInUS, int64_t trimOutInUS) {
     AlFileDescriptor descriptor(std::move(path));

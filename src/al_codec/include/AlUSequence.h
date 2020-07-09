@@ -36,11 +36,15 @@ private:
 
     AlMediaClip *_findClip(AlID id);
 
-    void _findClipsByTime(AlCodec::kMediaType type,
+    void _findClipsByTime(AlMediaTrack::kType type,
                           AlVector<std::shared_ptr<AlMediaClip>> &array,
                           int64_t timeInUS);
 
     void _notifyTimeline();
+
+    AlMediaClip *_findAudioRefClip();
+
+    void _beatAudioClips(int64_t timeInUS);
 
 private:
     AlIdentityCreator creator;

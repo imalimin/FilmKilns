@@ -9,7 +9,7 @@
 #define HWVC_ANDROID_ALVIDEOV2PROCESSOR_H
 
 #include "AlAbsProcessor.h"
-#include "AlCodec.h"
+#include "AlMediaTrack.h"
 
 AL_CLASS AlVideoV2Processor AL_EXTEND AlAbsProcessor {
 public:
@@ -21,7 +21,7 @@ public:
 
     virtual void onDestroy() override;
 
-    int32_t addTrack(AlCodec::kMediaType type, std::string path,
+    int32_t addTrack(AlMediaTrack::kType type, std::string path,
                      int64_t seqInInUS, int64_t seqOutInUS,
                      int64_t trimInInUS, int64_t trimOutInUS);
 

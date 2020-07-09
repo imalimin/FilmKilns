@@ -61,7 +61,7 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_addT
     jint track = -1;
     if (handler) {
         const char *ptr = env->GetStringUTFChars(path, JNI_FALSE);
-        track = getHandler(handler)->addTrack((AlCodec::kMediaType) type, std::string(ptr),
+        track = getHandler(handler)->addTrack((AlMediaTrack::kType) type, std::string(ptr),
                                               seqIn, seqOut, trimIn, trimOut);
         env->ReleaseStringUTFChars(path, ptr);
     }
