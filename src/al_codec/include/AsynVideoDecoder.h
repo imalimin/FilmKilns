@@ -27,7 +27,7 @@ extern "C" {
 
 class AsynVideoDecoder : public AbsVideoDecoder {
 public:
-    AsynVideoDecoder();
+    AsynVideoDecoder(bool onlyPic = false);
 
     virtual ~AsynVideoDecoder();
 

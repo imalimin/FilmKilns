@@ -5,15 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/AsynVideoDecoder.h"
+#include "AsynVideoDecoder.h"
 #include "TimeUtils.h"
-#include "../include/DefaultVideoDecoder.h"
+#include "DefaultVideoDecoder.h"
+#include "AlPicFrameDecoder.h"
 #include "../platform/android/decoder/HwAndroidDecoder.h"
 
-AsynVideoDecoder::AsynVideoDecoder() : AbsVideoDecoder() {
+AsynVideoDecoder::AsynVideoDecoder(bool onlyPic) : AbsVideoDecoder() {
     playing = false;
     hwFrameAllocator = new HwFrameAllocator();
-    decoder = new DefaultVideoDecoder();
+    if (onlyPic) {
+        decoder = new AlPicFrameDecoder();
+    } else {
+        decoder = new DefaultVideoDecoder();
+    }
 }
 
 AsynVideoDecoder::~AsynVideoDecoder() {
