@@ -195,12 +195,12 @@ int AsynVideoDecoder::getSamplesPerBuffer() {
     return 0;
 }
 
-void AsynVideoDecoder::seek(int64_t us) {
+void AsynVideoDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
     if (!decoder) {
         return;
     }
     clear();
-    decoder->seek(us);
+    decoder->seek(us, mode);
 }
 
 int64_t AsynVideoDecoder::getVideoDuration() {

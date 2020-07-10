@@ -12,6 +12,7 @@
 #include "HwAbsMediaFrame.h"
 #include "HwFrameAllocator.h"
 #include "HwAudioTranslator.h"
+#include "AlBundle.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +35,7 @@ public:
 
     virtual bool prepare(string path) override;
 
-    void seek(int64_t us) override;
+    void seek(int64_t us, AbsDecoder::kSeekMode mode = AbsDecoder::kSeekMode::BACKWARD) override;
 
     /**
      * @return 1: video, 2: audio, 0: failed
@@ -93,7 +94,7 @@ private:
     int64_t durationUs = -1;
     bool eof = false;
     /** action */
-    int64_t actionSeekInUs = -1;
+    AlBundle mSeekAction;
 };
 
 

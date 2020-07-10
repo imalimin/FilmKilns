@@ -47,7 +47,7 @@ public:
 
     virtual int getSamplesPerBuffer() override;
 
-    virtual void seek(int64_t us) override;
+    virtual void seek(int64_t us, AbsDecoder::kSeekMode mode = AbsDecoder::kSeekMode::BACKWARD) override;
 
     virtual void start() override;
 

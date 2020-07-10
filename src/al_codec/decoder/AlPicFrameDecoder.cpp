@@ -109,7 +109,7 @@ int AlPicFrameDecoder::getSamplesPerBuffer() {
     return 0;
 }
 
-void AlPicFrameDecoder::seek(int64_t us) {
+void AlPicFrameDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
     actionSeekInUs = us;
     eof = false;
 }

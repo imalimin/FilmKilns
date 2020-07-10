@@ -28,7 +28,7 @@ public:
 
     virtual bool prepare(string path) override;
 
-    void seek(int64_t us) override;
+    void seek(int64_t us, AbsDecoder::kSeekMode mode = AbsDecoder::kSeekMode::BACKWARD) override;
 
     virtual void start() override;
 

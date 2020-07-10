@@ -142,6 +142,7 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
 }
 
 bool AlUAudios::_onEnd(AlMessage *msg) {
+    mCurTimeInUS = 0;
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         _seek(_findDecoder(itr->get()), 0);
@@ -200,7 +201,7 @@ AbsAudioDecoder *AlUAudios::_findDecoder(AlMediaClip *clip) {
 void AlUAudios::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
     if (decoder) {
         AlLogI(TAG, "seek to %" PRId64, timeInUS);
-        decoder->seek(timeInUS);
+        decoder->seek(timeInUS, AbsDecoder::kSeekMode::EXACT);
         decoder->start();
     }
 }
@@ -210,15 +211,16 @@ HwResult AlUAudios::_correct(AlMediaClip *clip, AbsAudioDecoder *decoder,
     int64_t curTime = 0;
     auto itr = map.find(clip->id());
     if (map.end() != itr) {
-        curTime = std::min(itr->second, decoder->getDuration());
+        curTime = itr->second < decoder->getAudioDuration() ? itr->second : 0;
     }
     int64_t delta = curTime + clip->getSeqIn() - mCurTimeInUS;
     float scale = std::abs(delta) * decoder->getSampleHz() /
                   (decoder->getSamplesPerBuffer() * 1e6f);
     if (scale >= 3) {
-        AlLogW(TAG, "Seek clip(%d) from(%" PRId64 ") to(%" PRId64 ")",
-               clip->id(), curTime, mCurTimeInUS - clip->getSeqIn());
-        _seek(decoder, mCurTimeInUS - clip->getSeqIn());
+        auto timeInUS = mCurTimeInUS - clip->getSeqIn();
+        AlLogD(TAG, "Seek clip(%d) scale(%f) from %" PRId64 "US to %" PRId64 "US",
+               clip->id(), scale, curTime, timeInUS);
+        _seek(decoder, timeInUS);
     }
     return Hw::OK;
 }

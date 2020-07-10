@@ -55,12 +55,12 @@ bool AsynAudioDecoder::prepare(string path) {
     return true;
 }
 
-void AsynAudioDecoder::seek(int64_t us) {
+void AsynAudioDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
     if (!decoder) {
         return;
     }
     clear();
-    decoder->seek(us);
+    decoder->seek(us, mode);
 }
 
 void AsynAudioDecoder::start() {

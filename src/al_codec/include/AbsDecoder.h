@@ -16,6 +16,12 @@ using namespace std;
 
 class AbsDecoder : public Object {
 public:
+    AL_ENUM kSeekMode : int {
+        BACKWARD = 0,
+        EXACT
+    };
+
+public:
     AbsDecoder();
 
     virtual ~AbsDecoder();
@@ -24,7 +30,7 @@ public:
 
     virtual HwResult grab(HwAbsMediaFrame **frame)=0;
 
-    virtual void seek(int64_t us)=0;
+    virtual void seek(int64_t us, AbsDecoder::kSeekMode mode = AbsDecoder::kSeekMode::BACKWARD) = 0;
 
     virtual int64_t getDuration()=0;
 

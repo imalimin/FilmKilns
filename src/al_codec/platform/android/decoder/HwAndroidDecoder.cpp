@@ -168,7 +168,7 @@ int HwAndroidDecoder::getSamplesPerBuffer() {
     return 1024;
 }
 
-void HwAndroidDecoder::seek(int64_t us) {
+void HwAndroidDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
     actionSeekInUs = us;
     eof = false;
 }

@@ -87,18 +87,37 @@ bool DefaultAudioDecoder::prepare(string path) {
 }
 
 void DefaultAudioDecoder::handleAction() {
-    if (actionSeekInUs >= 0) {
+    auto timeInUS = mSeekAction.get("time", INT64_MIN);
+    if (timeInUS >= 0) {
         avcodec_flush_buffers(aCodecContext);
         int ret = avformat_seek_file(pFormatCtx, -1, INT64_MIN,
-                                     actionSeekInUs, INT64_MAX,
-                                     AVSEEK_FLAG_BACKWARD);
+                                     timeInUS, INT64_MAX,
+                                     AVSEEK_FLAG_ANY);
         if (ret < 0) {
             Logcat::e("HWVC", "DefaultAudioDecoder::seek audio failed");
             return;
         }
+        auto mode = (AbsDecoder::kSeekMode) mSeekAction.get("mode",
+                                       static_cast<int32_t>(AbsDecoder::kSeekMode::BACKWARD));
+        while (AbsDecoder::kSeekMode::EXACT == mode && timeInUS > 0) {
+            ret = av_read_frame(pFormatCtx, avPacket);
+            if (AVERROR_EOF == ret) {
+                eof = true;
+                break;
+            }
+            if (0 == ret && audioTrack == avPacket->stream_index) {
+                auto pts = av_rescale_q_rnd(avPacket->pts,
+                                            pFormatCtx->streams[audioTrack]->time_base,
+                                            outputTimeBase,
+                                            AV_ROUND_NEAR_INF);
+                if (pts >= timeInUS) {
+                    break;
+                }
+            }
+        }
         avcodec_flush_buffers(aCodecContext);
-        Logcat::e("HWVC", "DefaultVideoDecoder::seek: %lld", actionSeekInUs);
-        actionSeekInUs = -1;
+        mSeekAction.put("time", INT64_MIN);
+        Logcat::e("HWVC", "DefaultVideoDecoder::seek: %lld", timeInUS);
     }
 }
 
@@ -157,8 +176,9 @@ HwResult DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
     }
 }
 
-void DefaultAudioDecoder::seek(int64_t us) {
-    actionSeekInUs = us;
+void DefaultAudioDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
+    mSeekAction.put("mode", (int32_t) mode);
+    mSeekAction.put("time", us);
     eof = false;
 }
 

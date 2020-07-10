@@ -107,6 +107,7 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
 }
 
 bool AlUVideos::_onEnd(AlMessage *msg) {
+    mCurTimeInUS = 0;
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         _seek(_findDecoder(itr->get()), 0);
