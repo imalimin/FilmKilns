@@ -10,6 +10,7 @@
 #include "AsynVideoDecoder.h"
 #include "AlVector.h"
 #include "AlSize.h"
+#include "AlBuffer.h"
 
 #define TAG "AlUVideos"
 
@@ -36,6 +37,7 @@ bool AlUVideos::onDestroy(AlMessage *msg) {
              });
     map.clear();
     mLayerMap.clear();
+    mLastFrameMap.clear();
     return true;
 }
 
@@ -78,8 +80,8 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
         }
         while (decoder) {
             HwAbsMediaFrame *frame = nullptr;
-            HwResult ret = decoder->grab(&frame);
-            if (Hw::MEDIA_EOF == ret) {
+            HwResult ret = _grab(clip, decoder, &frame, mCurTimeInUS);
+            if (Hw::MEDIA_EOF == ret || Hw::FAILED == ret) {
                 AlLogI(TAG, "EOF");
                 break;
             }
@@ -96,6 +98,7 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
             break;
         }
     }
+    postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
     return true;
 }
 
@@ -149,7 +152,7 @@ void AlUVideos::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
     map.insert(make_pair(clip->id(), std::move(decoder)));
 }
 
-void AlUVideos::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
+void AlUVideos::_seek(AbsVideoDecoder *decoder, int64_t timeInUS) {
     if (decoder) {
         AlLogI(TAG, "seek to %" PRId64, timeInUS);
         decoder->seek(timeInUS);
@@ -157,7 +160,7 @@ void AlUVideos::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
     }
 }
 
-AbsAudioDecoder *AlUVideos::_findDecoder(AlMediaClip *clip) {
+AbsVideoDecoder *AlUVideos::_findDecoder(AlMediaClip *clip) {
     if (nullptr == clip) {
         return nullptr;
     }
@@ -192,9 +195,41 @@ void AlUVideos::_updateLayer(AlMediaClip *clip, HwVideoFrame *frame) {
         return;
     }
     auto itr = mLayerMap.find(clip->id());
-    if(mLayerMap.end() == itr) {
+    if (mLayerMap.end() == itr) {
         AlLogE(TAG, "failed.");
         return;
     }
+    auto *msg = AlMessage::obtain(MSG_LAYER_UPDATE_YUV);
+    msg->arg1 = itr->second;
+    msg->obj = AlBuffer::wrap(frame->data(), frame->size());
+    msg->sp = std::make_shared<Size>(frame->getWidth(), frame->getHeight());
     AlLogD(TAG, "%d, %d", itr->first, itr->second);
+    postMessage(msg);
+}
+
+HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
+                          HwAbsMediaFrame **frame, int64_t timeInUS) {
+    auto itr = mLastFrameMap.find(clip->id());
+    if (mLastFrameMap.end() != itr) {
+        if (timeInUS < itr->second->getPts()) {
+            return Hw::FAILED;
+        } else {
+            *frame = itr->second;
+            mLastFrameMap.erase(itr);
+            return Hw::OK;
+        }
+    }
+    HwResult ret = decoder->grab(frame);
+    if (Hw::OK != ret || nullptr == *frame) {
+        return Hw::FAILED;
+    }
+    if ((*frame)->isVideo()) {
+        if (timeInUS < (*frame)->getPts()) {
+            mLastFrameMap.insert(std::make_pair(clip->id(), *frame));
+            return Hw::FAILED;
+        }
+        *frame = itr->second;
+        return Hw::OK;
+    }
+    return Hw::FAILED;
 }

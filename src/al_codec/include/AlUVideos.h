@@ -37,9 +37,9 @@ private:
 
     void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
 
-    void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);
+    void _seek(AbsVideoDecoder *decoder, int64_t timeInUS);
 
-    AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
+    AbsVideoDecoder *_findDecoder(AlMediaClip *clip);
 
     int32_t _findLayer(AlMediaClip *clip);
 
@@ -47,10 +47,14 @@ private:
 
     void _updateLayer(AlMediaClip *clip, HwVideoFrame *frame);
 
+    HwResult _grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
+                   HwAbsMediaFrame **frame, int64_t timeInUS);
+
 private:
     std::map<AlID, std::unique_ptr<AbsVideoDecoder>> map;
     std::map<AlID, int64_t> mCurTimeMap;
     std::map<AlID, int32_t> mLayerMap;
+    std::map<AlID, HwAbsMediaFrame *> mLastFrameMap;
     int64_t mCurTimeInUS = 0;
 };
 

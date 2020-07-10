@@ -14,6 +14,7 @@
 #include "AlOperateCrop.h"
 #include "AlRectLoc.h"
 #include "AlMath.h"
+#include "HwYV122RGBAFilter.h"
 #include "core/file/AlFileImporter.h"
 #include "core/file/AlFileExporter.h"
 
@@ -35,6 +36,7 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     al_reg_msg(EVENT_IMAGE_CODEC_DECODE_NOTIFY, AlULayer::onReceiveImage);
     al_reg_msg(EVENT_LAYER_QUERY_INFO, AlULayer::onQueryInfo);
     al_reg_msg(MSG_LAYER_ADD_EMPTY, AlULayer::onAddLayerEmpty);
+    al_reg_msg(MSG_LAYER_UPDATE_YUV, AlULayer::_onUpdateLayerWithYUV);
 }
 
 AlULayer::~AlULayer() {
@@ -372,5 +374,45 @@ bool AlULayer::onQueryInfo(AlMessage *msg) {
     }
 
     postMessage(AlMessage::obtain(EVENT_LAYER_QUERY_INFO_NOTIFY, ObjectBox::box(models)));
+    return true;
+}
+
+bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
+    auto frame = msg->getObj<AlBuffer *>();
+    auto size = std::static_pointer_cast<Size>(msg->sp);
+    if (nullptr == frame) {
+        AlLogE(TAG, "failed.");
+        return true;
+    }
+    auto layer = mLayerManager.find(msg->arg1);
+    if (nullptr == layer) {
+        AlLogE(TAG, "failed.");
+        return true;
+    }
+
+    HwAbsTexture *y = AlTexManager::instance()->alloc();
+    HwAbsTexture *u = AlTexManager::instance()->alloc();
+    HwAbsTexture *v = AlTexManager::instance()->alloc();
+
+    int len = size->width * size->height;
+    AlBuffer *buf = AlBuffer::wrap(frame->data(), len);
+    y->update(buf, size->width, size->height, GL_LUMINANCE);
+    delete buf;
+
+    buf = AlBuffer::wrap(frame->data() + len, len / 4);
+    u->update(buf, size->width / 2, size->height / 2, GL_LUMINANCE);
+    delete buf;
+    buf = AlBuffer::wrap(frame->data() + len + len / 4, len / 4);
+    v->update(buf, size->width / 2, size->height / 2, GL_LUMINANCE);
+
+    glViewport(0, 0, size->width, size->height);
+    HwYV122RGBAFilter *yuvFilter = new HwYV122RGBAFilter();
+    yuvFilter->prepare();
+    yuvFilter->draw(y, u, v, layer->getTexture());
+    delete yuvFilter;
+
+    AlTexManager::instance()->recycle(&v);
+    AlTexManager::instance()->recycle(&u);
+    AlTexManager::instance()->recycle(&y);
     return true;
 }

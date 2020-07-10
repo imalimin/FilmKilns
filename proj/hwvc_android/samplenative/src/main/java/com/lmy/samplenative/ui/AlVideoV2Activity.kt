@@ -38,6 +38,7 @@ class AlVideoV2Activity : BaseActivity() {
         surfaceView.holder.addCallback(surfaceCallback)
         val testFile = File(externalCacheDir, "/video/hw_small.mp4")
         mCurTrackID = processor?.addTrack(MediaType.TYPE_VIDEO, testFile.absolutePath, 0)
+        processor?.addTrack(MediaType.TYPE_AUDIO, testFile.absolutePath, 0)
 //        mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 0)
         processor?.setOnPlayProgressListener { timeInUS, duration ->
             this.duration = duration

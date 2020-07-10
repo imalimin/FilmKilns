@@ -150,6 +150,17 @@ private:
     /// \return
     bool onQueryInfo(AlMessage *msg);
 
+    /// 更新纹理
+    /// FORMAT:
+    /// +-------------------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |  msg:sp  |
+    /// +-------------------------------------------------------------+
+    /// | buffer       | layer id  | none      |  none     |  size    |
+    /// +-------------------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onUpdateLayerWithYUV(AlMessage *msg);
+
 protected:
     void invalidate();
 
