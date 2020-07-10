@@ -78,10 +78,14 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
         if (nullptr == decoder) {
             continue;
         }
+//        _correct(clip, decoder, curTimeMap);
         while (decoder) {
             HwAbsMediaFrame *frame = nullptr;
             HwResult ret = _grab(clip, decoder, &frame, mCurTimeInUS);
-            if (Hw::MEDIA_EOF == ret || Hw::FAILED == ret) {
+            if (Hw::FAILED == ret) {
+                break;
+            }
+            if (Hw::MEDIA_EOF == ret) {
                 AlLogI(TAG, "EOF");
                 break;
             }
@@ -203,7 +207,6 @@ void AlUVideos::_updateLayer(AlMediaClip *clip, HwVideoFrame *frame) {
     msg->arg1 = itr->second;
     msg->obj = AlBuffer::wrap(frame->data(), frame->size());
     msg->sp = std::make_shared<Size>(frame->getWidth(), frame->getHeight());
-    AlLogD(TAG, "%d, %d", itr->first, itr->second);
     postMessage(msg);
 }
 
@@ -211,7 +214,7 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
                           HwAbsMediaFrame **frame, int64_t timeInUS) {
     auto itr = mLastFrameMap.find(clip->id());
     if (mLastFrameMap.end() != itr) {
-        if (timeInUS < itr->second->getPts()) {
+        if (timeInUS < clip->getSeqIn() + itr->second->getPts()) {
             return Hw::FAILED;
         } else {
             *frame = itr->second;
@@ -224,7 +227,7 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
         return Hw::FAILED;
     }
     if ((*frame)->isVideo()) {
-        if (timeInUS < (*frame)->getPts()) {
+        if (timeInUS < clip->getSeqIn() + (*frame)->getPts()) {
             mLastFrameMap.insert(std::make_pair(clip->id(), *frame));
             return Hw::FAILED;
         }
@@ -232,4 +235,21 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
         return Hw::OK;
     }
     return Hw::FAILED;
+}
+
+HwResult AlUVideos::_correct(AlMediaClip *clip, AbsVideoDecoder *decoder,
+                             std::map<AlID, int64_t> &map) {
+    int64_t curTime = 0;
+    auto itr = map.find(clip->id());
+    if (map.end() != itr) {
+        curTime = std::min(itr->second, decoder->getDuration());
+    }
+    int64_t delta = curTime + clip->getSeqIn() - mCurTimeInUS;
+    float scale = std::abs(delta) / 33333;
+    if (scale >= 3) {
+        AlLogW(TAG, "Seek clip(%d) from(%" PRId64 ") to(%" PRId64 ")",
+               clip->id(), curTime, mCurTimeInUS - clip->getSeqIn());
+        _seek(decoder, mCurTimeInUS - clip->getSeqIn());
+    }
+    return Hw::OK;
 }
