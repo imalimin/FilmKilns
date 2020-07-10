@@ -6,6 +6,7 @@ import com.lmy.hwvcnative.processor.MediaType
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
 import kotlinx.android.synthetic.main.activity_video_v2.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,7 +18,9 @@ class AlVideoV2Activity : BaseActivity() {
     private var duration: Long = -1
     private var mCurTrackID: Int? = -1
     override fun initView() {
-        mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 0)
+        val testFile = File(externalCacheDir, "/video/hw_small.mp4")
+        mCurTrackID = processor?.addTrack(MediaType.TYPE_VIDEO, testFile.absolutePath, 0)
+//        mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 0)
         processor?.setOnPlayProgressListener { timeInUS, duration ->
             this.duration = duration
             runOnUiThread {
@@ -42,7 +45,7 @@ class AlVideoV2Activity : BaseActivity() {
             playing = !playing
         }
         addBtn.setOnClickListener {
-            mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/hw_test.m4a", 10000000)
+            mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 10000000)
         }
         delBtn.setOnClickListener {
             if (null != mCurTrackID) {

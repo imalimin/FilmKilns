@@ -15,7 +15,7 @@ AlUSequence::AlUSequence(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_END, AlUSequence::_onTimelineEnd);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD, AlUSequence::_onAddTrack);
     al_reg_msg(MSG_SEQUENCE_TRACK_REMOVE, AlUSequence::_onRemoveTrack);
-    al_reg_msg(MSG_AUDIOS_TRACK_ADD_DONE, AlUSequence::_onAddTrackDone);
+    al_reg_msg(MSG_SEQUENCE_TRACK_SET_DURATION, AlUSequence::_onSetTrackDuration);
 }
 
 AlUSequence::~AlUSequence() {
@@ -32,6 +32,7 @@ bool AlUSequence::onDestroy(AlMessage *msg) {
 
 bool AlUSequence::_onHeartbeat(AlMessage *msg) {
     _beatAudioClips(msg->arg2);
+    _beatVideoClips(msg->arg2);
     return true;
 }
 
@@ -72,7 +73,7 @@ bool AlUSequence::_onRemoveTrack(AlMessage *msg) {
     return true;
 }
 
-bool AlUSequence::_onAddTrackDone(AlMessage *msg) {
+bool AlUSequence::_onSetTrackDuration(AlMessage *msg) {
     auto tmp = std::static_pointer_cast<AlMediaClip>(msg->sp);
     AlID id = tmp->id();
     int64_t duration = tmp->getDuration();
@@ -152,6 +153,7 @@ void AlUSequence::_notifyTimeline() {
             refClip->setSeqIn(0);
             refClip->setTrimIn(0);
             refClip->setFrameDuration(1024 * 1e6 / 44100);
+            tracks.insert(std::make_pair(track->id(), std::move(track)));
         }
     }
     if (refClip) {
@@ -175,6 +177,17 @@ void AlUSequence::_beatAudioClips(int64_t timeInUS) {
     }
     if (!clips->empty()) {
         auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
+        msg1->arg2 = timeInUS;
+        msg1->sp = clips;
+        postMessage(msg1);
+    }
+}
+
+void AlUSequence::_beatVideoClips(int64_t timeInUS) {
+    auto clips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
+    _findClipsByTime(AlMediaTrack::kType::VIDEO, *clips, timeInUS);
+    if (!clips->empty()) {
+        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_VIDEO);
         msg1->arg2 = timeInUS;
         msg1->sp = clips;
         postMessage(msg1);

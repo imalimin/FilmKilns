@@ -52,7 +52,7 @@ bool AlUAudios::_onAddTrack(AlMessage *msg) {
     if (duration > 0) {
         clip->setDuration(duration);
         clip->setFrameDuration(frameDuration);
-        auto msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD_DONE);
+        auto msg1 = AlMessage::obtain(MSG_SEQUENCE_TRACK_SET_DURATION);
         msg1->sp = clip;
         postMessage(msg1);
     }

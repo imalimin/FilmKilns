@@ -30,7 +30,7 @@ private:
 
     bool _onRemoveTrack(AlMessage *msg);
 
-    bool _onAddTrackDone(AlMessage *msg);
+    bool _onSetTrackDuration(AlMessage *msg);
 
     bool _onTimelineEnd(AlMessage *msg);
 
@@ -45,6 +45,8 @@ private:
     AlMediaClip *_findAudioRefClip();
 
     void _beatAudioClips(int64_t timeInUS);
+
+    void _beatVideoClips(int64_t timeInUS);
 
 private:
     AlIdentityCreator creator;

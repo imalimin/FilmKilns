@@ -47,6 +47,8 @@ private:
     const std::string ALIAS_SEQUENCE = "SEQUENCE_OF_VIDEO2";
     const std::string ALIAS_AUDIOS = "SEQUENCE_OF_AUDIOS";
     const std::string ALIAS_SPEAKER = "SEQUENCE_OF_SPEAKER";
+    const std::string ALIAS_IMAGE = "IMAGE_OF_VIDEO2";
+    const std::string ALIAS_SCREEN = "SCREEN_OF_VIDEO2";
 
     function<void(int64_t, int64_t)> playProgressListener = nullptr;
     int32_t mCurTrackID = -1;

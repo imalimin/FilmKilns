@@ -11,6 +11,8 @@
 #include "AlUSequence.h"
 #include "AlUAudios.h"
 #include "HwSpeaker.h"
+#include "AlGImage.h"
+#include "AlScreen.h"
 #include "AlFuture.h"
 #include "TimeUtils.h"
 
@@ -20,6 +22,8 @@ AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
     registerAnUnit(new AlUTimeline(ALIAS_TIMELINE));
     registerAnUnit(new AlUSequence(ALIAS_SEQUENCE));
     registerAnUnit(new AlUAudios(ALIAS_AUDIOS));
+    registerAnUnit(new AlGImage(ALIAS_IMAGE));
+    registerAnUnit(new AlScreen(ALIAS_SCREEN));
     registerAnUnit(new HwSpeaker(ALIAS_SPEAKER));
 
     al_reg_msg(MSG_TIMELINE_PROGRESS_NOTIFY, AlVideoV2Processor::_onTimelineInUS);
