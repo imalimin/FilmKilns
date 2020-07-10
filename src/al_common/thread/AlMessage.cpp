@@ -28,6 +28,7 @@ AlMessage *AlMessage::obtain(int32_t what, Object *obj, int16_t queueMode) {
         msg->obj = obj;
         msg->arg1 = 0;
         msg->arg2 = 0;
+        msg->action = 0;
         msg->desc = "Undef";
         msg->queueMode = queueMode;
         return msg;
@@ -58,6 +59,7 @@ AlMessage::AlMessage(int32_t what,
     this->obj = obj;
     this->arg1 = 0;
     this->arg2 = 0;
+    this->action = 0;
     this->desc = "Undef";
     this->queueMode = queueMode;
 }
@@ -93,6 +95,7 @@ void AlMessageManager::recycle(AlMessage *msg) {
     msg->what = -1;
     msg->arg1 = 0;
     msg->arg2 = 0;
+    msg->action = 0;
     msg->desc = "Undef";
     msg->queueMode = AlMessage::QUEUE_MODE_NORMAL;
     delete msg->obj;

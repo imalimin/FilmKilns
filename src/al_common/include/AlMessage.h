@@ -23,6 +23,7 @@ public:
     int32_t what = 0;
     int32_t arg1 = 0;
     int64_t arg2 = 0;
+    int64_t action = 0;
     string desc;
     /// Will be delete after cycle.
     Object *obj = nullptr;
