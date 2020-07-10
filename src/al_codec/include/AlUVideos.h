@@ -12,6 +12,7 @@
 #include "AlMediaClip.h"
 #include "AbsVideoDecoder.h"
 #include "AlIdentityCreator.h"
+#include "HwVideoFrame.h"
 
 al_def_unit(AlUVideos, Unit) {
 public:
@@ -38,9 +39,16 @@ private:
 
     AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
 
+    int32_t _findLayer(AlMediaClip *clip);
+
+    void _addLayer(AlMediaClip *clip, int32_t width, int32_t height);
+
+    void _updateLayer(AlMediaClip *clip, HwVideoFrame *frame);
+
 private:
     std::map<AlID, std::unique_ptr<AbsVideoDecoder>> map;
     std::map<AlID, int64_t> mCurTimeMap;
+    std::map<AlID, int32_t> mLayerMap;
     int64_t mCurTimeInUS = 0;
 };
 

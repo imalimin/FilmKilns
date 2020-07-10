@@ -10,6 +10,7 @@
 
 #include "AlAbsProcessor.h"
 #include "AlMediaTrack.h"
+#include "AlEgl.h"
 
 AL_CLASS AlVideoV2Processor AL_EXTEND AlAbsProcessor {
 public:
@@ -50,6 +51,7 @@ private:
     const std::string ALIAS_IMAGE = "IMAGE_OF_VIDEO2";
     const std::string ALIAS_SCREEN = "SCREEN_OF_VIDEO2";
 
+    AlEgl *aBaseCtx = nullptr;
     function<void(int64_t, int64_t)> playProgressListener = nullptr;
     int32_t mCurTrackID = -1;
 };

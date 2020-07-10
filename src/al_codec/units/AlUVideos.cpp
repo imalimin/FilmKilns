@@ -85,6 +85,10 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
                 continue;
             }
             if (frame->isVideo()) {
+                int32_t layer = _findLayer(clip);
+                if (AlIdentityCreator::NONE_ID != layer) {
+                    _updateLayer(clip, dynamic_cast<HwVideoFrame *>(frame));
+                }
                 mCurTimeMap.insert(std::make_pair(clip->id(), frame->getPts()));
             }
             break;
@@ -121,6 +125,7 @@ void AlUVideos::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
         return;
     }
 
+    _addLayer(clip, decoder->width(), decoder->height());
     duration = decoder->getDuration();
     auto frameSize = decoder->getSamplesPerBuffer();
     frameDuration = 1e6 * frameSize / decoder->getSampleHz();
@@ -154,4 +159,22 @@ AbsAudioDecoder *AlUVideos::_findDecoder(AlMediaClip *clip) {
         return nullptr;
     }
     return itr->second.get();
+}
+
+int32_t AlUVideos::_findLayer(AlMediaClip *clip) {
+    if (nullptr == clip) {
+        return AlIdentityCreator::NONE_ID;
+    }
+    auto itr = mLayerMap.find(clip->id());
+    if (mLayerMap.end() == itr) {
+        return AlIdentityCreator::NONE_ID;
+    }
+    return itr->second;
+}
+
+void AlUVideos::_addLayer(AlMediaClip *clip, int32_t width, int32_t height) {
+}
+
+void AlUVideos::_updateLayer(AlMediaClip *clip, HwVideoFrame *frame) {
+
 }

@@ -37,10 +37,13 @@ AlVideoV2Processor::~AlVideoV2Processor() {
 
 void AlVideoV2Processor::onCreate() {
     AlAbsProcessor::onCreate();
+    this->aBaseCtx = AlEgl::offScreen(TAG);
 }
 
 void AlVideoV2Processor::onDestroy() {
     AlAbsProcessor::onDestroy();
+    delete this->aBaseCtx;
+    this->aBaseCtx = nullptr;
 }
 
 bool AlVideoV2Processor::_onTimelineInUS(AlMessage *msg) {
