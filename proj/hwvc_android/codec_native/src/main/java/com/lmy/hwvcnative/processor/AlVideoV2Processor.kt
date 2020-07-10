@@ -1,6 +1,7 @@
 package com.lmy.hwvcnative.processor
 
 import android.util.Log
+import android.view.Surface
 import com.lmy.hwvcnative.CPPObject
 
 class AlVideoV2Processor : CPPObject() {
@@ -59,6 +60,12 @@ class AlVideoV2Processor : CPPObject() {
         onPlayProgressListener = l
     }
 
+    fun updateWindow(surface: Surface) {
+        if (!isNativeNull()) {
+            updateWindow(handler, surface)
+        }
+    }
+
     private fun onDispatchNativeMessage(what: Int, arg0: Int, arg1: Long, arg2: Long) {
 //        Log.d("AlVideoV2Processor", "$what, $arg0, $arg1, $arg2")
         when (what) {
@@ -83,6 +90,7 @@ class AlVideoV2Processor : CPPObject() {
     private external fun start(handle: Long)
     private external fun pause(handle: Long)
     private external fun seek(handle: Long, timeInUS: Long)
+    private external fun updateWindow(handle: Long, surface: Surface)
 }
 
 object MediaType {

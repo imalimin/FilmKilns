@@ -10,6 +10,7 @@
 #include "AlUTimeline.h"
 #include "AlUSequence.h"
 #include "AlUAudios.h"
+#include "AlUVideos.h"
 #include "HwSpeaker.h"
 #include "AlGImage.h"
 #include "AlScreen.h"
@@ -19,12 +20,13 @@
 #define TAG "AlVideoV2Processor"
 
 AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
+    registerAnUnit(new AlScreen(ALIAS_SCREEN));
+    registerAnUnit(new HwSpeaker(ALIAS_SPEAKER));
     registerAnUnit(new AlUTimeline(ALIAS_TIMELINE));
     registerAnUnit(new AlUSequence(ALIAS_SEQUENCE));
     registerAnUnit(new AlUAudios(ALIAS_AUDIOS));
+    registerAnUnit(new AlUVideos(ALIAS_VIDEOS));
     registerAnUnit(new AlGImage(ALIAS_IMAGE));
-    registerAnUnit(new AlScreen(ALIAS_SCREEN));
-    registerAnUnit(new HwSpeaker(ALIAS_SPEAKER));
 
     al_reg_msg(MSG_TIMELINE_PROGRESS_NOTIFY, AlVideoV2Processor::_onTimelineInUS);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD_DONE, AlVideoV2Processor::_onAddTrackDone);
@@ -102,4 +104,9 @@ void AlVideoV2Processor::seek(int64_t timeInUS) {
 
 void AlVideoV2Processor::setPlayProgressListener(function<void(int64_t, int64_t)> listener) {
     playProgressListener = std::move(listener);
+}
+
+void AlVideoV2Processor::updateWindow(HwWindow *win) {
+    AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
+    postEvent(msg);
 }

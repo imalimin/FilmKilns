@@ -8,6 +8,7 @@
 #include "platform/android/AlJNIEnv.h"
 #include "platform/android/AlJNIObject.h"
 #include "AlVideoV2Processor.h"
+#include "HwAndroidWindow.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,6 +94,13 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_seek
         (JNIEnv *env, jobject thiz, jlong handler, jlong timeInUS) {
     if (handler) {
         getHandler(handler)->seek(timeInUS);
+    }
+}
+
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_updateWindow
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+    if (handler) {
+        getHandler(handler)->updateWindow(new HwAndroidWindow(env, surface));
     }
 }
 

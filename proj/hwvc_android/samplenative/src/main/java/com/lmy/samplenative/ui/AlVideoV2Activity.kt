@@ -1,5 +1,7 @@
 package com.lmy.samplenative.ui
 
+import android.util.Log
+import android.view.SurfaceHolder
 import android.widget.SeekBar
 import com.lmy.hwvcnative.processor.AlVideoV2Processor
 import com.lmy.hwvcnative.processor.MediaType
@@ -17,7 +19,23 @@ class AlVideoV2Activity : BaseActivity() {
     private var playing: Boolean = true
     private var duration: Long = -1
     private var mCurTrackID: Int? = -1
+    private val surfaceCallback = object : SurfaceHolder.Callback {
+        override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
+            processor?.updateWindow(holder.surface)
+        }
+
+        override fun surfaceDestroyed(p0: SurfaceHolder?) {
+            Log.i("AlVideoV2Activity", "surfaceDestroyed")
+        }
+
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            Log.i("AlVideoV2Activity", "surfaceCreated")
+        }
+    }
+
     override fun initView() {
+        surfaceView.keepScreenOn = true
+        surfaceView.holder.addCallback(surfaceCallback)
         val testFile = File(externalCacheDir, "/video/hw_small.mp4")
         mCurTrackID = processor?.addTrack(MediaType.TYPE_VIDEO, testFile.absolutePath, 0)
 //        mCurTrackID = processor?.addTrack(MediaType.TYPE_AUDIO, "/sdcard/the-world-today-short.m4a", 0)
