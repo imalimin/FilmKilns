@@ -9,6 +9,7 @@
 #include "StringUtils.h"
 #include "AsynVideoDecoder.h"
 #include "AlVector.h"
+#include "AlSize.h"
 
 #define TAG "AlUVideos"
 
@@ -18,6 +19,7 @@ AlUVideos::AlUVideos(const std::string alias)
     al_reg_msg(MSG_VIDEOS_TRACK_REMOVE, AlUVideos::_onRemoveTrack);
     al_reg_msg(MSG_SEQUENCE_BEAT_VIDEO, AlUVideos::_onBeat);
     al_reg_msg(MSG_VIDEOS_END, AlUVideos::_onEnd);
+    al_reg_msg(EVENT_LAYER_QUERY_ID_NOTIFY, AlUVideos::_onLayerDone);
 }
 
 AlUVideos::~AlUVideos() {
@@ -33,11 +35,11 @@ bool AlUVideos::onDestroy(AlMessage *msg) {
                  it.second->stop();
              });
     map.clear();
+    mLayerMap.clear();
     return true;
 }
 
 bool AlUVideos::_onAddTrack(AlMessage *msg) {
-    AlLogI(TAG, "");
     auto clip = std::static_pointer_cast<AlMediaClip>(msg->sp);
     int64_t duration = 0;
     int64_t frameDuration = 0;
@@ -105,6 +107,11 @@ bool AlUVideos::_onEnd(AlMessage *msg) {
     return false;
 }
 
+bool AlUVideos::_onLayerDone(AlMessage *msg) {
+    mLayerMap[msg->action] = msg->arg1;
+    return true;
+}
+
 void AlUVideos::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration) {
     if (nullptr == clip || AlIdentityCreator::NONE_ID == clip->id()) {
         AlLogE(TAG, "failed. Invalid clip.");
@@ -119,7 +126,7 @@ void AlUVideos::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
         AlLogE(TAG, "failed. Invalid path(%s).", path.c_str());
         return;
     }
-    std::unique_ptr<AsynVideoDecoder> decoder = std::make_unique<AsynVideoDecoder>();
+    std::unique_ptr<AsynVideoDecoder> decoder = std::make_unique<AsynVideoDecoder>(true);
     if (!decoder->prepare(path)) {
         AlLogE(TAG, "failed. Decoder prepare failed.");
         return;
@@ -173,8 +180,21 @@ int32_t AlUVideos::_findLayer(AlMediaClip *clip) {
 }
 
 void AlUVideos::_addLayer(AlMediaClip *clip, int32_t width, int32_t height) {
+    auto *msg = AlMessage::obtain(MSG_LAYER_ADD_EMPTY);
+    msg->action = clip->id();
+    msg->obj = new AlSize(width, height);
+    postMessage(msg);
 }
 
 void AlUVideos::_updateLayer(AlMediaClip *clip, HwVideoFrame *frame) {
-
+    if (nullptr == clip || nullptr == frame) {
+        AlLogE(TAG, "failed.");
+        return;
+    }
+    auto itr = mLayerMap.find(clip->id());
+    if(mLayerMap.end() == itr) {
+        AlLogE(TAG, "failed.");
+        return;
+    }
+    AlLogD(TAG, "%d, %d", itr->first, itr->second);
 }

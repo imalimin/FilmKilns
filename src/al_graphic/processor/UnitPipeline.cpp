@@ -51,19 +51,6 @@ void UnitPipeline::postEvent(AlMessage *msg) {
 //    this->dispatch(msg);
 }
 
-static std::string kidRestore(int32_t kid) {
-    std::string str;
-    char *s = new char[4];
-    s[0] = (char) (kid >> 24);
-    s[1] = (char) (kid >> 16);
-    s[2] = (char) (kid >> 8);
-    s[3] = 0;
-    int d = (char) (kid);
-    str.append(s);
-    str.append(StringUtils::valueOf(d));
-    return str;
-}
-
 void UnitPipeline::_dispatch(AlMessage *msg) {
 #if 0
     AlLogI(TAG, "message(%s-%d), count of unit %d",
@@ -87,7 +74,7 @@ void UnitPipeline::_dispatch(AlMessage *msg) {
 #if DEBUG_SHOW_COST
     AlLogI(TAG, "%s cost %"
             PRId64,
-           kidRestore(msg->what).c_str(), (TimeUtils::getCurrentTimeUS() - time) / 1000);
+           Unit::kidRestore(msg->what).c_str(), (TimeUtils::getCurrentTimeUS() - time) / 1000);
 #endif
 }
 

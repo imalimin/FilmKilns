@@ -6,6 +6,7 @@
 */
 
 #include "Unit.h"
+#include "StringUtils.h"
 #include "log.h"
 
 #define TAG "Unit"
@@ -22,6 +23,19 @@ Event::~Event() {
 
 bool Event::handle(Unit *unit, AlMessage *msg) {
     return (unit->*handler)(msg);
+}
+
+std::string Unit::kidRestore(int32_t kid) {
+    std::string str;
+    char *s = new char[4];
+    s[0] = (char) (kid >> 24);
+    s[1] = (char) (kid >> 16);
+    s[2] = (char) (kid >> 8);
+    s[3] = 0;
+    int d = (char) (kid);
+    str.append(s);
+    str.append(StringUtils::valueOf(d));
+    return str;
 }
 
 Unit::Unit(string alias, AlUnitSetting setting) : Object(), alias(alias), setting(setting) {

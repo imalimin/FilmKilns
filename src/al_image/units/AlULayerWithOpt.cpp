@@ -180,6 +180,7 @@ bool AlULayerWithOpt::onOperateQuery(AlMessage *m) {
     auto *model = findLayerModel(desc->x, desc->y);
     auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
     msg->arg1 = nullptr != model ? model->getId() : AlIdentityCreator::NONE_ID;
+    msg->action = m->action;
     postEvent(msg);
     return true;
 }

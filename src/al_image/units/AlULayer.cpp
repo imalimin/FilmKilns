@@ -63,6 +63,7 @@ bool AlULayer::onAddLayerEmpty(AlMessage *msg) {
     auto *m = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
     AlSize size = *msg->getObj<AlSize *>();
     m->arg1 = mLayerManager.addLayerEmpty(size);
+    m->action = msg->action;
     m->obj = HwTexture::wrap(mLayerManager.find(m->arg1)->getTexture());
     postMessage(m);
     return true;
@@ -79,6 +80,7 @@ bool AlULayer::onReceiveImage(AlMessage *msg) {
             }
             auto *m = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
             m->arg1 = id;
+            m->action = msg->action;
             postEvent(m);
             break;
         }

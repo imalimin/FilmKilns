@@ -47,7 +47,12 @@ bool AlUSequence::_onAddTrack(AlMessage *msg) {
     if (clip) {
         clip->setSeqIn(tmp->getSeqIn());
         clip->setTrimIn(tmp->getTrimIn());
-        auto *msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD);
+        AlMessage *msg1 = nullptr;
+        if (type == AlMediaTrack::kType::AUDIO) {
+            msg1 = AlMessage::obtain(MSG_AUDIOS_TRACK_ADD);
+        } else if (type == AlMediaTrack::kType::VIDEO) {
+            msg1 = AlMessage::obtain(MSG_VIDEOS_TRACK_ADD);
+        }
         msg1->sp = std::make_shared<AlMediaClip>(*clip);
         postMessage(msg1);
     }
@@ -88,15 +93,23 @@ bool AlUSequence::_onSetTrackDuration(AlMessage *msg) {
 }
 
 bool AlUSequence::_onTimelineEnd(AlMessage *msg) {
+    auto vClips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
     auto aClips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
     for (auto &track : this->tracks) {
         if (AlMediaTrack::kType::AUDIO == track.second->type()) {
             track.second->findAllClips(*aClips);
+        } else if (AlMediaTrack::kType::VIDEO == track.second->type()) {
+            track.second->findAllClips(*vClips);
         }
     }
     if (!aClips->empty()) {
         auto *msg1 = AlMessage::obtain(MSG_AUDIOS_END);
         msg1->sp = aClips;
+        postMessage(msg1);
+    }
+    if (!vClips->empty()) {
+        auto *msg1 = AlMessage::obtain(MSG_VIDEOS_END);
+        msg1->sp = vClips;
         postMessage(msg1);
     }
     return true;

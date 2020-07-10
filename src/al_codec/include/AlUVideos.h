@@ -33,6 +33,8 @@ private:
 
     bool _onEnd(AlMessage *msg);
 
+    bool _onLayerDone(AlMessage *msg);
+
     void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
 
     void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);

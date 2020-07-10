@@ -40,6 +40,7 @@ bool AlUAudios::onDestroy(AlMessage *msg) {
         it.second->stop();
     }
     map.clear();
+    mCurTimeMap.clear();
     return true;
 }
 

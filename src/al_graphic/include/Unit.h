@@ -157,11 +157,9 @@ static constexpr int MSG_AUDIOS_TRACK_ADD = KID('A', 'A', 'S', 0x01);
 static constexpr int MSG_AUDIOS_END = KID('A', 'A', 'S', 0x02);
 static constexpr int MSG_AUDIOS_TRACK_REMOVE = KID('A', 'A', 'S', 0x03);
 
-static constexpr int MSG_VIDEOS_TRACK_ADD = KID('A', 'A', 'S', 0x01);
-static constexpr int MSG_VIDEOS_END = KID('A', 'A', 'S', 0x02);
-static constexpr int MSG_VIDEOS_TRACK_REMOVE = KID('A', 'A', 'S', 0x03);
-
-static constexpr int MSG_VIDEOS_ADD = KID('A', 'V', 'S', 0x01);
+static constexpr int MSG_VIDEOS_TRACK_ADD = KID('A', 'V', 'S', 0x01);
+static constexpr int MSG_VIDEOS_END = KID('A', 'V', 'S', 0x02);
+static constexpr int MSG_VIDEOS_TRACK_REMOVE = KID('A', 'V', 'S', 0x03);
 
 #include "Object.h"
 #include "UnitPipeline.h"
@@ -207,6 +205,8 @@ private:
     friend class AlAbsGraph;
 
 public:
+    static std::string kidRestore(int32_t kid);
+
     al_class AlUnitSetting al_extend Object {
     public:
         AlUnitSetting(bool hosted = false);
