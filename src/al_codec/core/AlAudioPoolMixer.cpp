@@ -161,5 +161,8 @@ void AlAudioPoolMixer::clearSelect() {
 }
 
 void AlAudioPoolMixer::select(int32_t clip) {
-    sClips.emplace_back(clip);
+    auto itr = std::find(sClips.begin(), sClips.end(), clip);
+    if (sClips.end() == itr) {
+        sClips.emplace_back(clip);
+    }
 }
