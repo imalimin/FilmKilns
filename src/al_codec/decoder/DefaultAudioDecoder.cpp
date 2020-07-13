@@ -105,14 +105,16 @@ void DefaultAudioDecoder::handleAction() {
                 eof = true;
                 break;
             }
+            int64_t pts = -1;
             if (0 == ret && audioTrack == avPacket->stream_index) {
-                auto pts = av_rescale_q_rnd(avPacket->pts,
-                                            pFormatCtx->streams[audioTrack]->time_base,
-                                            outputTimeBase,
-                                            AV_ROUND_NEAR_INF);
-                if (pts >= timeInUS) {
-                    break;
-                }
+                pts = av_rescale_q_rnd(avPacket->pts,
+                                       pFormatCtx->streams[audioTrack]->time_base,
+                                       outputTimeBase,
+                                       AV_ROUND_NEAR_INF);
+            }
+            av_packet_unref(avPacket);
+            if (pts >= timeInUS) {
+                break;
             }
         }
         avcodec_flush_buffers(aCodecContext);
@@ -134,26 +136,6 @@ HwResult DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
             avcodec_send_packet(aCodecContext, avPacket);
         }
         av_packet_unref(avPacket);//Or av_free_packet?
-//            switch (ret) {
-//                case AVERROR(EAGAIN): {
-//                    LOGI("you must read output with avcodec_receive_frame");
-//                }
-//                case AVERROR(EINVAL): {
-//                    LOGI("codec not opened, it is an encoder, or requires flush");
-//                    break;
-//                }
-//                case AVERROR(ENOMEM): {
-//                    LOGI("failed to add packet to internal queue");
-//                    break;
-//                }
-//                case AVERROR_EOF: {
-//                    LOGI("eof");
-//                    eof = true;
-//                    break;
-//                }
-//                default:
-//                    LOGI("avcodec_send_packet ret=%d", ret);
-//            }
         if (AVERROR_EOF == ret) {
             eof = true;
         }

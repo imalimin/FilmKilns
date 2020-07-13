@@ -212,6 +212,8 @@ HwResult AlUAudios::_correct(AlMediaClip *clip, AbsAudioDecoder *decoder,
     auto itr = map.find(clip->id());
     if (map.end() != itr) {
         curTime = itr->second < decoder->getAudioDuration() ? itr->second : 0;
+    } else {
+        return Hw::FAILED;
     }
     int64_t delta = curTime + clip->getSeqIn() - mCurTimeInUS;
     float scale = std::abs(delta) * decoder->getSampleHz() /

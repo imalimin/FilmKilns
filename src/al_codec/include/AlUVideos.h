@@ -50,7 +50,11 @@ private:
     HwResult _grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
                    HwAbsMediaFrame **frame, int64_t timeInUS);
 
-    HwResult _correct(AlMediaClip *clip, AbsVideoDecoder *decoder, std::map<AlID, int64_t> &map);
+    HwResult _correct(AlMediaClip *clip, AbsVideoDecoder *decoder);
+
+    void _setCurTimestamp(AlMediaClip *clip, int64_t timeInUS);
+
+    int64_t _getCurTimestamp(AlMediaClip *clip);
 
 private:
     std::map<AlID, std::unique_ptr<AbsVideoDecoder>> map;

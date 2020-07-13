@@ -59,8 +59,8 @@ void AsynAudioDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
     if (!decoder) {
         return;
     }
-    clear();
     decoder->seek(us, mode);
+    clear();
 }
 
 void AsynAudioDecoder::start() {

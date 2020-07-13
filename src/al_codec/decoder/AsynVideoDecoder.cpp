@@ -199,8 +199,18 @@ void AsynVideoDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
     if (!decoder) {
         return;
     }
-    clear();
+    releaseLock.lock();
     decoder->seek(us, mode);
+    while (!cache.empty()) {
+        outputFrame = cache.front();
+        cache.pop();
+        if (outputFrame) {
+            outputFrame->recycle();
+            outputFrame = nullptr;
+        }
+    }
+    releaseLock.unlock();
+    grabLock.notify();
 }
 
 int64_t AsynVideoDecoder::getVideoDuration() {

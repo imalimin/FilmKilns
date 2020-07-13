@@ -110,23 +110,53 @@ int AlPicFrameDecoder::getSamplesPerBuffer() {
 }
 
 void AlPicFrameDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
-    actionSeekInUs = us;
+    mSeekAction.put("mode", (int32_t) mode);
+    mSeekAction.put("time", us);
     eof = false;
 }
 
 void AlPicFrameDecoder::_handleAction() {
-    if (actionSeekInUs >= 0) {
+    auto timeInUS = mSeekAction.get("time", INT64_MIN);
+    if (timeInUS >= 0) {
+        auto mode = (AbsDecoder::kSeekMode) mSeekAction.get("mode",
+                                                            static_cast<int32_t>(AbsDecoder::kSeekMode::BACKWARD));
         avcodec_flush_buffers(vCtx);
-        int ret = avformat_seek_file(pFormatCtx, -1, INT64_MIN,
-                                     actionSeekInUs, INT64_MAX,
+        int ret = avformat_seek_file(pFormatCtx, vTrack, INT64_MIN,
+                                     av_rescale_q_rnd(timeInUS,
+                                                      oRational,
+                                                      pFormatCtx->streams[vTrack]->time_base,
+                                                      AV_ROUND_NEAR_INF), INT64_MAX,
                                      AVSEEK_FLAG_BACKWARD);
         if (ret < 0) {
             AlLogE(TAG, "failed");
             return;
         }
-        avcodec_flush_buffers(vCtx);
-        AlLogI(TAG, "seek: %lld", actionSeekInUs);
-        actionSeekInUs = -1;
+        while (AbsDecoder::kSeekMode::EXACT == mode && timeInUS > 0) {
+            ret = av_read_frame(pFormatCtx, vPacket);
+            if (0 == ret && vTrack == vPacket->stream_index) {
+                avcodec_send_packet(vCtx, vPacket);
+            }
+            av_packet_unref(vPacket);
+            if (AVERROR_EOF == ret) {
+                eof = true;
+                break;
+            }
+            int64_t pts = -1;
+            if (0 == avcodec_receive_frame(vCtx, vFrame)) {
+                pts = av_rescale_q_rnd(vFrame->pts,
+                                       pFormatCtx->streams[vTrack]->time_base,
+                                       oRational,
+                                       AV_ROUND_NEAR_INF);
+                av_frame_unref(vFrame);
+
+            }
+            if (pts >= timeInUS) {
+                AlLogD(TAG, "Seek %" PRId64 ", target %" PRId64 ", %d", pts, timeInUS, vCtx->gop_size);
+                break;
+            }
+        }
+        mSeekAction.put("time", INT64_MIN);
+        AlLogI(TAG, "seek: %lld", timeInUS);
     }
 }
 
@@ -134,12 +164,8 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
     _handleAction();
     while (true) {
         int ret = av_read_frame(pFormatCtx, vPacket);
-        if (0 == ret) {
-            if (vTrack == vPacket->stream_index) {
-                avcodec_send_packet(vCtx, vPacket);
-            } else {
-                continue;
-            }
+        if (0 == ret && vTrack == vPacket->stream_index) {
+            avcodec_send_packet(vCtx, vPacket);
         }
         av_packet_unref(vPacket);
         if (AVERROR_EOF == ret) {
@@ -156,7 +182,7 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
             }
             oHwFrame = hwFrameAllocator->ref(vFrame);
             *frame = oHwFrame;
-            AlLogD(TAG, "%d x %d, %d", vFrame->width, vFrame->height, vFrame->format);
+//            AlLogD(TAG, "%d x %d, %d", vFrame->width, vFrame->height, vFrame->format);
             av_frame_unref(vFrame);
             return Hw::MEDIA_SUCCESS;
         }

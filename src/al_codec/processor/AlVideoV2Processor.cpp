@@ -97,7 +97,7 @@ void AlVideoV2Processor::pause() {
 }
 
 void AlVideoV2Processor::seek(int64_t timeInUS) {
-    auto *msg = AlMessage::obtain(MSG_TIMELINE_SEEK);
+    auto *msg = AlMessage::obtain(MSG_TIMELINE_SEEK, AlMessage::QUEUE_MODE_UNIQUE);
     msg->arg2 = timeInUS;
     postMessage(msg);
 }

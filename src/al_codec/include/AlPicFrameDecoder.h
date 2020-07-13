@@ -11,6 +11,7 @@
 #include "AbsVideoDecoder.h"
 #include "HwFrameAllocator.h"
 #include "AlFFUtils.h"
+#include "AlBundle.h"
 
 AL_CLASS AlPicFrameDecoder AL_EXTEND AbsVideoDecoder {
 public:
@@ -73,7 +74,7 @@ private:
     HwAbsMediaFrame *oHwFrame = nullptr;
     bool eof = false;
     /** action */
-    int64_t actionSeekInUs = -1;
+    AlBundle mSeekAction;
 };
 
 
