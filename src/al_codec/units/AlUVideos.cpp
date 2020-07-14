@@ -76,16 +76,20 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
         if (nullptr == decoder) {
             continue;
         }
-        _correct(clip, decoder);
+        auto seekRet = _correct(clip, decoder);
         while (decoder) {
             HwAbsMediaFrame *frame = nullptr;
             HwResult ret = _grab(clip, decoder, &frame, mCurTimeInUS);
-            if (Hw::FAILED == ret) {
-//                AlLogW(TAG, "Grab failed.");
-                break;
-            }
             if (Hw::MEDIA_EOF == ret) {
                 AlLogI(TAG, "EOF");
+                break;
+            }
+            if (Hw::FAILED == ret) {
+//                if (Hw::SUCCESS == seekRet &&
+//                    mLastFrameMap.end() != mLastFrameMap.find(clip->id())) {
+//                    continue;
+//                }
+//                AlLogW(TAG, "Grab failed.");
                 break;
             }
             if (nullptr == frame && Hw::MEDIA_EOF != ret) {
@@ -99,6 +103,9 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
                 _setCurTimestamp(clip, frame->getPts());
             }
             break;
+        }
+        if (Hw::SUCCESS == seekRet && mCurTimeMap.end() == mCurTimeMap.find(clip->id())) {
+            AlLogW(TAG, "Grab frame failed after seek.");
         }
     }
     postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
@@ -215,6 +222,12 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
     auto itr = mLastFrameMap.find(clip->id());
     if (mLastFrameMap.end() != itr) {
         if (timeInUS < clip->getSeqIn() + itr->second->getPts()) {
+            /// 解决快退的时候，缓存帧时间戳过大导致等待时间过长的问题
+            if (clip->getSeqIn() + itr->second->getPts() - timeInUS >= 1e6) {
+                _setCurTimestamp(clip, itr->second->getPts());
+                mLastFrameMap.erase(itr);
+            }
+            AlLogW(TAG, "Skip frame(%d)", (int) itr->second->getPts());
             return Hw::FAILED;
         } else {
             *frame = itr->second;
@@ -255,8 +268,9 @@ HwResult AlUVideos::_correct(AlMediaClip *clip, AbsVideoDecoder *decoder) {
                clip->id(), scale, curTime, timeInUS);
         _seek(decoder, timeInUS);
         _setCurTimestamp(clip, INT64_MIN);
+        return Hw::OK;
     }
-    return Hw::OK;
+    return Hw::FAILED;
 }
 
 void AlUVideos::_setCurTimestamp(AlMediaClip *clip, int64_t timeInUS) {
