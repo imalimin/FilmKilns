@@ -21,7 +21,7 @@
 
 AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
     registerAnUnit(new AlScreen(ALIAS_SCREEN));
-    registerAnUnit(new HwSpeaker(ALIAS_SPEAKER));
+    registerAnUnit(new HwSpeaker(ALIAS_SPEAKER, HwAudioDeviceMode::LowLatency));
     registerAnUnit(new AlUTimeline(ALIAS_TIMELINE));
     registerAnUnit(new AlUSequence(ALIAS_SEQUENCE));
     registerAnUnit(new AlUAudios(ALIAS_AUDIOS));
