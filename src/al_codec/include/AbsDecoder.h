@@ -41,7 +41,7 @@ public:
     virtual void stop()=0;
 };
 namespace Hw {
-    const HwResult MEDIA_WAIT = Hw::FAILED;
+    const HwResult MEDIA_WAIT = HwResult(R_KID('M', 'D', 'A', 0x1));
     const HwResult MEDIA_EOF = Hw::IO_EOF;
     const HwResult MEDIA_SUCCESS = Hw::SUCCESS;
 }

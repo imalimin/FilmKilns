@@ -10,6 +10,8 @@
 
 #include "Object.h"
 
+#define R_KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
+
 class HwResult : public Object {
 public:
     int code;
@@ -33,7 +35,7 @@ public:
 
 namespace Hw {
     const HwResult SUCCESS = HwResult(0);
-    const HwResult OK = HwResult(0);
+    const HwResult OK = Hw::SUCCESS;
     const HwResult FAILED = HwResult(-1);
     const HwResult IO_EOF = HwResult(-541478725);
 }

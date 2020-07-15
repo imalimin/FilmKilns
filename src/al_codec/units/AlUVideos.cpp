@@ -84,11 +84,11 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
                 AlLogI(TAG, "EOF");
                 break;
             }
-            if (Hw::FAILED == ret) {
-//                if (Hw::SUCCESS == seekRet &&
-//                    mLastFrameMap.end() != mLastFrameMap.find(clip->id())) {
-//                    continue;
-//                }
+            if (Hw::MEDIA_WAIT == ret) {
+                AlLogW(TAG, "Grab retry.");
+                continue;
+            }
+            if (Hw::OK != ret) {
 //                AlLogW(TAG, "Grab failed.");
                 break;
             }
@@ -223,11 +223,11 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
     if (mLastFrameMap.end() != itr) {
         if (timeInUS < clip->getSeqIn() + itr->second->getPts()) {
             /// 解决快退的时候，缓存帧时间戳过大导致等待时间过长的问题
-            if (clip->getSeqIn() + itr->second->getPts() - timeInUS >= 1e6) {
-                _setCurTimestamp(clip, itr->second->getPts());
-                mLastFrameMap.erase(itr);
-            }
-            AlLogW(TAG, "Skip frame(%d)", (int) itr->second->getPts());
+//            if (clip->getSeqIn() + itr->second->getPts() - timeInUS >= 1e6) {
+//                _setCurTimestamp(clip, itr->second->getPts());
+//                mLastFrameMap.erase(itr);
+//            }
+            AlLogW(TAG, "Skip frame(%d), cur(%d)", (int) itr->second->getPts(), (int) timeInUS);
             return Hw::FAILED;
         } else {
             *frame = itr->second;
@@ -237,7 +237,7 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
     }
     HwResult ret = decoder->grab(frame);
     if (Hw::OK != ret || nullptr == *frame) {
-        return Hw::FAILED;
+        return ret;
     }
     if ((*frame)->isVideo()) {
         if (timeInUS < clip->getSeqIn() + (*frame)->getPts()) {
