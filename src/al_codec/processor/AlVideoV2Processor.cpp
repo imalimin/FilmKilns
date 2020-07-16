@@ -109,4 +109,5 @@ void AlVideoV2Processor::setPlayProgressListener(function<void(int64_t, int64_t)
 void AlVideoV2Processor::updateWindow(HwWindow *win) {
     AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
+    postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
 }
