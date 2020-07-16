@@ -92,3 +92,11 @@ bool HwAbsMediaFrame::isVideo() {
 bool HwAbsMediaFrame::isAudio() {
     return getFormat() >= HwFrameFormat::HW_SAMPLE_U8 && getFormat() < HwFrameFormat::HW_SAMPLE_END;
 }
+
+int32_t HwAbsMediaFrame::flags() {
+    return _flags;
+}
+
+void HwAbsMediaFrame::setFlags(int32_t flags) {
+    _flags = flags;
+}

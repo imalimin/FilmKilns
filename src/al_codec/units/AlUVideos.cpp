@@ -85,7 +85,7 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
                 break;
             }
             if (Hw::MEDIA_WAIT == ret) {
-                AlLogW(TAG, "Grab retry.");
+                AlLogW(TAG, "Grab retry. cur(%lld)", mCurTimeInUS);
                 continue;
             }
             if (Hw::OK != ret) {
@@ -227,7 +227,11 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
 //                _setCurTimestamp(clip, itr->second->getPts());
 //                mLastFrameMap.erase(itr);
 //            }
-            AlLogW(TAG, "Skip frame(%d), cur(%d)", (int) itr->second->getPts(), (int) timeInUS);
+            AlLogW(TAG, "Skip frame(%d), cur(%d), %s, %d",
+                   (int) itr->second->getPts(),
+                   (int) timeInUS,
+                   ((AsynVideoDecoder *) decoder)->dump().c_str(),
+                   mCurTimeMap.end() != mCurTimeMap.find(clip->id()));
             return Hw::FAILED;
         } else {
             *frame = itr->second;
@@ -236,6 +240,17 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
         }
     }
     HwResult ret = decoder->grab(frame);
+    while (nullptr != *frame) {
+        if ((*frame)->flags() & AlMediaDef::FLAG_EOF) {
+            _seek(decoder, 0);
+            AlLogI(TAG, "FLAG_EOF");
+        } else if ((*frame)->flags() & AlMediaDef::FLAG_SEEK_DONE) {
+            AlLogI(TAG, "FLAG_SEEK_DONE");
+        } else {
+            break;
+        }
+        ret = decoder->grab(frame);
+    }
     if (Hw::OK != ret || nullptr == *frame) {
         return ret;
     }
@@ -267,7 +282,7 @@ HwResult AlUVideos::_correct(AlMediaClip *clip, AbsVideoDecoder *decoder) {
         AlLogD(TAG, "Seek clip(%d) scale(%f) from %" PRId64 "US to %" PRId64 "US",
                clip->id(), scale, curTime, timeInUS);
         _seek(decoder, timeInUS);
-        _setCurTimestamp(clip, INT64_MIN);
+        _setCurTimestamp(clip, timeInUS);
         return Hw::OK;
     }
     return Hw::FAILED;

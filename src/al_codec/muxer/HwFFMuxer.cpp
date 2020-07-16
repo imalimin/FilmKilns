@@ -158,7 +158,7 @@ HwResult HwFFMuxer::write(int32_t track, HwPacket *pkt) {
         track <= TRACK_NONE || nullptr == pkt) {
         return Hw::FAILED;
     }
-    if (kState::CONFIGURED == state && pkt->getFlags() & HwPacket::FLAG_CONFIG) {
+    if (kState::CONFIGURED == state && pkt->getFlags() & AlMediaDef::FLAG_CONFIG) {
         HwResult ret = Hw::FAILED;
         if (_configure(track, pkt)) {
             ret = Hw::SUCCESS;

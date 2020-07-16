@@ -57,7 +57,7 @@ public:
     virtual void stop() override;
 
 private:
-    void _handleAction();
+    int32_t _handleAction();
 
 public:
     AlPicFrameDecoder(const AlPicFrameDecoder &o) : AbsVideoDecoder() {};

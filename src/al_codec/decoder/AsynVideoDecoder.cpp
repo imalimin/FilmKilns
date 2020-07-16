@@ -133,7 +133,7 @@ void AsynVideoDecoder::loop() {
     }
     pipeline->queueEvent([this] {
         if (!grab()) {
-            stop();
+            _stop();
             Logcat::i("HWVC", "AsynVideoDecoder::loop EOF");
             return;
         }
@@ -142,12 +142,18 @@ void AsynVideoDecoder::loop() {
 }
 
 void AsynVideoDecoder::start() {
+    pipeline->queueEvent([this] {
+        _start();
+        loop();
+    });
+}
+
+void AsynVideoDecoder::_start() {
     if (playing) {
         return;
     }
     playing = true;
     decoder->start();
-    loop();
 }
 
 void AsynVideoDecoder::pause() {
@@ -155,6 +161,12 @@ void AsynVideoDecoder::pause() {
 }
 
 void AsynVideoDecoder::stop() {
+    pipeline->queueEvent([this] {
+        _stop();
+    });
+}
+
+void AsynVideoDecoder::_stop() {
     if (!playing) {
         return;
     }
@@ -236,4 +248,14 @@ int64_t AsynVideoDecoder::getDuration() {
 
 int64_t AsynVideoDecoder::getAudioStartTime() {
     return 0;
+}
+
+std::string AsynVideoDecoder::dump() {
+    AlString str;
+    if(cache.empty()) {
+        return "empty";
+    }
+    str.append(cache.front()->flags());
+    std::string s = str.str();
+    return s;
 }

@@ -85,32 +85,32 @@ int32_t HwPacket::getFlags() {
 
 std::string HwPacket::getFlagsStr() {
     std::string str;
-    if(flags & FLAG_CONFIG) {
+    if(flags & AlMediaDef::FLAG_CONFIG) {
         str.append("C");
     } else {
         str.append("_");
     }
-    if(flags & FLAG_DISPOSABLE) {
+    if(flags & AlMediaDef::FLAG_DISPOSABLE) {
         str.append("D");
     } else {
         str.append("_");
     }
-    if(flags & FLAG_TRUSTED) {
+    if(flags & AlMediaDef::FLAG_TRUSTED) {
         str.append("T");
     } else {
         str.append("_");
     }
-    if(flags & FLAG_DISCARD) {
+    if(flags & AlMediaDef::FLAG_DISCARD) {
         str.append("D");
     } else {
         str.append("_");
     }
-    if(flags & FLAG_CORRUPT) {
+    if(flags & AlMediaDef::FLAG_CORRUPT) {
         str.append("T");
     } else {
         str.append("_");
     }
-    if(flags & FLAG_KEY) {
+    if(flags & AlMediaDef::FLAG_KEY) {
         str.append("K");
     } else {
         str.append("_");

@@ -41,7 +41,10 @@ HwAbsMediaFrame *HwVideoFrame::clone() {
     HwVideoFrame *destFrame = new HwVideoFrame(nullptr, getFormat(), width, height);
     destFrame->setPts(getPts());
     destFrame->setFormat(getFormat());
-    memcpy(destFrame->data(), data(), destFrame->size());
+    destFrame->setFlags(flags());
+    if (destFrame->size() > 0) {
+        memcpy(destFrame->data(), data(), destFrame->size());
+    }
     return destFrame;
 }
 
@@ -55,7 +58,10 @@ void HwVideoFrame::clone(HwAbsMediaFrame *src) {
     srcFrame->setFormat(getFormat());
     srcFrame->setSize(getWidth(), getHeight());
     srcFrame->setPicType(getPicType());
-    memcpy(srcFrame->data(), data(), size());
+    srcFrame->setFlags(flags());
+    if (srcFrame->size() > 0 && size() > 0) {
+        memcpy(srcFrame->data(), data(), size());
+    }
 }
 
 void HwVideoFrame::setPicType(int32_t picType) { this->picType = picType; }

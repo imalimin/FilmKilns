@@ -7,6 +7,7 @@
 
 #include "AlPicFrameDecoder.h"
 #include "AlLogcat.h"
+#include "HwVideoFrame.h"
 
 #define TAG "AlPicFrameDecoder"
 
@@ -115,7 +116,7 @@ void AlPicFrameDecoder::seek(int64_t us, AbsDecoder::kSeekMode mode) {
     eof = false;
 }
 
-void AlPicFrameDecoder::_handleAction() {
+int32_t AlPicFrameDecoder::_handleAction() {
     auto timeInUS = mSeekAction.get("time", INT64_MIN);
     if (timeInUS >= 0) {
         auto mode = (AbsDecoder::kSeekMode) mSeekAction.get("mode",
@@ -129,7 +130,7 @@ void AlPicFrameDecoder::_handleAction() {
                                      AVSEEK_FLAG_BACKWARD);
         if (ret < 0) {
             AlLogE(TAG, "failed");
-            return;
+            return 0;
         }
         while (AbsDecoder::kSeekMode::EXACT == mode && timeInUS > 0) {
             ret = av_read_frame(pFormatCtx, vPacket);
@@ -139,7 +140,7 @@ void AlPicFrameDecoder::_handleAction() {
             av_packet_unref(vPacket);
             if (AVERROR_EOF == ret) {
                 eof = true;
-                break;
+                return AlMediaDef::FLAG_SEEK_DONE | AlMediaDef::FLAG_EOF;
             }
             int64_t pts = -1;
             if (0 == avcodec_receive_frame(vCtx, vFrame)) {
@@ -157,11 +158,22 @@ void AlPicFrameDecoder::_handleAction() {
         }
         mSeekAction.put("time", INT64_MIN);
         AlLogI(TAG, "seek: %lld", timeInUS);
+        return AlMediaDef::FLAG_SEEK_DONE;
     }
+    return 0;
 }
 
 HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
-    _handleAction();
+    auto flags = _handleAction();
+    if (flags & AlMediaDef::FLAG_SEEK_DONE || flags & AlMediaDef::FLAG_EOF) {
+        if (oHwFrame) {
+            oHwFrame->recycle();
+        }
+        oHwFrame = new HwVideoFrame(hwFrameAllocator, HwFrameFormat::HW_FMT_NONE, 0, 0);
+        oHwFrame->setFlags(flags);
+        *frame = oHwFrame;
+        return Hw::FAILED;
+    }
     while (true) {
         int ret = av_read_frame(pFormatCtx, vPacket);
         if (0 == ret && vTrack == vPacket->stream_index) {
@@ -188,6 +200,12 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
         }
         if (eof) {
             AlLogI(TAG, "end");
+            if (oHwFrame) {
+                oHwFrame->recycle();
+            }
+            oHwFrame = new HwVideoFrame(hwFrameAllocator, HwFrameFormat::HW_FMT_NONE, 0, 0);
+            oHwFrame->setFlags(AlMediaDef::FLAG_EOF);
+            *frame = oHwFrame;
             return Hw::MEDIA_EOF;
         }
     }

@@ -65,12 +65,18 @@ public:
 
     virtual int64_t getAudioStartTime() override;
 
+    std::string dump();
+
 private:
     void loop();
 
     bool grab();
 
     void clear();
+
+    void _start();
+
+    void _stop();
 
 private:
     const int MAX_FRAME_CACHE = 36;
@@ -82,6 +88,7 @@ private:
     atomic_bool playing;
     SimpleLock grabLock;
     SimpleLock releaseLock;
+    std::mutex stateMtx;
 };
 
 #ifdef __cplusplus

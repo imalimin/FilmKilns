@@ -302,7 +302,7 @@ HwResult HwFFCodec::process(HwAbsMediaFrame **frame, HwPacket **pkt) {
         if (hwPacket) {
             delete hwPacket;
         }
-        hwPacket = HwPacket::wrap(ctx->extradata, ctx->extradata_size, 0, 0, HwPacket::FLAG_CONFIG);
+        hwPacket = HwPacket::wrap(ctx->extradata, ctx->extradata_size, 0, 0, AlMediaDef::FLAG_CONFIG);
         *pkt = hwPacket;
         reqExtraData = false;
         return Hw::SUCCESS;

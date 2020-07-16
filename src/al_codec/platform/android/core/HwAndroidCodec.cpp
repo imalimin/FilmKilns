@@ -238,7 +238,7 @@ HwResult HwAndroidCodec::pop(int32_t waitInUS) {
             AlLogI(TAG, "Got extra data(%d)", info.size);
             memcpy(keyFrameBuf->data(), buf, info.size);
             hwPacket = HwPacket::wrap(keyFrameBuf->data(), info.size, 0, 0,
-                                      HwPacket::FLAG_CONFIG);
+                                      AlMediaDef::FLAG_CONFIG);
         } else {
             if (isEncodeMode) {
                 if (hwPacket) {

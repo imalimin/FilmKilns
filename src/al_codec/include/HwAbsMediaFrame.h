@@ -11,6 +11,7 @@
 #include "HwAbsFrame.h"
 #include "HwSourcesAllocator.h"
 #include "HwFrameFormat.h"
+#include "AlMediaDef.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,7 +23,7 @@ extern "C" {
 }
 #endif
 
-class HwAbsMediaFrame : public HwSources, public HwAbsFrame {
+AL_CLASS HwAbsMediaFrame AL_EXTEND HwSources, public HwAbsFrame {
 public:
     /**
      * Convert to AVSampleFormat
@@ -81,10 +82,15 @@ public:
 
     virtual void clone(HwAbsMediaFrame *src)=0;
 
+    int32_t flags();
+
+    void setFlags(int32_t flags);
+
 private:
     HwFrameFormat format = HwFrameFormat::HW_FMT_NONE;
     /// Preview time in US.
     int64_t pts;
+    int32_t _flags = 0;
 };
 
 
