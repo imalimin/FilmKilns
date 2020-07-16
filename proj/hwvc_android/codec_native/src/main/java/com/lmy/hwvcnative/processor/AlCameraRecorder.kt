@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.devices.AlAbsCamera
@@ -15,6 +16,7 @@ import com.lmy.hwvcnative.entity.AlAudioParams
 import com.lmy.hwvcnative.entity.AlVideoParams
 import com.lmy.hwvcnative.filter.Filter
 
+@Keep
 class AlCameraRecorder(
     private val ctx: Context,
     private var vParams: AlVideoParams,

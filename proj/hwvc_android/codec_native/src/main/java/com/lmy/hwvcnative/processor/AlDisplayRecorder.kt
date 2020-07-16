@@ -9,8 +9,10 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.Surface
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 
+@Keep
 class AlDisplayRecorder(
     private val mp: MediaProjection,
     private val dw: Int,

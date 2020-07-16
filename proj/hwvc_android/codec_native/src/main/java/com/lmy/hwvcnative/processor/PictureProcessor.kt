@@ -1,10 +1,12 @@
 package com.lmy.hwvcnative.processor
 
 import android.view.Surface
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.filter.Filter
 
+@Keep
 class PictureProcessor : CPPObject(), FilterSupport {
     private var filter: Filter? = null
 

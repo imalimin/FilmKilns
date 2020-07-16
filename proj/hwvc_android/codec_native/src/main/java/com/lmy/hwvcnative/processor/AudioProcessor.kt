@@ -2,8 +2,10 @@ package com.lmy.hwvcnative.processor
 
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 
+@Keep
 class AudioProcessor : CPPObject() {
     private var onPlayProgressListener: ((Long, Long) -> Unit)? = null
     private val mHandler = Handler(Looper.getMainLooper())

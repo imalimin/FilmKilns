@@ -9,10 +9,12 @@ package com.lmy.hwvcnative.processor
 import android.os.Handler
 import android.os.Looper
 import android.view.Surface
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.FilterSupport
 import com.lmy.hwvcnative.filter.Filter
 
+@Keep
 class VideoProcessor : CPPObject(), FilterSupport {
     private var filter: Filter? = null
     private var onPlayProgressListener: ((Long, Long) -> Unit)? = null

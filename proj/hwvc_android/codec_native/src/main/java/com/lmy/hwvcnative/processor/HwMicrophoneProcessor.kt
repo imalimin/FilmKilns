@@ -1,7 +1,9 @@
 package com.lmy.hwvcnative.processor
 
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 
+@Keep
 class HwMicrophoneProcessor : CPPObject() {
 
     init {

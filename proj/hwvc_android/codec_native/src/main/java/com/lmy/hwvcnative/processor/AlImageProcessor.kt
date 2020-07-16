@@ -4,11 +4,13 @@ import android.graphics.PointF
 import android.os.Handler
 import android.os.Looper
 import android.view.Surface
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 import com.lmy.hwvcnative.entity.AlLayer
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.entity.AlResult
 
+@Keep
 class AlImageProcessor private constructor() : CPPObject() {
     private val mMainHandler = Handler(Looper.getMainLooper())
     private var onSaveListener: OnSaveListener? = null
