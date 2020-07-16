@@ -51,11 +51,12 @@ class AlVideoV2Activity : BaseActivity() {
         }
         val testFile = File(externalCacheDir, "/video/hw_small.mp4")
         addTrack(testFile.absolutePath, AlMediaType.TYPE_VIDEO)
+        addTrack(testFile.absolutePath, AlMediaType.TYPE_AUDIO)
         processor?.start()
     }
 
     private fun addTrack(path: String, type: Int) {
-        val id = processor?.addTrack(AlMediaType.TYPE_VIDEO, path, 0)
+        val id = processor?.addTrack(type, path, 0)
         if (null != id && id >= 0) {
             mAdapter.items?.add(AlMediaTrack(id, type))
         }
