@@ -2,8 +2,10 @@ package com.lmy.hwvcnative.processor
 
 import android.util.Log
 import android.view.Surface
+import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
 
+@Keep
 class AlVideoV2Processor : CPPObject() {
     private var onPlayProgressListener: ((timeInUS: Long, duration: Long) -> Unit)? = null
 
@@ -91,11 +93,4 @@ class AlVideoV2Processor : CPPObject() {
     private external fun pause(handle: Long)
     private external fun seek(handle: Long, timeInUS: Long)
     private external fun updateWindow(handle: Long, surface: Surface)
-}
-
-object MediaType {
-    const val TYPE_VIDEO = 0
-    const val TYPE_AUDIO = 1
-    const val TYPE_VIDEO_REF = 2
-    const val TYPE_AUDIO_REF = 3
 }

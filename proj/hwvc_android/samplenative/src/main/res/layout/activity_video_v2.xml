@@ -51,27 +51,11 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/addBtn"
-                style="@style/Widget.UIFabric.Button.Borderless"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="ADD" />
-
-            <Button
-                android:id="@+id/delBtn"
-                style="@style/Widget.UIFabric.Button.Borderless"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="DEL" />
-        </LinearLayout>
+            android:layout_height="match_parent" />
     </FrameLayout>
 </LinearLayout>
