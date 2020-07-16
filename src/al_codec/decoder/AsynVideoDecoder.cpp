@@ -142,13 +142,12 @@ void AsynVideoDecoder::loop() {
 }
 
 void AsynVideoDecoder::start() {
-    pipeline->queueEvent([this] {
-        _start();
-        loop();
-    });
+    _start();
+    loop();
 }
 
 void AsynVideoDecoder::_start() {
+    std::lock_guard<std::mutex> guard(stateMtx);
     if (playing) {
         return;
     }
@@ -161,12 +160,11 @@ void AsynVideoDecoder::pause() {
 }
 
 void AsynVideoDecoder::stop() {
-    pipeline->queueEvent([this] {
-        _stop();
-    });
+    _stop();
 }
 
 void AsynVideoDecoder::_stop() {
+    std::lock_guard<std::mutex> guard(stateMtx);
     if (!playing) {
         return;
     }

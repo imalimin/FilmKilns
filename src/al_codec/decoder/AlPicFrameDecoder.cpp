@@ -140,6 +140,7 @@ int32_t AlPicFrameDecoder::_handleAction() {
             av_packet_unref(vPacket);
             if (AVERROR_EOF == ret) {
                 eof = true;
+                mSeekAction.put("time", INT64_MIN);
                 return AlMediaDef::FLAG_SEEK_DONE | AlMediaDef::FLAG_EOF;
             }
             int64_t pts = -1;
