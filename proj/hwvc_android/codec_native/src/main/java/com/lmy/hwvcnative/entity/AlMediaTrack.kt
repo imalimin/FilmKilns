@@ -1,9 +1,12 @@
-package com.lmy.samplenative.entity
+package com.lmy.hwvcnative.entity
 
 data class AlMediaTrack(
     var id: Int,
     var type: Int
-)
+) : Comparable<AlMediaTrack> {
+
+    override fun compareTo(other: AlMediaTrack): Int = this.id.compareTo(other.id)
+}
 
 object AlMediaType {
     const val TYPE_VIDEO = 0

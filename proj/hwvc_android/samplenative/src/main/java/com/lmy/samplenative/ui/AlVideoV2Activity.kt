@@ -8,8 +8,8 @@ import com.lmy.hwvcnative.processor.AlVideoV2Processor
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
 import com.lmy.samplenative.adapter.AlTrackAdapter
-import com.lmy.samplenative.entity.AlMediaTrack
-import com.lmy.samplenative.entity.AlMediaType
+import com.lmy.hwvcnative.entity.AlMediaTrack
+import com.lmy.hwvcnative.entity.AlMediaType
 import kotlinx.android.synthetic.main.activity_video_v2.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -44,6 +44,7 @@ class AlVideoV2Activity : BaseActivity() {
         processor?.setOnPlayProgressListener { timeInUS, duration ->
             this.duration = duration
             runOnUiThread {
+                trackView.setDuration(duration)
                 seekBar.progress = (timeInUS * 100 / duration).toInt()
                 timeView.text =
                     "${fmt.format(Date(timeInUS / 1000))}/${fmt.format(Date(duration / 1000))}"
@@ -59,6 +60,7 @@ class AlVideoV2Activity : BaseActivity() {
         val id = processor?.addTrack(type, path, 0)
         if (null != id && id >= 0) {
             mAdapter.items?.add(AlMediaTrack(id, type))
+            trackView.addTrack(AlMediaTrack(id, type))
         }
     }
 

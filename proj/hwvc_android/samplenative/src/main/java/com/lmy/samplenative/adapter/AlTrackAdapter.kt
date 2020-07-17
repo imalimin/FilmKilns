@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.lmy.samplenative.R
-import com.lmy.samplenative.entity.AlMediaTrack
-import com.lmy.samplenative.entity.AlMediaType
+import com.lmy.hwvcnative.entity.AlMediaTrack
+import com.lmy.hwvcnative.entity.AlMediaType
 
 class AlTrackAdapter :
     RecyclerAdapter<AlMediaTrack, RecyclerAdapter.BaseViewHolder<AlMediaTrack>>() {
