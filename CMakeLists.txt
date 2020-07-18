@@ -3,6 +3,7 @@ set(SRC_PATH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/src/)
 option(ENABLE_BAN_WARNING "Enable warning as error." OFF)
 option(ENABLE_TINY "Enable tiny so." OFF)
 option(ENABLE_GLM "Enable glm." OFF)
+option(ENABLE_ASAN "Enable ASAN." OFF)
 set(WARNING_CONFIGS
         -Werror
         -Wmost
@@ -16,6 +17,21 @@ set(WARNING_CONFIGS
         -Wno-unused-private-field
         -Wno-deprecated-declarations
         -Wno-unknown-pragmas)
+
+set(CXX_FLAGS_CONFIGS "-std=c++17 -Wall")
+set(C_FLAGS_CONFIGS "-std=c11 -Wall")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    set(CXX_FLAGS_CONFIGS "${CXX_FLAGS_CONFIGS} -O3 -ffast-math -funroll-loops ")
+    set(C_FLAGS_CONFIGS "${C_FLAGS_CONFIGS} -O3 -ffast-math -funroll-loops ")
+else ()
+    set(CXX_FLAGS_CONFIGS "${CXX_FLAGS_CONFIGS} -O1 -g -ggdb ")
+    set(C_FLAGS_CONFIGS "${C_FLAGS_CONFIGS} -O1 -g -ggdb ")
+    if (ENABLE_ASAN)
+        message(STATUS "Enable ASAN!")
+        set(CXX_FLAGS_CONFIGS "${CXX_FLAGS_CONFIGS} -fsanitize=address -fno-omit-frame-pointer ")
+        set(C_FLAGS_CONFIGS "${C_FLAGS_CONFIGS} -fsanitize=address -fno-omit-frame-pointer ")
+    endif (ENABLE_ASAN)
+endif ()
 
 #if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpu=neon ")
