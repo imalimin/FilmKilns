@@ -97,7 +97,7 @@ class AlTimelineView : AlAbsView {
             textVec.clear()
             return 0
         }
-        val maxWidth = measuredWidth + textSize.x
+        val maxWidth = measuredWidth + textSize.x - paddingLeft - paddingRight
         if (textVec.isNotEmpty()) {
             val tmp = (maxWidth - textSize.x * textVec.size) / (textVec.size - 1).toFloat()
             if (tmp < textSize.x + cursorRect.width() * 2 && tmp > cursorRect.width()) {
@@ -130,7 +130,7 @@ class AlTimelineView : AlAbsView {
         val count = measureText()
         for (i in 0 until count) {
             val text = textVec[i]
-            val x = -textSize.x / 2f + ((textSize.x + spaceSize) * i).toFloat()
+            val x = paddingLeft - textSize.x / 2f + ((textSize.x + spaceSize) * i).toFloat()
             canvas?.drawText(text, x, (measuredHeight + textSize.y) / 2f, paint)
             if (i < count - 1) {
                 canvas?.drawCircle(

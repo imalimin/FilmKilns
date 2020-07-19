@@ -3,9 +3,7 @@ package com.lmy.hwvcnative.widget
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.Paint
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.TextView
@@ -20,8 +18,10 @@ class AlTrackView : ViewGroup {
     private val scale = AlRational(1, 1)
     private val map = TreeMap<AlMediaTrack, TextView>()
     private var originWidth = 0
+    private var mVideoColor = Color.LTGRAY
+    private var mAudioColor = Color.DKGRAY
 
-    constructor(context: Context) : super(context) {
+        constructor(context: Context) : super(context) {
         onResolveAttribute(context, null, 0, 0)
         onInitialize(context)
     }
@@ -48,12 +48,18 @@ class AlTrackView : ViewGroup {
     }
 
     private fun onInitialize(context: Context) {
+        clipToPadding = false
         mTimeView = AlTimelineView(context)
         mTimeView.setPadding(
             0, applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f).toInt(),
             0, applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f).toInt()
         )
         addView(mTimeView, makeLayoutParams())
+    }
+
+    override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
+        super.setPadding(left, top, right, bottom)
+        mTimeView.setPadding(left, mTimeView.paddingTop, right, mTimeView.paddingBottom)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -88,8 +94,8 @@ class AlTrackView : ViewGroup {
         }
         map[track]?.setBackgroundColor(
             when (track.type) {
-                AlMediaType.TYPE_VIDEO -> Color.LTGRAY
-                AlMediaType.TYPE_AUDIO -> Color.DKGRAY
+                AlMediaType.TYPE_VIDEO -> mVideoColor
+                AlMediaType.TYPE_AUDIO -> mAudioColor
                 else -> Color.RED
             }
         )
@@ -121,10 +127,10 @@ class AlTrackView : ViewGroup {
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var height = 0
 
-        var w = measuredWidth - paddingLeft - paddingRight
+        var w = measuredWidth
         var h = mTimeView.measuredHeight
         mTimeView.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), h)
-        mTimeView.layout(paddingLeft + l, height, paddingLeft + l + w, height + h)
+        mTimeView.layout(l, height, l + w, height + h)
         height += h
 
         map.forEach {
@@ -138,7 +144,6 @@ class AlTrackView : ViewGroup {
             }
             view.layout(paddingLeft + l, height, paddingLeft + l + w, height + h)
             view.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), h)
-            Log.i(TAG, "layout($l, $height, ${l + w}, ${height + h})")
 
             height += h
         }
