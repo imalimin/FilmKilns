@@ -34,13 +34,6 @@
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_media_pause" />
 
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="100" />
-
         <TextView
             android:id="@+id/timeView"
             android:layout_width="wrap_content"
@@ -59,14 +52,9 @@
             android:layout_height="match_parent"
             android:visibility="gone" />
 
-        <HorizontalScrollView
+        <com.lmy.hwvcnative.widget.AlTrackContainer
+            android:id="@+id/trackView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.lmy.hwvcnative.widget.AlTrackView
-                android:id="@+id/trackView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </HorizontalScrollView>
+            android:layout_height="wrap_content" />
     </FrameLayout>
 </LinearLayout>

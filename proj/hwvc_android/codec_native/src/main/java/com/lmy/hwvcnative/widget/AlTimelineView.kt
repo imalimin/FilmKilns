@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import androidx.annotation.AttrRes
-import com.lmy.hwvcnative.entity.AlRational
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -16,8 +15,6 @@ class AlTimelineView : AlAbsView {
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val fmt = SimpleDateFormat("mm:ss")
     private var durationInUS = 0L
-    private val scale = AlRational(1, 1)
-    private var originWidth = 0
     private val textSize = Point()
     private val cursorRect = Rect()
     private var cursorSize = 3f
@@ -67,11 +64,8 @@ class AlTimelineView : AlAbsView {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = MeasureSpec.getSize(widthMeasureSpec)
-        if (originWidth <= 0) {
-            originWidth = width
-        }
         setMeasuredDimension(
-            originWidth * scale.num / scale.den,
+            width,
             textSize.y + paddingTop + paddingBottom
         )
     }
@@ -85,19 +79,13 @@ class AlTimelineView : AlAbsView {
         return TypedValue.applyDimension(unit, value, r.displayMetrics)
     }
 
-    fun setScale(scale: AlRational) {
-        this.scale.num = scale.num
-        this.scale.den = scale.den
-        requestLayout()
-    }
-
     fun setDuration(us: Long) {
         if (us > 0 && this.durationInUS != us) {
             this.durationInUS = us
             post {
                 textVec.clear()
                 measureText()
-                requestLayout()
+                invalidate()
             }
         }
     }
@@ -109,14 +97,30 @@ class AlTimelineView : AlAbsView {
             textVec.clear()
             return 0
         }
-        val count = (measuredWidth / (textSize.x + cursorRect.width())).toInt()
-        spaceSize = (measuredWidth - textSize.x * count) / (count - 1).toFloat()
+        val maxWidth = measuredWidth + textSize.x
+        if (textVec.isNotEmpty()) {
+            val tmp = (maxWidth - textSize.x * textVec.size) / (textVec.size - 1).toFloat()
+            if (tmp < textSize.x + cursorRect.width() * 2 && tmp > cursorRect.width()) {
+                spaceSize = tmp
+                return textVec.size
+            }
+        }
+        val count = (maxWidth / (textSize.x + cursorRect.width())).toInt()
+        spaceSize = if (1 == count) {
+            (maxWidth - textSize.x).toFloat()
+        } else {
+            (maxWidth - textSize.x * count) / (count - 1).toFloat()
+        }
         if (textVec.size == count) {
             return count
         }
         textVec.clear()
-        for (i in 0 until count) {
-            textVec.add(fmt.format(Date(i * durationInUS / (count -1) / 1000)))
+        if (count > 1) {
+            for (i in 0 until count) {
+                textVec.add(fmt.format(Date(i * durationInUS / (count - 1) / 1000)))
+            }
+        } else {
+            textVec.add(fmt.format(Date(0)))
         }
         return count
     }
@@ -126,7 +130,7 @@ class AlTimelineView : AlAbsView {
         val count = measureText()
         for (i in 0 until count) {
             val text = textVec[i]
-            val x = ((textSize.x + spaceSize) * i).toFloat()
+            val x = -textSize.x / 2f + ((textSize.x + spaceSize) * i).toFloat()
             canvas?.drawText(text, x, (measuredHeight + textSize.y) / 2f, paint)
             if (i < count - 1) {
                 canvas?.drawCircle(

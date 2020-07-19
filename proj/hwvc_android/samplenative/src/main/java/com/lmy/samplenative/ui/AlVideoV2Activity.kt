@@ -2,14 +2,14 @@ package com.lmy.samplenative.ui
 
 import android.util.Log
 import android.view.SurfaceHolder
-import android.widget.SeekBar
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.lmy.hwvcnative.entity.AlMediaTrack
+import com.lmy.hwvcnative.entity.AlMediaType
 import com.lmy.hwvcnative.processor.AlVideoV2Processor
+import com.lmy.hwvcnative.widget.AlTrackContainer
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
 import com.lmy.samplenative.adapter.AlTrackAdapter
-import com.lmy.hwvcnative.entity.AlMediaTrack
-import com.lmy.hwvcnative.entity.AlMediaType
 import kotlinx.android.synthetic.main.activity_video_v2.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -45,7 +45,7 @@ class AlVideoV2Activity : BaseActivity() {
             this.duration = duration
             runOnUiThread {
                 trackView.setDuration(duration)
-                seekBar.progress = (timeInUS * 100 / duration).toInt()
+                trackView.setProgress(timeInUS / duration.toFloat())
                 timeView.text =
                     "${fmt.format(Date(timeInUS / 1000))}/${fmt.format(Date(duration / 1000))}"
             }
@@ -78,18 +78,18 @@ class AlVideoV2Activity : BaseActivity() {
             }
             playing = !playing
         }
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        trackView.setOnSeekBarChangeListener(object : AlTrackContainer.OnSeekBarChangeListener {
+            override fun onProgressChanged(progress: Float, fromUser: Boolean) {
                 if (fromUser) {
-                    processor?.seek(duration * progress.toLong() / 100)
+                    processor?.seek((duration * progress).toLong())
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            override fun onStartTrackingTouch() {
                 processor?.pause()
             }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            override fun onStopTrackingTouch() {
                 processor?.start()
             }
         })

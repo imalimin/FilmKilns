@@ -7,7 +7,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
-import android.widget.LinearLayout
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.AttrRes
 import com.lmy.hwvcnative.entity.AlMediaTrack
@@ -15,9 +15,8 @@ import com.lmy.hwvcnative.entity.AlMediaType
 import com.lmy.hwvcnative.entity.AlRational
 import java.util.*
 
-class AlTrackView : LinearLayout {
+class AlTrackView : ViewGroup {
     private lateinit var mTimeView: AlTimelineView
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val scale = AlRational(1, 1)
     private val map = TreeMap<AlMediaTrack, TextView>()
     private var originWidth = 0
@@ -49,10 +48,6 @@ class AlTrackView : LinearLayout {
     }
 
     private fun onInitialize(context: Context) {
-        orientation = VERTICAL
-        paint.strokeWidth = 3f
-        paint.color = Color.RED
-
         mTimeView = AlTimelineView(context)
         mTimeView.setPadding(
             0, applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f).toInt(),
@@ -65,10 +60,14 @@ class AlTrackView : LinearLayout {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val height = MeasureSpec.getSize(heightMeasureSpec)
+        measureChildren(widthMeasureSpec, heightMeasureSpec)
         if (originWidth <= 0) {
             originWidth = width
         }
-        setMeasuredDimension(originWidth * scale.num / scale.den, height)
+        setMeasuredDimension(
+            originWidth * scale.num / scale.den + paddingLeft + paddingRight,
+            height
+        )
     }
 
     fun setDuration(us: Long) {
@@ -103,7 +102,6 @@ class AlTrackView : LinearLayout {
     fun setScale(scale: AlRational) {
         this.scale.num = scale.num
         this.scale.den = scale.den
-        mTimeView.setScale(scale)
         requestLayout()
     }
 
@@ -121,24 +119,25 @@ class AlTrackView : LinearLayout {
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        super.onLayout(changed, l, t, r, b)
         var height = 0
 
-        var w = mTimeView.measuredWidth
+        var w = measuredWidth - paddingLeft - paddingRight
         var h = mTimeView.measuredHeight
-        mTimeView.layout(l, height, l + w, height + h)
+        mTimeView.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), h)
+        mTimeView.layout(paddingLeft + l, height, paddingLeft + l + w, height + h)
         height += h
 
         map.forEach {
             val track = it.key
             val view = it.value
 
-            w = view.measuredWidth
+            w = measuredWidth - paddingLeft - paddingRight
             h = view.measuredHeight
             if (mTimeView.getDuration() > 0) {
                 //TODO
             }
-            view.layout(l, height, l + w, height + h)
+            view.layout(paddingLeft + l, height, paddingLeft + l + w, height + h)
+            view.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), h)
             Log.i(TAG, "layout($l, $height, ${l + w}, ${height + h})")
 
             height += h
