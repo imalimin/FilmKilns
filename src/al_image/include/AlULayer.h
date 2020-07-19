@@ -161,6 +161,17 @@ private:
     /// \return
     bool _onUpdateLayerWithYUV(AlMessage *msg);
 
+    /// 清除图层
+    /// FORMAT:
+    /// +-------------------------------------------------------------+
+    /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |  msg:sp  |
+    /// +-------------------------------------------------------------+
+    /// | none         | layer id  | none      |  none     |  none    |
+    /// +-------------------------------------------------------------+
+    /// \param msg
+    /// \return
+    bool _onUpdateLayerClear(AlMessage *msg);
+
 protected:
     void invalidate();
 
@@ -218,6 +229,7 @@ private:
     Al2DCoordinate mCanvasCoord;
     ///For import cache.
     std::deque<AlImageLayerModel *> mImportQueue;
+    HwAbsFBObject *fbo = nullptr;
 };
 
 

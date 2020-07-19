@@ -199,10 +199,8 @@ void AlUSequence::_beatAudioClips(int64_t timeInUS) {
 void AlUSequence::_beatVideoClips(int64_t timeInUS) {
     auto clips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
     _findClipsByTime(AlMediaTrack::kType::VIDEO, *clips, timeInUS);
-    if (!clips->empty()) {
-        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_VIDEO);
-        msg1->arg2 = timeInUS;
-        msg1->sp = clips;
-        postMessage(msg1);
-    }
+    auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_VIDEO);
+    msg1->arg2 = timeInUS;
+    msg1->sp = clips;
+    postMessage(msg1);
 }

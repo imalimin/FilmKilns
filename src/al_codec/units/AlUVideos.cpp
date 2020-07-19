@@ -8,7 +8,6 @@
 #include "AlUVideos.h"
 #include "StringUtils.h"
 #include "AsynVideoDecoder.h"
-#include "AlVector.h"
 #include "AlSize.h"
 #include "AlBuffer.h"
 
@@ -69,9 +68,11 @@ bool AlUVideos::_onRemoveTrack(AlMessage *msg) {
 
 bool AlUVideos::_onBeat(AlMessage *msg) {
     mCurTimeInUS = msg->arg2;
+    std::vector<AlID> ignoreClips;
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         auto *clip = itr->get();
+        ignoreClips.emplace_back(clip->id());
         auto decoder = _findDecoder(clip);
         if (nullptr == decoder) {
             continue;
@@ -108,7 +109,10 @@ bool AlUVideos::_onBeat(AlMessage *msg) {
             AlLogW(TAG, "Grab frame failed after seek.");
         }
     }
-    postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
+    if (!mLayerMap.empty()) {
+        _clearLayers(ignoreClips);
+        postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
+    }
     return true;
 }
 
@@ -304,4 +308,20 @@ int64_t AlUVideos::_getCurTimestamp(AlMediaClip *clip) {
         return itr->second;
     }
     return INT64_MIN;
+}
+
+void AlUVideos::_clearLayers(std::vector<AlID> &ignoreClips) {
+    std::for_each(mLayerMap.begin(), mLayerMap.end(),
+                  [this, ignoreClips](std::map<AlID, int32_t>::reference &it) {
+                      if (ignoreClips.end() ==
+                          std::find(ignoreClips.begin(), ignoreClips.end(), it.first)) {
+                          this->_clearLayer(it.second);
+                      }
+                  });
+}
+
+void AlUVideos::_clearLayer(int32_t layerID) {
+    auto *msg = AlMessage::obtain(MSG_LAYER_UPDATE_CLEAR);
+    msg->arg1 = layerID;
+    postMessage(msg);
 }

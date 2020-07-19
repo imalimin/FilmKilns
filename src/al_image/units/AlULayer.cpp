@@ -15,6 +15,7 @@
 #include "AlRectLoc.h"
 #include "AlMath.h"
 #include "HwYV122RGBAFilter.h"
+#include "HwFBObject.h"
 #include "core/file/AlFileImporter.h"
 #include "core/file/AlFileExporter.h"
 
@@ -37,6 +38,7 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     al_reg_msg(EVENT_LAYER_QUERY_INFO, AlULayer::onQueryInfo);
     al_reg_msg(MSG_LAYER_ADD_EMPTY, AlULayer::onAddLayerEmpty);
     al_reg_msg(MSG_LAYER_UPDATE_YUV, AlULayer::_onUpdateLayerWithYUV);
+    al_reg_msg(MSG_LAYER_UPDATE_CLEAR, AlULayer::_onUpdateLayerClear);
 }
 
 AlULayer::~AlULayer() {
@@ -49,6 +51,8 @@ bool AlULayer::onCreate(AlMessage *msg) {
 
 bool AlULayer::onDestroy(AlMessage *msg) {
     mLayerManager.clear();
+    delete fbo;
+    fbo = nullptr;
     return true;
 }
 
@@ -414,5 +418,23 @@ bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
     AlTexManager::instance()->recycle(&v);
     AlTexManager::instance()->recycle(&u);
     AlTexManager::instance()->recycle(&y);
+    return true;
+}
+
+bool AlULayer::_onUpdateLayerClear(AlMessage *msg) {
+    auto layer = mLayerManager.find(msg->arg1);
+    if (nullptr == layer) {
+        AlLogE(TAG, "failed.");
+        return true;
+    }
+    glViewport(0, 0, layer->getWidth(), layer->getHeight());
+    if (nullptr == fbo) {
+        fbo = HwFBObject::alloc();
+    }
+    fbo->bindTex(layer->getTexture());
+    fbo->bind();
+    glClearColor(0, 0, 0, 0.9);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    fbo->unbind();
     return true;
 }

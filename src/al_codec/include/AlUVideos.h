@@ -13,6 +13,7 @@
 #include "AbsVideoDecoder.h"
 #include "AlIdentityCreator.h"
 #include "HwVideoFrame.h"
+#include "AlVector.h"
 
 al_def_unit(AlUVideos, Unit) {
 public:
@@ -55,6 +56,10 @@ private:
     void _setCurTimestamp(AlMediaClip *clip, int64_t timeInUS);
 
     int64_t _getCurTimestamp(AlMediaClip *clip);
+
+    void _clearLayers(std::vector<AlID> &ignoreClips);
+
+    void _clearLayer(int32_t layerID);
 
 private:
     std::map<AlID, std::unique_ptr<AbsVideoDecoder>> map;
