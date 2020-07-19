@@ -53,6 +53,8 @@ HwAudioPlayer::HwAudioPlayer(SLEngine *engine,
 }
 
 void HwAudioPlayer::initialize(SLEngine *engine) {
+    this->silenceData = new uint8_t[getBufferByteSize()];
+    memset(silenceData, 0, getBufferByteSize());
     this->engine = engine;
     uint32_t bufSize = getBufferByteSize() * 16;
     switch (mode) {
@@ -84,6 +86,10 @@ void HwAudioPlayer::initialize(SLEngine *engine) {
 HwAudioPlayer::~HwAudioPlayer() {
     LOGI("HwAudioPlayerer");
     stop();
+    if (silenceData) {
+        delete[]silenceData;
+        silenceData = nullptr;
+    }
 }
 
 HwResult HwAudioPlayer::createEngine() {
@@ -236,9 +242,7 @@ void HwAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf
         return;
     }
     AlLogW(TAG, "Play silence data.");
-    uint8_t *buffer = new uint8_t[getBufferByteSize()];
-    memset(buffer, 0, getBufferByteSize());
-    (*slBufferQueueItf)->Enqueue(bufferQueueItf, buffer, getBufferByteSize());
+    (*slBufferQueueItf)->Enqueue(bufferQueueItf, silenceData, getBufferByteSize());
 }
 
 HwResult HwAudioPlayer::write(uint8_t *buffer, size_t size) {

@@ -66,6 +66,7 @@ private:
     SLObjectItf playObject = nullptr;
     SLPlayItf playItf = nullptr;
     SLAndroidSimpleBufferQueueItf bufferQueueItf = nullptr;
+    uint8_t *silenceData = nullptr;
 
     HwResult createEngine();
 
