@@ -142,17 +142,19 @@ void AsynVideoDecoder::loop() {
 }
 
 void AsynVideoDecoder::start() {
-    _start();
-    loop();
+    if (_start()) {
+        loop();
+    }
 }
 
-void AsynVideoDecoder::_start() {
+bool AsynVideoDecoder::_start() {
     std::lock_guard<std::mutex> guard(stateMtx);
     if (playing) {
-        return;
+        return false;
     }
     playing = true;
     decoder->start();
+    return true;
 }
 
 void AsynVideoDecoder::pause() {
@@ -164,12 +166,14 @@ void AsynVideoDecoder::stop() {
 }
 
 void AsynVideoDecoder::_stop() {
-    std::lock_guard<std::mutex> guard(stateMtx);
-    if (!playing) {
-        return;
+    {
+        std::lock_guard<std::mutex> guard(stateMtx);
+        if (!playing) {
+            return;
+        }
+        playing = false;
+        decoder->stop();
     }
-    playing = false;
-    decoder->stop();
     grabLock.notify();
 }
 
@@ -250,7 +254,7 @@ int64_t AsynVideoDecoder::getAudioStartTime() {
 
 std::string AsynVideoDecoder::dump() {
     AlString str;
-    if(cache.empty()) {
+    if (cache.empty()) {
         return "empty";
     }
     str.append(cache.front()->flags());

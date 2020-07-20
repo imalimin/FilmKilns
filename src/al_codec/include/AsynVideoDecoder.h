@@ -74,7 +74,7 @@ private:
 
     void clear();
 
-    void _start();
+    bool _start();
 
     void _stop();
 

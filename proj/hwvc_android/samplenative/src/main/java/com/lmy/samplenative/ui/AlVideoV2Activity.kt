@@ -78,6 +78,7 @@ class AlVideoV2Activity : BaseActivity() {
             playing = !playing
         }
         addBtn.setOnClickListener {
+            addTrack("/sdcard/duet_input.mp4", AlMediaType.TYPE_VIDEO)
             addTrack("/sdcard/the-world-today.m4a", AlMediaType.TYPE_AUDIO)
         }
         trackView.setOnSeekBarChangeListener(object : AlTrackContainer.OnSeekBarChangeListener {
