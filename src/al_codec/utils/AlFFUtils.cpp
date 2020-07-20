@@ -6,6 +6,7 @@
 */
 
 #include "AlFFUtils.h"
+#include "AlLogcat.h"
 #include <vector>
 
 #ifdef __cplusplus
@@ -15,6 +16,8 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#define TAG "AlFFUtils"
 
 int AlFFUtils::init() {
     std::call_once(onceFlag, []() {
@@ -77,4 +80,28 @@ int AlFFUtils::exec(std::string cmd) {
     }
     delete[] argv;
     return ret;
+}
+
+int AlFFUtils::trackInfo(std::string &file) {
+    init();
+    int info = 0;
+    auto *ctx = avformat_alloc_context();
+    //打开输入视频文件
+    if (avformat_open_input(&ctx, file.c_str(), nullptr, nullptr) != 0) {
+        AlLogE(TAG, "failed. Couldn't open input stream.");
+        avformat_free_context(ctx);
+        return info;
+    }
+
+    auto track = av_find_best_stream(ctx, AVMediaType::AVMEDIA_TYPE_VIDEO, -1, -1, nullptr, 0);
+    if (track >= 0) {
+        info |= 0x1;
+    }
+    track = av_find_best_stream(ctx, AVMediaType::AVMEDIA_TYPE_AUDIO, -1, -1, nullptr, 0);
+    if (track >= 0) {
+        info |= 0x2;
+    }
+    avformat_close_input(&ctx);
+    avformat_free_context(ctx);
+    return info;
 }

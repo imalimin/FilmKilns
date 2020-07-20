@@ -1,7 +1,9 @@
 package com.lmy.samplenative
 
 import android.content.Intent
+import android.net.Uri
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.lmy.samplenative.adapter.OnRecyclerItemClickListener
@@ -9,13 +11,14 @@ import com.lmy.samplenative.adapter.SimpleTextAdapter
 import com.lmy.samplenative.ui.*
 import com.microsoft.officeuifabric.listitem.ListItemDivider
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 
 class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickListener {
 
     private val ITEMS = arrayListOf(
         Item("New Image Editor") { startActivity(Intent(this, AlImageActivity::class.java)) },
         Item("Audio Player") { startActivity(Intent(this, AudioActivity::class.java)) },
-        Item("Video V2") { startActivity(Intent(this, AlVideoV2Activity::class.java)) },
+        Item("Video V2") { actionVideoV2() },
         Item("Video Player") { startActivity(Intent(this, VideoActivity::class.java)) },
         Item("Audio Recorder & Mux") { startActivity(Intent(this, AudioRecordAndMuxActivity::class.java)) },
         Item("Video Recorder") { startActivity(Intent(this, CameraActivity::class.java)) },
@@ -51,5 +54,16 @@ class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickList
 
     override fun onItemClick(parent: RecyclerView?, view: View?, position: Int) {
         ITEMS[position].action()
+    }
+
+    private fun actionVideoV2() {
+        val testFile = File(externalCacheDir, "/video/hw_small.mp4")
+        if (!testFile.exists()) {
+            Toast.makeText(this, "File NOT exist.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val intent = Intent(this, AlVideoV2Activity::class.java)
+        intent.data = Uri.fromFile(testFile)
+        startActivity(intent)
     }
 }

@@ -1,17 +1,20 @@
 package com.lmy.samplenative.ui
 
+import android.content.Intent
+import android.text.TextUtils
 import android.util.Log
 import android.view.SurfaceHolder
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lmy.hwvcnative.entity.AlMediaTrack
 import com.lmy.hwvcnative.entity.AlMediaType
 import com.lmy.hwvcnative.processor.AlVideoV2Processor
+import com.lmy.hwvcnative.tools.AlFFUtils
 import com.lmy.hwvcnative.widget.AlTrackContainer
 import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
 import com.lmy.samplenative.adapter.AlTrackAdapter
 import kotlinx.android.synthetic.main.activity_video_v2.*
-import java.io.File
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
@@ -37,6 +40,19 @@ class AlVideoV2Activity : BaseActivity() {
     }
 
     override fun initView() {
+        var uri = intent.data
+        if (uri == null)
+            uri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
+        if (uri == null) {
+            finish()
+            return
+        }
+        val path = getRealFilePath(uri)
+        if (TextUtils.isEmpty(path)) {
+            Toast.makeText(this, "File NOT exist.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
         setupView()
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
@@ -49,9 +65,13 @@ class AlVideoV2Activity : BaseActivity() {
 //                    "${fmt.format(Date(timeInUS / 1000))}/${fmt.format(Date(duration / 1000))}"
             }
         }
-        val testFile = File(externalCacheDir, "/video/hw_small.mp4")
-        addTrack(testFile.absolutePath, AlMediaType.TYPE_VIDEO)
-        addTrack(testFile.absolutePath, AlMediaType.TYPE_AUDIO)
+        val info = AlFFUtils.trackInfo(path!!)
+        if (info and 0x1 > 0) {
+            addTrack(path!!, AlMediaType.TYPE_VIDEO)
+        }
+        if (info and 0x2 > 0) {
+            addTrack(path!!, AlMediaType.TYPE_AUDIO)
+        }
         processor?.start()
     }
 

@@ -38,6 +38,8 @@ public:
 
     static int exec(std::string cmd);
 
+    static int trackInfo(std::string &file);
+
 private:
 };
 

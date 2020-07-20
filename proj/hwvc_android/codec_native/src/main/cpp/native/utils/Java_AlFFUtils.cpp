@@ -22,6 +22,15 @@ JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_tools_AlFFUtils_exec(JNIEnv *env,
     return AlFFUtils::exec(str);
 }
 
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_tools_AlFFUtils_trackInfo(JNIEnv *env,
+                                                                         jobject thiz,
+                                                                         jstring file) {
+    const char *pFile = env->GetStringUTFChars(file, JNI_FALSE);
+    std::string str = std::string(pFile);
+    env->ReleaseStringChars(file, reinterpret_cast<const jchar *>(pFile));
+    return AlFFUtils::trackInfo(str);
+}
+
 #ifdef __cplusplus
 }
 #endif

@@ -50,14 +50,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".VideoActivity">
-            <intent-filter tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="video/*" />
-                <action android:name="android.intent.action.SEND" />
-            </intent-filter>
         </activity>
         <activity android:name=".ImageActivity" />
         <activity
@@ -76,6 +68,22 @@
         <activity android:name=".TestMemFIFOActivity" />
         <activity android:name=".EchoActivity" />
         <activity android:name=".AudioActivity">
+        </activity>
+        <activity android:name=".ui.TestAudioRecorderActivity" />
+        <activity android:name=".ui.CameraActivity" />
+        <activity android:name=".ui.BitmapActivity" />
+        <activity android:name=".ui.AudioRecordAndMuxActivity" />
+        <activity android:name=".ui.AlDisplayActivity" />
+        <activity android:name=".ui.FFCMDActivity" />
+        <activity android:name=".ui.AlVideoV2Activity" >
+            <intent-filter tools:ignore="AppLinkUrlError">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="video/*" />
+                <action android:name="android.intent.action.SEND" />
+            </intent-filter>
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -85,13 +93,6 @@
                 <action android:name="android.intent.action.SEND" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.TestAudioRecorderActivity" />
-        <activity android:name=".ui.CameraActivity" />
-        <activity android:name=".ui.BitmapActivity" />
-        <activity android:name=".ui.AudioRecordAndMuxActivity" />
-        <activity android:name=".ui.AlDisplayActivity" />
-        <activity android:name=".ui.FFCMDActivity" />
-        <activity android:name=".ui.AlVideoV2Activity" />
     </application>
 
 </manifest>
