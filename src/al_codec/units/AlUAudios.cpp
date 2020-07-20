@@ -128,7 +128,7 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
     }
     HwAbsMediaFrame *frame = nullptr;
     if (Hw::OK == mixer->pop(FRAME_SIZE, &frame)) {
-        AlMessage *msg0 = AlMessage::obtain(EVENT_SPEAKER_FEED);
+        AlMessage *msg0 = AlMessage::obtain(EVENT_SPEAKER_FEED, AlMessage::QUEUE_MODE_UNIQUE);
         msg0->obj = frame->clone();
         postEvent(msg0);
 

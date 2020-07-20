@@ -264,6 +264,10 @@ HwResult HwAudioPlayer::write(uint8_t *buffer, size_t size, int timeOut) {
     //-----------------
     size_t ret = fifo->push(buffer, size, timeOut);
     if (0 == ret) {
+#if defined(__AL_DEBUG__)
+        start();
+        AlLogE(TAG, "failed, try flush & restart.");
+#endif
         return Hw::FAILED;
     }
     return Hw::SUCCESS;
@@ -276,7 +280,7 @@ void HwAudioPlayer::flush() {
 }
 
 void HwAudioPlayer::stop() {
-    Logcat::i("HWVC", "HwAudioPlayer::stop");
+    AlLogI(TAG, "");
     if (playObject) {
         SLresult result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_STOPPED);
         if (SL_RESULT_SUCCESS != result) {

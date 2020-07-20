@@ -433,7 +433,7 @@ bool AlULayer::_onUpdateLayerClear(AlMessage *msg) {
     }
     fbo->bindTex(layer->getTexture());
     fbo->bind();
-    glClearColor(0, 0, 0, 0.9);
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     fbo->unbind();
     return true;
