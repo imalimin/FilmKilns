@@ -41,7 +41,7 @@ public:
 
     void update(int32_t w, int32_t h, int32_t color);
 
-    void clear(bool transparent = false);
+    void clear(bool retry = true);
 
     HwAbsTexture *getOutput();
 

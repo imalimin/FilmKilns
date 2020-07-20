@@ -47,7 +47,7 @@ bool AlUCanvas::onResize(AlMessage *m) {
 
 bool AlUCanvas::onClear(AlMessage *m) {
     AlLogD(TAG, "");
-    mCanvas.clear(1 == m->arg1);
+    mCanvas.clear();
     mDrawCount = 0;
     postEvent(AlMessage::obtain(EVENT_CANVAS_CLEAR_DONE));
     return false;

@@ -77,7 +77,7 @@ void AlImageCanvas::update(int32_t w, int32_t h, int32_t color) {
     clear();
 }
 
-void AlImageCanvas::clear(bool transparent) {
+void AlImageCanvas::clear(bool retry) {
     if (mCanvasTex) {
         AlColor color(0x00000000);
         if (kBGType::BLACK == mBGType) {
@@ -93,8 +93,18 @@ void AlImageCanvas::clear(bool transparent) {
             glClearColor(color.rf(), color.gf(), color.bf(), color.af());
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             fbo->unbind();
+            if (GL_NO_ERROR != glGetError() && retry) {
+                AlLogW(TAG, "Retry to clear");
+                if (fbo) {
+                    delete fbo;
+                    fbo = HwFBObject::alloc();
+                    AlLogW(TAG, "Retry to alloc fbo, error code %d", glGetError());
+                    fbo->bindTex(mCanvasTex);
+                }
+                clear(false);
+            }
         }
-        AlLogD(TAG, "Size %dx%d", mCanvasTex->getWidth(), mCanvasTex->getHeight());
+//        AlLogD(TAG, "Size %dx%d", mCanvasTex->getWidth(), mCanvasTex->getHeight());
     }
 }
 
