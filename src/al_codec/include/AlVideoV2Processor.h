@@ -14,6 +14,10 @@
 
 AL_CLASS AlVideoV2Processor AL_EXTEND AlAbsProcessor {
 public:
+    typedef function<void(int64_t, int64_t)> OnPlayProgressListener;
+    typedef function<void(std::shared_ptr<AlMediaTrack>)> OnTrackUpdateListener;
+
+public:
     AlVideoV2Processor();
 
     virtual ~AlVideoV2Processor();
@@ -34,9 +38,11 @@ public:
 
     void seek(int64_t timeInUS);
 
-    void setPlayProgressListener(function<void(int64_t, int64_t)> listener);
+    void setPlayProgressListener(OnPlayProgressListener l);
 
     void updateWindow(HwWindow *win);
+
+    void setOnTrackUpdateListener(OnTrackUpdateListener l);
 
 private:
     bool _onTimelineInUS(AlMessage *msg);
@@ -44,6 +50,8 @@ private:
     bool _onAddTrackDone(AlMessage *msg);
 
     bool _onRemoveTrackDone(AlMessage *msg);
+
+    bool _onTrackUpdate(AlMessage *msg);
 
 private:
     const std::string ALIAS_TIMELINE = "TIMELINE_OF_VIDEO2";
@@ -55,7 +63,8 @@ private:
     const std::string ALIAS_SCREEN = "SCREEN_OF_VIDEO2";
 
     AlEgl *aBaseCtx = nullptr;
-    function<void(int64_t, int64_t)> playProgressListener = nullptr;
+    OnPlayProgressListener playProgressListener = nullptr;
+    OnTrackUpdateListener trackUpdateListener = nullptr;
     int32_t mCurTrackID = -1;
 };
 

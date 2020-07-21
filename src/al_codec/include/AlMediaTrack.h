@@ -12,9 +12,10 @@
 #include "AlMediaClip.h"
 #include "AlIdentityCreator.h"
 #include "AlVector.h"
+#include "AlParcelable.h"
 #include <map>
 
-AL_CLASS AlMediaTrack AL_EXTEND Object {
+AL_CLASS AlMediaTrack AL_EXTEND AlParcelable {
 public:
     AL_ENUM kType : int {
         UNKNOWN = -1,
@@ -56,6 +57,8 @@ public:
     /// \param array clips copy.
     /// \return
     size_t findAllClips(AlVector<std::shared_ptr<AlMediaClip>> &array);
+
+    virtual void writeToParcel(std::shared_ptr<AlParcel> parcel) override ;
 
 private:
     std::map<AlID, std::unique_ptr<AlMediaClip>> clips;

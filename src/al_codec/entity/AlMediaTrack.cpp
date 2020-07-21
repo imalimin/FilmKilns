@@ -12,11 +12,18 @@
 #define TAG "AlMediaTrack"
 
 AlMediaTrack::AlMediaTrack(AlID id, AlMediaTrack::kType type)
-        : Object(), _id(id), _type(type) {
+        : AlParcelable(), _id(id), _type(type) {
 }
 
 AlMediaTrack::AlMediaTrack(const AlMediaTrack &o)
-        : Object(), _id(o._id), _type(o._type) {
+        : AlParcelable(o), _id(o._id), _type(o._type) {
+    if (o.clips.empty()) {
+        return;
+    }
+    for (auto &it : o.clips) {
+        auto clip = std::make_unique<AlMediaClip>(*(it.second));
+        clips.emplace(std::make_pair(it.first, std::move(clip)));
+    }
 }
 
 AlMediaTrack::~AlMediaTrack() {
@@ -107,4 +114,12 @@ size_t AlMediaTrack::findAllClips(AlVector<std::shared_ptr<AlMediaClip>> &array)
         ++count;
     }
     return count;
+}
+
+void AlMediaTrack::writeToParcel(std::shared_ptr<AlParcel> parcel) {
+    parcel->writeInt(id());
+    parcel->writeInt(static_cast<int32_t>(type()));
+    parcel->writeLong(getSeqIn());
+    parcel->writeLong(getSeqOut());
+    parcel->writeLong(getDuration());
 }

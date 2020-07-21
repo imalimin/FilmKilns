@@ -28,7 +28,7 @@ std::shared_ptr<AlBuffer> AlParcel::data() {
 }
 
 void AlParcel::writeBegin() {
-
+    vec.clear();
 }
 
 void AlParcel::writeEnd() {

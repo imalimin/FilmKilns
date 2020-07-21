@@ -88,6 +88,11 @@ bool AlUSequence::_onSetTrackDuration(AlMessage *msg) {
         clip->setDuration(duration);
         clip->setFrameDuration(tmp->getFrameDuration());
         _notifyTimeline();
+
+        auto *track = _findTrackByClip(id);
+        if (track) {
+            _notifyTrackUpdate(track);
+        }
     }
     return true;
 }
@@ -120,6 +125,16 @@ AlMediaClip *AlUSequence::_findClip(AlID id) {
         auto *clip = track.second->findClip(id);
         if (clip) {
             return clip;
+        }
+    }
+    return nullptr;
+}
+
+AlMediaTrack *AlUSequence::_findTrackByClip(AlID clipID) {
+    for (auto &track : this->tracks) {
+        auto *clip = track.second->findClip(clipID);
+        if (clip) {
+            return track.second.get();
         }
     }
     return nullptr;
@@ -203,4 +218,11 @@ void AlUSequence::_beatVideoClips(int64_t timeInUS) {
     msg1->arg2 = timeInUS;
     msg1->sp = clips;
     postMessage(msg1);
+}
+
+void AlUSequence::_notifyTrackUpdate(const AlMediaTrack *track) {
+    auto *msg = AlMessage::obtain(MSG_SEQUENCE_TRACK_UPDATE_NOTIFY);
+    auto copy = std::make_shared<AlMediaTrack>(*track);
+    msg->sp = copy;
+    postMessage(msg);
 }

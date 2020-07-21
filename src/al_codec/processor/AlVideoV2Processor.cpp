@@ -31,6 +31,7 @@ AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
     al_reg_msg(MSG_TIMELINE_PROGRESS_NOTIFY, AlVideoV2Processor::_onTimelineInUS);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD_DONE, AlVideoV2Processor::_onAddTrackDone);
     al_reg_msg(MSG_SEQUENCE_TRACK_REMOVE_DONE, AlVideoV2Processor::_onRemoveTrackDone);
+    al_reg_msg(MSG_SEQUENCE_TRACK_UPDATE_NOTIFY, AlVideoV2Processor::_onTrackUpdate);
 }
 
 AlVideoV2Processor::~AlVideoV2Processor() {
@@ -61,6 +62,14 @@ bool AlVideoV2Processor::_onAddTrackDone(AlMessage *msg) {
 }
 
 bool AlVideoV2Processor::_onRemoveTrackDone(AlMessage *msg) {
+    return true;
+}
+
+bool AlVideoV2Processor::_onTrackUpdate(AlMessage *msg) {
+    if (trackUpdateListener) {
+        auto track = std::static_pointer_cast<AlMediaTrack>(msg->sp);
+        trackUpdateListener(track);
+    }
     return true;
 }
 
@@ -102,12 +111,16 @@ void AlVideoV2Processor::seek(int64_t timeInUS) {
     postMessage(msg);
 }
 
-void AlVideoV2Processor::setPlayProgressListener(function<void(int64_t, int64_t)> listener) {
-    playProgressListener = std::move(listener);
+void AlVideoV2Processor::setPlayProgressListener(OnPlayProgressListener l) {
+    playProgressListener = std::move(l);
 }
 
 void AlVideoV2Processor::updateWindow(HwWindow *win) {
     AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
     postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
+}
+
+void AlVideoV2Processor::setOnTrackUpdateListener(AlVideoV2Processor::OnTrackUpdateListener l) {
+    trackUpdateListener = std::move(l);
 }

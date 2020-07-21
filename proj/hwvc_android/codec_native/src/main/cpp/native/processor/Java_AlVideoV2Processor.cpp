@@ -18,6 +18,10 @@ static AlJNIObject::Method midOnNativeMessage = {
         "com/lmy/hwvcnative/processor/AlVideoV2Processor",
         "onDispatchNativeMessage", "(IIJJ)V"};
 
+static AlJNIObject::Method midTrackUpdate = {
+        "com/lmy/hwvcnative/processor/AlVideoV2Processor",
+        "onNativeTrackUpdate", "([B)V"};
+
 static AlVideoV2Processor *getHandler(jlong handler) {
     return reinterpret_cast<AlVideoV2Processor *>(handler);
 }
@@ -27,6 +31,22 @@ static void bindListener(AlVideoV2Processor *p) {
         AlJNIObject *obj = nullptr;
         if (AlJNIEnv::getInstance().findObj(p, &obj)) {
             al_jni_call_void(obj, midOnNativeMessage, 0, 0, timeInUS, duration);
+        }
+    });
+    p->setOnTrackUpdateListener([p](std::shared_ptr<AlMediaTrack> track) {
+        AlJNIObject *obj = nullptr;
+        JNIEnv *env = nullptr;
+        if (AlJNIEnv::getInstance().findObj(p, &obj) && AlJNIEnv::getInstance().findEnv(&env)) {
+            auto buf = track->data();
+            if (buf->size() <= 0) {
+                return;
+            }
+            buf->rewind();
+            auto data = env->NewByteArray(buf->size());
+            env->SetByteArrayRegion(data, 0, buf->size(),
+                                    reinterpret_cast<const jbyte *>(buf->data()));
+            al_jni_call_void(obj, midTrackUpdate, data);
+            env->DeleteLocalRef(data);
         }
     });
 }

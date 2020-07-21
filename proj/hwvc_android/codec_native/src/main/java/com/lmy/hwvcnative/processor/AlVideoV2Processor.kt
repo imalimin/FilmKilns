@@ -1,13 +1,18 @@
 package com.lmy.hwvcnative.processor
 
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import android.view.Surface
 import androidx.annotation.Keep
 import com.lmy.hwvcnative.CPPObject
+import com.lmy.hwvcnative.entity.AlMediaTrack
+import com.lmy.hwvcnative.entity.AlParcel
 
 @Keep
 class AlVideoV2Processor : CPPObject() {
     private var onPlayProgressListener: ((timeInUS: Long, duration: Long) -> Unit)? = null
+    private var onTrackUpdateListener: ((AlMediaTrack) -> Unit)? = null
+    private val mHandler = Handler(Looper.getMainLooper())
 
     init {
         handler = create()
@@ -62,6 +67,10 @@ class AlVideoV2Processor : CPPObject() {
         onPlayProgressListener = l
     }
 
+    fun setOnTrackUpdateListener(l: (AlMediaTrack) -> Unit) {
+        onTrackUpdateListener = l
+    }
+
     fun updateWindow(surface: Surface) {
         if (!isNativeNull()) {
             updateWindow(handler, surface)
@@ -72,7 +81,17 @@ class AlVideoV2Processor : CPPObject() {
 //        Log.d("AlVideoV2Processor", "$what, $arg0, $arg1, $arg2")
         when (what) {
             0 -> {
-                onPlayProgressListener?.invoke(arg1, arg2)
+                mHandler.post {
+                    onPlayProgressListener?.invoke(arg1, arg2)
+                }
+            }
+        }
+    }
+
+    private fun onNativeTrackUpdate(data: ByteArray) {
+        if (data.isNotEmpty()) {
+            mHandler.post {
+                onTrackUpdateListener?.invoke(AlMediaTrack(AlParcel.from(data)))
             }
         }
     }
@@ -88,7 +107,8 @@ class AlVideoV2Processor : CPPObject() {
         trimIn: Long,
         trimOut: Long
     ): Int
-    private external fun removeTrack(handle: Long,trackID: Int)
+
+    private external fun removeTrack(handle: Long, trackID: Int)
     private external fun start(handle: Long)
     private external fun pause(handle: Long)
     private external fun seek(handle: Long, timeInUS: Long)
