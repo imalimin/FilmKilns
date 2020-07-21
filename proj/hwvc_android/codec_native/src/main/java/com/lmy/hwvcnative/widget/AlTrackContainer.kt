@@ -139,12 +139,16 @@ class AlTrackContainer : HorizontalScrollView {
         mTrackView.addTrack(track)
     }
 
+    fun updateTrack(track: AlMediaTrack) {
+        mTrackView.updateTrack(track)
+    }
+
     fun setProgress(progress: Float) {
         if (progress < 0 || progress > 1) {
             return
         }
         this.progress = progress
-        smoothScrollTo(((mTrackView.measuredWidth - measuredWidth) * this.progress).toInt(), 0)
+        scrollTo(((mTrackView.measuredWidth - measuredWidth) * this.progress).toInt(), 0)
     }
 
     fun setOnSeekBarChangeListener(l: OnSeekBarChangeListener) {

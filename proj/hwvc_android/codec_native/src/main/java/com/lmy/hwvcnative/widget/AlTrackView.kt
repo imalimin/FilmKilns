@@ -16,7 +16,8 @@ import java.util.*
 class AlTrackView : ViewGroup {
     private lateinit var mTimeView: AlTimelineView
     private val scale = AlRational(1, 1)
-    private val map = TreeMap<AlMediaTrack, TextView>()
+    private val tMap = TreeMap<Int, AlMediaTrack>()
+    private val vMap = TreeMap<Int, TextView>()
     private var originWidth = 0
     private var mVideoColor = Color.LTGRAY
     private var mAudioColor = Color.DKGRAY
@@ -81,18 +82,18 @@ class AlTrackView : ViewGroup {
     }
 
     fun addTrack(track: AlMediaTrack) {
-        if (map.containsKey(track)) {
+        if (tMap.containsKey(track.id)) {
             return
         }
-
-        map[track] = TextView(context)
-        map[track]?.textSize = 14f
-        map[track]?.text = when (track.type) {
+        tMap[track.id] = track
+        vMap[track.id] = TextView(context)
+        vMap[track.id]?.textSize = 14f
+        vMap[track.id]?.text = when (track.type) {
             AlMediaType.TYPE_VIDEO -> "Track ${track.id}"
             AlMediaType.TYPE_AUDIO -> "Track ${track.id}"
             else -> "Unknown Track"
         }
-        map[track]?.setBackgroundColor(
+        vMap[track.id]?.setBackgroundColor(
             when (track.type) {
                 AlMediaType.TYPE_VIDEO -> mVideoColor
                 AlMediaType.TYPE_AUDIO -> mAudioColor
@@ -100,8 +101,16 @@ class AlTrackView : ViewGroup {
             }
         )
         val padding = applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f).toInt()
-        map[track]?.setPadding(padding, padding, padding, padding)
-        addView(map[track], makeLayoutParams())
+        vMap[track.id]?.setPadding(padding, padding, padding, padding)
+        addView(vMap[track.id], makeLayoutParams())
+        requestLayout()
+    }
+
+    fun updateTrack(track: AlMediaTrack) {
+        if (!tMap.containsKey(track.id)) {
+            return
+        }
+        tMap[track.id] = track
         requestLayout()
     }
 
@@ -133,16 +142,18 @@ class AlTrackView : ViewGroup {
         mTimeView.layout(l, height, l + w, height + h)
         height += h
 
-        map.forEach {
-            val track = it.key
+        vMap.forEach {
+            val track = tMap[it.key]
             val view = it.value
 
             w = measuredWidth - paddingLeft - paddingRight
             h = view.measuredHeight
-            if (mTimeView.getDuration() > 0) {
-                //TODO
+            var offset = 0
+            if (null != track && mTimeView.getDuration() > 0 && track.duration > 0) {
+                offset = (track.seqIn * w / mTimeView.getDuration()).toInt()
+                w = (track.duration * w / mTimeView.getDuration()).toInt()
             }
-            view.layout(paddingLeft + l, height, paddingLeft + l + w, height + h)
+            view.layout(paddingLeft + l + offset, height, paddingLeft + l + w + offset, height + h)
             view.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), h)
 
             height += h

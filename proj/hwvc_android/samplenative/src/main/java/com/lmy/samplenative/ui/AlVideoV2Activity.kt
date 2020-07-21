@@ -57,13 +57,10 @@ class AlVideoV2Activity : BaseActivity() {
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(surfaceCallback)
         processor?.setOnPlayProgressListener { timeInUS, duration ->
-            this.duration = duration
-            runOnUiThread {
-                trackView.setDuration(duration)
-                trackView.setProgress(timeInUS / duration.toFloat())
-//                timeView.text =
-//                    "${fmt.format(Date(timeInUS / 1000))}/${fmt.format(Date(duration / 1000))}"
-            }
+            onPlayProgress(timeInUS, duration)
+        }
+        processor?.setOnTrackUpdateListener {
+            onTrackUpdate(it)
         }
         val info = AlFFUtils.trackInfo(path!!)
         if (info and 0x1 > 0) {
@@ -81,6 +78,17 @@ class AlVideoV2Activity : BaseActivity() {
             mAdapter.items?.add(AlMediaTrack(id, type))
             trackView.addTrack(AlMediaTrack(id, type))
         }
+    }
+
+    private fun onPlayProgress(timeInUS: Long, duration: Long) {
+        this.duration = duration
+        trackView.setDuration(duration)
+        trackView.setProgress(timeInUS / duration.toFloat())
+
+    }
+
+    private fun onTrackUpdate(track: AlMediaTrack) {
+        trackView.updateTrack(track)
     }
 
     private fun setupView() {
