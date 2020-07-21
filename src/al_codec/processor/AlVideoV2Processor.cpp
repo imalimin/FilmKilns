@@ -31,19 +31,6 @@ AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
     al_reg_msg(MSG_TIMELINE_PROGRESS_NOTIFY, AlVideoV2Processor::_onTimelineInUS);
     al_reg_msg(MSG_SEQUENCE_TRACK_ADD_DONE, AlVideoV2Processor::_onAddTrackDone);
     al_reg_msg(MSG_SEQUENCE_TRACK_REMOVE_DONE, AlVideoV2Processor::_onRemoveTrackDone);
-    int32_t val = 123456;
-    uint8_t *data = new uint8_t[4];
-    data[0] = val & 0xFF;
-    data[1] = (val >> 1) & 0xFF;
-    data[2] = (val >> 2) & 0xFF;
-    data[3] = (val >> 3) & 0xFF;
-    FILE *file = fopen("/sdcard/int32_t.1.bin", "wb");
-    if (file) {
-        fwrite(data, 1, sizeof(int32_t), file);
-        fclose(file);
-    }
-    delete[] data;
-    AlLogI(TAG, "%d", sizeof(int32_t));
 }
 
 AlVideoV2Processor::~AlVideoV2Processor() {
