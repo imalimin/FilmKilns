@@ -77,7 +77,7 @@ class AlVideoV2Activity : BaseActivity() {
         val id = processor?.addTrack(type, path, 0)
         if (null != id && id >= 0) {
             mAdapter.items?.add(AlMediaTrack(id, type))
-            trackView.addTrack(AlMediaTrack(id, type))
+            trackView.addTrack(AlMediaTrack(id, type).apply { this.path = path })
         }
     }
 

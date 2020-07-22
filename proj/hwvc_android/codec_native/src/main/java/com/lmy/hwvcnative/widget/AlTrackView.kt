@@ -2,7 +2,10 @@ package com.lmy.hwvcnative.widget
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.ViewGroup
@@ -11,6 +14,10 @@ import androidx.annotation.AttrRes
 import com.lmy.hwvcnative.entity.AlMediaTrack
 import com.lmy.hwvcnative.entity.AlMediaType
 import com.lmy.hwvcnative.entity.AlRational
+import com.lmy.hwvcnative.tools.AlFFUtils
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 
 class AlTrackView : ViewGroup {
@@ -20,9 +27,9 @@ class AlTrackView : ViewGroup {
     private val vMap = TreeMap<Int, TextView>()
     private var originWidth = 0
     private var mVideoColor = Color.LTGRAY
-    private var mAudioColor = Color.DKGRAY
+    private var mAudioColor = Color.BLACK
 
-        constructor(context: Context) : super(context) {
+    constructor(context: Context) : super(context) {
         onResolveAttribute(context, null, 0, 0)
         onInitialize(context)
     }
@@ -88,6 +95,7 @@ class AlTrackView : ViewGroup {
         tMap[track.id] = track
         vMap[track.id] = TextView(context)
         vMap[track.id]?.textSize = 14f
+        vMap[track.id]?.setTextColor(Color.WHITE)
         vMap[track.id]?.text = when (track.type) {
             AlMediaType.TYPE_VIDEO -> "Track ${track.id}"
             AlMediaType.TYPE_AUDIO -> "Track ${track.id}"
@@ -104,20 +112,44 @@ class AlTrackView : ViewGroup {
         vMap[track.id]?.setPadding(padding, padding, padding, padding)
         addView(vMap[track.id], makeLayoutParams())
         requestLayout()
+        updateAudioTrack(track)
     }
 
     fun updateTrack(track: AlMediaTrack) {
         if (!tMap.containsKey(track.id)) {
             return
         }
-        tMap[track.id] = track
+        tMap[track.id]?.id = track.id
+        tMap[track.id]?.type = track.type
+        tMap[track.id]?.seqIn = track.seqIn
+        tMap[track.id]?.seqOut = track.seqOut
+        tMap[track.id]?.duration = track.duration
+        if (!TextUtils.isEmpty(track.path)) {
+            tMap[track.id]?.path = track.path
+        }
         requestLayout()
+        updateAudioTrack(track)
     }
 
     fun setScale(scale: AlRational) {
         this.scale.num = scale.num
         this.scale.den = scale.den
         requestLayout()
+    }
+
+    private fun updateAudioTrack(track: AlMediaTrack) {
+        if (AlMediaType.TYPE_AUDIO == track.type) {
+            GlobalScope.launch {
+                val file = File("${context.externalCacheDir.path}/${File(track.path).name}.bmp")
+                AlFFUtils.exec("ffmpeg -i ${track.path} -lavfi showwavespic=s=720x60:colors=orange:scale=sqrt -f image2 ${file.absolutePath}")
+                if (file.exists()) {
+                    post {
+                        vMap[track.id]?.background =
+                            BitmapDrawable(resources, BitmapFactory.decodeFile(file.absolutePath))
+                    }
+                }
+            }
+        }
     }
 
     private fun makeLayoutParams(): LayoutParams {

@@ -6,6 +6,7 @@ class AlMediaTrack : AlParcelable, Comparable<AlMediaTrack> {
     var seqIn = 0L
     var seqOut = 0L
     var duration = 0L
+    var path = ""
 
     constructor(parcel: AlParcel) : super(parcel) {
         id = parcel.readInt()
