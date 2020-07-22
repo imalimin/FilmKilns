@@ -16,6 +16,8 @@
 #include "AlScreen.h"
 #include "AlFuture.h"
 #include "TimeUtils.h"
+#include "AlOperateTrans.h"
+#include "AlOperateScale.h"
 
 #define TAG "AlVideoV2Processor"
 
@@ -111,16 +113,46 @@ void AlVideoV2Processor::seek(int64_t timeInUS) {
     postMessage(msg);
 }
 
-void AlVideoV2Processor::setPlayProgressListener(OnPlayProgressListener l) {
-    playProgressListener = std::move(l);
-}
-
 void AlVideoV2Processor::updateWindow(HwWindow *win) {
     AlMessage *msg = AlMessage::obtain(EVENT_SCREEN_UPDATE_WINDOW, new NativeWindow(win, nullptr));
     postEvent(msg);
     postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
 }
 
+void AlVideoV2Processor::setCanvasBackground(int32_t type) {
+    auto *msg = AlMessage::obtain(MSG_CANVAS_SET_BG, AlMessage::QUEUE_MODE_UNIQUE);
+    msg->arg1 = type;
+    postMessage(msg);
+    postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
+}
+
+void AlVideoV2Processor::setPlayProgressListener(OnPlayProgressListener l) {
+    playProgressListener = std::move(l);
+}
+
 void AlVideoV2Processor::setOnTrackUpdateListener(AlVideoV2Processor::OnTrackUpdateListener l) {
     trackUpdateListener = std::move(l);
+}
+
+int32_t AlVideoV2Processor::getLayer(float x, float y) {
+    auto bundle = std::make_shared<AlFuture>();
+    auto *msg = AlMessage::obtain(MSG_LAYER_QUERY_ID_FUTURE,
+                                  new AlOperateTrans(0, x, y));
+    msg->sp = bundle;
+    postEvent(msg);
+    return bundle->get(-1);
+}
+
+HwResult AlVideoV2Processor::postTranslate(int32_t id, float dx, float dy) {
+    auto *msg = AlMessage::obtain(EVENT_LAYER_TRANS_POST,
+                                  new AlOperateTrans(id, dx, dy));
+    postEvent(msg);
+    return Hw::SUCCESS;
+}
+
+HwResult AlVideoV2Processor::postScale(int32_t id, AlRational ds, AlPointF anchor) {
+    auto *msg = AlMessage::obtain(EVENT_LAYER_SCALE_POST,
+                                  new AlOperateScale(id, ds, anchor));
+    postEvent(msg);
+    return Hw::SUCCESS;
 }

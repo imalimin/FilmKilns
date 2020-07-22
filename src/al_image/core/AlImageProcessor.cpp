@@ -23,6 +23,7 @@
 #include "AlOperateTrans.h"
 #include "AlOperateAlpha.h"
 #include "AlOperateCrop.h"
+#include "AlFuture.h"
 
 #define TAG "AlImageProcessor"
 
@@ -176,11 +177,12 @@ HwResult AlImageProcessor::setAlpha(int32_t id, float alpha) {
 }
 
 int32_t AlImageProcessor::getLayer(float x, float y) {
-    auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_ID,
+    auto bundle = std::make_shared<AlFuture>();
+    auto *msg = AlMessage::obtain(MSG_LAYER_QUERY_ID_FUTURE,
                                   new AlOperateTrans(0, x, y));
+    msg->sp = bundle;
     postEvent(msg);
-    mQueryLock.wait(50000);
-    return mCurLayerId;
+    return bundle->get(-1);
 }
 
 HwResult AlImageProcessor::cropLayer(int32_t id, float left, float top, float right, float bottom) {

@@ -11,6 +11,9 @@
 #include "AlAbsProcessor.h"
 #include "AlMediaTrack.h"
 #include "AlEgl.h"
+#include "AlRational.h"
+#include "AlPointF.h"
+#include "HwResult.h"
 
 AL_CLASS AlVideoV2Processor AL_EXTEND AlAbsProcessor {
 public:
@@ -38,11 +41,19 @@ public:
 
     void seek(int64_t timeInUS);
 
-    void setPlayProgressListener(OnPlayProgressListener l);
-
     void updateWindow(HwWindow *win);
 
+    void setCanvasBackground(int32_t type);
+
+    void setPlayProgressListener(OnPlayProgressListener l);
+
     void setOnTrackUpdateListener(OnTrackUpdateListener l);
+
+    int32_t getLayer(float x, float y);
+
+    HwResult postTranslate(int32_t id, float dx, float dy);
+
+    HwResult postScale(int32_t id, AlRational ds, AlPointF anchor);
 
 private:
     bool _onTimelineInUS(AlMessage *msg);

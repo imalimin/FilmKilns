@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.SurfaceHolder
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.lmy.hwvcnative.entity.AlLayer
 import com.lmy.hwvcnative.entity.AlMediaTrack
 import com.lmy.hwvcnative.entity.AlMediaType
 import com.lmy.hwvcnative.processor.AlVideoV2Processor
@@ -15,13 +16,13 @@ import com.lmy.samplenative.BaseActivity
 import com.lmy.samplenative.R
 import com.lmy.samplenative.adapter.AlTrackAdapter
 import kotlinx.android.synthetic.main.activity_video_v2.*
-import java.text.SimpleDateFormat
+import kotlinx.android.synthetic.main.activity_video_v2.surfaceView
 import kotlin.collections.ArrayList
 
 class AlVideoV2Activity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_video_v2
-    private val fmt = SimpleDateFormat("mm:ss")
     private val processor: AlVideoV2Processor? = AlVideoV2Processor()
+    private var mCurrentLayer = AlLayer.none()
     private var playing: Boolean = true
     private var duration: Long = -1
     private val mAdapter = AlTrackAdapter()
@@ -124,7 +125,24 @@ class AlVideoV2Activity : BaseActivity() {
                 processor?.start()
             }
         })
+        surfaceView?.setOnClickListener { v, x, y ->
+            if (null != processor) {
+                setCurLayer(AlLayer(processor.getLayer(x, y), 0, 0))
+            }
+        }
+        surfaceView.setOnScrollListener { v, x, y, dx, dy, s ->
+            processor?.postTranslate(getCurrentLayer().id, dx, dy)
+        }
+        surfaceView?.setOnScaleListener { v, ds, anchor ->
+            processor?.postScale(getCurrentLayer().id, ds, anchor)
+        }
     }
+
+    fun setCurLayer(layer: AlLayer) {
+        mCurrentLayer = layer
+    }
+
+    fun getCurrentLayer(): AlLayer = mCurrentLayer
 
     override fun onDestroy() {
         super.onDestroy()

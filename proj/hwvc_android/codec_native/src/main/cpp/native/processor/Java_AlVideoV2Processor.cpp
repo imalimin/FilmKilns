@@ -124,6 +124,39 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_upda
     }
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_setCanvasBackground
+        (JNIEnv *env, jobject thiz, jlong handler, jint type) {
+    if (handler) {
+        getHandler(handler)->setCanvasBackground(type);
+    }
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_getLayer
+        (JNIEnv *env, jobject thiz, jlong handler, jfloat x, jfloat y) {
+    if (handler) {
+        return getHandler(handler)->getLayer(x, y);
+    }
+    return Hw::FAILED.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_postTranslate
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jfloat x, jfloat y) {
+    if (handler) {
+        return getHandler(handler)->postTranslate(id, x, y).code;
+    }
+    return Hw::FAILED.code;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_postScale
+        (JNIEnv *env, jobject thiz, jlong handler, jint id, jint dsNum, jint dsDen,
+         jfloat anchorX, jfloat anchorY) {
+    if (handler) {
+        return getHandler(handler)->postScale(id, AlRational(dsNum, dsDen),
+                                              AlPointF(anchorX, anchorY)).code;
+    }
+    return Hw::FAILED.code;
+}
+
 #ifdef __cplusplus
 }
 #endif

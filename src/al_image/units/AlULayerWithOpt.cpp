@@ -15,6 +15,7 @@
 #include "AlOperateAlpha.h"
 #include "AlOperateCrop.h"
 #include "AlMath.h"
+#include "AlFuture.h"
 
 AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
     al_reg_msg(EVENT_LAYER_QUERY_ID, AlULayerWithOpt::onOperateQuery);
@@ -31,6 +32,7 @@ AlULayerWithOpt::AlULayerWithOpt(string alias) : AlULayer(alias) {
     al_reg_msg(EVENT_LAYER_ALIGN_CROP, AlULayerWithOpt::onAlignCropLayer);
     al_reg_msg(EVENT_LAYER_ALIGN_CROP_CANCEL, AlULayerWithOpt::onAlignCropLayerCancel);
     al_reg_msg(MSG_LAYER_PAINT_POINT, AlULayerWithOpt::onOperatePaintPoint);
+    al_reg_msg(MSG_LAYER_QUERY_ID_FUTURE, AlULayerWithOpt::onOperateQuery);
 }
 
 AlULayerWithOpt::~AlULayerWithOpt() {
@@ -178,8 +180,14 @@ bool AlULayerWithOpt::onOperateQuery(AlMessage *m) {
         return true;
     }
     auto *model = findLayerModel(desc->x, desc->y);
+    auto layerID = nullptr != model ? model->getId() : AlIdentityCreator::NONE_ID;
+    if (MSG_LAYER_QUERY_ID_FUTURE == m->what) {
+        auto bundle = std::static_pointer_cast<AlFuture>(m->sp);
+        bundle->put(layerID);
+        return true;
+    }
     auto *msg = AlMessage::obtain(EVENT_LAYER_QUERY_ID_NOTIFY);
-    msg->arg1 = nullptr != model ? model->getId() : AlIdentityCreator::NONE_ID;
+    msg->arg1 = layerID;
     msg->action = m->action;
     postEvent(msg);
     return true;

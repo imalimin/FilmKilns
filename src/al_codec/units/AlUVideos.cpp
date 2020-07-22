@@ -231,11 +231,11 @@ HwResult AlUVideos::_grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
 //                _setCurTimestamp(clip, itr->second->getPts());
 //                mLastFrameMap.erase(itr);
 //            }
-            AlLogW(TAG, "Skip frame(%d), cur(%d), %s, %d",
-                   (int) itr->second->getPts(),
-                   (int) timeInUS,
-                   ((AsynVideoDecoder *) decoder)->dump().c_str(),
-                   mCurTimeMap.end() != mCurTimeMap.find(clip->id()));
+//            AlLogW(TAG, "Skip frame(%d), cur(%d), %s, %d",
+//                   (int) itr->second->getPts(),
+//                   (int) timeInUS,
+//                   ((AsynVideoDecoder *) decoder)->dump().c_str(),
+//                   mCurTimeMap.end() != mCurTimeMap.find(clip->id()));
             return Hw::FAILED;
         } else {
             *frame = itr->second;
