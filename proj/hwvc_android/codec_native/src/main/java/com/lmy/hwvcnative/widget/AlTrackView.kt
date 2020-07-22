@@ -119,14 +119,7 @@ class AlTrackView : ViewGroup {
         if (!tMap.containsKey(track.id)) {
             return
         }
-        tMap[track.id]?.id = track.id
-        tMap[track.id]?.type = track.type
-        tMap[track.id]?.seqIn = track.seqIn
-        tMap[track.id]?.seqOut = track.seqOut
-        tMap[track.id]?.duration = track.duration
-        if (!TextUtils.isEmpty(track.path)) {
-            tMap[track.id]?.path = track.path
-        }
+        tMap[track.id] = track
         requestLayout()
         updateAudioTrack(track)
     }
@@ -140,13 +133,18 @@ class AlTrackView : ViewGroup {
     private fun updateAudioTrack(track: AlMediaTrack) {
         if (AlMediaType.TYPE_AUDIO == track.type) {
             GlobalScope.launch {
+                val src = File(track.path)
+                if (!src.exists()) {
+                    return@launch
+                }
                 val file = File("${context.externalCacheDir.path}/${File(track.path).name}.bmp")
-                AlFFUtils.exec("ffmpeg -i ${track.path} -lavfi showwavespic=s=720x60:colors=orange:scale=sqrt -f image2 ${file.absolutePath}")
-                if (file.exists()) {
-                    post {
-                        vMap[track.id]?.background =
-                            BitmapDrawable(resources, BitmapFactory.decodeFile(file.absolutePath))
-                    }
+                AlFFUtils.exec("ffmpeg -i ${src.absolutePath} -lavfi showwavespic=s=720x60:colors=orange:scale=sqrt -f image2 ${file.absolutePath}")
+                if (!file.exists()) {
+                    return@launch
+                }
+                post {
+                    vMap[track.id]?.background =
+                        BitmapDrawable(resources, BitmapFactory.decodeFile(file.absolutePath))
                 }
             }
         }

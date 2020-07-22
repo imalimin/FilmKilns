@@ -14,6 +14,7 @@ class AlMediaTrack : AlParcelable, Comparable<AlMediaTrack> {
         seqIn = parcel.readLong()
         seqOut = parcel.readLong()
         duration = parcel.readLong()
+        path = parcel.readString()
     }
 
     constructor(id: Int, type: Int) : super(AlParcel.from(ByteArray(0))) {
