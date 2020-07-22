@@ -71,7 +71,12 @@ void AlParcel::writeDouble(double val) {
 }
 
 void AlParcel::writeString(std::string &val) {
-
+    size_t len = val.length();
+    const char *str = val.c_str();
+    for (int i = 0; i < len; ++i) {
+        vec.emplace_back(str[i]);
+    }
+    vec.emplace_back('\0');
 }
 
 void AlParcel::writeByteArray(std::vector<uint8_t> &vec) {

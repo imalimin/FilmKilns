@@ -25,6 +25,16 @@ class AlParcel private constructor(data: ByteArray) {
         return buf.double
     }
 
+    fun readString(): String {
+        val sb = StringBuffer()
+        var c = readByte()
+        while (0 != c.toInt()) {
+            sb.append(c.toChar())
+            c = readByte()
+        }
+        return sb.toString()
+    }
+
     companion object {
         fun from(data: ByteArray): AlParcel {
             return AlParcel(data)
