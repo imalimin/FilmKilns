@@ -53,6 +53,8 @@ private:
 
     bool _onTimeAdd(AlMessage *msg);
 
+    bool _onGetStatus(AlMessage *msg);
+
     void _heartbeat();
 
     void _sendBeat();

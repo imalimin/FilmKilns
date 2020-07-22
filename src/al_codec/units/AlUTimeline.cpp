@@ -8,6 +8,7 @@
 #include "AlUTimeline.h"
 #include "Thread.h"
 #include "TimeUtils.h"
+#include "AlFuture.h"
 
 #define TAG "AlUTimeline"
 
@@ -18,6 +19,7 @@ AlUTimeline::AlUTimeline(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_PAUSE, AlUTimeline::_onPause);
     al_reg_msg(MSG_TIMELINE_SEEK, AlUTimeline::_onSeek);
     al_reg_msg(MSG_TIMELINE_ADD, AlUTimeline::_onTimeAdd);
+    al_reg_msg(MSG_TIMELINE_GET_STATUS, AlUTimeline::_onGetStatus);
     pipe = std::shared_ptr<AlEventPipeline>(AlEventPipeline::create(TAG));
     timebase = AlRational(1, 44100);
 }
@@ -71,6 +73,12 @@ bool AlUTimeline::_onSeek(AlMessage *msg) {
 bool AlUTimeline::_onTimeAdd(AlMessage *msg) {
     mBaseTime += msg->arg1;
     _heartbeat();
+    return true;
+}
+
+bool AlUTimeline::_onGetStatus(AlMessage *msg) {
+    auto bundle = std::static_pointer_cast<AlFuture>(msg->sp);
+    bundle->put(beating);
     return true;
 }
 

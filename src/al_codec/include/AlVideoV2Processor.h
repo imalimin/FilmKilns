@@ -19,6 +19,12 @@ AL_CLASS AlVideoV2Processor AL_EXTEND AlAbsProcessor {
 public:
     typedef function<void(int64_t, int64_t)> OnPlayProgressListener;
     typedef function<void(std::shared_ptr<AlMediaTrack>)> OnTrackUpdateListener;
+    AL_ENUM kPlayStatus : int {
+        IDL = -1,
+        START,
+        PAUSE,
+        STOP,
+    };
 
 public:
     AlVideoV2Processor();
@@ -76,7 +82,7 @@ private:
     AlEgl *aBaseCtx = nullptr;
     OnPlayProgressListener playProgressListener = nullptr;
     OnTrackUpdateListener trackUpdateListener = nullptr;
-    int32_t mCurTrackID = -1;
+    kPlayStatus status;
 };
 
 

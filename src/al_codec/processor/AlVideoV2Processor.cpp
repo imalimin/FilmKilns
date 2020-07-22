@@ -43,12 +43,15 @@ AlVideoV2Processor::~AlVideoV2Processor() {
 void AlVideoV2Processor::onCreate() {
     AlAbsProcessor::onCreate();
     this->aBaseCtx = AlEgl::offScreen(TAG);
+    this->status = kPlayStatus::IDL;
 }
 
 void AlVideoV2Processor::onDestroy() {
+    this->status = kPlayStatus::STOP;
     AlAbsProcessor::onDestroy();
     delete this->aBaseCtx;
     this->aBaseCtx = nullptr;
+    this->status = kPlayStatus::IDL;
 }
 
 bool AlVideoV2Processor::_onTimelineInUS(AlMessage *msg) {
@@ -59,7 +62,6 @@ bool AlVideoV2Processor::_onTimelineInUS(AlMessage *msg) {
 }
 
 bool AlVideoV2Processor::_onAddTrackDone(AlMessage *msg) {
-    mCurTrackID = msg->arg1;
     return true;
 }
 
@@ -101,10 +103,12 @@ void AlVideoV2Processor::removeTrack(int32_t trackID) {
 
 void AlVideoV2Processor::start() {
     postMessage(AlMessage::obtain(MSG_TIMELINE_START));
+    this->status = kPlayStatus::START;
 }
 
 void AlVideoV2Processor::pause() {
     postMessage(AlMessage::obtain(MSG_TIMELINE_PAUSE));
+    this->status = kPlayStatus::PAUSE;
 }
 
 void AlVideoV2Processor::seek(int64_t timeInUS) {
@@ -146,6 +150,7 @@ int32_t AlVideoV2Processor::getLayer(float x, float y) {
 HwResult AlVideoV2Processor::postTranslate(int32_t id, float dx, float dy) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_TRANS_POST,
                                   new AlOperateTrans(id, dx, dy));
+    msg->arg1 = status == kPlayStatus::START;
     postEvent(msg);
     return Hw::SUCCESS;
 }
@@ -153,6 +158,7 @@ HwResult AlVideoV2Processor::postTranslate(int32_t id, float dx, float dy) {
 HwResult AlVideoV2Processor::postScale(int32_t id, AlRational ds, AlPointF anchor) {
     auto *msg = AlMessage::obtain(EVENT_LAYER_SCALE_POST,
                                   new AlOperateScale(id, ds, anchor));
+    msg->arg1 = status == kPlayStatus::START;
     postEvent(msg);
     return Hw::SUCCESS;
 }

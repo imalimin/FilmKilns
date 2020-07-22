@@ -146,7 +146,8 @@ static constexpr int MSG_TIMELINE_PAUSE = KID('A', 'T', 'L', 0x06);
 static constexpr int MSG_TIMELINE_BEGIN = KID('A', 'T', 'L', 0x07);
 static constexpr int MSG_TIMELINE_END = KID('A', 'T', 'L', 0x08);
 static constexpr int MSG_TIMELINE_SEEK = KID('A', 'T', 'L', 0x09);
-static constexpr int MSG_TIMELINE_ADD = KID('A', 'T', 'L', 0x10);
+static constexpr int MSG_TIMELINE_ADD = KID('A', 'T', 'L', 0x0a);
+static constexpr int MSG_TIMELINE_GET_STATUS = KID('A', 'T', 'L', 0x0b);
 
 static constexpr int MSG_SEQUENCE_TRACK_ADD = KID('A', 'S', 'Q', 0x01);
 static constexpr int MSG_SEQUENCE_TRACK_ADD_DONE = KID('A', 'S', 'Q', 0x02);

@@ -100,7 +100,9 @@ bool AlULayerWithOpt::onOperatePostScale(AlMessage *m) {
         model->setPosition(model->getPosition().x + x, model->getPosition().y + y);
         model->setScale(model->getScale().x * scaleX,
                         model->getScale().y * scaleY);
-        invalidate();
+        if (!m->arg1) {
+            invalidate();
+        }
     }
     return true;
 }
@@ -141,7 +143,9 @@ bool AlULayerWithOpt::onOperatePostRotate(AlMessage *m) {
         auto nr = model->getRotation().toFloat() + desc->rotation.toFloat();
         auto rotation = AlRational(static_cast<int32_t>(nr * 100000), 100000);
         model->setRotation(rotation);
-        invalidate();
+        if (!m->arg1) {
+            invalidate();
+        }
     }
     return true;
 }
@@ -169,7 +173,9 @@ bool AlULayerWithOpt::onOperatePostTrans(AlMessage *m) {
     if (model) {
         AlVec2 vec = transWin2Canvas(desc->x, desc->y);
         model->postPosition(vec.x, vec.y);
-        invalidate();
+        if (!m->arg1) {
+            invalidate();
+        }
     }
     return true;
 }
