@@ -108,6 +108,12 @@
 
 #include "libavutil/avassert.h"
 
+#ifdef ANDROID
+
+#include <android/log.h>
+
+#endif
+
 /* median of 3 */
 #ifndef mid_pred
 #define mid_pred mid_pred
@@ -4863,6 +4869,34 @@ static int64_t getmaxrss(void)
 
 static void log_callback_null(void *ptr, int level, const char *fmt, va_list vl)
 {
+#ifdef ANDROID
+    auto lll = ANDROID_LOG_VERBOSE;
+    switch (level) {
+        case AV_LOG_INFO: {
+            lll = ANDROID_LOG_INFO;
+            break;
+        }
+        case AV_LOG_DEBUG: {
+            lll = ANDROID_LOG_DEBUG;
+            break;
+        }
+        case AV_LOG_ERROR: {
+            lll = ANDROID_LOG_ERROR;
+            break;
+        }
+        case AV_LOG_WARNING: {
+            lll = ANDROID_LOG_WARN;
+            break;
+        }
+        case AV_LOG_FATAL: {
+            lll = ANDROID_LOG_FATAL;
+            break;
+        }
+        default:
+            lll = ANDROID_LOG_VERBOSE;
+    }
+    __android_log_vprint(lll, "FFmpeg", fmt, vl);
+#endif
 }
 
 static void ff_reset() {
