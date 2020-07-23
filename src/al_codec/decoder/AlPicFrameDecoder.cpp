@@ -20,6 +20,10 @@ AlPicFrameDecoder::~AlPicFrameDecoder() {
         av_packet_free(&vPacket);
         vPacket = nullptr;
     }
+    if (vFinalFrame) {
+        av_frame_free(&vFinalFrame);
+        vFinalFrame = nullptr;
+    }
     if (vFrame) {
         av_frame_free(&vFrame);
         vFrame = nullptr;
@@ -32,6 +36,10 @@ AlPicFrameDecoder::~AlPicFrameDecoder() {
         avformat_close_input(&pFormatCtx);
         avformat_free_context(pFormatCtx);
         pFormatCtx = nullptr;
+    }
+    if (sCtx) {
+        sws_freeContext(sCtx);
+        sCtx = nullptr;
     }
     if (oHwFrame) {
         oHwFrame->recycle();
@@ -79,6 +87,7 @@ bool AlPicFrameDecoder::prepare(string path) {
     auto format = pFormatCtx->streams[vTrack]->codecpar->format;
     if (AVPixelFormat::AV_PIX_FMT_YUV420P != format) {
         AlLogW(TAG, "This track`s pixel format(%d) is not yuv420p", format);
+        _setupSwr();
     }
 
     return true;
@@ -197,7 +206,7 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
             if (oHwFrame) {
                 oHwFrame->recycle();
             }
-            oHwFrame = hwFrameAllocator->ref(vFrame);
+            oHwFrame = hwFrameAllocator->ref(_doSwr(vFrame));
             *frame = oHwFrame;
 //            AlLogD(TAG, "%d x %d, %d", vFrame->width, vFrame->height, vFrame->format);
             av_frame_unref(vFrame);
@@ -245,4 +254,30 @@ void AlPicFrameDecoder::pause() {
 
 void AlPicFrameDecoder::stop() {
 
+}
+
+void AlPicFrameDecoder::_setupSwr() {
+    sCtx = sws_getContext(vCtx->width, vCtx->height, (AVPixelFormat) pFormatCtx->streams[vTrack]->codecpar->format,
+                          vCtx->width, vCtx->height, AV_PIX_FMT_YUV420P,
+                          SWS_BICUBIC, nullptr, nullptr, nullptr);
+    vFinalFrame = av_frame_alloc();
+    vFinalFrame->width = vCtx->width;
+    vFinalFrame->height = vCtx->height;
+    vFinalFrame->format = AV_PIX_FMT_YUV420P;
+    auto *buf = (uint8_t *) av_malloc(
+            avpicture_get_size(AV_PIX_FMT_YUV420P, vCtx->width, vCtx->height));
+    int ret =av_image_fill_arrays(vFinalFrame->data, vFinalFrame->linesize, buf, AV_PIX_FMT_YUV420P,
+                         vCtx->width, vCtx->height, 1);
+}
+
+AVFrame *AlPicFrameDecoder::_doSwr(AVFrame *src) {
+    if (sCtx && vFinalFrame) {
+        int ret = sws_scale(sCtx, src->data, src->linesize, 0, src->height,
+                            vFinalFrame->data, vFinalFrame->linesize);
+        vFinalFrame->pts = src->pts;
+        vFinalFrame->pkt_dts = src->pkt_dts;
+        vFinalFrame->pkt_duration = src->pkt_duration;
+        return vFinalFrame;
+    }
+    return src;
 }

@@ -13,6 +13,17 @@
 #include "AlFFUtils.h"
 #include "AlBundle.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "libswscale/swscale.h"
+#include "libavutil/imgutils.h"
+
+#ifdef __cplusplus
+}
+#endif
+
 AL_CLASS AlPicFrameDecoder AL_EXTEND AbsVideoDecoder {
 public:
     AlPicFrameDecoder();
@@ -59,6 +70,10 @@ public:
 private:
     int32_t _handleAction();
 
+    void _setupSwr();
+
+    AVFrame *_doSwr(AVFrame *src);
+
 public:
     AlPicFrameDecoder(const AlPicFrameDecoder &o) : AbsVideoDecoder() {};
 
@@ -68,9 +83,12 @@ private:
     string path;
     AVFormatContext *pFormatCtx = nullptr;
     AVCodecContext *vCtx = nullptr;
+    /// For swr gif frame.
+    SwsContext *sCtx = nullptr;
     int vTrack = -1;
     AVPacket *vPacket = nullptr;
     AVFrame *vFrame = nullptr;
+    AVFrame *vFinalFrame = nullptr;
     HwAbsMediaFrame *oHwFrame = nullptr;
     bool eof = false;
     /** action */

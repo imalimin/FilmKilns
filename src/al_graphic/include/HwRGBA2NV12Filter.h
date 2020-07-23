@@ -10,6 +10,15 @@
 
 #include "HwAbsFilter.h"
 
+
+/// YUV Format
+/// +------------------------------------------+
+/// |    YUV420P(3Plane)   |  YUV420SP2Plane)  |
+/// +------------------------------------------+
+/// | YU12/I420   |  YV12  |   NV12   |  NV21  |
+/// +------------------------------------------+
+/// |    Y+U+V    | Y+V+U  |   Y+UV   |  Y+VU  |
+/// +------------------------------------------+
 class HwRGBA2NV12Filter : public HwAbsFilter {
 public:
     HwRGBA2NV12Filter();
