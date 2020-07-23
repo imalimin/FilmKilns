@@ -60,7 +60,11 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="image/*" />
+                <data android:mimeType="image/jpg" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/webp" />
+                <data android:mimeType="image/bmp" />
                 <action android:name="android.intent.action.SEND" />
             </intent-filter>
         </activity>
@@ -82,14 +86,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="video/*" />
-                <action android:name="android.intent.action.SEND" />
-            </intent-filter>
-            <intent-filter tools:ignore="AppLinkUrlError">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="audio/*" />
+                <data android:mimeType="image/gif" />
                 <action android:name="android.intent.action.SEND" />
             </intent-filter>
         </activity>
