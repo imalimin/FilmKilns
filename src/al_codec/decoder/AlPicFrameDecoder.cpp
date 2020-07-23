@@ -76,6 +76,10 @@ bool AlPicFrameDecoder::prepare(string path) {
     }
     vPacket = av_packet_alloc();
     vFrame = av_frame_alloc();
+    auto format = pFormatCtx->streams[vTrack]->codecpar->format;
+    if (AVPixelFormat::AV_PIX_FMT_YUV420P != format) {
+        AlLogW(TAG, "This track`s pixel format(%d) is not yuv420p", format);
+    }
 
     return true;
 }
