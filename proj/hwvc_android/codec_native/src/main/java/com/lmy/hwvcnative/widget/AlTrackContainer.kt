@@ -8,16 +8,19 @@ import android.graphics.Paint
 import android.graphics.PointF
 import android.util.AttributeSet
 import android.util.TypedValue
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.widget.HorizontalScrollView
 import androidx.annotation.AttrRes
+import androidx.core.view.GestureDetectorCompat
 import com.lmy.hwvcnative.entity.AlMediaTrack
 import com.lmy.hwvcnative.entity.AlRational
 
 class AlTrackContainer : HorizontalScrollView {
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private lateinit var mTrackView: AlTrackView
+    private lateinit var mGestureDetector: GestureDetectorCompat
     private lateinit var mScaleDetector: ScaleGestureDetector
     private var mOnSeekBarChangeListener: OnSeekBarChangeListener? = null
     private var isDoublePointer = false
@@ -63,6 +66,7 @@ class AlTrackContainer : HorizontalScrollView {
     private fun onInitialize(context: Context) {
         cursorSize = applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2f)
         paint.color = Color.WHITE
+        mGestureDetector = GestureDetectorCompat(context, onGestureListener)
         mScaleDetector = ScaleGestureDetector(context, mScaleListener)
         mTrackView = AlTrackView(context)
         addView(mTrackView)
@@ -107,6 +111,7 @@ class AlTrackContainer : HorizontalScrollView {
                 }
             }
         }
+        mGestureDetector.onTouchEvent(event)
         mScaleDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
     }
@@ -182,6 +187,12 @@ class AlTrackContainer : HorizontalScrollView {
             }
             getChildView().setScale(AlRational((scale * 10000).toInt(), 10000))
             return super.onScale(detector)
+        }
+    }
+
+    private val onGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        override fun onLongPress(e: MotionEvent?) {
+            super.onLongPress(e)
         }
     }
 
