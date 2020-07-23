@@ -257,17 +257,19 @@ void AlPicFrameDecoder::stop() {
 }
 
 void AlPicFrameDecoder::_setupSwr() {
-    sCtx = sws_getContext(vCtx->width, vCtx->height, (AVPixelFormat) pFormatCtx->streams[vTrack]->codecpar->format,
-                          vCtx->width, vCtx->height, AV_PIX_FMT_YUV420P,
-                          SWS_BICUBIC, nullptr, nullptr, nullptr);
+    auto format = AV_PIX_FMT_RGBA;
     vFinalFrame = av_frame_alloc();
     vFinalFrame->width = vCtx->width;
     vFinalFrame->height = vCtx->height;
-    vFinalFrame->format = AV_PIX_FMT_YUV420P;
+    vFinalFrame->format = format;
+    sCtx = sws_getContext(vCtx->width, vCtx->height,
+                          (AVPixelFormat) pFormatCtx->streams[vTrack]->codecpar->format,
+                          vFinalFrame->width, vFinalFrame->height, format,
+                          SWS_BICUBIC, nullptr, nullptr, nullptr);
     auto *buf = (uint8_t *) av_malloc(
-            avpicture_get_size(AV_PIX_FMT_YUV420P, vCtx->width, vCtx->height));
-    int ret =av_image_fill_arrays(vFinalFrame->data, vFinalFrame->linesize, buf, AV_PIX_FMT_YUV420P,
-                         vCtx->width, vCtx->height, 1);
+            avpicture_get_size(format, vFinalFrame->width, vFinalFrame->height));
+    int ret =av_image_fill_arrays(vFinalFrame->data, vFinalFrame->linesize, buf, format,
+                                  vFinalFrame->width, vFinalFrame->height, 1);
 }
 
 AVFrame *AlPicFrameDecoder::_doSwr(AVFrame *src) {

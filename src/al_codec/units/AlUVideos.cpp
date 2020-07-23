@@ -215,6 +215,9 @@ void AlUVideos::_updateLayer(AlMediaClip *clip, HwVideoFrame *frame) {
         return;
     }
     auto *msg = AlMessage::obtain(MSG_LAYER_UPDATE_YUV);
+    if (HwFrameFormat::HW_IMAGE_RGBA == frame->getFormat()) {
+        msg->what = MSG_LAYER_UPDATE_RGBA;
+    }
     msg->arg1 = itr->second;
     msg->obj = AlBuffer::wrap(frame->data(), frame->size());
     msg->sp = std::make_shared<Size>(frame->getWidth(), frame->getHeight());

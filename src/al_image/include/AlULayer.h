@@ -161,6 +161,8 @@ private:
     /// \return
     bool _onUpdateLayerWithYUV(AlMessage *msg);
 
+    bool _onUpdateLayerWithRGBA(AlMessage *msg);
+
     /// 清除图层
     /// FORMAT:
     /// +-------------------------------------------------------------+

@@ -128,6 +128,8 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
                                  static_cast<uint32_t>(avFrame->width),
                                  static_cast<uint32_t>(avFrame->height));
     }
+    frame->setFormat(HwAbsMediaFrame::convertToVideoFrameFormat(
+            static_cast<AVPixelFormat>(avFrame->format)));
     frame->setPts(avFrame->pts);
     int pixelCount = avFrame->width * avFrame->height;
     switch (frame->getFormat()) {
@@ -168,6 +170,16 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
                         i * 2 + 1];
             }
             break;
+        }
+        case HwFrameFormat::HW_IMAGE_RGBA: {
+            if (avFrame->linesize[0] == avFrame->width * 4) {
+                memcpy(frame->data(), avFrame->data[0], avFrame->width * avFrame->height * 4);
+            } else {
+                for (int i = 0; i < avFrame->height; ++i) {
+                    memcpy(frame->data() + avFrame->width * 4 * i,
+                           avFrame->data[0] + avFrame->linesize[0] * i, avFrame->width * 4);
+                }
+            }
         }
         default:
             copyInfo(frame, avFrame);

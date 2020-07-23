@@ -38,6 +38,7 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     al_reg_msg(EVENT_LAYER_QUERY_INFO, AlULayer::onQueryInfo);
     al_reg_msg(MSG_LAYER_ADD_EMPTY, AlULayer::onAddLayerEmpty);
     al_reg_msg(MSG_LAYER_UPDATE_YUV, AlULayer::_onUpdateLayerWithYUV);
+    al_reg_msg(MSG_LAYER_UPDATE_RGBA, AlULayer::_onUpdateLayerWithRGBA);
     al_reg_msg(MSG_LAYER_UPDATE_CLEAR, AlULayer::_onUpdateLayerClear);
 }
 
@@ -418,6 +419,22 @@ bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
     AlTexManager::instance()->recycle(&v);
     AlTexManager::instance()->recycle(&u);
     AlTexManager::instance()->recycle(&y);
+    return true;
+}
+
+bool AlULayer::_onUpdateLayerWithRGBA(AlMessage *msg) {
+    auto buf = msg->getObj<AlBuffer *>();
+    auto size = std::static_pointer_cast<Size>(msg->sp);
+    if (nullptr == buf) {
+        AlLogE(TAG, "failed.");
+        return true;
+    }
+    auto layer = mLayerManager.find(msg->arg1);
+    if (nullptr == layer) {
+        AlLogE(TAG, "failed.");
+        return true;
+    }
+    layer->getTexture()->update(buf, size->width, size->height);
     return true;
 }
 
