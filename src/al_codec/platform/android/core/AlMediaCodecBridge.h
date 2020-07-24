@@ -35,7 +35,24 @@ public:
 
     ~AlMediaCodecBridge();
 
+    /// For encoder
+    /// \param w
+    /// \param h
+    /// \param bitrate
+    /// \param format
+    /// \param iFrameInterval
+    /// \param fps
+    /// \param flags
+    /// \return
     HwResult configure(int w, int h, int bitrate, int format, int iFrameInterval, int fps, int flags);
+
+    /// For decoder
+    /// \param w
+    /// \param h
+    /// \param duration
+    /// \param flags
+    /// \return
+    HwResult configure(int w, int h, long duration, AlBuffer *sps, AlBuffer *pps, int flags);
 
     HwWindow *createInputSurface();
 
@@ -66,6 +83,7 @@ public:
 private:
     static const AlJNIObject::Method midInit;
     static const AlJNIObject::Method midConfigure;
+    static const AlJNIObject::Method midConfigureDec;
     static const AlJNIObject::Method midInputSurface;
     static const AlJNIObject::Method midStart;
     static const AlJNIObject::Method midStop;

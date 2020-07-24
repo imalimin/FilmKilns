@@ -15,6 +15,7 @@ const string AlCodec::KEY_PROFILE = "media-profile";
 const string AlCodec::KEY_PRESET = "media-preset";
 const string AlCodec::KEY_LEVEL = "media-level";
 const string AlCodec::KEY_BIT_RATE = "media-bit-rate";
+const string AlCodec::KEY_DURATION = "media-duration";
 const string AlCodec::KEY_WIDTH = "video-width";
 const string AlCodec::KEY_HEIGHT = "video-height";
 const string AlCodec::KEY_FPS = "video-fps";

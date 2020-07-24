@@ -4,6 +4,7 @@ option(ENABLE_BAN_WARNING "Enable warning as error." OFF)
 option(ENABLE_TINY "Enable tiny so." OFF)
 option(ENABLE_GLM "Enable glm." OFF)
 option(ENABLE_ASAN "Enable ASAN." OFF)
+option(ENABLE_MEDIA_CODEC "Enable MediaCodec." ON)
 set(WARNING_CONFIGS
         -Werror
         -Wmost
@@ -45,6 +46,10 @@ else ()
     message(STATUS "Debug mode.")
     add_definitions(-D__AL_DEBUG__)
 endif ()
+if (ENABLE_MEDIA_CODEC)
+    message(STATUS "Enable MediaCodec.")
+    add_definitions(-D__AL_ENABLE_MEDIA_CODEC__)
+endif (ENABLE_MEDIA_CODEC)
 
 add_subdirectory(${SRC_PATH_ROOT}/al_common)
 add_subdirectory(${SRC_PATH_ROOT}/al_bitmap)

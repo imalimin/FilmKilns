@@ -7,6 +7,7 @@
 
 #include "AlFFUtils.h"
 #include "AlLogcat.h"
+#include "platform/android/core/AlFFAndroidDec.h"
 #include <vector>
 
 #ifdef __cplusplus
@@ -23,6 +24,7 @@ int AlFFUtils::init() {
     std::call_once(onceFlag, []() {
         av_register_all();
         avcodec_register_all();
+        al_media_codec_dec_register();
     });
     return 0;
 }

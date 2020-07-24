@@ -67,6 +67,7 @@ public:
     static const string KEY_PRESET;
     static const string KEY_LEVEL;
     static const string KEY_BIT_RATE;
+    static const string KEY_DURATION;
     // Video
     static const string KEY_WIDTH;
     static const string KEY_HEIGHT;

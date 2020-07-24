@@ -19,6 +19,7 @@ jmethodID mid;                                                \
 if (o->findMid(m, &mid)) {                                    \
     o->getEnv()->CallVoidMethod(o->getObject(), mid, ##args); \
 }                                                             \
+o->getEnv()->ExceptionDescribe(); \
 o->getEnv()->ExceptionCheck(); \
 o->getEnv()->ExceptionClear(); \
 
@@ -27,6 +28,7 @@ jmethodID mid;                                                      \
 if (o->findMid(m, &mid)) {                                          \
     name = o->getEnv()->CallIntMethod(o->getObject(), mid, ##args); \
 }                                                                   \
+o->getEnv()->ExceptionDescribe(); \
 o->getEnv()->ExceptionCheck(); \
 o->getEnv()->ExceptionClear(); \
 
@@ -35,6 +37,7 @@ jmethodID mid; \
 if (o->findMid(m, &mid)) { \
     name = o->getEnv()->CallObjectMethod(o->getObject(), mid, ##args); \
 } \
+o->getEnv()->ExceptionDescribe(); \
 o->getEnv()->ExceptionCheck(); \
 o->getEnv()->ExceptionClear(); \
 
@@ -47,6 +50,7 @@ if (o_##name) { \
     if (nullptr != ptr && 0 != capacity) { \
         name = AlBuffer::wrap(static_cast<uint8_t *>(ptr), static_cast<size_t>(capacity));\
     } \
+    o->getEnv()->ExceptionDescribe(); \
     o->getEnv()->ExceptionCheck(); \
     o->getEnv()->ExceptionClear(); \
 } \
@@ -63,6 +67,7 @@ if (o_##name) { \
         name.emplace_back(array[i]);\
     }\
     o->getEnv()->ReleaseLongArrayElements(jArray, array, 0);\
+    o->getEnv()->ExceptionDescribe(); \
     o->getEnv()->ExceptionCheck(); \
     o->getEnv()->ExceptionClear(); \
 }\

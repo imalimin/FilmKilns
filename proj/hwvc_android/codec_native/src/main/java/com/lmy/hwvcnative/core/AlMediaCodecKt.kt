@@ -15,12 +15,13 @@ import java.nio.ByteBuffer
 class AlMediaCodecKt(
     private val mime: String
 ) {
-    private var codec: MediaCodec = MediaCodec.createEncoderByType(mime)
+    private lateinit var codec: MediaCodec
     private var outputFormat: MediaFormat? = null
     private var iBuffer: ByteBuffer? = null
     private var oBuffer: ByteBuffer? = null
 
     /**
+     * Create encoder.
      * @return AlResult
      */
     fun configure(
@@ -32,8 +33,38 @@ class AlMediaCodecKt(
         fps: Int,
         flags: Int
     ): Int {
+        codec = MediaCodec.createEncoderByType(mime)
         val f = createVideoFormat(mime, w, h, bitrate, format, iFrameInterval, fps)
             ?: return AlResult.FAILED
+        try {
+            codec.configure(f, null, null, flags)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.i(TAG, "configure failed.")
+            return AlResult.FAILED
+        }
+        return AlResult.SUCCESS
+    }
+
+    /**
+     * Create decoder
+     */
+    fun configure(
+        width: Int,
+        height: Int,
+        duration: Long,
+        sps: ByteBuffer?,
+        pps: ByteBuffer?,
+        flags: Int
+    ): Int {
+        codec = MediaCodec.createDecoderByType(mime)
+        val f = createVideoDec(mime, width, height, duration, flags) ?: return AlResult.FAILED
+        if (null != sps && sps.capacity() > 0) {
+            f.setByteBuffer("csd-0", sps)
+        }
+        if (null != pps && pps.capacity() > 0) {
+            f.setByteBuffer("csd-1", pps)
+        }
         try {
             codec.configure(f, null, null, flags)
         } catch (e: Exception) {
@@ -204,6 +235,20 @@ class AlMediaCodecKt(
 
     companion object {
         private const val TAG = "AlMediaCodecKt"
+
+        fun createVideoDec(
+            mime: String,
+            width: Int,
+            height: Int,
+            duration: Long,
+            flags: Int): MediaFormat? {
+            return MediaFormat().apply {
+                setString(MediaFormat.KEY_MIME, mime)
+                setInteger(MediaFormat.KEY_WIDTH, width)
+                setInteger(MediaFormat.KEY_HEIGHT, height)
+                setLong(MediaFormat.KEY_DURATION, duration)
+            }
+        }
 
         /**
          * MediaCodec兼容性问题：

@@ -8,6 +8,7 @@
 #include "AlPicFrameDecoder.h"
 #include "AlLogcat.h"
 #include "HwVideoFrame.h"
+#include "platform/android/core/AlFFAndroidDec.h"
 
 #define TAG "AlPicFrameDecoder"
 
@@ -50,8 +51,8 @@ AlPicFrameDecoder::~AlPicFrameDecoder() {
 }
 
 bool AlPicFrameDecoder::prepare(string path) {
-    this->path = path;
     AlFFUtils::init();
+    this->path = path;
     pFormatCtx = avformat_alloc_context();
     //打开输入视频文件
     if (avformat_open_input(&pFormatCtx, path.c_str(), NULL, NULL) != 0) {
@@ -70,8 +71,12 @@ bool AlPicFrameDecoder::prepare(string path) {
         AlLogE(TAG, "failed. Couldn't find stream information.");
         return false;
     }
-//    vCtx = pFormatCtx->streams[vTrack]->codec;
-    auto *codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
+    AVCodec *codec = nullptr;
+    if (AV_CODEC_ID_H264 == pFormatCtx->streams[vTrack]->codecpar->codec_id) {
+        codec = avcodec_find_decoder_by_name(AL_MEDIA_CODEC_DEC_NAME);
+    } else {
+        codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
+    }
     if (nullptr == codec) {
         AlLogE(TAG, "failed. Couldn't find codec.");
         return false;

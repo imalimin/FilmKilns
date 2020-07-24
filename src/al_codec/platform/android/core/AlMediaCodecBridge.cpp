@@ -15,6 +15,9 @@ const AlJNIObject::Method AlMediaCodecBridge::midInit = {
 const AlJNIObject::Method AlMediaCodecBridge::midConfigure = {
         "com/lmy/hwvcnative/core/AlMediaCodecKt",
         "configure", "(IIIIIII)I"};
+const AlJNIObject::Method AlMediaCodecBridge::midConfigureDec = {
+        "com/lmy/hwvcnative/core/AlMediaCodecKt",
+        "configure", "(IIJLjava/nio/ByteBuffer;Ljava/nio/ByteBuffer;I)I"};
 const AlJNIObject::Method AlMediaCodecBridge::midStart = {
         "com/lmy/hwvcnative/core/AlMediaCodecKt",
         "start", "()I"};
@@ -112,6 +115,24 @@ HwResult AlMediaCodecBridge::configure(int w, int h,
     if (AlJNIEnv::getInstance().findObj(this, &obj)) {
         jint ret = -1;
         al_jni_call_int(obj, midConfigure, ret, w, h, bitrate, format, iFrameInterval, fps, flags);
+        return HwResult(ret);
+    }
+    AlLogE(TAG, "failed");
+    return Hw::FAILED;
+}
+
+HwResult AlMediaCodecBridge::configure(int w, int h, long duration,
+                                       AlBuffer *sps, AlBuffer *pps, int flags) {
+    AlLogI(TAG, "enter.");
+    JNIEnv *env = nullptr;
+    AlJNIObject *obj = nullptr;
+    if (AlJNIEnv::getInstance().findEnv(&env) && AlJNIEnv::getInstance().findObj(this, &obj)) {
+        jint ret = -1;
+        jobject buf0 = env->NewDirectByteBuffer(sps->data(), sps->size());
+        jobject buf1 = env->NewDirectByteBuffer(pps->data(), pps->size());
+        al_jni_call_int(obj, midConfigureDec, ret, w, h, duration, buf0, buf1, flags);
+        env->DeleteLocalRef(buf1);
+        env->DeleteLocalRef(buf0);
         return HwResult(ret);
     }
     AlLogE(TAG, "failed");
