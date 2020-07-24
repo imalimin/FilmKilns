@@ -5,8 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwVideoUtils.h"
+#include "HwVideoUtils.h"
+#include "AlFFUtils.h"
 #include "StringUtils.h"
+#include "AlFFUtils.h"
 #include "Logcat.h"
 
 HwVideoUtils::Context::Context() : Object() {
@@ -136,7 +138,7 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
         sb.append("],");
     }
     Logcat::i("hwvc", "HwVideoUtils::remuxCopy %s", sb.c_str());
-    av_register_all();
+    AlFFUtils::init();
     /**
      * Open input
      */
@@ -232,7 +234,7 @@ HwResult HwVideoUtils::remuxCopy(std::string input, std::string output,
 
 HwResult HwVideoUtils::remux(std::string input, std::string output, std::vector<int64_t> trimIns,
                              std::vector<int64_t> trimOuts) {
-    av_register_all();
+    AlFFUtils::init();
     /**
      * Open input
      */

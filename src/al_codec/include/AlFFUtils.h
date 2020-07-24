@@ -40,6 +40,8 @@ public:
 
     static int trackInfo(std::string &file);
 
+    static void showInfo();
+
 private:
 };
 

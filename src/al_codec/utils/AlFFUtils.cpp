@@ -107,3 +107,38 @@ int AlFFUtils::trackInfo(std::string &file) {
     avformat_free_context(ctx);
     return info;
 }
+
+static void showEncoderInfo() {
+    std::string msg;
+    AVInputFormat *aif = av_iformat_next(nullptr);
+    msg.append("ENCODERS: ");
+    while (aif != nullptr) {
+        msg.append(aif->name);
+        msg.append(", ");
+        aif = aif->next;
+    }
+    AlLogI(TAG, "%s", msg.c_str());
+}
+
+static void showDecoderInfo() {
+    std::string msg;
+    msg.append("DECODERS: ");
+    AVOutputFormat *aof = av_oformat_next(nullptr);
+    while (aof != nullptr) {
+        msg.append(aof->name);
+        msg.append(", ");
+        aof = aof->next;
+    }
+    AlLogI(TAG, "%s", msg.c_str());
+}
+
+void AlFFUtils::showInfo() {
+    init();
+    AlLogI(TAG, "FFmpeg ver %d.%d.%d",
+           LIBSWRESAMPLE_VERSION_MAJOR,
+           LIBSWRESAMPLE_VERSION_MINOR,
+           LIBSWRESAMPLE_VERSION_MICRO);
+    showEncoderInfo();
+    showDecoderInfo();
+
+}

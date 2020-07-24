@@ -5,7 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwFFMuxer.h"
+#include "HwFFMuxer.h"
+#include "AlFFUtils.h"
 #include "Logcat.h"
 
 #define TAG "HwFFMuxer"
@@ -39,7 +40,7 @@ void HwFFMuxer::release() {
 
 HwResult HwFFMuxer::configure(string filePath, string type) {
     HwAbsMuxer::configure(filePath, type);
-    av_register_all();
+    AlFFUtils::init();
     int ret = avformat_alloc_output_context2(&pFormatCtx, NULL, type.c_str(), filePath.c_str());
     if (ret < 0 || !pFormatCtx) {
         AlLogE(TAG, "failed %s", strerror(AVUNERROR(ret)));

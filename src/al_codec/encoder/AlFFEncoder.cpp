@@ -12,6 +12,7 @@
 #include "HwFFMuxer.h"
 #include "HwFFCodec.h"
 #include "TimeUtils.h"
+#include "AlFFUtils.h"
 
 #define TAG "AlFFEncoder"
 
@@ -44,7 +45,7 @@ bool AlFFEncoder::prepare(string path, int width, int height, HwSampleFormat aud
 }
 
 bool AlFFEncoder::initialize() {
-    av_register_all();
+    AlFFUtils::init();
     /**
      * Video codec
      */
