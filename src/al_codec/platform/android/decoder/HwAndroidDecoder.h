@@ -38,6 +38,8 @@ public:
 
     virtual void seek(int64_t us, AbsDecoder::kSeekMode mode = AbsDecoder::kSeekMode::BACKWARD) override;
 
+
+    virtual void setOutSampleFormat(HwSampleFormat format) override {};
     /**
      * @return 1: video, 2: audio, 0: failed
      */
@@ -48,6 +50,8 @@ public:
     virtual int64_t getAudioDuration() override;
 
     virtual int64_t getDuration() override;
+
+    virtual int64_t getAudioStartTime() override {};
 
     virtual void start() override;
 
