@@ -202,9 +202,7 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
                 if (hwPacket) {
                     delete hwPacket;
                 }
-                memcpy(keyFrameBuf->data(), &info.size, 4);
-                memcpy(keyFrameBuf->data() + 4, buf->data(), info.size);
-                hwPacket = HwPacket::wrap(keyFrameBuf->data(), info.size + 4,
+                hwPacket = HwPacket::wrap(buf->data(), info.size,
                                           info.presentationTimeUs,
                                           info.presentationTimeUs,
                                           info.flags & BUFFER_FLAG_KEY_FRAME ? AV_PKT_FLAG_KEY : 0);
