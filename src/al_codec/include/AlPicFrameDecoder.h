@@ -74,6 +74,8 @@ private:
 
     AVFrame *_doSwr(AVFrame *src);
 
+    void _setupBSF();
+
 public:
     AlPicFrameDecoder(const AlPicFrameDecoder &o) : AbsVideoDecoder() {};
 
@@ -85,6 +87,7 @@ private:
     AVCodecContext *vCtx = nullptr;
     /// For swr gif frame.
     SwsContext *sCtx = nullptr;
+    AVBSFContext *bsf = nullptr;
     int vTrack = -1;
     AVPacket *vPacket = nullptr;
     AVFrame *vFrame = nullptr;

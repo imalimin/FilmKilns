@@ -46,6 +46,9 @@ AlPicFrameDecoder::~AlPicFrameDecoder() {
         oHwFrame->recycle();
         oHwFrame = nullptr;
     }
+    if (bsf) {
+        av_bsf_free(&bsf);
+    }
     delete hwFrameAllocator;
     hwFrameAllocator = nullptr;
 }
@@ -73,7 +76,8 @@ bool AlPicFrameDecoder::prepare(string path) {
     }
     AVCodec *codec = nullptr;
     if (AV_CODEC_ID_H264 == pFormatCtx->streams[vTrack]->codecpar->codec_id) {
-        codec = avcodec_find_decoder_by_name(AL_MEDIA_CODEC_DEC_NAME);
+//        codec = avcodec_find_decoder_by_name(AL_MEDIA_CODEC_DEC_NAME);
+        codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
     } else {
         codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
     }
@@ -94,7 +98,7 @@ bool AlPicFrameDecoder::prepare(string path) {
         AlLogW(TAG, "This track`s pixel format(%d) is not yuv420p", format);
         _setupSwr();
     }
-
+//    _setupBSF();
     return true;
 }
 
@@ -287,4 +291,30 @@ AVFrame *AlPicFrameDecoder::_doSwr(AVFrame *src) {
         return vFinalFrame;
     }
     return src;
+}
+
+void AlPicFrameDecoder::_setupBSF() {
+    const AVBitStreamFilter *filter = av_bsf_get_by_name("h264_mp4toannexb");
+    if (nullptr == filter) {
+        AlLogE(TAG, "failed.");
+    }
+    int ret = av_bsf_alloc(filter, &bsf);
+    if (0 != ret) {
+        AlLogE(TAG, "failed.");
+    }
+    ret = avcodec_parameters_from_context(bsf->par_in, vCtx);
+    if (0 != ret) {
+        AlLogE(TAG, "failed.");
+    }
+    ret = av_bsf_init(bsf);
+    if (ret < 0) {
+        AlLogE(TAG, "failed.");
+    }
+    if (vCtx->extradata) {
+        av_free(vCtx->extradata);
+        vCtx->extradata = (uint8_t *) av_malloc((size_t) bsf->par_out->extradata_size);
+        vCtx->extradata_size = bsf->par_out->extradata_size;
+
+        memcpy(vCtx->extradata, bsf->par_out->extradata, vCtx->extradata_size);
+    }
 }

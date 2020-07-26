@@ -158,72 +158,73 @@ static int al_media_codec_decprocess(AVCodecContext *ctx, AVFrame *frame,
     return pkt->size;
 }
 
-static int al_media_codec_dec_frame(AVCodecContext *ctx, void *data, int *got, AVPacket *pkt) {
-    int ret = -1;
-    AVFrame *frame = static_cast<AVFrame *>(data);
-    _AlMediaCodecDecContext *s = (_AlMediaCodecDecContext *) ctx->priv_data;
-    if (pkt->size) {
-        AVPacket tmp = {0};
-
-        if (sizeof(AVPacket) > av_fifo_space(s->fifo)) {
-            ret = av_fifo_realloc2(s->fifo, sizeof(AVPacket) + av_fifo_size(s->fifo));
-            if (ret < 0) {
-                AlLogE(TAG, "failed.");
-                return ret;
-            }
-        }
-        ret = av_packet_ref(&tmp, pkt);
-        if (ret < 0) {
-            AlLogE(TAG, "failed.");
-            return ret;
-        }
-        av_fifo_generic_write(s->fifo, &tmp, sizeof(AVPacket), nullptr);
-    }
-    ret = 0;
-    while (!ret) {
-        if (s->pkt.size <= 0) {
-            AVPacket tmp = {0};
-            av_packet_unref(&s->pkt);
-
-            if (sizeof(AVPacket) > av_fifo_size(s->fifo)) {
-                if (pkt->size) {
-                    return pkt->size;
-                } else {
-                    return al_media_codec_decprocess(ctx, frame, &ret, pkt);
-                }
-            }
-
-            av_fifo_generic_read(s->fifo, &tmp, sizeof(AVPacket), nullptr);
-
-            if (!s->bsf) {
-                av_packet_move_ref(&s->pkt, &tmp);
-            } else {
-                if ((ret = av_bsf_send_packet(s->bsf, &tmp)) < 0)
-                    return ret;
-                ret = av_bsf_receive_packet(s->bsf, &s->pkt);
-                if (ret == AVERROR(EAGAIN)) {
-                    break;
-                }
-            }
-            if (ret < 0) {
-                return ret;
-            }
-        }
-
-        ret = al_media_codec_decprocess(ctx, frame, &ret, &s->pkt);
-        if (ret < 0)
-            return ret;
-
-        s->pkt.size -= ret;
-        s->pkt.data += ret;
-        break;
-    }
-
-    if (ret && !frame->buf[0]) {
-        AlLogE(TAG, "failed.");
-    }
-
-    return pkt->size;
+static int al_media_codec_dec_receive_frame(AVCodecContext *avctx, AVFrame *frame) {
+//    int ret = -1;
+//    AVFrame *frame = static_cast<AVFrame *>(data);
+//    _AlMediaCodecDecContext *s = (_AlMediaCodecDecContext *) ctx->priv_data;
+//    if (pkt->size) {
+//        AVPacket tmp = {0};
+//
+//        if (sizeof(AVPacket) > av_fifo_space(s->fifo)) {
+//            ret = av_fifo_realloc2(s->fifo, sizeof(AVPacket) + av_fifo_size(s->fifo));
+//            if (ret < 0) {
+//                AlLogE(TAG, "failed.");
+//                return ret;
+//            }
+//        }
+//        ret = av_packet_ref(&tmp, pkt);
+//        if (ret < 0) {
+//            AlLogE(TAG, "failed.");
+//            return ret;
+//        }
+//        av_fifo_generic_write(s->fifo, &tmp, sizeof(AVPacket), nullptr);
+//    }
+//    ret = 0;
+//    while (!ret) {
+//        if (s->pkt.size <= 0) {
+//            AVPacket tmp = {0};
+//            av_packet_unref(&s->pkt);
+//
+//            if (sizeof(AVPacket) > av_fifo_size(s->fifo)) {
+//                if (pkt->size) {
+//                    return pkt->size;
+//                } else {
+//                    return al_media_codec_decprocess(ctx, frame, &ret, pkt);
+//                }
+//            }
+//
+//            av_fifo_generic_read(s->fifo, &tmp, sizeof(AVPacket), nullptr);
+//
+//            if (!s->bsf) {
+//                av_packet_move_ref(&s->pkt, &tmp);
+//            } else {
+//                if ((ret = av_bsf_send_packet(s->bsf, &tmp)) < 0)
+//                    return ret;
+//                ret = av_bsf_receive_packet(s->bsf, &s->pkt);
+//                if (ret == AVERROR(EAGAIN)) {
+//                    break;
+//                }
+//            }
+//            if (ret < 0) {
+//                return ret;
+//            }
+//        }
+//
+//        ret = al_media_codec_decprocess(ctx, frame, &ret, &s->pkt);
+//        if (ret < 0)
+//            return ret;
+//
+//        s->pkt.size -= ret;
+//        s->pkt.data += ret;
+//        break;
+//    }
+//
+//    if (ret && !frame->buf[0]) {
+//        AlLogE(TAG, "failed.");
+//    }
+//
+//    return pkt->size;
+    return 0;
 }
 
 static void al_media_codec_dec_flush(AVCodecContext *ctx) {
@@ -238,19 +239,30 @@ static void al_media_codec_dec_flush(AVCodecContext *ctx) {
     av_fifo_reset(s->fifo);
 }
 
-static AVCodec al_media_codec_dec = {
+const AVOption options[] = {
+        {NULL},
+};
+
+const AVClass al_media_codec_dec_class = {
+        .class_name = AL_MEDIA_CODEC_DEC_NAME,
+        .item_name  = av_default_item_name,
+        .option     = options,
+        .version    = LIBAVUTIL_VERSION_INT,
+};
+
+AVCodec al_media_codec_dec = {
         .name           = AL_MEDIA_CODEC_DEC_NAME,
-        .long_name      = "H264 MediaCodec dec",
+        .long_name      = NULL, /// "H.264 MediaCodec Decoder"
         .type           = AVMEDIA_TYPE_VIDEO,
         .id             = AV_CODEC_ID_H264,
         .priv_data_size = sizeof(_AlMediaCodecDecContext),
+        .priv_class     = &al_media_codec_dec_class,
         .init           = al_media_codec_dec_init,
-        .decode         = al_media_codec_dec_frame,
+        .receive_frame  = al_media_codec_dec_receive_frame,
         .flush          = al_media_codec_dec_flush,
         .close          = al_media_codec_dec_close,
         .capabilities   = AV_CODEC_CAP_DELAY,
         .caps_internal  = FF_CODEC_CAP_INIT_THREADSAFE,
-//        .priv_class     = &hwH264DecClass,
 };
 
 void AlFFAndroidDec::reg() {
