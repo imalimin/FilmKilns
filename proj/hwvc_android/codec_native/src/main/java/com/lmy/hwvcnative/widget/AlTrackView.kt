@@ -26,7 +26,7 @@ class AlTrackView : ViewGroup {
     private val tMap = TreeMap<Int, AlMediaTrack>()
     private val vMap = TreeMap<Int, TextView>()
     private var originWidth = 0
-    private var mVideoColor = Color.LTGRAY
+    private var mVideoColor = Color.DKGRAY
     private var mAudioColor = Color.BLACK
 
     constructor(context: Context) : super(context) {

@@ -17,11 +17,14 @@ import com.lmy.samplenative.R
 import com.lmy.samplenative.adapter.AlTrackAdapter
 import kotlinx.android.synthetic.main.activity_video_v2.*
 import kotlinx.android.synthetic.main.activity_video_v2.surfaceView
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.collections.ArrayList
 
 class AlVideoV2Activity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_video_v2
     private val processor: AlVideoV2Processor? = AlVideoV2Processor()
+    private val fmt = SimpleDateFormat("mm:ss")
     private var mCurrentLayer = AlLayer.none()
     private var playing: Boolean = true
     private var duration: Long = -1
@@ -85,7 +88,8 @@ class AlVideoV2Activity : BaseActivity() {
         this.duration = duration
         trackView.setDuration(duration)
         trackView.setProgress(timeInUS / duration.toFloat())
-
+        timeView.text =
+            "${fmt.format(Date(timeInUS / 1000))}/${fmt.format(Date(duration / 1000))}"
     }
 
     private fun onTrackUpdate(track: AlMediaTrack) {

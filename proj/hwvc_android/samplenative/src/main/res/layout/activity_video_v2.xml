@@ -19,19 +19,27 @@
 
     </com.lmy.common.widget.SquareLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:background="@color/black_232"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/timeView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="00:00"
+            android:textColor="#ffffff" />
 
         <ImageView
             android:id="@+id/playBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:src="@android:drawable/ic_media_pause" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
