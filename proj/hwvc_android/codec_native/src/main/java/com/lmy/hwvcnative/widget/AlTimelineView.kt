@@ -92,34 +92,45 @@ class AlTimelineView : AlAbsView {
 
     fun getDuration(): Long = durationInUS
 
+    private fun keepZoomLevel(visibleWidth: Int): Int {
+        val tmp = (visibleWidth - textSize.x * textVec.size) / (textVec.size - 1).toFloat()
+        if (tmp < textSize.x + cursorRect.width() * 2 && tmp > cursorRect.width()) {
+            spaceSize = tmp
+            return textVec.size
+        }
+        return Int.MIN_VALUE
+    }
+
     private fun measureText(): Int {
         if (durationInUS <= 0) {
             textVec.clear()
             return 0
         }
-        val maxWidth = measuredWidth + textSize.x - paddingLeft - paddingRight
-        if (textVec.isNotEmpty()) {
-            val tmp = (maxWidth - textSize.x * textVec.size) / (textVec.size - 1).toFloat()
-            if (tmp < textSize.x + cursorRect.width() * 2 && tmp > cursorRect.width()) {
-                spaceSize = tmp
-                return textVec.size
-            }
-        }
-        val count = (maxWidth / (textSize.x + cursorRect.width())).toInt()
-        spaceSize = if (1 == count) {
-            (maxWidth - textSize.x).toFloat()
-        } else {
-            (maxWidth - textSize.x * count) / (count - 1).toFloat()
-        }
+        val visibleWidth = measuredWidth + textSize.x - paddingLeft - paddingRight
+        var count = (visibleWidth / (textSize.x + cursorRect.width())).toInt()
         if (textVec.size == count) {
             return count
         }
+
+        if (textVec.isNotEmpty()) {
+            if (Int.MIN_VALUE != keepZoomLevel(visibleWidth)) {
+                return textVec.size
+            }
+            count = if (count < textVec.size) {
+                textVec.size / 2
+            } else {
+                textVec.size * 2
+            }
+        }
+
         textVec.clear()
         if (count > 1) {
+            spaceSize = (visibleWidth - textSize.x * count) / (count - 1).toFloat()
             for (i in 0 until count) {
                 textVec.add(fmt.format(Date(i * durationInUS / (count - 1) / 1000)))
             }
         } else {
+            spaceSize = (visibleWidth - textSize.x).toFloat()
             textVec.add(fmt.format(Date(0)))
         }
         return count
