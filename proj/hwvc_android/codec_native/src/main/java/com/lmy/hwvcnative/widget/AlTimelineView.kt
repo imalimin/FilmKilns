@@ -10,6 +10,7 @@ import androidx.annotation.AttrRes
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 class AlTimelineView : AlAbsView {
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -20,6 +21,7 @@ class AlTimelineView : AlAbsView {
     private var cursorSize = 3f
     private var spaceSize = 0f
     private val textVec = ArrayList<String>()
+    private var mLastVisibleWidth = 0
 
     constructor(context: Context) : super(context) {
         onResolveAttribute(context, null, 0, 0)
@@ -93,6 +95,10 @@ class AlTimelineView : AlAbsView {
     fun getDuration(): Long = durationInUS
 
     private fun keepZoomLevel(visibleWidth: Int): Int {
+        if (abs(mLastVisibleWidth - visibleWidth) < 5) {
+            return textVec.size
+        }
+        mLastVisibleWidth = visibleWidth
         val tmp = (visibleWidth - textSize.x * textVec.size) / (textVec.size - 1).toFloat()
         if (tmp < textSize.x + cursorRect.width() * 2 && tmp > cursorRect.width()) {
             spaceSize = tmp
