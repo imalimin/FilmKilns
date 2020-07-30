@@ -140,5 +140,12 @@ void AlFFUtils::showInfo() {
            LIBSWRESAMPLE_VERSION_MICRO);
     showEncoderInfo();
     showDecoderInfo();
-
+    std::string msg;
+    msg.append("CODEC: ");
+    AVCodec *codec = nullptr;
+    while((codec = av_codec_next(codec))) {
+        msg.append(codec->name);
+        msg.append(", ");
+    }
+    AlLogI(TAG, "%s", msg.c_str());
 }
