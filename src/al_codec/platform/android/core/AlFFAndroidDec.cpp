@@ -23,18 +23,18 @@ extern "C" {
 
 #if defined(__AL_ENABLE_MEDIA_CODEC__)
 
-typedef struct _AlMediaCodecDecContext {
+typedef struct AlMediaCodecCtx {
     const AVClass *av_class;
     AlAndroidCodecDecCompat *ctx;
     AVBSFContext *bsf;
     AVPacket pkt;
     AVFifoBuffer *fifo;
     AVFrame *frame;
-} _AlMediaCodecDecContext;
+};
 
 static av_cold int al_media_codec_dec_close(AVCodecContext *ctx) {
     AlLogI(TAG, "");
-    _AlMediaCodecDecContext *s = (_AlMediaCodecDecContext *) ctx->priv_data;
+    AlMediaCodecCtx *s = (AlMediaCodecCtx *) ctx->priv_data;
     if (s && s->ctx) {
         delete s->ctx;
         s->ctx = nullptr;
@@ -54,7 +54,7 @@ static av_cold int al_media_codec_dec_init(AVCodecContext *ctx) {
     int ret = 0, sizeOfSPS = 0, sizeOfPPS = 0;
     uint8_t sps[1024] = {0};
     uint8_t pps[1024] = {0};
-    _AlMediaCodecDecContext *s = (_AlMediaCodecDecContext *) ctx->priv_data;
+    AlMediaCodecCtx *s = (AlMediaCodecCtx *) ctx->priv_data;
     const AVBitStreamFilter *bsf = av_bsf_get_by_name("h264_mp4toannexb");
     if (nullptr == bsf) {
         al_media_codec_dec_close(ctx);
@@ -131,7 +131,7 @@ static int al_media_codec_decprocess(AVCodecContext *ctx, AVFrame *frame,
     int ret = -1;
     uint8_t *buf = nullptr;
     int size = 0;
-    _AlMediaCodecDecContext *s = (_AlMediaCodecDecContext *) ctx->priv_data;
+    AlMediaCodecCtx *s = (AlMediaCodecCtx *) ctx->priv_data;
 
     HwAbsMediaFrame *dst = nullptr;
     HwPacket *src = HwPacket::wrap(pkt->data, pkt->size, pkt->pts, pkt->dts, pkt->flags);
@@ -158,10 +158,11 @@ static int al_media_codec_decprocess(AVCodecContext *ctx, AVFrame *frame,
     return pkt->size;
 }
 
-static int al_media_codec_dec_receive_frame(AVCodecContext *avctx, AVFrame *frame) {
+static int al_media_codec_dec_frame(AVCodecContext *ctx, void *data,
+                                    int *got_frame, AVPacket *pkt) {
 //    int ret = -1;
 //    AVFrame *frame = static_cast<AVFrame *>(data);
-//    _AlMediaCodecDecContext *s = (_AlMediaCodecDecContext *) ctx->priv_data;
+//    _AlMediaCodecCtx *s = (_AlMediaCodecCtx *) ctx->priv_data;
 //    if (pkt->size) {
 //        AVPacket tmp = {0};
 //
@@ -229,7 +230,7 @@ static int al_media_codec_dec_receive_frame(AVCodecContext *avctx, AVFrame *fram
 
 static void al_media_codec_dec_flush(AVCodecContext *ctx) {
     AlLogI(TAG, "");
-    _AlMediaCodecDecContext *s = (_AlMediaCodecDecContext *) ctx->priv_data;
+    AlMediaCodecCtx *s = (AlMediaCodecCtx *) ctx->priv_data;
     s->ctx->flush();
     while (av_fifo_size(s->fifo)) {
         AVPacket pkt;
@@ -252,17 +253,16 @@ const AVClass al_media_codec_dec_class = {
 
 AVCodec al_media_codec_dec = {
         .name           = AL_MEDIA_CODEC_DEC_NAME,
-        .long_name      = NULL, /// "H.264 MediaCodec Decoder"
+        .long_name      = "H.264 Al MediaCodec decoder", /// "H.264 MediaCodec Decoder"
         .type           = AVMEDIA_TYPE_VIDEO,
         .id             = AV_CODEC_ID_H264,
-        .priv_data_size = sizeof(_AlMediaCodecDecContext),
-        .priv_class     = &al_media_codec_dec_class,
+        .priv_data_size = sizeof(AlMediaCodecCtx),
         .init           = al_media_codec_dec_init,
-        .receive_frame  = al_media_codec_dec_receive_frame,
+        .decode         = al_media_codec_dec_frame,
         .flush          = al_media_codec_dec_flush,
         .close          = al_media_codec_dec_close,
         .capabilities   = AV_CODEC_CAP_DELAY,
-        .caps_internal  = FF_CODEC_CAP_INIT_THREADSAFE,
+        .caps_internal  = FF_CODEC_CAP_SETS_PKT_DTS,
 };
 
 void AlFFAndroidDec::reg() {

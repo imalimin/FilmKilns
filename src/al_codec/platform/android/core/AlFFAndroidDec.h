@@ -8,7 +8,7 @@
 #ifndef HWVC_ANDROID_ALFFANDROIDDEC_H
 #define HWVC_ANDROID_ALFFANDROIDDEC_H
 
-#define AL_MEDIA_CODEC_DEC_NAME "al_h264_media_codec_dec"
+#define AL_MEDIA_CODEC_DEC_NAME "al_h264_mediacodec"
 
 #if defined(__AL_ENABLE_MEDIA_CODEC__)
 
