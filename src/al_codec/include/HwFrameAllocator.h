@@ -11,9 +11,9 @@
 #include "Object.h"
 #include "HwSourcesAllocator.h"
 #include "HwAbsMediaFrame.h"
-#include <set>
+#include "SimpleLock.h"
 #include "Logcat.h"
-#include <SimpleLock.h>
+#include <set>
 
 using namespace std;
 
@@ -21,6 +21,7 @@ using namespace std;
 extern "C" {
 #endif
 #include "libavformat/avformat.h"
+#include "libavutil/imgutils.h"
 #ifdef __cplusplus
 }
 #endif

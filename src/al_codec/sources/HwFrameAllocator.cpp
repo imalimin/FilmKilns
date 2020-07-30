@@ -5,10 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwFrameAllocator.h"
-#include "../include/HwVideoFrame.h"
-#include "../include/HwAudioFrame.h"
-#include <sstream>
+#include "HwFrameAllocator.h"
+#include "HwVideoFrame.h"
+#include "HwAudioFrame.h"
 
 HwFrameAllocator::HwFrameAllocator() : HwSourcesAllocator() {
 
@@ -131,59 +130,9 @@ HwAbsMediaFrame *HwFrameAllocator::refVideo(AVFrame *avFrame) {
     frame->setFormat(HwAbsMediaFrame::convertToVideoFrameFormat(
             static_cast<AVPixelFormat>(avFrame->format)));
     frame->setPts(avFrame->pts);
-    int pixelCount = avFrame->width * avFrame->height;
-    switch (frame->getFormat()) {
-        case HwFrameFormat::HW_IMAGE_YV12: {
-            if (avFrame->linesize[0] == avFrame->width) {
-                memcpy(frame->data(), avFrame->data[0], pixelCount);
-                memcpy(frame->data() + pixelCount, avFrame->data[1],
-                       pixelCount / 4);
-                memcpy(frame->data() + pixelCount + pixelCount / 4,
-                       avFrame->data[2],
-                       pixelCount / 4);
-            } else {
-                int position = 0;
-                for (int i = 0; i < avFrame->height; ++i) {
-                    memcpy(frame->data() + position,
-                           avFrame->data[0] + i * avFrame->linesize[0], avFrame->width);
-                    position += avFrame->width;
-                }
-                for (int i = 0; i < avFrame->height / 2; ++i) {
-                    memcpy(frame->data() + position,
-                           avFrame->data[1] + i * avFrame->linesize[1], avFrame->width / 2);
-                    position += avFrame->width / 2;
-                }
-                for (int i = 0; i < avFrame->height / 2; ++i) {
-                    memcpy(frame->data() + position,
-                           avFrame->data[2] + i * avFrame->linesize[2], avFrame->width / 2);
-                    position += avFrame->width / 2;
-                }
-            }
-            break;
-        }
-        case HwFrameFormat::HW_IMAGE_NV12: {
-            memcpy(frame->data(), avFrame->data[0], pixelCount);
-            int uvSize = pixelCount / 4;
-            for (int i = 0; i < uvSize; ++i) {
-                *(frame->data() + pixelCount + i) = avFrame->data[1][i * 2];
-                *(frame->data() + pixelCount + uvSize + i) = avFrame->data[1][
-                        i * 2 + 1];
-            }
-            break;
-        }
-        case HwFrameFormat::HW_IMAGE_RGBA: {
-            if (avFrame->linesize[0] == avFrame->width * 4) {
-                memcpy(frame->data(), avFrame->data[0], avFrame->width * avFrame->height * 4);
-            } else {
-                for (int i = 0; i < avFrame->height; ++i) {
-                    memcpy(frame->data() + avFrame->width * 4 * i,
-                           avFrame->data[0] + avFrame->linesize[0] * i, avFrame->width * 4);
-                }
-            }
-        }
-        default:
-            copyInfo(frame, avFrame);
-    }
+    av_image_copy_to_buffer(frame->data(), frame->size(), (const uint8_t *const *) avFrame->data,
+                            avFrame->linesize, (AVPixelFormat) avFrame->format,
+                            avFrame->width, avFrame->height, 1);
     refLock.lock();
     refQueue.insert(frame);
     refLock.unlock();
