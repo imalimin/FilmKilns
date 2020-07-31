@@ -18,7 +18,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="start"
-            android:text="ffmpeg -i /sdcard/The_World_Today.mp4 -ss 00:00:00 -t 00:00:10 /sdcard/003.mp4" />
+            android:hint="cmd"
+            android:text="ffmpeg -i /sdcard/The_World_Today.mp4 -ss 00:00:00 -t 00:00:10 /sdcard/003.mp4"
+            android:textColor="@color/grey_800" />
 
         <TextView
             android:id="@+id/logView"
