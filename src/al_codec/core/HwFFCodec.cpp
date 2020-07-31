@@ -5,9 +5,10 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/HwFFCodec.h"
-#include "../include/HwAudioFrame.h"
-#include "../include/HwVideoFrame.h"
+#include "HwFFCodec.h"
+#include "HwAudioFrame.h"
+#include "HwVideoFrame.h"
+#include "AlFFUtils.h"
 #include "BinaryUtils.h"
 #include "Logcat.h"
 
@@ -53,6 +54,7 @@ HwResult HwFFCodec::configure(AlBundle &format) {
     if (getCodecID() == AlCodec::kID::NONE) {
         return Hw::FAILED;
     }
+    AlFFUtils::init();
     AVCodecID id = static_cast<AVCodecID>(getCodecID());
     AVCodec *pCodec = avcodec_find_encoder(id);
     if (!pCodec) {
@@ -195,7 +197,7 @@ bool HwFFCodec::configureVideo(AVCodecID id, AVCodec *codec) {
     int ret = avcodec_open2(ctx, codec, &param);
     av_dict_free(&param);
     if (ret < 0) {
-        AlLogE(TAG, "could not open %d codec!", ctx->codec_id);
+        AlLogE(TAG, "could not open %d codec, ret=%s!", ctx->codec_id, av_err2str(ret));
         release();
         return false;
     }
