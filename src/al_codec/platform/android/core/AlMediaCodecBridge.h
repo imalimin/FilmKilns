@@ -12,7 +12,7 @@
 #include "AlCodec.h"
 #include "AlBuffer.h"
 #include "HwWindow.h"
-#include "platform/android/AlJNIEnv.h"
+#include "platform/android/AlJavaRuntime.h"
 #include <android/native_window_jni.h>
 
 al_class AlMediaCodecBridge al_extend Object {

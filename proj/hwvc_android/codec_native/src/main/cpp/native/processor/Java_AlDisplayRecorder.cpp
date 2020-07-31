@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "platform/android/AlJNIEnv.h"
+#include "platform/android/AlJavaRuntime.h"
 #include "platform/android/AlJNIObject.h"
 #include "AlDisplayRecorder.h"
 #include "HwAndroidWindow.h"
@@ -31,13 +31,13 @@ static AlDisplayRecorder *getHandler(jlong handler) {
 static void bindListener(AlDisplayRecorder *p) {
     p->setRecordListener([p](int64_t timeInUs) {
         AlJNIObject *obj = nullptr;
-        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+        if (AlJavaRuntime::getInstance().findObj(p, &obj)) {
             al_jni_call_void(obj, midOnRecordProgressDesc, timeInUs);
         }
     });
     p->setOnNativeReadyListener([p](int32_t oesTex) {
         AlJNIObject *obj = nullptr;
-        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+        if (AlJavaRuntime::getInstance().findObj(p, &obj)) {
             al_jni_call_void(obj, midOnNativePrepared, oesTex);
         }
     });
@@ -49,8 +49,8 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_crea
     auto *p = new AlDisplayRecorder();
     auto obj = env->NewGlobalRef(thiz);
     p->post([env, p, obj] {
-        AlJNIEnv::getInstance().attachThread();
-        AlJNIEnv::getInstance().attach(p, obj, false);
+        AlJavaRuntime::getInstance().attachThread();
+        AlJavaRuntime::getInstance().attach(p, obj, false);
     });
     bindListener(p);
     return reinterpret_cast<jlong>(p);
@@ -61,7 +61,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_postE
         auto *p = getHandler(handler);
         p->runOnCameraContext([p, what]() {
             AlJNIObject *obj = nullptr;
-            if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+            if (AlJavaRuntime::getInstance().findObj(p, &obj)) {
                 al_jni_call_void(obj, midOnNativeMessage, what, 0);
             }
         });
@@ -114,8 +114,8 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlDisplayRecorder_relea
         auto *p = getHandler(handler);
         p->release(AlRunnable::runEmptyArgs([p]() {
             AlLogI("Java_AlDisplayRecorder", "release");
-            AlJNIEnv::getInstance().detach(p);
-            AlJNIEnv::getInstance().detachThread();
+            AlJavaRuntime::getInstance().detach(p);
+            AlJavaRuntime::getInstance().detachThread();
         }));
         delete p;
     }

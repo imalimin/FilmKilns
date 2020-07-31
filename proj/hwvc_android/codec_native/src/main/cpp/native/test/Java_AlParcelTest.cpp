@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "platform/android/AlJNIEnv.h"
+#include "platform/android/AlJavaRuntime.h"
 #include "platform/android/AlJNIObject.h"
 #include "AlParcelable.h"
 

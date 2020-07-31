@@ -4,7 +4,7 @@
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
 */
-#include "platform/android/AlJNIEnv.h"
+#include "platform/android/AlJavaRuntime.h"
 #include "platform/android/AlJNIObject.h"
 #include "AlCameraRecorder.h"
 #include "HwAndroidWindow.h"
@@ -30,13 +30,13 @@ static AlCameraRecorder *getHandler(jlong handler) {
 static void bindListener(AlCameraRecorder *p) {
     p->setRecordListener([p](int64_t timeInUs) {
         AlJNIObject *obj = nullptr;
-        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+        if (AlJavaRuntime::getInstance().findObj(p, &obj)) {
             al_jni_call_void(obj, vRecordProgressDesc, timeInUs);
         }
     });
     p->setOnNativeReadyListener([p](int32_t oesTex) {
         AlJNIObject *obj = nullptr;
-        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+        if (AlJavaRuntime::getInstance().findObj(p, &obj)) {
             al_jni_call_void(obj, midOnNativePrepared, oesTex);
         }
     });
@@ -48,8 +48,8 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_creat
     AlCameraRecorder *p = new AlCameraRecorder();
     auto obj = env->NewGlobalRef(thiz);
     p->post([env, p, obj] {
-        AlJNIEnv::getInstance().attachThread();
-        AlJNIEnv::getInstance().attach(p, obj, false);
+        AlJavaRuntime::getInstance().attachThread();
+        AlJavaRuntime::getInstance().attach(p, obj, false);
     });
     bindListener(p);
     return reinterpret_cast<jlong>(p);
@@ -61,7 +61,7 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_postEv
         auto *p = getHandler(handler);
         p->runOnCameraContext([p, what]() {
             AlJNIObject *obj = nullptr;
-            if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+            if (AlJavaRuntime::getInstance().findObj(p, &obj)) {
                 al_jni_call_void(obj, cOnHandleMessage, what, 0);
             }
         });
@@ -114,8 +114,8 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlCameraRecorder_releas
         AlCameraRecorder *p = getHandler(handler);
         p->release(AlRunnable::runEmptyArgs([p]() {
             AlLogI("Java_AlCameraRecorder", "release");
-            AlJNIEnv::getInstance().detach(p);
-            AlJNIEnv::getInstance().detachThread();
+            AlJavaRuntime::getInstance().detach(p);
+            AlJavaRuntime::getInstance().detachThread();
         }));
         delete p;
     }

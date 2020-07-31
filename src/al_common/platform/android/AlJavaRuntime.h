@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef HWVC_ANDROID_ALJNIENV_H
-#define HWVC_ANDROID_ALJNIENV_H
+#ifndef HWVC_ANDROID_ALJAVARUNTIME_H
+#define HWVC_ANDROID_ALJAVARUNTIME_H
 
 #include "Object.h"
 #include "AlJNIObjCollection.h"
@@ -43,14 +43,14 @@
 ///         D: double
 /// Lpackage;: Objetc
 ///         V: void
-al_class AlJNIEnv al_extend Object {
+al_class AlJavaRuntime al_extend Object {
 public:
-    static AlJNIEnv &getInstance();
+    static AlJavaRuntime &getInstance();
 
 public:
-    AlJNIEnv();
+    AlJavaRuntime();
 
-    ~AlJNIEnv();
+    ~AlJavaRuntime();
 
     void attach(JavaVM *vm);
 
@@ -74,7 +74,7 @@ private:
     int64_t _currentId();
 
 private:
-    static AlJNIEnv *instance;
+    static AlJavaRuntime *instance;
     static const int VERSION;
     JavaVM *jvm = nullptr;
     std::map<string, jclass> mClassMap;
@@ -86,4 +86,4 @@ private:
 };
 
 
-#endif //HWVC_ANDROID_ALJNIENV_H
+#endif //HWVC_ANDROID_ALJAVARUNTIME_H

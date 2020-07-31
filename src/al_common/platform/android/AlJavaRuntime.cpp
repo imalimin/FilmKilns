@@ -5,33 +5,33 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "AlJNIEnv.h"
+#include "AlJavaRuntime.h"
 #include "Thread.h"
 #include <cassert>
 
-#define TAG "AlJNIEnv"
+#define TAG "AlJavaRuntime"
 
-AlJNIEnv *AlJNIEnv::instance = new AlJNIEnv();
-const int AlJNIEnv::VERSION = JNI_VERSION_1_6;
+AlJavaRuntime *AlJavaRuntime::instance = new AlJavaRuntime();
+const int AlJavaRuntime::VERSION = JNI_VERSION_1_6;
 
-AlJNIEnv &AlJNIEnv::getInstance() {
+AlJavaRuntime &AlJavaRuntime::getInstance() {
     return *instance;
 }
 
-AlJNIEnv::AlJNIEnv() : Object() {
+AlJavaRuntime::AlJavaRuntime() : Object() {
     collection = new AlJNIObjCollection();
 }
 
-AlJNIEnv::~AlJNIEnv() {
+AlJavaRuntime::~AlJavaRuntime() {
     delete collection;
     collection = nullptr;
 }
 
-void AlJNIEnv::attach(JavaVM *vm) {
+void AlJavaRuntime::attach(JavaVM *vm) {
     this->jvm = vm;
 }
 
-void AlJNIEnv::detach() {
+void AlJavaRuntime::detach() {
     JNIEnv *env = nullptr;
     jvm->GetEnv(reinterpret_cast<void **>(&env), VERSION);
     this->jvm = nullptr;
@@ -46,7 +46,7 @@ void AlJNIEnv::detach() {
     mClassMap.clear();
 }
 
-bool AlJNIEnv::attachThread() {
+bool AlJavaRuntime::attachThread() {
     if (!jvm) {
         AlLogE(TAG, "failed. Please call attach before.");
         return false;
@@ -72,7 +72,7 @@ bool AlJNIEnv::attachThread() {
     return true;
 }
 
-void AlJNIEnv::detachThread() {
+void AlJavaRuntime::detachThread() {
     if (!jvm) {
         AlLogE(TAG, "failed. Please call attach before.");
         return;
@@ -95,7 +95,7 @@ void AlJNIEnv::detachThread() {
 
 }
 
-jclass AlJNIEnv::registerAnClass(const char *name) {
+jclass AlJavaRuntime::registerAnClass(const char *name) {
     auto itr = mClassMap.find(name);
     if (mClassMap.end() != itr) {
         AlLogW(TAG, "Repeat register.");
@@ -116,7 +116,7 @@ jclass AlJNIEnv::registerAnClass(const char *name) {
     return cls;
 }
 
-bool AlJNIEnv::findEnv(JNIEnv **env) {
+bool AlJavaRuntime::findEnv(JNIEnv **env) {
     int64_t id = _currentId();
     assert(0 != id);
     auto itr = mEnvMap.find(id);
@@ -128,7 +128,7 @@ bool AlJNIEnv::findEnv(JNIEnv **env) {
     return true;
 }
 
-bool AlJNIEnv::attach(Object *o, jobject j, bool reqGlobalRef) {
+bool AlJavaRuntime::attach(Object *o, jobject j, bool reqGlobalRef) {
     if (nullptr == o) {
         AlLogI(TAG, "failed");
         return false;
@@ -143,7 +143,7 @@ bool AlJNIEnv::attach(Object *o, jobject j, bool reqGlobalRef) {
     return true;
 }
 
-void AlJNIEnv::detach(Object *o) {
+void AlJavaRuntime::detach(Object *o) {
     std::lock_guard<std::mutex> guard(atxObjMtx);
     JNIEnv *env = nullptr;
     if (!findEnv(&env)) {
@@ -153,7 +153,7 @@ void AlJNIEnv::detach(Object *o) {
     collection->detach(env, o);
 }
 
-bool AlJNIEnv::findObj(Object *o, AlJNIObject **obj) {
+bool AlJavaRuntime::findObj(Object *o, AlJNIObject **obj) {
     if (nullptr == o || nullptr == obj) {
         AlLogI(TAG, "failed");
         return false;
@@ -162,6 +162,6 @@ bool AlJNIEnv::findObj(Object *o, AlJNIObject **obj) {
     return collection->findObj(o, obj);
 }
 
-int64_t AlJNIEnv::_currentId() {
+int64_t AlJavaRuntime::_currentId() {
     return Thread::currentThreadId();
 }

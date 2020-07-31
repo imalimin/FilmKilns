@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "platform/android/AlJNIEnv.h"
+#include "platform/android/AlJavaRuntime.h"
 #include "platform/android/AlJNIObject.h"
 #include "AlVideoV2Processor.h"
 #include "HwAndroidWindow.h"
@@ -29,14 +29,14 @@ static AlVideoV2Processor *getHandler(jlong handler) {
 static void bindListener(AlVideoV2Processor *p) {
     p->setPlayProgressListener([p](int64_t timeInUS, int64_t duration) {
         AlJNIObject *obj = nullptr;
-        if (AlJNIEnv::getInstance().findObj(p, &obj)) {
+        if (AlJavaRuntime::getInstance().findObj(p, &obj)) {
             al_jni_call_void(obj, midOnNativeMessage, 0, 0, timeInUS, duration);
         }
     });
     p->setOnTrackUpdateListener([p](std::shared_ptr<AlMediaTrack> track) {
         AlJNIObject *obj = nullptr;
         JNIEnv *env = nullptr;
-        if (AlJNIEnv::getInstance().findObj(p, &obj) && AlJNIEnv::getInstance().findEnv(&env)) {
+        if (AlJavaRuntime::getInstance().findObj(p, &obj) && AlJavaRuntime::getInstance().findEnv(&env)) {
             auto buf = track->data();
             if (buf->size() <= 0) {
                 return;
@@ -56,8 +56,8 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_cre
     auto *p = new AlVideoV2Processor();
     auto obj = env->NewGlobalRef(thiz);
     p->post([env, p, obj] {
-        AlJNIEnv::getInstance().attachThread();
-        AlJNIEnv::getInstance().attach(p, obj, false);
+        AlJavaRuntime::getInstance().attachThread();
+        AlJavaRuntime::getInstance().attach(p, obj, false);
     });
     bindListener(p);
     return reinterpret_cast<jlong>(p);
@@ -69,8 +69,8 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_rele
         AlVideoV2Processor *p = getHandler(handler);
         p->release(AlRunnable::runEmptyArgs([p]() {
             AlLogI("Java_AlVideoV2Processor", "release");
-            AlJNIEnv::getInstance().detach(p);
-            AlJNIEnv::getInstance().detachThread();
+            AlJavaRuntime::getInstance().detach(p);
+            AlJavaRuntime::getInstance().detachThread();
         }));
         delete p;
     }
