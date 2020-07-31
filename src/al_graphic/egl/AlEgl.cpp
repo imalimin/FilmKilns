@@ -121,7 +121,7 @@ AlEgl::~AlEgl() {
         delete this->win;
         this->win = nullptr;
     }
-    AlLogI(TAG, "%s", alias.c_str());
+    AlLogI(TAG, "alias %s", alias.c_str());
 }
 
 
@@ -175,7 +175,7 @@ void AlEgl::init(EGLContext context, HwWindow *win, const int *config) {
 #endif
     //If interval is set to a value of 0, buffer swaps are not synchronized to a video frame, and the swap happens as soon as the render is complete.
 //    eglSwapInterval(eglDisplay, 0);
-    AlLogI(TAG, "%s", alias.c_str());
+    AlLogI(TAG, "alias %s", alias.c_str());
 }
 
 EGLDisplay AlEgl::createDisplay(EGLNativeDisplayType display_id) {

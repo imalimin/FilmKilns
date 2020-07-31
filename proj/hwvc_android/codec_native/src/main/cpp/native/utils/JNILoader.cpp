@@ -5,24 +5,36 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include <include/HwResult.h>
 #include "platform/android/AlJavaNativeHelper.h"
 #include "platform/android/AlJavaRuntime.h"
 #include "AlFFUtils.h"
+
+static std::vector<std::string> JAVA_CLASS_SET =
+        {"com/lmy/hwvcnative/core/AlMediaCodec",
+         "com/lmy/hwvcnative/core/AlMediaCodecKt"};
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+JNIEXPORT jint JNICALL Java_com_lmy_hwvcnative_tools_AlJavaRuntime_init
+        (JNIEnv *env, jobject thiz) {
+    JavaVM *vm = nullptr;
+    env->GetJavaVM(&vm);
+    if (nullptr == vm) {
+        return Hw::FAILED.code;
+    }
     AlJavaRuntime::getInstance().attach(vm);
-    AlJavaRuntime::getInstance().registerAnClass("com/lmy/hwvcnative/core/AlMediaCodec");
-    AlJavaRuntime::getInstance().registerAnClass("com/lmy/hwvcnative/core/AlMediaCodecKt");
     AlJavaNativeHelper::getInstance()->attach(vm);
-    AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodec");
-    AlJavaNativeHelper::getInstance()->registerAnClass("com/lmy/hwvcnative/core/AlMediaCodecKt");
+    for (auto cls : JAVA_CLASS_SET) {
+        AlJavaRuntime::getInstance().registerAnClass(cls.c_str());
+        AlJavaNativeHelper::getInstance()->registerAnClass(cls.c_str());
+
+    }
     AlFFUtils::attachJvm(vm);
     AlLogI("JNILoader", "AndroidApi: %d", AlJavaNativeHelper::getAndroidApi());
-    return JNI_VERSION_1_6;
+    return Hw::OK.code;
 }
 
 JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {

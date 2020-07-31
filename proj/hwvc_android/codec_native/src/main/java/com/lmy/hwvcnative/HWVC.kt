@@ -1,6 +1,7 @@
 package com.lmy.hwvcnative
 
 import android.content.Context
+import com.lmy.hwvcnative.tools.AlJavaRuntime
 
 class HWVC {
     companion object {
@@ -14,6 +15,7 @@ class HWVC {
             System.loadLibrary("al_codec")
             System.loadLibrary("al_image")
             System.loadLibrary("al_media")
+            AlJavaRuntime.init()
         }
     }
 }
