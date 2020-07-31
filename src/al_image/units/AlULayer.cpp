@@ -14,7 +14,6 @@
 #include "AlOperateCrop.h"
 #include "AlRectLoc.h"
 #include "AlMath.h"
-#include "HwYV122RGBAFilter.h"
 #include "HwFBObject.h"
 #include "core/file/AlFileImporter.h"
 #include "core/file/AlFileExporter.h"
@@ -54,6 +53,20 @@ bool AlULayer::onDestroy(AlMessage *msg) {
     mLayerManager.clear();
     delete fbo;
     fbo = nullptr;
+
+    if (yv12Filter) {
+        delete yv12Filter;
+        yv12Filter = nullptr;
+    }
+    if (v) {
+        AlTexManager::instance()->recycle(&v);
+    }
+    if (u) {
+        AlTexManager::instance()->recycle(&u);
+    }
+    if (y) {
+        AlTexManager::instance()->recycle(&y);
+    }
     return true;
 }
 
@@ -395,9 +408,19 @@ bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
         return true;
     }
 
-    HwAbsTexture *y = AlTexManager::instance()->alloc();
-    HwAbsTexture *u = AlTexManager::instance()->alloc();
-    HwAbsTexture *v = AlTexManager::instance()->alloc();
+    if (nullptr == y) {
+        y = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == u) {
+        u = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == v) {
+        v = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == yv12Filter) {
+        yv12Filter = new HwYV122RGBAFilter();
+        yv12Filter->prepare();
+    }
 
     int len = size->width * size->height;
     AlBuffer *buf = AlBuffer::wrap(frame->data(), len);
@@ -411,14 +434,7 @@ bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
     v->update(buf, size->width / 2, size->height / 2, GL_LUMINANCE);
 
     glViewport(0, 0, size->width, size->height);
-    HwYV122RGBAFilter *yuvFilter = new HwYV122RGBAFilter();
-    yuvFilter->prepare();
-    yuvFilter->draw(y, u, v, layer->getTexture());
-    delete yuvFilter;
-
-    AlTexManager::instance()->recycle(&v);
-    AlTexManager::instance()->recycle(&u);
-    AlTexManager::instance()->recycle(&y);
+    yv12Filter->draw(y, u, v, layer->getTexture());
     return true;
 }
 

@@ -12,6 +12,7 @@
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
 #include "Al2DCoordinate.h"
+#include "HwYV122RGBAFilter.h"
 #include <deque>
 
 al_def_unit(AlULayer, Unit) {
@@ -232,6 +233,9 @@ private:
     ///For import cache.
     std::deque<AlImageLayerModel *> mImportQueue;
     HwAbsFBObject *fbo = nullptr;
+
+    HwAbsTexture *y = nullptr, *u = nullptr, *v = nullptr;
+    HwYV122RGBAFilter *yv12Filter = nullptr;
 };
 
 
