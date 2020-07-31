@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
 import android.view.SurfaceHolder
+import android.widget.Toast
 import com.lmy.hwvcnative.entity.AlAudioParams
 import com.lmy.hwvcnative.entity.AlVideoParams
 import com.lmy.hwvcnative.processor.AlCameraRecorder
@@ -61,9 +62,14 @@ class CameraActivity : BaseActivity() {
             val task = object : AsyncTask<Void, Void, Void?>() {
                 override fun onPostExecute(result: Void?) {
                     super.onPostExecute(result)
-                    startActivity(Intent(this@CameraActivity, VideoActivity::class.java).apply {
-                        data = Uri.fromFile(File(path))
-                    })
+                    val testFile = File(path)
+                    if (!testFile.exists()) {
+                        Toast.makeText(this@CameraActivity, "File NOT exist.", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                    val intent = Intent(this@CameraActivity, AlVideoV2Activity::class.java)
+                    intent.data = Uri.fromFile(testFile)
+                    startActivity(intent)
                     finish()
                 }
 
