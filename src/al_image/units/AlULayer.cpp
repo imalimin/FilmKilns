@@ -418,7 +418,7 @@ bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
         v = AlTexManager::instance()->alloc();
     }
     if (nullptr == yv12Filter) {
-        yv12Filter = new HwYV122RGBAFilter();
+        yv12Filter = new AlNV12ToRGBAFilter();
         yv12Filter->prepare();
     }
 
@@ -427,14 +427,15 @@ bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
     y->update(buf, size->width, size->height, GL_LUMINANCE);
     delete buf;
 
-    buf = AlBuffer::wrap(frame->data() + len, len / 4);
-    u->update(buf, size->width / 2, size->height / 2, GL_LUMINANCE);
+    buf = AlBuffer::wrap(frame->data() + len, len / 2);
+    u->update(buf, size->width, size->height / 2, GL_LUMINANCE);
     delete buf;
-    buf = AlBuffer::wrap(frame->data() + len + len / 4, len / 4);
-    v->update(buf, size->width / 2, size->height / 2, GL_LUMINANCE);
+//    buf = AlBuffer::wrap(frame->data() + len + len / 4, len / 4);
+//    v->update(buf, size->width / 2, size->height / 2, GL_LUMINANCE);
+//    delete buf;
 
     glViewport(0, 0, size->width, size->height);
-    yv12Filter->draw(y, u, v, layer->getTexture());
+    yv12Filter->draw(y, u, layer->getTexture());
     return true;
 }
 

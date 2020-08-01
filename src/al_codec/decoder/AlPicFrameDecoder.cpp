@@ -55,6 +55,9 @@ AlPicFrameDecoder::~AlPicFrameDecoder() {
 
 bool AlPicFrameDecoder::prepare(string path) {
     AlFFUtils::init();
+#if defined(__AL_DEBUG__)
+    AlFFUtils::showInfo();
+#endif
     this->path = path;
     pFormatCtx = avformat_alloc_context();
     //打开输入视频文件
@@ -76,8 +79,8 @@ bool AlPicFrameDecoder::prepare(string path) {
     }
     AVCodec *codec = nullptr;
     if (AV_CODEC_ID_H264 == pFormatCtx->streams[vTrack]->codecpar->codec_id) {
-//        codec = avcodec_find_decoder_by_name(AL_MEDIA_CODEC_DEC_NAME);
-        codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
+        codec = avcodec_find_decoder_by_name("h264_mediacodec");
+//        codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
     } else {
         codec = avcodec_find_decoder(pFormatCtx->streams[vTrack]->codecpar->codec_id);
     }
@@ -212,6 +215,7 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
                                            pFormatCtx->streams[vTrack]->time_base,
                                            oRational,
                                            AV_ROUND_NEAR_INF);
+            AlLogI(TAG, "format %d, %d, %d", pFormatCtx->streams[vTrack]->codecpar->format, vFrame->format, AV_PIX_FMT_NV12);
             if (oHwFrame) {
                 oHwFrame->recycle();
             }

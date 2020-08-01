@@ -12,7 +12,7 @@
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
 #include "Al2DCoordinate.h"
-#include "HwYV122RGBAFilter.h"
+#include "AlNV12ToRGBAFilter.h"
 #include <deque>
 
 al_def_unit(AlULayer, Unit) {
@@ -235,7 +235,7 @@ private:
     HwAbsFBObject *fbo = nullptr;
 
     HwAbsTexture *y = nullptr, *u = nullptr, *v = nullptr;
-    HwYV122RGBAFilter *yv12Filter = nullptr;
+    AlNV12ToRGBAFilter *yv12Filter = nullptr;
 };
 
 
