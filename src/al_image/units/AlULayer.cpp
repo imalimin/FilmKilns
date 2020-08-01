@@ -15,6 +15,7 @@
 #include "AlRectLoc.h"
 #include "AlMath.h"
 #include "HwFBObject.h"
+#include "AlColorFormat.h"
 #include "core/file/AlFileImporter.h"
 #include "core/file/AlFileExporter.h"
 
@@ -54,6 +55,10 @@ bool AlULayer::onDestroy(AlMessage *msg) {
     delete fbo;
     fbo = nullptr;
 
+    if (nv12Filter) {
+        delete nv12Filter;
+        nv12Filter = nullptr;
+    }
     if (yv12Filter) {
         delete yv12Filter;
         yv12Filter = nullptr;
@@ -396,8 +401,8 @@ bool AlULayer::onQueryInfo(AlMessage *msg) {
 }
 
 bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
-    auto frame = msg->getObj<AlBuffer *>();
-    auto size = std::static_pointer_cast<Size>(msg->sp);
+    auto *frame = msg->getObj<AlBuffer *>();
+    auto size = std::static_pointer_cast<AlSize>(msg->sp);
     if (nullptr == frame) {
         AlLogE(TAG, "failed.");
         return true;
@@ -407,41 +412,18 @@ bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
         AlLogE(TAG, "failed.");
         return true;
     }
-
-    if (nullptr == y) {
-        y = AlTexManager::instance()->alloc();
+    AlColorFormat format = static_cast<AlColorFormat>(msg->arg2);
+    if (AlColorFormat::YV12 == format) {
+        _updateYUV420P(layer, frame, size.get());
+    } else if (AlColorFormat::NV12 == format) {
+        _updateYUV420SP(layer, frame, size.get());
     }
-    if (nullptr == u) {
-        u = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == v) {
-        v = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == yv12Filter) {
-        yv12Filter = new AlNV12ToRGBAFilter();
-        yv12Filter->prepare();
-    }
-
-    int len = size->width * size->height;
-    AlBuffer *buf = AlBuffer::wrap(frame->data(), len);
-    y->update(buf, size->width, size->height, GL_LUMINANCE);
-    delete buf;
-
-    buf = AlBuffer::wrap(frame->data() + len, len / 2);
-    u->update(buf, size->width, size->height / 2, GL_LUMINANCE);
-    delete buf;
-//    buf = AlBuffer::wrap(frame->data() + len + len / 4, len / 4);
-//    v->update(buf, size->width / 2, size->height / 2, GL_LUMINANCE);
-//    delete buf;
-
-    glViewport(0, 0, size->width, size->height);
-    yv12Filter->draw(y, u, layer->getTexture());
     return true;
 }
 
 bool AlULayer::_onUpdateLayerWithRGBA(AlMessage *msg) {
     auto buf = msg->getObj<AlBuffer *>();
-    auto size = std::static_pointer_cast<Size>(msg->sp);
+    auto size = std::static_pointer_cast<AlSize>(msg->sp);
     if (nullptr == buf) {
         AlLogE(TAG, "failed.");
         return true;
@@ -471,4 +453,63 @@ bool AlULayer::_onUpdateLayerClear(AlMessage *msg) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     fbo->unbind();
     return true;
+}
+
+void AlULayer::_updateYUV420P(AlImageLayer *layer, AlBuffer *buf, AlSize *size) {
+    if (nullptr == y) {
+        y = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == u) {
+        u = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == v) {
+        v = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == yv12Filter) {
+        yv12Filter = new HwYV122RGBAFilter();
+        yv12Filter->prepare();
+    }
+
+    int len = size->width * size->height;
+    AlBuffer *tmp = AlBuffer::wrap(buf->data(), len);
+    y->update(tmp, size->width, size->height, GL_LUMINANCE);
+    delete tmp;
+
+    tmp = AlBuffer::wrap(buf->data() + len, len / 4);
+    u->update(tmp, size->width / 2, size->height / 2, GL_LUMINANCE);
+    delete tmp;
+    tmp = AlBuffer::wrap(buf->data() + len + len / 4, len / 4);
+    v->update(tmp, size->width / 2, size->height / 2, GL_LUMINANCE);
+    delete tmp;
+
+    glViewport(0, 0, size->width, size->height);
+    yv12Filter->draw(y, u, v, layer->getTexture());
+}
+
+void AlULayer::_updateYUV420SP(AlImageLayer *layer, AlBuffer *buf, AlSize *size) {
+    if (nullptr == y) {
+        y = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == u) {
+        u = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == v) {
+        v = AlTexManager::instance()->alloc();
+    }
+    if (nullptr == nv12Filter) {
+        nv12Filter = new AlNV12ToRGBAFilter();
+        nv12Filter->prepare();
+    }
+
+    int len = size->width * size->height;
+    AlBuffer *tmp = AlBuffer::wrap(buf->data(), len);
+    y->update(tmp, size->width, size->height, GL_LUMINANCE);
+    delete tmp;
+
+    tmp = AlBuffer::wrap(buf->data() + len, len / 2);
+    u->update(tmp, size->width / 2, size->height / 2, GL_LUMINANCE_ALPHA);
+    delete tmp;
+
+    glViewport(0, 0, size->width, size->height);
+    nv12Filter->draw(y, u, layer->getTexture());
 }

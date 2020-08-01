@@ -12,6 +12,7 @@
 #include "HwAbsTexture.h"
 #include "AlImageLayerManager.h"
 #include "Al2DCoordinate.h"
+#include "HwYV122RGBAFilter.h"
 #include "AlNV12ToRGBAFilter.h"
 #include <deque>
 
@@ -156,7 +157,7 @@ private:
     /// +-------------------------------------------------------------+
     /// | msg::obj     | msg::arg1 | msg::arg2 | msg::desc |  msg:sp  |
     /// +-------------------------------------------------------------+
-    /// | buffer       | layer id  | none      |  none     |  size    |
+    /// | buffer       | layer id  | format    |  none     |  size    |
     /// +-------------------------------------------------------------+
     /// \param msg
     /// \return
@@ -225,6 +226,10 @@ private:
 
     void _cropCanvasAndKeepLoc(AlSize &src, AlSize &dst, AlPointF &anchor);
 
+    void _updateYUV420P(AlImageLayer *layer, AlBuffer *buf, AlSize *size);
+
+    void _updateYUV420SP(AlImageLayer *layer, AlBuffer *buf, AlSize *size);
+
 private:
     AlImageLayerManager mLayerManager;
     std::deque<std::string *> steps;
@@ -235,7 +240,8 @@ private:
     HwAbsFBObject *fbo = nullptr;
 
     HwAbsTexture *y = nullptr, *u = nullptr, *v = nullptr;
-    AlNV12ToRGBAFilter *yv12Filter = nullptr;
+    HwYV122RGBAFilter *yv12Filter = nullptr;
+    AlNV12ToRGBAFilter *nv12Filter = nullptr;
 };
 
 

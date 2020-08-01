@@ -217,10 +217,15 @@ void AlUVideos::_updateLayer(AlMediaClip *clip, HwVideoFrame *frame) {
     auto *msg = AlMessage::obtain(MSG_LAYER_UPDATE_YUV);
     if (HwFrameFormat::HW_IMAGE_RGBA == frame->getFormat()) {
         msg->what = MSG_LAYER_UPDATE_RGBA;
+        msg->arg2 = static_cast<int64_t>(AlColorFormat::RGBA);
+    } else if (HwFrameFormat::HW_IMAGE_NV12 == frame->getFormat()) {
+        msg->arg2 = static_cast<int64_t>(AlColorFormat::NV12);
+    } else {
+        msg->arg2 = static_cast<int64_t>(AlColorFormat::YV12);
     }
     msg->arg1 = itr->second;
     msg->obj = AlBuffer::wrap(frame->data(), frame->size());
-    msg->sp = std::make_shared<Size>(frame->getWidth(), frame->getHeight());
+    msg->sp = std::make_shared<AlSize>(frame->getWidth(), frame->getHeight());
     postMessage(msg);
 }
 
