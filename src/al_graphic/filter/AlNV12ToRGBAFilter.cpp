@@ -35,7 +35,7 @@ AlAbsGLProgram *AlNV12ToRGBAFilter::createProgram() {
             vec3 rgb;
             yuv.x = texture2D(uTexture, vTextureCoord).r;
             yuv.y = texture2D(uTexture1, vTextureCoord).r - 0.5;
-            yuv.z = texture2D(uTexture1, vTextureCoord + vec2(uStrideOffset, 0)).r - 0.5;
+            yuv.z = texture2D(uTexture1, vTextureCoord).a - 0.5;
             rgb = mat3(1, 1, 1,
                        0, -0.39465, 2.03211,
                        1.13983, -0.58060, 0) * yuv;
