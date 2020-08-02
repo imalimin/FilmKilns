@@ -239,6 +239,10 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
 }
 
 int64_t AlPicFrameDecoder::getVideoDuration() {
+    if (AV_NOPTS_VALUE == pFormatCtx->streams[vTrack]->duration) {
+        auto r = pFormatCtx->streams[vTrack]->r_frame_rate;
+        return pFormatCtx->streams[vTrack]->codec_info_nb_frames * r.den * AV_TIME_BASE / r.num;
+    }
     return av_rescale_q_rnd(pFormatCtx->streams[vTrack]->duration,
                             pFormatCtx->streams[vTrack]->time_base,
                             oRational,
