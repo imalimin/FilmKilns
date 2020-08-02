@@ -104,7 +104,7 @@ class MainActivity : BaseActivity(), OnRecyclerItemClickListener.OnItemClickList
     }
 
     private fun actionVideoV2() {
-        val testFile = File(externalCacheDir, "/video/hw_small.mp4")
+        val testFile = File(externalCacheDir, "/video/ricardo_milos.mp4")
         if (!testFile.exists()) {
             Toast.makeText(this, "File NOT exist.", Toast.LENGTH_SHORT).show()
             return
