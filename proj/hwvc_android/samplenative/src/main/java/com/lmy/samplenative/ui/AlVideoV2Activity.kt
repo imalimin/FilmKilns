@@ -17,6 +17,7 @@ import com.lmy.samplenative.R
 import com.lmy.samplenative.adapter.AlTrackAdapter
 import kotlinx.android.synthetic.main.activity_video_v2.*
 import kotlinx.android.synthetic.main.activity_video_v2.surfaceView
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -111,8 +112,7 @@ class AlVideoV2Activity : BaseActivity() {
             playing = !playing
         }
         addBtn.setOnClickListener {
-            addTrack("/sdcard/duet_input.mp4", AlMediaType.TYPE_VIDEO)
-            addTrack("/sdcard/the-world-today.m4a", AlMediaType.TYPE_AUDIO)
+            addTrack(File(externalCacheDir, "/image/cat.gif").absolutePath, AlMediaType.TYPE_VIDEO)
         }
         trackView.setOnSeekBarChangeListener(object : AlTrackContainer.OnSeekBarChangeListener {
             override fun onProgressChanged(progress: Float, fromUser: Boolean) {
