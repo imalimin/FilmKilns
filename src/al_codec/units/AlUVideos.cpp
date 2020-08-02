@@ -214,14 +214,15 @@ void AlUVideos::_updateLayer(AlMediaClip *clip, HwVideoFrame *frame) {
         AlLogE(TAG, "failed.");
         return;
     }
-    auto *msg = AlMessage::obtain(MSG_LAYER_UPDATE_YUV);
+    auto *msg = AlMessage::obtain(MSG_LAYER_UPDATE_WITH_BUF);
     if (HwFrameFormat::HW_IMAGE_RGBA == frame->getFormat()) {
-        msg->what = MSG_LAYER_UPDATE_RGBA;
         msg->arg2 = static_cast<int64_t>(AlColorFormat::RGBA);
     } else if (HwFrameFormat::HW_IMAGE_NV12 == frame->getFormat()) {
         msg->arg2 = static_cast<int64_t>(AlColorFormat::NV12);
-    } else {
+    } else if (HwFrameFormat::HW_IMAGE_YV12 == frame->getFormat()) {
         msg->arg2 = static_cast<int64_t>(AlColorFormat::YV12);
+    } else {
+        msg->arg2 = static_cast<int64_t>(AlColorFormat::NONE);
     }
     msg->arg1 = itr->second;
     msg->obj = AlBuffer::wrap(frame->data(), frame->size());

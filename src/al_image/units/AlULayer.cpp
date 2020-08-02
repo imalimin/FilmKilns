@@ -37,8 +37,7 @@ AlULayer::AlULayer(string alias) : Unit(alias) {
     al_reg_msg(EVENT_IMAGE_CODEC_DECODE_NOTIFY, AlULayer::onReceiveImage);
     al_reg_msg(EVENT_LAYER_QUERY_INFO, AlULayer::onQueryInfo);
     al_reg_msg(MSG_LAYER_ADD_EMPTY, AlULayer::onAddLayerEmpty);
-    al_reg_msg(MSG_LAYER_UPDATE_YUV, AlULayer::_onUpdateLayerWithYUV);
-    al_reg_msg(MSG_LAYER_UPDATE_RGBA, AlULayer::_onUpdateLayerWithRGBA);
+    al_reg_msg(MSG_LAYER_UPDATE_WITH_BUF, AlULayer::_onUpdateLayerWithBuf);
     al_reg_msg(MSG_LAYER_UPDATE_CLEAR, AlULayer::_onUpdateLayerClear);
 }
 
@@ -52,25 +51,9 @@ bool AlULayer::onCreate(AlMessage *msg) {
 
 bool AlULayer::onDestroy(AlMessage *msg) {
     mLayerManager.clear();
-    delete fbo;
-    fbo = nullptr;
-
-    if (nv12Filter) {
-        delete nv12Filter;
-        nv12Filter = nullptr;
-    }
-    if (yv12Filter) {
-        delete yv12Filter;
-        yv12Filter = nullptr;
-    }
-    if (v) {
-        AlTexManager::instance()->recycle(&v);
-    }
-    if (u) {
-        AlTexManager::instance()->recycle(&u);
-    }
-    if (y) {
-        AlTexManager::instance()->recycle(&y);
+    if (texDrawer) {
+        delete texDrawer;
+        texDrawer = nullptr;
     }
     return true;
 }
@@ -400,29 +383,8 @@ bool AlULayer::onQueryInfo(AlMessage *msg) {
     return true;
 }
 
-bool AlULayer::_onUpdateLayerWithYUV(AlMessage *msg) {
-    auto *frame = msg->getObj<AlBuffer *>();
-    auto size = std::static_pointer_cast<AlSize>(msg->sp);
-    if (nullptr == frame) {
-        AlLogE(TAG, "failed.");
-        return true;
-    }
-    auto layer = mLayerManager.find(msg->arg1);
-    if (nullptr == layer) {
-        AlLogE(TAG, "failed.");
-        return true;
-    }
-    AlColorFormat format = static_cast<AlColorFormat>(msg->arg2);
-    if (AlColorFormat::YV12 == format) {
-        _updateYUV420P(layer, frame, size.get());
-    } else if (AlColorFormat::NV12 == format) {
-        _updateYUV420SP(layer, frame, size.get());
-    }
-    return true;
-}
-
-bool AlULayer::_onUpdateLayerWithRGBA(AlMessage *msg) {
-    auto buf = msg->getObj<AlBuffer *>();
+bool AlULayer::_onUpdateLayerWithBuf(AlMessage *msg) {
+    auto *buf = msg->getObj<AlBuffer *>();
     auto size = std::static_pointer_cast<AlSize>(msg->sp);
     if (nullptr == buf) {
         AlLogE(TAG, "failed.");
@@ -433,7 +395,11 @@ bool AlULayer::_onUpdateLayerWithRGBA(AlMessage *msg) {
         AlLogE(TAG, "failed.");
         return true;
     }
-    layer->getTexture()->update(buf, size->width, size->height);
+    AlColorFormat fmt = static_cast<AlColorFormat>(msg->arg2);
+    if (nullptr == texDrawer) {
+        texDrawer = new AlNorTexDrawer();
+    }
+    texDrawer->draw(buf, size.get(), fmt, layer->getTexture());
     return true;
 }
 
@@ -443,73 +409,9 @@ bool AlULayer::_onUpdateLayerClear(AlMessage *msg) {
         AlLogE(TAG, "failed.");
         return true;
     }
-    glViewport(0, 0, layer->getWidth(), layer->getHeight());
-    if (nullptr == fbo) {
-        fbo = HwFBObject::alloc();
+    if (nullptr == texDrawer) {
+        texDrawer = new AlNorTexDrawer();
     }
-    fbo->bindTex(layer->getTexture());
-    fbo->bind();
-    glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    fbo->unbind();
+    texDrawer->draw(nullptr, nullptr, AlColorFormat::NONE, layer->getTexture());
     return true;
-}
-
-void AlULayer::_updateYUV420P(AlImageLayer *layer, AlBuffer *buf, AlSize *size) {
-    if (nullptr == y) {
-        y = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == u) {
-        u = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == v) {
-        v = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == yv12Filter) {
-        yv12Filter = new HwYV122RGBAFilter();
-        yv12Filter->prepare();
-    }
-
-    int len = size->width * size->height;
-    AlBuffer *tmp = AlBuffer::wrap(buf->data(), len);
-    y->update(tmp, size->width, size->height, GL_LUMINANCE);
-    delete tmp;
-
-    tmp = AlBuffer::wrap(buf->data() + len, len / 4);
-    u->update(tmp, size->width / 2, size->height / 2, GL_LUMINANCE);
-    delete tmp;
-    tmp = AlBuffer::wrap(buf->data() + len + len / 4, len / 4);
-    v->update(tmp, size->width / 2, size->height / 2, GL_LUMINANCE);
-    delete tmp;
-
-    glViewport(0, 0, size->width, size->height);
-    yv12Filter->draw(y, u, v, layer->getTexture());
-}
-
-void AlULayer::_updateYUV420SP(AlImageLayer *layer, AlBuffer *buf, AlSize *size) {
-    if (nullptr == y) {
-        y = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == u) {
-        u = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == v) {
-        v = AlTexManager::instance()->alloc();
-    }
-    if (nullptr == nv12Filter) {
-        nv12Filter = new AlNV12ToRGBAFilter();
-        nv12Filter->prepare();
-    }
-
-    int len = size->width * size->height;
-    AlBuffer *tmp = AlBuffer::wrap(buf->data(), len);
-    y->update(tmp, size->width, size->height, GL_LUMINANCE);
-    delete tmp;
-
-    tmp = AlBuffer::wrap(buf->data() + len, len / 2);
-    u->update(tmp, size->width / 2, size->height / 2, GL_LUMINANCE_ALPHA);
-    delete tmp;
-
-    glViewport(0, 0, size->width, size->height);
-    nv12Filter->draw(y, u, layer->getTexture());
 }

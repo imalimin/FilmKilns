@@ -63,6 +63,7 @@ file(GLOB SOURCES
         ${PROJECT_SOURCE_DIR}/platform/*.cpp
         ${PROJECT_SOURCE_DIR}/sources/*.cpp
         ${PROJECT_SOURCE_DIR}/core/*.cpp
+        ${PROJECT_SOURCE_DIR}/utils/*.cpp
         #Header
         ${PROJECT_SOURCE_DIR}/include/*.h
         )

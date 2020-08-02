@@ -14,6 +14,7 @@
 #include "Al2DCoordinate.h"
 #include "HwYV122RGBAFilter.h"
 #include "AlNV12ToRGBAFilter.h"
+#include "AlNorTexDrawer.h"
 #include <deque>
 
 al_def_unit(AlULayer, Unit) {
@@ -161,9 +162,7 @@ private:
     /// +-------------------------------------------------------------+
     /// \param msg
     /// \return
-    bool _onUpdateLayerWithYUV(AlMessage *msg);
-
-    bool _onUpdateLayerWithRGBA(AlMessage *msg);
+    bool _onUpdateLayerWithBuf(AlMessage *msg);
 
     /// 清除图层
     /// FORMAT:
@@ -226,10 +225,6 @@ private:
 
     void _cropCanvasAndKeepLoc(AlSize &src, AlSize &dst, AlPointF &anchor);
 
-    void _updateYUV420P(AlImageLayer *layer, AlBuffer *buf, AlSize *size);
-
-    void _updateYUV420SP(AlImageLayer *layer, AlBuffer *buf, AlSize *size);
-
 private:
     AlImageLayerManager mLayerManager;
     std::deque<std::string *> steps;
@@ -237,11 +232,7 @@ private:
     Al2DCoordinate mCanvasCoord;
     ///For import cache.
     std::deque<AlImageLayerModel *> mImportQueue;
-    HwAbsFBObject *fbo = nullptr;
-
-    HwAbsTexture *y = nullptr, *u = nullptr, *v = nullptr;
-    HwYV122RGBAFilter *yv12Filter = nullptr;
-    AlNV12ToRGBAFilter *nv12Filter = nullptr;
+    AlNorTexDrawer *texDrawer = nullptr;
 };
 
 
