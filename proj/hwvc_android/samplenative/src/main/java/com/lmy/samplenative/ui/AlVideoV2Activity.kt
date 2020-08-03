@@ -25,6 +25,7 @@ class AlVideoV2Activity : BaseActivity() {
     private val fmt = SimpleDateFormat("mm:ss")
     private var mCurrentLayer = AlLayer.none()
     private var playing: Boolean = true
+    private var shouldSeek: Boolean = false
     private var duration: Long = -1
     private val surfaceCallback = object : SurfaceHolder.Callback {
         override fun surfaceChanged(holder: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
@@ -95,13 +96,10 @@ class AlVideoV2Activity : BaseActivity() {
     private fun setupView() {
         playBtn.setOnClickListener {
             if (playing) {
-                playBtn.setImageResource(android.R.drawable.ic_media_play)
-                processor?.pause()
+                pausePlay()
             } else {
-                playBtn.setImageResource(android.R.drawable.ic_media_pause)
-                processor?.start()
+                startPlay()
             }
-            playing = !playing
         }
         addBtn.setOnClickListener {
             addTrack(File(externalCacheDir, "/image/cat.gif").absolutePath, AlMediaType.TYPE_VIDEO)
@@ -114,11 +112,11 @@ class AlVideoV2Activity : BaseActivity() {
             }
 
             override fun onStartTrackingTouch() {
-                processor?.pause()
+                pausePlay()
             }
 
             override fun onStopTrackingTouch() {
-                processor?.start()
+                shouldSeek = true
             }
         })
         surfaceView?.setOnClickListener { v, x, y ->
@@ -139,6 +137,22 @@ class AlVideoV2Activity : BaseActivity() {
     }
 
     fun getCurrentLayer(): AlLayer = mCurrentLayer
+
+    private fun pausePlay() {
+        playBtn.setImageResource(android.R.drawable.ic_media_play)
+        processor?.pause()
+        playing = !playing
+    }
+
+    private fun startPlay() {
+        playBtn.setImageResource(android.R.drawable.ic_media_pause)
+        if (shouldSeek) {
+            shouldSeek = false
+            processor?.seek((duration * trackView.getProgress()).toLong())
+        }
+        processor?.start()
+        playing = !playing
+    }
 
     override fun onDestroy() {
         super.onDestroy()
