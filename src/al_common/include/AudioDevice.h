@@ -11,13 +11,13 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 
-enum class HwAudioDeviceMode : int {
-    LowLatency,
-    Normal,
-    HighLatency
-};
-
 class AudioDevice : public Object {
+public:
+    enum class kMode : int {
+        LowLatency,
+        Normal,
+        HighLatency
+    };
 public:
     AudioDevice(uint16_t channels,
                 uint32_t sampleRate,
@@ -40,6 +40,8 @@ protected:
     uint16_t format = SL_PCMSAMPLEFORMAT_FIXED_16;
     uint32_t samplesPerBuffer = 0;//sampleCount
 };
+
+typedef AudioDevice::kMode HwAudioDeviceMode;
 
 class SLAudioDevice : public AudioDevice {
 public:
