@@ -6,15 +6,15 @@
 */
 
 #include <libavutil/samplefmt.h>
-#include "../include/HwSpeaker.h"
+#include "HwSpeaker.h"
 #include "AlLogcat.h"
 
 #define TAG "HwSpeaker"
 
-HwSpeaker::HwSpeaker(string alias) : HwSpeaker(alias, HwAudioDeviceMode::Normal) {
+HwSpeaker::HwSpeaker(string alias) : HwSpeaker(alias, AudioDevice::kMode::Normal) {
 }
 
-HwSpeaker::HwSpeaker(string alias, HwAudioDeviceMode mode) : Unit(alias), mode(mode) {
+HwSpeaker::HwSpeaker(string alias, AudioDevice::kMode mode) : Unit(alias), mode(mode) {
     al_reg_msg(EVENT_SPEAKER_FEED, HwSpeaker::eventFeed);
 }
 
@@ -69,7 +69,7 @@ void HwSpeaker::createFromAudioFrame(HwAudioFrame *frame) {
         default:
             format = SL_PCMSAMPLEFORMAT_FIXED_32;
     }
-    player = new HwAudioPlayer(mode,
+    player = new AlAudioPlayer(mode,
                                frame->getChannels(),
                                frame->getSampleRate(),
                                static_cast<uint16_t>(format),

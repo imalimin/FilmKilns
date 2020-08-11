@@ -10,13 +10,14 @@
 
 #include "Unit.h"
 #include "HwAudioPlayer.h"
+#include "AlAudioPlayer.h"
 #include "HwAudioFrame.h"
 
 class HwSpeaker : public Unit {
 public:
     HwSpeaker(string alias);
 
-    HwSpeaker(string alias, HwAudioDeviceMode mode);
+    HwSpeaker(string alias, AudioDevice::kMode mode);
 
     virtual ~HwSpeaker();
 
@@ -30,8 +31,8 @@ private:
     void createFromAudioFrame(HwAudioFrame *frame);
 
 private:
-    HwAudioDeviceMode mode = HwAudioDeviceMode::Normal;
-    HwAudioPlayer *player = nullptr;
+    AudioDevice::kMode mode = AudioDevice::kMode::Normal;
+    AlAudioPlayer *player = nullptr;
 };
 
 

@@ -69,10 +69,10 @@ void AlAudioPlayer::initialize(SLEngine *engine) {
     }
     configCache(size);
     AlLogI(TAG, "Create AlAudioPlayer, channels=%d, sampleHz=%d, minBufferSize=%d, format=%d",
-         this->channels,
-         this->sampleRate,
-         this->samplesPerBuffer,
-         this->format);
+           this->channels,
+           this->sampleRate,
+           this->samplesPerBuffer,
+           this->format);
     mixObject = nullptr;
     playObject = nullptr;
     playItf = nullptr;
@@ -85,7 +85,8 @@ void AlAudioPlayer::initialize(SLEngine *engine) {
 
 void AlAudioPlayer::configCache(int size) {
     for (int i = 0; i < size; ++i) {
-
+        auto it = std::shared_ptr<AlBuffer>(AlBuffer::alloc(getBufferByteSize()));
+        cache.push(it);
     }
 }
 
@@ -217,7 +218,7 @@ static int64_t ttime = 0;
 
 void AlAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf) {
     auto buf = pop();
-    if (buf) {
+    if (nullptr != buf) {
         (*slBufferQueueItf)->Enqueue(bufferQueueItf, buf->data(), buf->size());
         recycle(buf);
         return;
@@ -244,7 +245,7 @@ HwResult AlAudioPlayer::write(uint8_t *buffer, size_t size, int timeOut) {
 
 HwResult AlAudioPlayer::push(uint8_t *buffer, size_t size) {
     std::lock_guard<std::mutex> guard(mtx);
-    if(cache.empty()) {
+    if (cache.empty()) {
         return Hw::FAILED;
     }
     auto it = cache.front();
@@ -252,12 +253,13 @@ HwResult AlAudioPlayer::push(uint8_t *buffer, size_t size) {
     it->rewind();
     it->put(buffer, size);
     input.push(it);
+    return Hw::SUCCESS;
 }
 
 std::shared_ptr<AlBuffer> AlAudioPlayer::pop() {
     std::lock_guard<std::mutex> guard(mtx);
-    if(input.empty()) {
-        return nullptr;
+    if (input.empty()) {
+        return std::shared_ptr<AlBuffer>(nullptr);
     }
     auto it = input.front();
     input.pop();
