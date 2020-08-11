@@ -214,11 +214,10 @@ HwResult AlAudioPlayer::createBufferQueueAudioPlayer() {
     return Hw::SUCCESS;
 }
 
-static int64_t ttime = 0;
-
 void AlAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf) {
     auto buf = pop();
     if (nullptr != buf) {
+        buf->rewind();
         (*slBufferQueueItf)->Enqueue(bufferQueueItf, buf->data(), buf->size());
         recycle(buf);
         return;
@@ -232,21 +231,16 @@ HwResult AlAudioPlayer::write(uint8_t *buffer, size_t size) {
 }
 
 HwResult AlAudioPlayer::write(uint8_t *buffer, size_t size, int timeOut) {
-    auto ret = push(buffer, size);
-    if (Hw::OK == ret) {
-#if defined(__AL_DEBUG__)
-        start();
-        AlLogE(TAG, "failed, try flush & restart.");
-#endif
-        return Hw::FAILED;
-    }
-    return Hw::SUCCESS;
+    return push(buffer, size, timeOut);
 }
 
-HwResult AlAudioPlayer::push(uint8_t *buffer, size_t size) {
-    std::lock_guard<std::mutex> guard(mtx);
+HwResult AlAudioPlayer::push(uint8_t *buffer, size_t size, int us) {
+    std::unique_lock<std::mutex> guard(mtx);
     if (cache.empty()) {
-        return Hw::FAILED;
+        cond.wait_for(guard, chrono::nanoseconds(us * 1000));
+        if (cache.empty()) {
+            return Hw::FAILED;
+        }
     }
     auto it = cache.front();
     cache.pop();
@@ -257,7 +251,7 @@ HwResult AlAudioPlayer::push(uint8_t *buffer, size_t size) {
 }
 
 std::shared_ptr<AlBuffer> AlAudioPlayer::pop() {
-    std::lock_guard<std::mutex> guard(mtx);
+    std::unique_lock<std::mutex> guard(mtx);
     if (input.empty()) {
         return std::shared_ptr<AlBuffer>(nullptr);
     }
@@ -267,12 +261,13 @@ std::shared_ptr<AlBuffer> AlAudioPlayer::pop() {
 }
 
 void AlAudioPlayer::recycle(std::shared_ptr<AlBuffer> buf) {
-    std::lock_guard<std::mutex> guard(mtx);
+    std::unique_lock<std::mutex> guard(mtx);
     cache.push(buf);
+    cond.notify_all();
 }
 
 void AlAudioPlayer::flush() {
-    std::lock_guard<std::mutex> guard(mtx);
+    std::unique_lock<std::mutex> guard(mtx);
     while (!input.empty()) {
         auto it = input.front();
         input.pop();
@@ -297,7 +292,7 @@ void AlAudioPlayer::stop() {
         mixObject = nullptr;
     }
     destroyEngine();
-    std::lock_guard<std::mutex> guard(mtx);
+    std::unique_lock<std::mutex> guard(mtx);
     while (!input.empty()) {
         input.pop();
     }

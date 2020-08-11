@@ -11,7 +11,7 @@
 #include "AlUSequence.h"
 #include "AlUAudios.h"
 #include "AlUVideos.h"
-#include "HwSpeaker.h"
+#include "AlUSpeaker.h"
 #include "AlGImage.h"
 #include "AlScreen.h"
 #include "AlFuture.h"
@@ -23,7 +23,7 @@
 
 AlVideoV2Processor::AlVideoV2Processor() : AlAbsProcessor(TAG) {
     registerAnUnit(new AlScreen(ALIAS_SCREEN));
-    registerAnUnit(new HwSpeaker(ALIAS_SPEAKER, HwAudioDeviceMode::LowLatency));
+    registerAnUnit(new AlUSpeaker(ALIAS_SPEAKER, AudioDevice::kMode::LowLatency));
     registerAnUnit(new AlUTimeline(ALIAS_TIMELINE));
     registerAnUnit(new AlUSequence(ALIAS_SEQUENCE));
     registerAnUnit(new AlUAudios(ALIAS_AUDIOS));

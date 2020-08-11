@@ -5,20 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include <libavutil/samplefmt.h>
-#include "../include/HwSpeaker.h"
-#include "AlLogcat.h"
+#include "AlUSpeaker.h"
 
-#define TAG "HwSpeaker"
+#define TAG "AlUSpeaker"
 
-HwSpeaker::HwSpeaker(string alias) : HwSpeaker(alias, HwAudioDeviceMode::Normal) {
+AlUSpeaker::AlUSpeaker(string alias) : AlUSpeaker(alias, AudioDevice::kMode::Normal) {
 }
 
-HwSpeaker::HwSpeaker(string alias, HwAudioDeviceMode mode) : Unit(alias), mode(mode) {
-    al_reg_msg(EVENT_SPEAKER_FEED, HwSpeaker::eventFeed);
+AlUSpeaker::AlUSpeaker(string alias, AudioDevice::kMode mode) : Unit(alias), mode(mode) {
+    al_reg_msg(EVENT_SPEAKER_FEED, AlUSpeaker::eventFeed);
 }
 
-HwSpeaker::~HwSpeaker() {
+AlUSpeaker::~AlUSpeaker() {
     LOGI("HwSpeaker::~HwSpeaker");
     if (player) {
         player->stop();
@@ -27,15 +25,15 @@ HwSpeaker::~HwSpeaker() {
     }
 }
 
-bool HwSpeaker::onCreate(AlMessage *msg) {
+bool AlUSpeaker::onCreate(AlMessage *msg) {
     return false;
 }
 
-bool HwSpeaker::onDestroy(AlMessage *msg) {
+bool AlUSpeaker::onDestroy(AlMessage *msg) {
     return false;
 }
 
-bool HwSpeaker::eventFeed(AlMessage *msg) {
+bool AlUSpeaker::eventFeed(AlMessage *msg) {
     if (msg->obj) {
         HwAudioFrame *frame = dynamic_cast<HwAudioFrame *>(msg->obj);
         createFromAudioFrame(frame);
@@ -54,7 +52,7 @@ bool HwSpeaker::eventFeed(AlMessage *msg) {
     return false;
 }
 
-void HwSpeaker::createFromAudioFrame(HwAudioFrame *frame) {
+void AlUSpeaker::createFromAudioFrame(HwAudioFrame *frame) {
     if (player) {
         return;
     }
@@ -69,10 +67,10 @@ void HwSpeaker::createFromAudioFrame(HwAudioFrame *frame) {
         default:
             format = SL_PCMSAMPLEFORMAT_FIXED_32;
     }
-    player = new HwAudioPlayer(mode,
-                               frame->getChannels(),
-                               frame->getSampleRate(),
-                               static_cast<uint16_t>(format),
-                               static_cast<uint32_t>(frame->getSampleCount()));
+    player = new AlAudioPlayer(mode,
+                            frame->getChannels(),
+                            frame->getSampleRate(),
+                            static_cast<uint16_t>(format),
+                            static_cast<uint32_t>(frame->getSampleCount()));
     player->start();
 }

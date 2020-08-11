@@ -13,6 +13,7 @@
 #include "AlBuffer.h"
 #include "HwResult.h"
 #include <mutex>
+#include <condition_variable>
 #include <queue>
 
 AL_CLASS AlAudioPlayer AL_EXTEND SLAudioDevice {
@@ -60,7 +61,7 @@ private:
 
     void configCache(int size);
 
-    HwResult push(uint8_t *buffer, size_t size);
+    HwResult push(uint8_t *buffer, size_t size, int us);
 
     std::shared_ptr<AlBuffer> pop();
 
@@ -78,6 +79,7 @@ private:
     std::queue<std::shared_ptr<AlBuffer>> input;
     std::queue<std::shared_ptr<AlBuffer>> cache;
     std::mutex mtx;
+    std::condition_variable cond;
 };
 
 
