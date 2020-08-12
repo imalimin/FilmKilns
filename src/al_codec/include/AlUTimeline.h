@@ -51,8 +51,6 @@ private:
 
     bool _onSeek(AlMessage *msg);
 
-    bool _onTimeAdd(AlMessage *msg);
-
     bool _onGetStatus(AlMessage *msg);
 
     void _heartbeat();
@@ -61,13 +59,11 @@ private:
 
 private:
     std::shared_ptr<AlEventPipeline> pipe;
-    int64_t mLastBeatTimestampInUS = 0;
-    int32_t hzInUS = 0;
     int64_t mDurationInUS = 0;
     int64_t mCurTimeInUS = 0;
     bool beating = false;
-    int64_t mBaseTime = 0;
-    AlRational timebase;
+    int64_t mClockTime = 0;
+    int64_t mClockStartTime = 0;
 };
 
 

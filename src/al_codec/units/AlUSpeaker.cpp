@@ -43,7 +43,7 @@ bool AlUSpeaker::eventFeed(AlMessage *msg) {
 //                      frame->getSampleRate(),
 //                      frame->getSampleCount(),
 //                      frame->getDataSize());
-            player->write(frame->data(), frame->size(), 1000000);
+            player->write(frame->data(), frame->size());
             auto *msg1 = AlMessage::obtain(MSG_SPEAKER_FEED_DONE);
             msg1->arg1 = frame->getSampleCount();
             postMessage(msg1);

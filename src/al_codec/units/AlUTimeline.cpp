@@ -18,10 +18,8 @@ AlUTimeline::AlUTimeline(const std::string alias) : Unit(alias) {
     al_reg_msg(MSG_TIMELINE_START, AlUTimeline::_onStart);
     al_reg_msg(MSG_TIMELINE_PAUSE, AlUTimeline::_onPause);
     al_reg_msg(MSG_TIMELINE_SEEK, AlUTimeline::_onSeek);
-    al_reg_msg(MSG_TIMELINE_ADD, AlUTimeline::_onTimeAdd);
     al_reg_msg(MSG_TIMELINE_GET_STATUS, AlUTimeline::_onGetStatus);
     pipe = std::shared_ptr<AlEventPipeline>(AlEventPipeline::create(TAG));
-    timebase = AlRational(1, 44100);
 }
 
 AlUTimeline::~AlUTimeline() {
@@ -37,8 +35,6 @@ bool AlUTimeline::onDestroy(AlMessage *msg) {
 }
 
 bool AlUTimeline::_onSetHzInUS(AlMessage *msg) {
-//    hzInUS = msg->arg1;
-    hzInUS = 23220;
     return true;
 }
 
@@ -49,30 +45,24 @@ bool AlUTimeline::_onSetDurationUS(AlMessage *msg) {
 }
 
 bool AlUTimeline::_onStart(AlMessage *msg) {
+    mClockStartTime = TimeUtils::getCurrentTimeUS();
     beating = true;
     _heartbeat();
     return true;
 }
 
 bool AlUTimeline::_onPause(AlMessage *msg) {
+    mClockTime = TimeUtils::getCurrentTimeUS() - mClockStartTime;
     beating = false;
     return true;
 }
 
 bool AlUTimeline::_onSeek(AlMessage *msg) {
-    if (hzInUS > 0) {
-        int64_t cur = msg->arg2 / hzInUS * hzInUS;
-        if (cur >= mDurationInUS) {
-            cur = 0;
-        }
-        this->mBaseTime = cur * timebase.den / timebase.num / 1e6;
+    int64_t cur = msg->arg2;
+    if (cur >= mDurationInUS) {
+        cur = 0;
     }
-    return true;
-}
-
-bool AlUTimeline::_onTimeAdd(AlMessage *msg) {
-    mBaseTime += msg->arg1;
-    _heartbeat();
+    this->mCurTimeInUS = cur;
     return true;
 }
 
@@ -94,16 +84,12 @@ void AlUTimeline::_heartbeat() {
     }
     this->_sendBeat();
 
-//    pipe->queueEvent([this]() {
-//        this->_sendBeat();
-//        auto sleepTime = this->mLastBeatTimestampInUS > 0 ? (this->hzInUS -
-//                                                             (TimeUtils::getCurrentTimeUS() -
-//                                                              this->mLastBeatTimestampInUS))
-//                                                          : this->hzInUS;
-//        AlEventPipeline::sleep(sleepTime);
-//        this->mLastBeatTimestampInUS = TimeUtils::getCurrentTimeUS();
-//        this->_heartbeat();
-//    });
+    pipe->queueEvent([this]() {
+        this->_sendBeat();
+        auto sleepTime = 10000;
+        AlEventPipeline::sleep(sleepTime);
+        this->_heartbeat();
+    });
 }
 
 void AlUTimeline::_sendBeat() {
@@ -115,13 +101,14 @@ void AlUTimeline::_sendBeat() {
     auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, mode);
     msg->arg2 = this->mCurTimeInUS;
     this->postMessage(msg);
-    this->mCurTimeInUS = (mBaseTime * timebase.num * 1e6 / timebase.den);
-    AlLogD(TAG, "%" PRId64 ", %" PRId64 ", %" PRId64, mBaseTime, mCurTimeInUS, mDurationInUS);
+    this->mCurTimeInUS = mClockTime + TimeUtils::getCurrentTimeUS() - mClockStartTime;
+    AlLogD(TAG, "%" PRId64 ", %" PRId64, mCurTimeInUS, mDurationInUS);
     if (this->mCurTimeInUS > this->mDurationInUS) {
         auto *msg1 = AlMessage::obtain(MSG_TIMELINE_END, AlMessage::QUEUE_MODE_UNIQUE);
         msg1->arg2 = this->mDurationInUS;
         postMessage(msg1);
-        this->mBaseTime = 0;
         this->mCurTimeInUS = 0;
+        this->mClockStartTime = TimeUtils::getCurrentTimeUS();
+        this->mClockTime = 0;
     }
 }

@@ -237,8 +237,12 @@ HwResult AlAudioPlayer::write(uint8_t *buffer, size_t size, int timeOut) {
 HwResult AlAudioPlayer::push(uint8_t *buffer, size_t size, int us) {
     std::unique_lock<std::mutex> guard(mtx);
     if (cache.empty()) {
-        cond.wait_for(guard, chrono::nanoseconds(us * 1000));
-        if (cache.empty()) {
+        if (us > 0) {
+            cond.wait_for(guard, chrono::nanoseconds(us * 1000));
+            if (cache.empty()) {
+                return Hw::FAILED;
+            }
+        } else {
             return Hw::FAILED;
         }
     }
