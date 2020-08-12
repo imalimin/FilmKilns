@@ -156,6 +156,8 @@ class AlTrackContainer : HorizontalScrollView {
         scrollTo(((mTrackView.measuredWidth - measuredWidth) * this.progress).toInt(), 0)
     }
 
+    fun getProgress(): Float = scrollX / (mTrackView.measuredWidth - measuredWidth).toFloat()
+
     fun setOnSeekBarChangeListener(l: OnSeekBarChangeListener) {
         mOnSeekBarChangeListener = l
     }

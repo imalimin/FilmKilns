@@ -182,6 +182,9 @@ class AlTrackView : ViewGroup {
             if (null != track && mTimeView.getDuration() > 0 && track.duration > 0) {
                 offset = (track.seqIn * w / mTimeView.getDuration()).toInt()
                 w = (track.duration * w / mTimeView.getDuration()).toInt()
+            } else {
+                offset = 0
+                w = 0
             }
             view.layout(paddingLeft + l + offset, height, paddingLeft + l + w + offset, height + h)
             view.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), h)
