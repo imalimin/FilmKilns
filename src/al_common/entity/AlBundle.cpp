@@ -10,6 +10,7 @@
 #include "AlLogcat.h"
 
 #define PUT_PRI(_pri) \
+std::lock_guard<std::mutex> guard(mtx); \
 auto itr = map.find(key); \
 if (map.end() != itr) { \
   map.erase(itr); \
@@ -18,6 +19,7 @@ auto ptr = std::make_unique<_pri>(val); \
 map.insert(make_pair(key, std::move(ptr))); \
 
 #define GET_PRI(_pri) \
+std::lock_guard<std::mutex> guard(mtx); \
 auto itr = map.find(key); \
 if (map.end() != itr && itr->second) { \
   _pri *val = dynamic_cast<_pri *>(itr->second.get()); \

@@ -55,6 +55,7 @@ public:
 
 private:
     std::map<std::string, std::unique_ptr<Object>> map;
+    std::mutex mtx;
 };
 
 
