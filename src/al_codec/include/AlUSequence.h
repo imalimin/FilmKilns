@@ -32,6 +32,8 @@ private:
 
     bool _onSetTrackDuration(AlMessage *msg);
 
+    bool _onSeek(AlMessage *msg);
+
     bool _onTimelineEnd(AlMessage *msg);
 
     AlMediaClip *_findClip(AlID id);
@@ -44,11 +46,9 @@ private:
 
     void _notifyTimeline();
 
-    AlMediaClip *_findAudioRefClip();
+    void _beatAudioClips(int64_t timeInUS, bool isSeek = false);
 
-    void _beatAudioClips(int64_t timeInUS);
-
-    void _beatVideoClips(int64_t timeInUS);
+    void _beatVideoClips(int64_t timeInUS, bool isSeek = false);
 
     void _notifyTrackUpdate(const AlMediaTrack *track);
 

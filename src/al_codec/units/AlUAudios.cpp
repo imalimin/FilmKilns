@@ -76,10 +76,12 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         return true;
     }
     mCurTimeInUS = msg->arg2;
-    auto curTimeMap = mCurTimeMap;
-    mCurTimeMap.clear();
     mixer->clearSelect();
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
+    if (msg->arg1) {
+        _seek(clips, mCurTimeInUS);
+        return true;
+    }
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         auto *clip = itr->get();
         auto count = mixer->samplesOfTrack(clip->id());
@@ -95,9 +97,7 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         if (nullptr == decoder) {
             continue;
         }
-//        _correct(clip, decoder, curTimeMap);
 
-        bool offsetDone = false;
         while (decoder) {
             HwAbsMediaFrame *frame = nullptr;
             HwResult ret = _grab(clip, decoder, &frame, mCurTimeInUS);
@@ -118,18 +118,12 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
                 continue;
             }
             if (frame->isAudio()) {
-//                if (!offsetDone) {
-//                    if (Hw::OK == _offsetDynamic(clip, decoder, frame->getPts())) {
-//                        offsetDone = true;
-//                    }
-//                }
-
                 mixer->put(clip->id(), dynamic_cast<HwAudioFrame *>(frame));
                 mixer->select(clip->id());
                 if (mixer->samplesOfTrack(itr->get()->id()) < FRAME_SIZE) {
                     continue;
                 }
-                mCurTimeMap.insert(std::make_pair(clip->id(), frame->getPts()));
+                _setCurTimestamp(clip, frame->getPts());
             }
             break;
         }
@@ -156,6 +150,21 @@ bool AlUAudios::_onEnd(AlMessage *msg) {
         _seek(_findDecoder(itr->get()), 0);
     }
     return true;
+}
+
+void AlUAudios::_seek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips,
+                      int64_t timeInUS) {
+    for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
+        _seek(_findDecoder(itr->get()), timeInUS);
+    }
+}
+
+void AlUAudios::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
+    if (decoder) {
+        AlLogI(TAG, "seek to %" PRId64, timeInUS);
+        decoder->seek(timeInUS, AbsDecoder::kSeekMode::EXACT);
+        decoder->start();
+    }
 }
 
 void AlUAudios::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration) {
@@ -200,7 +209,8 @@ HwResult AlUAudios::_grab(AlMediaClip *clip, AbsAudioDecoder *decoder,
     auto itr = mLastFrameMap.find(clip->id());
     if (mLastFrameMap.end() != itr) {
         if (timeInUS < clip->getSeqIn() + itr->second->getPts()) {
-            AlLogD(TAG, "Skip. Want %" PRId64 ", but %" PRId64, timeInUS, clip->getSeqIn() + itr->second->getPts());
+            AlLogD(TAG, "Skip. Want %" PRId64 ", but %" PRId64, timeInUS,
+                   clip->getSeqIn() + itr->second->getPts());
             return Hw::FAILED;
         } else {
             *frame = itr->second;
@@ -245,61 +255,6 @@ AbsAudioDecoder *AlUAudios::_findDecoder(AlMediaClip *clip) {
     return itr->second.get();
 }
 
-void AlUAudios::_seek(AbsAudioDecoder *decoder, int64_t timeInUS) {
-    if (decoder) {
-        AlLogI(TAG, "seek to %" PRId64, timeInUS);
-        decoder->seek(timeInUS, AbsDecoder::kSeekMode::EXACT);
-        decoder->start();
-    }
-}
-
-HwResult AlUAudios::_correct(AlMediaClip *clip, AbsAudioDecoder *decoder,
-                             std::map<AlID, int64_t> &map) {
-    int64_t curTime = 0;
-    auto itr = map.find(clip->id());
-    if (map.end() != itr) {
-        curTime = itr->second < decoder->getAudioDuration() ? itr->second : 0;
-    } else {
-        return Hw::FAILED;
-    }
-    int64_t delta = curTime + clip->getSeqIn() - mCurTimeInUS;
-    float scale = std::abs(delta) * decoder->getSampleHz() /
-                  (decoder->getSamplesPerBuffer() * 1e6f);
-    if (scale >= 3) {
-        auto timeInUS = mCurTimeInUS - clip->getSeqIn();
-        AlLogD(TAG, "Seek clip(%d) scale(%f) from %" PRId64 "US to %" PRId64 "US",
-               clip->id(), scale, curTime, timeInUS);
-        _seek(decoder, timeInUS);
-    }
-    return Hw::OK;
-}
-
-HwResult AlUAudios::_offsetDynamic(AlMediaClip *clip, AbsAudioDecoder *decoder,
-                                   int64_t curFramePts) {
-    int64_t delta = curFramePts + clip->getSeqIn() - mCurTimeInUS;
-    float scale = std::abs(delta) * decoder->getSampleHz() /
-                  (decoder->getSamplesPerBuffer() * 1e6f);
-    if (scale < 2 && 0 != delta) {
-        if (delta > 0) {
-            int32_t nb = std::abs(delta) * format.getSampleRate() / 1e6;
-            nb = std::min(nb, FRAME_SIZE);
-            int64_t len = nb * format.getChannels()
-                          * HwAbsMediaFrame::getBytesPerSample(format.getFormat());
-            auto *data = new uint8_t[len];
-
-            memset(data, 0, len);
-            mixer->put(clip->id(), format, data, nb);
-            AlLogW(TAG, "Offset clip(%d) -%d", clip->id(), nb);
-            delete[] data;
-        } else if (delta < 0) {
-            int32_t nb = std::abs(delta) * format.getSampleRate() / 1e6;
-            AlLogW(TAG, "Offset clip(%d) +%d", clip->id(), nb);
-        }
-        return Hw::OK;
-    }
-    return Hw::FAILED;
-}
-
 HwResult AlUAudios::_putSilence(AlMediaClip *clip, int nbSamples) {
     if (nullptr == clip || nbSamples <= 0) {
         return Hw::FAILED;
@@ -313,4 +268,22 @@ HwResult AlUAudios::_putSilence(AlMediaClip *clip, int nbSamples) {
     mixer->put(clip->id(), format, pSilenceBuf->data(), std::min(nbSamples, FRAME_SIZE));
     mixer->select(clip->id());
     return Hw::SUCCESS;
+}
+
+void AlUAudios::_setCurTimestamp(AlMediaClip *clip, int64_t timeInUS) {
+    auto itr = mCurTimeMap.find(clip->id());
+    if (mCurTimeMap.end() != itr) {
+        mCurTimeMap.erase(itr);
+    }
+    if (timeInUS != INT64_MIN) {
+        mCurTimeMap.insert(std::make_pair(clip->id(), timeInUS));
+    }
+}
+
+int64_t AlUAudios::_getCurTimestamp(AlMediaClip *clip) {
+    auto itr = mCurTimeMap.find(clip->id());
+    if (mCurTimeMap.end() != itr) {
+        return itr->second;
+    }
+    return INT64_MIN;
 }

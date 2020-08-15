@@ -52,17 +52,17 @@ bool AlUTimeline::_onStart(AlMessage *msg) {
 }
 
 bool AlUTimeline::_onPause(AlMessage *msg) {
-    mClockTime = TimeUtils::getCurrentTimeUS() - mClockStartTime;
+    mClockTime += TimeUtils::getCurrentTimeUS() - mClockStartTime;
     beating = false;
     return true;
 }
 
 bool AlUTimeline::_onSeek(AlMessage *msg) {
-    int64_t cur = msg->arg2;
-    if (cur >= mDurationInUS) {
-        cur = 0;
-    }
-    this->mCurTimeInUS = cur;
+    this->mClockTime = std::max<int64_t>(msg->arg2, 0);
+    this->mClockTime = std::min<int64_t>(mDurationInUS, this->mClockTime);
+    auto *msg1 = AlMessage::obtain(MSG_TIMELINE_SEEK_NOTIFY);
+    msg1->arg2 = this->mClockTime;
+    postMessage(msg1);
     return true;
 }
 
@@ -82,11 +82,10 @@ void AlUTimeline::_heartbeat() {
         msg->arg2 = mDurationInUS;
         this->postMessage(msg);
     }
-    this->_sendBeat();
 
     pipe->queueEvent([this]() {
         this->_sendBeat();
-        auto sleepTime = 10000;
+        auto sleepTime = 1e4;
         AlEventPipeline::sleep(sleepTime);
         this->_heartbeat();
     });

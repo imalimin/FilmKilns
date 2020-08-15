@@ -38,6 +38,8 @@ private:
 
     void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
 
+    void _seek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS);
+
     void _seek(AbsVideoDecoder *decoder, int64_t timeInUS);
 
     AbsVideoDecoder *_findDecoder(AlMediaClip *clip);
@@ -50,8 +52,6 @@ private:
 
     HwResult _grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
                    HwAbsMediaFrame **frame, int64_t timeInUS);
-
-    HwResult _correct(AlMediaClip *clip, AbsVideoDecoder *decoder);
 
     void _setCurTimestamp(AlMediaClip *clip, int64_t timeInUS);
 

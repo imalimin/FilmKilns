@@ -14,6 +14,7 @@
 #include "AbsAudioDecoder.h"
 #include "AlIdentityCreator.h"
 #include "AlBuffer.h"
+#include "AlVector.h"
 #include <map>
 
 al_def_unit(AlUAudios, Unit) {
@@ -35,20 +36,22 @@ private:
 
     bool _onEnd(AlMessage *msg);
 
-    void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
-
-    AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
+    void _seek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS);
 
     void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);
 
-    HwResult _correct(AlMediaClip *clip, AbsAudioDecoder *decoder, std::map<AlID, int64_t> &map);
+    void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
 
-    HwResult _offsetDynamic(AlMediaClip *clip, AbsAudioDecoder *decoder, int64_t curFramePts);
+    AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
 
     HwResult _putSilence(AlMediaClip *clip, int nbSamples);
 
     HwResult _grab(AlMediaClip *clip, AbsAudioDecoder *decoder,
                    HwAbsMediaFrame **frame, int64_t timeInUS);
+
+    void _setCurTimestamp(AlMediaClip *clip, int64_t timeInUS);
+
+    int64_t _getCurTimestamp(AlMediaClip *clip);
 
 private:
     const int FRAME_SIZE = 1024;
