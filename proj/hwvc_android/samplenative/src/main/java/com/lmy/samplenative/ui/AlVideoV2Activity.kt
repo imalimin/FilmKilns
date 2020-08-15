@@ -141,7 +141,7 @@ class AlVideoV2Activity : BaseActivity() {
     private fun pausePlay() {
         playBtn.setImageResource(android.R.drawable.ic_media_play)
         processor?.pause()
-        playing = !playing
+        playing = false
     }
 
     private fun startPlay() {
@@ -151,7 +151,7 @@ class AlVideoV2Activity : BaseActivity() {
             processor?.seek((duration * trackView.getProgress()).toLong())
         }
         processor?.start()
-        playing = !playing
+        playing = true
     }
 
     override fun onDestroy() {
