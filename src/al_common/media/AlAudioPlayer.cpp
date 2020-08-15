@@ -59,7 +59,7 @@ void AlAudioPlayer::initialize(SLEngine *engine) {
     uint32_t size = 16;
     switch (mode) {
         case HwAudioDeviceMode::LowLatency:
-            size = 3;
+            size = 4;
             break;
         case HwAudioDeviceMode::Normal:
             size = 16;
@@ -126,10 +126,6 @@ HwResult AlAudioPlayer::createEngine() {
 
 HwResult AlAudioPlayer::start() {
     (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_STOPPED);
-    uint32_t bufSize = getBufferByteSize();
-    uint8_t buffer[bufSize];
-    memset(buffer, 0, bufSize);
-    write(buffer, bufSize);
     bufferEnqueue(bufferQueueItf);
     SLresult result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_PLAYING);
     if (SL_RESULT_SUCCESS != result) {
@@ -137,6 +133,32 @@ HwResult AlAudioPlayer::start() {
         return Hw::FAILED;
     }
     return Hw::SUCCESS;
+}
+
+void AlAudioPlayer::stop() {
+    AlLogI(TAG, "");
+    if (playObject) {
+        SLresult result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_STOPPED);
+        if (SL_RESULT_SUCCESS != result) {
+            AlLogI(TAG, "Player SetPlayState stop failed!");
+        }
+        (*playObject)->Destroy(playObject);
+        playObject = nullptr;
+        bufferQueueItf = nullptr;
+        playItf = nullptr;
+    }
+    if (nullptr != mixObject) {
+        (*mixObject)->Destroy(mixObject);
+        mixObject = nullptr;
+    }
+    destroyEngine();
+    std::unique_lock<std::mutex> guard(mtx);
+    while (!input.empty()) {
+        input.pop();
+    }
+    while (!cache.empty()) {
+        cache.pop();
+    }
 }
 
 HwResult AlAudioPlayer::createBufferQueueAudioPlayer() {
@@ -219,11 +241,14 @@ void AlAudioPlayer::bufferEnqueue(SLAndroidSimpleBufferQueueItf slBufferQueueItf
     if (nullptr != buf) {
         buf->rewind();
         (*slBufferQueueItf)->Enqueue(bufferQueueItf, buf->data(), buf->size());
-        recycle(buf);
-        return;
+        if (nullptr != tmpData) {
+            recycle(tmpData);
+        }
+        tmpData = buf;
+    } else {
+        AlLogW(TAG, "Play silence data.");
+        (*slBufferQueueItf)->Enqueue(bufferQueueItf, silenceData, getBufferByteSize());
     }
-    AlLogW(TAG, "Play silence data.");
-    (*slBufferQueueItf)->Enqueue(bufferQueueItf, silenceData, getBufferByteSize());
 }
 
 HwResult AlAudioPlayer::write(uint8_t *buffer, size_t size) {
@@ -277,32 +302,6 @@ void AlAudioPlayer::flush() {
         auto it = input.front();
         input.pop();
         cache.push(it);
-    }
-}
-
-void AlAudioPlayer::stop() {
-    AlLogI(TAG, "");
-    if (playObject) {
-        SLresult result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_STOPPED);
-        if (SL_RESULT_SUCCESS != result) {
-            AlLogI(TAG, "Player SetPlayState stop failed!");
-        }
-        (*playObject)->Destroy(playObject);
-        playObject = nullptr;
-        bufferQueueItf = nullptr;
-        playItf = nullptr;
-    }
-    if (nullptr != mixObject) {
-        (*mixObject)->Destroy(mixObject);
-        mixObject = nullptr;
-    }
-    destroyEngine();
-    std::unique_lock<std::mutex> guard(mtx);
-    while (!input.empty()) {
-        input.pop();
-    }
-    while (!cache.empty()) {
-        cache.pop();
     }
 }
 

@@ -67,5 +67,6 @@ void HwAudioFrame::clone(HwAbsMediaFrame *src) {
     srcFrame->setPts(getPts());
     srcFrame->setFormat(getFormat());
     srcFrame->setSampleFormat(channels, sampleRate, sampleCount);
+    srcFrame->setFlags(flags());
     memcpy(srcFrame->data(), data(), size());
 }

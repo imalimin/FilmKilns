@@ -78,6 +78,7 @@ private:
     uint8_t *silenceData = nullptr;
     std::queue<std::shared_ptr<AlBuffer>> input;
     std::queue<std::shared_ptr<AlBuffer>> cache;
+    std::shared_ptr<AlBuffer> tmpData = nullptr;
     std::mutex mtx;
     std::condition_variable cond;
 };
