@@ -47,6 +47,9 @@ private:
 
     HwResult _putSilence(AlMediaClip *clip, int nbSamples);
 
+    HwResult _grab(AlMediaClip *clip, AbsAudioDecoder *decoder,
+                   HwAbsMediaFrame **frame, int64_t timeInUS);
+
 private:
     const int FRAME_SIZE = 1024;
     std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
@@ -55,6 +58,7 @@ private:
     AlAudioPoolMixer *mixer = nullptr;
     int64_t mCurTimeInUS = 0;
     AlBuffer *pSilenceBuf = nullptr;
+    std::map<AlID, HwAbsMediaFrame *> mLastFrameMap;
 };
 
 

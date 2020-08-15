@@ -95,15 +95,23 @@ bool AlUAudios::_onBeat(AlMessage *msg) {
         if (nullptr == decoder) {
             continue;
         }
-        _correct(clip, decoder, curTimeMap);
+//        _correct(clip, decoder, curTimeMap);
 
         bool offsetDone = false;
         while (decoder) {
             HwAbsMediaFrame *frame = nullptr;
-            HwResult ret = decoder->grab(&frame);
+            HwResult ret = _grab(clip, decoder, &frame, mCurTimeInUS);
             if (Hw::MEDIA_EOF == ret) {
                 _putSilence(clip, FRAME_SIZE - count);
                 AlLogI(TAG, "EOF");
+                break;
+            }
+            if (Hw::MEDIA_WAIT == ret) {
+                AlLogW(TAG, "Grab retry. cur(%lld)", mCurTimeInUS);
+                continue;
+            }
+            if (Hw::OK != ret) {
+//                AlLogW(TAG, "Grab failed.");
                 break;
             }
             if (nullptr == frame && Hw::MEDIA_EOF != ret) {
@@ -185,6 +193,45 @@ void AlUAudios::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
            decoder->getSampleHz(),
            decoder->getSampleFormat(), path.c_str());
     map.insert(make_pair(clip->id(), std::move(decoder)));
+}
+
+HwResult AlUAudios::_grab(AlMediaClip *clip, AbsAudioDecoder *decoder,
+                          HwAbsMediaFrame **frame, int64_t timeInUS) {
+    auto itr = mLastFrameMap.find(clip->id());
+    if (mLastFrameMap.end() != itr) {
+        if (timeInUS < clip->getSeqIn() + itr->second->getPts()) {
+            AlLogD(TAG, "Skip. Want %" PRId64 ", but %" PRId64, timeInUS, clip->getSeqIn() + itr->second->getPts());
+            return Hw::FAILED;
+        } else {
+            *frame = itr->second;
+            mLastFrameMap.erase(itr);
+            return Hw::OK;
+        }
+    }
+    HwResult ret = decoder->grab(frame);
+    while (nullptr != *frame) {
+        if ((*frame)->flags() & AlMediaDef::FLAG_EOF) {
+            _seek(decoder, 0);
+            AlLogI(TAG, "FLAG_EOF");
+        } else if ((*frame)->flags() & AlMediaDef::FLAG_SEEK_DONE) {
+            AlLogI(TAG, "FLAG_SEEK_DONE");
+        } else {
+            break;
+        }
+        ret = decoder->grab(frame);
+    }
+    if (Hw::OK != ret || nullptr == *frame) {
+        return ret;
+    }
+    if ((*frame)->isAudio()) {
+        if (timeInUS < clip->getSeqIn() + (*frame)->getPts()) {
+            mLastFrameMap.insert(std::make_pair(clip->id(), *frame));
+            return Hw::FAILED;
+        }
+        return Hw::OK;
+    }
+    return Hw::FAILED;
+
 }
 
 AbsAudioDecoder *AlUAudios::_findDecoder(AlMediaClip *clip) {

@@ -243,6 +243,7 @@ HwResult AlAudioPlayer::push(uint8_t *buffer, size_t size, int us) {
                 return Hw::FAILED;
             }
         } else {
+            AlLogW(TAG, "Write failed.");
             return Hw::FAILED;
         }
     }

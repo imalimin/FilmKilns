@@ -38,11 +38,6 @@ bool AlUSpeaker::eventFeed(AlMessage *msg) {
         HwAudioFrame *frame = dynamic_cast<HwAudioFrame *>(msg->obj);
         createFromAudioFrame(frame);
         if (player) {
-//            Logcat::i("HWVC", "HwSpeaker::play audio: %d, %d, %lld, %lld",
-//                      frame->getChannels(),
-//                      frame->getSampleRate(),
-//                      frame->getSampleCount(),
-//                      frame->getDataSize());
             player->write(frame->data(), frame->size());
             auto *msg1 = AlMessage::obtain(MSG_SPEAKER_FEED_DONE);
             msg1->arg1 = frame->getSampleCount();

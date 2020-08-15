@@ -9,6 +9,7 @@
 #include "AlFFUtils.h"
 #include "Logcat.h"
 #include "AlFFUtils.h"
+#include "HwAudioFrame.h"
 #include <cassert>
 
 #define TAG "DefaultAudioDecoder"
@@ -49,31 +50,30 @@ DefaultAudioDecoder::~DefaultAudioDecoder() {
 };
 
 bool DefaultAudioDecoder::prepare(string path) {
-    Logcat::i("HWVC", "DefaultAudioDecoder::prepare: %s", path.c_str());
+    AlLogI(TAG, "%s", path.c_str());
     AlFFUtils::init();
     this->path = path;
     pFormatCtx = avformat_alloc_context();
     //打开输入视频文件
     if (avformat_open_input(&pFormatCtx, path.c_str(), NULL, NULL) != 0) {
-        Logcat::e("HWVC", "Couldn't open input stream.");
+        AlLogE(TAG, "Couldn't open input stream.");
         return false;
     }
     audioTrack = av_find_best_stream(pFormatCtx, AVMEDIA_TYPE_AUDIO, -1, -1, NULL, 0);
     //获取视频文件信息
     if (avformat_find_stream_info(pFormatCtx, NULL) < 0) {
-        Logcat::e("HWVC", "Couldn't find stream information.");
+        AlLogE(TAG, "Couldn't find stream information.");
         return false;
     }
     if (AVERROR_STREAM_NOT_FOUND != audioTrack && !openTrack(audioTrack, &aCodecContext)) {
-        Logcat::e("HWVC", "******** Open audio track failed. *********");
+        AlLogE(TAG, "******** Open audio track failed. *********");
         return false;
     }
     sFormat = HwSampleFormat(HwAbsMediaFrame::convertToAudioFrameFormat(aCodecContext->sample_fmt),
                              aCodecContext->channels, aCodecContext->sample_rate);
     _checkFormat();
-    Logcat::e("HWVC",
-              "DefaultAudioDecoder::prepare(duration=%lld channels=%d, sampleHz=%d, frameSize=%d)",
-              getAudioDuration(), getChannels(), getSampleHz(), getSamplesPerBuffer());
+    AlLogI(TAG, "duration=%lld channels=%d, sampleHz=%d, frameSize=%d",
+           getAudioDuration(), getChannels(), getSampleHz(), getSamplesPerBuffer());
     if (oFormat != sFormat) {
         translator = new HwAudioTranslator(oFormat, sFormat);
     } else {
@@ -86,7 +86,7 @@ bool DefaultAudioDecoder::prepare(string path) {
     return true;
 }
 
-void DefaultAudioDecoder::handleAction() {
+int32_t DefaultAudioDecoder::_handleAction() {
     auto timeInUS = mSeekAction.get("time", INT64_MIN);
     if (timeInUS >= 0) {
         avcodec_flush_buffers(aCodecContext);
@@ -94,16 +94,16 @@ void DefaultAudioDecoder::handleAction() {
                                      timeInUS, INT64_MAX,
                                      AVSEEK_FLAG_ANY);
         if (ret < 0) {
-            Logcat::e("HWVC", "DefaultAudioDecoder::seek audio failed");
-            return;
+            AlLogE(TAG, "failed");
+            return 0;
         }
         auto mode = (AbsDecoder::kSeekMode) mSeekAction.get("mode",
-                                       static_cast<int32_t>(AbsDecoder::kSeekMode::BACKWARD));
+                                                            static_cast<int32_t>(AbsDecoder::kSeekMode::BACKWARD));
         while (AbsDecoder::kSeekMode::EXACT == mode && timeInUS > 0) {
             ret = av_read_frame(pFormatCtx, avPacket);
             if (AVERROR_EOF == ret) {
                 eof = true;
-                break;
+                return AlMediaDef::FLAG_SEEK_DONE | AlMediaDef::FLAG_EOF;
             }
             int64_t pts = -1;
             if (0 == ret && audioTrack == avPacket->stream_index) {
@@ -119,8 +119,10 @@ void DefaultAudioDecoder::handleAction() {
         }
         avcodec_flush_buffers(aCodecContext);
         mSeekAction.put("time", INT64_MIN);
-        Logcat::e("HWVC", "DefaultVideoDecoder::seek: %lld", timeInUS);
+        AlLogI(TAG, "seek: %" PRId64, timeInUS);
+        return AlMediaDef::FLAG_SEEK_DONE;
     }
+    return 0;
 }
 
 
@@ -129,7 +131,15 @@ void DefaultAudioDecoder::handleAction() {
  * @param frame 每次返回的地址可能都一样，所以获取一帧音视频后请立即使用，在下次grab之后可能会被释放
  */
 HwResult DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
-    handleAction();
+    auto flags = _handleAction();
+    if (flags & AlMediaDef::FLAG_SEEK_DONE || flags & AlMediaDef::FLAG_EOF) {
+        if (outHwFrame) {
+            outHwFrame->recycle();
+        }
+        outHwFrame = _createEmptyFrame(flags);
+        *frame = outHwFrame;
+        return Hw::FAILED;
+    }
     while (true) {
         int ret = av_read_frame(pFormatCtx, avPacket);
         if (0 == ret && audioTrack == avPacket->stream_index) {
@@ -152,7 +162,12 @@ HwResult DefaultAudioDecoder::grab(HwAbsMediaFrame **frame) {
         }
         //如果缓冲区中既没有音频也没有视频，并且已经读取完文件，则播放完了
         if (eof) {
-            Logcat::i("HWVC", "DefaultAudioDecoder::grab EOF");
+            AlLogI(TAG, "end");
+            if (outHwFrame) {
+                outHwFrame->recycle();
+            }
+            outHwFrame = _createEmptyFrame(AlMediaDef::FLAG_EOF);
+            *frame = outHwFrame;
             return Hw::MEDIA_EOF;
         }
     }
@@ -226,14 +241,14 @@ bool DefaultAudioDecoder::openTrack(int track, AVCodecContext **context) {
     if (AV_CODEC_ID_H264 == avCodecParameters->codec_id) {
         codec = avcodec_find_decoder_by_name("h264_mediacodec");
         if (NULL == codec) {
-            Logcat::e("HWVC", "Selected AV_CODEC_ID_H264.");
+            AlLogI(TAG, "Selected AV_CODEC_ID_H264.");
             codec = avcodec_find_decoder(avCodecParameters->codec_id);
         }
     } else {
         codec = avcodec_find_decoder(avCodecParameters->codec_id);
     }
     if (NULL == codec) {
-        Logcat::e("HWVC", "Couldn't find codec.");
+        AlLogE(TAG, "Couldn't find codec.");
         return false;
     }
     //打开编码器
@@ -321,4 +336,12 @@ int64_t DefaultAudioDecoder::getAudioStartTime() {
                                 AV_ROUND_NEAR_INF);
     }
     return 0;
+}
+
+HwAbsMediaFrame *DefaultAudioDecoder::_createEmptyFrame(int32_t flags) {
+    auto *frame = new HwAudioFrame(hwFrameAllocator, oFormat.getFormat(),
+                                   oFormat.getChannels(),
+                                   oFormat.getSampleRate(), 0);
+    frame->setFlags(flags);
+    return frame;
 }

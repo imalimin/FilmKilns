@@ -73,9 +73,11 @@ private:
 
     void matchPts(AVFrame *frame, int track);
 
-    void handleAction();
+    int32_t _handleAction();
 
     void _checkFormat();
+
+    HwAbsMediaFrame *_createEmptyFrame(int32_t flags);
 
 private:
     string path;
