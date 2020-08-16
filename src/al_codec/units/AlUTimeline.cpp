@@ -60,7 +60,7 @@ bool AlUTimeline::_onPause(AlMessage *msg) {
 bool AlUTimeline::_onSeek(AlMessage *msg) {
     this->mClockTime = std::max<int64_t>(msg->arg2, 0);
     this->mClockTime = std::min<int64_t>(mDurationInUS, this->mClockTime);
-    auto *msg1 = AlMessage::obtain(MSG_TIMELINE_SEEK_NOTIFY);
+    auto *msg1 = AlMessage::obtain(MSG_TIMELINE_SEEK_NOTIFY, AlMessage::QUEUE_MODE_UNIQUE);
     msg1->arg2 = this->mClockTime;
     postMessage(msg1);
     return true;
@@ -85,7 +85,7 @@ void AlUTimeline::_heartbeat() {
 
     pipe->queueEvent([this]() {
         this->_sendBeat();
-        auto sleepTime = 1e4;
+        auto sleepTime = 2e3;
         AlEventPipeline::sleep(sleepTime);
         this->_heartbeat();
     });
@@ -96,8 +96,7 @@ void AlUTimeline::_sendBeat() {
         postMessage(AlMessage::obtain(MSG_TIMELINE_BEGIN, AlMessage::QUEUE_MODE_UNIQUE));
     }
     // 如果QUEUE_MODE_FIRST_ALWAYS会影响数据流传递，所以使用QUEUE_MODE_UNIQUE即可
-    auto mode = AlMessage::QUEUE_MODE_UNIQUE;
-    auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, mode);
+    auto *msg = AlMessage::obtain(MSG_TIMELINE_HEARTBEAT, AlMessage::QUEUE_MODE_UNIQUE);
     msg->arg2 = this->mCurTimeInUS;
     this->postMessage(msg);
     this->mCurTimeInUS = mClockTime + TimeUtils::getCurrentTimeUS() - mClockStartTime;
