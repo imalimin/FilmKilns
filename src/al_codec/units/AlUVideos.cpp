@@ -169,8 +169,62 @@ void AlUVideos::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDura
 
 void AlUVideos::_seek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips,
                       int64_t timeInUS) {
+    std::vector<AlID> ignoreClips;
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
-        _seek(_findDecoder(itr->get()), timeInUS);
+        auto *clip = itr->get();
+        ignoreClips.emplace_back(clip->id());
+        auto decoder = _findDecoder(clip);
+        _seek(decoder, timeInUS);
+        if (nullptr == decoder) {
+            continue;
+        }
+        while (decoder) {
+            HwAbsMediaFrame *frame = nullptr;
+            HwResult ret = decoder->grab(&frame);
+            while (Hw::MEDIA_WAIT == ret || nullptr == frame) {
+                ret = decoder->grab(&frame);
+                if (Hw::MEDIA_EOF == ret ||
+                    (nullptr != frame && frame->flags() & AlMediaDef::FLAG_EOF)) {
+                    AlLogI(TAG, "FLAG_EOF");
+                    break;
+                }
+            }
+            while (nullptr != frame) {
+                if (frame->flags() & AlMediaDef::FLAG_SEEK_DONE) {
+                    AlLogI(TAG, "FLAG_SEEK_DONE");
+                } else {
+                    break;
+                }
+                while (Hw::MEDIA_WAIT == ret) {
+                    ret = decoder->grab(&frame);
+                    if (Hw::MEDIA_EOF == ret ||
+                        (nullptr != frame && frame->flags() & AlMediaDef::FLAG_EOF)) {
+                        AlLogI(TAG, "FLAG_EOF");
+                        break;
+                    }
+                }
+            }
+            if (Hw::OK != ret || nullptr == frame) {
+                if (Hw::MEDIA_WAIT == ret) {
+                    AlLogI(TAG, "MEDIA_WAIT");
+                } else {
+                    AlLogI(TAG, "frame is null");
+                }
+                break;
+            }
+            if (frame->isVideo()) {
+                int32_t layer = _findLayer(clip);
+                if (AlIdentityCreator::NONE_ID != layer) {
+                    AlLogI(TAG, "seek render %" PRId64, frame->getPts());
+                    _updateLayer(clip, dynamic_cast<HwVideoFrame *>(frame));
+                }
+            }
+            break;
+        }
+    }
+    if (!mLayerMap.empty()) {
+        _clearLayers(ignoreClips);
+        postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
     }
 }
 

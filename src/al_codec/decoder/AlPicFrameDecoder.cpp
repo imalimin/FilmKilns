@@ -146,21 +146,27 @@ int32_t AlPicFrameDecoder::_handleAction() {
     if (timeInUS >= 0) {
         auto mode = (AbsDecoder::kSeekMode) mSeekAction.get("mode",
                                                             static_cast<int32_t>(AbsDecoder::kSeekMode::BACKWARD));
-        avcodec_flush_buffers(vCtx);
-        int ret = avformat_seek_file(pFormatCtx, vTrack, INT64_MIN,
+        int ret = -1;
+        if (!_inCurGop(timeInUS)) {
+            avcodec_flush_buffers(vCtx);
+            ret = avformat_seek_file(pFormatCtx, vTrack, INT64_MIN,
                                      av_rescale_q_rnd(timeInUS,
                                                       oRational,
                                                       pFormatCtx->streams[vTrack]->time_base,
                                                       AV_ROUND_NEAR_INF), INT64_MAX,
                                      AVSEEK_FLAG_BACKWARD);
-        if (ret < 0) {
-            AlLogE(TAG, "failed");
-            return 0;
+            if (ret < 0) {
+                AlLogE(TAG, "failed");
+                return 0;
+            }
+        } else {
+            AlLogD(TAG, "In current gop.");
         }
         while (AbsDecoder::kSeekMode::EXACT == mode && timeInUS > 0) {
             ret = av_read_frame(pFormatCtx, vPacket);
             if (0 == ret && vTrack == vPacket->stream_index) {
                 avcodec_send_packet(vCtx, vPacket);
+                lastPktPts = vPacket->pts;
             }
             av_packet_unref(vPacket);
             if (AVERROR_EOF == ret) {
@@ -178,7 +184,8 @@ int32_t AlPicFrameDecoder::_handleAction() {
 
             }
             if (pts >= timeInUS) {
-                AlLogD(TAG, "Seek %" PRId64 ", target %" PRId64 ", %d", pts, timeInUS, vCtx->gop_size);
+                AlLogD(TAG, "Seek %" PRId64 ", target %" PRId64 ", %d", pts, timeInUS,
+                       vCtx->gop_size);
                 break;
             }
         }
@@ -204,6 +211,7 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
         int ret = av_read_frame(pFormatCtx, vPacket);
         if (0 == ret && vTrack == vPacket->stream_index) {
             avcodec_send_packet(vCtx, vPacket);
+            lastPktPts = vPacket->pts;
         }
         av_packet_unref(vPacket);
         if (AVERROR_EOF == ret) {
@@ -215,7 +223,7 @@ HwResult AlPicFrameDecoder::grab(HwAbsMediaFrame **frame) {
                                            pFormatCtx->streams[vTrack]->time_base,
                                            oRational,
                                            AV_ROUND_NEAR_INF);
-            AlLogI(TAG, "format %d, %d, %d", pFormatCtx->streams[vTrack]->codecpar->format, vFrame->format, AV_PIX_FMT_NV12);
+//            AlLogD(TAG, "format %d, %d, %d", pFormatCtx->streams[vTrack]->codecpar->format, vFrame->format, AV_PIX_FMT_NV12);
             if (oHwFrame) {
                 oHwFrame->recycle();
             }
@@ -285,8 +293,8 @@ void AlPicFrameDecoder::_setupSwr() {
                           SWS_BICUBIC, nullptr, nullptr, nullptr);
     auto *buf = (uint8_t *) av_malloc(
             avpicture_get_size(format, vFinalFrame->width, vFinalFrame->height));
-    int ret =av_image_fill_arrays(vFinalFrame->data, vFinalFrame->linesize, buf, format,
-                                  vFinalFrame->width, vFinalFrame->height, 1);
+    int ret = av_image_fill_arrays(vFinalFrame->data, vFinalFrame->linesize, buf, format,
+                                   vFinalFrame->width, vFinalFrame->height, 1);
 }
 
 AVFrame *AlPicFrameDecoder::_doSwr(AVFrame *src) {
@@ -325,4 +333,26 @@ void AlPicFrameDecoder::_setupBSF() {
 
         memcpy(vCtx->extradata, bsf->par_out->extradata, vCtx->extradata_size);
     }
+}
+
+bool AlPicFrameDecoder::_inCurGop(int64_t timeInUS) {
+    int64_t lastKeyPts = 0;
+    int nb_index_entries = pFormatCtx->streams[vTrack]->nb_index_entries;
+    int64_t curUS = av_rescale_q_rnd(lastPktPts,
+                                     pFormatCtx->streams[vTrack]->time_base,
+                                     oRational,
+                                     AV_ROUND_NEAR_INF);
+    for (int i = 0; i < nb_index_entries; ++i) {
+        auto *entity = pFormatCtx->streams[vTrack]->index_entries + i;
+        if (entity->flags & AV_PKT_FLAG_KEY) {
+            lastKeyPts = av_rescale_q_rnd(entity->timestamp,
+                                          pFormatCtx->streams[vTrack]->time_base,
+                                          oRational,
+                                          AV_ROUND_NEAR_INF);
+        }
+        if (timeInUS >= lastKeyPts && curUS >= lastKeyPts && timeInUS >= curUS) {
+            return true;
+        }
+    }
+    return false;
 }

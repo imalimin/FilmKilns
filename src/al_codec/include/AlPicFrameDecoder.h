@@ -76,6 +76,8 @@ private:
 
     void _setupBSF();
 
+    bool _inCurGop(int64_t timeInUS);
+
 public:
     AlPicFrameDecoder(const AlPicFrameDecoder &o) : AbsVideoDecoder() {};
 
@@ -96,6 +98,7 @@ private:
     bool eof = false;
     /** action */
     AlBundle mSeekAction;
+    int64_t lastPktPts = 0;
 };
 
 

@@ -180,7 +180,7 @@ void AlUSequence::_beatAudioClips(int64_t timeInUS, bool isSeek) {
     auto clips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
     _findClipsByTime(AlMediaTrack::kType::AUDIO, *clips, timeInUS);
     if (!clips->empty()) {
-        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO);
+        auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_AUDIO, AlMessage::QUEUE_MODE_UNIQUE);
         msg1->arg1 = isSeek;
         msg1->arg2 = timeInUS;
         msg1->sp = clips;
@@ -191,7 +191,7 @@ void AlUSequence::_beatAudioClips(int64_t timeInUS, bool isSeek) {
 void AlUSequence::_beatVideoClips(int64_t timeInUS, bool isSeek) {
     auto clips = std::make_shared<AlVector<std::shared_ptr<AlMediaClip>>>();
     _findClipsByTime(AlMediaTrack::kType::VIDEO, *clips, timeInUS);
-    auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_VIDEO);
+    auto *msg1 = AlMessage::obtain(MSG_SEQUENCE_BEAT_VIDEO, AlMessage::QUEUE_MODE_UNIQUE);
     msg1->arg1 = isSeek;
     msg1->arg2 = timeInUS;
     msg1->sp = clips;
