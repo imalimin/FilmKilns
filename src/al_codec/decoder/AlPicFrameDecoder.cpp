@@ -336,23 +336,11 @@ void AlPicFrameDecoder::_setupBSF() {
 }
 
 bool AlPicFrameDecoder::_inCurGop(int64_t timeInUS) {
-    int64_t lastKeyPts = 0;
-    int nb_index_entries = pFormatCtx->streams[vTrack]->nb_index_entries;
-    int64_t curUS = av_rescale_q_rnd(lastPktPts,
-                                     pFormatCtx->streams[vTrack]->time_base,
+    int64_t reqTimeInBase = av_rescale_q_rnd(timeInUS,
                                      oRational,
+                                     pFormatCtx->streams[vTrack]->time_base,
                                      AV_ROUND_NEAR_INF);
-    for (int i = 0; i < nb_index_entries; ++i) {
-        auto *entity = pFormatCtx->streams[vTrack]->index_entries + i;
-        if (entity->flags & AV_PKT_FLAG_KEY) {
-            lastKeyPts = av_rescale_q_rnd(entity->timestamp,
-                                          pFormatCtx->streams[vTrack]->time_base,
-                                          oRational,
-                                          AV_ROUND_NEAR_INF);
-        }
-        if (timeInUS >= lastKeyPts && curUS >= lastKeyPts && timeInUS >= curUS) {
-            return true;
-        }
-    }
-    return false;
+    int64_t curTime = av_index_search_timestamp(pFormatCtx->streams[vTrack], lastPktPts, AVSEEK_FLAG_BACKWARD);
+    int64_t reqTime = av_index_search_timestamp(pFormatCtx->streams[vTrack], reqTimeInBase, AVSEEK_FLAG_BACKWARD);
+    return curTime == reqTime && reqTimeInBase > lastPktPts;
 }
