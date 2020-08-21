@@ -130,5 +130,7 @@ void UnitPipeline::_notifyCreate() {
 }
 
 void UnitPipeline::_notifyDestroy() {
-    mHandler->sendMessage(AlMessage::obtain(EVENT_COMMON_RELEASE));
+    auto *msg = AlMessage::obtain(EVENT_COMMON_RELEASE);
+    msg->desc = "Release";
+    mHandler->sendMessage(msg);
 }
