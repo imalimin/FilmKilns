@@ -3,6 +3,7 @@ package com.lmy.samplenative.ui
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
+import android.view.KeyEvent
 import android.view.SurfaceHolder
 import android.widget.Toast
 import com.lmy.hwvcnative.entity.AlLayer
@@ -21,7 +22,7 @@ import java.util.*
 
 class AlVideoV2Activity : BaseActivity() {
     override fun getLayoutResource(): Int = R.layout.activity_video_v2
-    private val processor: AlVideoV2Processor? = AlVideoV2Processor()
+    private var processor: AlVideoV2Processor? = AlVideoV2Processor()
     private val fmt = SimpleDateFormat("mm:ss")
     private var mCurrentLayer = AlLayer.none()
     private var playing: Boolean = true
@@ -121,7 +122,7 @@ class AlVideoV2Activity : BaseActivity() {
         })
         surfaceView?.setOnClickListener { v, x, y ->
             if (null != processor) {
-                setCurLayer(AlLayer(processor.getLayer(x, y), 0, 0))
+                setCurLayer(AlLayer(processor!!.getLayer(x, y), 0, 0))
             }
         }
         surfaceView.setOnScrollListener { v, x, y, dx, dy, s ->
@@ -154,9 +155,22 @@ class AlVideoV2Activity : BaseActivity() {
         playing = true
     }
 
+    override fun onStop() {
+        super.onStop()
+        pausePlay()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        processor?.pause()
         processor?.release()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            processor?.pause()
+            processor?.release()
+            processor = null
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }
