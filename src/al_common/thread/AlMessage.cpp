@@ -36,6 +36,10 @@ AlMessage *AlMessage::obtain(int32_t what, Object *obj, int16_t queueMode) {
     return new AlMessage(what, obj, queueMode);
 }
 
+void AlMessage::recycle(AlMessage *msg) {
+    AlMessageManager::getInstance()->recycle(msg);
+}
+
 AlMessage::AlMessage()
         : AlMessage(0) {
 

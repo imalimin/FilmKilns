@@ -72,6 +72,8 @@ public:
     static AlMessage *obtain(int32_t what, int16_t queueMode);
 
     static AlMessage *obtain(int32_t what, Object *obj, int16_t queueMode);
+
+    static void recycle(AlMessage *msg);
 };
 
 al_class AlMessageManager al_extend Object {

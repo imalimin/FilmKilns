@@ -97,7 +97,7 @@ void AlLooper::_loop() {
             if (msg->target) {
                 msg->target->dispatchMessage(msg);
             }
-            delete msg;
+            AlMessage::recycle(msg);
         }
         if (exitSafely) {
             if (exiting && 0 == queue.size()) {
