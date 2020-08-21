@@ -59,6 +59,7 @@ private:
 
 private:
     std::shared_ptr<AlEventPipeline> pipe;
+    int64_t durationOfBeatInNS = 0;
     int64_t mDurationInUS = 0;
     int64_t mCurTimeInUS = 0;
     bool beating = false;

@@ -35,6 +35,7 @@ bool AlUTimeline::onDestroy(AlMessage *msg) {
 }
 
 bool AlUTimeline::_onSetHzInUS(AlMessage *msg) {
+    durationOfBeatInNS = 1024 *1e9 / 44100 / 4;
     return true;
 }
 
@@ -85,8 +86,7 @@ void AlUTimeline::_heartbeat() {
 
     pipe->queueEvent([this]() {
         this->_sendBeat();
-        auto sleepTime = 2e3;
-        AlEventPipeline::sleep(sleepTime);
+        this_thread::sleep_for(chrono::nanoseconds(durationOfBeatInNS));
         this->_heartbeat();
     });
 }
