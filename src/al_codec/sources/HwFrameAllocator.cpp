@@ -68,10 +68,13 @@ HwAbsMediaFrame *HwFrameAllocator::refAudio(AVFrame *avFrame) {
     HwAbsMediaFrame *frame = nullptr;
     unRefLock.lock();
     if (unRefQueue.size() > 0) {
+        auto avFrameByteSize = avFrame->nb_samples *
+                               av_get_bytes_per_sample((AVSampleFormat) avFrame->format) *
+                               avFrame->channels;
         set<HwAbsMediaFrame *>::iterator itr = unRefQueue.begin();
         while (itr != unRefQueue.end()) {
             if ((*itr)->isAudio()
-                && (*itr)->size() == avFrame->linesize[0]) {//帧类型相同，data大小相等，则可以复用
+                && (*itr)->size() == avFrameByteSize) {//帧类型相同，data大小相等，则可以复用
                 frame = *itr;
                 unRefQueue.erase(itr);
                 break;
