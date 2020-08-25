@@ -8,16 +8,15 @@
 #ifndef HWVC_ANDROID_ALUAUDIOS_H
 #define HWVC_ANDROID_ALUAUDIOS_H
 
-#include "Unit.h"
+#include "AlUAbsMedia.h"
 #include "AlAudioPoolMixer.h"
 #include "AlMediaClip.h"
 #include "AbsAudioDecoder.h"
 #include "AlIdentityCreator.h"
 #include "AlBuffer.h"
 #include "AlVector.h"
-#include <map>
 
-al_def_unit(AlUAudios, Unit) {
+al_def_unit(AlUAudios, AlUAbsMedia) {
 public:
     AlUAudios(const std::string alias);
 
@@ -27,41 +26,32 @@ public:
 
     virtual bool onDestroy(AlMessage *msg) override;
 
+protected:
+    virtual std::shared_ptr<AbsDecoder> createDecoder(AlMediaClip *clip,
+                                                      int64_t &frameDuration) override;
+
+    virtual bool shouldDecodeFrame() override;
+
+    virtual bool onInterruptClip(AlMediaClip *clip) override;
+
+    virtual bool onClipEOF(AlMediaClip *clip) override;
+
+    virtual bool onDispatchFrame(AlMediaClip *clip, HwAbsMediaFrame *frame, int64_t timeInUS) override;
+
+    virtual bool onBeatFinish(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips) override;
+
+    virtual void onActionSeek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS) override;
+
 private:
-    bool _onAddTrack(AlMessage *msg);
-
-    bool _onRemoveTrack(AlMessage *msg);
-
-    bool _onBeat(AlMessage *msg);
-
-    bool _onEnd(AlMessage *msg);
-
-    void _seek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS);
-
-    void _seek(AbsAudioDecoder *decoder, int64_t timeInUS);
-
-    void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
-
-    AbsAudioDecoder *_findDecoder(AlMediaClip *clip);
+    void _seek(std::shared_ptr<AbsDecoder> decoder, int64_t timeInUS);
 
     HwResult _putSilence(AlMediaClip *clip, int nbSamples);
 
-    HwResult _grab(AlMediaClip *clip, AbsAudioDecoder *decoder,
-                   HwAbsMediaFrame **frame, int64_t timeInUS);
-
-    void _setCurTimestamp(AlMediaClip *clip, int64_t timeInUS);
-
-    int64_t _getCurTimestamp(AlMediaClip *clip);
-
 private:
     const int FRAME_SIZE = 1024;
-    std::map<AlID, std::unique_ptr<AbsAudioDecoder>> map;
-    std::map<AlID, int64_t> mCurTimeMap;
     HwSampleFormat format;
     AlAudioPoolMixer *mixer = nullptr;
-    int64_t mCurTimeInUS = 0;
     AlBuffer *pSilenceBuf = nullptr;
-    std::map<AlID, HwAbsMediaFrame *> mLastFrameMap;
 };
 
 

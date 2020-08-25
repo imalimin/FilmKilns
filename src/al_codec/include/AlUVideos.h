@@ -8,14 +8,14 @@
 #ifndef HWVC_ANDROID_ALUVIDEOS_H
 #define HWVC_ANDROID_ALUVIDEOS_H
 
-#include "Unit.h"
+#include "AlUAbsMedia.h"
 #include "AlMediaClip.h"
 #include "AbsVideoDecoder.h"
 #include "AlIdentityCreator.h"
 #include "HwVideoFrame.h"
 #include "AlVector.h"
 
-al_def_unit(AlUVideos, Unit) {
+al_def_unit(AlUVideos, AlUAbsMedia) {
 public:
     AlUVideos(const std::string alias);
 
@@ -25,24 +25,26 @@ public:
 
     virtual bool onDestroy(AlMessage *msg) override;
 
+protected:
+    virtual std::shared_ptr<AbsDecoder> createDecoder(AlMediaClip *clip,
+                                                      int64_t &frameDuration) override;
+
+    virtual bool shouldDecodeFrame() override;
+
+    virtual bool onInterruptClip(AlMediaClip *clip) override;
+
+    virtual bool onClipEOF(AlMediaClip *clip) override;
+
+    virtual bool onDispatchFrame(AlMediaClip *clip, HwAbsMediaFrame *frame, int64_t timeInUS) override;
+
+    virtual bool onBeatFinish(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips) override;
+
+    virtual void onActionSeek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS) override;
+
 private:
-    bool _onAddTrack(AlMessage *msg);
-
-    bool _onRemoveTrack(AlMessage *msg);
-
-    bool _onBeat(AlMessage *msg);
-
-    bool _onEnd(AlMessage *msg);
-
     bool _onLayerDone(AlMessage *msg);
 
-    void _create(AlMediaClip *clip, int64_t &duration, int64_t &frameDuration);
-
-    void _seek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS);
-
-    void _seek(AbsVideoDecoder *decoder, int64_t timeInUS);
-
-    AbsVideoDecoder *_findDecoder(AlMediaClip *clip);
+    void _seek(std::shared_ptr<AbsDecoder> decoder, int64_t timeInUS);
 
     int32_t _findLayer(AlMediaClip *clip);
 
@@ -50,23 +52,13 @@ private:
 
     void _updateLayer(AlMediaClip *clip, HwVideoFrame *frame);
 
-    HwResult _grab(AlMediaClip *clip, AbsVideoDecoder *decoder,
-                   HwAbsMediaFrame **frame, int64_t timeInUS);
-
-    void _setCurTimestamp(AlMediaClip *clip, int64_t timeInUS);
-
-    int64_t _getCurTimestamp(AlMediaClip *clip);
-
     void _clearLayers(std::vector<AlID> &ignoreClips);
 
     void _clearLayer(int32_t layerID);
 
 private:
-    std::map<AlID, std::unique_ptr<AbsVideoDecoder>> map;
-    std::map<AlID, int64_t> mCurTimeMap;
     std::map<AlID, int32_t> mLayerMap;
-    std::map<AlID, HwAbsMediaFrame *> mLastFrameMap;
-    int64_t mCurTimeInUS = 0;
+    std::vector<AlID> ignoreClips;
 };
 
 
