@@ -169,10 +169,12 @@ HwResult AlUAbsMedia::_grab(AlMediaClip *clip, std::shared_ptr<AbsDecoder> decod
         (AlMediaTrack::kType::AUDIO == type && (*frame)->isAudio())) {
         if (timeInUS < clip->getSeqIn() + (*frame)->getPts()) {
             mLastFrameMap.insert(std::make_pair(clip->id(), *frame));
+            *frame = nullptr;
             return Hw::FAILED;
         }
         return Hw::OK;
     }
+    *frame = nullptr;
     return Hw::FAILED;
 }
 

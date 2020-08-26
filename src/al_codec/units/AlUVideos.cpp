@@ -36,12 +36,12 @@ bool AlUVideos::onDestroy(AlMessage *msg) {
 }
 
 bool AlUVideos::shouldDecodeFrame() {
-    ignoreClips.clear();
+    ignoreClearClips.clear();
     return true;
 }
 
 bool AlUVideos::onInterruptClip(AlMediaClip *clip) {
-    ignoreClips.emplace_back(clip->id());
+    ignoreClearClips.emplace_back(clip->id());
     return false;
 }
 
@@ -55,15 +55,13 @@ bool AlUVideos::onDispatchFrame(AlMediaClip *clip, HwAbsMediaFrame *frame, int64
         if (AlIdentityCreator::NONE_ID != layer) {
             _updateLayer(clip, dynamic_cast<HwVideoFrame *>(frame));
         }
-        AlLogI(TAG, "onDispatchFrame %" PRId64 ", %" PRId64 ", %" PRId64 ", %" PRId64, timeInUS, frame->getPts(), clip->getSeqIn(), clip->getTrimIn());
-//        _setCurTimestamp(clip, frame->getPts());
     }
     return false;
 }
 
 bool AlUVideos::onBeatFinish(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips) {
     if (!mLayerMap.empty()) {
-        _clearLayers(ignoreClips);
+        _clearLayers(ignoreClearClips);
         postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
     }
     return false;
@@ -81,7 +79,7 @@ std::shared_ptr<AbsDecoder> AlUVideos::createDecoder(AlMediaClip *clip,
         AlLogE(TAG, "failed. Invalid path(%s).", path.c_str());
         return nullptr;
     }
-    auto decoder = std::make_shared<AsynVideoDecoder>();
+    auto decoder = std::make_shared<AsynVideoDecoder>(true);
     if (!decoder->prepare(path)) {
         AlLogE(TAG, "failed. Decoder prepare failed.");
         return nullptr;
@@ -98,10 +96,10 @@ std::shared_ptr<AbsDecoder> AlUVideos::createDecoder(AlMediaClip *clip,
 }
 
 void AlUVideos::onActionSeek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS) {
-    std::vector<AlID> ignoreClips;
+    std::vector<AlID> ignoreClearClips;
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         auto *clip = itr->get();
-        ignoreClips.emplace_back(clip->id());
+        ignoreClearClips.emplace_back(clip->id());
         auto decoder = findDecoderByClip(clip);
         _seek(decoder, timeInUS);
         if (nullptr == decoder) {
@@ -152,7 +150,7 @@ void AlUVideos::onActionSeek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaCli
         }
     }
     if (!mLayerMap.empty()) {
-        _clearLayers(ignoreClips);
+        _clearLayers(ignoreClearClips);
         postEvent(AlMessage::obtain(EVENT_COMMON_INVALIDATE, AlMessage::QUEUE_MODE_UNIQUE));
     }
 }

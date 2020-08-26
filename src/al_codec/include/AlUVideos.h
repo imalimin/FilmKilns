@@ -58,7 +58,7 @@ private:
 
 private:
     std::map<AlID, int32_t> mLayerMap;
-    std::vector<AlID> ignoreClips;
+    std::vector<AlID> ignoreClearClips;
 };
 
 
