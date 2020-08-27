@@ -101,7 +101,7 @@ void AlUVideos::onActionSeek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaCli
         auto *clip = itr->get();
         ignoreClearClips.emplace_back(clip->id());
         auto decoder = findDecoderByClip(clip);
-        _seek(decoder, timeInUS);
+        _seek(decoder, timeInUS + (*itr)->getTrimIn());
         if (nullptr == decoder) {
             continue;
         }

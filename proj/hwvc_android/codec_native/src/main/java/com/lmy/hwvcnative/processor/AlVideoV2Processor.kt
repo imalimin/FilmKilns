@@ -32,12 +32,19 @@ class AlVideoV2Processor : CPPObject() {
         type: Int,
         path: String,
         seqInInUS: Long,
-        seqOutInUS: Long = 0,
         trimInInUS: Long = 0,
-        trimOutInUS: Long = 0
+        durationInUS: Long = 0
     ): Int {
         if (!isNativeNull()) {
-            return addTrack(handler, type, path, seqInInUS, seqOutInUS, trimInInUS, trimOutInUS)
+            return addTrack(
+                handler,
+                type,
+                path,
+                seqInInUS,
+                seqInInUS + durationInUS,
+                trimInInUS,
+                trimInInUS + durationInUS
+            )
         }
         return -1
     }

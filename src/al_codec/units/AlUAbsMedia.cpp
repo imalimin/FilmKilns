@@ -62,7 +62,7 @@ bool AlUAbsMedia::_onEnd(AlMessage *msg) {
     auto clips = std::static_pointer_cast<AlVector<std::shared_ptr<AlMediaClip>>>(msg->sp);
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
         auto decoder = findDecoderByClip(itr->get());
-        decoder->seek(0, AbsDecoder::kSeekMode::EXACT);
+        decoder->seek((*itr)->getTrimIn(), AbsDecoder::kSeekMode::EXACT);
         decoder->start();
     }
     return true;
@@ -131,7 +131,7 @@ void AlUAbsMedia::_create(AlMediaClip *clip, int64_t &duration, int64_t &frameDu
     decoder->start();
     auto timeInUS = std::min<int64_t>(mCurTimeInUS, duration);
     timeInUS = std::max<int64_t>(0, timeInUS);
-    decoder->seek(timeInUS);
+    decoder->seek(timeInUS + clip->getTrimIn());
     map.insert(make_pair(clip->id(), std::move(decoder)));
 }
 
@@ -139,9 +139,9 @@ HwResult AlUAbsMedia::_grab(AlMediaClip *clip, std::shared_ptr<AbsDecoder> decod
                             HwAbsMediaFrame **frame, int64_t timeInUS) {
     auto itr = mLastFrameMap.find(clip->id());
     if (mLastFrameMap.end() != itr) {
-        if (timeInUS < clip->getSeqIn() + itr->second->getPts()) {
+        if (timeInUS < clip->getSeqIn() + _transPts(clip, itr->second->getPts())) {
             AlLogD(TAG, "Skip. Want %" PRId64 ", but %" PRId64, timeInUS,
-                   clip->getSeqIn() + itr->second->getPts());
+                   clip->getSeqIn() + _transPts(clip, itr->second->getPts()));
             return Hw::FAILED;
         } else {
             *frame = itr->second;
@@ -152,9 +152,10 @@ HwResult AlUAbsMedia::_grab(AlMediaClip *clip, std::shared_ptr<AbsDecoder> decod
     HwResult ret = decoder->grab(frame);
     while (nullptr != *frame) {
         if ((*frame)->flags() & AlMediaDef::FLAG_EOF) {
-            decoder->seek(0, AbsDecoder::kSeekMode::EXACT);
-            decoder->start();
+//            decoder->seek(0, AbsDecoder::kSeekMode::EXACT);
+//            decoder->start();
             AlLogI(TAG, "FLAG_EOF");
+            return Hw::FAILED;
         } else if ((*frame)->flags() & AlMediaDef::FLAG_SEEK_DONE) {
             AlLogI(TAG, "FLAG_SEEK_DONE");
         } else {
@@ -167,7 +168,7 @@ HwResult AlUAbsMedia::_grab(AlMediaClip *clip, std::shared_ptr<AbsDecoder> decod
     }
     if ((AlMediaTrack::kType::VIDEO == type && (*frame)->isVideo()) ||
         (AlMediaTrack::kType::AUDIO == type && (*frame)->isAudio())) {
-        if (timeInUS < clip->getSeqIn() + (*frame)->getPts()) {
+        if (timeInUS < clip->getSeqIn() + _transPts(clip, (*frame)->getPts())) {
             mLastFrameMap.insert(std::make_pair(clip->id(), *frame));
             *frame = nullptr;
             return Hw::FAILED;
@@ -187,4 +188,8 @@ std::shared_ptr<AbsDecoder> AlUAbsMedia::findDecoderByClip(AlMediaClip *clip) {
         return nullptr;
     }
     return itr->second;
+}
+
+int64_t AlUAbsMedia::_transPts(AlMediaClip *clip, int64_t pts) {
+    return pts - clip->getTrimIn();
 }

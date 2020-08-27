@@ -59,6 +59,8 @@ private:
     HwResult _grab(AlMediaClip *clip, std::shared_ptr<AbsDecoder> decoder,
                    HwAbsMediaFrame **frame, int64_t timeInUS);
 
+    int64_t _transPts(AlMediaClip *clip, int64_t pts);
+
 private:
     AlMediaTrack::kType type;
     std::map<AlID, std::shared_ptr<AbsDecoder>> map;

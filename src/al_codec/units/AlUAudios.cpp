@@ -97,7 +97,7 @@ bool AlUAudios::onBeatFinish(std::shared_ptr<AlVector<std::shared_ptr<AlMediaCli
 }
 void AlUAudios::onActionSeek(std::shared_ptr<AlVector<std::shared_ptr<AlMediaClip>>> clips, int64_t timeInUS) {
     for (auto itr = clips->begin(); clips->end() != itr; ++itr) {
-        _seek(findDecoderByClip(itr->get()), timeInUS);
+        _seek(findDecoderByClip(itr->get()), timeInUS + (*itr)->getTrimIn());
     }
 }
 
