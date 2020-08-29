@@ -68,6 +68,9 @@ bool HwAudioTranslator::translate(AVFrame **dest, AVFrame **src) {
         outFrame->sample_rate = outFormat.getSampleRate();
         outFrame->pts = 0;
     }
+    if (0 == src[0]->channel_layout) {
+        src[0]->channel_layout = av_get_default_channel_layout(inFormat.getChannels());
+    }
     int ret = swr_convert_frame(swrContext, outFrame, src[0]);
     if (0 != ret) {
         AlLogE(TAG, "translator(%p) failed: %s", this, strerror(AVUNERROR(ret)));
