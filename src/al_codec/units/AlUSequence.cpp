@@ -83,10 +83,14 @@ bool AlUSequence::_onSetTrackDuration(AlMessage *msg) {
     auto tmp = std::static_pointer_cast<AlMediaClip>(msg->sp);
     AlID id = tmp->id();
     int64_t duration = tmp->getDuration();
-    AlLogI(TAG, "id(%d), duration(%" PRId64 ")", id, duration);
     auto *clip = _findClip(id);
     if (clip) {
-        clip->setDuration(duration);
+        AlLogI(TAG, "id(%d), duration=%" PRId64 "trim in=%" PRId64, id, duration, clip->getTrimIn());
+        if (clip->getTrimOut() > clip->getTrimIn()) {
+            clip->setDuration(clip->getTrimOut() - clip->getTrimIn());
+        } else {
+            clip->setDuration(duration - clip->getTrimIn());
+        }
         clip->setFrameDuration(tmp->getFrameDuration());
         _notifyTimeline();
 
