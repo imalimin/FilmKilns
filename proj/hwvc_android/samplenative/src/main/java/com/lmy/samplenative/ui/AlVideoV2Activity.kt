@@ -75,8 +75,13 @@ class AlVideoV2Activity : BaseActivity() {
         processor?.start()
     }
 
-    private fun addTrack(path: String, type: Int) {
-        val id = processor?.addTrack(type, path, 0)
+    private fun addTrack(
+        path: String, type: Int,
+        seqInInUS: Long = 0,
+        trimInInUS: Long = 0,
+        durationInUS: Long = 0
+    ) {
+        val id = processor?.addTrack(type, path, seqInInUS, trimInInUS, durationInUS)
         if (null != id && id >= 0) {
             trackView.addTrack(AlMediaTrack(id, type))
         }
