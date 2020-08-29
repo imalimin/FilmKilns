@@ -21,6 +21,9 @@ AlParcel::~AlParcel() {
 }
 
 std::shared_ptr<AlBuffer> AlParcel::data() {
+    if (vec.empty()) {
+        return nullptr;
+    }
     AlBuffer *buf = AlBuffer::alloc(vec.size());
     buf->put(vec.data(), vec.size());
     buf->rewind();
@@ -101,6 +104,15 @@ void AlParcel::writeDoubleArray(std::vector<double> &vec) {
 
 void AlParcel::writeStringArray(std::vector<std::string> &vec) {
 
+}
+
+void AlParcel::writeParcelArray(std::vector<AlParcelable *> &vec) {
+    auto size = vec.size();
+    writeInt(vec.size());
+    std::shared_ptr<AlParcel> parcel(this, [](AlParcel *p) {});
+    for (int i = 0; i < size; ++i) {
+        vec[i]->writeToParcel(parcel);
+    }
 }
 
 AlParcelable::AlParcelable() : Object() {

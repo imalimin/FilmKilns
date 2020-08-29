@@ -10,8 +10,9 @@
 
 #include "Object.h"
 #include "AlFileDescriptor.h"
+#include "AlParcelable.h"
 
-AL_CLASS AlMediaClip AL_EXTEND Object {
+AL_CLASS AlMediaClip AL_EXTEND AlParcelable {
 public:
     AlMediaClip(int32_t id, const AlFileDescriptor &descriptor);
 
@@ -42,6 +43,8 @@ public:
     int64_t getFrameDuration();
 
     std::shared_ptr<AlFileDescriptor> getInputDescriptor();
+
+    virtual void writeToParcel(std::shared_ptr<AlParcel> parcel) override ;
 
 private:
     int32_t _id = INT32_MIN;

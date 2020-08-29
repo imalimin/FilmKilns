@@ -44,6 +44,8 @@ public:
 
     void writeStringArray(std::vector<std::string> &vec);
 
+    void writeParcelArray(std::vector<AlParcelable *> &vec);
+
 private:
     AlParcel(const AlParcel &o) : Object() {};
 

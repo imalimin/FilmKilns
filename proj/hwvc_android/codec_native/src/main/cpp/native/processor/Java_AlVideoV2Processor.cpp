@@ -38,7 +38,7 @@ static void bindListener(AlVideoV2Processor *p) {
         JNIEnv *env = nullptr;
         if (AlJavaRuntime::getInstance().findObj(p, &obj) && AlJavaRuntime::getInstance().findEnv(&env)) {
             auto buf = track->data();
-            if (buf->size() <= 0) {
+            if (nullptr == buf || buf->size() <= 0) {
                 return;
             }
             buf->rewind();

@@ -12,14 +12,14 @@
 #define TAG "AlMediaClip"
 
 AlMediaClip::AlMediaClip(int32_t id, const AlFileDescriptor &descriptor)
-        : Object(),
+        : AlParcelable(),
           _id(id),
           iDescriptor(std::make_shared<AlFileDescriptor>(descriptor)) {
 
 }
 
 AlMediaClip::AlMediaClip(const AlMediaClip &o)
-        : Object(),
+        : AlParcelable(),
           _id(o._id),
           seqIn(o.seqIn),
           trimIn(o.trimIn),
@@ -77,4 +77,14 @@ int64_t AlMediaClip::getFrameDuration() {
 
 std::shared_ptr<AlFileDescriptor> AlMediaClip::getInputDescriptor() {
     return iDescriptor;
+}
+
+void AlMediaClip::writeToParcel(std::shared_ptr<AlParcel> parcel) {
+    parcel->writeInt(id());
+    parcel->writeLong(getSeqIn());
+    parcel->writeLong(getTrimIn());
+    parcel->writeLong(getDuration());
+    auto path = getInputDescriptor()->path();
+    parcel->writeString(path);
+
 }

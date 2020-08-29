@@ -117,11 +117,14 @@ size_t AlMediaTrack::findAllClips(AlVector<std::shared_ptr<AlMediaClip>> &array)
 }
 
 void AlMediaTrack::writeToParcel(std::shared_ptr<AlParcel> parcel) {
-    std::string path = clips.empty() ? "" : clips.begin()->second->getInputDescriptor()->path();
     parcel->writeInt(id());
     parcel->writeInt(static_cast<int32_t>(type()));
     parcel->writeLong(getSeqIn());
     parcel->writeLong(getSeqOut());
     parcel->writeLong(getDuration());
-    parcel->writeString(path);
+    std::vector<AlParcelable *> vec;
+    for (auto &clip : this->clips) {
+        vec.push_back(clip.second.get());
+    }
+    parcel->writeParcelArray(vec);
 }

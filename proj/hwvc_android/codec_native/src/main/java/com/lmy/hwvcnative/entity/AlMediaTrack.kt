@@ -6,7 +6,7 @@ class AlMediaTrack : AlParcelable, Comparable<AlMediaTrack> {
     var seqIn = 0L
     var seqOut = 0L
     var duration = 0L
-    var path = ""
+    val clips = HashMap<Int, AlMediaClip>()
 
     constructor(parcel: AlParcel) : super(parcel) {
         id = parcel.readInt()
@@ -14,7 +14,11 @@ class AlMediaTrack : AlParcelable, Comparable<AlMediaTrack> {
         seqIn = parcel.readLong()
         seqOut = parcel.readLong()
         duration = parcel.readLong()
-        path = parcel.readString()
+        val size = parcel.readInt()
+        for (i in 0 until size) {
+            val clip = AlMediaClip(parcel)
+            clips[clip.id] = clip
+        }
     }
 
     constructor(id: Int, type: Int) : super(AlParcel.from(ByteArray(0))) {
