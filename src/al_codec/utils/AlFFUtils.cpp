@@ -143,9 +143,170 @@ void AlFFUtils::showInfo() {
     std::string msg;
     msg.append("CODEC: ");
     AVCodec *codec = nullptr;
-    while((codec = av_codec_next(codec))) {
+    while ((codec = av_codec_next(codec))) {
         msg.append(codec->name);
         msg.append(", ");
     }
     AlLogI(TAG, "%s", msg.c_str());
+}
+
+static bool _openTrack(AVFormatContext *ctx, int track, AVCodecContext **context) {
+    AVCodecParameters *avCodecParameters = ctx->streams[track]->codecpar;
+    AVCodec *codec = NULL;
+    if (AV_CODEC_ID_H264 == avCodecParameters->codec_id) {
+        codec = avcodec_find_decoder_by_name("h264_mediacodec");
+        if (NULL == codec) {
+            AlLogI(TAG, "Selected AV_CODEC_ID_H264.");
+            codec = avcodec_find_decoder(avCodecParameters->codec_id);
+        }
+    } else {
+        codec = avcodec_find_decoder(avCodecParameters->codec_id);
+    }
+    if (NULL == codec) {
+        AlLogE(TAG, "Couldn't find codec.");
+        return false;
+    }
+    //打开编码器
+    *context = avcodec_alloc_context3(codec);
+    avcodec_parameters_to_context(*context, avCodecParameters);
+    if (avcodec_open2(*context, codec, NULL) < 0) {
+        AlLogE(TAG, "Couldn't open codec.");
+        return false;
+    }
+    string typeName = "unknown";
+    if (AVMEDIA_TYPE_VIDEO == codec->type) {
+        typeName = "video";
+    } else if (AVMEDIA_TYPE_AUDIO == codec->type) {
+        typeName = "audio";
+    }
+    AlLogI(TAG, "Open %s track with %s, fmt=%d, frameSize=%d", typeName.c_str(), codec->name,
+           avCodecParameters->format, avCodecParameters->frame_size);
+    return true;
+}
+
+static float _getAudioLevel(AVFrame *frame) {
+    float result = 0.f;
+    if (frame) {
+        auto fmt = frame->format;
+        auto *left = AlBuffer::wrap(frame->data[0], frame->linesize[0]);
+        AlBuffer *right = nullptr;
+        if (frame->linesize[1] > 0) {
+            right = AlBuffer::wrap(frame->data[1], frame->linesize[1]);
+        }
+        switch (fmt) {
+            case AV_SAMPLE_FMT_S16: {
+                return left->getShort() * 1.f / 0x7FFF;
+            }
+            case AV_SAMPLE_FMT_FLTP: {
+                result = left->getFloat();
+                break;
+            }
+        }
+        delete right;
+        delete left;
+    }
+    return result;
+}
+
+int AlFFUtils::parseWaveform(int64_t seqIn, int64_t duInUS,
+                             std::vector<std::string> &files,
+                             std::vector<int64_t> &seqIns,
+                             std::vector<int64_t> &trimIns,
+                             std::vector<int64_t> &dus,
+                             float *data,
+                             int size) {
+    float delta = duInUS / (float) size;
+    int64_t current = -seqIn;
+    int track = -1;
+    int clipIndex = 0;
+    int formIndex = 0;
+    AVFormatContext *ctx = nullptr;
+    AVCodecContext *c = nullptr;
+    AVPacket *pkt = nullptr;
+    AVFrame *frame = nullptr;
+    while (current <= duInUS) {
+        if (clipIndex < files.size() && current >= seqIns[clipIndex]) {
+            if (c) {
+                avcodec_close(c);
+                c = nullptr;
+            }
+            if (ctx) {
+                avformat_close_input(&ctx);
+                avformat_free_context(ctx);
+                ctx = nullptr;
+            }
+            if (pkt) {
+                av_packet_free(&pkt);
+                pkt = nullptr;
+            }
+            if (frame) {
+                av_frame_free(&frame);
+                frame = nullptr;
+            }
+            std::string path = files[clipIndex];
+            int64_t trimIn = trimIns[clipIndex];
+            ++clipIndex;
+            ctx = avformat_alloc_context();
+            if (avformat_open_input(&ctx, path.c_str(), NULL, NULL) != 0) {
+                AlLogE(TAG, "Couldn't open input stream. index=%d/%d, cur=% " PRId64 ", %s", clipIndex - 1, files.size(), current, path.c_str());
+                return false;
+            }
+            track = av_find_best_stream(ctx, AVMEDIA_TYPE_AUDIO, -1, -1, NULL, 0);
+            //获取视频文件信息
+            if (avformat_find_stream_info(ctx, NULL) < 0) {
+                AlLogE(TAG, "Couldn't find stream information.");
+                return false;
+            }
+            if (AVERROR_STREAM_NOT_FOUND != track && !_openTrack(ctx, track, &c)) {
+                AlLogE(TAG, "******** Open audio track failed. *********");
+                return false;
+            }
+            pkt = av_packet_alloc();
+            frame = av_frame_alloc();
+        }
+        int ret = avformat_seek_file(ctx, -1, INT64_MIN,
+                                     current - seqIns[clipIndex - 1] + trimIns[clipIndex - 1],
+                                     INT64_MAX, AVSEEK_FLAG_ANY);
+        bool found = false;
+        while (true) {
+            int ret = av_read_frame(ctx, pkt);
+            if (0 == ret && track == pkt->stream_index) {
+                avcodec_send_packet(c, pkt);
+            }
+            av_packet_unref(pkt);
+            if (AVERROR_EOF == ret) {
+                break;
+            }
+            if (0 == avcodec_receive_frame(c, frame)) {
+                found = true;
+                data[formIndex] = _getAudioLevel(frame);
+                av_frame_unref(frame);
+                break;
+            }
+        }
+        if (!found) {
+            data[formIndex] = 0;
+        }
+//        AlLogI("AlFFUtils", "%d, _getAudioLevel=%f", formIndex, data[formIndex]);
+        ++formIndex;
+        current += delta;
+    }
+    if (c) {
+        avcodec_close(c);
+        c = nullptr;
+    }
+    if (ctx) {
+        avformat_close_input(&ctx);
+        avformat_free_context(ctx);
+        ctx = nullptr;
+    }
+    if (pkt) {
+        av_packet_free(&pkt);
+        pkt = nullptr;
+    }
+    if (frame) {
+        av_frame_free(&frame);
+        frame = nullptr;
+    }
+    return 0;
 }

@@ -52,6 +52,10 @@ public:
     /// \return zero for fail, or size for success.
     size_t get(uint8_t *dst, size_t size);
 
+    short getShort();
+
+    float getFloat();
+
 private:
     uint8_t *buf = nullptr;
     size_t _size = 0;

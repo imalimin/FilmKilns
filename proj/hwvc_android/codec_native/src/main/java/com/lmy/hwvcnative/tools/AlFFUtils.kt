@@ -8,4 +8,14 @@ object AlFFUtils {
      * 0x2: Audio
      */
     external fun trackInfo(file: String): Int
+
+    external fun parseWaveform(
+        seqIn: Long,
+        duInUS: Long,
+        files: Array<String?>,
+        seqIns: LongArray,
+        trimIns: LongArray,
+        dus: LongArray,
+        width: Int
+    ): FloatArray?
 }

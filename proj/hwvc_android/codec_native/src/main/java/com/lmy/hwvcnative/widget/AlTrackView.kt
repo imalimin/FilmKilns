@@ -2,8 +2,7 @@ package com.lmy.hwvcnative.widget
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -11,14 +10,15 @@ import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.AttrRes
+import com.lmy.hwvcnative.entity.AlMediaClip
 import com.lmy.hwvcnative.entity.AlMediaTrack
 import com.lmy.hwvcnative.entity.AlMediaType
 import com.lmy.hwvcnative.entity.AlRational
 import com.lmy.hwvcnative.tools.AlFFUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 class AlTrackView : ViewGroup {
     private lateinit var mTimeView: AlTimelineView
@@ -133,21 +133,44 @@ class AlTrackView : ViewGroup {
     private fun updateAudioTrack(track: AlMediaTrack) {
         if (AlMediaType.TYPE_AUDIO == track.type) {
             GlobalScope.launch {
-                val src = File(track.path)
-                if (!src.exists()) {
-                    return@launch
+                val list = ArrayList<AlMediaClip>()
+                track.clips.forEach {
+                    list.add(it.value)
                 }
-                val file = File("${context.externalCacheDir.path}/${File(track.path).name}.bmp")
-                AlFFUtils.exec("ffmpeg -i ${src.absolutePath} -lavfi showwavespic=s=720x60:colors=orange:scale=sqrt -f image2 ${file.absolutePath}")
-                if (!file.exists()) {
-                    return@launch
+                list.sortBy { it.seqIn }
+                val files = arrayOfNulls<String?>(track.clips.size)
+                val seqIns = LongArray(track.clips.size)
+                val trimIns = LongArray(track.clips.size)
+                val dus = LongArray(track.clips.size)
+                var index = 0
+                list.forEach {
+                    files[index] = it.path
+                    seqIns[index] = it.seqIn
+                    trimIns[index] = it.trimIn
+                    dus[index] = it.duration
+                    ++index;
                 }
-                post {
-                    vMap[track.id]?.background =
-                        BitmapDrawable(resources, BitmapFactory.decodeFile(file.absolutePath))
-                }
+                val width = resources.displayMetrics.widthPixels
+                val data = AlFFUtils.parseWaveform(track.seqIn, track.duration, files , seqIns , trimIns , dus, width)
+                val bmp = getWaveform(track, width, data)
+                post { vMap[track.id]?.background = BitmapDrawable(resources, bmp) }
             }
         }
+    }
+
+    private fun getWaveform(track: AlMediaTrack, width: Int, data: FloatArray?): Bitmap? {
+        if (null == data) return null
+        val height = 60
+        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+        val canvas = Canvas(bmp)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.color = Color.WHITE
+        paint.strokeWidth = 1.0f
+        for (i in 0 until width) {
+            val tmp = data[i]
+            canvas.drawLine(i.toFloat(), height / 2.0f * (1 - tmp), i.toFloat(), height / 2.0f * (1 + tmp), paint)
+        }
+        return bmp
     }
 
     private fun makeLayoutParams(): LayoutParams {

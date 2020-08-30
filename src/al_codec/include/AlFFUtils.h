@@ -11,6 +11,7 @@
 #include "Object.h"
 #include <pthread.h>
 #include <mutex>
+#include <include/AlBuffer.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,6 +40,14 @@ public:
     static int exec(std::string cmd);
 
     static int trackInfo(std::string &file);
+
+    static int parseWaveform(int64_t seqIn, int64_t duInUS,
+                             std::vector<std::string> &files,
+                             std::vector<int64_t> &seqIns,
+                             std::vector<int64_t> &trimIns,
+                             std::vector<int64_t> &dus,
+                             float *data,
+                             int size);
 
     static void showInfo();
 

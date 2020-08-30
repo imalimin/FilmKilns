@@ -107,3 +107,23 @@ size_t AlBuffer::get(uint8_t *dst, size_t size) {
 void AlBuffer::_movePosition(size_t offset) {
     _position += offset;
 }
+
+short AlBuffer::getShort() {
+    short val = 0;
+    uint8_t *p = reinterpret_cast<uint8_t *>(&val);
+    for (int i = 0; i < 2; ++i) {
+        *(p + i) = *data();
+        _movePosition(1);
+    }
+    return val;
+}
+
+float AlBuffer::getFloat() {
+    float val = 0;
+    uint8_t *p = reinterpret_cast<uint8_t *>(&val);
+    for (int i = 0; i < 4; ++i) {
+        *(p + i) = *data();
+        _movePosition(1);
+    }
+    return val;
+}
