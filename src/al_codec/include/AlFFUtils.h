@@ -9,6 +9,7 @@
 #define HARDWAREVIDEOCODEC_FFUTILS_H
 
 #include "Object.h"
+#include "AlMediaCoverSequence.h"
 #include <pthread.h>
 #include <mutex>
 #include <include/AlBuffer.h>
@@ -48,6 +49,12 @@ public:
                              std::vector<int64_t> &dus,
                              float *data,
                              int size);
+
+    static std::shared_ptr<AlMediaCoverSequence> parseVideoCover(int64_t seqIn, int64_t duInUS,
+                                                                 std::vector<std::string> &files,
+                                                                 std::vector<int64_t> &seqIns,
+                                                                 std::vector<int64_t> &trimIns,
+                                                                 std::vector<int64_t> &dus);
 
     static void showInfo();
 

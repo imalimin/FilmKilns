@@ -18,4 +18,14 @@ object AlFFUtils {
         dus: LongArray,
         width: Int
     ): FloatArray?
+
+    external fun parseVideoCover(
+        seqIn: Long,
+        duInUS: Long,
+        files: Array<String?>,
+        seqIns: LongArray,
+        trimIns: LongArray,
+        dus: LongArray,
+        width: Int
+    ): ByteArray?
 }

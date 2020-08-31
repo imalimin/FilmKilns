@@ -82,6 +82,53 @@ JNIEXPORT jfloatArray JNICALL Java_com_lmy_hwvcnative_tools_AlFFUtils_parseWavef
     return floatArray;
 }
 
+JNIEXPORT jbyteArray JNICALL Java_com_lmy_hwvcnative_tools_AlFFUtils_parseVideoCover(JNIEnv *env,
+                                                                                      jobject thiz,
+                                                                                      jlong seqIn,
+                                                                                      jlong duInUS,
+                                                                                      jobjectArray files,
+                                                                                      jlongArray seqIns,
+                                                                                      jlongArray trimIns,
+                                                                                      jlongArray dus,
+                                                                                      jint width) {
+    if (nullptr == files || nullptr == seqIns || nullptr == trimIns || nullptr == dus ||
+        width <= 0) {
+        AlLogE("Java_AlFFUtils", "Invalid params");
+        return nullptr;
+    }
+    auto count = env->GetArrayLength(files);
+    if (0 == count || count != env->GetArrayLength(seqIns) ||
+        count != env->GetArrayLength(trimIns) ||
+        count != env->GetArrayLength(dus)) {
+        AlLogE("Java_AlFFUtils", "Invalid params");
+        return nullptr;
+    }
+    std::vector<std::string> vecOfFiles;
+    std::vector<int64_t> vecOfSeqIns;
+    std::vector<int64_t> vecOfTrimIns;
+    std::vector<int64_t> vecOfDus;
+    auto pSeqIns = env->GetLongArrayElements(seqIns, nullptr);
+    auto pTrimIns = env->GetLongArrayElements(trimIns, nullptr);
+    auto pDus = env->GetLongArrayElements(dus, nullptr);
+    for (int i = 0; i < count; ++i) {
+        jstring oStr = (jstring) env->GetObjectArrayElement(files, i);
+        const char *pFile = env->GetStringUTFChars(oStr, JNI_FALSE);
+        vecOfFiles.push_back(std::string(pFile));
+        env->ReleaseStringChars(oStr, reinterpret_cast<const jchar *>(pFile));
+        env->DeleteLocalRef(oStr);
+        vecOfSeqIns.push_back(pSeqIns[0]);
+        vecOfTrimIns.push_back(pTrimIns[0]);
+        vecOfDus.push_back(pDus[0]);
+    }
+    env->ReleaseLongArrayElements(dus, pDus, 0);
+    env->ReleaseLongArrayElements(trimIns, pTrimIns, 0);
+    env->ReleaseLongArrayElements(seqIns, pSeqIns, 0);
+
+    auto covers = AlFFUtils::parseVideoCover(seqIn, duInUS, vecOfFiles, vecOfSeqIns,
+                                             vecOfTrimIns, vecOfDus);
+    return nullptr;
+}
+
 #ifdef __cplusplus
 }
 #endif

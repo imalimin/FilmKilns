@@ -248,7 +248,8 @@ int AlFFUtils::parseWaveform(int64_t seqIn, int64_t duInUS,
             ++clipIndex;
             ctx = avformat_alloc_context();
             if (avformat_open_input(&ctx, path.c_str(), NULL, NULL) != 0) {
-                AlLogE(TAG, "Couldn't open input stream. index=%d/%d, cur=% " PRId64 ", %s", clipIndex - 1, files.size(), current, path.c_str());
+                AlLogE(TAG, "Couldn't open input stream. index=%d/%d, cur=% " PRId64 ", %s",
+                       clipIndex - 1, files.size(), current, path.c_str());
                 return false;
             }
             track = av_find_best_stream(ctx, AVMEDIA_TYPE_AUDIO, -1, -1, NULL, 0);
@@ -309,4 +310,12 @@ int AlFFUtils::parseWaveform(int64_t seqIn, int64_t duInUS,
         frame = nullptr;
     }
     return 0;
+}
+
+std::shared_ptr<AlMediaCoverSequence> AlFFUtils::parseVideoCover(int64_t seqIn, int64_t duInUS,
+                                                                 std::vector<std::string> &files,
+                                                                 std::vector<int64_t> &seqIns,
+                                                                 std::vector<int64_t> &trimIns,
+                                                                 std::vector<int64_t> &dus) {
+    return nullptr;
 }
