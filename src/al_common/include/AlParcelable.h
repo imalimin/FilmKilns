@@ -34,6 +34,8 @@ public:
 
     void writeByteArray(std::vector<uint8_t> &vec);
 
+    void writeByteArray(uint8_t *data, size_t size);
+
     void writeIntArray(std::vector<int32_t> &vec);
 
     void writeLongArray(std::vector<int64_t> &vec);

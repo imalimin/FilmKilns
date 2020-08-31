@@ -83,7 +83,14 @@ void AlParcel::writeString(std::string &val) {
 }
 
 void AlParcel::writeByteArray(std::vector<uint8_t> &vec) {
+    writeByteArray(vec.data(), vec.size());
+}
 
+void AlParcel::writeByteArray(uint8_t *data, size_t size) {
+    writeInt(size);
+    for (int i = 0; i < size; ++i) {
+        writeByte(data[i]);
+    }
 }
 
 void AlParcel::writeIntArray(std::vector<int32_t> &vec) {
