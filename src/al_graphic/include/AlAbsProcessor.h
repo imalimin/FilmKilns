@@ -59,9 +59,13 @@ public:
 
     void release();
 
+    /// \deprecated
+    /// \param runnable
     void release(AlRunnable *runnable);
 
     void post(function<void()> runnable);
+
+    void setOnDestroyListener(AlRunnable *runnable);
 
 protected:
     virtual void onCreate() ;

@@ -67,11 +67,12 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_rele
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         AlVideoV2Processor *p = getHandler(handler);
-        p->release(AlRunnable::runEmptyArgs([p]() {
+        p->setOnDestroyListener(AlRunnable::runEmptyArgs([p]() {
             AlLogI("Java_AlVideoV2Processor", "release");
             AlJavaRuntime::getInstance().detach(p);
             AlJavaRuntime::getInstance().detachThread();
         }));
+        p->release();
         delete p;
     }
 }

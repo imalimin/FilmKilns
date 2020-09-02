@@ -24,7 +24,7 @@ void AlAbsProcessor::release() {
 }
 
 void AlAbsProcessor::release(AlRunnable *runnable) {
-    this->destroyRun = runnable;
+    setOnDestroyListener(runnable);
     delete pipeline;
     pipeline = nullptr;
 }
@@ -68,4 +68,8 @@ bool AlAbsProcessor::onDestroy(AlMessage *msg) {
     AlLogI(TAG, "");
     onDestroy();
     return true;
+}
+
+void AlAbsProcessor::setOnDestroyListener(AlRunnable *runnable) {
+    this->destroyRun = runnable;
 }
