@@ -26,13 +26,21 @@ class AlParcel private constructor(data: ByteArray) {
     }
 
     fun readString(): String {
+        val size = readInt()
         val sb = StringBuffer()
-        var c = readByte()
-        while (0 != c.toInt()) {
-            sb.append(c.toChar())
-            c = readByte()
+        for (i in 0 until size) {
+            sb.append(readByte().toChar())
         }
         return sb.toString()
+    }
+
+    fun readByteBuffer(): ByteBuffer {
+        val size = readInt()
+        val buf = ByteBuffer.allocate(size)
+        for (i in 0 until size) {
+            buf.put(this.buf.get())
+        }
+        return buf
     }
 
     companion object {
