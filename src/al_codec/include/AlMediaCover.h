@@ -20,11 +20,13 @@ public:
 
     void setTimestamp(int64_t timeInUS);
 
+    AlBuffer *buf();
+
 private:
     int64_t timestamp = 0;
     int32_t width = 0;
     int32_t height = 0;
-    AlBuffer *buf = nullptr;
+    AlBuffer *_buf = nullptr;
 };
 
 

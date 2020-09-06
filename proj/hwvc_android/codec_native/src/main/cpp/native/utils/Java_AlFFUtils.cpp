@@ -125,8 +125,17 @@ JNIEXPORT jbyteArray JNICALL Java_com_lmy_hwvcnative_tools_AlFFUtils_parseVideoC
     env->ReleaseLongArrayElements(seqIns, pSeqIns, 0);
 
     auto covers = AlFFUtils::parseVideoCover(seqIn, duInUS, vecOfFiles, vecOfSeqIns,
-                                             vecOfTrimIns, vecOfDus);
-    return nullptr;
+                                             vecOfTrimIns, vecOfDus, width);
+    auto buf = covers->data();
+    if (nullptr == buf || buf->size() <= 0) {
+        AlLogE("Java_AlFFUtils", "Empty buffer.");
+        return nullptr;
+    }
+    buf->rewind();
+    auto data = env->NewByteArray(buf->size());
+    env->SetByteArrayRegion(data, 0, buf->size(),
+                            reinterpret_cast<const jbyte *>(buf->data()));
+    return data;
 }
 
 #ifdef __cplusplus

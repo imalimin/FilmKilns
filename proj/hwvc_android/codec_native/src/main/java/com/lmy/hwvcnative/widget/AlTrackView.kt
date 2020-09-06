@@ -6,14 +6,12 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.AttrRes
-import com.lmy.hwvcnative.entity.AlMediaClip
-import com.lmy.hwvcnative.entity.AlMediaTrack
-import com.lmy.hwvcnative.entity.AlMediaType
-import com.lmy.hwvcnative.entity.AlRational
+import com.lmy.hwvcnative.entity.*
 import com.lmy.hwvcnative.tools.AlFFUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -121,6 +119,7 @@ class AlTrackView : ViewGroup {
         }
         tMap[track.id] = track
         requestLayout()
+        updateVideoTrack(track)
         updateAudioTrack(track)
     }
 
@@ -171,6 +170,36 @@ class AlTrackView : ViewGroup {
             canvas.drawLine(i.toFloat(), height / 2.0f * (1 - tmp), i.toFloat(), height / 2.0f * (1 + tmp), paint)
         }
         return bmp
+    }
+
+    private fun updateVideoTrack(track: AlMediaTrack) {
+        if (AlMediaType.TYPE_AUDIO == track.type) {
+            GlobalScope.launch {
+                val list = ArrayList<AlMediaClip>()
+                track.clips.forEach {
+                    list.add(it.value)
+                }
+                list.sortBy { it.seqIn }
+                val files = arrayOfNulls<String?>(track.clips.size)
+                val seqIns = LongArray(track.clips.size)
+                val trimIns = LongArray(track.clips.size)
+                val dus = LongArray(track.clips.size)
+                var index = 0
+                list.forEach {
+                    files[index] = it.path
+                    seqIns[index] = it.seqIn
+                    trimIns[index] = it.trimIn
+                    dus[index] = it.duration
+                    ++index
+                }
+//                val data = AlFFUtils.parseVideoCover(track.seqIn, track.duration, files , seqIns , trimIns , dus, 64)
+//                if (null != data) {
+//                    Log.i("alimin", "get sequence")
+//                    val sequence = AlMediaCoverSequence(AlParcel.from(data))
+//                    Log.i("alimin", "${sequence.covers.size}")
+//                }
+            }
+        }
     }
 
     private fun makeLayoutParams(): LayoutParams {

@@ -54,7 +54,8 @@ public:
                                                                  std::vector<std::string> &files,
                                                                  std::vector<int64_t> &seqIns,
                                                                  std::vector<int64_t> &trimIns,
-                                                                 std::vector<int64_t> &dus);
+                                                                 std::vector<int64_t> &dus,
+                                                                 int width);
 
     static void showInfo();
 

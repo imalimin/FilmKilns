@@ -312,10 +312,131 @@ int AlFFUtils::parseWaveform(int64_t seqIn, int64_t duInUS,
     return 0;
 }
 
+static void _addSequenceFrame(std::shared_ptr<AlMediaCoverSequence> sequence, SwsContext *sws, AVFrame *frame) {
+    auto cover = std::make_shared<AlMediaCover>(64, 64);
+    cover->setTimestamp(1);
+    auto *dst = cover->buf()->data();
+    int dstLineSize = 64 * 4;
+    int ret = sws_scale(sws, frame->data, frame->linesize, 0, 64, &dst, &dstLineSize);
+    if (ret <= 0) {
+        AlLogE(TAG, "failed.");
+    }
+}
+
 std::shared_ptr<AlMediaCoverSequence> AlFFUtils::parseVideoCover(int64_t seqIn, int64_t duInUS,
                                                                  std::vector<std::string> &files,
                                                                  std::vector<int64_t> &seqIns,
                                                                  std::vector<int64_t> &trimIns,
-                                                                 std::vector<int64_t> &dus) {
+                                                                 std::vector<int64_t> &dus,
+                                                                 int width) {
+    int64_t current = -seqIn;
+    int track = -1;
+    int clipIndex = 0;
+    AVFormatContext *ctx = nullptr;
+    AVCodecContext *c = nullptr;
+    SwsContext *sws = nullptr;
+    AVPacket *pkt = nullptr;
+    AVFrame *frame = nullptr;
+    int64_t lastFramePts = -1;
+    std::shared_ptr<AlMediaCoverSequence> sequence;
+    while (current <= duInUS) {
+        if (clipIndex < files.size() && current >= seqIns[clipIndex]) {
+            if (sws) {
+                sws_freeContext(sws);
+                sws = nullptr;
+            }
+            if (c) {
+                avcodec_close(c);
+                c = nullptr;
+            }
+            if (ctx) {
+                avformat_close_input(&ctx);
+                avformat_free_context(ctx);
+                ctx = nullptr;
+            }
+            if (pkt) {
+                av_packet_free(&pkt);
+                pkt = nullptr;
+            }
+            if (frame) {
+                av_frame_free(&frame);
+                frame = nullptr;
+            }
+            std::string path = files[clipIndex];
+            int64_t trimIn = trimIns[clipIndex];
+            ++clipIndex;
+            ctx = avformat_alloc_context();
+            if (avformat_open_input(&ctx, path.c_str(), NULL, NULL) != 0) {
+                AlLogE(TAG, "Couldn't open input stream. index=%d/%d, cur=% " PRId64 ", %s",
+                       clipIndex - 1, files.size(), current, path.c_str());
+                return nullptr;
+            }
+            track = av_find_best_stream(ctx, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0);
+            //获取视频文件信息
+            if (avformat_find_stream_info(ctx, NULL) < 0) {
+                AlLogE(TAG, "Couldn't find stream information.");
+                return nullptr;
+            }
+            if (AVERROR_STREAM_NOT_FOUND != track && !_openTrack(ctx, track, &c)) {
+                AlLogE(TAG, "******** Open video track failed. *********");
+                return nullptr;
+            }
+            pkt = av_packet_alloc();
+            frame = av_frame_alloc();
+            auto srcW = ctx->streams[track]->codecpar->width;
+            auto srcH = ctx->streams[track]->codecpar->height;
+            auto srcFmt = (AVPixelFormat) ctx->streams[track]->codecpar->format;
+            auto dstW = 64;
+            auto dstH = 64;
+            sws = sws_getContext(srcW, srcH, srcFmt,
+                                 dstW, dstH, AVPixelFormat::AV_PIX_FMT_RGBA,
+                                 SWS_BICUBIC, nullptr, nullptr, nullptr);
+        }
+        int64_t time = current - seqIns[clipIndex - 1] + trimIns[clipIndex - 1];
+        int64_t trackTime = av_index_search_timestamp(ctx->streams[track], time,
+                                                    AVSEEK_FLAG_BACKWARD);
+        if (lastFramePts != trackTime) {
+            lastFramePts = trackTime;
+            int ret = avformat_seek_file(ctx, -1, INT64_MIN, time,
+                                         INT64_MAX, AVSEEK_FLAG_BACKWARD);
+            while (true) {
+                int ret = av_read_frame(ctx, pkt);
+                if (0 == ret && track == pkt->stream_index) {
+                    avcodec_send_packet(c, pkt);
+                }
+                av_packet_unref(pkt);
+                if (AVERROR_EOF == ret) {
+                    break;
+                }
+                if (0 == avcodec_receive_frame(c, frame)) {
+                    _addSequenceFrame(sequence, sws, frame);
+                    av_frame_unref(frame);
+                    break;
+                }
+            }
+        }
+        current += 33000;
+    }
+    if (sws) {
+        sws_freeContext(sws);
+        sws = nullptr;
+    }
+    if (c) {
+        avcodec_close(c);
+        c = nullptr;
+    }
+    if (ctx) {
+        avformat_close_input(&ctx);
+        avformat_free_context(ctx);
+        ctx = nullptr;
+    }
+    if (pkt) {
+        av_packet_free(&pkt);
+        pkt = nullptr;
+    }
+    if (frame) {
+        av_frame_free(&frame);
+        frame = nullptr;
+    }
     return nullptr;
 }

@@ -9,20 +9,24 @@
 
 AlMediaCover::AlMediaCover(int32_t width, int32_t height)
         : AlParcelable(), width(width), height(height) {
-    buf = AlBuffer::alloc(width * height * 4);
+    _buf = AlBuffer::alloc(width * height * 4);
 }
 
 AlMediaCover::~AlMediaCover() {
-    delete buf;
+    delete _buf;
 }
 
 void AlMediaCover::writeToParcel(std::shared_ptr<AlParcel> parcel) {
     parcel->writeLong(timestamp);
     parcel->writeInt(width);
     parcel->writeInt(height);
-    parcel->writeByteArray(buf->data(), buf->size());
+    parcel->writeByteArray(_buf->data(), _buf->size());
 }
 
 void AlMediaCover::setTimestamp(int64_t timeInUS) {
     this->timestamp = timeInUS;
+}
+
+AlBuffer *AlMediaCover::buf() {
+    return _buf;
 }
