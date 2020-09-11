@@ -110,6 +110,7 @@ class AlTrackView : ViewGroup {
         vMap[track.id]?.setPadding(padding, padding, padding, padding)
         addView(vMap[track.id], makeLayoutParams())
         requestLayout()
+//        updateVideoTrack(track)
         updateAudioTrack(track)
     }
 
@@ -119,7 +120,7 @@ class AlTrackView : ViewGroup {
         }
         tMap[track.id] = track
         requestLayout()
-        updateVideoTrack(track)
+//        updateVideoTrack(track)
         updateAudioTrack(track)
     }
 
@@ -173,7 +174,7 @@ class AlTrackView : ViewGroup {
     }
 
     private fun updateVideoTrack(track: AlMediaTrack) {
-        if (AlMediaType.TYPE_AUDIO == track.type) {
+        if (AlMediaType.TYPE_VIDEO == track.type) {
             GlobalScope.launch {
                 val list = ArrayList<AlMediaClip>()
                 track.clips.forEach {
@@ -192,12 +193,12 @@ class AlTrackView : ViewGroup {
                     dus[index] = it.duration
                     ++index
                 }
-//                val data = AlFFUtils.parseVideoCover(track.seqIn, track.duration, files , seqIns , trimIns , dus, 64)
-//                if (null != data) {
-//                    Log.i("alimin", "get sequence")
-//                    val sequence = AlMediaCoverSequence(AlParcel.from(data))
-//                    Log.i("alimin", "${sequence.covers.size}")
-//                }
+                val data = AlFFUtils.parseVideoCover(track.seqIn, track.duration, files , seqIns , trimIns , dus, 64)
+                if (null != data) {
+                    Log.i("alimin", "get sequence")
+                    val sequence = AlMediaCoverSequence(AlParcel.from(data))
+                    Log.i("alimin", "${sequence.covers.size}")
+                }
             }
         }
     }
