@@ -42,6 +42,11 @@ static void bindListener(AlVideoV2Processor *p) {
                 return;
             }
             buf->rewind();
+            AlLogI("Java_AlVideoV2Processor", "parcel %d", buf->size());
+            if (JNI_TRUE == env->ExceptionCheck()) {
+                env->ExceptionDescribe();
+                env->ExceptionClear();
+            }
             auto data = env->NewByteArray(buf->size());
             env->SetByteArrayRegion(data, 0, buf->size(),
                                     reinterpret_cast<const jbyte *>(buf->data()));
@@ -59,6 +64,11 @@ JNIEXPORT jlong JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_cre
         AlJavaRuntime::getInstance().attachThread();
         AlJavaRuntime::getInstance().attach(p, obj, false);
     });
+    p->setOnDestroyListener(AlRunnable::runEmptyArgs([p]() {
+        AlLogI("Java_AlVideoV2Processor", "release");
+        AlJavaRuntime::getInstance().detach(p);
+        AlJavaRuntime::getInstance().detachThread();
+    }));
     bindListener(p);
     return reinterpret_cast<jlong>(p);
 }
@@ -67,11 +77,6 @@ JNIEXPORT void JNICALL Java_com_lmy_hwvcnative_processor_AlVideoV2Processor_rele
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
         AlVideoV2Processor *p = getHandler(handler);
-        p->setOnDestroyListener(AlRunnable::runEmptyArgs([p]() {
-            AlLogI("Java_AlVideoV2Processor", "release");
-            AlJavaRuntime::getInstance().detach(p);
-            AlJavaRuntime::getInstance().detachThread();
-        }));
         p->release();
         delete p;
     }

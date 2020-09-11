@@ -20,7 +20,7 @@ AlAbsProcessor::~AlAbsProcessor() {
 }
 
 void AlAbsProcessor::release() {
-    release(AlRunnable::runEmptyArgs([]() {}));
+    release(this->destroyRun);
 }
 
 void AlAbsProcessor::release(AlRunnable *runnable) {
