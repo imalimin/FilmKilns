@@ -15,6 +15,11 @@
 #include "HwPacket.h"
 #include "AlBuffer.h"
 
+/// +------------------------------+
+/// |    Annex-B   |  AVCC/HVCC    |
+/// +------------------------------+
+/// | 00 00 00 01  |  NALU LENGTH  |
+/// +------------------------------+
 class AlCodec : public Object {
 public:
     AL_ENUM kID : int {
