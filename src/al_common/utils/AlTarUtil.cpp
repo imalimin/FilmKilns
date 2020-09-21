@@ -1048,7 +1048,8 @@ int write_entries(const int fd, struct tar_t **archive, struct tar_t **head, con
             const unsigned int pad = 512 - size % 512;
             if (pad != 512) {
                 for (unsigned int j = 0; j < pad; j++) {
-                    if (write_size(fd, "\0", 1) != 1) {
+                    char c = '\0';
+                    if (write_size(fd, &c, 1) != 1) {
                         WRITE_ERROR("Could not write padding data");
                     }
                 }

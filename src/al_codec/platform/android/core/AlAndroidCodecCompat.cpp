@@ -231,7 +231,7 @@ HwResult AlAndroidCodecCompat::pop(int32_t waitInUS) {
                     int32_t lines = h * 3 / 2;
                     for (int i = 0; i < lines; ++i) {
                         memcpy(videoFrame->data() + i * w,
-                               buf + info.offset + i * stride * 3 / 2, w);
+                               buf->data() + info.offset + i * stride * 3 / 2, w);
                     }
                 }
             }

@@ -32,6 +32,7 @@ bool AlFileDescriptor::operator==(const AlFileDescriptor &o) {
     return o._path == this->_path;
 }
 
-bool AlFileDescriptor::equals(const AlFileDescriptor &o) {
-    return o._path == this->_path;
+bool AlFileDescriptor::equals(const Object &o) {
+    auto &o1 = (AlFileDescriptor &) o;
+    return o1._path == this->_path;
 }

@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.4.1)
 set(SRC_PATH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/src/)
-option(ENABLE_BAN_WARNING "Enable warning as error." OFF)
+option(ENABLE_BAN_WARNING "Enable warning as error." ON)
 option(ENABLE_TINY "Enable tiny so." OFF)
 option(ENABLE_GLM "Enable glm." OFF)
 option(ENABLE_ASAN "Enable ASAN." OFF)
 option(ENABLE_MEDIA_CODEC "Enable MediaCodec." ON)
 set(WARNING_CONFIGS
         -Werror
+        -Wreturn-type
         -Wmost
         -Wno-pragmas
         -Wno-unused-function
@@ -17,10 +18,15 @@ set(WARNING_CONFIGS
         -Wno-reorder
         -Wno-unused-private-field
         -Wno-deprecated-declarations
-        -Wno-unknown-pragmas)
+        -Wno-unknown-pragmas
+        -Wno-overloaded-virtual
+        -Wno-parentheses
+        -Wno-pointer-sign
+        -Wno-switch
+        -Wno-implicit-int)
 
 set(CXX_FLAGS_CONFIGS "-std=c++17 -Wall")
-set(C_FLAGS_CONFIGS "-std=c11 -Wall")
+set(C_FLAGS_CONFIGS "-Wall")
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     set(CXX_FLAGS_CONFIGS "${CXX_FLAGS_CONFIGS} -O3 -ffast-math -funroll-loops ")
     set(C_FLAGS_CONFIGS "${C_FLAGS_CONFIGS} -O3 -ffast-math -funroll-loops ")

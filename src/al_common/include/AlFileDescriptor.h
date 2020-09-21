@@ -25,7 +25,7 @@ public:
 
     virtual bool operator==(const AlFileDescriptor &o);
 
-    virtual bool equals(const AlFileDescriptor &o);
+    virtual bool equals(const Object &o) override;
 
 private:
     std::string _path;

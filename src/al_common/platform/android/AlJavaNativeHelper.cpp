@@ -55,7 +55,7 @@ AlJavaNativeHelper::~AlJavaNativeHelper() {
 }
 
 AlJavaNativeHelper &AlJavaNativeHelper::operator=(const AlJavaNativeHelper &object) {
-
+    return *this;
 }
 
 

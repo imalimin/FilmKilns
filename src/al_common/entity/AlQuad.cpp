@@ -19,8 +19,10 @@ AlQuad::AlQuad() : Object() {
 
 AlQuad::AlQuad(AlVec2 &lt, AlVec2 &rt, AlVec2 &rb, AlVec2 &lb)
         : Object(),
-          _leftTop(lt), _rightTop(rt),
-          _rightBottom(rb), _leftBottom(lb) {
+          _leftTop(lt),
+          _leftBottom(lb),
+          _rightBottom(rb),
+          _rightTop(rt) {
 
 }
 

@@ -13,7 +13,7 @@ AlOperateCrop::AlOperateCrop(int32_t layerId, float left, float top, float right
 }
 
 AlOperateCrop::AlOperateCrop(const AlOperateCrop &o)
-        : AlOperateDesc(layerId), rectF(o.rectF) {
+        : AlOperateDesc(o.layerId), rectF(o.rectF) {
 
 }
 

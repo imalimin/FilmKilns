@@ -152,6 +152,7 @@ HwResult AlLayerMeasurer::measurePoint(float &x, float &y) {
     AlVec2 vec = (lt * mat).xy();
     x = vec.x;
     y = vec.y;
+    return Hw::OK;
 }
 
 HwResult AlLayerMeasurer::measure(AlImageLayerDrawModel &drawModel) {

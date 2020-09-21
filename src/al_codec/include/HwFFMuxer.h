@@ -38,7 +38,7 @@ public:
 
     virtual HwResult configure(string filePath, string type) override;
 
-    virtual HwResult start();
+    virtual HwResult start() override;
 
     virtual int32_t addTrack(AlBundle &format) override;
 

@@ -51,4 +51,5 @@ size_t AlMemoryUtils::memcpy(uint8_t *dst, uint8_t *src, size_t size) {
 #else
     std::memcpy(dst, src, size);
 #endif
+    return size;
 }

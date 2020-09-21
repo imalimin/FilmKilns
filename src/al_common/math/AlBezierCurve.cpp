@@ -93,7 +93,7 @@ void AlBezierCurve::getPath(vector<float> &path) {
 }
 
 bool AlBezierCurve::empty() {
-    return _length < 0.001F || p0 == p1 && p1 == p2;
+    return _length < 0.001F || (p0 == p1 && p1 == p2);
 }
 
 float AlBezierCurve::_calculateLength() {

@@ -20,8 +20,8 @@ AlHandlerThread::AlHandlerThread(std::string name)
         : Object(),
           name(name),
           mThread(thread(&AlHandlerThread::run, std::ref(*this))),
-          exited(false),
-          exiting(false) {
+          exiting(false),
+          exited(false) {
 }
 
 void AlHandlerThread::run() {

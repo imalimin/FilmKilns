@@ -43,7 +43,7 @@ public:
     /**
      * @return 1: video, 2: audio, 0: failed
      */
-    virtual HwResult grab(HwAbsMediaFrame **frame);
+    virtual HwResult grab(HwAbsMediaFrame **frame) override;
 
     virtual int64_t getVideoDuration() override;
 
@@ -51,7 +51,7 @@ public:
 
     virtual int64_t getDuration() override;
 
-    virtual int64_t getAudioStartTime() override {};
+    virtual int64_t getAudioStartTime() override { return 0; };
 
     virtual void start() override;
 

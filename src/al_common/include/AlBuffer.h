@@ -57,11 +57,11 @@ public:
     float getFloat();
 
 private:
-    uint8_t *buf = nullptr;
     size_t _size = 0;
-    size_t _position = 0;
     size_t _limit = 0;
     size_t _capacity = 0;
+    size_t _position = 0;
+    uint8_t *buf = nullptr;
     bool isRef = false;
 
 };

@@ -271,6 +271,7 @@ int AlFFUtils::parseWaveform(int64_t seqIn, int64_t duInUS,
         bool found = false;
         while (true) {
             int ret = av_read_frame(ctx, pkt);
+//            AlLogI("alimin", "level %f", pkt->pts);
             if (0 == ret && track == pkt->stream_index) {
                 avcodec_send_packet(c, pkt);
             }

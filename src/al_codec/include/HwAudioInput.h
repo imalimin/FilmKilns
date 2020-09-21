@@ -18,19 +18,19 @@ public:
 
     virtual ~HwAudioInput();
 
-    bool onDestroy(AlMessage *msg);
+    bool onDestroy(AlMessage *msg) override;
 
     bool onCreate(AlMessage *msg) override;
 
-    bool eventSetSource(AlMessage *msg);
+    bool eventSetSource(AlMessage *msg) override;
 
-    bool eventStart(AlMessage *msg);
+    bool eventStart(AlMessage *msg) override;
 
-    bool eventPause(AlMessage *msg);
+    bool eventPause(AlMessage *msg) override;
 
-    bool eventStop(AlMessage *msg);
+    bool eventStop(AlMessage *msg) override;
 
-    bool eventSeek(AlMessage *msg);
+    bool eventSeek(AlMessage *msg) override;
 
     bool eventLoop(AlMessage *msg);
 

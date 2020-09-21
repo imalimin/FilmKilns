@@ -26,7 +26,7 @@ AlTar *AlTar::unpack(std::string tar, std::string destDir) {
         Logcat::i(TAG, "%s(%d)", __FUNCTION__, __LINE__);
         return nullptr;
     }
-    unsigned int offset = 0;
+//    unsigned int offset = 0;
     int32_t count = 0;
     bool update = true;
     while (true) {

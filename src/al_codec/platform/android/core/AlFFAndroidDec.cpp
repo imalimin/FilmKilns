@@ -23,7 +23,7 @@ extern "C" {
 
 #if defined(__AL_ENABLE_MEDIA_CODEC__)
 
-typedef struct AlMediaCodecCtx {
+struct AlMediaCodecCtx {
     const AVClass *av_class;
     AlAndroidCodecDecCompat *ctx;
     AVBSFContext *bsf;
@@ -128,9 +128,9 @@ static av_cold int al_media_codec_dec_init(AVCodecContext *ctx) {
 
 static int al_media_codec_decprocess(AVCodecContext *ctx, AVFrame *frame,
                                      int *got, AVPacket *pkt) {
-    int ret = -1;
-    uint8_t *buf = nullptr;
-    int size = 0;
+//    int ret = -1;
+//    uint8_t *buf = nullptr;
+//    int size = 0;
     AlMediaCodecCtx *s = (AlMediaCodecCtx *) ctx->priv_data;
 
     HwAbsMediaFrame *dst = nullptr;
