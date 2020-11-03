@@ -8,12 +8,14 @@
 #include "AlAbsProcessor.h"
 #include "AlRunnable.h"
 #include "HwPair.h"
+#include "FkUMonitor.h"
 
 #define TAG "AlAbsProcessor"
 
 AlAbsProcessor::AlAbsProcessor(string name) : Unit(name, Unit::AlUnitSetting(true)), name(name) {
     pipeline = AlPostMan::create(name);
     registerAnUnit(this);
+    registerMonitor();
 }
 
 AlAbsProcessor::~AlAbsProcessor() {
@@ -72,4 +74,10 @@ bool AlAbsProcessor::onDestroy(AlMessage *msg) {
 
 void AlAbsProcessor::setOnDestroyListener(AlRunnable *runnable) {
     this->destroyRun = runnable;
+}
+
+void AlAbsProcessor::registerMonitor() {
+    auto s = Unit::AlUnitSetting(true);
+    s.endNode = true;
+    registerAnUnit(new FkUMonitor("engine_monitor", s));
 }

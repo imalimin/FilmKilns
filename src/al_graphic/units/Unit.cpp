@@ -53,6 +53,10 @@ Unit::~Unit() {
     eventMap.clear();
 }
 
+bool Unit::onMsgReceived(AlMessage *msg) {
+    return false;
+}
+
 bool Unit::registerEvent(int what, EventFunc handler) {
     eventMap.insert(pair<int, Event *>(what, new Event(what, handler)));
     return true;
@@ -84,7 +88,7 @@ bool Unit::dispatch(AlMessage *msg) {
         }
         created = true;
     }
-
+    onMsgReceived(msg);
     auto itr = eventMap.find(msg->what);
     if (eventMap.end() != itr) {
         return itr->second->handle(this, msg);

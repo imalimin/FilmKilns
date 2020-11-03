@@ -225,6 +225,7 @@ public:
         /// false: This unit will be delete when UnitPipeline delete.
         /// true: This unit will not be delete when UnitPipeline delete.
         bool hosted = false;
+        bool endNode = false;
     };
 
 public:
@@ -252,6 +253,12 @@ public:
     /// \param msg
     /// \return
     virtual bool onDestroy(AlMessage *msg) = 0;
+
+    /// Will be call auto before handle func when receive a message.
+    /// Do not touch this func if no need.
+    /// \param msg
+    /// \return
+    virtual bool onMsgReceived(AlMessage *msg);
 
     /** Model Provider START */
     void setModelProvider(HwModelProvider *provider);

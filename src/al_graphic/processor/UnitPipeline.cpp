@@ -68,7 +68,16 @@ void UnitPipeline::_dispatch(AlMessage *msg) {
 #if DEBUG_SHOW_COST
     auto time = TimeUtils::getCurrentTimeUS();
 #endif
+    std::vector<Unit *> endNodes;
     for (auto *unit:units) {
+        // Handle msg on the end.
+        if (unit->setting.endNode) {
+            endNodes.emplace_back(unit);
+            continue;
+        }
+        bool ret = unit->dispatch(msg);
+    }
+    for (auto *unit:endNodes) {
         bool ret = unit->dispatch(msg);
     }
 #if DEBUG_SHOW_COST

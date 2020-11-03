@@ -79,6 +79,9 @@ protected:
     void registerAnUnit(Unit *unit);
 
 private:
+    void registerMonitor();
+
+private:
     string name;
     AlPostMan *pipeline = nullptr;
     AlRunnable *destroyRun = nullptr;
