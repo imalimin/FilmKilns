@@ -13,6 +13,7 @@
 #include "Unit.h"
 #include "HwPair.h"
 #include "AlRunnable.h"
+#include "FkUMonitor.h"
 
 template<typename V>
 class HwPairBuilder : public Object {
@@ -67,6 +68,8 @@ public:
 
     void setOnDestroyListener(AlRunnable *runnable);
 
+    void setOnMonitorListener(FkUMonitor::OnMonitorListener l);
+
 protected:
     virtual void onCreate() ;
 
@@ -81,10 +84,15 @@ protected:
 private:
     void registerMonitor();
 
+    bool _onMonitorNotify(AlMessage *msg);
+
 private:
     string name;
     AlPostMan *pipeline = nullptr;
     AlRunnable *destroyRun = nullptr;
+
+    std::mutex monitorMtx;
+    FkUMonitor::OnMonitorListener onMonitorListener = nullptr;
 };
 
 

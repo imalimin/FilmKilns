@@ -22,6 +22,10 @@ static AlJNIObject::Method midTrackUpdate = {
         "com/lmy/hwvcnative/processor/AlVideoV2Processor",
         "onNativeTrackUpdate", "([B)V"};
 
+static AlJNIObject::Method midMonitorUpdate = {
+        "com/lmy/hwvcnative/processor/AlVideoV2Processor",
+        "onNativeMonitorUpdate", "([B[B)V"};
+
 static AlVideoV2Processor *getHandler(jlong handler) {
     return reinterpret_cast<AlVideoV2Processor *>(handler);
 }
@@ -52,6 +56,35 @@ static void bindListener(AlVideoV2Processor *p) {
                                     reinterpret_cast<const jbyte *>(buf->data()));
             al_jni_call_void(obj, midTrackUpdate, data);
             env->DeleteLocalRef(data);
+        }
+    });
+    p->setOnMonitorListener([p](int monitorState, std::shared_ptr<AlVector<std::shared_ptr<FkUnitDesc>>> unitsDesc,
+                               std::shared_ptr<FkMsgState> state) {
+        AlJNIObject *obj = nullptr;
+        JNIEnv *env = nullptr;
+        if (AlJavaRuntime::getInstance().findObj(p, &obj) && AlJavaRuntime::getInstance().findEnv(&env)) {
+            AlLogI("alimin", "%" PRId64 ", %" PRId64 ", %p", state->what, state->costTimeInUS, (void *)obj);
+//            auto buf0 = state->data();
+//            auto buf1 = state->data();
+//            if (nullptr == buf0 || buf0->size() <= 0
+//                || nullptr == buf1 || buf1->size() <= 0) {
+//                return;
+//            }
+//            buf0->rewind();
+//            buf1->rewind();
+//            if (JNI_TRUE == env->ExceptionCheck()) {
+//                env->ExceptionDescribe();
+//                env->ExceptionClear();
+//            }
+//            auto data0 = env->NewByteArray(buf0->size());
+//            env->SetByteArrayRegion(data0, 0, buf0->size(),
+//                                    reinterpret_cast<const jbyte *>(buf0->data()));
+//            auto data1 = env->NewByteArray(buf1->size());
+//            env->SetByteArrayRegion(data1, 0, buf1->size(),
+//                                    reinterpret_cast<const jbyte *>(buf1->data()));
+//            al_jni_call_void(obj, midMonitorUpdate, data0, data1);
+//            env->DeleteLocalRef(data1);
+//            env->DeleteLocalRef(data0);
         }
     });
 }

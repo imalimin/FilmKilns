@@ -8,6 +8,8 @@
 #include "AlMessage.h"
 #include "StringUtils.h"
 #include "TimeUtils.h"
+#include "AlVector.h"
+#include "FkUnitDesc.h"
 
 #define TAG "UnitPipeline"
 #define DEBUG_SHOW_COST 0
@@ -46,6 +48,7 @@ void UnitPipeline::postDestroy() {
 void UnitPipeline::postEvent(AlMessage *msg) {
     std::lock_guard<std::mutex> guard(mtx);
     if (mHandler) {
+        msg->state.postTimeInUS = TimeUtils::getCurrentTimeUS();
         mHandler->sendMessage(msg);
     }
 //    this->dispatch(msg);
@@ -57,6 +60,7 @@ void UnitPipeline::_dispatch(AlMessage *msg) {
            kidRestore(msg->what).c_str(),
            msg->what, units.size());
 #endif
+    msg->state.handleTimeInUS = TimeUtils::getCurrentTimeUS();
     if (EVENT_COMMON_PREPARE == msg->what) {
         _disCreate(msg);
         return;
@@ -89,12 +93,17 @@ void UnitPipeline::_dispatch(AlMessage *msg) {
 
 bool UnitPipeline::_disCreate(AlMessage *msg) {
 //    std::lock_guard<std::mutex> guard(mtx);
+    bool shouldNotifyDesc = false;
     while (!units0.empty()) {
+        shouldNotifyDesc = true;
         auto *u = units0.front();
         AlLogI(TAG, "%s will be create.", u->toString().c_str());
         bool ret = u->dispatch(msg);
         units0.pop_front();
         units.emplace_back(u);
+    }
+    if (shouldNotifyDesc) {
+        _notifyUnitsDesc();
     }
     return true;
 }
@@ -142,4 +151,20 @@ void UnitPipeline::_notifyDestroy() {
     auto *msg = AlMessage::obtain(EVENT_COMMON_RELEASE);
     msg->desc = "Release";
     mHandler->sendMessage(msg);
+}
+
+void UnitPipeline::_notifyUnitsDesc() {
+    auto clips = std::make_shared<AlVector<std::shared_ptr<FkUnitDesc>>>();
+
+    for (auto *unit:units) {
+        auto desc = std::make_shared<FkUnitDesc>();
+        desc->name = unit->alias;
+        for (auto it : unit->eventMap) {
+            desc->msgVec.emplace_back(it.first);
+        }
+        clips->push_back(desc);
+    }
+    auto msg = AlMessage::obtain(MSG_ENGINE_NOTIFY_UNITS_DESC);
+    msg->sp = clips;
+    postEvent(msg);
 }

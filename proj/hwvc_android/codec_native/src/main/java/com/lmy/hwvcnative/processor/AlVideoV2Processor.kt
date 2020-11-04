@@ -133,6 +133,10 @@ class AlVideoV2Processor : CPPObject() {
         }
     }
 
+    private fun onNativeMonitorUpdate(unitsDesc: ByteArray, state: ByteArray) {
+
+    }
+
     private external fun create(): Long
     private external fun release(handle: Long)
     private external fun addTrack(

@@ -15,6 +15,7 @@ static constexpr int EVENT_COMMON_PREPARE = KID('C', 'O', 'M', 0x02);
 static constexpr int EVENT_COMMON_INVALIDATE = KID('C', 'O', 'M', 0x03);
 static constexpr int EVENT_COMMON_START = KID('C', 'O', 'M', 0x04);
 static constexpr int EVENT_COMMON_PAUSE = KID('C', 'O', 'M', 0x05);
+static constexpr int MSG_ENGINE_NOTIFY_UNITS_DESC = KID('C', 'O', 'M', 0x06);
 /**
  * Notify pixels is ready to someone.
  */

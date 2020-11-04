@@ -8,7 +8,6 @@
 #include "AlAbsProcessor.h"
 #include "AlRunnable.h"
 #include "HwPair.h"
-#include "FkUMonitor.h"
 
 #define TAG "AlAbsProcessor"
 
@@ -77,7 +76,25 @@ void AlAbsProcessor::setOnDestroyListener(AlRunnable *runnable) {
 }
 
 void AlAbsProcessor::registerMonitor() {
-    auto s = Unit::AlUnitSetting(true);
+    auto s = Unit::AlUnitSetting(false);
     s.endNode = true;
-    registerAnUnit(new FkUMonitor("engine_monitor", s));
+    auto *u = new FkUMonitor("engine_monitor", s);
+    u->setOnMonitorListener([this](int monitorState, std::shared_ptr<AlVector<std::shared_ptr<FkUnitDesc>>> unitsDesc,
+                               std::shared_ptr<FkMsgState> state) {
+        std::lock_guard<std::mutex> guard(this->monitorMtx);
+        if (this->onMonitorListener) {
+            this->onMonitorListener(monitorState, unitsDesc, state);
+        }
+    });
+    registerAnUnit(u);
+    al_reg_msg(MSG_MONITOR_NOTIFY, AlAbsProcessor::_onMonitorNotify);
+}
+
+bool AlAbsProcessor::_onMonitorNotify(AlMessage *msg) {
+    return true;
+}
+
+void AlAbsProcessor::setOnMonitorListener(FkUMonitor::OnMonitorListener l) {
+    std::lock_guard<std::mutex> guard(monitorMtx);
+    onMonitorListener = l;
 }

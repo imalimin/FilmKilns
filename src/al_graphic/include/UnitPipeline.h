@@ -42,6 +42,8 @@ private:
 
     void _notifyDestroy();
 
+    void _notifyUnitsDesc();
+
 private:
     AlHandlerThread *mThread = nullptr;
     AlHandler *mHandler = nullptr;
