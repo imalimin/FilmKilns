@@ -1,20 +1,20 @@
 hwvc
 ====
 
-hwvc is a cross-platform project. Committed to quickly and easily implement a variety of complex multimedia needs, including recording and editing. This project uses c / c + + implementation, currently only supports Android platform, but it can also be easily ported to other platforms, such as IOS.
+FilmKilns(Old named hwvc) is a cross-platform project. Committed to quickly and easily implement a variety of complex multimedia needs, including recording and editing. This project uses c / c + + implementation, currently only supports Android platform, but it can also be easily ported to other platforms, such as IOS.
 
 [![Build Status](https://dev.azure.com/alimin/hwvc/_apis/build/status/hwvc/MAIN?branchName=master)](https://dev.azure.com/alimin/hwvc/_build/latest?definitionId=2&branchName=master)
 
 Video Editor
 ------------
 
-![Screen 0](https://github.com/imalimin/hwvc/raw/develop/ScreenRecording/recording-video-v2-0.mp4.gif)
-![Screen 1](https://github.com/imalimin/hwvc/raw/develop/ScreenRecording/recording-video-v2-1.mp4.gif)
+![Screen 0](https://github.com/imalimin/FilmKilns/raw/develop/ScreenRecording/recording-video-v2-0.mp4.gif)
+![Screen 1](https://github.com/imalimin/FilmKilns/raw/develop/ScreenRecording/recording-video-v2-1.mp4.gif)
 
 Image Editor
 ------------
 
-![Screen 0](https://github.com/imalimin/hwvc/raw/develop/ScreenRecording/recording-image.mp4.gif)
+![Screen 0](https://github.com/imalimin/FilmKilns/raw/develop/ScreenRecording/recording-image.mp4.gif)
 
 License
 -------
@@ -22,7 +22,7 @@ License
 ```
 MIT License
 
-Copyright (c) [2019] [aliminabc@gmail.com]
+Copyright (c) [2020] [aliminabc@gmail.com]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
