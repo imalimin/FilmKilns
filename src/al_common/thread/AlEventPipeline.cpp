@@ -72,3 +72,10 @@ void AlEventPipeline::quit() {
         mHandler->sendMessage(AlMessage::obtain(0, nullptr, AlMessage::QUEUE_MODE_CLEAR));
     }
 }
+
+void AlEventPipeline::quitSafely() {
+    if (exited) {
+        return;
+    }
+    exited = true;
+}

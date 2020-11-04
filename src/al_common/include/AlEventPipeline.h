@@ -36,6 +36,8 @@ public:
 
     void quit();
 
+    void quitSafely();
+
 private:
     AlHandler *mHandler;
     AlHandlerThread *mThread = nullptr;
