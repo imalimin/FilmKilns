@@ -102,6 +102,10 @@ void AlMessageManager::recycle(AlMessage *msg) {
     msg->action = 0;
     msg->desc = "Undef";
     msg->queueMode = AlMessage::QUEUE_MODE_NORMAL;
+    msg->state.postTimeInUS = 0;
+    msg->state.handleTimeInUS = 0;
+    msg->state.handleDoneInUS = 0;
+    msg->state.costTimeInUS = 0;
     delete msg->obj;
     msg->obj = nullptr;
     if (msg->sp.unique()) {

@@ -9,6 +9,7 @@
 #define HWVC_ANDROID_ALMESSAGE_H
 
 #include "Object.h"
+#include "FkMsgState.h"
 #include <queue>
 #include <mutex>
 
@@ -25,6 +26,7 @@ public:
     int64_t arg2 = 0;
     int64_t action = 0;
     string desc;
+    FkMsgState state;
     /// Will be delete after cycle.
     Object *obj = nullptr;
     std::shared_ptr<Object> sp;
