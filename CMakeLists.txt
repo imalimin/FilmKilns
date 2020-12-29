@@ -58,6 +58,8 @@ if (ENABLE_MEDIA_CODEC)
 endif (ENABLE_MEDIA_CODEC)
 
 add_subdirectory(${SRC_PATH_ROOT}/al_common)
+add_subdirectory(${SRC_PATH_ROOT}/FkBase)
+add_subdirectory(${SRC_PATH_ROOT}/FkFramework)
 add_subdirectory(${SRC_PATH_ROOT}/al_bitmap)
 add_subdirectory(${SRC_PATH_ROOT}/al_graphic)
 add_subdirectory(${SRC_PATH_ROOT}/al_image)
