@@ -9,12 +9,33 @@
 #define FK_FRAMEWORK_FKQUARK_H
 
 #include "FkObject.h"
+#include "FkProtDesc.h"
 
 FK_ABS_CLASS FkQuark FK_EXTEND FkObject {
+public:
+    typedef int (FkQuark::*ProtHandler)(std::shared_ptr<FkProtocol>);
+
 public:
     FkQuark();
 
     virtual ~FkQuark();
+
+    virtual void describeProtocols(std::shared_ptr<FkProtDesc> prot) = 0;
+
+protected:
+    void onCreate();
+
+    void onDestroy();
+
+    void onStart();
+
+    void onStop();
+
+private:
+    FkQuark(const FkQuark &o) : FkObject() {};
+
+private:
+    std::shared_ptr<FkProtDesc> prot = nullptr;
 };
 
 

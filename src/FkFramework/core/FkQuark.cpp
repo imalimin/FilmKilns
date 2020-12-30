@@ -7,10 +7,26 @@
 
 #include "FkQuark.h"
 
-FkQuark::FkQuark() : FkObject("FkQuark") {
-
+FkQuark::FkQuark() : FkObject() {
+    prot = std::make_shared<FkProtDesc>(this);
 }
 
 FkQuark::~FkQuark() {
+
+}
+
+void FkQuark::onCreate() {
+    describeProtocols(prot);
+}
+
+void FkQuark::onDestroy() {
+
+}
+
+void FkQuark::onStart() {
+
+}
+
+void FkQuark::onStop() {
 
 }
