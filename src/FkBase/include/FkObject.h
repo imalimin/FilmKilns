@@ -10,15 +10,18 @@
 
 #include "Object.h"
 #include "FkDefinition.h"
+#include "FkClassType.h"
 
 FK_CLASS FkObject FK_EXTEND Object {
 public:
-    FkObject(const char *name);
+    FkObject();
 
     virtual ~FkObject();
 
+    virtual FkClassType *getClassType();
+
 private:
-    std::string name;
+    FkClassType type;
 };
 
 

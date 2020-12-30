@@ -6,11 +6,16 @@
 */
 
 #include "FkObject.h"
+#include <typeinfo>
 
-FkObject::FkObject(const char *name) : Object(), name(name) {
-
+FkObject::FkObject() : Object() {
+    FK_MARK_SUPER
 }
 
 FkObject::~FkObject() {
 
+}
+
+FkClassType *FkObject::getClassType() {
+    return &type;
 }
