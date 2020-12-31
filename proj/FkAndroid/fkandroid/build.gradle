@@ -1,0 +1,58 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+android {
+    compileSdkVersion target_version
+
+    defaultConfig {
+        minSdkVersion min_version
+        targetSdkVersion target_version
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_ARM_NEON=TRUE",
+                        "-DANDROID_CPP_FEATURES=rtti exceptions"
+            }
+        }
+        ndk {
+            stl "libstdc++"
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+        sourceSets.main {
+            jni.srcDirs = []
+            jniLibs.srcDir "../../../src/al_codec/prebuild/shared/ffmpeg/libs"
+            jniLibs.srcDir "../../../src/al_codec/prebuild/shared/yuv/libs"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+    android.libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "film_kilns_${defaultConfig.versionName}_${defaultConfig.versionCode}" + '.aar'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    implementation "androidx.appcompat:appcompat:$androidx_version"
+    implementation "androidx.core:core-ktx:$androidx_version"
+    //Kotlin协程
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.27.0-eap13"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
+}
