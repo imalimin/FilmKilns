@@ -1,13 +1,30 @@
 package com.alimin.fk.app.ui
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
+import android.content.Intent
 import com.alimin.fk.app.R
+import com.lmy.common.adapter.SimpleTextAdapter
+import com.lmy.common.ext.setOnItemClickListener
+import com.lmy.common.ui.BaseActivity
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+    class Action(val name: String, val action: () -> Unit)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override val layoutResID: Int = R.layout.activity_main
+    private val ITEMS = arrayListOf(
+        Action("Module Test") { startActivity(Intent(this, ModuleTestActivity::class.java)) }
+    )
+
+    override fun initView() {
+        val items = ArrayList<String>()
+        ITEMS.forEach {
+            items.add(it.name)
+        }
+        val adapter = SimpleTextAdapter()
+        adapter.bindData(items)
+        mRecyclerView.adapter = adapter
+        mRecyclerView.setOnItemClickListener { parent, view, position ->
+            ITEMS[position].action()
+        }
     }
 }

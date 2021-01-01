@@ -9,7 +9,8 @@ android {
         targetSdkVersion target_version
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
-
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        flavorDimensions "version"
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_ARM_NEON=TRUE",
@@ -25,12 +26,6 @@ android {
             stl "libstdc++"
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
-        sourceSets.main {
-            jni.srcDirs = []
-            if (enableTest) {
-                jniLibs.srcDir "./src/main/cpp/native/prebuild/shared/gtest/libs"
-            }
-        }
     }
 
     buildTypes {
@@ -42,6 +37,21 @@ android {
         }
         debug {
             buildConfigField("boolean", "ENABLE_TEST", "${enableTest}")
+        }
+    }
+
+    productFlavors {
+        unitTest {
+            externalNativeBuild {
+                cmake {
+//                    cppFlags "-fprofile-arcs -ftest-coverage --coverage -fprofile-instr-generate"
+                    arguments.add "-DENABLE_G_TEST=TRUE"
+                }
+            }
+            sourceSets.main {
+                jni.srcDirs = []
+                jniLibs.srcDir "./src/test/cpp/prebuild/shared/gtest/libs"
+            }
         }
     }
 
@@ -61,6 +71,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
     implementation "androidx.appcompat:appcompat:$androidx_version"
     implementation "androidx.core:core-ktx:$androidx_version"
     //Kotlin协程

@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkAndroid")
+set(MODULE_NAME "FkAndroidTest")
 project(${MODULE_NAME} LANGUAGES C CXX)
 
 set(PROJECT_SOURCE_FK_DIR ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/prebuild/shared/gtest/include
         ${PROJECT_SOURCE_FK_DIR}/al_common/include
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
@@ -37,6 +38,15 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "al_native CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
+set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared")
+set(GTEST ${PREBUILD_SHARED}/gtest)
+add_library(gtest_main SHARED IMPORTED)
+set_target_properties(gtest_main PROPERTIES IMPORTED_LOCATION
+        "${GTEST}/libs/${ANDROID_ABI}/libgtest_main.so")
+add_library(gtest SHARED IMPORTED)
+set_target_properties(gtest PROPERTIES IMPORTED_LOCATION
+        "${GTEST}/libs/${ANDROID_ABI}/libgtest.so")
+
 aux_source_directory(${PROJECT_SOURCE_DIR}/module SOURCES_MODULE)
 
 list(APPEND SOURCES_ROOT ${SOURCES_MODULE})
@@ -47,5 +57,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common FkBase FkFramework ${log-lib})
+set(MODULES ${MODULE_NAME} gtest_main gtest al_common FkBase FkFramework ${log-lib})
 target_link_libraries(${MODULES})

@@ -16,6 +16,6 @@
 #define FK_NULLABLE
 
 #define FK_MARK_SUPER getClassType()->super(typeid(*this).name());
-#define FK_CLASS_TYPE_EQUALS(src, target) (*(src.getClassType()) == *(target.getClassType()))
+#define FK_CLASS_TYPE_EQUALS(src, target) (*((src).getClassType()) == *((target).getClassType()))
 
 #endif //FK_BASE_FKDEFINITION_H

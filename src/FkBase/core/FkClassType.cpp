@@ -7,6 +7,8 @@
 
 #include "FkClassType.h"
 
+#define FK_POINTER ":<-"
+
 FkClassType::FkClassType() {
 
 }
@@ -30,4 +32,15 @@ bool operator==(const FkClassType &o0, const FkClassType &o1) {
     std::string target = o1.extends.back();
     auto itr = std::find(o0.extends.begin(), o0.extends.end(), target);
     return o0.extends.end() != itr;
+}
+
+std::string FkClassType::toString() {
+    std::string str;
+    for (auto itr = extends.begin(); itr != extends.end(); ++itr) {
+        str.append(*itr);
+        if ((--extends.end()) != itr) {
+            str.append(FK_POINTER);
+        }
+    }
+    return str;
 }
