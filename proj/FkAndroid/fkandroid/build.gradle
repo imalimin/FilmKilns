@@ -13,18 +13,19 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_ARM_NEON=TRUE",
-                        "-DANDROID_CPP_FEATURES=rtti exceptions"
+                        "-DANDROID_CPP_FEATURES=rtti exceptions",
+                        "-DENABLE_FK=TRUE"
             }
         }
         ndk {
             stl "libstdc++"
             abiFilters "armeabi-v7a", "arm64-v8a"
         }
-        sourceSets.main {
-            jni.srcDirs = []
-            jniLibs.srcDir "../../../src/al_codec/prebuild/shared/ffmpeg/libs"
-            jniLibs.srcDir "../../../src/al_codec/prebuild/shared/yuv/libs"
-        }
+//        sourceSets.main {
+//            jni.srcDirs = []
+//            jniLibs.srcDir "../../../src/al_codec/prebuild/shared/ffmpeg/libs"
+//            jniLibs.srcDir "../../../src/al_codec/prebuild/shared/yuv/libs"
+//        }
     }
 
     buildTypes {
