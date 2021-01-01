@@ -16,12 +16,12 @@ extern "C" {
 
 #define TAG "FkModuleTest"
 
-JNIEXPORT void JNICALL Java_com_alimin_fk_CPPTest_testAll
+JNIEXPORT jboolean JNICALL Java_com_alimin_fk_CPPTest_testAll
         (JNIEnv *env, jobject thiz) {
     int argc = 0;
     char **argv = nullptr;
     ::testing::InitGoogleTest(&argc, argv);
-    RUN_ALL_TESTS();
+    return 0 == RUN_ALL_TESTS() ? JNI_TRUE : JNI_FALSE;
 }
 
 #ifdef __cplusplus

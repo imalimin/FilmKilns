@@ -48,10 +48,10 @@ android {
                     arguments.add "-DENABLE_G_TEST=TRUE"
                 }
             }
-            sourceSets.main {
-                jni.srcDirs = []
-                jniLibs.srcDir "./src/test/cpp/prebuild/shared/gtest/libs"
-            }
+//            sourceSets.main {
+//                jni.srcDirs = []
+//                jniLibs.srcDir "./src/test/cpp/prebuild/shared/gtest/libs"
+//            }
         }
     }
 

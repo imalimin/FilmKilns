@@ -28,10 +28,10 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         println(appContext.packageName)
         FilmKilns.init(appContext)
-        CPPTest().testAll()
+        assertTrue(CPPTest().testAll())
     }
 }
 
 class CPPTest {
-    external fun testAll()
+    external fun testAll(): Boolean
 }

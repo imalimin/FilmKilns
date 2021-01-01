@@ -7,11 +7,10 @@
 
 #include "gtest/gtest.h"
 #include "FkHelloProt.h"
+#include "AlLogcat.h"
 
 TEST(FkClassTypeTests, Equals) {
-    auto *prot = new FkHelloProt();
-    auto *obj = new FkObject();
-    ASSERT_TRUE(FK_CLASS_TYPE_EQUALS(*prot, *obj));
-    delete obj;
-    delete prot;
+    FkHelloProt prot;
+    FkObject obj;
+    EXPECT_TRUE(FK_CLASS_TYPE_EQUALS(prot, obj));
 }

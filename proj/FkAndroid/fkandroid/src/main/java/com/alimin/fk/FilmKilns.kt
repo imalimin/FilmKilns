@@ -7,8 +7,8 @@ class FilmKilns {
         @Synchronized
         fun init(context: Context?) {
             if (BuildConfig.ENABLE_TEST) {
-                System.loadLibrary("gtest")
-                System.loadLibrary("gtest_main")
+//                System.loadLibrary("gtest")
+//                System.loadLibrary("gtest_main")
                 System.loadLibrary("FkAndroidTest")
             }
             System.loadLibrary("al_common")

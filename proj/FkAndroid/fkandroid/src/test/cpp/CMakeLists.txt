@@ -38,14 +38,20 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "al_native CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
-set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/shared")
+set(PREBUILD_SHARED "${CMAKE_CURRENT_SOURCE_DIR}/prebuild/static")
 set(GTEST ${PREBUILD_SHARED}/gtest)
-add_library(gtest_main SHARED IMPORTED)
+add_library(gtest_main STATIC IMPORTED)
 set_target_properties(gtest_main PROPERTIES IMPORTED_LOCATION
-        "${GTEST}/libs/${ANDROID_ABI}/libgtest_main.so")
-add_library(gtest SHARED IMPORTED)
+        "${GTEST}/libs/${ANDROID_ABI}/libgtest_main.a")
+add_library(gtest STATIC IMPORTED)
 set_target_properties(gtest PROPERTIES IMPORTED_LOCATION
-        "${GTEST}/libs/${ANDROID_ABI}/libgtest.so")
+        "${GTEST}/libs/${ANDROID_ABI}/libgtest.a")
+add_library(gmock STATIC IMPORTED)
+set_target_properties(gmock PROPERTIES IMPORTED_LOCATION
+        "${GTEST}/libs/${ANDROID_ABI}/libgmock.a")
+add_library(gmock_main STATIC IMPORTED)
+set_target_properties(gmock_main PROPERTIES IMPORTED_LOCATION
+        "${GTEST}/libs/${ANDROID_ABI}/libgmock_main.a")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/module SOURCES_MODULE)
 
