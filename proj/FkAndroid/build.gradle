@@ -14,6 +14,7 @@ buildscript {
     ext.bintray_groupId = 'com.lmy.codec'
     ext.bintray_publishVersion = versionName
     ext.bintray_website = 'https://github.com/lmylr'
+    ext.enableTest = Boolean.parseBoolean(ENABLE_TEST)
 
     repositories {
         mavenCentral()
