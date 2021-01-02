@@ -5,6 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
+#include "MyPrinter.h"
 #include "gtest/gtest.h"
 
 #ifdef __cplusplus
@@ -13,10 +14,18 @@ extern "C" {
 
 #include "jni.h"
 
-#define TAG "FkModuleTest"
-
 JNIEXPORT jboolean JNICALL Java_com_alimin_fk_CPPTest_testAll
         (JNIEnv *env, jobject thiz) {
+    FK_SETUP_PRINTER
+    int argc = 0;
+    char **argv = nullptr;
+    ::testing::InitGoogleTest(&argc, argv);
+    return 0 == RUN_ALL_TESTS() ? JNI_TRUE : JNI_FALSE;
+}
+
+JNIEXPORT jboolean JNICALL Java_com_alimin_fk_CPPTest_testClassType
+        (JNIEnv *env, jobject thiz) {
+    FK_SETUP_PRINTER
     int argc = 0;
     char **argv = nullptr;
     ::testing::InitGoogleTest(&argc, argv);

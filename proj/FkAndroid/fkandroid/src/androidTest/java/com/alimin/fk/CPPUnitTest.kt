@@ -16,12 +16,20 @@ class CPPUnitTest {
     fun testAll() {
         checkUnitTest()
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        println(appContext.packageName)
         FilmKilns.init(appContext)
         assertTrue(CPPTest().testAll())
+    }
+
+    @Test
+    fun testClassType() {
+        checkUnitTest()
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        FilmKilns.init(appContext)
+        assertTrue(CPPTest().testClassType())
     }
 }
 
 class CPPTest {
     external fun testAll(): Boolean
+    external fun testClassType(): Boolean
 }
