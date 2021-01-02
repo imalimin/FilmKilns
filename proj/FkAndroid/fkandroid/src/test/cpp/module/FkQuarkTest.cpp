@@ -6,24 +6,11 @@
 */
 
 #include "gtest/gtest.h"
-#include "FkHelloQuark.h"
-#include "FkHelloProt.h"
-#include "FkSayProt.h"
+#include "FkIncreaseQuark.h"
 
-TEST(FkQuarkTest, Dispatch) {
-    FkHelloQuark quark;
-    quark.onCreate();
-    quark.onStart();
-
-    auto p = std::make_shared<FkHelloProt>();
-    EXPECT_EQ(quark.dispatch(p), 0);
-}
-
-TEST(FkQuarkTest, DispatchErr) {
-    FkHelloQuark quark;
-    quark.onCreate();
-    quark.onStart();
-
-    auto p = std::make_shared<FkSayProt>();
-    EXPECT_NE(quark.dispatch(p), 0);
+TEST(FkQuarkTest, Create) {
+    auto quark = std::make_shared<FkIncreaseQuark>();
+    quark->onCreate();
+    quark->onStart();
+    EXPECT_EQ(0, 0);
 }

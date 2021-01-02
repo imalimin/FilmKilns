@@ -29,4 +29,8 @@
 
 #define FkAssert(condition) assert(condition)
 
+typedef int FkResult;
+#define FK_OK 0
+#define FK_FAIL -1
+
 #endif //FK_BASE_FKDEFINITION_H

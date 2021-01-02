@@ -11,7 +11,10 @@
 #include "FkObject.h"
 #include "FkProtDesc.h"
 
+class FkSession;
+
 FK_ABS_CLASS FkQuark FK_EXTEND FkObject {
+    friend FkSession;
 public:
     typedef int (FkQuark::*ProtHandler)(std::shared_ptr<FkProtocol>);
 
@@ -34,6 +37,8 @@ public:
 
 private:
     FkQuark(const FkQuark &o) : FkObject() {};
+
+    FkResult accept(const std::shared_ptr<FkProtocol> p);
 
 private:
     std::shared_ptr<FkProtDesc> prot = nullptr;

@@ -31,10 +31,17 @@ void FkQuark::onStop() {
 
 }
 
-int FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
+FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
     auto handler = prot->find(p.get());
     if (handler) {
         return (this->*handler)(p);
     }
-    return -1;
+    return FK_FAIL;
+}
+
+FkResult FkQuark::accept(const std::shared_ptr<FkProtocol> p) {
+    if (prot->find(p.get())) {
+        return FK_OK;
+    }
+    return FK_FAIL;
 }
