@@ -10,12 +10,20 @@
 
 #include "FkObject.h"
 #include "FkProtDesc.h"
+#include <mutex>
 
 class FkSession;
 
 FK_ABS_CLASS FkQuark FK_EXTEND FkObject {
     friend FkSession;
 public:
+    AFK_ENUM kState : int {
+        IDL = -1,
+        CREATED,
+        STARTED,
+        STOPPED,
+    };
+
     typedef int (FkQuark::*ProtHandler)(std::shared_ptr<FkProtocol>);
 
 public:
@@ -25,23 +33,27 @@ public:
 
     virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) = 0;
 
-    void onCreate();
+    FkResult onCreate();
 
-    void onDestroy();
+    FkResult onDestroy();
 
-    void onStart();
+    FkResult onStart();
 
-    void onStop();
+    FkResult onStop();
 
-    int dispatch(std::shared_ptr<FkProtocol> p);
+    FkResult dispatch(std::shared_ptr<FkProtocol> p);
 
 private:
     FkQuark(const FkQuark &o) : FkObject() {};
 
     FkResult accept(const std::shared_ptr<FkProtocol> p);
 
+    FkResult _changeState(kState src, kState dst);
+
 private:
     std::shared_ptr<FkProtDesc> prot = nullptr;
+    std::mutex mtx;
+    kState state = kState::IDL;
 };
 
 

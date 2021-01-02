@@ -7,7 +7,7 @@
 
 #include "FkQuark.h"
 
-FkQuark::FkQuark() : FkObject() {
+FkQuark::FkQuark() : FkObject(), state(FkQuark::kState::IDL) {
     prot = std::make_shared<FkProtDesc>(this);
 }
 
@@ -15,20 +15,37 @@ FkQuark::~FkQuark() {
 
 }
 
-void FkQuark::onCreate() {
+FkResult FkQuark::onCreate() {
+    auto ret = _changeState(FkQuark::kState::IDL, FkQuark::kState::CREATED);
+    if (FK_OK != ret) {
+        return ret;
+    }
     describeProtocols(prot);
+    return FK_OK;
 }
 
-void FkQuark::onDestroy() {
-
+FkResult FkQuark::onDestroy() {
+    auto ret = _changeState(FkQuark::kState::STOPPED, FkQuark::kState::IDL);
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return FK_OK;
 }
 
-void FkQuark::onStart() {
-
+FkResult FkQuark::onStart() {
+    auto ret = _changeState(FkQuark::kState::CREATED, FkQuark::kState::STARTED);
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return FK_OK;
 }
 
-void FkQuark::onStop() {
-
+FkResult FkQuark::onStop() {
+    auto ret = _changeState(FkQuark::kState::STARTED, FkQuark::kState::STOPPED);
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return FK_OK;
 }
 
 FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
@@ -44,4 +61,13 @@ FkResult FkQuark::accept(const std::shared_ptr<FkProtocol> p) {
         return FK_OK;
     }
     return FK_FAIL;
+}
+
+FkResult FkQuark::_changeState(kState src, kState dst) {
+    std::lock_guard<std::mutex> guard(mtx);
+    if (src != state) {
+        return FK_INVALID_STATE;
+    }
+    this->state = dst;
+    return FK_OK;
 }

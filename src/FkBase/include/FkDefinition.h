@@ -10,6 +10,7 @@
 
 #include "AlLogcat.h"
 
+// +-------- Define --------+
 #define FK_CLASS class
 #define FK_ABS_CLASS class
 #define FK_INTERFACE class
@@ -20,6 +21,7 @@
 #define FK_MARK_SUPER getClassType()->super(typeid(*this).name());
 #define FK_CLASS_TYPE_EQUALS(src, target) (*((src).getClassType()) == *((target).getClassType()))
 
+// +-------- Log --------+
 #define FK_DEF_TAG "FilmKilns"
 #define FkLogV(tag, fmt, args...) AlLogV(tag, fmt, ##args)
 #define FkLogD(tag, fmt, args...) AlLogD(tag, fmt, ##args)
@@ -27,10 +29,13 @@
 #define FkLogE(tag, fmt, args...) AlLogE(tag, fmt, ##args)
 #define FkLogW(tag, fmt, args...) AlLogW(tag, fmt, ##args)
 
+// +-------- Assert --------+
 #define FkAssert(condition) assert(condition)
 
+// +------ State Code ------+
 typedef int FkResult;
 #define FK_OK 0
 #define FK_FAIL -1
+#define FK_INVALID_STATE -2
 
 #endif //FK_BASE_FKDEFINITION_H
