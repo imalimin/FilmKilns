@@ -33,15 +33,15 @@ public:
 
     virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) = 0;
 
-    FkResult onCreate();
+    virtual FkResult onCreate();
 
-    FkResult onDestroy();
+    virtual FkResult onDestroy();
 
-    FkResult onStart();
+    virtual FkResult onStart();
 
-    FkResult onStop();
+    virtual FkResult onStop();
 
-    FkResult dispatch(std::shared_ptr<FkProtocol> p);
+    virtual FkResult dispatch(std::shared_ptr<FkProtocol> p);
 
 private:
     FkQuark(const FkQuark &o) : FkObject() {};

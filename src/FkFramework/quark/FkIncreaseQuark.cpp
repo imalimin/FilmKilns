@@ -23,5 +23,9 @@ void FkIncreaseQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
 }
 
 FkResult FkIncreaseQuark::_onIncrease(std::shared_ptr<FkProtocol> p) {
-    return FK_FAIL;
+    auto cp = std::static_pointer_cast<FkCalculateProt>(p);
+    cp->number += 1;
+    cp->number += 1;
+    cp->number += 1;
+    return FK_OK;
 }

@@ -8,8 +8,9 @@
 #ifndef FK_FRAMEWORK_FKATOM_H
 #define FK_FRAMEWORK_FKATOM_H
 
+#include "FkQuark.h"
 
-class FkAtom {
+FK_ABS_CLASS FkAtom FK_EXTEND FkQuark {
 
 };
 

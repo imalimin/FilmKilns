@@ -66,6 +66,7 @@ FkResult FkQuark::accept(const std::shared_ptr<FkProtocol> p) {
 FkResult FkQuark::_changeState(kState src, kState dst) {
     std::lock_guard<std::mutex> guard(mtx);
     if (src != state) {
+        FkLogW(FK_DEF_TAG, "Invalid state");
         return FK_INVALID_STATE;
     }
     this->state = dst;

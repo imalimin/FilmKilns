@@ -23,5 +23,7 @@ void FkDecreaseQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
 }
 
 FkResult FkDecreaseQuark::_onDecrease(std::shared_ptr<FkProtocol> p) {
-    return FK_FAIL;
+    auto cp = std::static_pointer_cast<FkCalculateProt>(p);
+    cp->number -= 1;
+    return FK_OK;
 }

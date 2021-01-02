@@ -20,5 +20,7 @@ void FkDivideQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
 }
 
 FkResult FkDivideQuark::_onDivide(std::shared_ptr<FkProtocol> p) {
-    return FK_FAIL;
+    auto cp = std::static_pointer_cast<FkCalculateProt>(p);
+    cp->number /= 2;
+    return FK_OK;
 }

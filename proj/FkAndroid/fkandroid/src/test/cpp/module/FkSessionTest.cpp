@@ -30,7 +30,8 @@ TEST(FkSessionTest, Connect) {
     decrease->onStart();
     divide->onStart();
 
-    EXPECT_EQ(FK_CONNECT_TO(session, divide), FK_OK);
+    EXPECT_EQ(session->open(), FK_OK);
+    EXPECT_NE(FK_CONNECT_TO(session, divide), FK_OK);
 
     divide->onStop();
     decrease->onStop();
@@ -43,3 +44,36 @@ TEST(FkSessionTest, Connect) {
     session->close();
 }
 
+TEST(FkSessionTest, Disconnect) {
+    auto session = FkSession::with(std::make_shared<FkCalculateProt>());
+
+    auto increase = std::make_shared<FkIncreaseQuark>();
+    increase->onCreate();
+
+    EXPECT_EQ(FK_CONNECT_TO(session, increase), FK_OK);
+    increase->onStart();
+
+    EXPECT_EQ(FK_DISCONNECT_TO(session, increase), FK_OK);
+
+    increase->onStop();
+
+    increase->onDestroy();
+    session->close();
+}
+
+TEST(FkSessionTest, DisconnectError) {
+    auto session = FkSession::with(std::make_shared<FkCalculateProt>());
+
+    auto increase = std::make_shared<FkIncreaseQuark>();
+    increase->onCreate();
+
+    EXPECT_EQ(FK_CONNECT_TO(session, increase), FK_OK);
+    increase->onStart();
+    session->open();
+    EXPECT_NE(FK_DISCONNECT_TO(session, increase), FK_OK);
+
+    increase->onStop();
+
+    increase->onDestroy();
+    session->close();
+}
