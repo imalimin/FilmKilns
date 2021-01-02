@@ -26,6 +26,8 @@ public:
 
     void add(std::shared_ptr<FkProtocol> p, ProtHandler h);
 
+    ProtHandler find(FkProtocol *p);
+
 private:
     FkQuark *target = nullptr;
     std::unordered_map<FkProtocol::Type, std::shared_ptr<FkProtocol>> prots;

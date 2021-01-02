@@ -30,3 +30,11 @@ void FkQuark::onStart() {
 void FkQuark::onStop() {
 
 }
+
+int FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
+    auto handler = prot->find(p.get());
+    if (handler) {
+        return (this->*handler)(p);
+    }
+    return -1;
+}

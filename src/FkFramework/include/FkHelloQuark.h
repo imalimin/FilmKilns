@@ -17,10 +17,12 @@ public:
 
     virtual ~FkHelloQuark();
 
-    virtual void describeProtocols(std::shared_ptr<FkProtDesc> prot) override;
+    virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) override;
 
 protected:
-    int _onHello(FkProtocol *p);
+    int _onHello(std::shared_ptr<FkProtocol> p);
+
+    int _onSay(std::shared_ptr<FkProtocol> p);
 
 private:
     FkHelloQuark(const FkHelloQuark &o) : FkQuark() {};

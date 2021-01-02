@@ -5,16 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkHelloProt.h"
+#include "FkSayProt.h"
 
-FkHelloProt::FkHelloProt() : FkProtocol() {
+FkSayProt::FkSayProt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkHelloProt::FkHelloProt(const FkHelloProt &o) : FkProtocol(o) {
+FkSayProt::FkSayProt(const FkSayProt &o) : FkProtocol(o) {
 
 }
 
-FkHelloProt::~FkHelloProt() {
+FkSayProt::~FkSayProt() {
 
 }

@@ -7,11 +7,11 @@
 
 #include "FkProtocol.h"
 
-FkProtocol::FkProtocol(Type type) : FkObject(), type(type) {
+FkProtocol::FkProtocol() : FkObject() {
     FK_MARK_SUPER
 }
 
-FkProtocol::FkProtocol(const FkProtocol &o) : FkObject(), type(o.type) {
+FkProtocol::FkProtocol(const FkProtocol &o) : FkObject() {
 
 }
 
@@ -20,5 +20,5 @@ FkProtocol::~FkProtocol() {
 }
 
 FkProtocol::Type FkProtocol::getType() {
-    return type;
+    return getClassType()->hashCode();
 }

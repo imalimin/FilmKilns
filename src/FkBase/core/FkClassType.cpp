@@ -44,3 +44,10 @@ std::string FkClassType::toString() {
     }
     return str;
 }
+
+size_t FkClassType::hashCode() {
+    if (extends.empty()) {
+        return 0;
+    }
+    return hashValue(extends.back());
+}

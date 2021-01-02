@@ -20,10 +20,13 @@
 #define FK_MARK_SUPER getClassType()->super(typeid(*this).name());
 #define FK_CLASS_TYPE_EQUALS(src, target) (*((src).getClassType()) == *((target).getClassType()))
 
+#define FK_DEF_TAG "FilmKilns"
 #define FkLogV(tag, fmt, args...) AlLogV(tag, fmt, ##args)
 #define FkLogD(tag, fmt, args...) AlLogD(tag, fmt, ##args)
 #define FkLogI(tag, fmt, args...) AlLogI(tag, fmt, ##args)
 #define FkLogE(tag, fmt, args...) AlLogE(tag, fmt, ##args)
 #define FkLogW(tag, fmt, args...) AlLogW(tag, fmt, ##args)
+
+#define FkAssert(condition) assert(condition)
 
 #endif //FK_BASE_FKDEFINITION_H

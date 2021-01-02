@@ -16,15 +16,15 @@ FkHelloQuark::~FkHelloQuark() {
 
 }
 
-void FkHelloQuark::describeProtocols(std::shared_ptr<FkProtDesc> prot) {
-    FkHelloProt p0;
-    FkHelloProt p1;
-    if(FK_CLASS_TYPE_EQUALS(p0, p1)) {
-
-    }
-//    prot->add(std::make_shared<FkHelloProt>(), reinterpret_cast<ProtHandler>(FkHelloQuark::_onHello));
+void FkHelloQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
+    desc->add(std::static_pointer_cast<FkProtocol>(std::make_shared<FkHelloProt>()),
+              reinterpret_cast<FkQuark::ProtHandler>(&FkHelloQuark::_onHello));
 }
 
-int FkHelloQuark::_onHello(FkProtocol *p) {
+int FkHelloQuark::_onHello(std::shared_ptr<FkProtocol> p) {
+    return 0;
+}
+
+int FkHelloQuark::_onSay(std::shared_ptr<FkProtocol> p) {
     return 0;
 }

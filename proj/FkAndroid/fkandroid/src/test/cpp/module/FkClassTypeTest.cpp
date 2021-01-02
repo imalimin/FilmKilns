@@ -24,3 +24,8 @@ TEST(FkClassTypeTests, SuperTrack) {
     FkHelloProt prot;
     EXPECT_STREQ(prot.getClassType()->toString().c_str(), "8FkObject:<-10FkProtocol:<-11FkHelloProt");
 }
+
+TEST(FkClassTypeTests, HashCode) {
+    FkHelloProt prot;
+    EXPECT_EQ(prot.getClassType()->hashCode(), 6632983811005846172L);
+}

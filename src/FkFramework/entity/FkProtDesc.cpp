@@ -30,14 +30,21 @@ void FkProtDesc::add(std::shared_ptr<FkProtocol> p, FkProtDesc::ProtHandler h) {
     if (p && h) {
         auto type = p->getType();
         auto itr0 = prots.find(type);
-        if (prots.end() != itr0) {
-            prots.erase(itr0);
-        }
+        FkAssert(prots.end() == itr0);
         auto itr1 = funcs.find(type);
-        if (funcs.end() != itr1) {
-            funcs.erase(itr1);
-        }
+        FkAssert(funcs.end() == itr1);
         prots.insert(std::make_pair(type, p));
         funcs.insert(std::make_pair(type, h));
     }
+}
+
+FkProtDesc::ProtHandler FkProtDesc::find(FkProtocol *p) {
+    if (nullptr == p) {
+        return nullptr;
+    }
+    auto itr = funcs.find(p->getType());
+    if (funcs.end() == itr) {
+        return nullptr;
+    }
+    return itr->second;
 }

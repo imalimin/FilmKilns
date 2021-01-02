@@ -10,6 +10,7 @@
 
 #include <list>
 #include <string>
+#include <functional>
 
 class FkClassType {
 public:
@@ -25,8 +26,11 @@ public:
 
     std::string toString();
 
+    size_t hashCode();
+
 private:
     std::list<std::string> extends;
+    std::hash<std::string> hashValue;
 };
 
 

@@ -12,9 +12,9 @@
 
 FK_ABS_CLASS FkProtocol FK_EXTEND FkObject {
 public:
-    typedef uint16_t Type;
+    typedef size_t Type;
 public:
-    FkProtocol(Type type);
+    FkProtocol();
 
     FkProtocol(const FkProtocol &o);
 
@@ -22,8 +22,6 @@ public:
 
     virtual Type getType();
 
-private:
-    Type type;
 };
 
 
