@@ -6,3 +6,27 @@
 */
 
 #include "FkAtom.h"
+
+FkAtom::FkAtom() : FkQuark() {
+
+}
+
+FkAtom::~FkAtom() {
+
+}
+
+FkResult FkAtom::onCreate() {
+    return FkQuark::onCreate();
+}
+
+FkResult FkAtom::onDestroy() {
+    return FkQuark::onDestroy();
+}
+
+FkResult FkAtom::onStart() {
+    return FkQuark::onStart();
+}
+
+FkResult FkAtom::onStop() {
+    return FkQuark::onStop();
+}

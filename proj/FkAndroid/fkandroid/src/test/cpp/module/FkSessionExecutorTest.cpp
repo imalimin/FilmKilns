@@ -29,6 +29,7 @@ TEST(FkSessionExecutorTest, Execute) {
     increase->onStart();
     decrease->onStart();
     divide->onStart();
+    EXPECT_EQ(session->open(), FK_OK);
 
     FkSessionExecutor executor;
     auto protocol = std::make_shared<FkCalculateProt>();
@@ -40,6 +41,7 @@ TEST(FkSessionExecutorTest, Execute) {
     EXPECT_EQ(executor.send(session, protocol), FK_OK);
     EXPECT_EQ(protocol->number, 2.0f);
 
+    EXPECT_EQ(session->close(), FK_OK);
     divide->onStop();
     decrease->onStop();
     increase->onStop();

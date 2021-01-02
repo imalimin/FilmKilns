@@ -74,6 +74,16 @@ FkResult FkSession::close() {
 }
 
 FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
+    {
+        std::lock_guard<std::mutex> guard(mtx);
+        if (FkSession::kState::OPENED != state) {
+            FkLogW(FK_DEF_TAG, "Invalid state");
+            return FK_INVALID_STATE;
+        }
+    }
+    if (link.empty()) {
+        return FK_FAIL;
+    }
     FkResult ret = FK_OK;
     for (auto &it : link) {
         if (FK_OK != it->dispatch(protocol)) {

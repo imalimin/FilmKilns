@@ -11,6 +11,21 @@
 #include "FkQuark.h"
 
 FK_ABS_CLASS FkAtom FK_EXTEND FkQuark {
+public:
+    FkAtom();
+
+    virtual ~FkAtom();
+
+    virtual FkResult onCreate() override;
+
+    virtual FkResult onDestroy() override;
+
+    virtual FkResult onStart() override;
+
+    virtual FkResult onStop() override;
+
+private:
+    FkAtom(const FkAtom &o) : FkQuark() {};
 
 };
 
