@@ -6,9 +6,7 @@ class FilmKilns {
     companion object {
         @Synchronized
         fun init(context: Context?) {
-            if (BuildConfig.ENABLE_TEST) {
-//                System.loadLibrary("gtest")
-//                System.loadLibrary("gtest_main")
+            if (BuildConfig.ENABLE_UNIT_TEST) {
                 System.loadLibrary("FkAndroidTest")
             }
             System.loadLibrary("al_common")
