@@ -6,7 +6,7 @@
 */
 
 #include "FkIncreaseQuark.h"
-#include "FkCalculateProt.h"
+#include "FkCalculatePrt.h"
 
 FkIncreaseQuark::FkIncreaseQuark() : FkQuark() {
 
@@ -17,11 +17,11 @@ FkIncreaseQuark::~FkIncreaseQuark() {
 }
 
 void FkIncreaseQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
-    FK_PROT_DESC_ADD(desc, FkCalculateProt, FkIncreaseQuark::_onIncrease);
+    FK_PROT_DESC_ADD(desc, FkCalculatePrt, FkIncreaseQuark::_onIncrease);
 }
 
 FkResult FkIncreaseQuark::_onIncrease(std::shared_ptr<FkProtocol> p) {
-    auto cp = std::static_pointer_cast<FkCalculateProt>(p);
+    auto cp = std::static_pointer_cast<FkCalculatePrt>(p);
     cp->number += 1;
     cp->number += 1;
     cp->number += 1;

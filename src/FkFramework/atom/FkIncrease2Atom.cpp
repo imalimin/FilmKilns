@@ -6,7 +6,7 @@
 */
 
 #include "FkIncrease2Atom.h"
-#include "FkCalculateProt.h"
+#include "FkCalculatePrt.h"
 
 FkIncrease2Atom::FkIncrease2Atom() : FkAtom() {
     mIncreaseQuark = std::make_shared<FkIncreaseQuark>();
@@ -18,7 +18,7 @@ FkIncrease2Atom::~FkIncrease2Atom() {
 }
 
 void FkIncrease2Atom::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
-    FK_PROT_DESC_ADD(desc, FkCalculateProt, FkIncrease2Atom::_onIncrease2);
+    FK_PROT_DESC_ADD(desc, FkCalculatePrt, FkIncrease2Atom::_onIncrease2);
 }
 
 FkResult FkIncrease2Atom::onCreate() {
@@ -26,11 +26,11 @@ FkResult FkIncrease2Atom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    ret = executor.quickSend<FkOnCreateProt>({mIncreaseQuark, mDivideQuark});
+    ret = executor.quickSend<FkOnCreatePrt>({mIncreaseQuark, mDivideQuark});
     if (FK_OK != ret) {
         return ret;
     }
-    session = FkSession::with(std::make_shared<FkCalculateProt>());
+    session = FkSession::with(std::make_shared<FkCalculatePrt>());
     ret = session->connectTo(mIncreaseQuark);
     if (FK_OK != ret) {
         return ret;
@@ -48,7 +48,7 @@ FkResult FkIncrease2Atom::onDestroy() {
         return ret;
     }
     session->close();
-    return executor.quickSend<FkOnDestroyProt>({mIncreaseQuark, mDivideQuark});
+    return executor.quickSend<FkOnDestroyPrt>({mIncreaseQuark, mDivideQuark});
 }
 
 FkResult FkIncrease2Atom::onStart() {
@@ -56,7 +56,7 @@ FkResult FkIncrease2Atom::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    return executor.quickSend<FkOnStartProt>({mIncreaseQuark, mDivideQuark});
+    return executor.quickSend<FkOnStartPrt>({mIncreaseQuark, mDivideQuark});
 }
 
 FkResult FkIncrease2Atom::onStop() {
@@ -64,7 +64,7 @@ FkResult FkIncrease2Atom::onStop() {
     if (FK_OK != ret) {
         return ret;
     }
-    return executor.quickSend<FkOnStopProt>({mIncreaseQuark, mDivideQuark});
+    return executor.quickSend<FkOnStopPrt>({mIncreaseQuark, mDivideQuark});
 }
 
 FkResult FkIncrease2Atom::_onIncrease2(std::shared_ptr<FkProtocol> p) {

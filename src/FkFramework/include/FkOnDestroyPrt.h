@@ -10,13 +10,13 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkOnDestroyProt FK_EXTEND FkProtocol {
+FK_CLASS FkOnDestroyPrt FK_EXTEND FkProtocol {
 public:
-    FkOnDestroyProt();
+    FkOnDestroyPrt();
 
-    FkOnDestroyProt(const FkOnDestroyProt &o);
+    FkOnDestroyPrt(const FkOnDestroyPrt &o);
 
-    virtual ~FkOnDestroyProt();
+    virtual ~FkOnDestroyPrt();
 
 };
 

@@ -8,24 +8,24 @@
 #include "gtest/gtest.h"
 #include "FkSession.h"
 #include "FkIncreaseQuark.h"
-#include "FkOnCreateProt.h"
+#include "FkOnCreatePrt.h"
 
 TEST(FkSessionTest, Connect) {
     auto quark = std::make_shared<FkIncreaseQuark>();
-    auto session = FkSession::with(std::make_shared<FkOnCreateProt>());
+    auto session = FkSession::with(std::make_shared<FkOnCreatePrt>());
     EXPECT_EQ(session->connectTo(quark), FK_OK);
 }
 
 TEST(FkSessionTest, Disconnect) {
     auto quark = std::make_shared<FkIncreaseQuark>();
-    auto session = FkSession::with(std::make_shared<FkOnCreateProt>());
+    auto session = FkSession::with(std::make_shared<FkOnCreatePrt>());
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->disconnect(quark), FK_OK);
 }
 
 TEST(FkSessionTest, DisconnectError) {
     auto quark = std::make_shared<FkIncreaseQuark>();
-    auto session = FkSession::with(std::make_shared<FkOnCreateProt>());
+    auto session = FkSession::with(std::make_shared<FkOnCreatePrt>());
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     EXPECT_NE(session->disconnect(quark), FK_OK);

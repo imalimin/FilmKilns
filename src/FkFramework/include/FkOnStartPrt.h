@@ -10,13 +10,13 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkOnStartProt FK_EXTEND FkProtocol {
+FK_CLASS FkOnStartPrt FK_EXTEND FkProtocol {
 public:
-    FkOnStartProt();
+    FkOnStartPrt();
 
-    FkOnStartProt(const FkOnStartProt &o);
+    FkOnStartPrt(const FkOnStartPrt &o);
 
-    virtual ~FkOnStartProt();
+    virtual ~FkOnStartPrt();
 
 };
 

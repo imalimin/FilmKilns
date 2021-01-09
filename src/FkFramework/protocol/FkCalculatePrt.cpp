@@ -5,16 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkOnDestroyProt.h"
+#include "FkCalculatePrt.h"
 
-FkOnDestroyProt::FkOnDestroyProt() : FkProtocol() {
+FkCalculatePrt::FkCalculatePrt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkOnDestroyProt::FkOnDestroyProt(const FkOnDestroyProt &o) : FkProtocol(o) {
+FkCalculatePrt::FkCalculatePrt(const FkCalculatePrt &o) : FkProtocol(o), number(o.number) {
 
 }
 
-FkOnDestroyProt::~FkOnDestroyProt() {
+FkCalculatePrt::~FkCalculatePrt() {
 
 }

@@ -8,15 +8,15 @@
 #include "gtest/gtest.h"
 #include "FkSession.h"
 #include "FkIncreaseQuark.h"
-#include "FkOnCreateProt.h"
+#include "FkOnCreatePrt.h"
 #include "FkSessionExecutor.h"
 
 TEST(FkSessionExecutorTest, Execute) {
     auto quark = std::make_shared<FkIncreaseQuark>();
-    auto session = FkSession::with(std::make_shared<FkOnCreateProt>());
+    auto session = FkSession::with(std::make_shared<FkOnCreatePrt>());
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkSessionExecutor executor;
-    EXPECT_EQ(executor.send(session, std::make_shared<FkOnCreateProt>()), FK_OK);
+    EXPECT_EQ(executor.send(session, std::make_shared<FkOnCreatePrt>()), FK_OK);
     EXPECT_EQ(session->close(), FK_OK);
 }

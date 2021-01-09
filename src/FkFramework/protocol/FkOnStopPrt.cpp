@@ -5,16 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkOnStopProt.h"
+#include "FkOnStopPrt.h"
 
-FkOnStopProt::FkOnStopProt() : FkProtocol() {
+FkOnStopPrt::FkOnStopPrt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkOnStopProt::FkOnStopProt(const FkOnStopProt &o) : FkProtocol(o) {
+FkOnStopPrt::FkOnStopPrt(const FkOnStopPrt &o) : FkProtocol(o) {
 
 }
 
-FkOnStopProt::~FkOnStopProt() {
+FkOnStopPrt::~FkOnStopPrt() {
 
 }

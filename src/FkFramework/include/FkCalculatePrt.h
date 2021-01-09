@@ -10,13 +10,13 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkCalculateProt FK_EXTEND FkProtocol {
+FK_CLASS FkCalculatePrt FK_EXTEND FkProtocol {
 public:
-    FkCalculateProt();
+    FkCalculatePrt();
 
-    FkCalculateProt(const FkCalculateProt &o);
+    FkCalculatePrt(const FkCalculatePrt &o);
 
-    virtual ~FkCalculateProt();
+    virtual ~FkCalculatePrt();
 
 public:
     float number = 0;

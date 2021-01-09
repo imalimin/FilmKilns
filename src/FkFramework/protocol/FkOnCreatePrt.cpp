@@ -5,16 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkOnStartProt.h"
+#include "FkOnCreatePrt.h"
 
-FkOnStartProt::FkOnStartProt() : FkProtocol() {
+FkOnCreatePrt::FkOnCreatePrt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkOnStartProt::FkOnStartProt(const FkOnStartProt &o) : FkProtocol(o) {
+FkOnCreatePrt::FkOnCreatePrt(const FkOnCreatePrt &o) : FkProtocol(o) {
 
 }
 
-FkOnStartProt::~FkOnStartProt() {
+FkOnCreatePrt::~FkOnCreatePrt() {
 
 }

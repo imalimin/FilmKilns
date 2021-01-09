@@ -6,17 +6,17 @@
 */
 
 #include "FkQuark.h"
-#include "FkOnCreateProt.h"
-#include "FkOnDestroyProt.h"
-#include "FkOnStartProt.h"
-#include "FkOnStopProt.h"
+#include "FkOnCreatePrt.h"
+#include "FkOnDestroyPrt.h"
+#include "FkOnStartPrt.h"
+#include "FkOnStopPrt.h"
 
 FkQuark::FkQuark() : FkObject(), state(FkQuark::kState::IDL) {
     prot = std::make_shared<FkProtDesc>(this);
-    FK_PROT_DESC_ADD(prot, FkOnCreateProt, FkQuark::_onCreate);
-    FK_PROT_DESC_ADD(prot, FkOnDestroyProt, FkQuark::_onDestroy);
-    FK_PROT_DESC_ADD(prot, FkOnStartProt, FkQuark::_onStart);
-    FK_PROT_DESC_ADD(prot, FkOnStopProt, FkQuark::_onStop);
+    FK_PROT_DESC_ADD(prot, FkOnCreatePrt, FkQuark::_onCreate);
+    FK_PROT_DESC_ADD(prot, FkOnDestroyPrt, FkQuark::_onDestroy);
+    FK_PROT_DESC_ADD(prot, FkOnStartPrt, FkQuark::_onStart);
+    FK_PROT_DESC_ADD(prot, FkOnStopPrt, FkQuark::_onStop);
 }
 
 FkQuark::~FkQuark() {
@@ -41,10 +41,10 @@ FkResult FkQuark::onStop() {
 
 FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
     if (this->state != FkQuark::kState::STARTED
-        && !FK_INSTANCE_OF(p, FkOnCreateProt)
-        && !FK_INSTANCE_OF(p, FkOnDestroyProt)
-        && !FK_INSTANCE_OF(p, FkOnStartProt)
-        && !FK_INSTANCE_OF(p, FkOnStopProt)) {
+        && !FK_INSTANCE_OF(p, FkOnCreatePrt)
+        && !FK_INSTANCE_OF(p, FkOnDestroyPrt)
+        && !FK_INSTANCE_OF(p, FkOnStartPrt)
+        && !FK_INSTANCE_OF(p, FkOnStopPrt)) {
         FkLogI("FkTest", "Result FK_INVALID_STATE");
         return FK_INVALID_STATE;
     }
