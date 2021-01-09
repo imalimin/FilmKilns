@@ -9,7 +9,8 @@
 #include "FkCalculateProt.h"
 
 FkIncrease2Atom::FkIncrease2Atom() : FkAtom() {
-
+    mIncreaseQuark = std::make_shared<FkIncreaseQuark>();
+    mDivideQuark = std::make_shared<FkDivideQuark>();
 }
 
 FkIncrease2Atom::~FkIncrease2Atom() {
@@ -17,8 +18,7 @@ FkIncrease2Atom::~FkIncrease2Atom() {
 }
 
 void FkIncrease2Atom::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
-    desc->add(std::static_pointer_cast<FkProtocol>(std::make_shared<FkCalculateProt>()),
-              reinterpret_cast<FkQuark::ProtHandler>(&FkIncrease2Atom::_onIncrease2));
+    FK_PROT_DESC_ADD(desc, FkCalculateProt, FkIncrease2Atom::_onIncrease2);
 }
 
 FkResult FkIncrease2Atom::onCreate() {
@@ -26,16 +26,20 @@ FkResult FkIncrease2Atom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    mIncreaseQuark = std::make_shared<FkIncreaseQuark>();
-    if (FK_OK != mIncreaseQuark->onCreate()) {
-        FkLogI(FK_DEF_TAG, "Create increase atom failed.");
+    ret = executor.quickSend<FkOnCreateProt>({mIncreaseQuark, mDivideQuark});
+    if (FK_OK != ret) {
+        return ret;
     }
-    session = FkSession::with<FkCalculateProt>(std::make_shared<FkCalculateProt>());
-    if (FK_OK != FK_CONNECT_TO(session, mIncreaseQuark)) {
-        return FK_FAIL;
+    session = FkSession::with(std::make_shared<FkCalculateProt>());
+    ret = session->connectTo(mIncreaseQuark);
+    if (FK_OK != ret) {
+        return ret;
     }
-    session->open();
-    return ret;
+    ret = session->connectTo(mDivideQuark);
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return session->open();
 }
 
 FkResult FkIncrease2Atom::onDestroy() {
@@ -43,11 +47,8 @@ FkResult FkIncrease2Atom::onDestroy() {
     if (FK_OK != ret) {
         return ret;
     }
-    if (FK_OK != mIncreaseQuark->onDestroy()) {
-        FkLogI(FK_DEF_TAG, "Destroy increase atom failed.");
-    }
-    ret = session->close();
-    return ret;
+    session->close();
+    return executor.quickSend<FkOnDestroyProt>({mIncreaseQuark, mDivideQuark});
 }
 
 FkResult FkIncrease2Atom::onStart() {
@@ -55,10 +56,7 @@ FkResult FkIncrease2Atom::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    if (FK_OK != mIncreaseQuark->onStart()) {
-        FkLogI(FK_DEF_TAG, "Start increase atom failed.");
-    }
-    return ret;
+    return executor.quickSend<FkOnStartProt>({mIncreaseQuark, mDivideQuark});
 }
 
 FkResult FkIncrease2Atom::onStop() {
@@ -66,13 +64,9 @@ FkResult FkIncrease2Atom::onStop() {
     if (FK_OK != ret) {
         return ret;
     }
-    if (FK_OK != mIncreaseQuark->onStop()) {
-        FkLogI(FK_DEF_TAG, "Stop increase atom failed.");
-    }
-    return ret;
+    return executor.quickSend<FkOnStopProt>({mIncreaseQuark, mDivideQuark});
 }
 
 FkResult FkIncrease2Atom::_onIncrease2(std::shared_ptr<FkProtocol> p) {
-    executor.send(session, p);
     return executor.send(session, p);
 }

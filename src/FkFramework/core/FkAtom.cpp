@@ -8,7 +8,6 @@
 #include "FkAtom.h"
 
 FkAtom::FkAtom() : FkQuark() {
-
 }
 
 FkAtom::~FkAtom() {
@@ -16,17 +15,33 @@ FkAtom::~FkAtom() {
 }
 
 FkResult FkAtom::onCreate() {
-    return FkQuark::onCreate();
+    auto ret = FkQuark::onCreate();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
 }
 
 FkResult FkAtom::onDestroy() {
-    return FkQuark::onDestroy();
+    auto ret = FkQuark::onDestroy();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
 }
 
 FkResult FkAtom::onStart() {
-    return FkQuark::onStart();
+    auto ret = FkQuark::onStart();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
 }
 
 FkResult FkAtom::onStop() {
-    return FkQuark::onStop();
+    auto ret = FkQuark::onStop();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
 }

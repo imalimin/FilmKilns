@@ -34,7 +34,7 @@ bool operator==(const FkClassType &o0, const FkClassType &o1) {
     return o0.extends.end() != itr;
 }
 
-std::string FkClassType::toString() {
+std::string FkClassType::toString() const {
     std::string str;
     for (auto itr = extends.begin(); itr != extends.end(); ++itr) {
         str.append(*itr);
@@ -45,7 +45,7 @@ std::string FkClassType::toString() {
     return str;
 }
 
-size_t FkClassType::hashCode() {
+size_t FkClassType::hashCode() const {
     if (extends.empty()) {
         return 0;
     }

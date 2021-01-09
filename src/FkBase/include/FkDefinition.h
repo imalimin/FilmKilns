@@ -9,6 +9,7 @@
 #define FK_BASE_FKDEFINITION_H
 
 #include "AlLogcat.h"
+#include "FkClassType.h"
 
 // +-------- Define --------+
 #define FK_CLASS class
@@ -18,8 +19,10 @@
 #define FK_EXTEND : public
 #define FK_NULLABLE
 
-#define FK_MARK_SUPER getClassType()->super(typeid(*this).name());
-#define FK_CLASS_TYPE_EQUALS(src, target) (*((src).getClassType()) == *((target).getClassType()))
+#define FK_MARK_SUPER type.super(typeid(*this).name());
+#define FK_CLASS_TYPE_EQUALS(src, target) ((src).getClassType() == (target).getClassType())
+#define FK_CLASS_TYPE_EQUALS2(src, target) ((src)->getClassType() == (target)->getClassType())
+#define FK_INSTANCE_OF(src, CLASS) ((src)->getClassType() == FkClassType::type<CLASS>())
 
 // +-------- Log --------+
 #define FK_DEF_TAG "FilmKilns"
@@ -37,5 +40,7 @@ typedef int FkResult;
 #define FK_OK 0
 #define FK_FAIL -1
 #define FK_INVALID_STATE -2
+#define FK_PROTOCOL_NOT_ACCEPT -3
+#define FK_INVALID_DATA -4
 
 #endif //FK_BASE_FKDEFINITION_H

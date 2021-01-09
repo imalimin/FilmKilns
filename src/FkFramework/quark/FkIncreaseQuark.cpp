@@ -17,9 +17,7 @@ FkIncreaseQuark::~FkIncreaseQuark() {
 }
 
 void FkIncreaseQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
-    desc->add(std::static_pointer_cast<FkProtocol>(std::make_shared<FkCalculateProt>()),
-              reinterpret_cast<FkQuark::ProtHandler>(&FkIncreaseQuark::_onIncrease));
-
+    FK_PROT_DESC_ADD(desc, FkCalculateProt, FkIncreaseQuark::_onIncrease);
 }
 
 FkResult FkIncreaseQuark::_onIncrease(std::shared_ptr<FkProtocol> p) {

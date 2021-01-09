@@ -12,6 +12,10 @@
 #include "FkProtocol.h"
 #include <unordered_map>
 
+#define FK_PROT_DESC_ADD(desc, prot, method) \
+    desc->add(std::static_pointer_cast<FkProtocol>(std::make_shared<prot>()), \
+        reinterpret_cast<FkQuark::ProtHandler>(&method)) \
+
 class FkQuark;
 
 FK_CLASS FkProtDesc FK_EXTEND FkObject {

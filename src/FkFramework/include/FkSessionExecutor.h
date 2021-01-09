@@ -20,6 +20,26 @@ public:
 
     FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol);
 
+    template<class T>
+    FkResult quickSend(std::initializer_list<std::shared_ptr<FkQuark>> chain) {
+        auto session = FkSession::with<T>(std::make_shared<T>());
+        for (auto it = chain.begin(); it != chain.end(); ++it) {
+            auto ret = session->connectTo(*it);
+            if (FK_OK != ret) {
+                return ret;
+            }
+        }
+        auto ret = session->open();
+        if (FK_OK != ret) {
+            return ret;
+        }
+        ret = this->send(session, std::make_shared<T>());
+        if (FK_OK != ret) {
+            return ret;
+        }
+        return session->close();
+    }
+
 private:
     FkSessionExecutor(const FkSessionExecutor &o) : FkObject() {};
 };

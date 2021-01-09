@@ -14,6 +14,16 @@
 
 class FkClassType {
 public:
+    template<class T>
+    static FkClassType &type() {
+        static FkClassType *type;
+        if (type == nullptr) {
+            type = new FkClassType();
+        }
+        type->super(typeid(T).name());
+        return *type;
+    };
+public:
     FkClassType();
 
     FkClassType(const FkClassType &o);
@@ -24,9 +34,9 @@ public:
 
     friend bool operator==(const FkClassType &o0, const FkClassType &o1);
 
-    std::string toString();
+    std::string toString() const;
 
-    size_t hashCode();
+    size_t hashCode() const;
 
 private:
     std::list<std::string> extends;

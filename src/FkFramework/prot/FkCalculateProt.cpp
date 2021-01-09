@@ -11,7 +11,7 @@ FkCalculateProt::FkCalculateProt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkCalculateProt::FkCalculateProt(const FkCalculateProt &o) : FkProtocol(), number(o.number) {
+FkCalculateProt::FkCalculateProt(const FkCalculateProt &o) : FkProtocol(o), number(o.number) {
 
 }
 

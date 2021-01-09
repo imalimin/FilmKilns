@@ -74,6 +74,12 @@ FkResult FkSession::close() {
 }
 
 FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
+    if (nullptr == protocol) {
+        return FK_INVALID_DATA;
+    }
+    if (!FK_CLASS_TYPE_EQUALS2(protocol, templateProtocol)) {
+        return FK_PROTOCOL_NOT_ACCEPT;
+    }
     {
         std::lock_guard<std::mutex> guard(mtx);
         if (FkSession::kState::OPENED != state) {
@@ -84,11 +90,11 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
     if (link.empty()) {
         return FK_FAIL;
     }
-    FkResult ret = FK_OK;
     for (auto &it : link) {
-        if (FK_OK != it->dispatch(protocol)) {
-            ret = FK_FAIL;
+        auto ret = it->dispatch(protocol);
+        if (FK_OK != ret) {
+            return ret;
         }
     }
-    return ret;
+    return FK_OK;
 }

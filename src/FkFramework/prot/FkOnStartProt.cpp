@@ -5,17 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkObject.h"
-#include <typeinfo>
+#include "FkOnStartProt.h"
 
-FkObject::FkObject() : Object() {
+FkOnStartProt::FkOnStartProt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkObject::~FkObject() {
+FkOnStartProt::FkOnStartProt(const FkOnStartProt &o) : FkProtocol(o) {
 
 }
 
-const FkClassType &FkObject::getClassType() const {
-    return type;
+FkOnStartProt::~FkOnStartProt() {
+
 }

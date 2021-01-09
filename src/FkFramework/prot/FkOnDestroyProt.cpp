@@ -5,17 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkObject.h"
-#include <typeinfo>
+#include "FkOnDestroyProt.h"
 
-FkObject::FkObject() : Object() {
+FkOnDestroyProt::FkOnDestroyProt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkObject::~FkObject() {
+FkOnDestroyProt::FkOnDestroyProt(const FkOnDestroyProt &o) : FkProtocol(o) {
 
 }
 
-const FkClassType &FkObject::getClassType() const {
-    return type;
+FkOnDestroyProt::~FkOnDestroyProt() {
+
 }

@@ -31,6 +31,7 @@ public:
 
     virtual ~FkQuark();
 
+protected:
     virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) = 0;
 
     virtual FkResult onCreate();
@@ -45,6 +46,14 @@ public:
 
 private:
     FkQuark(const FkQuark &o) : FkObject() {};
+
+    FkResult _onCreate(std::shared_ptr<FkProtocol> p);
+
+    FkResult _onDestroy(std::shared_ptr<FkProtocol> p);
+
+    FkResult _onStart(std::shared_ptr<FkProtocol> p);
+
+    FkResult _onStop(std::shared_ptr<FkProtocol> p);
 
     FkResult accept(const std::shared_ptr<FkProtocol> p);
 

@@ -13,8 +13,8 @@
 #include "FkQuark.h"
 #include <vector>
 
-#define FK_CONNECT_TO(session, quark) (session->connectTo(std::static_pointer_cast<FkQuark>(quark)))
-#define FK_DISCONNECT_TO(session, quark) (session->disconnect(std::static_pointer_cast<FkQuark>(quark)))
+//#define FK_CONNECT_TO(session, quark) (session->connectTo(std::static_pointer_cast<FkQuark>(quark)))
+//#define FK_DISCONNECT_TO(session, quark) (session->disconnect(std::static_pointer_cast<FkQuark>(quark)))
 
 class FkSessionExecutor;
 
@@ -29,7 +29,7 @@ public:
     template<class T>
     static std::shared_ptr<FkSession> with(std::shared_ptr<T> p) {
         auto session = std::make_shared<FkSession>();
-        session->templateProtocol = std::static_pointer_cast<FkProtocol>(p);
+        session->templateProtocol = p;
         return session;
     }
 

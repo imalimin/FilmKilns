@@ -20,5 +20,5 @@ FkProtocol::~FkProtocol() {
 }
 
 FkProtocol::Type FkProtocol::getType() {
-    return getClassType()->hashCode();
+    return getClassType().hashCode();
 }

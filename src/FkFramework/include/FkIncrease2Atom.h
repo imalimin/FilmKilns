@@ -12,6 +12,7 @@
 #include "FkSessionExecutor.h"
 #include "FkSession.h"
 #include "FkIncreaseQuark.h"
+#include "FkDivideQuark.h"
 
 FK_ABS_CLASS FkIncrease2Atom FK_EXTEND FkAtom {
 public:
@@ -19,6 +20,7 @@ public:
 
     virtual ~FkIncrease2Atom();
 
+protected:
     virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) override;
 
     virtual FkResult onCreate() override;
@@ -39,6 +41,7 @@ private:
     FkSessionExecutor executor;
     std::shared_ptr<FkSession> session = nullptr;
     std::shared_ptr<FkIncreaseQuark> mIncreaseQuark = nullptr;
+    std::shared_ptr<FkDivideQuark> mDivideQuark = nullptr;
 };
 
 

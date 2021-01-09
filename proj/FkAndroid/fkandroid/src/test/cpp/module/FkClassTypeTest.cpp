@@ -22,10 +22,10 @@ TEST(FkClassTypeTests, EqualsReverse) {
 
 TEST(FkClassTypeTests, SuperTrack) {
     FkCalculateProt prot;
-    EXPECT_STREQ(prot.getClassType()->toString().c_str(), "8FkObject:<-10FkProtocol:<-15FkCalculateProt");
+    EXPECT_STREQ(prot.getClassType().toString().c_str(), "8FkObject:<-10FkProtocol:<-15FkCalculateProt");
 }
 
 TEST(FkClassTypeTests, HashCode) {
     FkCalculateProt prot;
-    EXPECT_EQ(prot.getClassType()->hashCode(), -5469057871962402202L);
+    EXPECT_EQ(prot.getClassType().hashCode(), -5469057871962402202L);
 }

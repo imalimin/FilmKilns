@@ -18,9 +18,9 @@ public:
 
     virtual ~FkObject();
 
-    virtual FkClassType *getClassType();
+    virtual const FkClassType &getClassType() const;
 
-private:
+protected:
     FkClassType type;
 };
 

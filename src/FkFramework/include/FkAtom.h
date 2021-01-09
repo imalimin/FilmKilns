@@ -9,6 +9,12 @@
 #define FK_FRAMEWORK_FKATOM_H
 
 #include "FkQuark.h"
+#include "FkSession.h"
+#include "FkSessionExecutor.h"
+#include "FkOnCreateProt.h"
+#include "FkOnDestroyProt.h"
+#include "FkOnStartProt.h"
+#include "FkOnStopProt.h"
 
 FK_ABS_CLASS FkAtom FK_EXTEND FkQuark {
 public:
@@ -16,6 +22,7 @@ public:
 
     virtual ~FkAtom();
 
+protected:
     virtual FkResult onCreate() override;
 
     virtual FkResult onDestroy() override;

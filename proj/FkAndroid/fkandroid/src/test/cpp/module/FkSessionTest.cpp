@@ -8,72 +8,25 @@
 #include "gtest/gtest.h"
 #include "FkSession.h"
 #include "FkIncreaseQuark.h"
-#include "FkDecreaseQuark.h"
-#include "FkDivideQuark.h"
-#include "FkCalculateProt.h"
+#include "FkOnCreateProt.h"
 
 TEST(FkSessionTest, Connect) {
-    auto protocol = std::make_shared<FkCalculateProt>();
-    auto session = FkSession::with(protocol);
-
-    auto increase = std::make_shared<FkIncreaseQuark>();
-    increase->onCreate();
-    auto decrease = std::make_shared<FkDecreaseQuark>();
-    decrease->onCreate();
-    auto divide = std::make_shared<FkDivideQuark>();
-    divide->onCreate();
-
-    EXPECT_EQ(FK_CONNECT_TO(session, increase), FK_OK);
-    EXPECT_EQ(FK_CONNECT_TO(session, decrease), FK_OK);
-    EXPECT_EQ(FK_CONNECT_TO(session, divide), FK_OK);
-    increase->onStart();
-    decrease->onStart();
-    divide->onStart();
-
-    EXPECT_EQ(session->open(), FK_OK);
-    EXPECT_NE(FK_CONNECT_TO(session, divide), FK_OK);
-
-    divide->onStop();
-    decrease->onStop();
-    increase->onStop();
-
-    divide->onDestroy();
-    decrease->onDestroy();
-    increase->onDestroy();
-
-    session->close();
+    auto quark = std::make_shared<FkIncreaseQuark>();
+    auto session = FkSession::with(std::make_shared<FkOnCreateProt>());
+    EXPECT_EQ(session->connectTo(quark), FK_OK);
 }
 
 TEST(FkSessionTest, Disconnect) {
-    auto session = FkSession::with(std::make_shared<FkCalculateProt>());
-
-    auto increase = std::make_shared<FkIncreaseQuark>();
-    increase->onCreate();
-
-    EXPECT_EQ(FK_CONNECT_TO(session, increase), FK_OK);
-    increase->onStart();
-
-    EXPECT_EQ(FK_DISCONNECT_TO(session, increase), FK_OK);
-
-    increase->onStop();
-
-    increase->onDestroy();
-    session->close();
+    auto quark = std::make_shared<FkIncreaseQuark>();
+    auto session = FkSession::with(std::make_shared<FkOnCreateProt>());
+    EXPECT_EQ(session->connectTo(quark), FK_OK);
+    EXPECT_EQ(session->disconnect(quark), FK_OK);
 }
 
 TEST(FkSessionTest, DisconnectError) {
-    auto session = FkSession::with(std::make_shared<FkCalculateProt>());
-
-    auto increase = std::make_shared<FkIncreaseQuark>();
-    increase->onCreate();
-
-    EXPECT_EQ(FK_CONNECT_TO(session, increase), FK_OK);
-    increase->onStart();
-    session->open();
-    EXPECT_NE(FK_DISCONNECT_TO(session, increase), FK_OK);
-
-    increase->onStop();
-
-    increase->onDestroy();
-    session->close();
+    auto quark = std::make_shared<FkIncreaseQuark>();
+    auto session = FkSession::with(std::make_shared<FkOnCreateProt>());
+    EXPECT_EQ(session->connectTo(quark), FK_OK);
+    EXPECT_EQ(session->open(), FK_OK);
+    EXPECT_NE(session->disconnect(quark), FK_OK);
 }
