@@ -54,8 +54,10 @@ set_target_properties(gmock_main PROPERTIES IMPORTED_LOCATION
         "${GTEST}/libs/${ANDROID_ABI}/libgmock_main.a")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/module SOURCES_MODULE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/samples SOURCES_SAMPLES)
 
 list(APPEND SOURCES_ROOT ${SOURCES_MODULE})
+list(APPEND SOURCES_ROOT ${SOURCES_SAMPLES})
 
 add_library(${MODULE_NAME} SHARED ${SOURCES_ROOT})
 
