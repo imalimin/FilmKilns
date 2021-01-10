@@ -20,10 +20,11 @@ public:
 
     FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol);
 
-    template<class T>
-    FkResult quickSend(std::initializer_list<std::shared_ptr<FkQuark>> chain) {
+    template<class T, typename... Args>
+    FkResult quickSend(Args... chain) {
         auto session = FkSession::with<T>(std::make_shared<T>());
-        for (auto it = chain.begin(); it != chain.end(); ++it) {
+        auto ll = initializer_list<std::shared_ptr<FkQuark>>{chain...};
+        for (auto it = ll.begin(); it != ll.end(); ++it) {
             auto ret = session->connectTo(*it);
             if (FK_OK != ret) {
                 return ret;

@@ -26,7 +26,7 @@ FkResult FkIncrease2Atom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    ret = executor.quickSend<FkOnCreatePrt>({mIncreaseQuark, mDivideQuark});
+    ret = executor.quickSend<FkOnCreatePrt>(mIncreaseQuark, mDivideQuark);
     if (FK_OK != ret) {
         return ret;
     }
@@ -48,7 +48,7 @@ FkResult FkIncrease2Atom::onDestroy() {
         return ret;
     }
     session->close();
-    return executor.quickSend<FkOnDestroyPrt>({mIncreaseQuark, mDivideQuark});
+    return executor.quickSend<FkOnDestroyPrt>(mIncreaseQuark, mDivideQuark);
 }
 
 FkResult FkIncrease2Atom::onStart() {
@@ -56,7 +56,7 @@ FkResult FkIncrease2Atom::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    return executor.quickSend<FkOnStartPrt>({mIncreaseQuark, mDivideQuark});
+    return executor.quickSend<FkOnStartPrt>(mIncreaseQuark, mDivideQuark);
 }
 
 FkResult FkIncrease2Atom::onStop() {
@@ -64,7 +64,7 @@ FkResult FkIncrease2Atom::onStop() {
     if (FK_OK != ret) {
         return ret;
     }
-    return executor.quickSend<FkOnStopPrt>({mIncreaseQuark, mDivideQuark});
+    return executor.quickSend<FkOnStopPrt>(mIncreaseQuark, mDivideQuark);
 }
 
 FkResult FkIncrease2Atom::_onIncrease2(std::shared_ptr<FkProtocol> p) {
