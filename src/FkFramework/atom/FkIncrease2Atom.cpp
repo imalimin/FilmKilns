@@ -7,8 +7,10 @@
 
 #include "FkIncrease2Atom.h"
 #include "FkCalculatePrt.h"
+#include "FkLocalClient.h"
 
 FkIncrease2Atom::FkIncrease2Atom() : FkAtom() {
+    client = std::make_shared<FkLocalClient>();
     mIncreaseQuark = std::make_shared<FkIncreaseQuark>();
     mDivideQuark = std::make_shared<FkDivideQuark>();
 }
@@ -26,7 +28,7 @@ FkResult FkIncrease2Atom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    ret = executor.quickSend<FkOnCreatePrt>(mIncreaseQuark, mDivideQuark);
+    ret = client->quickSend<FkOnCreatePrt>(mIncreaseQuark, mDivideQuark);
     if (FK_OK != ret) {
         return ret;
     }
@@ -48,7 +50,7 @@ FkResult FkIncrease2Atom::onDestroy() {
         return ret;
     }
     session->close();
-    return executor.quickSend<FkOnDestroyPrt>(mIncreaseQuark, mDivideQuark);
+    return client->quickSend<FkOnDestroyPrt>(mIncreaseQuark, mDivideQuark);
 }
 
 FkResult FkIncrease2Atom::onStart() {
@@ -56,7 +58,7 @@ FkResult FkIncrease2Atom::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    return executor.quickSend<FkOnStartPrt>(mIncreaseQuark, mDivideQuark);
+    return client->quickSend<FkOnStartPrt>(mIncreaseQuark, mDivideQuark);
 }
 
 FkResult FkIncrease2Atom::onStop() {
@@ -64,9 +66,9 @@ FkResult FkIncrease2Atom::onStop() {
     if (FK_OK != ret) {
         return ret;
     }
-    return executor.quickSend<FkOnStopPrt>(mIncreaseQuark, mDivideQuark);
+    return client->quickSend<FkOnStopPrt>(mIncreaseQuark, mDivideQuark);
 }
 
 FkResult FkIncrease2Atom::_onIncrease2(std::shared_ptr<FkProtocol> p) {
-    return executor.send(session, p);
+    return client->send(session, p);
 }

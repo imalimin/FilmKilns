@@ -12,13 +12,15 @@
 #include "FkSession.h"
 #include "FkProtocol.h"
 
-FK_CLASS FkSessionExecutor FK_EXTEND FkObject {
+FK_ABS_CLASS FkSessionClient FK_EXTEND FkObject {
 public:
-    FkSessionExecutor();
+    FkSessionClient(const FkSessionClient &o) = delete;
 
-    virtual ~FkSessionExecutor();
+    FkSessionClient();
 
-    FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol);
+    virtual ~FkSessionClient();
+
+    virtual FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol) = 0;
 
     template<class T, typename... Args>
     FkResult quickSend(Args... chain) {
@@ -40,9 +42,6 @@ public:
         }
         return session->close();
     }
-
-private:
-    FkSessionExecutor(const FkSessionExecutor &o) : FkObject() {};
 };
 
 

@@ -16,10 +16,14 @@
 //#define FK_CONNECT_TO(session, quark) (session->connectTo(std::static_pointer_cast<FkQuark>(quark)))
 //#define FK_DISCONNECT_TO(session, quark) (session->disconnect(std::static_pointer_cast<FkQuark>(quark)))
 
-class FkSessionExecutor;
+class FkSessionClient;
+class FkLocalClient;
+class FkRemoteClient;
 
 FK_CLASS FkSession FK_EXTEND FkObject {
-    friend FkSessionExecutor;
+    friend FkSessionClient;
+    friend FkLocalClient;
+    friend FkRemoteClient;
 public:
     AFK_ENUM kState : int {
         IDL = -1,

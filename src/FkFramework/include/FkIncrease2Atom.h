@@ -9,7 +9,7 @@
 #define FK_FRAMEWORK_FKINCREASE2ATOM_H
 
 #include "FkAtom.h"
-#include "FkSessionExecutor.h"
+#include "FkSessionClient.h"
 #include "FkSession.h"
 #include "FkIncreaseQuark.h"
 #include "FkDivideQuark.h"
@@ -38,7 +38,7 @@ private:
     FkResult _onIncrease2(std::shared_ptr<FkProtocol> p);
 
 private:
-    FkSessionExecutor executor;
+    std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkSession> session = nullptr;
     std::shared_ptr<FkIncreaseQuark> mIncreaseQuark = nullptr;
     std::shared_ptr<FkDivideQuark> mDivideQuark = nullptr;

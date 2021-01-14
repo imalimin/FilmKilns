@@ -5,17 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkSessionExecutor.h"
+#include "FkSessionClient.h"
 
-FkSessionExecutor::FkSessionExecutor() {
-
-}
-
-FkSessionExecutor::~FkSessionExecutor() {
+FkSessionClient::FkSessionClient() {
 
 }
 
-FkResult FkSessionExecutor::send(std::shared_ptr<FkSession> session,
+FkSessionClient::~FkSessionClient() {
+
+}
+
+FkResult FkSessionClient::send(std::shared_ptr<FkSession> session,
                                  std::shared_ptr<FkProtocol> protocol) {
     return session->send(protocol);
 }
