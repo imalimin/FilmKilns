@@ -7,11 +7,11 @@
 
 #include "FkProtDesc.h"
 
-FkProtDesc::FkProtDesc(FkQuark *target) : FkObject(), target(target) {
+FkProtDesc::FkProtDesc() : FkObject() {
 
 }
 
-FkProtDesc::FkProtDesc(const FkProtDesc &o) : FkObject(), target(o.target) {
+FkProtDesc::FkProtDesc(const FkProtDesc &o) : FkObject() {
     for (auto &it : o.prots) {
         prots.insert(std::make_pair(it.first, it.second));
     }
@@ -21,7 +21,6 @@ FkProtDesc::FkProtDesc(const FkProtDesc &o) : FkObject(), target(o.target) {
 }
 
 FkProtDesc::~FkProtDesc() {
-    target = nullptr;
     prots.clear();
     funcs.clear();
 }

@@ -12,7 +12,7 @@
 #include "FkOnStopPrt.h"
 
 FkQuark::FkQuark() : FkObject(), state(FkQuark::kState::IDL) {
-    prot = std::make_shared<FkProtDesc>(this);
+    prot = std::make_shared<FkProtDesc>();
     FK_PROT_DESC_ADD(prot, FkOnCreatePrt, FkQuark::_onCreate);
     FK_PROT_DESC_ADD(prot, FkOnDestroyPrt, FkQuark::_onDestroy);
     FK_PROT_DESC_ADD(prot, FkOnStartPrt, FkQuark::_onStart);

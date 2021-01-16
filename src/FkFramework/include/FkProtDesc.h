@@ -22,7 +22,7 @@ FK_CLASS FkProtDesc FK_EXTEND FkObject {
 private:
     typedef int (FkQuark::*ProtHandler)(std::shared_ptr<FkProtocol>);
 public:
-    FkProtDesc(FkQuark *target);
+    FkProtDesc();
 
     FkProtDesc(const FkProtDesc &o);
 
@@ -33,7 +33,6 @@ public:
     ProtHandler find(FkProtocol *p);
 
 private:
-    FkQuark *target = nullptr;
     std::unordered_map<FkProtocol::Type, std::shared_ptr<FkProtocol>> prots;
     std::unordered_map<FkProtocol::Type, ProtHandler> funcs;
 };
