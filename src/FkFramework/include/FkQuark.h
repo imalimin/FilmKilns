@@ -9,7 +9,7 @@
 #define FK_FRAMEWORK_FKQUARK_H
 
 #include "FkObject.h"
-#include "FkProtDesc.h"
+#include "FkPortDesc.h"
 #include <mutex>
 
 class FkSession;
@@ -60,7 +60,7 @@ private:
     FkResult _changeState(kState src, kState dst);
 
 private:
-    std::shared_ptr<FkProtDesc> prot = nullptr;
+    std::shared_ptr<FkPortDesc> desc = nullptr;
     std::mutex mtx;
     kState state = kState::IDL;
 };
