@@ -12,11 +12,11 @@
 #include "FkOnStopPrt.h"
 
 FkQuark::FkQuark() : FkObject(), state(FkQuark::kState::IDL) {
-    prot = std::make_shared<FkProtDesc>();
-    FK_PROT_DESC_ADD(prot, FkOnCreatePrt, FkQuark::_onCreate);
-    FK_PROT_DESC_ADD(prot, FkOnDestroyPrt, FkQuark::_onDestroy);
-    FK_PROT_DESC_ADD(prot, FkOnStartPrt, FkQuark::_onStart);
-    FK_PROT_DESC_ADD(prot, FkOnStopPrt, FkQuark::_onStop);
+    desc = std::make_shared<FkPortDesc>();
+    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnCreatePrt, FkQuark::_onCreate);
+    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnDestroyPrt, FkQuark::_onDestroy);
+    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnStartPrt, FkQuark::_onStart);
+    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnStopPrt, FkQuark::_onStop);
 }
 
 FkQuark::~FkQuark() {
