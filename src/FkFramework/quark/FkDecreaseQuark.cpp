@@ -16,9 +16,8 @@ FkDecreaseQuark::~FkDecreaseQuark() {
 
 }
 
-void FkDecreaseQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
-    desc->add(std::static_pointer_cast<FkProtocol>(std::make_shared<FkCalculatePrt>()),
-              reinterpret_cast<FkQuark::ProtHandler>(&FkDecreaseQuark::_onDecrease));
+void FkDecreaseQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
+    FK_PORT_DESC_QUICK_ADD(desc, FkCalculatePrt, FkDecreaseQuark::_onDecrease);
 
 }
 

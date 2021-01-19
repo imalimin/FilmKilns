@@ -16,7 +16,7 @@
         reinterpret_cast<FkPort::PortFunc>(&method)) \
 
 
-#define FK_PORT_DESC_SIMPLE_ADD(desc, PRT, method) \
+#define FK_PORT_DESC_QUICK_ADD(desc, PRT, method) \
     desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
         reinterpret_cast<FkPort::PortFunc>(&method)) \
 
@@ -28,12 +28,13 @@ public:
 
     virtual ~FkPortDesc();
 
-    void add(uint32_t port, std::shared_ptr<FkProtocol> p, FkPort::PortFunc func);
+    FkResult add(uint32_t port, std::shared_ptr<FkProtocol> p, FkPort::PortFunc func);
 
-    FkPort::PortFunc find(FkProtocol *p);
+    std::shared_ptr<FkPort> find(FkProtocol::Type type);
 
 private:
     std::unordered_map<FkProtocol::Type, std::shared_ptr<FkPort>> ports;
+    std::mutex mtx;
 };
 
 

@@ -13,9 +13,8 @@ FkDivideQuark::~FkDivideQuark() {
 
 }
 
-void FkDivideQuark::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
-    desc->add(std::static_pointer_cast<FkProtocol>(std::make_shared<FkCalculatePrt>()),
-              reinterpret_cast<FkQuark::ProtHandler>(&FkDivideQuark::_onDivide));
+void FkDivideQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
+    FK_PORT_DESC_QUICK_ADD(desc, FkCalculatePrt, FkDivideQuark::_onDivide);
 
 }
 

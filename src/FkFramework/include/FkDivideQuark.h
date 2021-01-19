@@ -15,7 +15,7 @@ public:
     virtual ~FkDivideQuark();
 
 protected:
-    virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) override;
+    virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
 
 private:
     FkDivideQuark(const FkDivideQuark &o) : FkQuark() {};

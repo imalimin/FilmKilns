@@ -21,7 +21,7 @@ public:
     virtual ~FkIncrease2Atom();
 
 protected:
-    virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) override;
+    virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
 
     virtual FkResult onCreate() override;
 

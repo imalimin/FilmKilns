@@ -13,10 +13,10 @@
 
 FkQuark::FkQuark() : FkObject(), state(FkQuark::kState::IDL) {
     desc = std::make_shared<FkPortDesc>();
-    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnCreatePrt, FkQuark::_onCreate);
-    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnDestroyPrt, FkQuark::_onDestroy);
-    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnStartPrt, FkQuark::_onStart);
-    FK_PORT_DESC_SIMPLE_ADD(desc, FkOnStopPrt, FkQuark::_onStop);
+    FK_PORT_DESC_QUICK_ADD(desc, FkOnCreatePrt, FkQuark::_onCreate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkOnDestroyPrt, FkQuark::_onDestroy);
+    FK_PORT_DESC_QUICK_ADD(desc, FkOnStartPrt, FkQuark::_onStart);
+    FK_PORT_DESC_QUICK_ADD(desc, FkOnStopPrt, FkQuark::_onStop);
 }
 
 FkQuark::~FkQuark() {
@@ -48,9 +48,9 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
         FkLogI("FkTest", "Result FK_INVALID_STATE");
         return FK_INVALID_STATE;
     }
-    auto handler = prot->find(p.get());
-    if (handler) {
-        return (this->*handler)(p);
+    auto port = desc->find(p->getType());
+    if (nullptr != port) {
+        return port->communicate(this, p);
     }
     return FK_FAIL;
 }
@@ -60,7 +60,7 @@ FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
     if (FK_OK != ret) {
         return ret;
     }
-    describeProtocols(prot);
+    describeProtocols(desc);
     return onCreate();
 }
 
@@ -89,7 +89,7 @@ FkResult FkQuark::_onStop(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::accept(const std::shared_ptr<FkProtocol> p) {
-    if (prot->find(p.get())) {
+    if (nullptr != desc->find(p->getType())) {
         return FK_OK;
     }
     return FK_FAIL;

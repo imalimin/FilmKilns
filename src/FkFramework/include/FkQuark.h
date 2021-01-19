@@ -32,7 +32,7 @@ public:
     virtual ~FkQuark();
 
 protected:
-    virtual void describeProtocols(std::shared_ptr<FkProtDesc> desc) = 0;
+    virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) = 0;
 
     virtual FkResult onCreate();
 

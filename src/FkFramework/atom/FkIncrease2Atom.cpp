@@ -19,8 +19,8 @@ FkIncrease2Atom::~FkIncrease2Atom() {
 
 }
 
-void FkIncrease2Atom::describeProtocols(std::shared_ptr<FkProtDesc> desc) {
-    FK_PROT_DESC_ADD(desc, FkCalculatePrt, FkIncrease2Atom::_onIncrease2);
+void FkIncrease2Atom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
+    FK_PORT_DESC_QUICK_ADD(desc, FkCalculatePrt, FkIncrease2Atom::_onIncrease2);
 }
 
 FkResult FkIncrease2Atom::onCreate() {

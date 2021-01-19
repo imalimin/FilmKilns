@@ -16,6 +16,7 @@ class FkQuark;
 FK_CLASS FkPort FK_EXTEND FkObject {
 public:
     typedef int (FkQuark::*PortFunc)(std::shared_ptr<FkProtocol>);
+    static const uint32_t NONE;
 
 public:
     FkPort(uint32_t port, std::shared_ptr<FkProtocol> protocol, FkPort::PortFunc func);
@@ -23,6 +24,8 @@ public:
     FkPort(const FkPort &o) = delete;
 
     virtual ~FkPort();
+
+    FkResult communicate(FkQuark *target, std::shared_ptr<FkProtocol> protocol) const;
 
 public:
     uint32_t port = 0;
