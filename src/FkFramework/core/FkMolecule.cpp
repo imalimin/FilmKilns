@@ -6,3 +6,43 @@
 */
 
 #include "FkMolecule.h"
+
+FkMolecule::FkMolecule() : FkQuark() {
+
+}
+
+FkMolecule::~FkMolecule() {
+
+}
+
+FkResult FkMolecule::onCreate() {
+    auto ret = FkQuark::onCreate();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
+}
+
+FkResult FkMolecule::onDestroy() {
+    auto ret = FkQuark::onDestroy();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
+}
+
+FkResult FkMolecule::onStart() {
+    auto ret = FkQuark::onStart();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
+}
+
+FkResult FkMolecule::onStop() {
+    auto ret = FkQuark::onStop();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    return ret;
+}

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkBase")
+set(MODULE_NAME "FkGraphic")
 project(${MODULE_NAME} LANGUAGES C CXX)
 
 set(INCLUDES
@@ -7,6 +7,8 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../al_common/include
+        ${PROJECT_SOURCE_DIR}/../FkBase/include
+        ${PROJECT_SOURCE_DIR}/../FkFramework/include
         )
 include_directories(${INCLUDES})
 
@@ -30,11 +32,21 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
-aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
+aux_source_directory(${PROJECT_SOURCE_DIR}/system SOURCES_SYSTEM)
+aux_source_directory(${PROJECT_SOURCE_DIR}/system/atom SOURCES_SYSTEM_ATOM)
+aux_source_directory(${PROJECT_SOURCE_DIR}/system/atom/quark SOURCES_SYSTEM_QUARK)
+aux_source_directory(${PROJECT_SOURCE_DIR}/component SOURCES_COMPONENT)
+aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
+aux_source_directory(${PROJECT_SOURCE_DIR}/protocol SOURCES_PROTOCOL)
 
-list(APPEND SOURCES_ROOT ${SOURCES_CORE})
 list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
+list(APPEND SOURCES_ROOT ${SOURCES_SYSTEM})
+list(APPEND SOURCES_ROOT ${SOURCES_SYSTEM_ATOM})
+list(APPEND SOURCES_ROOT ${SOURCES_SYSTEM_QUARK})
+list(APPEND SOURCES_ROOT ${SOURCES_COMPONENT})
+list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
+list(APPEND SOURCES_ROOT ${SOURCES_PROTOCOL})
 
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
@@ -53,5 +65,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common ${log-lib})
+set(MODULES ${MODULE_NAME} al_common FkBase FkFramework ${log-lib})
 target_link_libraries(${MODULES})

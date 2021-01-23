@@ -12,6 +12,7 @@ FkProtocol::FkProtocol() : FkObject() {
 }
 
 FkProtocol::FkProtocol(const FkProtocol &o) : FkObject() {
+    FK_MARK_SUPER
 
 }
 

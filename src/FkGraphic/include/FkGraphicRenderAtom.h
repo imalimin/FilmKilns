@@ -5,18 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_FRAMEWORK_FKMOLECULE_H
-#define FK_FRAMEWORK_FKMOLECULE_H
+#ifndef FK_GRAPHIC_FKGRAPHICRENDERATOM_H
+#define FK_GRAPHIC_FKGRAPHICRENDERATOM_H
 
-#include "FkQuark.h"
+#include "FkAtom.h"
 
-FK_ABS_CLASS FkMolecule FK_EXTEND FkQuark {
+FK_CLASS FkGraphicRenderAtom FK_EXTEND FkAtom {
 public:
-    FkMolecule();
+    FkGraphicRenderAtom();
 
-    FkMolecule(const FkMolecule &o) = delete;
+    FkGraphicRenderAtom(const FkGraphicRenderAtom &o) = delete;
 
-    virtual ~FkMolecule();
+    virtual ~FkGraphicRenderAtom();
 
 protected:
     virtual FkResult onCreate() override;
@@ -26,8 +26,6 @@ protected:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
-
 };
 
-
-#endif //FK_FRAMEWORK_FKMOLECULE_H
+#endif //FK_GRAPHIC_FKGRAPHICRENDERATOM_H

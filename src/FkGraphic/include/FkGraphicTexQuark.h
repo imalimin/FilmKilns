@@ -5,24 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_FRAMEWORK_FKATOM_H
-#define FK_FRAMEWORK_FKATOM_H
+#ifndef FK_GRAPHIC_FKGRAPHICTEXQUARK_H
+#define FK_GRAPHIC_FKGRAPHICTEXQUARK_H
 
 #include "FkQuark.h"
-#include "FkSession.h"
-#include "FkSessionClient.h"
-#include "FkOnCreatePrt.h"
-#include "FkOnDestroyPrt.h"
-#include "FkOnStartPrt.h"
-#include "FkOnStopPrt.h"
 
-FK_ABS_CLASS FkAtom FK_EXTEND FkQuark {
+FK_CLASS FkGraphicTexQuark FK_EXTEND FkQuark {
 public:
-    FkAtom();
+    FkGraphicTexQuark();
 
-    FkAtom(const FkAtom &o) = delete;
+    FkGraphicTexQuark(const FkGraphicTexQuark &o) = delete;
 
-    virtual ~FkAtom();
+    virtual ~FkGraphicTexQuark();
 
 protected:
     virtual FkResult onCreate() override;
@@ -36,4 +30,4 @@ protected:
 };
 
 
-#endif //FK_FRAMEWORK_FKATOM_H
+#endif //FK_GRAPHIC_FKGRAPHICTEXQUARK_H
