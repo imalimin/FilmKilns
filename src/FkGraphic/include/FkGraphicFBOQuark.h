@@ -5,18 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_GRAPHIC_FKGRAPHICTEXQUARK_H
-#define FK_GRAPHIC_FKGRAPHICTEXQUARK_H
+#ifndef FK_GRAPHIC_FKGRAPHICFBOQUARK_H
+#define FK_GRAPHIC_FKGRAPHICFBOQUARK_H
 
 #include "FkQuark.h"
 
-FK_CLASS FkGraphicTexQuark FK_EXTEND FkQuark {
+class FkGraphicFBOQuark FK_EXTEND FkQuark {
 public:
-    FkGraphicTexQuark();
+    FkGraphicFBOQuark();
 
-    FkGraphicTexQuark(const FkGraphicTexQuark &o) = delete;
+    FkGraphicFBOQuark(const FkGraphicFBOQuark &o) = delete;
 
-    virtual ~FkGraphicTexQuark();
+    virtual ~FkGraphicFBOQuark();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
@@ -34,5 +34,4 @@ private:
 
 };
 
-
-#endif //FK_GRAPHIC_FKGRAPHICTEXQUARK_H
+#endif //FK_GRAPHIC_FKGRAPHICFBOQUARK_H

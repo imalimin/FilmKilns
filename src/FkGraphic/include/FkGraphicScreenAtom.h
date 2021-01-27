@@ -5,18 +5,19 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_GRAPHIC_FKGRAPHICTEXQUARK_H
-#define FK_GRAPHIC_FKGRAPHICTEXQUARK_H
+#ifndef FK_GRAPHIC_FKGRAPHICSCREENATOM_H
+#define FK_GRAPHIC_FKGRAPHICSCREENATOM_H
 
-#include "FkQuark.h"
+#include "FkAtom.h"
+#include "FkLocalClient.h"
 
-FK_CLASS FkGraphicTexQuark FK_EXTEND FkQuark {
+FK_CLASS FkGraphicScreenAtom FK_EXTEND FkAtom {
 public:
-    FkGraphicTexQuark();
+    FkGraphicScreenAtom();
 
-    FkGraphicTexQuark(const FkGraphicTexQuark &o) = delete;
+    FkGraphicScreenAtom(const FkGraphicScreenAtom &o) = delete;
 
-    virtual ~FkGraphicTexQuark();
+    virtual ~FkGraphicScreenAtom();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
@@ -32,7 +33,9 @@ protected:
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
+private:
+    std::shared_ptr<FkSessionClient> client;
 };
 
 
-#endif //FK_GRAPHIC_FKGRAPHICTEXQUARK_H
+#endif //FK_GRAPHIC_FKGRAPHICSCREENATOM_H

@@ -6,6 +6,7 @@
 */
 
 #include "FkGraphicTexQuark.h"
+#include "FkGraphicLayerPrt.h"
 
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
 
@@ -13,6 +14,10 @@ FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
 
 FkGraphicTexQuark::~FkGraphicTexQuark() {
 
+}
+
+void FkGraphicTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicTexQuark::_onDrawLayer);
 }
 
 FkResult FkGraphicTexQuark::onCreate() {
@@ -29,4 +34,8 @@ FkResult FkGraphicTexQuark::onStart() {
 
 FkResult FkGraphicTexQuark::onStop() {
     return FkQuark::onStop();
+}
+
+FkResult FkGraphicTexQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+    return FK_OK;
 }

@@ -10,9 +10,6 @@
 
 #include "FkAtom.h"
 #include "FkLocalClient.h"
-#include "FkGraphicTransQuark.h"
-#include "FkGraphicScaleQuark.h"
-#include "FkGraphicRotateQuark.h"
 
 FK_CLASS FkGraphicMVPAtom FK_EXTEND FkAtom {
 public:
@@ -38,10 +35,10 @@ private:
 
 private:
     std::shared_ptr<FkSessionClient> client;
-    std::shared_ptr<FkSession> mLayerSesion = nullptr;
-    std::shared_ptr<FkGraphicTransQuark> mTransQuark = nullptr;
-    std::shared_ptr<FkGraphicScaleQuark> mScaleQuark = nullptr;
-    std::shared_ptr<FkGraphicRotateQuark> mRotateQuark = nullptr;
+    std::shared_ptr<FkSession> mLayerSession = nullptr;
+    std::shared_ptr<FkQuark> mTransQuark = nullptr;
+    std::shared_ptr<FkQuark> mScaleQuark = nullptr;
+    std::shared_ptr<FkQuark> mRotateQuark = nullptr;
 };
 
 

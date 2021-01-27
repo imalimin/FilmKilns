@@ -6,6 +6,7 @@
 */
 
 #include "FkGraphicRenderAtom.h"
+#include "FkGraphicLayerPrt.h"
 
 FkGraphicRenderAtom::FkGraphicRenderAtom() : FkAtom() {
 
@@ -13,6 +14,10 @@ FkGraphicRenderAtom::FkGraphicRenderAtom() : FkAtom() {
 
 FkGraphicRenderAtom::~FkGraphicRenderAtom() {
 
+}
+
+void FkGraphicRenderAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicRenderAtom::_onDrawLayer);
 }
 
 FkResult FkGraphicRenderAtom::onCreate() {
@@ -29,4 +34,8 @@ FkResult FkGraphicRenderAtom::onStart() {
 
 FkResult FkGraphicRenderAtom::onStop() {
     return FkAtom::onStop();
+}
+
+FkResult FkGraphicRenderAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+    return FK_OK;
 }

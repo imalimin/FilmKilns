@@ -20,6 +20,8 @@ public:
     virtual ~FkGraphicSourceAtom();
 
 protected:
+    virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
+
     virtual FkResult onCreate() override;
 
     virtual FkResult onDestroy() override;
@@ -29,7 +31,15 @@ protected:
     virtual FkResult onStop() override;
 
 private:
+    FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
+
+private:
     std::shared_ptr<FkSessionClient> client;
+    std::shared_ptr<FkSession> mLayerSession = nullptr;
+    std::shared_ptr<FkQuark> mCtxQuark = nullptr;
+    std::shared_ptr<FkQuark> mTexQuark = nullptr;
+    std::shared_ptr<FkQuark> mFBOQuark = nullptr;
+    std::shared_ptr<FkQuark> mProgramQuark = nullptr;
 };
 
 

@@ -16,6 +16,8 @@ public:
     virtual ~FkGraphicContextQuark();
 
 protected:
+    virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
+
     virtual FkResult onCreate() override;
 
     virtual FkResult onDestroy() override;
@@ -23,6 +25,9 @@ protected:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
+
+private:
+    FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
 };
 

@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKGRAPHICMOLECULE_H
 
 #include "FkMolecule.h"
+#include "FkAtom.h"
 #include "FkLocalClient.h"
 
 FK_CLASS FkGraphicMolecule FK_EXTEND FkMolecule {
@@ -35,6 +36,11 @@ private:
 
 private:
     std::shared_ptr<FkSessionClient> client;
+    std::shared_ptr<FkSession> mLayerSession = nullptr;
+    std::shared_ptr<FkAtom> mMVPAtom = nullptr;
+    std::shared_ptr<FkAtom> mSrcAtom = nullptr;
+    std::shared_ptr<FkAtom> mRenderAtom = nullptr;
+    std::shared_ptr<FkAtom> mScreenAtom = nullptr;
 };
 
 
