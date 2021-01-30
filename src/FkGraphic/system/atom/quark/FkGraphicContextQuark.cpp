@@ -8,8 +8,10 @@
 #include "FkGraphicContextQuark.h"
 #include "FkGraphicLayerPrt.h"
 
-FkGraphicContextQuark::FkGraphicContextQuark() : FkQuark() {
+#define TAG "FkGraphicContextQuark"
 
+FkGraphicContextQuark::FkGraphicContextQuark() : FkQuark() {
+    context = std::make_shared<FkGraphicContext>(TAG);
 }
 
 FkGraphicContextQuark::~FkGraphicContextQuark() {
@@ -21,10 +23,16 @@ void FkGraphicContextQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) 
 }
 
 FkResult FkGraphicContextQuark::onCreate() {
-    return FkQuark::onCreate();
+    auto ret = FkQuark::onCreate();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    context->create();
+    return ret;
 }
 
 FkResult FkGraphicContextQuark::onDestroy() {
+    context->destroy();
     return FkQuark::onDestroy();
 }
 
@@ -37,5 +45,10 @@ FkResult FkGraphicContextQuark::onStop() {
 }
 
 FkResult FkGraphicContextQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+    context->makeCurrent();
+    auto ptl = std::static_pointer_cast<FkGraphicLayerPrt>(p);
+    auto comp = std::make_shared<FkGraphicCtxComponent>();
+    comp->context = context;
+    ptl->layer->addComponent(comp);
     return FK_OK;
 }

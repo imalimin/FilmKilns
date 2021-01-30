@@ -25,25 +25,25 @@ public:
 
     virtual ~FkVec2();
 
-    void set(FkVec2 vec);
+    virtual void set(FkVec2 vec);
 
-    bool isZero();
+    virtual bool isZero();
 
-    FkVec2 &operator+(const float value);
+    virtual FkVec2 &operator+(const float value);
 
-    FkVec2 &operator+(const FkVec2 &vec);
+    virtual FkVec2 &operator+(const FkVec2 &vec);
 
-    FkVec2 &operator-(const FkVec2 &vec);
+    virtual FkVec2 &operator-(const FkVec2 &vec);
 
-    bool operator<(const FkVec2 &vec);
+    virtual bool operator<(const FkVec2 &vec);
 
-    bool operator>(const FkVec2 &vec);
+    virtual bool operator>(const FkVec2 &vec);
 
-    bool operator==(const FkVec2 &vec);
+    virtual bool operator==(const FkVec2 &vec);
 
-    FkVec2 &operator/(const float value);
+    virtual FkVec2 &operator/(const float value);
 
-    bool isNan();
+    virtual bool isNan();
 
 public:
     float x = 0.0f;

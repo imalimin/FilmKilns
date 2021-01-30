@@ -11,6 +11,8 @@
 #include "FkOnStartPrt.h"
 #include "FkOnStopPrt.h"
 
+#define TAG "FkQuark"
+
 FkQuark::FkQuark() : FkObject(), state(FkQuark::kState::IDL) {
     desc = std::make_shared<FkPortDesc>();
     FK_PORT_DESC_QUICK_ADD(desc, FkOnCreatePrt, FkQuark::_onCreate);
@@ -45,7 +47,7 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
         && !FK_INSTANCE_OF(p, FkOnDestroyPrt)
         && !FK_INSTANCE_OF(p, FkOnStartPrt)
         && !FK_INSTANCE_OF(p, FkOnStopPrt)) {
-        FkLogI("FkTest", "Result FK_INVALID_STATE");
+        FkLogI(FK_DEF_TAG, "Result FK_INVALID_STATE");
         return FK_INVALID_STATE;
     }
     auto port = desc->find(p->getType());

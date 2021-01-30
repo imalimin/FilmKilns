@@ -36,11 +36,16 @@
 #define FkAssert(condition) assert(condition)
 
 // +------ State Code ------+
-typedef int FkResult;
+typedef int32_t FkResult;
 #define FK_OK 0
 #define FK_FAIL -1
 #define FK_INVALID_STATE -2
 #define FK_PROTOCOL_NOT_ACCEPT -3
 #define FK_INVALID_DATA -4
+
+// +------ ID ------+
+typedef int32_t FkID;
+#define FK_ID_NONE -1
+
 
 #endif //FK_BASE_FKDEFINITION_H

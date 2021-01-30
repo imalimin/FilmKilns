@@ -1,11 +1,15 @@
-//
-// Created by mingyi.li on 2021-01-23.
-//
+/*
+* Copyright (c) 2018-present, aliminabc@gmail.com.
+*
+* This source code is licensed under the MIT license found in the
+* LICENSE file in the root directory of this source tree.
+*/
 
 #ifndef FK_GRAPHIC_FKGRAPHICCONTEXTQUARK_H
 #define FK_GRAPHIC_FKGRAPHICCONTEXTQUARK_H
 
 #include "FkQuark.h"
+#include "FkGraphicCtxComponent.h"
 
 FK_CLASS FkGraphicContextQuark FK_EXTEND FkQuark {
 public:
@@ -29,6 +33,8 @@ protected:
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
+private:
+    std::shared_ptr<FkGraphicContext> context = nullptr;
 };
 
 

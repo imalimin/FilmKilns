@@ -9,17 +9,17 @@
 #include "FkDefinition.h"
 
 FkSPObject::FkSPObject() {
-    FkLogI("FkTest", "FkSPObject");
+    FkLogI(FK_DEF_TAG, "FkSPObject");
 }
 
 FkSPObject::~FkSPObject() {
-    FkLogI("FkTest", "~FkSPObject");
+    FkLogI(FK_DEF_TAG, "~FkSPObject");
 }
 
 FkSPObject2::FkSPObject2() {
-    FkLogI("FkTest", "FkSPObject2");
+    FkLogI(FK_DEF_TAG, "FkSPObject2");
 }
 
 FkSPObject2::~FkSPObject2() {
-    FkLogI("FkTest", "~FkSPObject2");
+    FkLogI(FK_DEF_TAG, "~FkSPObject2");
 }

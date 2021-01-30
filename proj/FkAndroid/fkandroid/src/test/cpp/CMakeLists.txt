@@ -9,6 +9,7 @@ include_directories(
         ${PROJECT_SOURCE_FK_DIR}/al_common/include
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
+        ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
@@ -65,5 +66,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} gtest_main gtest al_common FkBase FkFramework ${log-lib})
+set(MODULES ${MODULE_NAME} gtest_main gtest al_common FkBase FkFramework FkGraphic ${log-lib})
 target_link_libraries(${MODULES})
