@@ -9,7 +9,6 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
-#include "FkDefinition.h"
 
 #define TAG "FkGraphicAllocator"
 
@@ -50,7 +49,8 @@ uint32_t FkGraphicTexture::convertGLFormat(FkColor::kFormat fmt) {
 
 }
 
-FkGraphicTexture::FkGraphicTexture() : FkSource(), applied(false) {
+FkGraphicTexture::FkGraphicTexture(const FkTexDescription &desc)
+        : FkSource(), desc(desc), applied(false) {
     FK_MARK_SUPER
 }
 
@@ -66,7 +66,37 @@ void FkGraphicTexture::unbind() {
 }
 
 FkResult FkGraphicTexture::create() {
-    return FK_OK;
+    glGenTextures(1, &tex);
+    bind();
+    glTexParameterf(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    switch (desc.wrapMode) {
+        case FkTexDescription::WrapMode::EDGE: {
+            glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            break;
+        }
+        case FkTexDescription::WrapMode::BORDER: {
+            glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_EXT);
+            glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER_EXT);
+            float color[] = {1.0f, 1.0f, 1.0f, 0.0f};
+            if (GL_TEXTURE_2D == desc.target) {
+                glTexParameterfv(desc.target, GL_TEXTURE_BORDER_COLOR_EXT, color);
+            }
+#ifdef __ANDROID__
+            if (GL_TEXTURE_EXTERNAL_OES == desc.target) {
+                glTexParameterfv(desc.target, GL_TEXTURE_BORDER_COLOR_OES, color);
+            }
+#endif
+            break;
+        }
+        default:
+            glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            break;
+    }
+    unbind();
+    return GL_NO_ERROR != glGetError();
 }
 
 void FkGraphicTexture::destroy() {
@@ -137,38 +167,9 @@ FkGraphicTexture *FkGraphicAllocator::delegateAlloc(FkTexDescription &desc) {
     if (0 == desc.target) {
         FkLogE(TAG, "Allocate texture failed. Invalid target(%d)", desc.target);
     }
-    auto o = new FkGraphicTexture();
+    auto o = new FkGraphicTexture(desc);
     o->create();
-    o->desc = desc;
-    glGenTextures(1, &(o->tex));
     o->bind();
-    glTexParameterf(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    switch (desc.wrapMode) {
-        case FkTexDescription::WrapMode::EDGE: {
-            glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            break;
-        }
-        case FkTexDescription::WrapMode::BORDER: {
-            glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_EXT);
-            glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER_EXT);
-            float color[] = {1.0f, 1.0f, 1.0f, 0.0f};
-            if (GL_TEXTURE_2D == desc.target) {
-                glTexParameterfv(desc.target, GL_TEXTURE_BORDER_COLOR_EXT, color);
-            }
-#ifdef __ANDROID__
-            if (GL_TEXTURE_EXTERNAL_OES == desc.target) {
-                glTexParameterfv(desc.target, GL_TEXTURE_BORDER_COLOR_OES, color);
-            }
-#endif
-            break;
-        }
-        default:
-            glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            break;
-    }
     if (FkColor::kFormat::NONE != o->desc.fmt
         && 0 != o->desc.size.getWidth()
         && 0 != o->desc.size.getHeight()) {

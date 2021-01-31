@@ -46,7 +46,7 @@ public:
     static uint32_t convertGLFormat(FkColor::kFormat fmt);
 
 public:
-    FkGraphicTexture();
+    FkGraphicTexture(const FkTexDescription &desc);
 
     FkGraphicTexture(const FkGraphicTexture &o) = delete;
 

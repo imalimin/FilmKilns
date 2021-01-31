@@ -12,7 +12,6 @@
 #include "FkGraphicTexComponent.h"
 
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
-    allocator = std::make_shared<FkGraphicAllocator>();
 }
 
 FkGraphicTexQuark::~FkGraphicTexQuark() {
@@ -25,7 +24,12 @@ void FkGraphicTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 FkResult FkGraphicTexQuark::onCreate() {
-    return FkQuark::onCreate();
+    auto ret = FkQuark::onCreate();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    allocator = std::make_shared<FkGraphicAllocator>();
+    return ret;
 }
 
 FkResult FkGraphicTexQuark::onDestroy() {

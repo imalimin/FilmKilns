@@ -11,7 +11,6 @@
 #define TAG "FkGraphicContextQuark"
 
 FkGraphicContextQuark::FkGraphicContextQuark() : FkQuark() {
-    context = std::make_shared<FkGraphicContext>(TAG);
 }
 
 FkGraphicContextQuark::~FkGraphicContextQuark() {
@@ -27,6 +26,7 @@ FkResult FkGraphicContextQuark::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
+    context = std::make_shared<FkGraphicContext>(TAG);
     context->create();
     return ret;
 }
