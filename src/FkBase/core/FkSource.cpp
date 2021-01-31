@@ -7,11 +7,15 @@
 
 #include "FkSource.h"
 
-FkSource::FkSource() : FkObject() {
+FkSource::FkSource()
+        : FkObject(), cTime(FkTimeUtils::getCurrentTimeUS()),
+          eTime(FkTimeUtils::getCurrentTimeUS()) {
     FK_MARK_SUPER
 }
 
-FkSource::FkSource(const FkSource &o) : FkObject(o), id(o.id) {
+FkSource::FkSource(const FkSource &o) : FkObject(o), id(o.id),
+                                        cTime(FkTimeUtils::getCurrentTimeUS()),
+                                        eTime(FkTimeUtils::getCurrentTimeUS()) {
     FK_MARK_SUPER
 }
 

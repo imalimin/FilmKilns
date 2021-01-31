@@ -10,7 +10,10 @@
 
 #include "FkObject.h"
 #include "FkDefinition.h"
+#include "FkTimeUtils.h"
+#include "AlString.h"
 #include <unordered_map>
+#include <map>
 
 FK_ABS_CLASS FkSource FK_EXTEND FkObject {
 public:
@@ -28,6 +31,8 @@ public:
 
 public:
     FkID id = FK_ID_NONE;
+    int64_t cTime = 0;
+    int64_t eTime = 0;
 };
 
 template<class T, class D>
@@ -52,15 +57,22 @@ public:
         }
         auto itr1 = sRecycler.begin();
         while (sRecycler.end() != itr1) {
-            itr1->second->destroy();
-            delete itr1->second;
+            (*itr1)->destroy();
+            delete (*itr1);
             itr1 = sRecycler.erase(itr1);
         }
     }
 
     std::shared_ptr<T> alloc(D &desc) {
         std::lock_guard<std::mutex> guard(mtx);
-        auto o = delegateAlloc(desc);
+        T *ptr = findFromRecycler(desc);
+        if (nullptr == ptr) {
+            ptr = delegateAlloc(desc);
+        }
+        ptr->eTime = FkTimeUtils::getCurrentTimeUS();
+        std::shared_ptr<T> o(ptr, [this](T *o) {
+            this->recycle(o);
+        });
         if (nullptr == o) {
             return nullptr;
         }
@@ -70,7 +82,20 @@ public:
         return o;
     }
 
-    virtual std::shared_ptr<T> delegateAlloc(D &desc) = 0;
+    T *findFromRecycler(D &desc) {
+        auto itr = sRecycler.begin();
+        while (sRecycler.end() != itr) {
+            if (delegateEquals(desc, *itr)) {
+                return *itr;
+            }
+            ++itr;
+        }
+        return nullptr;
+    }
+
+    virtual T *delegateAlloc(D &desc) = 0;
+
+    virtual bool delegateEquals(D &desc, T *) = 0;
 
     virtual size_t size() {
         std::lock_guard<std::mutex> guard(mtx);
@@ -94,7 +119,7 @@ public:
 
         auto itr1 = sRecycler.begin();
         while (sRecycler.end() != itr1) {
-            size += itr1->second->size();
+            size += (*itr1)->size();
             ++itr1;
         }
         return size;
@@ -105,7 +130,17 @@ protected:
         std::lock_guard<std::mutex> guard(mtx);
         auto itr = sMap.find(o->id);
         if (sMap.end() != itr) {
-            sRecycler.insert(std::make_pair(o->id, o));
+            if (sRecycler.empty()) {
+                sRecycler.push_back(o);
+            } else {
+                auto pos = sRecycler.begin();
+                for (; pos != sRecycler.end(); ++pos) {
+                    if (o->eTime > (*pos)->eTime) {
+                        break;
+                    }
+                }
+                sRecycler.insert(pos, o);
+            }
             sMap.erase(itr);
         }
     }
@@ -114,7 +149,7 @@ private:
     std::mutex mtx;
     FkID current = FK_ID_NONE;
     std::unordered_map<FkID, T *> sMap;
-    std::unordered_map<FkID, T *> sRecycler;
+    std::list<T *> sRecycler;
 };
 
 

@@ -9,6 +9,8 @@
 #define FK_GRAPHIC_FKGRAPHICTEXQUARK_H
 
 #include "FkQuark.h"
+#include "FkGraphicTexture.h"
+#include <unordered_map>
 
 FK_CLASS FkGraphicTexQuark FK_EXTEND FkQuark {
 public:
@@ -32,6 +34,11 @@ protected:
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onAllocTex(std::shared_ptr<FkProtocol> p);
+
+private:
+    std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
+    std::unordered_map<FkID, std::shared_ptr<FkGraphicTexture>> sMap;
 };
 
 

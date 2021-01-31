@@ -17,5 +17,5 @@ FkGraphicCtxComponent::FkGraphicCtxComponent(const FkGraphicCtxComponent &o)
 }
 
 FkGraphicCtxComponent::~FkGraphicCtxComponent() {
-
+    context = nullptr;
 }

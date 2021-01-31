@@ -50,7 +50,7 @@ uint32_t FkGraphicTexture::convertGLFormat(FkColor::kFormat fmt) {
 
 }
 
-FkGraphicTexture::FkGraphicTexture() : FkSource() {
+FkGraphicTexture::FkGraphicTexture() : FkSource(), applied(false) {
     FK_MARK_SUPER
 }
 
@@ -104,12 +104,20 @@ size_t FkGraphicTexture::size() {
 }
 
 void FkGraphicTexture::update(FkColor::kFormat fmt, int32_t width, int32_t height) {
-    bind();
     desc.fmt = fmt;
     desc.size.set(width, height);
-    glTexImage2D(desc.target, 0, convertGLFormat(desc.fmt),
-                 desc.size.getWidth(), desc.size.getHeight(), 0,
-                 convertGLFormat(desc.fmt), GL_UNSIGNED_BYTE, nullptr);
+    bind();
+    if (applied) {
+        glTexSubImage2D(desc.target, 0, 0, 0,
+                        desc.size.getWidth(), desc.size.getHeight(),
+                        convertGLFormat(desc.fmt), GL_UNSIGNED_BYTE, nullptr);
+    } else {
+        applied = true;
+        glTexImage2D(desc.target, 0, convertGLFormat(desc.fmt),
+                     desc.size.getWidth(), desc.size.getHeight(), 0,
+                     convertGLFormat(desc.fmt), GL_UNSIGNED_BYTE, nullptr);
+
+    }
     unbind();
 }
 
@@ -121,7 +129,7 @@ FkGraphicAllocator::~FkGraphicAllocator() {
 
 }
 
-std::shared_ptr<FkGraphicTexture> FkGraphicAllocator::delegateAlloc(FkTexDescription &desc) {
+FkGraphicTexture *FkGraphicAllocator::delegateAlloc(FkTexDescription &desc) {
     if (EGL_NO_CONTEXT == eglGetCurrentContext()) {
         FkLogE(TAG, "Allocate texture failed. Invalid EGL context");
         return nullptr;
@@ -129,9 +137,7 @@ std::shared_ptr<FkGraphicTexture> FkGraphicAllocator::delegateAlloc(FkTexDescrip
     if (0 == desc.target) {
         FkLogE(TAG, "Allocate texture failed. Invalid target(%d)", desc.target);
     }
-    std::shared_ptr<FkGraphicTexture> o(new FkGraphicTexture(), [this](FkGraphicTexture *o) {
-        this->recycle(o);
-    });
+    auto o = new FkGraphicTexture();
     o->create();
     o->desc = desc;
     glGenTextures(1, &(o->tex));
@@ -163,6 +169,25 @@ std::shared_ptr<FkGraphicTexture> FkGraphicAllocator::delegateAlloc(FkTexDescrip
             glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_REPEAT);
             break;
     }
+    if (FkColor::kFormat::NONE != o->desc.fmt
+        && 0 != o->desc.size.getWidth()
+        && 0 != o->desc.size.getHeight()) {
+        o->update(o->desc.fmt, o->desc.size.getWidth(), o->desc.size.getHeight());
+    }
     o->unbind();
     return o;
+}
+
+bool FkGraphicAllocator::delegateEquals(FkTexDescription &desc, FkGraphicTexture *tex) {
+    if (tex->desc.target == desc.target) {
+        if (FkColor::kFormat::NONE != desc.fmt) {
+            if (0 != desc.size.getWidth() && 0 != desc.size.getHeight()) {
+                return desc.fmt == tex->desc.fmt
+                       && tex->desc.size.getWidth() == desc.size.getWidth()
+                       && tex->desc.size.getHeight() == desc.size.getHeight();
+            }
+//            return desc.fmt == tex->desc.fmt;
+        }
+    }
+    return false;
 }

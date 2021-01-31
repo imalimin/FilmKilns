@@ -19,7 +19,7 @@ public:
     virtual ~FkTexComponent();
 
 public:
-    FkID id = FK_ID_NONE;
+    FkID texId = FK_ID_NONE;
 };
 
 

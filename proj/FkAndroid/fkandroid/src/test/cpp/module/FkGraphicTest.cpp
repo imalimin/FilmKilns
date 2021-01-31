@@ -9,14 +9,28 @@
 #include "FkGraphicContext.h"
 #include "FkGraphicTexture.h"
 #include "GLES2/gl2.h"
+#include "FkGraphicLayer.h"
+#include "FkTexComponent.h"
+#include "FkScaleComponent.h"
 
-TEST(FkGraphicAllocatorTest, Context) {
+TEST(FkGraphicEntityTest, Context) {
+    auto layer = std::make_shared<FkGraphicLayer>();
+    auto tex = std::make_shared<FkTexComponent>();
+    layer->addComponent(tex);
+
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    EXPECT_EQ(layer->findComponent(vec, FkClassType::type<FkTexComponent>()), FK_OK);
+    vec.clear();
+    EXPECT_NE(layer->findComponent(vec, FkClassType::type<FkScaleComponent>()), FK_OK);
+}
+
+TEST(FkGraphicTest, Context) {
     auto context = std::make_shared<FkGraphicContext>("Test");
     EXPECT_EQ(context->create(), FK_OK);
     context->destroy();
 }
 
-TEST(FkGraphicAllocatorTest, Alloc) {
+TEST(FkGraphicTest, Alloc) {
     auto context = std::make_shared<FkGraphicContext>("Test");
     EXPECT_EQ(context->create(), FK_OK);
     EXPECT_EQ(context->makeCurrent(), FK_OK);

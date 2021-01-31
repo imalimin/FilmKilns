@@ -65,6 +65,7 @@ public:
     virtual void update(FkColor::kFormat fmt, int32_t width, int32_t height);
 
 public:
+    std::atomic_bool applied;
     FkTexDescription desc;
     uint32_t tex;
 };
@@ -77,7 +78,9 @@ public:
 
     ~FkGraphicAllocator();
 
-    virtual std::shared_ptr<FkGraphicTexture> delegateAlloc(FkTexDescription &desc) override;
+    virtual FkGraphicTexture *delegateAlloc(FkTexDescription &desc) override;
+
+    virtual bool delegateEquals(FkTexDescription &desc, FkGraphicTexture *tex) override;
 
 };
 

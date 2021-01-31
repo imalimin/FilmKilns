@@ -10,6 +10,8 @@
 
 #include "FkObject.h"
 #include "FkGraphicComponent.h"
+#include <vector>
+#include <list>
 
 FK_CLASS FkGraphicEntity FK_EXTEND FkObject {
 public:
@@ -20,6 +22,9 @@ public:
     virtual ~FkGraphicEntity();
 
     FkResult addComponent(std::shared_ptr<FkGraphicComponent> comp);
+
+    FkResult findComponent(std::vector<std::shared_ptr<FkGraphicComponent>> &vec,
+                           const FkClassType &classType);
 
 private:
     std::list<std::shared_ptr<FkGraphicComponent>> components;

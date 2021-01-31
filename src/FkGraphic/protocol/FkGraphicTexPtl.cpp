@@ -5,16 +5,17 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkTexComponent.h"
+#include "FkGraphicTexPtl.h"
 
-FkTexComponent::FkTexComponent() : FkBufferComponent() {
+FkGraphicTexPtl::FkGraphicTexPtl() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkTexComponent::FkTexComponent(const FkTexComponent &o) : FkBufferComponent(o) {
+FkGraphicTexPtl::FkGraphicTexPtl(const FkGraphicTexPtl &o) : FkProtocol(o), texId(o.texId) {
     FK_MARK_SUPER
+
 }
 
-FkTexComponent::~FkTexComponent() {
+FkGraphicTexPtl::~FkGraphicTexPtl() {
     texId = FK_ID_NONE;
 }
