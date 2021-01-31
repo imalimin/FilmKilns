@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKGRAPHICPROGRAMQUARK_H
 
 #include "FkQuark.h"
+#include "FkGraphicProgram.h"
 
 class FkGraphicProgramQuark FK_EXTEND FkQuark {
 public:
@@ -31,6 +32,9 @@ protected:
 
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
+
+private:
+    std::shared_ptr<FkGraphicProgramAllocator> allocator = nullptr;
 
 };
 

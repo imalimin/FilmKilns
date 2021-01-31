@@ -13,6 +13,7 @@
 #include "FkTexComponent.h"
 #include "FkScaleComponent.h"
 #include "FkGraphicFrameObject.h"
+#include "FkGraphicProgram.h"
 
 TEST(FkGraphicEntityTest, Context) {
     auto layer = std::make_shared<FkGraphicLayer>();
@@ -65,6 +66,28 @@ TEST(FkGraphicFBOTest, Alloc) {
         int32_t desc = 0;
         auto fbo = allocator->alloc(desc);
         EXPECT_NE(fbo, nullptr);
+        EXPECT_NE(allocator->size(), 0);
+    }
+    EXPECT_EQ(allocator->size(), 0);
+    EXPECT_NE(allocator->capacity(), 0);
+    allocator->release();
+    EXPECT_EQ(allocator->size(), 0);
+    EXPECT_EQ(allocator->capacity(), 0);
+
+    context->destroy();
+    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+}
+
+TEST(FkGraphicProgramTest, Alloc) {
+    auto context = std::make_shared<FkGraphicContext>("Test");
+    EXPECT_EQ(context->create(), FK_OK);
+    EXPECT_EQ(context->makeCurrent(), FK_OK);
+
+    auto allocator = std::make_shared<FkGraphicProgramAllocator>();
+    {
+        FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
+        auto program = allocator->alloc(desc);
+        EXPECT_NE(program, nullptr);
         EXPECT_NE(allocator->size(), 0);
     }
     EXPECT_EQ(allocator->size(), 0);

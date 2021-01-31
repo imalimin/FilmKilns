@@ -16,7 +16,7 @@
 
 FK_CLASS FkTexDescription FK_EXTEND FkObject {
 public:
-    enum WrapMode : int {
+    AFK_ENUM kWrapMode : int32_t {
         REPEAT = 0,
         EDGE,
         BORDER,
@@ -34,7 +34,7 @@ public:
     /// GL_TEXTURE_2D,GL_TEXTURE_EXTERNAL_OES
     uint32_t target = 0;
     /// GL_REPEAT,GL_CLAMP_TO_EDGE,GL_CLAMP_TO_BORDER_EXT
-    WrapMode wrapMode = WrapMode::REPEAT;
+    kWrapMode wrapMode = kWrapMode::REPEAT;
     /// GL_CLAMP_TO_BORDER_EXT mode color
     float borderColor[4] = {0.0f};
     FkSize size;

@@ -71,12 +71,12 @@ FkResult FkGraphicTexture::create() {
     glTexParameterf(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     switch (desc.wrapMode) {
-        case FkTexDescription::WrapMode::EDGE: {
+        case FkTexDescription::kWrapMode::EDGE: {
             glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             break;
         }
-        case FkTexDescription::WrapMode::BORDER: {
+        case FkTexDescription::kWrapMode::BORDER: {
             glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER_EXT);
             glTexParameterf(desc.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER_EXT);
             float color[] = {1.0f, 1.0f, 1.0f, 0.0f};
