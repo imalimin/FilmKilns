@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CPPUnitTest {
     private fun checkUnitTest() {
-        assertTrue(BuildConfig.ENABLE_UNIT_TEST)
+        assertTrue("Enable unit test please.", BuildConfig.ENABLE_UNIT_TEST)
     }
 
     @Test

@@ -35,7 +35,7 @@ android {
     }
 
     productFlavors {
-        nornaml {
+        Normal {
             externalNativeBuild {
                 cmake {
                     arguments.add "-DENABLE_G_TEST=FALSE"
@@ -43,7 +43,7 @@ android {
             }
         }
 
-        unitTest {
+        UnitTest {
             buildConfigField("boolean", "ENABLE_UNIT_TEST", "true")
             externalNativeBuild {
                 cmake {
