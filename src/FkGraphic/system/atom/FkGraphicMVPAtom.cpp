@@ -11,11 +11,7 @@
 #include "FkGraphicScaleQuark.h"
 #include "FkGraphicRotateQuark.h"
 
-FkGraphicMVPAtom::FkGraphicMVPAtom() : FkAtom() {
-    client = std::make_shared<FkLocalClient>();
-    mTransQuark = std::make_shared<FkGraphicTransQuark>();
-    mScaleQuark = std::make_shared<FkGraphicScaleQuark>();
-    mRotateQuark = std::make_shared<FkGraphicRotateQuark>();
+FkGraphicMVPAtom::FkGraphicMVPAtom() : FkSimpleAtom() {
 }
 
 FkGraphicMVPAtom::~FkGraphicMVPAtom() {
@@ -26,49 +22,30 @@ void FkGraphicMVPAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMVPAtom::_onDrawLayer);
 }
 
+void FkGraphicMVPAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next(std::make_shared<FkGraphicTransQuark>());
+    chain->next(std::make_shared<FkGraphicScaleQuark>());
+    chain->next(std::make_shared<FkGraphicRotateQuark>());
+}
+
 FkResult FkGraphicMVPAtom::onCreate() {
-    auto ret = FkAtom::onCreate();
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
-    ret = client->quickSend<FkOnCreatePrt>(mTransQuark, mScaleQuark, mRotateQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    mLayerSession = FkSession::with(std::make_shared<FkGraphicLayerPrt>());
-    ret = mLayerSession->connectTo(mTransQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mScaleQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mRotateQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    return mLayerSession->open();
+    return ret;
 }
 
 FkResult FkGraphicMVPAtom::onDestroy() {
-    auto ret = FkAtom::onDestroy();
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
-    ret = client->quickSend<FkOnDestroyPrt>(mTransQuark, mScaleQuark, mRotateQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    return mLayerSession->close();
+    return ret;
 }
 
 FkResult FkGraphicMVPAtom::onStart() {
-    auto ret = FkAtom::onStart();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = client->quickSend<FkOnStartPrt>(mTransQuark, mScaleQuark, mRotateQuark);
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -76,11 +53,7 @@ FkResult FkGraphicMVPAtom::onStart() {
 }
 
 FkResult FkGraphicMVPAtom::onStop() {
-    auto ret = FkAtom::onStop();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = client->quickSend<FkOnStopPrt>(mTransQuark, mScaleQuark, mRotateQuark);
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }
@@ -88,5 +61,5 @@ FkResult FkGraphicMVPAtom::onStop() {
 }
 
 FkResult FkGraphicMVPAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
-    return client->send(mLayerSession, p);
+    return dispatchNext(std::move(p));
 }

@@ -43,3 +43,13 @@ std::shared_ptr<FkPort> FkPortDesc::find(FkProtocol::Type type) {
     }
     return itr->second;
 }
+
+FkResult FkPortDesc::query(std::list<std::shared_ptr<FkProtocol>> &protocols) {
+    if (ports.empty()) {
+        return FK_EMPTY_DATA;
+    }
+    for (auto &itr : ports) {
+        protocols.push_back(itr.second->protocol);
+    }
+    return FK_OK;
+}

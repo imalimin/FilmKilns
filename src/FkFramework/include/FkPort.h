@@ -12,9 +12,11 @@
 #include "FkProtocol.h"
 
 class FkQuark;
+class FkPortDesc;
 
 FK_CLASS FkPort FK_EXTEND FkObject {
 public:
+    friend FkPortDesc;
     typedef int (FkQuark::*PortFunc)(std::shared_ptr<FkProtocol>);
     static const uint32_t NONE;
 
@@ -25,7 +27,7 @@ public:
 
     virtual ~FkPort();
 
-    FkResult communicate(FkQuark *target, std::shared_ptr<FkProtocol> protocol) const;
+    FkResult chat(FkQuark *target, std::shared_ptr<FkProtocol> protocol) const;
 
 public:
     uint32_t port = 0;

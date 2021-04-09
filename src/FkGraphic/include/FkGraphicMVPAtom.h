@@ -8,10 +8,10 @@
 #ifndef FK_GRAPHIC_FKGRAPHICMVPATOM_H
 #define FK_GRAPHIC_FKGRAPHICMVPATOM_H
 
-#include "FkAtom.h"
+#include "FkSimpleAtom.h"
 #include "FkLocalClient.h"
 
-FK_CLASS FkGraphicMVPAtom FK_EXTEND FkAtom {
+FK_CLASS FkGraphicMVPAtom FK_EXTEND FkSimpleAtom {
 public:
     FkGraphicMVPAtom();
 
@@ -21,6 +21,8 @@ public:
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
+
+    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
 
     virtual FkResult onCreate() override;
 
@@ -33,12 +35,6 @@ protected:
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
-private:
-    std::shared_ptr<FkSessionClient> client;
-    std::shared_ptr<FkSession> mLayerSession = nullptr;
-    std::shared_ptr<FkQuark> mTransQuark = nullptr;
-    std::shared_ptr<FkQuark> mScaleQuark = nullptr;
-    std::shared_ptr<FkQuark> mRotateQuark = nullptr;
 };
 
 

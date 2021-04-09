@@ -24,7 +24,7 @@ public:
 
     template<class T, typename... Args>
     FkResult quickSend(Args... chain) {
-        auto session = FkSession::with<T>(std::make_shared<T>());
+        auto session = FkSession::with(std::make_shared<T>());
         auto ll = initializer_list<std::shared_ptr<FkQuark>>{chain...};
         for (auto it = ll.begin(); it != ll.end(); ++it) {
             auto ret = session->connectTo(*it);

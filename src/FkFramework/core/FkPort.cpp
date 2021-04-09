@@ -20,6 +20,6 @@ FkPort::~FkPort() {
     func = nullptr;
 }
 
-FkResult FkPort::communicate(FkQuark *target, std::shared_ptr<FkProtocol> protocol) const {
+FkResult FkPort::chat(FkQuark *target, std::shared_ptr<FkProtocol> protocol) const {
     return (target->*func)(protocol);
 }

@@ -7,6 +7,12 @@
 
 #include "FkSession.h"
 
+std::shared_ptr<FkSession> FkSession::with(std::shared_ptr<FkProtocol> p) {
+    auto session = std::make_shared<FkSession>();
+    session->templateProtocol = p;
+    return session;
+}
+
 FkSession::FkSession() : FkObject() {
 
 }
@@ -97,4 +103,8 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
         }
     }
     return FK_OK;
+}
+
+std::string FkSession::toString() {
+    return templateProtocol->getClassType().toString();
 }

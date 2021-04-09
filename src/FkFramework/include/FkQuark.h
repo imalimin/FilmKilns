@@ -44,6 +44,8 @@ protected:
 
     virtual FkResult dispatch(std::shared_ptr<FkProtocol> p);
 
+    FkResult queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols);
+
 private:
     FkQuark(const FkQuark &o) : FkObject() {};
 

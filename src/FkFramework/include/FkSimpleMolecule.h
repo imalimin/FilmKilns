@@ -5,18 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_FRAMEWORK_FKMOLECULE_H
-#define FK_FRAMEWORK_FKMOLECULE_H
+#ifndef FK_FRAMEWORK_FKSIMPLEMOLECULE_H
+#define FK_FRAMEWORK_FKSIMPLEMOLECULE_H
 
-#include "FkAtom.h"
+#include "FkSimpleAtom.h"
 
-FK_ABS_CLASS FkMolecule FK_EXTEND FkAtom {
+FK_ABS_CLASS FkSimpleMolecule FK_EXTEND FkSimpleAtom {
 public:
-    FkMolecule();
+    FkSimpleMolecule();
 
-    FkMolecule(const FkMolecule &o) = delete;
+    FkSimpleMolecule(const FkSimpleMolecule &o) = delete;
 
-    virtual ~FkMolecule();
+    virtual ~FkSimpleMolecule();
 
 protected:
     virtual FkResult onCreate() override;
@@ -30,4 +30,4 @@ protected:
 };
 
 
-#endif //FK_FRAMEWORK_FKMOLECULE_H
+#endif //FK_FRAMEWORK_FKSIMPLEMOLECULE_H

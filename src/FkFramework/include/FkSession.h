@@ -30,12 +30,7 @@ public:
         OPENED,
     };
 
-    template<class T>
-    static std::shared_ptr<FkSession> with(std::shared_ptr<T> p) {
-        auto session = std::make_shared<FkSession>();
-        session->templateProtocol = p;
-        return session;
-    }
+    static std::shared_ptr<FkSession> with(std::shared_ptr<FkProtocol> p);
 
 public:
     FkSession();
@@ -49,6 +44,8 @@ public:
     FkResult open();
 
     FkResult close();
+
+    virtual std::string toString() override;
 
 private:
     FkSession(const FkSession &o) : FkObject() {};

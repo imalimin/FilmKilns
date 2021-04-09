@@ -10,6 +10,7 @@
 
 #include "FkPort.h"
 #include <unordered_map>
+#include <list>
 
 #define FK_PORT_DESC_ADD(desc, port, PRT, method) \
     desc->add(port, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
@@ -31,6 +32,8 @@ public:
     FkResult add(uint32_t port, std::shared_ptr<FkProtocol> p, FkPort::PortFunc func);
 
     std::shared_ptr<FkPort> find(FkProtocol::Type type);
+
+    FkResult query(std::list<std::shared_ptr<FkProtocol>> &protocols);
 
 private:
     std::unordered_map<FkProtocol::Type, std::shared_ptr<FkPort>> ports;

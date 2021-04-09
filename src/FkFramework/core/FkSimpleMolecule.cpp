@@ -5,42 +5,42 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkMolecule.h"
+#include "FkSimpleMolecule.h"
 
-FkMolecule::FkMolecule() : FkAtom() {
-
-}
-
-FkMolecule::~FkMolecule() {
+FkSimpleMolecule::FkSimpleMolecule() : FkSimpleAtom() {
 
 }
 
-FkResult FkMolecule::onCreate() {
-    auto ret = FkAtom::onCreate();
+FkSimpleMolecule::~FkSimpleMolecule() {
+
+}
+
+FkResult FkSimpleMolecule::onCreate() {
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
     return ret;
 }
 
-FkResult FkMolecule::onDestroy() {
-    auto ret = FkAtom::onDestroy();
+FkResult FkSimpleMolecule::onDestroy() {
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
     return ret;
 }
 
-FkResult FkMolecule::onStart() {
-    auto ret = FkAtom::onStart();
+FkResult FkSimpleMolecule::onStart() {
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
     return ret;
 }
 
-FkResult FkMolecule::onStop() {
-    auto ret = FkAtom::onStop();
+FkResult FkSimpleMolecule::onStop() {
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }

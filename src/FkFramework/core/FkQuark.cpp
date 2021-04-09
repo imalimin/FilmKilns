@@ -52,7 +52,7 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
     }
     auto port = desc->find(p->getType());
     if (nullptr != port) {
-        return port->communicate(this, p);
+        return port->chat(this, p);
     }
     return FK_FAIL;
 }
@@ -105,4 +105,8 @@ FkResult FkQuark::_changeState(kState src, kState dst) {
     }
     this->state = dst;
     return FK_OK;
+}
+
+FkResult FkQuark::queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols) {
+    return desc->query(protocols);
 }
