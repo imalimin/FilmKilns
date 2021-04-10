@@ -13,7 +13,7 @@
 
 #define TAG "FkQuark"
 
-FkQuark::FkQuark() : FkObject(), state(FkQuark::kState::IDL) {
+FkQuark::FkQuark() : FkObject(), state(kState::IDL) {
     desc = std::make_shared<FkPortDesc>();
     FK_PORT_DESC_QUICK_ADD(desc, FkOnCreatePrt, FkQuark::_onCreate);
     FK_PORT_DESC_QUICK_ADD(desc, FkOnDestroyPrt, FkQuark::_onDestroy);
@@ -42,7 +42,7 @@ FkResult FkQuark::onStop() {
 }
 
 FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
-    if (this->state != FkQuark::kState::STARTED
+    if (this->state != kState::STARTED
         && !FK_INSTANCE_OF(p, FkOnCreatePrt)
         && !FK_INSTANCE_OF(p, FkOnDestroyPrt)
         && !FK_INSTANCE_OF(p, FkOnStartPrt)
@@ -58,7 +58,7 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(FkQuark::kState::IDL, FkQuark::kState::CREATED);
+    auto ret = _changeState(kState::IDL, kState::CREATED);
     if (FK_OK != ret) {
         return ret;
     }
@@ -67,7 +67,7 @@ FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onDestroy(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(FkQuark::kState::STOPPED, FkQuark::kState::IDL);
+    auto ret = _changeState(kState::STOPPED, kState::IDL);
     if (FK_OK != ret) {
         return ret;
     }
@@ -75,7 +75,7 @@ FkResult FkQuark::_onDestroy(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onStart(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(FkQuark::kState::CREATED, FkQuark::kState::STARTED);
+    auto ret = _changeState(kState::CREATED, kState::STARTED);
     if (FK_OK != ret) {
         return ret;
     }
@@ -83,7 +83,7 @@ FkResult FkQuark::_onStart(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onStop(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(FkQuark::kState::STARTED, FkQuark::kState::STOPPED);
+    auto ret = _changeState(kState::STARTED, kState::STOPPED);
     if (FK_OK != ret) {
         return ret;
     }

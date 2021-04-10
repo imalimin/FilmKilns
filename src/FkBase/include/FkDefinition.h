@@ -33,7 +33,11 @@
 #define FkLogW(tag, fmt, args...) AlLogW(tag, fmt, ##args)
 
 // +-------- Assert --------+
+#ifdef __FK_DEBUG__
 #define FkAssert(condition) assert(condition)
+#else
+#define FkAssert(condition) FkLogW("FkAssert", "Assert failed.");
+#endif
 
 // +------ State Code ------+
 typedef int32_t FkResult;
@@ -48,5 +52,14 @@ typedef int32_t FkResult;
 typedef int32_t FkID;
 #define FK_ID_NONE -1
 
+// +------ KID ------+
+#define FK_KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
+
+AFK_ENUM kState : int {
+    IDL = -1,
+    CREATED,
+    STARTED,
+    STOPPED,
+};
 
 #endif //FK_BASE_FKDEFINITION_H

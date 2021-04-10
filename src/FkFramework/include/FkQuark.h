@@ -17,13 +17,6 @@ class FkSession;
 FK_ABS_CLASS FkQuark FK_EXTEND FkObject {
     friend FkSession;
 public:
-    AFK_ENUM kState : int {
-        IDL = -1,
-        CREATED,
-        STARTED,
-        STOPPED,
-    };
-
     typedef int (FkQuark::*ProtHandler)(std::shared_ptr<FkProtocol>);
 
 public:

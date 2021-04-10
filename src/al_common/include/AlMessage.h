@@ -11,6 +11,7 @@
 #include "Object.h"
 #include <queue>
 #include <mutex>
+#include <future>
 
 class AlLooper;
 
@@ -28,6 +29,7 @@ public:
     /// Will be delete after cycle.
     Object *obj = nullptr;
     std::shared_ptr<Object> sp;
+    std::promise<Object> prom;
     int16_t queueMode = QUEUE_MODE_NORMAL;
 private:
     friend AlLooper;
