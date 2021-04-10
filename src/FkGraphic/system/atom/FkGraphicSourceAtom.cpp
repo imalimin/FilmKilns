@@ -12,12 +12,7 @@
 #include "FkGraphicFBOQuark.h"
 #include "FkGraphicProgramQuark.h"
 
-FkGraphicSourceAtom::FkGraphicSourceAtom() : FkAtom() {
-    client = std::make_shared<FkLocalClient>();
-    mCtxQuark = std::make_shared<FkGraphicContextQuark>();
-    mTexQuark = std::make_shared<FkGraphicTexQuark>();
-    mFBOQuark = std::make_shared<FkGraphicFBOQuark>();
-    mProgramQuark = std::make_shared<FkGraphicProgramQuark>();
+FkGraphicSourceAtom::FkGraphicSourceAtom() : FkSimpleAtom() {
 }
 
 FkGraphicSourceAtom::~FkGraphicSourceAtom() {
@@ -28,53 +23,31 @@ void FkGraphicSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicSourceAtom::_onDrawLayer);
 }
 
+void FkGraphicSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkGraphicContextQuark>();
+    chain->next<FkGraphicTexQuark>();
+    chain->next<FkGraphicFBOQuark>();
+    chain->next<FkGraphicProgramQuark>();
+}
+
 FkResult FkGraphicSourceAtom::onCreate() {
-    auto ret = FkAtom::onCreate();
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
-    ret = client->quickSend<FkOnCreatePrt>(mCtxQuark, mTexQuark, mFBOQuark, mProgramQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    mLayerSession = FkSession::with(std::make_shared<FkGraphicLayerPrt>());
-    ret = mLayerSession->connectTo(mCtxQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mTexQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mFBOQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mProgramQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    return mLayerSession->open();
+    return ret;
 }
 
 FkResult FkGraphicSourceAtom::onDestroy() {
-    auto ret = FkAtom::onDestroy();
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
-    ret = client->quickSend<FkOnDestroyPrt>(mCtxQuark, mTexQuark, mFBOQuark, mProgramQuark);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    return mLayerSession->close();
+    return ret;
 }
 
 FkResult FkGraphicSourceAtom::onStart() {
-    auto ret = FkAtom::onStart();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = client->quickSend<FkOnStartPrt>(mCtxQuark, mTexQuark, mFBOQuark, mProgramQuark);
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -82,11 +55,7 @@ FkResult FkGraphicSourceAtom::onStart() {
 }
 
 FkResult FkGraphicSourceAtom::onStop() {
-    auto ret = FkAtom::onStop();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = client->quickSend<FkOnStopPrt>(mCtxQuark, mTexQuark, mFBOQuark, mProgramQuark);
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }
@@ -94,5 +63,5 @@ FkResult FkGraphicSourceAtom::onStop() {
 }
 
 FkResult FkGraphicSourceAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
-    return client->send(mLayerSession, p);
+    return dispatchNext(std::move(p));
 }

@@ -15,7 +15,7 @@ FkConnectChain::~FkConnectChain() {
 
 }
 
-void FkConnectChain::next(std::shared_ptr<FkQuark> quark) {
+void FkConnectChain::_next(std::shared_ptr<FkQuark> quark) {
     chain.push_back(quark);
 }
 

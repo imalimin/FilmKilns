@@ -21,9 +21,15 @@ public:
 
     virtual ~FkConnectChain();
 
-    void next(std::shared_ptr<FkQuark> quark);
+    template<class T>
+    void next() {
+        _next(std::make_shared<T>());
+    }
 
     std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> p);
+
+private:
+    void _next(std::shared_ptr<FkQuark> quark);
 
 private:
     std::list<std::shared_ptr<FkQuark>> chain;

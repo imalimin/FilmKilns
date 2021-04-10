@@ -12,12 +12,7 @@
 #include "FkGraphicRenderAtom.h"
 #include "FkGraphicScreenAtom.h"
 
-FkGraphicMolecule::FkGraphicMolecule() : FkMolecule() {
-    client = std::make_shared<FkLocalClient>();
-    mMVPAtom = std::make_shared<FkGraphicMVPAtom>();
-    mSrcAtom = std::make_shared<FkGraphicSourceAtom>();
-    mRenderAtom = std::make_shared<FkGraphicRenderAtom>();
-    mScreenAtom = std::make_shared<FkGraphicScreenAtom>();
+FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
 }
 
 FkGraphicMolecule::~FkGraphicMolecule() {
@@ -28,53 +23,31 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMolecule::_onDrawLayer);
 }
 
+void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkGraphicMVPAtom>();
+    chain->next<FkGraphicSourceAtom>();
+    chain->next<FkGraphicRenderAtom>();
+    chain->next<FkGraphicScreenAtom>();
+}
+
 FkResult FkGraphicMolecule::onCreate() {
-    auto ret = FkMolecule::onCreate();
+    auto ret = FkSimpleMolecule::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
-    ret = client->quickSend<FkOnCreatePrt>(mMVPAtom, mSrcAtom, mRenderAtom, mScreenAtom);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    mLayerSession = FkSession::with(std::make_shared<FkGraphicLayerPrt>());
-    ret = mLayerSession->connectTo(mMVPAtom);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mSrcAtom);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mRenderAtom);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = mLayerSession->connectTo(mScreenAtom);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    return mLayerSession->open();
+    return ret;
 }
 
 FkResult FkGraphicMolecule::onDestroy() {
-    auto ret = FkMolecule::onDestroy();
+    auto ret = FkSimpleMolecule::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
-    ret = client->quickSend<FkOnDestroyPrt>(mMVPAtom, mSrcAtom, mRenderAtom, mScreenAtom);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    return mLayerSession->close();
+    return ret;
 }
 
 FkResult FkGraphicMolecule::onStart() {
-    auto ret = FkMolecule::onStart();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = client->quickSend<FkOnStartPrt>(mMVPAtom, mSrcAtom, mRenderAtom, mScreenAtom);
+    auto ret = FkSimpleMolecule::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -82,11 +55,7 @@ FkResult FkGraphicMolecule::onStart() {
 }
 
 FkResult FkGraphicMolecule::onStop() {
-    auto ret = FkMolecule::onStop();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    ret = client->quickSend<FkOnStopPrt>(mMVPAtom, mSrcAtom, mRenderAtom, mScreenAtom);
+    auto ret = FkSimpleMolecule::onStop();
     if (FK_OK != ret) {
         return ret;
     }
@@ -94,5 +63,5 @@ FkResult FkGraphicMolecule::onStop() {
 }
 
 FkResult FkGraphicMolecule::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
-    return client->send(mLayerSession, p);
+    return dispatchNext(std::move(p));
 }

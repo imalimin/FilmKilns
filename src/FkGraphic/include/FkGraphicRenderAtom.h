@@ -8,9 +8,9 @@
 #ifndef FK_GRAPHIC_FKGRAPHICRENDERATOM_H
 #define FK_GRAPHIC_FKGRAPHICRENDERATOM_H
 
-#include "FkAtom.h"
+#include "FkSimpleAtom.h"
 
-FK_CLASS FkGraphicRenderAtom FK_EXTEND FkAtom {
+FK_CLASS FkGraphicRenderAtom FK_EXTEND FkSimpleAtom {
 public:
     FkGraphicRenderAtom();
 
@@ -28,6 +28,8 @@ protected:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
+
+    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
 
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);

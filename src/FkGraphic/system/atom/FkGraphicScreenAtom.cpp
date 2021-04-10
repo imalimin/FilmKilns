@@ -8,8 +8,7 @@
 #include "FkGraphicScreenAtom.h"
 #include "FkGraphicLayerPrt.h"
 
-FkGraphicScreenAtom::FkGraphicScreenAtom() : FkAtom() {
-    client = std::make_shared<FkLocalClient>();
+FkGraphicScreenAtom::FkGraphicScreenAtom() : FkSimpleAtom() {
 
 }
 
@@ -19,23 +18,25 @@ FkGraphicScreenAtom::~FkGraphicScreenAtom() {
 
 void FkGraphicScreenAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicScreenAtom::_onDrawLayer);
+}
 
+void FkGraphicScreenAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkGraphicScreenAtom::onCreate() {
-    return FkAtom::onCreate();
+    return FkSimpleAtom::onCreate();
 }
 
 FkResult FkGraphicScreenAtom::onDestroy() {
-    return FkAtom::onDestroy();
+    return FkSimpleAtom::onDestroy();
 }
 
 FkResult FkGraphicScreenAtom::onStart() {
-    return FkAtom::onStart();
+    return FkSimpleAtom::onStart();
 }
 
 FkResult FkGraphicScreenAtom::onStop() {
-    return FkAtom::onStop();
+    return FkSimpleAtom::onStop();
 }
 
 FkResult FkGraphicScreenAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {

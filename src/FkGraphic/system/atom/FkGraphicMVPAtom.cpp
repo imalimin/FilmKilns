@@ -23,9 +23,9 @@ void FkGraphicMVPAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkGraphicMVPAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next(std::make_shared<FkGraphicTransQuark>());
-    chain->next(std::make_shared<FkGraphicScaleQuark>());
-    chain->next(std::make_shared<FkGraphicRotateQuark>());
+    chain->next<FkGraphicTransQuark>();
+    chain->next<FkGraphicScaleQuark>();
+    chain->next<FkGraphicRotateQuark>();
 }
 
 FkResult FkGraphicMVPAtom::onCreate() {

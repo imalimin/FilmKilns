@@ -8,7 +8,7 @@
 #include "FkGraphicRenderAtom.h"
 #include "FkGraphicLayerPrt.h"
 
-FkGraphicRenderAtom::FkGraphicRenderAtom() : FkAtom() {
+FkGraphicRenderAtom::FkGraphicRenderAtom() : FkSimpleAtom() {
 
 }
 
@@ -20,20 +20,23 @@ void FkGraphicRenderAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicRenderAtom::_onDrawLayer);
 }
 
+void FkGraphicRenderAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+}
+
 FkResult FkGraphicRenderAtom::onCreate() {
-    return FkAtom::onCreate();
+    return FkSimpleAtom::onCreate();
 }
 
 FkResult FkGraphicRenderAtom::onDestroy() {
-    return FkAtom::onDestroy();
+    return FkSimpleAtom::onDestroy();
 }
 
 FkResult FkGraphicRenderAtom::onStart() {
-    return FkAtom::onStart();
+    return FkSimpleAtom::onStart();
 }
 
 FkResult FkGraphicRenderAtom::onStop() {
-    return FkAtom::onStop();
+    return FkSimpleAtom::onStop();
 }
 
 FkResult FkGraphicRenderAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {

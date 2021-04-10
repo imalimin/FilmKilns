@@ -8,10 +8,10 @@
 #ifndef FK_GRAPHIC_FKGRAPHICSOURCEATOM_H
 #define FK_GRAPHIC_FKGRAPHICSOURCEATOM_H
 
-#include "FkAtom.h"
+#include "FkSimpleAtom.h"
 #include "FkLocalClient.h"
 
-FK_CLASS FkGraphicSourceAtom FK_EXTEND FkAtom {
+FK_CLASS FkGraphicSourceAtom FK_EXTEND FkSimpleAtom {
 public:
     FkGraphicSourceAtom();
 
@@ -30,16 +30,11 @@ protected:
 
     virtual FkResult onStop() override;
 
+    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
+
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
-private:
-    std::shared_ptr<FkSessionClient> client;
-    std::shared_ptr<FkSession> mLayerSession = nullptr;
-    std::shared_ptr<FkQuark> mCtxQuark = nullptr;
-    std::shared_ptr<FkQuark> mTexQuark = nullptr;
-    std::shared_ptr<FkQuark> mFBOQuark = nullptr;
-    std::shared_ptr<FkQuark> mProgramQuark = nullptr;
 };
 
 

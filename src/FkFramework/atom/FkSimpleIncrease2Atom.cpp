@@ -23,8 +23,8 @@ void FkSimpleIncrease2Atom::describeProtocols(std::shared_ptr<FkPortDesc> desc) 
 }
 
 void FkSimpleIncrease2Atom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next(std::make_shared<FkIncreaseQuark>());
-    chain->next(std::make_shared<FkDivideQuark>());
+    chain->next<FkIncreaseQuark>();
+    chain->next<FkDivideQuark>();
 }
 
 FkResult FkSimpleIncrease2Atom::onCreate() {

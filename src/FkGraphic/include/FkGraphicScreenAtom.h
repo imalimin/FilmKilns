@@ -8,10 +8,10 @@
 #ifndef FK_GRAPHIC_FKGRAPHICSCREENATOM_H
 #define FK_GRAPHIC_FKGRAPHICSCREENATOM_H
 
-#include "FkAtom.h"
+#include "FkSimpleAtom.h"
 #include "FkLocalClient.h"
 
-FK_CLASS FkGraphicScreenAtom FK_EXTEND FkAtom {
+FK_CLASS FkGraphicScreenAtom FK_EXTEND FkSimpleAtom {
 public:
     FkGraphicScreenAtom();
 
@@ -30,11 +30,11 @@ protected:
 
     virtual FkResult onStop() override;
 
+    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
+
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
-private:
-    std::shared_ptr<FkSessionClient> client;
 };
 
 
