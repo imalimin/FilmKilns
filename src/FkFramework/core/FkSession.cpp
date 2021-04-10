@@ -24,7 +24,7 @@ FkSession::~FkSession() {
 FkResult FkSession::connectTo(const std::shared_ptr<FkQuark> quark) {
     std::lock_guard<std::mutex> guard(mtx);
     if (FkSession::kState::IDL != state) {
-        FkLogW(FK_DEF_TAG, "Invalid state");
+        FkLogE(FK_DEF_TAG, "Invalid state");
         return FK_INVALID_STATE;
     }
     if (nullptr == quark) {
@@ -40,7 +40,7 @@ FkResult FkSession::connectTo(const std::shared_ptr<FkQuark> quark) {
 FkResult FkSession::disconnect(const std::shared_ptr<FkQuark> quark) {
     std::lock_guard<std::mutex> guard(mtx);
     if (FkSession::kState::IDL != state) {
-        FkLogW(FK_DEF_TAG, "Invalid state");
+        FkLogE(FK_DEF_TAG, "Invalid state");
         return FK_INVALID_STATE;
     }
     if (nullptr == quark) {
@@ -61,8 +61,12 @@ FkResult FkSession::disconnect(const std::shared_ptr<FkQuark> quark) {
 FkResult FkSession::open() {
     std::lock_guard<std::mutex> guard(mtx);
     if (FkSession::kState::IDL != state) {
-        FkLogW(FK_DEF_TAG, "Invalid state");
+        FkLogE(FK_DEF_TAG, "Invalid state");
         return FK_INVALID_STATE;
+    }
+    if (link.empty()) {
+        FkLogE(FK_DEF_TAG, "Connect quark first.");
+        return FK_EMPTY_DATA;
     }
     state = FkSession::kState::OPENED;
     return FK_OK;
@@ -71,7 +75,7 @@ FkResult FkSession::open() {
 FkResult FkSession::close() {
     std::lock_guard<std::mutex> guard(mtx);
     if (FkSession::kState::OPENED != state) {
-        FkLogW(FK_DEF_TAG, "Invalid state");
+        FkLogE(FK_DEF_TAG, "Invalid state");
         return FK_INVALID_STATE;
     }
     link.clear();
@@ -89,7 +93,7 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
     {
         std::lock_guard<std::mutex> guard(mtx);
         if (FkSession::kState::OPENED != state) {
-            FkLogW(FK_DEF_TAG, "Invalid state");
+            FkLogE(FK_DEF_TAG, "Invalid state");
             return FK_INVALID_STATE;
         }
     }

@@ -27,7 +27,7 @@ public:
 
     virtual ~FkPort();
 
-    FkResult chat(FkQuark *target, std::shared_ptr<FkProtocol> protocol) const;
+    FkResult chat(FkQuark *target, std::shared_ptr<FkProtocol> p) const;
 
 public:
     uint32_t port = 0;

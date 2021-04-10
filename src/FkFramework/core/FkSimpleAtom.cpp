@@ -40,19 +40,22 @@ FkSimpleAtom::~FkSimpleAtom() {
 }
 
 FkResult FkSimpleAtom::onCreate() {
-    auto ret = FkQuark::onCreate();
+    auto ret = FkAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
     client = std::make_shared<FkLocalClient>();
     onConnect(chain);
+    /// Connect create/destroy/start/stop.
     _connectSession();
     ret = dispatchNext(std::make_shared<FkOnCreatePrt>());
+    /// Connect left protocols.
+    _connectSession();
     return ret;
 }
 
 FkResult FkSimpleAtom::onDestroy() {
-    auto ret = FkQuark::onDestroy();
+    auto ret = FkAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -62,7 +65,7 @@ FkResult FkSimpleAtom::onDestroy() {
 }
 
 FkResult FkSimpleAtom::onStart() {
-    auto ret = FkQuark::onStart();
+    auto ret = FkAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -71,7 +74,7 @@ FkResult FkSimpleAtom::onStart() {
 }
 
 FkResult FkSimpleAtom::onStop() {
-    auto ret = FkQuark::onStop();
+    auto ret = FkAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }
@@ -83,6 +86,9 @@ void FkSimpleAtom::_connectSession() {
     std::list<std::shared_ptr<FkProtocol>> protocols;
     if (FK_OK == queryProtocols(protocols)) {
         for (auto &it : protocols) {
+            if (mSessionMap.end() != mSessionMap.find(it->getType())) {
+                continue;
+            }
             auto session = chain->connectSession(it);
             FkResult ret = session->open();
             if (FK_OK == ret) {
@@ -107,7 +113,7 @@ void FkSimpleAtom::_disconnectSession() {
 FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     auto itr = mSessionMap.find(p->getType());
     if (mSessionMap.end() != itr) {
-        return client->send(itr->second, p);
+        return client->send(itr->second, std::move(p));
     }
     return FK_FAIL;
 }
