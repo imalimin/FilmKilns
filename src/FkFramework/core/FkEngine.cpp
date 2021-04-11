@@ -27,7 +27,10 @@ bool FkMessageHandlerPair::handle(FkEngine *target, AlMessage *msg) {
     return (target->*handler)(msg);
 }
 
-const FkID FkEngine::MSG_FUTURE = FK_KID('F', 'K', 'E', 0x01);
+const FkID FkEngine::FK_MSG_CREATE = FK_KID('F', 'K', 'E', 0x01);
+const FkID FkEngine::FK_MSG_DESTROY = FK_KID('F', 'K', 'E', 0x02);
+const FkID FkEngine::FK_MSG_START = FK_KID('F', 'K', 'E', 0x03);
+const FkID FkEngine::FK_MSG_STOP = FK_KID('F', 'K', 'E', 0x04);
 
 FkEngine::FkEngine(std::string name) : FkObject(), name(std::move(name)), state(kState::IDL) {
 }

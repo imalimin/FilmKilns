@@ -55,3 +55,23 @@ FkResult FkLayerEngine::stop() {
 FkID FkLayerEngine::newLayer() {
     return FK_ID_NONE;
 }
+
+FkResult FkLayerEngine::_create(std::shared_ptr<AlMessage> msg) {
+    return FK_OK;
+}
+
+FkResult FkLayerEngine::_destroy(std::shared_ptr<AlMessage> msg) {
+    return FK_OK;
+}
+
+FkResult FkLayerEngine::_start(std::shared_ptr<AlMessage> msg) {
+    return FK_OK;
+}
+
+FkResult FkLayerEngine::_stop(std::shared_ptr<AlMessage> msg) {
+    return FK_OK;
+}
+
+FkResult FkLayerEngine::_newLayer(std::shared_ptr<AlMessage> msg) {
+    return FK_OK;
+}

@@ -30,6 +30,17 @@ public:
     FkID newLayer();
 
 private:
+    FkResult _create(std::shared_ptr<AlMessage> msg);
+
+    FkResult _destroy(std::shared_ptr<AlMessage> msg);
+
+    FkResult _start(std::shared_ptr<AlMessage> msg);
+
+    FkResult _stop(std::shared_ptr<AlMessage> msg);
+
+    FkResult _newLayer(std::shared_ptr<AlMessage> msg);
+
+private:
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
 };
