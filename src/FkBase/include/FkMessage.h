@@ -25,7 +25,7 @@ public:
     int64_t arg2 = 0;
     std::string arg3;
     std::shared_ptr<FkObject> sp;
-    std::promise<Object> prom;
+    std::shared_ptr<std::promise<std::shared_ptr<FkObject>>> prom;
     int32_t flags = FLAG_NORMAL;
 private:
     friend FkLooper;

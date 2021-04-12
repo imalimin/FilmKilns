@@ -6,6 +6,7 @@
 */
 
 #include "FkLayerEngine.h"
+#include "FkGraphicNewLayerPrt.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 
@@ -57,7 +58,10 @@ FkResult FkLayerEngine::stop() {
 
 FkID FkLayerEngine::newLayer(std::string path) {
     auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
+    msg->arg3 = std::move(path);
+    msg->prom = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
     sendMessage(msg);
+    std::shared_ptr<FkGraphicNewLayerPrt> result = std::static_pointer_cast<FkGraphicNewLayerPrt>(msg->prom->get_future().get());
     return FK_ID_NONE;
 }
 
