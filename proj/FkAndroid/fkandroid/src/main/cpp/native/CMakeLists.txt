@@ -8,6 +8,7 @@ include_directories(
         ${PROJECT_SOURCE_FK_DIR}/al_common/include
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
+        ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
@@ -38,8 +39,10 @@ endif ()
 message(STATUS "al_native CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/module SOURCES_MODULE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/engine SOURCES_ENGINE)
 
 list(APPEND SOURCES_ROOT ${SOURCES_MODULE})
+list(APPEND SOURCES_ROOT ${SOURCES_ENGINE})
 
 add_library(${MODULE_NAME} SHARED ${SOURCES_ROOT})
 
@@ -47,5 +50,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common FkBase FkFramework ${log-lib})
+set(MODULES ${MODULE_NAME} al_common FkBase FkFramework FkGraphic ${log-lib})
 target_link_libraries(${MODULES})

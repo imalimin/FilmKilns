@@ -7,7 +7,10 @@
 
 #include "FkLayerEngine.h"
 
+const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
+
 FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
+    FK_REG_MSG(FK_MSG_NEW_LAYER, FkLayerEngine::_newLayer)
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -52,26 +55,12 @@ FkResult FkLayerEngine::stop() {
     return ret;
 }
 
-FkID FkLayerEngine::newLayer() {
+FkID FkLayerEngine::newLayer(std::string path) {
+    auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
+    sendMessage(msg);
     return FK_ID_NONE;
 }
 
-FkResult FkLayerEngine::_create(std::shared_ptr<AlMessage> msg) {
-    return FK_OK;
-}
-
-FkResult FkLayerEngine::_destroy(std::shared_ptr<AlMessage> msg) {
-    return FK_OK;
-}
-
-FkResult FkLayerEngine::_start(std::shared_ptr<AlMessage> msg) {
-    return FK_OK;
-}
-
-FkResult FkLayerEngine::_stop(std::shared_ptr<AlMessage> msg) {
-    return FK_OK;
-}
-
-FkResult FkLayerEngine::_newLayer(std::shared_ptr<AlMessage> msg) {
+FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     return FK_OK;
 }

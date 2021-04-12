@@ -27,20 +27,14 @@ public:
 
     FkResult stop();
 
-    FkID newLayer();
+    FkID newLayer(std::string path);
 
 private:
-    FkResult _create(std::shared_ptr<AlMessage> msg);
 
-    FkResult _destroy(std::shared_ptr<AlMessage> msg);
-
-    FkResult _start(std::shared_ptr<AlMessage> msg);
-
-    FkResult _stop(std::shared_ptr<AlMessage> msg);
-
-    FkResult _newLayer(std::shared_ptr<AlMessage> msg);
+    FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 
 private:
+    static const FkID FK_MSG_NEW_LAYER;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
 };

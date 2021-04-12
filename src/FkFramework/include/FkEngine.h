@@ -10,18 +10,19 @@
 
 #include "FkObject.h"
 #include "FkSimpleMolecule.h"
-#include "AlHandlerThread.h"
-#include "AlHandler.h"
+#include "FkHandlerThread.h"
+#include "FkHandler.h"
 #include <future>
 #include <map>
 #include <mutex>
 
 #define FK_REG_MSG(id, func) \
-_registerMessage(id, reinterpret_cast<FkMessageHandler>(&func)); \
+registerMessage(id, reinterpret_cast<FkMessageHandler>(&func)); \
+
 
 class FkEngine;
 
-typedef bool (FkEngine::*FkMessageHandler)(AlMessage *);
+typedef FkResult (FkEngine::*FkMessageHandler)(std::shared_ptr<FkMessage>);
 
 FK_CLASS FkMessageHandlerPair FK_EXTEND FkObject {
 public:
@@ -31,7 +32,7 @@ public:
 
     virtual ~FkMessageHandlerPair();
 
-    bool handle(FkEngine *target, AlMessage *msg);
+    bool handle(FkEngine *target, std::shared_ptr<FkMessage> msg);
 
 protected:
     FkID what = 0;
@@ -54,7 +55,15 @@ public:
 
     virtual FkResult stop();
 
-    FkResult sendMessage(AlMessage *message);
+    virtual void onCreate();
+
+    virtual void onDestroy();
+
+    virtual void onStart();
+
+    virtual void onStop();
+
+    FkResult sendMessage(std::shared_ptr<FkMessage> msg);
 
 //    template<class T>
 //    std::future<T> sendFuture(std::shared_ptr<T> protocol) {
@@ -64,13 +73,21 @@ public:
 //        mHandler->sendMessage(msg);
 //        return prom->get_future();
 //    }
+protected:
+    FkResult registerMessage(FkID what, FkMessageHandler handler);
 
 private:
+    virtual FkResult _onCreate(std::shared_ptr<FkMessage> msg);
+
+    virtual FkResult _onDestroy(std::shared_ptr<FkMessage> msg);
+
+    virtual FkResult _onStart(std::shared_ptr<FkMessage> msg);
+
+    virtual FkResult _onStop(std::shared_ptr<FkMessage> msg);
+
     FkResult _changeState(kState src, kState dst);
 
-    void _dispatch(AlMessage *msg);
-
-    FkResult _registerMessage(FkID what, FkMessageHandler handler);
+    void _dispatch(std::shared_ptr<FkMessage> msg);
 
 private:
     static const FkID FK_MSG_CREATE;
@@ -78,8 +95,8 @@ private:
     static const FkID FK_MSG_START;
     static const FkID FK_MSG_STOP;
     std::string name;
-    AlHandlerThread *mThread = nullptr;
-    AlHandler *mHandler = nullptr;
+    std::shared_ptr<FkHandlerThread> mThread = nullptr;
+    FkHandler *mHandler = nullptr;
     std::map<FkID, FkMessageHandlerPair> mMsgMap;
     std::mutex mtx;
     kState state = kState::IDL;

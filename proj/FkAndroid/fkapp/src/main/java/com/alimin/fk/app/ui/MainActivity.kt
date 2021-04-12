@@ -12,7 +12,7 @@ class MainActivity : BaseActivity() {
 
     override val layoutResID: Int = R.layout.activity_main
     private val ITEMS = arrayListOf(
-        Action("Module Test") { startActivity(Intent(this, ModuleTestActivity::class.java)) }
+        Action("Image") { startActivity(Intent(this, ImageActivity::class.java)) }
     )
 
     override fun initView() {

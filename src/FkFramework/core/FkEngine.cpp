@@ -23,7 +23,7 @@ FkMessageHandlerPair::~FkMessageHandlerPair() {
     handler = nullptr;
 }
 
-bool FkMessageHandlerPair::handle(FkEngine *target, AlMessage *msg) {
+bool FkMessageHandlerPair::handle(FkEngine *target, std::shared_ptr<FkMessage> msg) {
     return (target->*handler)(msg);
 }
 
@@ -33,6 +33,10 @@ const FkID FkEngine::FK_MSG_START = FK_KID('F', 'K', 'E', 0x03);
 const FkID FkEngine::FK_MSG_STOP = FK_KID('F', 'K', 'E', 0x04);
 
 FkEngine::FkEngine(std::string name) : FkObject(), name(std::move(name)), state(kState::IDL) {
+    FK_REG_MSG(FK_MSG_CREATE, FkEngine::_onCreate)
+    FK_REG_MSG(FK_MSG_DESTROY, FkEngine::_onDestroy)
+    FK_REG_MSG(FK_MSG_START, FkEngine::_onStart)
+    FK_REG_MSG(FK_MSG_STOP, FkEngine::_onStop)
 }
 
 FkEngine::~FkEngine() {
@@ -45,20 +49,15 @@ FkResult FkEngine::create() {
     if (FK_OK != ret) {
         return ret;
     }
-    mThread = AlHandlerThread::create(name);
-    mHandler = new AlHandler(mThread->getLooper(), [this](AlMessage *msg) {
-        if (msg && msg->obj && typeid(AlRunnable) == typeid(*msg->obj)) {
-            AlRunnable *run = dynamic_cast<AlRunnable *>(msg->obj);
-            (*run)(msg);
-        }
-        this->_dispatch(msg);
+    mThread = FkHandlerThread::create(name);
+    mHandler = new FkHandler(mThread->getLooper(), [this](std::shared_ptr<FkMessage> msg) {
+        this->_dispatch(std::move(msg));
     });
     return FK_OK;
 }
 
 FkResult FkEngine::destroy() {
     mThread->quitSafely();
-    delete mThread;
     mThread = nullptr;
     delete mHandler;
     mHandler = nullptr;
@@ -87,6 +86,38 @@ FkResult FkEngine::stop() {
     return FK_OK;
 }
 
+void FkEngine::onCreate() {
+
+}
+
+void FkEngine::onDestroy() {
+
+}
+
+void FkEngine::onStart() {
+
+}
+
+void FkEngine::onStop() {
+
+}
+
+FkResult FkEngine::_onCreate(std::shared_ptr<FkMessage> msg) {
+    return FK_OK;
+}
+
+FkResult FkEngine::_onDestroy(std::shared_ptr<FkMessage> msg) {
+    return FK_OK;
+}
+
+FkResult FkEngine::_onStart(std::shared_ptr<FkMessage> msg) {
+    return FK_OK;
+}
+
+FkResult FkEngine::_onStop(std::shared_ptr<FkMessage> msg) {
+    return FK_OK;
+}
+
 FkResult FkEngine::_changeState(kState src, kState dst) {
     std::lock_guard<std::mutex> guard(mtx);
     if (src != state) {
@@ -97,12 +128,12 @@ FkResult FkEngine::_changeState(kState src, kState dst) {
     return FK_OK;
 }
 
-FkResult FkEngine::_registerMessage(FkID what, FkMessageHandler handler) {
+FkResult FkEngine::registerMessage(FkID what, FkMessageHandler handler) {
     mMsgMap.emplace(std::make_pair(what, FkMessageHandlerPair(what, handler)));
     return FK_OK;
 }
 
-void FkEngine::_dispatch(AlMessage *msg) {
+void FkEngine::_dispatch(std::shared_ptr<FkMessage> msg) {
     std::lock_guard<std::mutex> guard(mtx);
     if (kState::IDL == state) {
         FkLogW(FK_DEF_TAG, "Invalid state");
@@ -110,11 +141,11 @@ void FkEngine::_dispatch(AlMessage *msg) {
     }
     auto itr = mMsgMap.find(msg->what);
     if (mMsgMap.end() != itr) {
-        itr->second.handle(this, msg);
+        itr->second.handle(this, std::move(msg));
     }
 }
 
-FkResult FkEngine::sendMessage(AlMessage *message) {
-    mHandler->sendMessage(message);
+FkResult FkEngine::sendMessage(std::shared_ptr<FkMessage> msg) {
+    mHandler->sendMessage(std::move(msg));
     return FK_OK;
 }
