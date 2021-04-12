@@ -48,6 +48,11 @@ FkResult FkGraphicProgramQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
     auto comp = std::make_shared<FkGraphicProgramComponent>();
     FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
     comp->program = allocator->alloc(desc);
+    _fillValue(comp->program);
     ptl->layer->addComponent(comp);
+    return FK_OK;
+}
+
+FkResult FkGraphicProgramQuark::_fillValue(std::shared_ptr<FkGraphicProgram> program) {
     return FK_OK;
 }

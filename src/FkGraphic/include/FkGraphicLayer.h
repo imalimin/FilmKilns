@@ -20,7 +20,7 @@ public:
     virtual ~FkGraphicLayer();
 
 public:
-    std::shared_ptr<FkBufferComponent> buf = nullptr;
+    FkID id = FK_ID_NONE;
 };
 
 

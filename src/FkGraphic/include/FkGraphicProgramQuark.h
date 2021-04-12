@@ -33,6 +33,8 @@ protected:
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _fillValue(std::shared_ptr<FkGraphicProgram> program);
+
 private:
     std::shared_ptr<FkGraphicProgramAllocator> allocator = nullptr;
 

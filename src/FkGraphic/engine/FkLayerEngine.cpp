@@ -59,12 +59,15 @@ FkResult FkLayerEngine::stop() {
 FkID FkLayerEngine::newLayer(std::string path) {
     auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
     msg->arg3 = std::move(path);
-    msg->prom = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
+    msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
     sendMessage(msg);
-    std::shared_ptr<FkGraphicNewLayerPrt> result = std::static_pointer_cast<FkGraphicNewLayerPrt>(msg->prom->get_future().get());
-    return FK_ID_NONE;
+    std::shared_ptr<FkGraphicNewLayerPrt> result = std::static_pointer_cast<FkGraphicNewLayerPrt>(msg->promise->get_future().get());
+    return result->layer->id;
 }
 
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
-    return FK_OK;
+    auto prt = std::make_shared<FkGraphicNewLayerPrt>();
+    auto ret = client->quickSend<FkGraphicNewLayerPrt>(prt, molecule);
+    msg->promise->set_value(prt);
+    return ret;
 }
