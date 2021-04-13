@@ -8,6 +8,7 @@
 #include "FkAtom.h"
 
 FkAtom::FkAtom() : FkQuark() {
+    FK_MARK_SUPER
 }
 
 FkAtom::~FkAtom() {

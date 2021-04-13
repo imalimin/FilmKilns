@@ -28,6 +28,8 @@ public:
 
     std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> p);
 
+    bool empty();
+
 private:
     void _next(std::shared_ptr<FkQuark> quark);
 
@@ -57,6 +59,8 @@ protected:
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) = 0;
 
 private:
+    void _connectBaseSession();
+
     void _connectSession();
 
     void _disconnectSession();

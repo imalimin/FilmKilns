@@ -9,6 +9,7 @@
 #include "FkGraphicLayerPrt.h"
 
 FkGraphicRotateQuark::FkGraphicRotateQuark() : FkQuark() {
+    FK_MARK_SUPER
 
 }
 

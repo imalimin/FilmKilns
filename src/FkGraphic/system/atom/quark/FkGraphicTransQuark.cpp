@@ -9,6 +9,7 @@
 #include "FkGraphicLayerPrt.h"
 
 FkGraphicTransQuark::FkGraphicTransQuark() : FkQuark() {
+    FK_MARK_SUPER
 
 }
 

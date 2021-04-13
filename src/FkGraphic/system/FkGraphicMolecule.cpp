@@ -11,8 +11,10 @@
 #include "FkGraphicSourceAtom.h"
 #include "FkGraphicRenderAtom.h"
 #include "FkGraphicScreenAtom.h"
+#include "FkGraphicNewLayerPrt.h"
 
 FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
+    FK_MARK_SUPER
 }
 
 FkGraphicMolecule::~FkGraphicMolecule() {
@@ -21,6 +23,7 @@ FkGraphicMolecule::~FkGraphicMolecule() {
 
 void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMolecule::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicMolecule::_onNewLayer);
 }
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
@@ -63,5 +66,9 @@ FkResult FkGraphicMolecule::onStop() {
 }
 
 FkResult FkGraphicMolecule::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+    return dispatchNext(std::move(p));
+}
+
+FkResult FkGraphicMolecule::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     return dispatchNext(std::move(p));
 }

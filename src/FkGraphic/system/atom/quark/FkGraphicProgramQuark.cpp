@@ -10,6 +10,7 @@
 #include "FkGraphicProgramComponent.h"
 
 FkGraphicProgramQuark::FkGraphicProgramQuark() : FkQuark() {
+    FK_MARK_SUPER
 
 }
 

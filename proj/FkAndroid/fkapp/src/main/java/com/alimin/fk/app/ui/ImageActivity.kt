@@ -1,5 +1,6 @@
 package com.alimin.fk.app.ui
 
+import android.util.Log
 import android.view.SurfaceHolder
 import com.alimin.fk.app.R
 import com.alimin.fk.engine.FkImage
@@ -14,7 +15,6 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback {
     override fun initView() {
         FkModuleTest().testAll()
         engine.create()
-        engine.newLayer("")
         surfaceView.holder.addCallback(this)
     }
 
@@ -32,5 +32,7 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback {
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         engine.start()
+        val layer = engine.newLayer("")
+        Log.i("FilmKilns", "newLayer: $layer")
     }
 }

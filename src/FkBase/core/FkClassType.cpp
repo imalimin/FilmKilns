@@ -51,3 +51,7 @@ size_t FkClassType::hashCode() const {
     }
     return hashValue(extends.back());
 }
+
+std::string FkClassType::getName() const {
+    return *(--extends.end());
+}

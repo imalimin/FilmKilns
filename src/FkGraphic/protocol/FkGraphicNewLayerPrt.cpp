@@ -11,7 +11,7 @@ FkGraphicNewLayerPrt::FkGraphicNewLayerPrt() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkGraphicNewLayerPrt::FkGraphicNewLayerPrt(const FkGraphicNewLayerPrt &o) : FkProtocol(o) {
+FkGraphicNewLayerPrt::FkGraphicNewLayerPrt(const FkGraphicNewLayerPrt &o) : FkProtocol(o), layer(o.layer) {
     FK_MARK_SUPER
     if (o.layer) {
         this->layer = std::make_shared<FkGraphicLayer>(*(o.layer.get()));

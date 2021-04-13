@@ -12,6 +12,7 @@
 #include "FkGraphicTexComponent.h"
 
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
+    FK_MARK_SUPER
 }
 
 FkGraphicTexQuark::~FkGraphicTexQuark() {

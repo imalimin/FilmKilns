@@ -18,7 +18,9 @@ FkSession::FkSession() : FkObject() {
 }
 
 FkSession::~FkSession() {
-    close();
+    if (FkSession::kState::IDL != state) {
+        FkLogE(FK_DEF_TAG, "Session(%s): Close before delete please.", templateProtocol->getClassType().getName().c_str());
+    }
 }
 
 FkResult FkSession::connectTo(const std::shared_ptr<FkQuark> quark) {
@@ -65,7 +67,7 @@ FkResult FkSession::open() {
         return FK_INVALID_STATE;
     }
     if (link.empty()) {
-        FkLogE(FK_DEF_TAG, "Connect quark first.");
+        FkLogE(FK_DEF_TAG, "Session(%s): Connect quark first.", templateProtocol->getClassType().getName().c_str());
         return FK_EMPTY_DATA;
     }
     state = FkSession::kState::OPENED;
@@ -75,7 +77,7 @@ FkResult FkSession::open() {
 FkResult FkSession::close() {
     std::lock_guard<std::mutex> guard(mtx);
     if (FkSession::kState::OPENED != state) {
-        FkLogE(FK_DEF_TAG, "Invalid state");
+        FkLogE(FK_DEF_TAG, "Session(%s) close failed. Invalid state", templateProtocol->getClassType().getName().c_str());
         return FK_INVALID_STATE;
     }
     link.clear();

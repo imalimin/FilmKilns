@@ -35,6 +35,8 @@ protected:
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onNewLayer(std::shared_ptr<FkProtocol> p);
+
 };
 
 

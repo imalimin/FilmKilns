@@ -38,6 +38,8 @@ public:
 
     size_t hashCode() const;
 
+    std::string getName() const;
+
 private:
     std::list<std::string> extends;
     std::hash<std::string> hashValue;

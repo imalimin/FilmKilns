@@ -5,20 +5,19 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_GRAPHIC_FKGRAPHICMOLECULE_H
-#define FK_GRAPHIC_FKGRAPHICMOLECULE_H
+#ifndef FK_GRAPHIC_FKGRAPHICLAYERQUARK_H
+#define FK_GRAPHIC_FKGRAPHICLAYERQUARK_H
 
-#include "FkSimpleMolecule.h"
-#include "FkAtom.h"
-#include "FkLocalClient.h"
+#include "FkQuark.h"
+#include <list>
 
-FK_CLASS FkGraphicMolecule FK_EXTEND FkSimpleMolecule {
+FK_CLASS FkGraphicLayerQuark FK_EXTEND FkQuark {
 public:
-    FkGraphicMolecule();
+    FkGraphicLayerQuark();
 
-    FkGraphicMolecule(const FkGraphicMolecule &o) = delete;
+    FkGraphicLayerQuark(const FkGraphicLayerQuark &o) = delete;
 
-    virtual ~FkGraphicMolecule();
+    virtual ~FkGraphicLayerQuark();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
@@ -31,14 +30,14 @@ protected:
 
     virtual FkResult onStop() override;
 
-    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
-
 private:
-    FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
-
     FkResult _onNewLayer(std::shared_ptr<FkProtocol> p);
 
+private:
+    FkID mCurID = 0;
+    std::list<FkID> ids;
+    std::mutex mtx;
 };
 
 
-#endif //FK_GRAPHIC_FKGRAPHICMOLECULE_H
+#endif //FK_GRAPHIC_FKGRAPHICLAYERQUARK_H

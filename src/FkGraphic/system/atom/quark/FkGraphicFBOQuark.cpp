@@ -10,6 +10,7 @@
 #include "FkGraphicFBOComponent.h"
 
 FkGraphicFBOQuark::FkGraphicFBOQuark() : FkQuark() {
+    FK_MARK_SUPER
 }
 
 FkGraphicFBOQuark::~FkGraphicFBOQuark() {

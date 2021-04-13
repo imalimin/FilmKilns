@@ -9,6 +9,7 @@
 #include "FkGraphicLayerPrt.h"
 
 FkGraphicScaleQuark::FkGraphicScaleQuark() : FkQuark() {
+    FK_MARK_SUPER
 
 }
 

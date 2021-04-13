@@ -8,6 +8,7 @@
 #include "FkSimpleMolecule.h"
 
 FkSimpleMolecule::FkSimpleMolecule() : FkSimpleAtom() {
+    FK_MARK_SUPER
 
 }
 

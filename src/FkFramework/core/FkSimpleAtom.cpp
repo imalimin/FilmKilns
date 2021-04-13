@@ -24,14 +24,19 @@ std::shared_ptr<FkSession> FkConnectChain::connectSession(std::shared_ptr<FkProt
     for (auto &it : chain) {
         FkResult ret = session->connectTo(it);
         if (FK_OK != ret) {
-            FkLogW(FK_DEF_TAG, "Skip connect(%s), ret=%d",
-                   it->getClassType().toString().c_str(), ret);
+            FkLogW(FK_DEF_TAG, "Skip session(%s) connect(%s), ret=%d",
+                   p->getClassType().getName().c_str(), it->getClassType().getName().c_str(), ret);
         }
     }
     return session;
 }
 
+bool FkConnectChain::empty() {
+    return chain.empty();
+}
+
 FkSimpleAtom::FkSimpleAtom() : FkAtom() {
+    FK_MARK_SUPER
     chain = std::make_shared<FkConnectChain>();
 }
 
@@ -46,8 +51,12 @@ FkResult FkSimpleAtom::onCreate() {
     }
     client = std::make_shared<FkLocalClient>();
     onConnect(chain);
+    if (chain->empty()) {
+        FkLogE(FK_DEF_TAG, "Connect quark on onConnect first.");
+        return ret;
+    }
     /// Connect create/destroy/start/stop.
-    _connectSession();
+    _connectBaseSession();
     ret = dispatchNext(std::make_shared<FkOnCreatePrt>());
     /// Connect left protocols.
     _connectSession();
@@ -82,6 +91,27 @@ FkResult FkSimpleAtom::onStop() {
     return ret;
 }
 
+void FkSimpleAtom::_connectBaseSession() {
+    std::list<std::shared_ptr<FkProtocol>> protocols;
+    protocols.emplace_back(std::make_shared<FkOnCreatePrt>());
+    protocols.emplace_back(std::make_shared<FkOnStartPrt>());
+    protocols.emplace_back(std::make_shared<FkOnStopPrt>());
+    protocols.emplace_back(std::make_shared<FkOnDestroyPrt>());
+    for (auto &it : protocols) {
+        if (mSessionMap.end() != mSessionMap.find(it->getType())) {
+            continue;
+        }
+        auto session = chain->connectSession(it);
+        FkResult ret = session->open();
+        if (FK_OK == ret) {
+            mSessionMap.emplace(std::make_pair(it->getType(), session));
+        } else {
+            FkLogW(FK_DEF_TAG, "Session(%s) open failed, ret=%d",
+                   it->getClassType().getName().c_str(), getClassType().getName().c_str(), ret);
+        }
+    }
+}
+
 void FkSimpleAtom::_connectSession() {
     std::list<std::shared_ptr<FkProtocol>> protocols;
     if (FK_OK == queryProtocols(protocols)) {
@@ -95,7 +125,7 @@ void FkSimpleAtom::_connectSession() {
                 mSessionMap.emplace(std::make_pair(it->getType(), session));
             } else {
                 FkLogW(FK_DEF_TAG, "Session(%s) open failed, ret=%d",
-                       it->getClassType().toString().c_str(), ret);
+                       it->getClassType().getName().c_str(), getClassType().getName().c_str(), ret);
             }
         }
     }

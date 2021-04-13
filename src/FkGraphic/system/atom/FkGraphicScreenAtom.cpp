@@ -9,6 +9,7 @@
 #include "FkGraphicLayerPrt.h"
 
 FkGraphicScreenAtom::FkGraphicScreenAtom() : FkSimpleAtom() {
+    FK_MARK_SUPER
 
 }
 

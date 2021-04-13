@@ -11,6 +11,7 @@
 #define TAG "FkGraphicContextQuark"
 
 FkGraphicContextQuark::FkGraphicContextQuark() : FkQuark() {
+    FK_MARK_SUPER
 }
 
 FkGraphicContextQuark::~FkGraphicContextQuark() {

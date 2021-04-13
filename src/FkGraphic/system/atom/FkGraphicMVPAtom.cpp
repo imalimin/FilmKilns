@@ -12,6 +12,7 @@
 #include "FkGraphicRotateQuark.h"
 
 FkGraphicMVPAtom::FkGraphicMVPAtom() : FkSimpleAtom() {
+    FK_MARK_SUPER
 }
 
 FkGraphicMVPAtom::~FkGraphicMVPAtom() {

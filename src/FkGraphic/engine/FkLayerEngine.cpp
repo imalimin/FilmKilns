@@ -62,7 +62,10 @@ FkID FkLayerEngine::newLayer(std::string path) {
     msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
     sendMessage(msg);
     std::shared_ptr<FkGraphicNewLayerPrt> result = std::static_pointer_cast<FkGraphicNewLayerPrt>(msg->promise->get_future().get());
-    return result->layer->id;
+    if (result->layer) {
+        return result->layer->id;
+    }
+    return FK_ID_NONE;
 }
 
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {

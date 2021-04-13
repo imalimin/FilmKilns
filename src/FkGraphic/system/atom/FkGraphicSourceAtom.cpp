@@ -11,8 +11,11 @@
 #include "FkGraphicTexQuark.h"
 #include "FkGraphicFBOQuark.h"
 #include "FkGraphicProgramQuark.h"
+#include "FkGraphicNewLayerPrt.h"
+#include "FkGraphicLayerQuark.h"
 
 FkGraphicSourceAtom::FkGraphicSourceAtom() : FkSimpleAtom() {
+    FK_MARK_SUPER
 }
 
 FkGraphicSourceAtom::~FkGraphicSourceAtom() {
@@ -21,9 +24,11 @@ FkGraphicSourceAtom::~FkGraphicSourceAtom() {
 
 void FkGraphicSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicSourceAtom::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicSourceAtom::_onNewLayer);
 }
 
 void FkGraphicSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkGraphicLayerQuark>();
     chain->next<FkGraphicContextQuark>();
     chain->next<FkGraphicTexQuark>();
     chain->next<FkGraphicFBOQuark>();
@@ -63,5 +68,9 @@ FkResult FkGraphicSourceAtom::onStop() {
 }
 
 FkResult FkGraphicSourceAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+    return dispatchNext(std::move(p));
+}
+
+FkResult FkGraphicSourceAtom::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     return dispatchNext(std::move(p));
 }
