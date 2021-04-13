@@ -38,6 +38,11 @@ public:
         }
         ret = this->send(session, prt);
         if (FK_OK != ret) {
+            FkLogW(FK_DEF_TAG, "quickSend failed with ret=%d", ret);
+            auto ret1 = session->close();
+            if (FK_OK != ret1) {
+                FkLogW(FK_DEF_TAG, "quickSend failed & close session with ret=%d", ret1);
+            }
             return ret;
         }
         return session->close();
@@ -59,6 +64,11 @@ public:
         }
         ret = this->send(session, std::make_shared<T>());
         if (FK_OK != ret) {
+            FkLogW(FK_DEF_TAG, "quickSend failed with ret=%d", ret);
+            auto ret1 = session->close();
+            if (FK_OK != ret1) {
+                FkLogW(FK_DEF_TAG, "quickSend failed & close session with ret=%d", ret1);
+            }
             return ret;
         }
         return session->close();
