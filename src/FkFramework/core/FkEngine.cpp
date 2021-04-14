@@ -10,7 +10,7 @@
 
 FkMessageHandlerPair::FkMessageHandlerPair(FkID what, FkMessageHandler handler)
         : FkObject(), what(what), handler(handler) {
-
+    FK_MARK_SUPER
 }
 
 FkMessageHandlerPair::FkMessageHandlerPair(const FkMessageHandlerPair &o)

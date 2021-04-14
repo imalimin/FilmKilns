@@ -42,13 +42,25 @@ JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImage_nativeStop
     engine->stop();
 }
 
-JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayer
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithFile
         (JNIEnv *env, jobject that, jlong handle, jstring path) {
     auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
     auto *p = env->GetStringUTFChars(path, nullptr);
-    auto layer = engine->newLayer(std::string(p));
+    auto layer = engine->newLayerWithFile(std::string(p));
     env->ReleaseStringUTFChars(path, p);
     return layer;
+}
+
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithColor
+        (JNIEnv *env, jobject that, jlong handle, jint widht, jint height, jint red, jint green,
+         jint blue, jint alpha) {
+    FkColor color;
+    color.format = FkColor::kFormat::RGBA;
+    color.red = red;
+    color.greed = green;
+    color.alpha;
+    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    return engine->newLayerWithColor(FkSize(widht, height), color);
 }
 
 #ifdef __cplusplus

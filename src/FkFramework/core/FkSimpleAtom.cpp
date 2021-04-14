@@ -8,6 +8,7 @@
 #include "FkSimpleAtom.h"
 
 FkConnectChain::FkConnectChain() : FkObject() {
+    FK_MARK_SUPER
 
 }
 

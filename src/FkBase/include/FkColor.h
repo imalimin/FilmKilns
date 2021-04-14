@@ -20,6 +20,19 @@ public:
         RGBA,
         RGB565,
     };
+public:
+    FkColor();
+
+    FkColor(const FkColor &o);
+
+    virtual ~FkColor();
+
+public:
+    kFormat format;
+    uint16_t red;
+    uint16_t greed;
+    uint16_t blue;
+    uint16_t alpha;
 };
 
 

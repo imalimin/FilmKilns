@@ -32,7 +32,7 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback {
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         engine.start()
-        val layer = engine.newLayer("")
+        val layer = engine.newLayerWithColor(512, 512, 255, 0, 0, 0)
         Log.i("FilmKilns", "newLayer: $layer")
     }
 }

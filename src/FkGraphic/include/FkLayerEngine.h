@@ -10,6 +10,8 @@
 
 #include "FkEngine.h"
 #include "FkGraphicMolecule.h"
+#include "FkColor.h"
+#include "FkSize.h"
 
 FK_CLASS FkLayerEngine FK_EXTEND FkEngine {
 public:
@@ -27,14 +29,23 @@ public:
 
     FkResult stop();
 
-    FkID newLayer(std::string path);
+    FkID newLayer();
+
+    FkID newLayerWithFile(std::string path);
+
+    FkID newLayerWithColor(FkSize size, FkColor color);
 
 private:
-
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
+
+    FkResult _updateLayerWithFile(std::shared_ptr<FkMessage> msg);
+
+    FkResult _updateLayerWithColor(std::shared_ptr<FkMessage> msg);
 
 private:
     static const FkID FK_MSG_NEW_LAYER;
+    static const FkID FK_MSG_UPDATE_LAYER_WITH_FILE;
+    static const FkID FK_MSG_UPDATE_LAYER_WITH_COLOR;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
 };

@@ -31,9 +31,23 @@ class FkImage() : FkEngine() {
         }
     }
 
-    fun newLayer(path: String): Int {
+    fun newLayerWithFile(path: String): Int {
         if (!isNull()) {
-            return nativeNewLayer(getHandle(), path)
+            return nativeNewLayerWithFile(getHandle(), path)
+        }
+        return -1
+    }
+
+    fun newLayerWithColor(
+        width: Int,
+        height: Int,
+        red: Int,
+        green: Int,
+        blue: Int,
+        alpha: Int
+    ): Int {
+        if (!isNull()) {
+            return nativeNewLayerWithColor(getHandle(), width, height, red, green, blue, alpha)
         }
         return -1
     }
@@ -43,5 +57,14 @@ class FkImage() : FkEngine() {
     private external fun nativeDestroy(handle: Long)
     private external fun nativeStart(handle: Long)
     private external fun nativeStop(handle: Long)
-    private external fun nativeNewLayer(handle: Long, path: String): Int
+    private external fun nativeNewLayerWithFile(handle: Long, path: String): Int
+    private external fun nativeNewLayerWithColor(
+        handle: Long,
+        width: Int,
+        height: Int,
+        red: Int,
+        green: Int,
+        blue: Int,
+        alpha: Int
+    ): Int
 }

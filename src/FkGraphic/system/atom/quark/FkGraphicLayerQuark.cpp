@@ -7,6 +7,7 @@
 
 #include "FkGraphicLayerQuark.h"
 #include "FkGraphicNewLayerPrt.h"
+#include "FkGraphicUpdateLayerPrt.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -18,6 +19,7 @@ FkGraphicLayerQuark::~FkGraphicLayerQuark() {
 
 void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicLayerQuark::_onNewLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicLayerQuark::_onUpdateLayer);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -44,5 +46,9 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     layer->id = mCurID;
     prt->layer = layer;
     ids.emplace_back(mCurID);
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }

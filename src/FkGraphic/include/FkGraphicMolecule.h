@@ -38,6 +38,8 @@ private:
 
     FkResult _onNewLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onUpdateLayer(std::shared_ptr<FkProtocol> p);
+
 };
 
 

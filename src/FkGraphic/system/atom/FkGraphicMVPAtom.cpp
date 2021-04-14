@@ -10,6 +10,9 @@
 #include "FkGraphicTransQuark.h"
 #include "FkGraphicScaleQuark.h"
 #include "FkGraphicRotateQuark.h"
+#include "FkGraphicNewLayerPrt.h"
+#include "FkGraphicUpdateLayerPrt.h"
+#include "FkGraphicLayerQuark.h"
 
 FkGraphicMVPAtom::FkGraphicMVPAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -21,9 +24,12 @@ FkGraphicMVPAtom::~FkGraphicMVPAtom() {
 
 void FkGraphicMVPAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMVPAtom::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicMVPAtom::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicMVPAtom::dispatchNext);
 }
 
 void FkGraphicMVPAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkGraphicLayerQuark>();
     chain->next<FkGraphicTransQuark>();
     chain->next<FkGraphicScaleQuark>();
     chain->next<FkGraphicRotateQuark>();

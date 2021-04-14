@@ -33,6 +33,8 @@ protected:
 private:
     FkResult _onNewLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onUpdateLayer(std::shared_ptr<FkProtocol> p);
+
 private:
     FkID mCurID = 0;
     std::list<FkID> ids;
