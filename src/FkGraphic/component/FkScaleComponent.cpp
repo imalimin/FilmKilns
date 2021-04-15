@@ -7,14 +7,13 @@
 
 #include "FkScaleComponent.h"
 
-FkScaleComponent::FkScaleComponent() : FkGraphicComponent() {
+FkScaleComponent::FkScaleComponent() : FkGraphicComponent(), scale(1.0f, 1.0f) {
     FK_MARK_SUPER
-
 }
 
-FkScaleComponent::FkScaleComponent(const FkScaleComponent &o) : FkGraphicComponent(o) {
+FkScaleComponent::FkScaleComponent(const FkScaleComponent &o)
+        : FkGraphicComponent(o), scale(o.scale) {
     FK_MARK_SUPER
-
 }
 
 FkScaleComponent::~FkScaleComponent() {

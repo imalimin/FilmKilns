@@ -9,7 +9,9 @@
 #define FK_GRAPHIC_FKGRAPHICLAYERQUARK_H
 
 #include "FkQuark.h"
+#include "FkGraphicLayer.h"
 #include <list>
+#include <map>
 
 FK_CLASS FkGraphicLayerQuark FK_EXTEND FkQuark {
 public:
@@ -37,7 +39,7 @@ private:
 
 private:
     FkID mCurID = 0;
-    std::list<FkID> ids;
+    std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
     std::mutex mtx;
 };
 

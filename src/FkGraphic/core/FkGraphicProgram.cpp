@@ -90,7 +90,7 @@ void FkGraphicProgram::setUniform1f(int32_t location, float value) {
     glUniform1f(location, value);
 }
 
-void FkGraphicProgram::setUniform2fv(int32_t location, FkVec2 &vec2) {
+void FkGraphicProgram::setUniform2fv(int32_t location, FkFloatVec2 &vec2) {
     auto *value = new float[2]{vec2.x, vec2.y};
     glUniform2fv(location, 1, value);
     delete[] value;

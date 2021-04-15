@@ -5,16 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkGraphicLayer.h"
+#include "FkIntVec2.h"
 
-FkGraphicLayer::FkGraphicLayer() : FkGraphicEntity() {
+FkIntVec2::FkIntVec2(int32_t x, int32_t y) : FkVec2<int32_t>(x, y) {
     FK_MARK_SUPER
 }
 
-FkGraphicLayer::FkGraphicLayer(const FkGraphicLayer &o) : FkGraphicEntity(o), id(o.id) {
+FkIntVec2::FkIntVec2(const FkIntVec2 &o) : FkVec2<int32_t>(o) {
     FK_MARK_SUPER
 }
 
-FkGraphicLayer::~FkGraphicLayer() {
+FkIntVec2::~FkIntVec2() {
 
 }

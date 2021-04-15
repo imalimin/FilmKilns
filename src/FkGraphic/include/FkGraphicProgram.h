@@ -10,7 +10,7 @@
 
 #include "FkSource.h"
 #include "FkDefinition.h"
-#include "FkVec2.h"
+#include "FkFloatVec2.h"
 
 FK_CLASS FkProgramDescription FK_EXTEND FkObject {
 public:
@@ -59,7 +59,7 @@ public:
 
     void setUniform1f(int32_t location, float value);
 
-    void setUniform2fv(int32_t location, FkVec2 &vec2);
+    void setUniform2fv(int32_t location, FkFloatVec2 &vec2);
 
     void setUniform2fv(int32_t location, int32_t count, float *array);
 

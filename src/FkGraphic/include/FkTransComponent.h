@@ -9,7 +9,7 @@
 #define FK_GRAPHIC_FKTRANSCOMPONENT_H
 
 #include "FkGraphicComponent.h"
-#include "FkVec2.h"
+#include "FkIntVec2.h"
 
 FK_CLASS FkTransComponent FK_EXTEND FkGraphicComponent {
 public:
@@ -20,7 +20,7 @@ public:
     virtual ~FkTransComponent();
 
 public:
-    FkVec2 position;
+    FkIntVec2 position;
 };
 
 

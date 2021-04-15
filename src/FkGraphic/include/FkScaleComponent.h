@@ -9,7 +9,7 @@
 #define FK_GRAPHIC_FKSCALECOMPONENT_H
 
 #include "FkGraphicComponent.h"
-#include "FkVec2.h"
+#include "FkFloatVec2.h"
 
 FK_CLASS FkScaleComponent FK_EXTEND FkGraphicComponent {
 public:
@@ -20,7 +20,7 @@ public:
     virtual ~FkScaleComponent();
 
 public:
-    FkVec2 scale;
+    FkFloatVec2 scale;
 };
 
 

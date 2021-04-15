@@ -13,6 +13,10 @@
 #include <list>
 #include <map>
 
+#define FK_PORT_DESC_SIMPLE_ADD(desc, PRT) \
+    desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
+        reinterpret_cast<FkPort::PortFunc>(&FkSimpleAtom::dispatchNext)) \
+
 FK_ABS_CLASS FkConnectChain FK_EXTEND FkObject {
 public:
     FkConnectChain();

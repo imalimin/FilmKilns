@@ -8,6 +8,8 @@
 #include "FkGraphicLayerQuark.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
+#include "FkColorComponent.h"
+#include "FkSizeComponent.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -45,10 +47,21 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     ++mCurID;
     layer->id = mCurID;
     prt->layer = layer;
-    ids.emplace_back(mCurID);
+    layers.emplace(std::make_pair(mCurID, std::make_shared<FkGraphicLayer>()));
     return FK_OK;
 }
 
 FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
+    auto prt = std::static_pointer_cast<FkGraphicUpdateLayerPrt>(p);
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkColorComponent>())) {
+        auto comp = std::static_pointer_cast<FkColorComponent>(vec[0]);
+        auto itr = layers.find(prt->layer->id);
+        if (layers.end() != itr) {
+            auto sizeComp = std::make_shared<FkSizeComponent>();
+            sizeComp->size = comp->size;
+            itr->second->addComponent(sizeComp);
+        }
+    }
     return FK_OK;
 }
