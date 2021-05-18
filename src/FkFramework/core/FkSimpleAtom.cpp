@@ -53,7 +53,7 @@ FkResult FkSimpleAtom::onCreate() {
     client = std::make_shared<FkLocalClient>();
     onConnect(chain);
     if (chain->empty()) {
-        FkLogE(FK_DEF_TAG, "Connect quark on onConnect first.");
+        FkLogE(FK_DEF_TAG, "Chain is empty. Connect quark on onConnect first.");
         return ret;
     }
     /// Connect create/destroy/start/stop.
@@ -146,5 +146,6 @@ FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     if (mSessionMap.end() != itr) {
         return client->send(itr->second, std::move(p));
     }
+    FkLogE(FK_DEF_TAG, "Can not find session or session map is empty.");
     return FK_FAIL;
 }

@@ -7,7 +7,7 @@
 
 #include "FkGraphicTexQuark.h"
 #include "FkGraphicLayerPrt.h"
-#include "FkGraphicTexPtl.h"
+#include "FkGraphicNewTexPtl.h"
 #include "FkTexComponent.h"
 #include "FkGraphicTexComponent.h"
 
@@ -21,7 +21,7 @@ FkGraphicTexQuark::~FkGraphicTexQuark() {
 
 void FkGraphicTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicTexQuark::_onDrawLayer);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexPtl, FkGraphicTexQuark::_onAllocTex);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicTexQuark::_onAllocTex);
 }
 
 FkResult FkGraphicTexQuark::onCreate() {

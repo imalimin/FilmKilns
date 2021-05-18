@@ -13,6 +13,7 @@
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkGraphicLayerQuark.h"
+#include "FkGraphicNewTexPtl.h"
 
 FkGraphicMVPAtom::FkGraphicMVPAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -26,6 +27,7 @@ void FkGraphicMVPAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMVPAtom::_onDrawLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicMVPAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicMVPAtom::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicMVPAtom::dispatchNext);
 }
 
 void FkGraphicMVPAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

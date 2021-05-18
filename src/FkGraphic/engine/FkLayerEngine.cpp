@@ -9,6 +9,8 @@
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkColorComponent.h"
+#include "FkTexComponent.h"
+#include "FkGraphicNewTexPtl.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'E', 0x11);
@@ -114,7 +116,14 @@ FkResult FkLayerEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
+    auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
+    auto ret = client->quickSend<FkGraphicNewTexPtl>(texPrt, molecule);
     auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
     prt->layer = std::static_pointer_cast<FkGraphicLayer>(msg->sp);
+    if (FK_OK == ret) {
+        auto com = std::make_shared<FkTexComponent>();
+        com->texId = texPrt->texId;
+        prt->layer->addComponent(com);
+    }
     return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
 }
