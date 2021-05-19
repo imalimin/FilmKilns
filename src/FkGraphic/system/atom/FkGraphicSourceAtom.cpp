@@ -68,3 +68,8 @@ FkResult FkGraphicSourceAtom::onStop() {
 FkResult FkGraphicSourceAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
     return dispatchNext(std::move(p));
 }
+
+FkResult FkGraphicSourceAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
+    auto ret = FkSimpleAtom::dispatchNext(p);
+    return ret;
+}

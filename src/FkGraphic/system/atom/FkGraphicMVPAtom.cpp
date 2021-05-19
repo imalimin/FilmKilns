@@ -72,3 +72,8 @@ FkResult FkGraphicMVPAtom::onStop() {
 FkResult FkGraphicMVPAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
     return dispatchNext(std::move(p));
 }
+
+FkResult FkGraphicMVPAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
+    auto ret = FkSimpleAtom::dispatchNext(p);
+    return ret;
+}

@@ -32,6 +32,8 @@ protected:
 
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
 
+    virtual FkResult dispatchNext(std::shared_ptr<FkProtocol> p) override;
+
 private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 

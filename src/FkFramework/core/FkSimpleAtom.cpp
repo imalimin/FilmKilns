@@ -107,7 +107,7 @@ void FkSimpleAtom::_connectBaseSession() {
         if (FK_OK == ret) {
             mSessionMap.emplace(std::make_pair(it->getType(), session));
         } else {
-            FkLogW(FK_DEF_TAG, "Session(%s) open failed, ret=%d",
+            FkLogW(FK_DEF_TAG, "Session(%s, Atom(%s)) open failed, ret=%d",
                    it->getClassType().getName().c_str(), getClassType().getName().c_str(), ret);
         }
     }
@@ -125,7 +125,7 @@ void FkSimpleAtom::_connectSession() {
             if (FK_OK == ret) {
                 mSessionMap.emplace(std::make_pair(it->getType(), session));
             } else {
-                FkLogW(FK_DEF_TAG, "Session(%s) open failed, ret=%d",
+                FkLogW(FK_DEF_TAG, "Session(%s, Atom(%s)) open failed, ret=%d",
                        it->getClassType().getName().c_str(), getClassType().getName().c_str(), ret);
             }
         }
@@ -146,6 +146,6 @@ FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     if (mSessionMap.end() != itr) {
         return client->send(itr->second, std::move(p));
     }
-    FkLogE(FK_DEF_TAG, "Can not find session or session map is empty.");
+    FkLogE(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty.", getClassType().getName().c_str());
     return FK_FAIL;
 }
