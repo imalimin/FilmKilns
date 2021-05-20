@@ -69,6 +69,10 @@ public:
         if (nullptr == ptr) {
             ptr = delegateAlloc(desc);
         }
+        if (nullptr == ptr) {
+            FkLogE(FK_DEF_TAG, "Alloc source failed.");
+            return nullptr;
+        }
         ptr->eTime = FkTimeUtils::getCurrentTimeUS();
         std::shared_ptr<T> o(ptr, [this](T *o) {
             this->recycle(o);

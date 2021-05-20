@@ -10,6 +10,7 @@
 #include "FkGraphicNewTexPtl.h"
 #include "FkTexComponent.h"
 #include "FkGraphicTexComponent.h"
+#include "EGL/egl.h"
 
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -68,6 +69,9 @@ FkResult FkGraphicTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
     auto ptl = std::static_pointer_cast<FkGraphicTexPtl>(p);
     FkTexDescription desc;
     auto tex = allocator->alloc(desc);
+    if (nullptr == tex) {
+        return FK_FAIL;
+    }
     sMap.insert(std::make_pair(tex->id, tex));
     ptl->texId = tex->id;
     return FK_OK;

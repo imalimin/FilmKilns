@@ -7,6 +7,7 @@
 
 #include "FkGraphicContextQuark.h"
 #include "FkGraphicLayerPrt.h"
+#include "FkGraphicNewTexPtl.h"
 
 #define TAG "FkGraphicContextQuark"
 
@@ -19,7 +20,8 @@ FkGraphicContextQuark::~FkGraphicContextQuark() {
 }
 
 void FkGraphicContextQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicContextQuark::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicContextQuark::_onMakeCurrent);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicContextQuark::_onMakeCurrent);
 }
 
 FkResult FkGraphicContextQuark::onCreate() {
@@ -29,6 +31,7 @@ FkResult FkGraphicContextQuark::onCreate() {
     }
     context = std::make_shared<FkGraphicContext>(TAG);
     context->create();
+    context->makeCurrent();
     return ret;
 }
 
@@ -45,11 +48,13 @@ FkResult FkGraphicContextQuark::onStop() {
     return FkQuark::onStop();
 }
 
-FkResult FkGraphicContextQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicContextQuark::_onMakeCurrent(std::shared_ptr<FkProtocol> p) {
     context->makeCurrent();
-    auto ptl = std::static_pointer_cast<FkGraphicLayerPrt>(p);
-    auto comp = std::make_shared<FkGraphicCtxComponent>();
-    comp->context = context;
-    ptl->layer->addComponent(comp);
+    if (FK_INSTANCE_OF(p, FkGraphicLayerPrt)) {
+        auto ptl = std::static_pointer_cast<FkGraphicLayerPrt>(p);
+        auto comp = std::make_shared<FkGraphicCtxComponent>();
+        comp->context = context;
+        ptl->layer->addComponent(comp);
+    }
     return FK_OK;
 }

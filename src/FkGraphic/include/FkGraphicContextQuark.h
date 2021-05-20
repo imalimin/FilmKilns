@@ -31,7 +31,7 @@ protected:
     virtual FkResult onStop() override;
 
 private:
-    FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
+    FkResult _onMakeCurrent(std::shared_ptr<FkProtocol> p);
 
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;
