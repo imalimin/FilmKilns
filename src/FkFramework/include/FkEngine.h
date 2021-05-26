@@ -55,13 +55,13 @@ public:
 
     virtual FkResult stop();
 
-    virtual void onCreate();
+    virtual FkResult onCreate();
 
-    virtual void onDestroy();
+    virtual FkResult onDestroy();
 
-    virtual void onStart();
+    virtual FkResult onStart();
 
-    virtual void onStop();
+    virtual FkResult onStop();
 
     FkResult sendMessage(std::shared_ptr<FkMessage> msg);
 

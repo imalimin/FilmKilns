@@ -13,9 +13,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions "version"
-        ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a"
-        }
     }
 
     buildTypes {

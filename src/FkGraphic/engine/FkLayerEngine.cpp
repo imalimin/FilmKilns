@@ -28,8 +28,8 @@ FkLayerEngine::~FkLayerEngine() {
 
 }
 
-FkResult FkLayerEngine::create() {
-    auto ret = FkEngine::create();
+FkResult FkLayerEngine::onCreate() {
+    auto ret = FkEngine::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
@@ -37,8 +37,8 @@ FkResult FkLayerEngine::create() {
     return ret;
 }
 
-FkResult FkLayerEngine::destroy() {
-    auto ret = FkEngine::destroy();
+FkResult FkLayerEngine::onDestroy() {
+    auto ret = FkEngine::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -46,8 +46,8 @@ FkResult FkLayerEngine::destroy() {
     return ret;
 }
 
-FkResult FkLayerEngine::start() {
-    auto ret = FkEngine::start();
+FkResult FkLayerEngine::onStart() {
+    auto ret = FkEngine::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -55,8 +55,8 @@ FkResult FkLayerEngine::start() {
     return ret;
 }
 
-FkResult FkLayerEngine::stop() {
-    auto ret = FkEngine::stop();
+FkResult FkLayerEngine::onStop() {
+    auto ret = FkEngine::onStop();
     if (FK_OK != ret) {
         return ret;
     }
@@ -118,12 +118,13 @@ FkResult FkLayerEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
 FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
     auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
     auto ret = client->quickSend<FkGraphicNewTexPtl>(texPrt, molecule);
-    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
-    prt->layer = std::static_pointer_cast<FkGraphicLayer>(msg->sp);
     if (FK_OK == ret) {
         auto com = std::make_shared<FkTexComponent>();
+        auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
+        prt->layer = std::static_pointer_cast<FkGraphicLayer>(msg->sp);
         com->texId = texPrt->texId;
         prt->layer->addComponent(com);
+        return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
     }
-    return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
+    return ret;
 }

@@ -53,6 +53,7 @@ FkResult FkEngine::create() {
     mHandler = new FkHandler(mThread->getLooper(), [this](std::shared_ptr<FkMessage> msg) {
         this->_dispatch(std::move(msg));
     });
+    sendMessage(FkMessage::obtain(FK_MSG_CREATE));
     return FK_OK;
 }
 
@@ -65,6 +66,7 @@ FkResult FkEngine::destroy() {
     if (FK_OK != ret) {
         return ret;
     }
+    sendMessage(FkMessage::obtain(FK_MSG_DESTROY));
     return FK_OK;
 }
 
@@ -75,6 +77,7 @@ FkResult FkEngine::start() {
         return FK_INVALID_STATE;
     }
     this->state = kState::STARTED;
+    sendMessage(FkMessage::obtain(FK_MSG_START));
     return FK_OK;
 }
 
@@ -83,39 +86,40 @@ FkResult FkEngine::stop() {
     if (FK_OK != ret) {
         return ret;
     }
+    sendMessage(FkMessage::obtain(FK_MSG_STOP));
     return FK_OK;
 }
 
-void FkEngine::onCreate() {
-
+FkResult FkEngine::onCreate() {
+    return FK_OK;
 }
 
-void FkEngine::onDestroy() {
-
+FkResult FkEngine::onDestroy() {
+    return FK_OK;
 }
 
-void FkEngine::onStart() {
-
+FkResult FkEngine::onStart() {
+    return FK_OK;
 }
 
-void FkEngine::onStop() {
-
+FkResult FkEngine::onStop() {
+    return FK_OK;
 }
 
 FkResult FkEngine::_onCreate(std::shared_ptr<FkMessage> msg) {
-    return FK_OK;
+    return onCreate();
 }
 
 FkResult FkEngine::_onDestroy(std::shared_ptr<FkMessage> msg) {
-    return FK_OK;
+    return onDestroy();
 }
 
 FkResult FkEngine::_onStart(std::shared_ptr<FkMessage> msg) {
-    return FK_OK;
+    return onStart();
 }
 
 FkResult FkEngine::_onStop(std::shared_ptr<FkMessage> msg) {
-    return FK_OK;
+    return onStop();
 }
 
 FkResult FkEngine::_changeState(kState src, kState dst) {

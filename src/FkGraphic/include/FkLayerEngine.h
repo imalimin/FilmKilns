@@ -21,13 +21,13 @@ public:
 
     virtual ~FkLayerEngine();
 
-    FkResult create();
+    virtual FkResult onCreate() override;
 
-    FkResult destroy();
+    virtual FkResult onDestroy() override;
 
-    FkResult start();
+    virtual FkResult onStart() override;
 
-    FkResult stop();
+    virtual FkResult onStop() override;
 
     FkID newLayer();
 

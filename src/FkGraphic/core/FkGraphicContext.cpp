@@ -204,7 +204,8 @@ FkResult FkGraphicContext::makeCurrent() {
         FkLogE(TAG, "[%s] name egl failed had release!", alias.c_str());
         return FK_FAIL;
     }
-    if (!eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext) || !_checkError()) {
+    auto ret = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+    if (EGL_TRUE != ret || !_checkError()) {
         FkLogE(TAG, "[%s] name makeCurrent failed", alias.c_str());
         return FK_FAIL;
     }

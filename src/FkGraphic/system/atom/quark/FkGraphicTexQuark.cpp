@@ -66,6 +66,7 @@ FkResult FkGraphicTexQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
+    auto ctx = eglGetCurrentContext();
     auto ptl = std::static_pointer_cast<FkGraphicTexPtl>(p);
     FkTexDescription desc;
     auto tex = allocator->alloc(desc);
