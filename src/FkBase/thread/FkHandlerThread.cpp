@@ -23,7 +23,7 @@ FkHandlerThread::FkHandlerThread(std::string name)
 }
 
 void FkHandlerThread::run() {
-    prctl(PR_SET_NAME, name.c_str());
+    pthread_setname_np(mThread.native_handle(), name.c_str());
     exited = false;
     exiting = false;
     FkLooper::prepare();

@@ -56,6 +56,5 @@ FkResult FkGraphicContextQuark::_onMakeCurrent(std::shared_ptr<FkProtocol> p) {
         comp->context = context;
         ptl->layer->addComponent(comp);
     }
-    auto ctx = eglGetCurrentContext();
     return FK_OK;
 }
