@@ -64,6 +64,10 @@ FkResult FkLayerEngine::onStop() {
     return ret;
 }
 
+FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
+    return FK_OK;
+}
+
 FkID FkLayerEngine::newLayer() {
     auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
     msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();

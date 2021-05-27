@@ -58,6 +58,7 @@ FkResult FkEngine::create() {
 }
 
 FkResult FkEngine::destroy() {
+    sendMessage(FkMessage::obtain(FK_MSG_DESTROY));
     mThread->quitSafely();
     mThread = nullptr;
     delete mHandler;
@@ -66,7 +67,6 @@ FkResult FkEngine::destroy() {
     if (FK_OK != ret) {
         return ret;
     }
-    sendMessage(FkMessage::obtain(FK_MSG_DESTROY));
     return FK_OK;
 }
 

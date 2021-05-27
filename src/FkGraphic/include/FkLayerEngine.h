@@ -12,6 +12,7 @@
 #include "FkGraphicMolecule.h"
 #include "FkColor.h"
 #include "FkSize.h"
+#include "FkGraphicWindow.h"
 
 FK_CLASS FkLayerEngine FK_EXTEND FkEngine {
 public:
@@ -28,6 +29,8 @@ public:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
+
+    FkResult setSurface(std::shared_ptr<FkGraphicWindow> win);
 
     FkID newLayer();
 

@@ -1,5 +1,7 @@
 package com.alimin.fk.engine
 
+import android.view.Surface
+
 class FkImage() : FkEngine() {
     override fun onCreateInstance(): Long = nativeCreateInstance()
     override fun create() {
@@ -31,6 +33,13 @@ class FkImage() : FkEngine() {
         }
     }
 
+    fun setSurface(surface: Surface?): Int {
+        if (!isNull()) {
+            return nativeSetSurface(getHandle(), surface)
+        }
+        return -1
+    }
+
     fun newLayerWithFile(path: String): Int {
         if (!isNull()) {
             return nativeNewLayerWithFile(getHandle(), path)
@@ -57,6 +66,7 @@ class FkImage() : FkEngine() {
     private external fun nativeDestroy(handle: Long)
     private external fun nativeStart(handle: Long)
     private external fun nativeStop(handle: Long)
+    private external fun nativeSetSurface(handle: Long, surface: Surface?): Int
     private external fun nativeNewLayerWithFile(handle: Long, path: String): Int
     private external fun nativeNewLayerWithColor(
         handle: Long,
