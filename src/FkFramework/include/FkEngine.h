@@ -17,7 +17,7 @@
 #include <mutex>
 
 #define FK_REG_MSG(id, func) \
-registerMessage(id, reinterpret_cast<FkMessageHandler>(&func)); \
+registerMessage(id, reinterpret_cast<FkMessageHandler>(&func)) \
 
 
 class FkEngine;

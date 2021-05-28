@@ -33,11 +33,15 @@ class FkImage() : FkEngine() {
         }
     }
 
-    fun setSurface(surface: Surface?): Int {
+    fun attachToSurface(surface: Surface?): Int {
         if (!isNull()) {
             return nativeSetSurface(getHandle(), surface)
         }
         return -1
+    }
+
+    fun detachFromSurface(surface: Surface?) {
+
     }
 
     fun newLayerWithFile(path: String): Int {

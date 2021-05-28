@@ -33,10 +33,11 @@ const FkID FkEngine::FK_MSG_START = FK_KID('F', 'K', 'E', 0x03);
 const FkID FkEngine::FK_MSG_STOP = FK_KID('F', 'K', 'E', 0x04);
 
 FkEngine::FkEngine(std::string name) : FkObject(), name(std::move(name)), state(kState::IDL) {
-    FK_REG_MSG(FK_MSG_CREATE, FkEngine::_onCreate)
-    FK_REG_MSG(FK_MSG_DESTROY, FkEngine::_onDestroy)
-    FK_REG_MSG(FK_MSG_START, FkEngine::_onStart)
-    FK_REG_MSG(FK_MSG_STOP, FkEngine::_onStop)
+    FK_MARK_SUPER
+    FK_REG_MSG(FK_MSG_CREATE, FkEngine::_onCreate);
+    FK_REG_MSG(FK_MSG_DESTROY, FkEngine::_onDestroy);
+    FK_REG_MSG(FK_MSG_START, FkEngine::_onStart);
+    FK_REG_MSG(FK_MSG_STOP, FkEngine::_onStop);
 }
 
 FkEngine::~FkEngine() {

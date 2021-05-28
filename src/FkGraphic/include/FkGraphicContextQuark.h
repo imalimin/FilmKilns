@@ -33,6 +33,8 @@ protected:
 private:
     FkResult _onMakeCurrent(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onSetSurface(std::shared_ptr<FkProtocol> p);
+
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;
 };

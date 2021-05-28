@@ -11,15 +11,19 @@
 #include "FkColorComponent.h"
 #include "FkTexComponent.h"
 #include "FkGraphicNewTexPtl.h"
+#include "FkSetSurfacePrt.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'E', 0x11);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x12);
+const FkID FkLayerEngine::FK_MSG_SET_SURFACE = FK_KID('F', 'K', 'E', 0x13);
 
 FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
-    FK_REG_MSG(FK_MSG_NEW_LAYER, FkLayerEngine::_newLayer)
-    FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_FILE, FkLayerEngine::_updateLayerWithFile)
-    FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor)
+    FK_MARK_SUPER
+    FK_REG_MSG(FK_MSG_NEW_LAYER, FkLayerEngine::_newLayer);
+    FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_FILE, FkLayerEngine::_updateLayerWithFile);
+    FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor);
+    FK_REG_MSG(FK_MSG_SET_SURFACE, FkLayerEngine::_setSurface);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -65,7 +69,9 @@ FkResult FkLayerEngine::onStop() {
 }
 
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
-    return FK_OK;
+    auto msg = FkMessage::obtain(FK_MSG_SET_SURFACE);
+    msg->sp = std::move(win);
+    return sendMessage(msg);;
 }
 
 FkID FkLayerEngine::newLayer() {
@@ -131,4 +137,10 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
         return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
     }
     return ret;
+}
+
+FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
+    auto prt = std::make_shared<FkSetSurfacePrt>();
+    prt->win = std::static_pointer_cast<FkGraphicWindow>(msg->sp);
+    return client->quickSend<FkSetSurfacePrt>(prt, molecule);
 }
