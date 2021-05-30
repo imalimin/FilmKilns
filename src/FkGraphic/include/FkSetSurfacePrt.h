@@ -5,8 +5,8 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FKANDROID_FKSETSURFACEPRT_H
-#define FKANDROID_FKSETSURFACEPRT_H
+#ifndef FK_GRAPHIC_FKSETSURFACEPRT_H
+#define FK_GRAPHIC_FKSETSURFACEPRT_H
 
 #include "FkProtocol.h"
 #include "FkGraphicWindow.h"
@@ -25,4 +25,4 @@ public:
 };
 
 
-#endif //FKANDROID_FKSETSURFACEPRT_H
+#endif //FK_GRAPHIC_FKSETSURFACEPRT_H

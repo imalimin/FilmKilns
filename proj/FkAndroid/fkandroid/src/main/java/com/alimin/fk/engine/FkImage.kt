@@ -65,6 +65,13 @@ class FkImage() : FkEngine() {
         return -1
     }
 
+    fun notifyRender(): Int {
+        if (!isNull()) {
+            return nativeNotifyRender(getHandle())
+        }
+        return -1
+    }
+
     private external fun nativeCreateInstance(): Long
     private external fun nativeCreate(handle: Long)
     private external fun nativeDestroy(handle: Long)
@@ -81,4 +88,5 @@ class FkImage() : FkEngine() {
         blue: Int,
         alpha: Int
     ): Int
+    private external fun nativeNotifyRender(handle: Long): Int
 }

@@ -12,11 +12,13 @@
 #include "FkTexComponent.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
+#include "FkRenderRequestPrt.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'E', 0x11);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x12);
 const FkID FkLayerEngine::FK_MSG_SET_SURFACE = FK_KID('F', 'K', 'E', 0x13);
+const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = FK_KID('F', 'K', 'E', 0x14);
 
 FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_MARK_SUPER
@@ -66,6 +68,11 @@ FkResult FkLayerEngine::onStop() {
     }
     client->quickSend<FkOnStopPrt>(molecule);
     return ret;
+}
+
+FkResult FkLayerEngine::notifyRender() {
+    auto msg = FkMessage::obtain(FK_MSG_NOTIFY_RENDER);
+    return sendMessage(msg);;
 }
 
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
@@ -143,4 +150,9 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
     auto prt = std::make_shared<FkSetSurfacePrt>();
     prt->win = std::static_pointer_cast<FkGraphicWindow>(msg->sp);
     return client->quickSend<FkSetSurfacePrt>(prt, molecule);
+}
+
+FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
+    auto prt = std::make_shared<FkRenderRequestPrt>();
+    return client->quickSend<FkRenderRequestPrt>(prt, molecule);
 }
