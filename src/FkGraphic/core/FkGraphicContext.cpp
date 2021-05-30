@@ -46,6 +46,10 @@ FkGraphicContext::FkGraphicContext(const char *alias) : FkObject(), alias(alias)
     FK_MARK_SUPER
 }
 
+FkGraphicContext::FkGraphicContext(const std::string alias) : FkObject(), alias(alias) {
+    FK_MARK_SUPER
+}
+
 FkGraphicContext::~FkGraphicContext() {
 
 }
@@ -210,6 +214,21 @@ FkResult FkGraphicContext::makeCurrent() {
         return FK_FAIL;
     }
     return FK_OK;
+}
+
+FkResult FkGraphicContext::update(std::shared_ptr<FkGraphicWindow> win) {
+    /// 只有初始化时带Surface的egl才能更新Surface
+    if (win) {
+        if (EGL_NO_SURFACE != eglSurface) {
+            eglDestroySurface(eglDisplay, eglSurface);
+            eglSurface = EGL_NO_SURFACE;
+        }
+        eglSurface = _createWindowSurface(eglDisplay, eglConfig, win);
+        makeCurrent();
+        AlLogE(TAG, "Update window");
+        return FK_OK;
+    }
+    return FK_FAIL;
 }
 
 bool FkGraphicContext::_checkError() {

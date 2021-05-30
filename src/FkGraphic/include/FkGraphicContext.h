@@ -16,6 +16,8 @@ FK_CLASS FkGraphicContext FK_EXTEND FkObject {
 public:
     FkGraphicContext(const char *alias);
 
+    FkGraphicContext(const std::string alias);
+
     FkGraphicContext(const FkGraphicContext &o) = delete;
 
     virtual ~FkGraphicContext();
@@ -24,6 +26,8 @@ public:
 
     FkResult create(std::shared_ptr<FkGraphicContext> context = nullptr,
                     std::shared_ptr<FkGraphicWindow> win = nullptr);
+
+    FkResult update(std::shared_ptr<FkGraphicWindow> win);
 
     void destroy();
 

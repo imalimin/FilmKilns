@@ -12,6 +12,9 @@
 
 #define TAG "FkGraphicContextQuark"
 
+const std::string FkGraphicContextQuark::FK_DETACH_CONTEXT = "EGLDetach";
+const std::string FkGraphicContextQuark::FK_ATTACH_CONTEXT = "EGLAttach";
+
 FkGraphicContextQuark::FkGraphicContextQuark() : FkQuark() {
     FK_MARK_SUPER
 }
@@ -31,13 +34,16 @@ FkResult FkGraphicContextQuark::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    context = std::make_shared<FkGraphicContext>(TAG);
+    context = std::make_shared<FkGraphicContext>(FK_DETACH_CONTEXT);
     context->create();
-    context->makeCurrent();
     return ret;
 }
 
 FkResult FkGraphicContextQuark::onDestroy() {
+    if (contextOfWin) {
+        contextOfWin->destroy();
+        contextOfWin = nullptr;
+    }
     context->destroy();
     return FkQuark::onDestroy();
 }
@@ -51,11 +57,12 @@ FkResult FkGraphicContextQuark::onStop() {
 }
 
 FkResult FkGraphicContextQuark::_onMakeCurrent(std::shared_ptr<FkProtocol> p) {
-    context->makeCurrent();
+    auto ctx = (nullptr != contextOfWin ? contextOfWin : context);
+    ctx->makeCurrent();
     if (FK_INSTANCE_OF(p, FkGraphicLayerPrt)) {
         auto ptl = std::static_pointer_cast<FkGraphicLayerPrt>(p);
         auto comp = std::make_shared<FkGraphicCtxComponent>();
-        comp->context = context;
+        comp->context = ctx;
         ptl->layer->addComponent(comp);
     }
     return FK_OK;
@@ -63,5 +70,10 @@ FkResult FkGraphicContextQuark::_onMakeCurrent(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicContextQuark::_onSetSurface(std::shared_ptr<FkProtocol> p) {
     auto ptl = std::static_pointer_cast<FkSetSurfacePrt>(p);
-    return FK_OK;
+    if (nullptr == contextOfWin) {
+        contextOfWin = std::make_shared<FkGraphicContext>(FK_ATTACH_CONTEXT);
+        return contextOfWin->create(context, ptl->win);
+    } else {
+        return contextOfWin->update(ptl->win);
+    }
 }

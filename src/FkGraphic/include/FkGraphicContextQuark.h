@@ -36,7 +36,11 @@ private:
     FkResult _onSetSurface(std::shared_ptr<FkProtocol> p);
 
 private:
+    static const std::string FK_DETACH_CONTEXT;
+    static const std::string FK_ATTACH_CONTEXT;
+    static const FkID FK_MSG_NEW_LAYER;
     std::shared_ptr<FkGraphicContext> context = nullptr;
+    std::shared_ptr<FkGraphicContext> contextOfWin = nullptr;
 };
 
 
