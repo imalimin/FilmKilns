@@ -81,4 +81,5 @@ dependencies {
     //Kotlin协程
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.27.0-eap13"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
+    annotationProcessor project(':preannotation')
 }
