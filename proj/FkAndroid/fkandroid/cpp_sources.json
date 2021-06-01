@@ -1,0 +1,9 @@
+[
+  {
+    "project": "FkGraphic",
+    "path": "core",
+    "src": [
+      "FkCoreTest"
+    ]
+  }
+]

@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -84,4 +86,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
     implementation project(':fkannotation')
     annotationProcessor project(':fkauto')
+}
+
+task generateCPPSources {
+    def jsonFile = file('cpp_sources.json')
+    def entities = new JsonSlurper().parseText(jsonFile.text)
+    for (item in entities) {
+        println(item.project)
+    }
 }
