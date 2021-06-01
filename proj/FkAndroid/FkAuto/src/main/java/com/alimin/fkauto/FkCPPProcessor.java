@@ -1,5 +1,6 @@
 package com.alimin.fkauto;
 
+import com.alimin.fkannotation.FkCPPSource;
 import com.google.auto.service.AutoService;
 
 import java.io.File;
@@ -23,7 +24,7 @@ public class FkCPPProcessor extends AbstractProcessor {
         Messager messager = processingEnvironment.getMessager();
         String mRootPath = processingEnvironment.getOptions().getOrDefault("rootPath", ".");
         messager.printMessage(Diagnostic.Kind.NOTE, "mRootPath: " + mRootPath);
-        File file = new File("/Users/lmy/Downloads/" + System.currentTimeMillis() + ".txt");
+        File file = new File(mRootPath,System.currentTimeMillis() + ".txt");
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -40,7 +41,7 @@ public class FkCPPProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Collections.singleton(FkCPPElement.class.getCanonicalName());
+        return Collections.singleton(FkCPPSource.class.getCanonicalName());
     }
 
     @Override
