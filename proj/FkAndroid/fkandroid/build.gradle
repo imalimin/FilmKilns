@@ -1,4 +1,8 @@
 import groovy.json.JsonSlurper
+import org.apache.velocity.Template
+import org.apache.velocity.VelocityContext
+import org.apache.velocity.app.VelocityEngine
+import org.apache.velocity.runtime.RuntimeConstants
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
@@ -89,9 +93,50 @@ dependencies {
 }
 
 task generateCPPSources {
+    def rootDir = new File(getRootDir().parentFile.parentFile, "src")
+    def templateDir = new File(getProjectDir(), "templates")
     def jsonFile = file('cpp_sources.json')
     def entities = new JsonSlurper().parseText(jsonFile.text)
+
+    VelocityEngine engine = new VelocityEngine()
+    engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath());
+    engine.init()
+
     for (item in entities) {
-        println(item.project)
+        for (pkt in item.packages) {
+            for (src in pkt.src) {
+                def headerFile = new File(rootDir, "${item.module}/include/${src}.h")
+                def srcFile = new File(rootDir, "${item.module}/${pkt.package}/${src}.cpp")
+                def tagHeader = "${item.module.replace("Fk", "Fk_")}_${src}_H".toUpperCase()
+                VelocityContext ctx = new VelocityContext()
+                ctx.put("moduleName", item.module)
+                ctx.put("className", src)
+                ctx.put("tagHeader", tagHeader)
+                if (!headerFile.exists()) {
+                    writeSource(engine, ctx, "FkHeader.txt", headerFile)
+                    println("New   h: ${headerFile.path}")
+                }
+                if (!srcFile.exists()) {
+                    writeSource(engine, ctx, "FkCPP.txt", srcFile)
+                    println("New cpp: ${srcFile.path}")
+                }
+            }
+        }
     }
+}
+
+static def writeSource(VelocityEngine engine, VelocityContext ctx, String templateStr, File out) {
+    Template template = engine.getTemplate(templateStr)
+    ctx.put("email", "aliminabc@gmail.com")
+
+    try {
+        FileWriter writer = new FileWriter(out)
+        template.merge(ctx, writer)
+        writer.flush()
+        writer.close()
+        return true
+    } catch (IOException e) {
+        e.printStackTrace()
+    }
+    return false
 }

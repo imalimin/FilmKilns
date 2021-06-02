@@ -1,9 +1,12 @@
 [
   {
-    "project": "FkGraphic",
-    "path": "core",
-    "src": [
-      "FkCoreTest"
+    "module": "FkGraphic",
+    "packages": [
+      {
+        "package": "core",
+        "src": [
+        ]
+      }
     ]
   }
 ]
