@@ -90,6 +90,24 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
 }
 
+/**
+ * Generate .cpp and .h source by command
+ * ./gradlew generateCPPSource -Pm=FkGraphic -Ppkt=core -Pc=FkTest
+ */
+task generateCPPSource(type: Exec) {
+    if (project.hasProperty('m') && project.hasProperty('pkt') && project.hasProperty('c')) {
+        def rootDir = new File(getRootDir().parentFile.parentFile, "src")
+        def templateDir = new File(getProjectDir(), "templates")
+        VelocityEngine engine = new VelocityEngine()
+        engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath());
+        engine.init()
+        generateCPPAndHeader(engine, rootDir, m, pkt, c)
+        commandLine 'echo', 'Generate done.'
+    } else {
+        commandLine 'echo', 'Generate nothing.'
+    }
+}
+
 task generateCPPSources {
     def rootDir = new File(getRootDir().parentFile.parentFile, "src")
     def templateDir = new File(getProjectDir(), "templates")
@@ -103,24 +121,29 @@ task generateCPPSources {
     for (item in entities) {
         for (pkt in item.packages) {
             for (src in pkt.src) {
-                def headerFile = new File(rootDir, "${item.module}/include/${src}.h")
-                def srcFile = new File(rootDir, "${item.module}/${pkt.package}/${src}.cpp")
-                def tagHeader = "${item.module.replace("Fk", "Fk_")}_${src}_H".toUpperCase()
-                VelocityContext ctx = new VelocityContext()
-                ctx.put("moduleName", item.module)
-                ctx.put("className", src)
-                ctx.put("tagHeader", tagHeader)
-                if (!headerFile.exists()) {
-                    writeSource(engine, ctx, "FkHeader.txt", headerFile)
-                    println("New   h: ${headerFile.path}")
-                }
-                if (!srcFile.exists()) {
-                    writeSource(engine, ctx, "FkCPP.txt", srcFile)
-                    println("New cpp: ${srcFile.path}")
-                }
+                generateCPPAndHeader(engine, rootDir, item.module, pkt.package, src)
             }
         }
     }
+}
+
+static def generateCPPAndHeader(VelocityEngine engine, File rootDir, String module, String pkt, String className) {
+    def headerFile = new File(rootDir, "${module}/include/${className}.h")
+    def srcFile = new File(rootDir, "${module}/${pkt}/${className}.cpp")
+    def tagHeader = "${module.replace("Fk", "Fk_")}_${className}_H".toUpperCase()
+    VelocityContext ctx = new VelocityContext()
+    ctx.put("moduleName", module)
+    ctx.put("className", className)
+    ctx.put("tagHeader", tagHeader)
+    if (!headerFile.exists()) {
+        writeSource(engine, ctx, "FkHeader.txt", headerFile)
+        println("New   h: ${headerFile.path}")
+    }
+    if (!srcFile.exists()) {
+        writeSource(engine, ctx, "FkCPP.txt", srcFile)
+        println("New cpp: ${srcFile.path}")
+    }
+
 }
 
 static def writeSource(VelocityEngine engine, VelocityContext ctx, String templateStr, File out) {
