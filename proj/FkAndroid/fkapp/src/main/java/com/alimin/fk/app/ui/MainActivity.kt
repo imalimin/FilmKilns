@@ -2,7 +2,6 @@ package com.alimin.fk.app.ui
 
 import android.content.Intent
 import com.alimin.fk.app.R
-import com.alimin.fk.auto.FkCPPSources
 import com.lmy.common.adapter.SimpleTextAdapter
 import com.lmy.common.ext.setOnItemClickListener
 import com.lmy.common.ui.BaseActivity
@@ -17,7 +16,6 @@ class MainActivity : BaseActivity() {
     )
 
     override fun initView() {
-        FkCPPSources().init()
         val items = ArrayList<String>()
         ITEMS.forEach {
             items.add(it.name)
