@@ -47,7 +47,7 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     ++mCurID;
     layer->id = mCurID;
     prt->layer = layer;
-    layers.emplace(std::make_pair(mCurID, std::make_shared<FkGraphicLayer>()));
+    layers.emplace(std::make_pair(mCurID, layer));
     return FK_OK;
 }
 

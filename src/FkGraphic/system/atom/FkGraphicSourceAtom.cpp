@@ -13,6 +13,7 @@
 #include "FkGraphicProgramQuark.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
+#include "FkRenderRequestPrt.h"
 
 FkGraphicSourceAtom::FkGraphicSourceAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -26,13 +27,14 @@ void FkGraphicSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicSourceAtom::_onDrawLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicSourceAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSurfacePrt, FkGraphicSourceAtom::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicSourceAtom::dispatchNext);
 }
 
 void FkGraphicSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkGraphicContextQuark>();
-    chain->next<FkGraphicTexQuark>();
-    chain->next<FkGraphicFBOQuark>();
-    chain->next<FkGraphicProgramQuark>();
+    chain->next<FkGraphicContextQuark>()
+            .next<FkGraphicTexQuark>()
+            .next<FkGraphicFBOQuark>()
+            .next<FkGraphicProgramQuark>();
 }
 
 FkResult FkGraphicSourceAtom::onCreate() {

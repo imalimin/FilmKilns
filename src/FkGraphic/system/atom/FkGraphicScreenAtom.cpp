@@ -7,6 +7,7 @@
 
 #include "FkGraphicScreenAtom.h"
 #include "FkGraphicLayerPrt.h"
+#include "FkRenderRequestPrt.h"
 
 FkGraphicScreenAtom::FkGraphicScreenAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -19,6 +20,7 @@ FkGraphicScreenAtom::~FkGraphicScreenAtom() {
 
 void FkGraphicScreenAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicScreenAtom::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicScreenAtom::dispatchNext);
 }
 
 void FkGraphicScreenAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

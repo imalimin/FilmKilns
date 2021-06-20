@@ -26,6 +26,7 @@ FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_FILE, FkLayerEngine::_updateLayerWithFile);
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor);
     FK_REG_MSG(FK_MSG_SET_SURFACE, FkLayerEngine::_setSurface);
+    FK_REG_MSG(FK_MSG_NOTIFY_RENDER, FkLayerEngine::_notifyRender);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }

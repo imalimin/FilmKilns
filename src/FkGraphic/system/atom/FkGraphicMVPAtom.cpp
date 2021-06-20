@@ -14,6 +14,7 @@
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkGraphicLayerQuark.h"
 #include "FkGraphicNewTexPtl.h"
+#include "FkRenderRequestPrt.h"
 
 FkGraphicMVPAtom::FkGraphicMVPAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -28,13 +29,14 @@ void FkGraphicMVPAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicMVPAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicMVPAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicMVPAtom::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicMVPAtom::dispatchNext);
 }
 
 void FkGraphicMVPAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkGraphicLayerQuark>();
-    chain->next<FkGraphicTransQuark>();
-    chain->next<FkGraphicScaleQuark>();
-    chain->next<FkGraphicRotateQuark>();
+    chain->next<FkGraphicLayerQuark>()
+            .next<FkGraphicTransQuark>()
+            .next<FkGraphicScaleQuark>()
+            .next<FkGraphicRotateQuark>();
 }
 
 FkResult FkGraphicMVPAtom::onCreate() {

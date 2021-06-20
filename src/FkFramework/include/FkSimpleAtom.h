@@ -26,8 +26,9 @@ public:
     virtual ~FkConnectChain();
 
     template<class T>
-    void next() {
+    FkConnectChain &next() {
         _next(std::make_shared<T>());
+        return *this;
     }
 
     std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> p);
