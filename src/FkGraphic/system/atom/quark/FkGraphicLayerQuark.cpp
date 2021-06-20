@@ -10,6 +10,8 @@
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkColorComponent.h"
 #include "FkSizeComponent.h"
+#include "FkTexComponent.h"
+#include "FkRenderRequestPrt.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -22,6 +24,7 @@ FkGraphicLayerQuark::~FkGraphicLayerQuark() {
 void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicLayerQuark::_onNewLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicLayerQuark::_onUpdateLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicLayerQuark::_onRenderRequest);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -63,5 +66,18 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             itr->second->addComponent(sizeComp);
         }
     }
+    vec.clear();
+    if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkTexComponent>())) {
+        auto itr = layers.find(prt->layer->id);
+        if (layers.end() != itr) {
+            itr->second->addComponent(vec[0]);
+        }
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
+    auto prt = std::static_pointer_cast<FkRenderRequestPrt>(p);
+
     return FK_OK;
 }

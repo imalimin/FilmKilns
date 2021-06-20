@@ -37,6 +37,8 @@ private:
 
     FkResult _onUpdateLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
 private:
     FkID mCurID = 0;
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
