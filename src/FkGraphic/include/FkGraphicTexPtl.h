@@ -19,7 +19,7 @@ public:
     virtual ~FkGraphicTexPtl();
 
 public:
-    FkID texId = FK_ID_NONE;
+    FkID id = FK_ID_NONE;
 
 };
 

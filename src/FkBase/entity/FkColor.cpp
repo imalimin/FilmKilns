@@ -7,6 +7,18 @@
 
 #include "FkColor.h"
 
+FkColor &FkColor::white() {
+    static FkColor *color;
+    if (color == nullptr) {
+        color = new FkColor();
+    }
+    color->red = 0;
+    color->greed = 0;
+    color->blue = 0;
+    color->alpha = 0;
+    return *color;
+}
+
 FkColor::FkColor() {
     FK_MARK_SUPER
 }
@@ -18,4 +30,20 @@ FkColor::FkColor(const FkColor &o)
 
 FkColor::~FkColor() {
 
+}
+
+float FkColor::fRed() {
+    return red / 255.0f;
+}
+
+float FkColor::fGreen() {
+    return greed / 255.0f;
+}
+
+float FkColor::fBlue() {
+    return blue / 255.0f;
+}
+
+float FkColor::fAlpha() {
+    return alpha / 255.0f;
 }

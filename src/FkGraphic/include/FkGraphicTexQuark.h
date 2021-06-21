@@ -36,6 +36,8 @@ private:
 
     FkResult _onAllocTex(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
 private:
     std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
     std::unordered_map<FkID, std::shared_ptr<FkGraphicTexture>> sMap;

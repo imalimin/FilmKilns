@@ -10,7 +10,8 @@
 #include "FkGraphicNewTexPtl.h"
 #include "FkTexComponent.h"
 #include "FkGraphicTexComponent.h"
-#include "EGL/egl.h"
+#include "FkRenderRequestPrt.h"
+#include "FkGLDefinition.h"
 
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -23,6 +24,7 @@ FkGraphicTexQuark::~FkGraphicTexQuark() {
 void FkGraphicTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicTexQuark::_onDrawLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicTexQuark::_onAllocTex);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicTexQuark::_onRenderRequest);
 }
 
 FkResult FkGraphicTexQuark::onCreate() {
@@ -53,26 +55,46 @@ FkResult FkGraphicTexQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
     if (FK_OK != ptl->layer->findComponent(vec, FkClassType::type<FkTexComponent>())) {
         return FK_FAIL;
     }
-    for (auto it : vec) {
-        auto tex = std::static_pointer_cast<FkTexComponent>(it);
-        auto itr = sMap.find(tex->texId);
-        if (itr != sMap.end()) {
-            auto comp = std::make_shared<FkGraphicTexComponent>();
-            comp->texture = itr->second;
-            ptl->layer->addComponent(comp);
-        }
-    }
+//    for (auto it : vec) {
+//        auto tex = std::static_pointer_cast<FkTexComponent>(it);
+//        auto itr = sMap.find(tex->texId);
+//        if (itr != sMap.end()) {
+//            auto comp = std::make_shared<FkGraphicTexComponent>();
+//            comp->texture = itr->second;
+//            ptl->layer->addComponent(comp);
+//        }
+//    }
     return FK_OK;
 }
 
 FkResult FkGraphicTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
-    auto ptl = std::static_pointer_cast<FkGraphicTexPtl>(p);
+    auto prt = Fk_POINTER_CAST(FkGraphicTexPtl, p);
     FkTexDescription desc;
     auto tex = allocator->alloc(desc);
     if (nullptr == tex) {
         return FK_FAIL;
     }
     sMap.insert(std::make_pair(tex->id, tex));
-    ptl->texId = tex->id;
+    prt->id = tex->id;
+    return FK_OK;
+}
+
+FkResult FkGraphicTexQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
+    auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    for (auto &it : prt->req->layers) {
+        vec.clear();
+        std::shared_ptr<FkTexComponent> tex = nullptr;
+        if (FK_OK != it->findComponent(vec, FkClassType::type<FkTexComponent>())) {
+            continue;
+        }
+        tex = Fk_POINTER_CAST(FkTexComponent, vec[0]);
+        auto itr = sMap.find(tex->id);
+        if (itr != sMap.end()) {
+            auto comp = std::make_shared<FkGraphicTexComponent>();
+            comp->tex = itr->second;
+            it->addComponent(comp);
+        }
+    }
     return FK_OK;
 }

@@ -64,7 +64,7 @@ FkResult FkGraphicProgram::create() {
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
     glLinkProgram(program);
-    return GL_NO_ERROR != glGetError();
+    return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
 void FkGraphicProgram::destroy() {

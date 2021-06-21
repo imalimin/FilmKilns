@@ -9,6 +9,7 @@
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkColorComponent.h"
+#include "FkSizeComponent.h"
 #include "FkTexComponent.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
@@ -107,12 +108,14 @@ FkID FkLayerEngine::newLayerWithFile(std::string path) {
 FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
     auto id = newLayer();
     if (FK_ID_NONE != id) {
-        auto component = std::make_shared<FkColorComponent>();
-        component->size = size;
-        component->color = color;
+        auto colorCom = std::make_shared<FkColorComponent>();
+        colorCom->color = color;
+        auto sizeCom = std::make_shared<FkSizeComponent>();
+        sizeCom->size = size;
         auto layer = std::make_shared<FkGraphicLayer>();
         layer->id = id;
-        layer->addComponent(component);
+        layer->addComponent(colorCom);
+        layer->addComponent(sizeCom);
         auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_COLOR);
         msg->sp = layer;
         sendMessage(msg);
@@ -138,9 +141,9 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
     auto ret = client->quickSend<FkGraphicNewTexPtl>(texPrt, molecule);
     if (FK_OK == ret) {
         auto com = std::make_shared<FkTexComponent>();
+        com->id = texPrt->id;
         auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
         prt->layer = std::static_pointer_cast<FkGraphicLayer>(msg->sp);
-        com->texId = texPrt->texId;
         prt->layer->addComponent(com);
         return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
     }

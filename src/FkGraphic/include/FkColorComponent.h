@@ -22,7 +22,6 @@ public:
 
 public:
     FkColor color;
-    FkSize size;
 };
 
 #endif //FK_GRAPHIC_FKCOLORCOMPONENT_H

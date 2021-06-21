@@ -6,9 +6,7 @@
 */
 
 #include "FkGraphicTexture.h"
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <EGL/egl.h>
+#include "FkGLDefinition.h"
 
 #define TAG "FkGraphicAllocator"
 
@@ -169,13 +167,11 @@ FkGraphicTexture *FkGraphicAllocator::delegateAlloc(FkTexDescription &desc) {
     }
     auto o = new FkGraphicTexture(desc);
     o->create();
-    o->bind();
     if (FkColor::kFormat::NONE != o->desc.fmt
         && 0 != o->desc.size.getWidth()
         && 0 != o->desc.size.getHeight()) {
         o->update(o->desc.fmt, o->desc.size.getWidth(), o->desc.size.getHeight());
     }
-    o->unbind();
     return o;
 }
 

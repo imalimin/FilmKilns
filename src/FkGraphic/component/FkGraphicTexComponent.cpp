@@ -12,10 +12,10 @@ FkGraphicTexComponent::FkGraphicTexComponent() : FkGraphicComponent() {
 }
 
 FkGraphicTexComponent::FkGraphicTexComponent(const FkGraphicTexComponent &o)
-        : FkGraphicComponent(o), texture(o.texture) {
+        : FkGraphicComponent(o), tex(o.tex) {
     FK_MARK_SUPER
 }
 
 FkGraphicTexComponent::~FkGraphicTexComponent() {
-    texture = nullptr;
+    tex = nullptr;
 }

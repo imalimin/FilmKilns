@@ -10,6 +10,7 @@
 
 #include "FkSimpleAtom.h"
 #include "FkLocalClient.h"
+#include "FkGraphicProgram.h"
 
 FK_CLASS FkGraphicScreenAtom FK_EXTEND FkSimpleAtom {
 public:
@@ -35,6 +36,10 @@ protected:
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
+private:
+    float *position = nullptr;
+    float *coordinate = nullptr;
+    uint32_t vbo = 0;
 };
 
 

@@ -20,7 +20,7 @@ public:
     virtual ~FkGraphicTexComponent();
 
 public:
-    std::shared_ptr<FkGraphicTexture> texture = nullptr;
+    std::shared_ptr<FkGraphicTexture> tex = nullptr;
 };
 
 

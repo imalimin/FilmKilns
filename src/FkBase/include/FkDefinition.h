@@ -18,6 +18,7 @@
 #define AFK_ENUM enum class
 #define FK_EXTEND : public
 #define FK_NULLABLE
+#define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 
 #define FK_MARK_SUPER type.super(typeid(*this).name());
 #define FK_CLASS_TYPE_EQUALS(src, target) ((src).getClassType() == (target).getClassType())

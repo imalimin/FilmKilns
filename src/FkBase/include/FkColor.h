@@ -21,11 +21,21 @@ public:
         RGB565,
     };
 public:
+    static FkColor &white();
+public:
     FkColor();
 
     FkColor(const FkColor &o);
 
     virtual ~FkColor();
+
+    float fRed();
+
+    float fGreen();
+
+    float fBlue();
+
+    float fAlpha();
 
 public:
     kFormat format;

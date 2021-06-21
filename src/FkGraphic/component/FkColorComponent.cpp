@@ -12,7 +12,7 @@ FkColorComponent::FkColorComponent() : FkGraphicComponent() {
 }
 
 FkColorComponent::FkColorComponent(const FkColorComponent &o)
-        : FkGraphicComponent(o), color(o.color), size(o.size) {
+        : FkGraphicComponent(o), color(o.color) {
     FK_MARK_SUPER
 }
 

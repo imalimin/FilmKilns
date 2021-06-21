@@ -31,6 +31,8 @@ public:
 
     void destroy();
 
+    FkResult swapBuffers();
+
 private:
     EGLDisplay _createDisplay(EGLNativeDisplayType display_id);
 

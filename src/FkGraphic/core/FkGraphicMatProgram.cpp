@@ -17,6 +17,28 @@ FkGraphicMatProgram::~FkGraphicMatProgram() {
 
 }
 
+FkResult FkGraphicMatProgram::create() {
+    auto ret = FkGraphicProgram::create();
+    if (FK_OK == ret) {
+        aPositionLocation = getAttribLocation("aPosition");
+        uTextureLocation = getUniformLocation("uTexture");
+        uMatrixLocation = getUniformLocation("uTextureMatrix");
+        aTextureCoordinateLocation = getAttribLocation("aTextureCoord");
+    }
+    return ret;
+}
+
+FkResult FkGraphicMatProgram::bindTexture(int32_t target, int32_t index, FkID tex) {
+    if (GL_NONE == tex) {
+        glBindTexture(target, GL_NONE);
+    } else {
+        glActiveTexture(GL_TEXTURE0 + index);
+        glBindTexture(target, tex);
+        setUniform1i(uTextureLocation, index);
+    }
+    return FK_OK;
+}
+
 std::string FkGraphicMatProgram::getVertex() {
     std::string shader(R"(
         attribute vec4 aPosition;

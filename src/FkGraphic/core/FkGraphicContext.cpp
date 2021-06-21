@@ -231,6 +231,14 @@ FkResult FkGraphicContext::update(std::shared_ptr<FkGraphicWindow> win) {
     return FK_FAIL;
 }
 
+FkResult FkGraphicContext::swapBuffers() {
+    if (!eglSwapBuffers(eglDisplay, eglSurface)) {
+        AlLogE(TAG, "%s swapBuffers failed!", alias.c_str());
+        return FK_FAIL;
+    }
+    return FK_OK;
+}
+
 bool FkGraphicContext::_checkError() {
     EGLint error = eglGetError();
     if (EGL_SUCCESS != error) {

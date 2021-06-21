@@ -17,5 +17,4 @@ FkGraphicNewTexPtl::FkGraphicNewTexPtl(const FkGraphicNewTexPtl &o) : FkGraphicT
 }
 
 FkGraphicNewTexPtl::~FkGraphicNewTexPtl() {
-    texId = FK_ID_NONE;
 }

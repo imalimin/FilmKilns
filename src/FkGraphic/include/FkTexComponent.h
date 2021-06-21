@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKTEXCOMPONENT_H
 
 #include "FkBufferComponent.h"
+#include "FkGraphicTexture.h"
 
 FK_CLASS FkTexComponent FK_EXTEND FkBufferComponent {
 public:
@@ -19,7 +20,7 @@ public:
     virtual ~FkTexComponent();
 
 public:
-    FkID texId = FK_ID_NONE;
+    FkID id = FK_ID_NONE;
 };
 
 

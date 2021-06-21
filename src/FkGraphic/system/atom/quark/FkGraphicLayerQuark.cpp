@@ -55,23 +55,23 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
-    auto prt = std::static_pointer_cast<FkGraphicUpdateLayerPrt>(p);
+    auto prt = Fk_POINTER_CAST(FkGraphicUpdateLayerPrt, p);
+    auto itr = layers.find(prt->layer->id);
+    if (layers.end() == itr) {
+        return FK_FAIL;
+    }
+
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkColorComponent>())) {
-        auto comp = std::static_pointer_cast<FkColorComponent>(vec[0]);
-        auto itr = layers.find(prt->layer->id);
-        if (layers.end() != itr) {
-            auto sizeComp = std::make_shared<FkSizeComponent>();
-            sizeComp->size = comp->size;
-            itr->second->addComponent(sizeComp);
-        }
+        itr->second->addComponent(vec[0]);
+    }
+    vec.clear();
+    if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+        itr->second->addComponent(vec[0]);
     }
     vec.clear();
     if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkTexComponent>())) {
-        auto itr = layers.find(prt->layer->id);
-        if (layers.end() != itr) {
-            itr->second->addComponent(vec[0]);
-        }
+        itr->second->addComponent(vec[0]);
     }
     return FK_OK;
 }

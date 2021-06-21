@@ -79,8 +79,6 @@ public:
     uint32_t program = 0;
 };
 
-class FkGraphicMatProgram;
-
 FK_CLASS FkGraphicProgramAllocator FK_EXTEND FkSourceAllocator<
         FkGraphicProgram,
         FkProgramDescription> {

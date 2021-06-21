@@ -11,11 +11,11 @@ FkGraphicTexPtl::FkGraphicTexPtl() : FkProtocol() {
     FK_MARK_SUPER
 }
 
-FkGraphicTexPtl::FkGraphicTexPtl(const FkGraphicTexPtl &o) : FkProtocol(o), texId(o.texId) {
+FkGraphicTexPtl::FkGraphicTexPtl(const FkGraphicTexPtl &o) : FkProtocol(o), id(o.id) {
     FK_MARK_SUPER
 
 }
 
 FkGraphicTexPtl::~FkGraphicTexPtl() {
-    texId = FK_ID_NONE;
+    id = FK_ID_NONE;
 }

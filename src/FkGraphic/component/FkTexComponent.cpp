@@ -11,10 +11,10 @@ FkTexComponent::FkTexComponent() : FkBufferComponent() {
     FK_MARK_SUPER
 }
 
-FkTexComponent::FkTexComponent(const FkTexComponent &o) : FkBufferComponent(o) {
+FkTexComponent::FkTexComponent(const FkTexComponent &o) : FkBufferComponent(o), id(o.id) {
     FK_MARK_SUPER
 }
 
 FkTexComponent::~FkTexComponent() {
-    texId = FK_ID_NONE;
+    id = FK_ID_NONE;
 }
