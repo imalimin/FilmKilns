@@ -32,7 +32,7 @@ public:
 
     virtual FkResult attach(std::shared_ptr<FkGraphicTexture> o);
 
-    virtual FkResult dettach(uint32_t target);
+    virtual FkResult detach(uint32_t target);
 
 private:
     uint32_t fbo = 0;

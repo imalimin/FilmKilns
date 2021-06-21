@@ -9,6 +9,7 @@
 #include "FkGraphicLayerPrt.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
+#include "FkRenderRequestPrt.h"
 
 #define TAG "FkGraphicContextQuark"
 
@@ -27,6 +28,7 @@ void FkGraphicContextQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) 
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicContextQuark::_onMakeCurrent);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicContextQuark::_onMakeCurrent);
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSurfacePrt, FkGraphicContextQuark::_onSetSurface);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicContextQuark::_onRenderRequest);
 }
 
 FkResult FkGraphicContextQuark::onCreate() {
@@ -76,4 +78,14 @@ FkResult FkGraphicContextQuark::_onSetSurface(std::shared_ptr<FkProtocol> p) {
     } else {
         return contextOfWin->update(ptl->win);
     }
+}
+
+FkResult FkGraphicContextQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
+    auto prt = std::static_pointer_cast<FkRenderRequestPrt>(p);
+    auto ctx = (nullptr != contextOfWin ? contextOfWin : context);
+    ctx->makeCurrent();
+    auto comp = std::make_shared<FkGraphicCtxComponent>();
+    comp->context = ctx;
+    prt->req->addComponent(comp);
+    return FK_OK;
 }

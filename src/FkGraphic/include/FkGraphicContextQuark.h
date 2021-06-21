@@ -35,6 +35,8 @@ private:
 
     FkResult _onSetSurface(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
 private:
     static const std::string FK_DETACH_CONTEXT;
     static const std::string FK_ATTACH_CONTEXT;

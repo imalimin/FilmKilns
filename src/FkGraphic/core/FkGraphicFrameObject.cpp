@@ -48,7 +48,7 @@ FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> o) {
     return GL_NO_ERROR != glGetError();
 }
 
-FkResult FkGraphicFrameObject::dettach(uint32_t target) {
+FkResult FkGraphicFrameObject::detach(uint32_t target) {
     bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, GL_NONE, 0);
     unbind();

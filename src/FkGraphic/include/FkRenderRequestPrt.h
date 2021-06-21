@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKRENDERREQUESTPRT_H
 
 #include "FkProtocol.h"
+#include "FkRenderRequest.h"
 
 FK_CLASS FkRenderRequestPrt FK_EXTEND FkProtocol {
 public:
@@ -18,6 +19,8 @@ public:
 
     virtual ~FkRenderRequestPrt();
 
+public:
+    std::shared_ptr<FkRenderRequest> req = nullptr;
 };
 
 

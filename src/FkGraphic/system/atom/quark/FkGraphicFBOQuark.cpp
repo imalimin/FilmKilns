@@ -8,6 +8,7 @@
 #include "FkGraphicFBOQuark.h"
 #include "FkGraphicLayerPrt.h"
 #include "FkGraphicFBOComponent.h"
+#include "FkRenderRequestPrt.h"
 
 FkGraphicFBOQuark::FkGraphicFBOQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -18,7 +19,7 @@ FkGraphicFBOQuark::~FkGraphicFBOQuark() {
 }
 
 void FkGraphicFBOQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicFBOQuark::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicFBOQuark::_onRenderRequest);
 }
 
 FkResult FkGraphicFBOQuark::onCreate() {
@@ -43,7 +44,7 @@ FkResult FkGraphicFBOQuark::onStop() {
     return FkQuark::onStop();
 }
 
-FkResult FkGraphicFBOQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicFBOQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto ptl = std::static_pointer_cast<FkGraphicLayerPrt>(p);
     auto comp = std::make_shared<FkGraphicFBOComponent>();
     int32_t desc = 0;

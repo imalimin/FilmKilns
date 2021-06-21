@@ -31,7 +31,7 @@ protected:
     virtual FkResult onStop() override;
 
 private:
-    FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
 private:
     std::shared_ptr<FkGraphicFBOAllocator> allocator = nullptr;

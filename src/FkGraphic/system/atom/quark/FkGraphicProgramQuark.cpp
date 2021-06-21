@@ -8,6 +8,7 @@
 #include "FkGraphicProgramQuark.h"
 #include "FkGraphicLayerPrt.h"
 #include "FkGraphicProgramComponent.h"
+#include "FkRenderRequestPrt.h"
 
 FkGraphicProgramQuark::FkGraphicProgramQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -19,7 +20,7 @@ FkGraphicProgramQuark::~FkGraphicProgramQuark() {
 }
 
 void FkGraphicProgramQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicProgramQuark::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicProgramQuark::_onRenderRequest);
 }
 
 FkResult FkGraphicProgramQuark::onCreate() {
@@ -44,13 +45,13 @@ FkResult FkGraphicProgramQuark::onStop() {
     return FkQuark::onStop();
 }
 
-FkResult FkGraphicProgramQuark::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
-    auto ptl = std::static_pointer_cast<FkGraphicLayerPrt>(p);
+FkResult FkGraphicProgramQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
+    auto prt = std::static_pointer_cast<FkGraphicLayerPrt>(p);
     auto comp = std::make_shared<FkGraphicProgramComponent>();
     FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
     comp->program = allocator->alloc(desc);
     _fillValue(comp->program);
-    ptl->layer->addComponent(comp);
+    prt->layer->addComponent(comp);
     return FK_OK;
 }
 

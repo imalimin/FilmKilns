@@ -19,8 +19,7 @@ FkGraphicScreenAtom::~FkGraphicScreenAtom() {
 }
 
 void FkGraphicScreenAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicScreenAtom::_onDrawLayer);
-    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicScreenAtom::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicScreenAtom::_onRenderRequest);
 }
 
 void FkGraphicScreenAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
@@ -42,6 +41,6 @@ FkResult FkGraphicScreenAtom::onStop() {
     return FkSimpleAtom::onStop();
 }
 
-FkResult FkGraphicScreenAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }

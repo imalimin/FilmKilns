@@ -78,6 +78,11 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto prt = std::static_pointer_cast<FkRenderRequestPrt>(p);
-
+    if (nullptr == prt->req) {
+        prt->req = std::make_shared<FkRenderRequest>();
+    }
+    for (auto &it : layers) {
+        prt->req->layers.emplace_back(it.second);
+    }
     return FK_OK;
 }

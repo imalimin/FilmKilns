@@ -102,9 +102,9 @@ task generateCPPSource(type: Exec) {
         engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath());
         engine.init()
         generateCPPAndHeader(engine, rootDir, m, pkt, c)
-        commandLine 'echo', 'Generate done.'
+        println("Generate done.")
     } else {
-        commandLine 'echo', 'Generate nothing.'
+        println("Generate nothing.")
     }
 }
 
