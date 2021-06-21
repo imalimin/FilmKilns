@@ -8,46 +8,50 @@
 #include "jni.h"
 #include "android/native_window.h"
 #include "android/native_window_jni.h"
-#include "FkLayerEngine.h"
+#include "FkImageEngine.h"
 #include "FkGraphicWindow.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+static FkImageEngine *castHandle(jlong handle) {
+    return reinterpret_cast<FkImageEngine *>(handle);
+}
+
 JNIEXPORT jlong JNICALL Java_com_alimin_fk_engine_FkImage_nativeCreateInstance
         (JNIEnv *env, jobject that) {
-    auto *p = new FkLayerEngine("FkImage");
+    auto *p = new FkImageEngine("FkImage");
     return reinterpret_cast<jlong>(p);
 }
 
 JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImage_nativeCreate
         (JNIEnv *env, jobject that, jlong handle) {
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     engine->create();
 }
 
 JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImage_nativeDestroy
         (JNIEnv *env, jobject that, jlong handle) {
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     engine->destroy();
 }
 
 JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImage_nativeStart
         (JNIEnv *env, jobject that, jlong handle) {
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     engine->start();
 }
 
 JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImage_nativeStop
         (JNIEnv *env, jobject that, jlong handle) {
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     engine->stop();
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSetSurface
         (JNIEnv *env, jobject that, jlong handle, jobject surface) {
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     if (surface) {
         auto nativeHandle = ANativeWindow_fromSurface(env, surface);
         auto win = std::make_shared<FkGraphicWindow>(nativeHandle,
@@ -61,7 +65,7 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSetSurface
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithFile
         (JNIEnv *env, jobject that, jlong handle, jstring path) {
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     auto *p = env->GetStringUTFChars(path, nullptr);
     auto layer = engine->newLayerWithFile(std::string(p));
     env->ReleaseStringUTFChars(path, p);
@@ -77,13 +81,13 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithColor
     color.greed = green;
     color.blue = blue;
     color.alpha = alpha;
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     return engine->newLayerWithColor(FkSize(widht, height), color);
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNotifyRender
         (JNIEnv *env, jobject that, jlong handle) {
-    auto *engine = reinterpret_cast<FkLayerEngine *>(handle);
+    auto *engine = castHandle(handle);
     return engine->notifyRender();
 }
 

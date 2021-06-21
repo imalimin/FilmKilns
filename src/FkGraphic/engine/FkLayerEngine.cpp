@@ -16,15 +16,13 @@
 #include "FkRenderRequestPrt.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
-const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'E', 0x11);
-const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x12);
-const FkID FkLayerEngine::FK_MSG_SET_SURFACE = FK_KID('F', 'K', 'E', 0x13);
-const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = FK_KID('F', 'K', 'E', 0x14);
+const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
+const FkID FkLayerEngine::FK_MSG_SET_SURFACE = FK_KID('F', 'K', 'E', 0x12);
+const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = FK_KID('F', 'K', 'E', 0x13);
 
 FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_NEW_LAYER, FkLayerEngine::_newLayer);
-    FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_FILE, FkLayerEngine::_updateLayerWithFile);
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor);
     FK_REG_MSG(FK_MSG_SET_SURFACE, FkLayerEngine::_setSurface);
     FK_REG_MSG(FK_MSG_NOTIFY_RENDER, FkLayerEngine::_notifyRender);
@@ -95,16 +93,6 @@ FkID FkLayerEngine::newLayer() {
     return FK_ID_NONE;
 }
 
-FkID FkLayerEngine::newLayerWithFile(std::string path) {
-    auto id = newLayer();
-    if (FK_ID_NONE != id) {
-        auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_COLOR);
-        msg->arg3 = std::move(path);
-        sendMessage(msg);
-    }
-    return id;
-}
-
 FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
     auto id = newLayer();
     if (FK_ID_NONE != id) {
@@ -130,10 +118,6 @@ FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
         msg->promise->set_value(prt);
     }
     return ret;
-}
-
-FkResult FkLayerEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
-    return FK_FAIL;
 }
 
 FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {

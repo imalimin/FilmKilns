@@ -12,6 +12,8 @@ class FilmKilns {
             System.loadLibrary("al_common")
             System.loadLibrary("FkBase")
             System.loadLibrary("FkFramework")
+            System.loadLibrary("FkGraphic")
+            System.loadLibrary("FkImage")
             System.loadLibrary("FkAndroid")
         }
     }

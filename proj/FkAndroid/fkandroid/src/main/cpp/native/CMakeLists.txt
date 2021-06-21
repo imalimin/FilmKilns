@@ -9,6 +9,7 @@ include_directories(
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
         ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
+        ${PROJECT_SOURCE_FK_DIR}/FkImage/include
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")

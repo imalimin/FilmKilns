@@ -36,14 +36,10 @@ public:
 
     FkID newLayer();
 
-    FkID newLayerWithFile(std::string path);
-
     FkID newLayerWithColor(FkSize size, FkColor color);
 
 private:
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
-
-    FkResult _updateLayerWithFile(std::shared_ptr<FkMessage> msg);
 
     FkResult _updateLayerWithColor(std::shared_ptr<FkMessage> msg);
 
@@ -53,7 +49,6 @@ private:
 
 private:
     static const FkID FK_MSG_NEW_LAYER;
-    static const FkID FK_MSG_UPDATE_LAYER_WITH_FILE;
     static const FkID FK_MSG_UPDATE_LAYER_WITH_COLOR;
     static const FkID FK_MSG_SET_SURFACE;
     static const FkID FK_MSG_NOTIFY_RENDER;
