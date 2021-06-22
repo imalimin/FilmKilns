@@ -35,9 +35,13 @@
 
 // +-------- Assert --------+
 #ifdef __FK_DEBUG__
-#define FkAssert(condition) assert(condition)
+#define FkAssert(condition, value) assert(condition)
 #else
-#define FkAssert(condition) FkLogW("FkAssert", "Assert failed.");
+#define FkAssert(condition, value)            \
+    if(!(condition)) {                        \
+        FkLogW("FkAssert", "Assert failed."); \
+        return value;                         \
+    }
 #endif
 
 // +------ State Code ------+

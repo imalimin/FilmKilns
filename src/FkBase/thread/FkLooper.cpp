@@ -18,7 +18,7 @@ void FkLooper::prepare() {
     if (nullptr == looper) {
         FkLogE(TAG, "has been called.");
     }
-    FkAssert(nullptr != looper);
+    FkAssert(nullptr != looper, );
 }
 
 FkLooper *FkLooper::myLooper() {
@@ -26,7 +26,7 @@ FkLooper *FkLooper::myLooper() {
     if (nullptr == looper) {
         FkLogE(TAG, "Call first pls.");
     }
-    FkAssert(nullptr != looper);
+    FkAssert(nullptr != looper, nullptr);
     return looper;
 }
 

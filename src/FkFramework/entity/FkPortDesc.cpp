@@ -29,7 +29,7 @@ FkResult FkPortDesc::add(uint32_t port, std::shared_ptr<FkProtocol> p, FkPort::P
         }
         auto type = p->getType();
         auto itr0 = ports.find(type);
-        FkAssert(ports.end() == itr0);
+        FkAssert(ports.end() == itr0, FK_FAIL);
         ports.insert(std::make_pair(type, std::make_shared<FkPort>(port, p, func)));
         return FK_OK;
     }

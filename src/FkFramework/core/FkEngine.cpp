@@ -42,7 +42,7 @@ FkEngine::FkEngine(std::string name) : FkObject(), name(std::move(name)), state(
 
 FkEngine::~FkEngine() {
     std::lock_guard<std::mutex> guard(mtx);
-    FkAssert(kState::IDL == state);
+    FkAssert(kState::IDL == state, );
 }
 
 FkResult FkEngine::create() {

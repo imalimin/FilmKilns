@@ -11,7 +11,7 @@
 FkHandler::FkHandler(FkHandler::Callback callback) : FkObject(), callback(std::move(callback)) {
     FK_MARK_SUPER
     this->looper = FkLooper::myLooper();
-    FkAssert(nullptr != looper);
+    FkAssert(nullptr != looper, );
 }
 
 FkHandler::FkHandler(FkLooper *looper, FkHandler::Callback callback)

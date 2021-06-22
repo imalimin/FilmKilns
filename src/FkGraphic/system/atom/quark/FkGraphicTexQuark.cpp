@@ -37,6 +37,7 @@ FkResult FkGraphicTexQuark::onCreate() {
 }
 
 FkResult FkGraphicTexQuark::onDestroy() {
+    sMap.clear();
     allocator->release();
     return FkQuark::onDestroy();
 }
@@ -52,6 +53,7 @@ FkResult FkGraphicTexQuark::onStop() {
 FkResult FkGraphicTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkGraphicTexPtl, p);
     FkTexDescription desc(GL_TEXTURE_2D);
+    desc.fmt = prt->fmt;
     auto tex = allocator->alloc(desc);
     if (nullptr == tex) {
         return FK_FAIL;
@@ -63,6 +65,18 @@ FkResult FkGraphicTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicTexQuark::_onUpdateTex(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkGraphicUpdateTexPrt, p);
+    if (prt->size.getWidth() <= 0 || prt->size.getHeight() <= 0) {
+        FkLogE(FK_DEF_TAG, "Invalid texture size(%dx%d).",
+               prt->size.getWidth(),
+               prt->size.getHeight());
+        return FK_FAIL;
+    }
+    auto itr = sMap.find(prt->id);
+    if (sMap.end() == itr) {
+        FkLogE(FK_DEF_TAG, "Texture(id=%d) not found.", prt->id);
+        return FK_FAIL;
+    }
+    itr->second->update(itr->second->desc.fmt, prt->size.getWidth(), prt->size.getHeight());
     return FK_OK;
 }
 

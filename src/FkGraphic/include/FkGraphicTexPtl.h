@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKGRAPHICTEXPTL_H
 
 #include "FkProtocol.h"
+#include "FkColor.h"
 
 FK_CLASS FkGraphicTexPtl FK_EXTEND FkProtocol {
 public:
@@ -20,7 +21,7 @@ public:
 
 public:
     FkID id = FK_ID_NONE;
-
+    FkColor::kFormat fmt = FkColor::kFormat::NONE;
 };
 
 

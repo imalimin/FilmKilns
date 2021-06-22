@@ -12,4 +12,18 @@
 #include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
 
+#define FK_DEF_GL_TAG "FilmKilnsGL"
+#ifdef __FK_DEBUG__
+#define FK_GL_CHECK(statement)                                        \
+    {                                                                 \
+        statement;                                                    \
+        GLenum e = glGetError();                                      \
+        if (e != GL_NO_ERROR) {                                       \
+            FkLogE(FK_DEF_GL_TAG, "Get error(%i, 0x%x)", e, e);       \
+        }                                                             \
+    }
+#else
+#define FK_GL_CHECK(statement) statement
+#endif
+
 #endif //FK_GRAPHIC_FKGLDEFINITION_H
