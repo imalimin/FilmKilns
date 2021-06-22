@@ -38,6 +38,11 @@ public:
 
     FkID newLayerWithColor(FkSize size, FkColor color);
 
+protected:
+    std::shared_ptr<FkSessionClient> getClient() { return client; };
+
+    std::shared_ptr<FkGraphicMolecule> getMolecule() { return molecule; };
+
 private:
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 

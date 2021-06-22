@@ -6,6 +6,10 @@
 */
 
 #include "FkImageEngine.h"
+#include "AlBitmapFactory.h"
+#include "FkGraphicNewTexPtl.h"
+#include "FkGraphicLayer.h"
+#include "FkBitmap.h"
 
 const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'I', 0x10);
 
@@ -37,13 +41,23 @@ FkResult FkImageEngine::onStop() {
 FkID FkImageEngine::newLayerWithFile(std::string path) {
     auto id = newLayer();
     if (FK_ID_NONE != id) {
+        auto layer = std::make_shared<FkGraphicLayer>();
+        layer->id = id;
         auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_FILE);
         msg->arg3 = std::move(path);
+        msg->sp = layer;
         sendMessage(msg);
     }
     return id;
 }
 
 FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
+    auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
+    texPrt->fmt = FkColor::kFormat::RGBA;
+    auto ret = getClient()->quickSend<FkGraphicNewTexPtl>(texPrt, getMolecule());
+    if (FK_OK == ret) {
+        auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
+        auto bmp = FkBitmap::from(AlBitmapFactory::decodeFile(msg->arg3));
+    }
     return FK_FAIL;
 }

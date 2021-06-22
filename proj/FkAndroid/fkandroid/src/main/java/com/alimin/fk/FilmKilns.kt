@@ -10,6 +10,7 @@ class FilmKilns {
                 System.loadLibrary("FkAndroidTest")
             }
             System.loadLibrary("al_common")
+            System.loadLibrary("al_bitmap")
             System.loadLibrary("FkBase")
             System.loadLibrary("FkFramework")
             System.loadLibrary("FkGraphic")

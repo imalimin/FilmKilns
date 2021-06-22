@@ -7,6 +7,7 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../al_common/include
+        ${PROJECT_SOURCE_DIR}/../al_bitmap/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
         ${PROJECT_SOURCE_DIR}/../FkFramework/include
         ${PROJECT_SOURCE_DIR}/../FkGraphic/include
@@ -35,9 +36,11 @@ message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/protocol SOURCES_ENGINE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/engine SOURCES_ENGINE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 
 list(APPEND SOURCES_ROOT ${SOURCES_PROTOCOL})
 list(APPEND SOURCES_ROOT ${SOURCES_ENGINE})
+list(APPEND SOURCES_ROOT ${SOURCES_CORE})
 
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
@@ -61,6 +64,7 @@ set(MODULES ${MODULE_NAME}
         EGL
         android
         al_common
+        al_bitmap
         FkBase
         FkFramework
         FkGraphic
