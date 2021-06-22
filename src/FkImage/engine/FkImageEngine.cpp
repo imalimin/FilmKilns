@@ -10,6 +10,7 @@
 #include "FkGraphicNewTexPtl.h"
 #include "FkGraphicLayer.h"
 #include "FkBitmap.h"
+#include "FkUpdateTexWithBmpPrt.h"
 
 const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'I', 0x10);
 
@@ -58,6 +59,9 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     if (FK_OK == ret) {
         auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
         auto bmp = FkBitmap::from(AlBitmapFactory::decodeFile(msg->arg3));
+        auto updatePrt = std::make_shared<FkUpdateTexWithBmpPrt>();
+        updatePrt->id=texPrt->id;
+        updatePrt->pixels = bmp->getPixels();
     }
     return FK_FAIL;
 }
