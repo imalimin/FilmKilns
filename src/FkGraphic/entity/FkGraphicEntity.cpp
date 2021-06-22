@@ -14,7 +14,9 @@ FkGraphicEntity::FkGraphicEntity() : FkObject() {
 
 FkGraphicEntity::FkGraphicEntity(const FkGraphicEntity &o) : FkObject() {
     FK_MARK_SUPER
-
+    for (auto &it : o.components) {
+        components.emplace_back(it);
+    }
 }
 
 FkGraphicEntity::~FkGraphicEntity() {

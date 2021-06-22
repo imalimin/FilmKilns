@@ -32,9 +32,9 @@ protected:
     virtual FkResult onStop() override;
 
 private:
-    FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
-
     FkResult _onAllocTex(std::shared_ptr<FkProtocol> p);
+
+    FkResult _onUpdateTex(std::shared_ptr<FkProtocol> p);
 
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 

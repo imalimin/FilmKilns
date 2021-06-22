@@ -127,7 +127,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 
     context->context->makeCurrent();
     glViewport(0, 0, size->size.getWidth(), size->size.getHeight());
-    glClearColor(color->color.fRed(), color->color.fGreen(), color->color.fBlue(), 0.0);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     program->bind();
     program->bindTexture(GL_TEXTURE_2D, 0, tex->tex->tex);

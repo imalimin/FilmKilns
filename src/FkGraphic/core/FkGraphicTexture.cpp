@@ -64,6 +64,9 @@ void FkGraphicTexture::unbind() {
 }
 
 FkResult FkGraphicTexture::create() {
+    if (GL_NONE == desc.target) {
+        return FK_FAIL;
+    }
     glGenTextures(1, &tex);
     bind();
     glTexParameterf(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -166,7 +169,10 @@ FkGraphicTexture *FkGraphicAllocator::delegateAlloc(FkTexDescription &desc) {
         FkLogE(TAG, "Allocate texture failed. Invalid target(%d)", desc.target);
     }
     auto o = new FkGraphicTexture(desc);
-    o->create();
+    if (FK_OK != o->create()) {
+        delete o;
+        return nullptr;
+    }
     if (FkColor::kFormat::NONE != o->desc.fmt
         && 0 != o->desc.size.getWidth()
         && 0 != o->desc.size.getHeight()) {

@@ -13,6 +13,7 @@ FkGraphicLayer::FkGraphicLayer() : FkGraphicEntity() {
 
 FkGraphicLayer::FkGraphicLayer(const FkGraphicLayer &o) : FkGraphicEntity(o), id(o.id) {
     FK_MARK_SUPER
+
 }
 
 FkGraphicLayer::~FkGraphicLayer() {

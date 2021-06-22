@@ -51,5 +51,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common FkBase FkFramework FkGraphic ${log-lib})
+set(MODULES ${MODULE_NAME} al_common FkBase FkFramework FkGraphic FkImage ${log-lib})
 target_link_libraries(${MODULES})

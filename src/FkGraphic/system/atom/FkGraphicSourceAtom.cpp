@@ -14,6 +14,7 @@
 #include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
 #include "FkRenderRequestPrt.h"
+#include "FkGraphicUpdateTexPrt.h"
 
 FkGraphicSourceAtom::FkGraphicSourceAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -25,6 +26,7 @@ FkGraphicSourceAtom::~FkGraphicSourceAtom() {
 
 void FkGraphicSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicSourceAtom::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateTexPrt, FkGraphicSourceAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicSourceAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSurfacePrt, FkGraphicSourceAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicSourceAtom::dispatchNext);

@@ -46,7 +46,7 @@ std::string FkGraphicMatProgram::getVertex() {
         varying vec2 vTextureCoord;
         uniform mat4 uTextureMatrix;
         void main(){
-            gl_Position= uTextureMatrix * aPosition;
+            gl_Position= aPosition;
             vTextureCoord = aTextureCoord;
         })");
     return shader;

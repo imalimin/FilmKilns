@@ -82,7 +82,7 @@ FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         prt->req = std::make_shared<FkRenderRequest>();
     }
     for (auto &it : layers) {
-        prt->req->layers.emplace_back(it.second);
+        prt->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(*it.second));
     }
     return FK_OK;
 }
