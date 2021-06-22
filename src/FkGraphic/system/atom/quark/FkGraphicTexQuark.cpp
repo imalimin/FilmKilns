@@ -12,6 +12,7 @@
 #include "FkRenderRequestPrt.h"
 #include "FkGraphicUpdateTexPrt.h"
 #include "FkGLDefinition.h"
+#include "FkGraphicTexDelPtl.h"
 
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -24,6 +25,7 @@ FkGraphicTexQuark::~FkGraphicTexQuark() {
 void FkGraphicTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicTexQuark::_onAllocTex);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateTexPrt, FkGraphicTexQuark::_onUpdateTex);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicTexQuark::_onDeleteTex);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicTexQuark::_onRenderRequest);
 }
 
@@ -60,6 +62,16 @@ FkResult FkGraphicTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
     }
     sMap.insert(std::make_pair(tex->id, tex));
     prt->id = tex->id;
+    return FK_OK;
+}
+
+FkResult FkGraphicTexQuark::_onDeleteTex(std::shared_ptr<FkProtocol> p) {
+    auto prt = Fk_POINTER_CAST(FkGraphicTexDelPtl, p);
+    auto itr = sMap.find(prt->id);
+    if (itr != sMap.end()) {
+        sMap.erase(itr);
+    }
+    prt->id = FK_ID_NONE;
     return FK_OK;
 }
 

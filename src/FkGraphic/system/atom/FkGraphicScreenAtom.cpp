@@ -143,7 +143,6 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     glBufferSubData(GL_ARRAY_BUFFER, 0, VERTEX_BYTE_SIZE, position);
     glBufferSubData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE, VERTEX_BYTE_SIZE, coordinate);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glEnableVertexAttribArray(program->aPositionLocation);
     glEnableVertexAttribArray(program->aTextureCoordinateLocation);
     //xy
@@ -154,14 +153,15 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
                           reinterpret_cast<const void *>(VERTEX_BYTE_SIZE));
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4))
     glDisableVertexAttribArray(program->aPositionLocation);
     glDisableVertexAttribArray(program->aTextureCoordinateLocation);
 
+    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     program->bindTexture(GL_TEXTURE_2D, 0, GL_NONE);
     program->unbind();
-    glFlush();
     context->context->swapBuffers();
+    glFlush();
 
     return FK_OK;
 }

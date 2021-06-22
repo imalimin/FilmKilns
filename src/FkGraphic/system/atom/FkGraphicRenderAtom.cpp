@@ -68,22 +68,23 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         return FK_FAIL;
     }
     program = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
-    for (auto &it : prt->req->layers) {
+    context->context->makeCurrent();
+    for (auto &layer : prt->req->layers) {
         vec.clear();
         std::shared_ptr<FkGraphicTexComponent> tex = nullptr;
         std::shared_ptr<FkSizeComponent> size = nullptr;
-        if (FK_OK != it->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
+        if (FK_OK != layer->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
             continue;
         }
         tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
         vec.clear();
-        if (FK_OK != it->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+        if (FK_OK != layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
             continue;
         }
         size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
         vec.clear();
         std::shared_ptr<FkColorComponent> color = nullptr;
-        if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkColorComponent>())) {
+        if (FK_OK != layer->findComponent(vec, FkClassType::type<FkColorComponent>())) {
             color = std::make_shared<FkColorComponent>();
             color->color = FkColor::white();
         }

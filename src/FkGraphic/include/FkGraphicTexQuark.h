@@ -34,6 +34,8 @@ protected:
 private:
     FkResult _onAllocTex(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onDeleteTex(std::shared_ptr<FkProtocol> p);
+
     FkResult _onUpdateTex(std::shared_ptr<FkProtocol> p);
 
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
