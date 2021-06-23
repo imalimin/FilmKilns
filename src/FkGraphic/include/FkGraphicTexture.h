@@ -62,7 +62,7 @@ public:
 
     virtual void unbind();
 
-    virtual void update(FkColor::kFormat fmt, int32_t width, int32_t height);
+    virtual void update(FkColor::kFormat fmt, int32_t width, int32_t height, uint8_t *pixels = nullptr);
 
 public:
     std::atomic_bool applied;

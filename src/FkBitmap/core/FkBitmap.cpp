@@ -6,12 +6,18 @@
 */
 
 #include "FkBitmap.h"
+#include "AlBitmapFactory.h"
 
-std::shared_ptr<FkBitmap> FkBitmap::from(AlBitmap *bmp) {
-    auto target = std::shared_ptr<FkBitmap>();
-    target->pixels = bmp->getPixels();
-    target->byteSize = bmp->getByteSize();
-    target->size.set(bmp->getWidth(), bmp->getHeight());
+std::shared_ptr<FkBitmap> FkBitmap::from(std::string file) {
+    AlBitmap *b = AlBitmapFactory::decodeFile(file);
+    if (nullptr == b) {
+        return nullptr;
+    }
+    auto target = std::make_shared<FkBitmap>();
+    target->bmp = b;
+    target->pixels = b->getPixels();
+    target->byteSize = b->getByteSize();
+    target->size.set(b->getWidth(), b->getHeight());
     return target;
 }
 
@@ -24,7 +30,11 @@ FkBitmap::FkBitmap(const FkBitmap &o) : FkObject(o) {
 }
 
 FkBitmap::~FkBitmap() {
-
+    delete bmp;
+    bmp = nullptr;
+    size.set(0, 0);
+    pixels = nullptr;
+    byteSize = 0;
 }
 
 int FkBitmap::getWidth() {

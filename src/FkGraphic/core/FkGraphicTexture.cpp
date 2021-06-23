@@ -133,7 +133,7 @@ size_t FkGraphicTexture::size() {
     return desc.size.getWidth() * desc.size.getHeight() * byteCount;
 }
 
-void FkGraphicTexture::update(FkColor::kFormat fmt, int32_t width, int32_t height) {
+void FkGraphicTexture::update(FkColor::kFormat fmt, int32_t width, int32_t height, uint8_t *pixels) {
     FkAssert(fmt != FkColor::kFormat::NONE, );
     desc.fmt = fmt;
     desc.size.set(width, height);
@@ -141,12 +141,12 @@ void FkGraphicTexture::update(FkColor::kFormat fmt, int32_t width, int32_t heigh
     if (applied) {
         FK_GL_CHECK(glTexSubImage2D(desc.target, 0, 0, 0,
                         desc.size.getWidth(), desc.size.getHeight(),
-                        convertGLFormat(desc.fmt), GL_UNSIGNED_BYTE, nullptr));
+                        convertGLFormat(desc.fmt), GL_UNSIGNED_BYTE, pixels));
     } else {
         applied = true;
         FK_GL_CHECK(glTexImage2D(desc.target, 0, convertGLFormat(desc.fmt),
                      desc.size.getWidth(), desc.size.getHeight(), 0,
-                     convertGLFormat(desc.fmt), GL_UNSIGNED_BYTE, nullptr));
+                     convertGLFormat(desc.fmt), GL_UNSIGNED_BYTE, pixels));
 
     }
     unbind();

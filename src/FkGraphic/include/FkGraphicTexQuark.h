@@ -38,6 +38,8 @@ private:
 
     FkResult _onUpdateTex(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p);
+
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
 private:

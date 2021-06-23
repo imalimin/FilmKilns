@@ -9,7 +9,7 @@
 #define FK_GRAPHIC_FKUPDATETEXWITHBMPPRT_H
 
 #include "FkProtocol.h"
-#include "FkSize.h"
+#include "FkBitmap.h"
 
 FK_CLASS FkUpdateTexWithBmpPrt FK_EXTEND FkProtocol {
 public:
@@ -21,8 +21,7 @@ public:
 
 public:
     FkID id = FK_ID_NONE;
-    uint8_t *pixels = nullptr;
-    FkSize size;
+    std::shared_ptr<FkBitmap> bmp = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKUPDATETEXWITHBMPPRT_H

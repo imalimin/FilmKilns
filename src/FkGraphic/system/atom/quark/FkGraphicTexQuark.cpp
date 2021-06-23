@@ -13,6 +13,7 @@
 #include "FkGraphicUpdateTexPrt.h"
 #include "FkGLDefinition.h"
 #include "FkGraphicTexDelPtl.h"
+#include "FkUpdateTexWithBmpPrt.h"
 
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -25,6 +26,7 @@ FkGraphicTexQuark::~FkGraphicTexQuark() {
 void FkGraphicTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicTexQuark::_onAllocTex);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateTexPrt, FkGraphicTexQuark::_onUpdateTex);
+    FK_PORT_DESC_QUICK_ADD(desc, FkUpdateTexWithBmpPrt, FkGraphicTexQuark::_onUpdateTexWithBitmap);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicTexQuark::_onDeleteTex);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicTexQuark::_onRenderRequest);
 }
@@ -89,6 +91,16 @@ FkResult FkGraphicTexQuark::_onUpdateTex(std::shared_ptr<FkProtocol> p) {
         return FK_FAIL;
     }
     itr->second->update(itr->second->desc.fmt, prt->size.getWidth(), prt->size.getHeight());
+    return FK_OK;
+}
+FkResult FkGraphicTexQuark::_onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p) {
+    auto prt = Fk_POINTER_CAST(FkUpdateTexWithBmpPrt, p);
+    auto itr = sMap.find(prt->id);
+    if (sMap.end() == itr) {
+        FkLogE(FK_DEF_TAG, "Texture(id=%d) not found.", prt->id);
+        return FK_FAIL;
+    }
+    itr->second->update(itr->second->desc.fmt, prt->bmp->getWidth(), prt->bmp->getHeight(), prt->bmp->getPixels());
     return FK_OK;
 }
 

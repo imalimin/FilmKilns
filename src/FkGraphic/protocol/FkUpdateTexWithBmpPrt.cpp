@@ -8,18 +8,16 @@
 #include "FkUpdateTexWithBmpPrt.h"
 
 FkUpdateTexWithBmpPrt::FkUpdateTexWithBmpPrt()
-        : FkProtocol(), size(0, 0) {
+        : FkProtocol() {
     FK_MARK_SUPER
 }
 
 FkUpdateTexWithBmpPrt::FkUpdateTexWithBmpPrt(const FkUpdateTexWithBmpPrt &o)
         : FkProtocol(o),
-          id(o.id),
-          size(o.size) {
+          id(o.id) {
     FK_MARK_SUPER
+    bmp = o.bmp;
 }
 
 FkUpdateTexWithBmpPrt::~FkUpdateTexWithBmpPrt() {
-    pixels = nullptr;
-    size.set(0, 0);
 }

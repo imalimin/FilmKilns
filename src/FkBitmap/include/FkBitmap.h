@@ -11,18 +11,17 @@
 #include "FkObject.h"
 #include "FkColor.h"
 #include "FkSize.h"
-#include "AlBitmap.h"
 
 FK_CLASS FkBitmap FK_EXTEND FkObject {
 public:
-    static std::shared_ptr<FkBitmap> from(AlBitmap *bmp);
+    static std::shared_ptr<FkBitmap> from(std::string file);
 
 private:
-    FkBitmap();
-
     FkBitmap(const FkBitmap &o);
 
 public:
+    FkBitmap();
+
     virtual ~FkBitmap();
 
     int getWidth();
@@ -49,6 +48,7 @@ public:
 //    void dump();
 
 private:
+    Object *bmp = nullptr;
     uint8_t *pixels = nullptr;//用于存储图片像素的buffer
     uint64_t byteSize = 0;
     FkSize size;

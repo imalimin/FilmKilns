@@ -62,6 +62,7 @@ set(MODULES ${MODULE_NAME}
         EGL
         android
         al_common
+        al_bitmap
         FkBase
         FkFramework
         FkBitmap

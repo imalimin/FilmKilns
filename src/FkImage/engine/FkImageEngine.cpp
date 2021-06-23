@@ -6,7 +6,6 @@
 */
 
 #include "FkImageEngine.h"
-#include "AlBitmapFactory.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkGraphicLayer.h"
 #include "FkBitmap.h"
@@ -58,10 +57,11 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     auto ret = getClient()->quickSend<FkGraphicNewTexPtl>(texPrt, getMolecule());
     if (FK_OK == ret) {
         auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
-        auto bmp = FkBitmap::from(AlBitmapFactory::decodeFile(msg->arg3));
         auto updatePrt = std::make_shared<FkUpdateTexWithBmpPrt>();
-        updatePrt->id=texPrt->id;
-        updatePrt->pixels = bmp->getPixels();
+        updatePrt->id = texPrt->id;
+        updatePrt->bmp = FkBitmap::from(msg->arg3);
+        FkAssert(nullptr != updatePrt->bmp, FK_EMPTY_DATA);
+        return getClient()->quickSend<FkUpdateTexWithBmpPrt>(updatePrt, getMolecule());
     }
-    return FK_FAIL;
+    return ret;
 }

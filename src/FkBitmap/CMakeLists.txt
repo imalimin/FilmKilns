@@ -58,6 +58,5 @@ set(MODULES ${MODULE_NAME}
         al_common
         al_bitmap
         FkBase
-        FkBitmap
         ${log-lib})
 target_link_libraries(${MODULES})

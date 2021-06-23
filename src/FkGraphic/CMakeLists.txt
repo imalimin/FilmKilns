@@ -8,6 +8,7 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../al_common/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
+        ${PROJECT_SOURCE_DIR}/../FkBitmap/include
         ${PROJECT_SOURCE_DIR}/../FkFramework/include
         )
 include_directories(${INCLUDES})
@@ -75,6 +76,7 @@ set(MODULES ${MODULE_NAME}
         android
         al_common
         FkBase
+        FkBitmap
         FkFramework
         ${log-lib})
 target_link_libraries(${MODULES})
