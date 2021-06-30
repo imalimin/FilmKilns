@@ -36,7 +36,7 @@ AlBitmap *AlBitmapFactory::decodeFile(std::string file) {
             decoder = new AlWebPDecoder(file);
             break;
         default:
-            decoder = nullptr;
+            decoder = new AlJpegDecoder(file);
     }
     if (nullptr == decoder) {
         Logcat::i(TAG, "%s(%d): failed(%s)", __FUNCTION__, __LINE__, file.c_str());

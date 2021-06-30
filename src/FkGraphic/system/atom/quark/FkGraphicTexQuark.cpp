@@ -37,6 +37,7 @@ FkResult FkGraphicTexQuark::onCreate() {
         return ret;
     }
     allocator = std::make_shared<FkGraphicAllocator>();
+    fboAllocator  = std::make_shared<FkGraphicFBOAllocator>();
     return ret;
 }
 
@@ -101,6 +102,20 @@ FkResult FkGraphicTexQuark::_onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p
         return FK_FAIL;
     }
     itr->second->update(itr->second->desc.fmt, prt->bmp->getWidth(), prt->bmp->getHeight(), prt->bmp->getPixels());
+
+    GLuint fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, itr->second->tex, 0);
+    uint8_t *buffer = new uint8_t[prt->bmp->getWidth() * prt->bmp->getHeight() * 4];
+    glReadPixels(0, 0, prt->bmp->getWidth(), prt->bmp->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+    FkBitmap::write("/sdcard/000000.bmp", buffer, prt->bmp->getWidth() * prt->bmp->getHeight() * 4,
+                    prt->bmp->getWidth(), prt->bmp->getHeight());
+
+    delete[] buffer;
+    glDeleteFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     return FK_OK;
 }
 

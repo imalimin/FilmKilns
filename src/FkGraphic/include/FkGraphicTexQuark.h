@@ -10,6 +10,7 @@
 
 #include "FkQuark.h"
 #include "FkGraphicTexture.h"
+#include "FkGraphicFrameObject.h"
 #include <unordered_map>
 
 FK_CLASS FkGraphicTexQuark FK_EXTEND FkQuark {
@@ -45,6 +46,7 @@ private:
 private:
     std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
     std::unordered_map<FkID, std::shared_ptr<FkGraphicTexture>> sMap;
+    std::shared_ptr<FkGraphicFBOAllocator> fboAllocator = nullptr;
 };
 
 

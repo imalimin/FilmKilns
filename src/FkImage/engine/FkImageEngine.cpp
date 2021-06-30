@@ -10,6 +10,8 @@
 #include "FkGraphicLayer.h"
 #include "FkBitmap.h"
 #include "FkUpdateTexWithBmpPrt.h"
+#include "FkDefinition.h"
+#include <zconf.h>
 
 const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'I', 0x10);
 
@@ -39,6 +41,10 @@ FkResult FkImageEngine::onStop() {
 }
 
 FkID FkImageEngine::newLayerWithFile(std::string path) {
+    if (access(path.c_str(), F_OK) == -1) {
+        FkLogE("File not found: %s", path.c_str());
+        return FK_ID_NONE;
+    }
     auto id = newLayer();
     if (FK_ID_NONE != id) {
         auto layer = std::make_shared<FkGraphicLayer>();
