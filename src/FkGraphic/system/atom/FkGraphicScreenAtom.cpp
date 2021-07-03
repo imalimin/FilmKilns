@@ -20,6 +20,7 @@
 #include "FkCoordinateValue.h"
 #include "FkPositionValue.h"
 #include "FkGraphicRender.h"
+#include "ext.hpp"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  4
@@ -139,13 +140,29 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE * 2, nullptr, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     }
+    auto model = std::make_shared<FkMatrix>();
+    auto view = std::make_shared<FkMatrix>();
+    auto proj = std::make_shared<FkMatrix>();
+
+
+//    proj->mat4 = glm::perspective(glm::radians(0.0f), 1440.0f / 2526.0f, 0.1f, 100.0f);
+    proj->mat4 = glm::ortho(0.0f, 1440.0f, 0.0f, 2526.0f, 0.1f, 100.0f);
+    view->mat4 = glm::translate(view->mat4, glm::vec3(0.0f, 0.0f, -3.0f));
+    model->mat4 = glm::rotate(model->mat4, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+//    float *pMat = (float *) mat->get();
+//    for (int i = 0; i < 4; ++i) {
+//        FkLogI(FK_DEF_TAG, "%f, %f, %f, %f", pMat[i * 4 + 0], pMat[i * 4 + 1], pMat[i * 4 + 2], pMat[i * 4 + 3]);
+//    }
     auto ret = FkGraphicRender::with(program)
             ->enableSwapBuffers(true)
             ->setContext(context->context)
-            ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
+            ->setViewport(0, 0, context->context->getWidth(), context->context->getHeight())
             ->setColor(color->color)
             ->setVertexBuffer(vbo)
             ->setSrcTexture(0, tex->tex)
+            ->setMatrix(0, model)
+            ->setMatrix(1, view)
+            ->setMatrix(2, proj)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, position)
             ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->render();

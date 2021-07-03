@@ -33,6 +33,10 @@ public:
 
     FkResult swapBuffers();
 
+    int32_t getWidth();
+
+    int32_t getHeight();
+
 private:
     EGLDisplay _createDisplay(EGLNativeDisplayType display_id);
 
@@ -48,6 +52,7 @@ private:
 
 private:
     std::string alias;
+    FkSize size;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
     EGLConfig eglConfig = nullptr;
     EGLContext eglContext = EGL_NO_CONTEXT;

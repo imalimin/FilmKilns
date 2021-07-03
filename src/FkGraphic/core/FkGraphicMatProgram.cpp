@@ -9,6 +9,7 @@
 #include "FkTexValue.h"
 #include "FkCoordinateValue.h"
 #include "FkPositionValue.h"
+#include "FkMatrixValue.h"
 
 FkGraphicMatProgram::FkGraphicMatProgram(const FkProgramDescription &desc)
         : FkGraphicProgram(desc) {
@@ -25,7 +26,9 @@ FkResult FkGraphicMatProgram::create() {
     if (FK_OK == ret) {
         aPositionLocation = getAttribLocation("aPosition");
         uTextureLocation = getUniformLocation("uTexture");
-        uMatrixLocation = getUniformLocation("uTextureMatrix");
+        uModelMatLoc = getUniformLocation("model");
+        uViewMatLoc = getUniformLocation("view");
+        uProjMatLoc = getUniformLocation("projection");
         aTextureCoordinateLocation = getAttribLocation("aTextureCoord");
     }
     return ret;
@@ -68,6 +71,22 @@ FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkProgramValue> value) {
         //st
         glVertexAttribPointer(aTextureCoordinateLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                               reinterpret_cast<const void *>(pValue->offset));
+    } else if (FK_INSTANCE_OF(value, FkMatrixValue)) {
+        auto pValue = Fk_POINTER_CAST(FkMatrixValue, value);
+        int32_t loc = -1;
+        switch (pValue->index) {
+            case 0:
+                loc = uModelMatLoc;
+                break;
+            case 1:
+                loc = uViewMatLoc;
+                break;
+            case 2:
+                loc = uProjMatLoc;
+                break;
+        }
+        glUniformMatrix4fv(loc, 1, GL_FALSE,
+                           reinterpret_cast<const GLfloat *>(pValue->mat->get()));
     }
     return FkGraphicProgram::addValue(value);
 }
@@ -77,9 +96,11 @@ std::string FkGraphicMatProgram::getVertex() {
         attribute vec4 aPosition;
         attribute vec2 aTextureCoord;
         varying vec2 vTextureCoord;
-        uniform mat4 uTextureMatrix;
+        uniform mat4 model;
+        uniform mat4 view;
+        uniform mat4 projection;
         void main(){
-            gl_Position= aPosition;
+            gl_Position = projection * view * model * aPosition;
             vTextureCoord = aTextureCoord;
         })");
     return shader;

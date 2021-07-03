@@ -24,7 +24,7 @@ FkGraphicRender::FkGraphicRender(const FkGraphicRender &o) : FkObject(o) {
 }
 
 FkGraphicRender::~FkGraphicRender() {
-
+    mats.clear();
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::enableSwapBuffers(bool enable) {
@@ -46,6 +46,9 @@ FkResult FkGraphicRender::render() {
 
     program->bind();
     program->addValue(srcTex);
+    for (auto &it : mats) {
+        program->addValue(it);
+    }
     program->addValue(position);
     program->addValue(coordinate);
 
@@ -107,5 +110,13 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
     coordinate->countPerVertex = countPerVertex;
     coordinate->offset = offset;
     coordinate->data = data;
+    return shared_from_this();
+}
+
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(int32_t index, std::shared_ptr<FkMatrix> mat) {
+    auto value = std::make_shared<FkMatrixValue>();
+    value->mat = mat;
+    value->index = index;
+    mats.emplace_back(value);
     return shared_from_this();
 }

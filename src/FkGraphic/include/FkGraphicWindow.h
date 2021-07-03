@@ -27,6 +27,8 @@ public:
 
     virtual NativeWindowType getNativeWindow();
 
+    FkSize &getSize();
+
 private:
     NativeWindowType win = nullptr;
     FkSize size;

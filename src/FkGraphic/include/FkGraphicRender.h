@@ -15,6 +15,8 @@
 #include "FkTexValue.h"
 #include "FkCoordinateValue.h"
 #include "FkPositionValue.h"
+#include "FkMatrixValue.h"
+#include "FkMatrix.h"
 #include "FkGLDefinition.h"
 
 FK_CLASS FkGraphicRender FK_EXTEND FkObject, public enable_shared_from_this<FkGraphicRender> {
@@ -45,6 +47,8 @@ public:
 
     std::shared_ptr<FkGraphicRender> setCoordinate(size_t countVertex, size_t countPerVertex, size_t offset, void *data);
 
+    std::shared_ptr<FkGraphicRender> setMatrix(int32_t index, std::shared_ptr<FkMatrix> mat);
+
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;
     FkColor color;
@@ -55,6 +59,7 @@ private:
     std::shared_ptr<FkPositionValue> position = nullptr;
     std::shared_ptr<FkCoordinateValue> coordinate = nullptr;
     bool _enableSwapBuffers = false;
+    std::vector<std::shared_ptr<FkMatrixValue>> mats;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDER_H

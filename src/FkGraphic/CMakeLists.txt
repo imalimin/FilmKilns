@@ -6,6 +6,7 @@ set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/../glm
         ${PROJECT_SOURCE_DIR}/../al_common/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
         ${PROJECT_SOURCE_DIR}/../FkBitmap/include

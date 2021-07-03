@@ -31,8 +31,9 @@ public:
 
 private:
     int32_t uTextureLocation = GL_NONE;
-    int32_t uMatrixLocation = GL_NONE;
-public:
+    int32_t uModelMatLoc = -1;
+    int32_t uViewMatLoc = -1;
+    int32_t uProjMatLoc = -1;
     int32_t aPositionLocation = GL_NONE;
     int32_t aTextureCoordinateLocation = GL_NONE;
 

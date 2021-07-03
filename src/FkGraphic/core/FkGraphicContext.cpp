@@ -71,6 +71,7 @@ FkResult FkGraphicContext::create(std::shared_ptr<FkGraphicContext> context,
         return FK_FAIL;
     }
     if (nullptr != win) {
+        size = win->getSize();
         eglSurface = _createWindowSurface(eglDisplay, eglConfig, win);
     } else {
         eglSurface = _createPbufferSurface(eglDisplay, eglConfig);
@@ -246,4 +247,12 @@ bool FkGraphicContext::_checkError() {
         return false;
     }
     return true;
+}
+
+int32_t FkGraphicContext::getWidth() {
+    return size.getWidth();
+}
+
+int32_t FkGraphicContext::getHeight() {
+    return size.getHeight();
 }

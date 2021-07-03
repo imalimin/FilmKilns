@@ -19,3 +19,7 @@ FkGraphicWindow::~FkGraphicWindow() {
 NativeWindowType FkGraphicWindow::getNativeWindow() {
     return win;
 }
+
+FkSize &FkGraphicWindow::getSize() {
+    return size;
+}
