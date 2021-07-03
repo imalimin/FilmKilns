@@ -15,6 +15,8 @@
 #include "FkGraphicTexDelPtl.h"
 #include "FkUpdateTexWithBmpPrt.h"
 
+#define DUMP_TEX 0
+
 FkGraphicTexQuark::FkGraphicTexQuark() : FkQuark() {
     FK_MARK_SUPER
 }
@@ -94,6 +96,7 @@ FkResult FkGraphicTexQuark::_onUpdateTex(std::shared_ptr<FkProtocol> p) {
     itr->second->update(itr->second->desc.fmt, prt->size.getWidth(), prt->size.getHeight());
     return FK_OK;
 }
+
 FkResult FkGraphicTexQuark::_onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkUpdateTexWithBmpPrt, p);
     auto itr = sMap.find(prt->id);
@@ -103,6 +106,7 @@ FkResult FkGraphicTexQuark::_onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p
     }
     itr->second->update(itr->second->desc.fmt, prt->bmp->getWidth(), prt->bmp->getHeight(), prt->bmp->getPixels());
 
+#if DUMP_TEX
     GLuint fbo;
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -110,12 +114,14 @@ FkResult FkGraphicTexQuark::_onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p
     uint8_t *buffer = new uint8_t[prt->bmp->getWidth() * prt->bmp->getHeight() * 4];
     glReadPixels(0, 0, prt->bmp->getWidth(), prt->bmp->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
-    FkBitmap::write("/sdcard/000000.bmp", buffer, prt->bmp->getWidth() * prt->bmp->getHeight() * 4,
-                    prt->bmp->getWidth(), prt->bmp->getHeight());
+    auto ret = FkBitmap::write("/sdcard/000000.bmp", buffer, prt->bmp->getWidth() * prt->bmp->getHeight() * 4,
+                               prt->bmp->getWidth(), prt->bmp->getHeight());
+    FkAssert( ret == FK_OK,);
 
     delete[] buffer;
     glDeleteFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif
     return FK_OK;
 }
 

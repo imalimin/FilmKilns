@@ -16,7 +16,7 @@ FK_CLASS FkBitmap FK_EXTEND FkObject {
 public:
     static std::shared_ptr<FkBitmap> from(std::string file);
 
-    static bool write(std::string file, uint8_t *data, size_t size, int width, int height);
+    static FkResult write(std::string file, uint8_t *data, size_t size, int width, int height);
 
 private:
     FkBitmap(const FkBitmap &o);

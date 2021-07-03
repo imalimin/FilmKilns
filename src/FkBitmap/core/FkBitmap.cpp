@@ -21,11 +21,11 @@ std::shared_ptr<FkBitmap> FkBitmap::from(std::string file) {
     return target;
 }
 
-bool FkBitmap::write(std::string file, uint8_t *data, size_t size, int width, int height) {
+FkResult FkBitmap::write(std::string file, uint8_t *data, size_t size, int width, int height) {
     AlBuffer *buf = AlBuffer::wrap(data, size);
     auto ret = AlBitmapFactory::save(width, height, buf, file);
     delete buf;
-    return Hw::SUCCESS == ret;
+    return Hw::SUCCESS == ret ? FK_OK : FK_FAIL;
 }
 
 FkBitmap::FkBitmap() : FkObject(), size(0, 0) {

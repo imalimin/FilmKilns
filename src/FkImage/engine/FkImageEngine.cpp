@@ -11,6 +11,9 @@
 #include "FkBitmap.h"
 #include "FkUpdateTexWithBmpPrt.h"
 #include "FkDefinition.h"
+#include "FkSizeComponent.h"
+#include "FkTexComponent.h"
+#include "FkGraphicUpdateLayerPrt.h"
 #include <zconf.h>
 
 const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'I', 0x10);
@@ -67,7 +70,18 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
         updatePrt->id = texPrt->id;
         updatePrt->bmp = FkBitmap::from(msg->arg3);
         FkAssert(nullptr != updatePrt->bmp, FK_EMPTY_DATA);
-        return getClient()->quickSend<FkUpdateTexWithBmpPrt>(updatePrt, getMolecule());
+        getClient()->quickSend<FkUpdateTexWithBmpPrt>(updatePrt, getMolecule());
+
+        auto com = std::make_shared<FkTexComponent>();
+        com->id = texPrt->id;
+        auto sizeCom = std::make_shared<FkSizeComponent>();
+        sizeCom->size.set(updatePrt->bmp->getWidth(), updatePrt->bmp->getHeight());
+
+        auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
+        prt->layer = layer;
+        prt->layer->addComponent(com);
+        prt->layer->addComponent(sizeCom);
+        return getClient()->quickSend<FkGraphicUpdateLayerPrt>(prt, getMolecule());
     }
     return ret;
 }

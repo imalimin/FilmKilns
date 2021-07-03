@@ -83,18 +83,16 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         }
         size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
         vec.clear();
-        std::shared_ptr<FkColorComponent> color = nullptr;
-        if (FK_OK != layer->findComponent(vec, FkClassType::type<FkColorComponent>())) {
-            color = std::make_shared<FkColorComponent>();
-            color->color = FkColor::white();
-        }
-        color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
-        vec.clear();
+        if (FK_OK == layer->findComponent(vec, FkClassType::type<FkColorComponent>())) {
+            std::shared_ptr<FkColorComponent> color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
 
-        fbo->fbo->attach(tex->tex);
-        glClearColor(color->color.fRed(), color->color.fGreen(), color->color.fBlue(), 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        fbo->fbo->unbind();
+            fbo->fbo->attach(tex->tex);
+            fbo->fbo->bind();
+            glClearColor(color->color.fRed(), color->color.fGreen(), color->color.fBlue(), color->color.fAlpha());
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            fbo->fbo->unbind();
+        }
+        vec.clear();
     }
     return FK_OK;
 }

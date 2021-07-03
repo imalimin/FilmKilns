@@ -12,9 +12,9 @@ FkColor &FkColor::white() {
     if (color == nullptr) {
         color = new FkColor();
     }
-    color->red = 0;
-    color->greed = 0;
-    color->blue = 0;
+    color->red = 255;
+    color->greed = 255;
+    color->blue = 255;
     color->alpha = 0;
     return *color;
 }
