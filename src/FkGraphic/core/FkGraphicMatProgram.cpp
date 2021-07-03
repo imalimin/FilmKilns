@@ -31,7 +31,7 @@ FkResult FkGraphicMatProgram::create() {
     return ret;
 }
 
-void FkGraphicMatProgram::unbind() {
+void FkGraphicMatProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
         if (FK_INSTANCE_OF(it, FkPositionValue)) {
@@ -40,7 +40,7 @@ void FkGraphicMatProgram::unbind() {
             glDisableVertexAttribArray(aTextureCoordinateLocation);
         }
     }
-    FkGraphicProgram::unbind();
+    FkGraphicProgram::clear();
 }
 
 FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkProgramValue> value) {
@@ -59,17 +59,15 @@ FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkProgramValue> value) {
     } else if (FK_INSTANCE_OF(value, FkPositionValue)) {
         auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
         glEnableVertexAttribArray(aPositionLocation);
-        auto offset = pValue->countVertex * pValue->countPerVertex * sizeof(float);
         //xy
         glVertexAttribPointer(aPositionLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                              reinterpret_cast<const void *>(offset));
+                              reinterpret_cast<const void *>(pValue->offset));
     } else if (FK_INSTANCE_OF(value, FkCoordinateValue)) {
         auto pValue = Fk_POINTER_CAST(FkCoordinateValue, value);
         glEnableVertexAttribArray(aTextureCoordinateLocation);
-        auto offset = pValue->countVertex * pValue->countPerVertex * sizeof(float);
         //st
         glVertexAttribPointer(aTextureCoordinateLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                              reinterpret_cast<const void *>(offset));
+                              reinterpret_cast<const void *>(pValue->offset));
     }
     return FkGraphicProgram::addValue(value);
 }

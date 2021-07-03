@@ -22,6 +22,9 @@ public:
     };
 public:
     static FkColor &white();
+
+    static FkColor &black();
+
 public:
     FkColor();
 

@@ -19,6 +19,18 @@ FkColor &FkColor::white() {
     return *color;
 }
 
+FkColor &FkColor::black() {
+    static FkColor *color;
+    if (color == nullptr) {
+        color = new FkColor();
+    }
+    color->red = 0;
+    color->greed = 0;
+    color->blue = 0;
+    color->alpha = 0;
+    return *color;
+}
+
 FkColor::FkColor() {
     FK_MARK_SUPER
 }

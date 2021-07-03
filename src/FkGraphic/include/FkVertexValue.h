@@ -22,6 +22,7 @@ public:
     size_t countVertex = 0;
     size_t countPerVertex = 0;
     size_t offset = 0;
+    void *data = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKVERTEXVALUE_H

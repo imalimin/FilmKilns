@@ -25,7 +25,7 @@ public:
 
     virtual std::string getFragment() override;
 
-    virtual void unbind() override;
+    virtual void clear() override;
 
     virtual FkResult addValue(std::shared_ptr<FkProgramValue> value) override;
 

@@ -19,13 +19,14 @@
 #include "FkTexValue.h"
 #include "FkCoordinateValue.h"
 #include "FkPositionValue.h"
+#include "FkGraphicRender.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  4
 //一个顶点坐标包含几个点
 #define COUNT_PER_VERTEX  2
 //所有顶点坐标总共多少字节
-#define VERTEX_BYTE_SIZE  COUNT_PER_VERTEX * SIZE_OF_VERTEX * 4
+#define VERTEX_BYTE_SIZE  COUNT_PER_VERTEX * SIZE_OF_VERTEX * sizeof(float)
 
 FkGraphicScreenAtom::FkGraphicScreenAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -62,6 +63,10 @@ FkResult FkGraphicScreenAtom::onCreate() {
 }
 
 FkResult FkGraphicScreenAtom::onDestroy() {
+    if (GL_NONE != vbo) {
+        glDeleteBuffers(1, &vbo);
+        vbo = GL_NONE;
+    }
     if (position) {
         delete[] position;
         position = nullptr;
@@ -122,27 +127,11 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     std::shared_ptr<FkColorComponent> color = nullptr;
     if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkColorComponent>())) {
         color = std::make_shared<FkColorComponent>();
-        color->color = FkColor::white();
+        color->color = FkColor::black();
+    } else {
+        color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
     }
-    color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
     vec.clear();
-
-    auto texValue = std::make_shared<FkTexValue>();
-    texValue->index = 0;
-    texValue->tex = tex->tex;
-    auto coorValue = std::make_shared<FkCoordinateValue>();
-    coorValue->countVertex = SIZE_OF_VERTEX;
-    coorValue->countPerVertex = COUNT_PER_VERTEX;
-    coorValue->offset = 0;
-    auto posValue = std::make_shared<FkPositionValue>();
-    coorValue->countVertex = SIZE_OF_VERTEX;
-    posValue->countPerVertex = COUNT_PER_VERTEX;
-    posValue->offset = SIZE_OF_VERTEX;
-
-    context->context->makeCurrent();
-    glViewport(0, 0, size->size.getWidth(), size->size.getHeight());
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (GL_NONE == vbo) {
         glGenBuffers(1, &vbo);
@@ -150,20 +139,15 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE * 2, nullptr, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     }
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, VERTEX_BYTE_SIZE, position);
-    glBufferSubData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE, VERTEX_BYTE_SIZE, coordinate);
-
-    program->bind();
-    program->addValue(texValue);
-    program->addValue(coorValue);
-    program->addValue(posValue);
-
-    FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4))
-
-    program->unbind();
-    context->context->swapBuffers();
-    glFlush();
-
-    return FK_OK;
+    auto ret = FkGraphicRender::with(program)
+            ->enableSwapBuffers(true)
+            ->setContext(context->context)
+            ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
+            ->setColor(color->color)
+            ->setVertexBuffer(vbo)
+            ->setSrcTexture(0, tex->tex)
+            ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, position)
+            ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
+            ->render();
+    return ret;
 }

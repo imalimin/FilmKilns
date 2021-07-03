@@ -55,6 +55,8 @@ public:
 
     virtual void unbind();
 
+    virtual void clear();
+
     virtual FkResult addValue(std::shared_ptr<FkProgramValue> value);
 
 protected:

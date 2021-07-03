@@ -85,15 +85,6 @@ void FkGraphicProgram::bind() {
 }
 
 void FkGraphicProgram::unbind() {
-    for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
-        auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkTexValue)) {
-            auto pValue = Fk_POINTER_CAST(FkTexValue, it);
-            glBindTexture(pValue->tex->desc.target, GL_NONE);
-        } else if (FK_INSTANCE_OF(it, FkVertexValue)) {
-            glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-        }
-    }
     glUseProgram(GL_NONE);
 }
 
@@ -171,6 +162,16 @@ uint32_t FkGraphicProgram::_createShader(uint32_t type, std::string &shader) {
 FkResult FkGraphicProgram::addValue(std::shared_ptr<FkProgramValue> value) {
     values.emplace_back(value);
     return FK_OK;
+}
+
+void FkGraphicProgram::clear() {
+    for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
+        auto it = *itr;
+        if (FK_INSTANCE_OF(it, FkTexValue)) {
+            auto pValue = Fk_POINTER_CAST(FkTexValue, it);
+            glBindTexture(pValue->tex->desc.target, GL_NONE);
+        }
+    }
 }
 
 ///+-----------------------------------------------------------+
