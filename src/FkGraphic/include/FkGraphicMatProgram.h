@@ -25,7 +25,9 @@ public:
 
     virtual std::string getFragment() override;
 
-    FkResult bindTexture(int32_t target, int32_t index, FkID tex);
+    virtual void unbind() override;
+
+    virtual FkResult addValue(std::shared_ptr<FkProgramValue> value) override;
 
 private:
     int32_t uTextureLocation = GL_NONE;

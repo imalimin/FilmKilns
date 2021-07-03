@@ -16,6 +16,9 @@
 #include "FkColorComponent.h"
 #include "FkGLDefinition.h"
 #include "FkGraphicMatProgram.h"
+#include "FkTexValue.h"
+#include "FkCoordinateValue.h"
+#include "FkPositionValue.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  4
@@ -101,8 +104,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         return FK_FAIL;
     }
     programCom = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
-    std::shared_ptr<FkGraphicMatProgram> program = std::static_pointer_cast<FkGraphicMatProgram>(
-            programCom->program);
+    auto program = programCom->program;
     vec.clear();
     std::shared_ptr<FkGraphicTexComponent> tex = nullptr;
     if (FK_OK !=
@@ -125,12 +127,22 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
     vec.clear();
 
+    auto texValue = std::make_shared<FkTexValue>();
+    texValue->index = 0;
+    texValue->tex = tex->tex;
+    auto coorValue = std::make_shared<FkCoordinateValue>();
+    coorValue->countVertex = SIZE_OF_VERTEX;
+    coorValue->countPerVertex = COUNT_PER_VERTEX;
+    coorValue->offset = 0;
+    auto posValue = std::make_shared<FkPositionValue>();
+    coorValue->countVertex = SIZE_OF_VERTEX;
+    posValue->countPerVertex = COUNT_PER_VERTEX;
+    posValue->offset = SIZE_OF_VERTEX;
+
     context->context->makeCurrent();
     glViewport(0, 0, size->size.getWidth(), size->size.getHeight());
     glClearColor(0.0f, 0.0f, 0.0f, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    program->bind();
-    program->bindTexture(GL_TEXTURE_2D, 0, tex->tex->tex);
 
     if (GL_NONE == vbo) {
         glGenBuffers(1, &vbo);
@@ -138,27 +150,17 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE * 2, nullptr, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     }
-
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferSubData(GL_ARRAY_BUFFER, 0, VERTEX_BYTE_SIZE, position);
     glBufferSubData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE, VERTEX_BYTE_SIZE, coordinate);
 
-    glEnableVertexAttribArray(program->aPositionLocation);
-    glEnableVertexAttribArray(program->aTextureCoordinateLocation);
-    //xy
-    glVertexAttribPointer(program->aPositionLocation, COUNT_PER_VERTEX, GL_FLOAT, GL_FALSE, 0, 0);
-    //st
-    glVertexAttribPointer(program->aTextureCoordinateLocation, COUNT_PER_VERTEX, GL_FLOAT, GL_FALSE,
-                          0,
-                          reinterpret_cast<const void *>(VERTEX_BYTE_SIZE));
-    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+    program->bind();
+    program->addValue(texValue);
+    program->addValue(coorValue);
+    program->addValue(posValue);
 
     FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4))
-    glDisableVertexAttribArray(program->aPositionLocation);
-    glDisableVertexAttribArray(program->aTextureCoordinateLocation);
 
-    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-    program->bindTexture(GL_TEXTURE_2D, 0, GL_NONE);
     program->unbind();
     context->context->swapBuffers();
     glFlush();

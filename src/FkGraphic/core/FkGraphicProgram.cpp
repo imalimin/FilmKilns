@@ -7,6 +7,8 @@
 
 #include "FkGraphicProgram.h"
 #include "FkGraphicMatProgram.h"
+#include "FkTexValue.h"
+#include "FkVertexValue.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
@@ -45,7 +47,7 @@ FkGraphicProgram::FkGraphicProgram(const FkProgramDescription &desc) : FkSource(
 }
 
 FkGraphicProgram::~FkGraphicProgram() {
-
+    values.clear();
 }
 
 FkResult FkGraphicProgram::create() {
@@ -83,6 +85,15 @@ void FkGraphicProgram::bind() {
 }
 
 void FkGraphicProgram::unbind() {
+    for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
+        auto it = *itr;
+        if (FK_INSTANCE_OF(it, FkTexValue)) {
+            auto pValue = Fk_POINTER_CAST(FkTexValue, it);
+            glBindTexture(pValue->tex->desc.target, GL_NONE);
+        } else if (FK_INSTANCE_OF(it, FkVertexValue)) {
+            glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+        }
+    }
     glUseProgram(GL_NONE);
 }
 
@@ -155,6 +166,11 @@ uint32_t FkGraphicProgram::_createShader(uint32_t type, std::string &shader) {
         shaderId = GL_NONE;
     }
     return shaderId;
+}
+
+FkResult FkGraphicProgram::addValue(std::shared_ptr<FkProgramValue> value) {
+    values.emplace_back(value);
+    return FK_OK;
 }
 
 ///+-----------------------------------------------------------+
