@@ -128,7 +128,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     std::shared_ptr<FkColorComponent> color = nullptr;
     if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkColorComponent>())) {
         color = std::make_shared<FkColorComponent>();
-        color->color = FkColor::black();
+        color->color = FkColor::white();
     } else {
         color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
     }
@@ -145,10 +145,16 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto proj = std::make_shared<FkMatrix>();
 
 
-//    proj->mat4 = glm::perspective(glm::radians(0.0f), 1440.0f / 2526.0f, 0.1f, 100.0f);
-    proj->mat4 = glm::ortho(0.0f, 1440.0f, 0.0f, 2526.0f, 0.1f, 100.0f);
-    view->mat4 = glm::translate(view->mat4, glm::vec3(0.0f, 0.0f, -3.0f));
-    model->mat4 = glm::rotate(model->mat4, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    double aspect = (context->context->getWidth() * size->size.getHeight() * 1.0) / (context->context->getHeight() * size->size.getWidth());
+    proj->mat4 = glm::perspective(glm::radians(70.0f), (float) aspect, 0.1f, 100.0f);
+//    proj->mat4 = glm::ortho(0.0f, 1440.0f, 0.0f, 2526.0f, 0.1f, 100.0f);
+    view->mat4 = glm::lookAt(
+            glm::vec3(0.0f, 0.0f, 3.0f), // Camera is at (0,0,3), in World Space
+            glm::vec3(0.0f, 0.0f, 0.0f), // and looks at the origin
+            glm::vec3(0.0f, 1.0f, 0.0f)  // Head is up (set to 0,-1,0 to look upside-down)
+    );
+//    view->mat4 = glm::rotate(view->mat4, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.5f));
+    model->mat4 = glm::scale(model->mat4, glm::vec3(1.0, -1.0, 1.0));
 //    float *pMat = (float *) mat->get();
 //    for (int i = 0; i < 4; ++i) {
 //        FkLogI(FK_DEF_TAG, "%f, %f, %f, %f", pMat[i * 4 + 0], pMat[i * 4 + 1], pMat[i * 4 + 2], pMat[i * 4 + 3]);
