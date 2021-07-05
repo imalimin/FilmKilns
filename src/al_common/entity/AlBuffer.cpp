@@ -6,6 +6,7 @@
  */
 
 #include "AlBuffer.h"
+#include <assert.h>
 
 AlBuffer *AlBuffer::alloc(size_t size) {
     return new AlBuffer(size);

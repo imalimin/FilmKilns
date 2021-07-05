@@ -35,6 +35,7 @@
 
 // +-------- Assert --------+
 #ifdef __FK_DEBUG__
+#include <assert.h>
 #define FkAssert(condition, value) assert(condition)
 #else
 #define FkAssert(condition, value)            \

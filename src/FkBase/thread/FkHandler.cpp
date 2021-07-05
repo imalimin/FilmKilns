@@ -17,7 +17,7 @@ FkHandler::FkHandler(FkHandler::Callback callback) : FkObject(), callback(std::m
 FkHandler::FkHandler(FkLooper *looper, FkHandler::Callback callback)
         : FkObject(), callback(std::move(callback)) {
     this->looper = looper;
-    assert(nullptr != looper);
+    FkAssert(nullptr != looper, );
 }
 
 FkHandler::~FkHandler() {
