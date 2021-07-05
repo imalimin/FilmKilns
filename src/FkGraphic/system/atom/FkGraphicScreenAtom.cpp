@@ -20,7 +20,7 @@
 #include "FkCoordinateValue.h"
 #include "FkPositionValue.h"
 #include "FkGraphicRender.h"
-#include "ext.hpp"
+#include "FkMVPMatrix.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  4
@@ -162,6 +162,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 //    for (int i = 0; i < 4; ++i) {
 //        FkLogI(FK_DEF_TAG, "%f, %f, %f, %f", pMat[i * 4 + 0], pMat[i * 4 + 1], pMat[i * 4 + 2], pMat[i * 4 + 3]);
 //    }
+    auto mat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
     float pos[]{
             -size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//LEFT,BOTTOM
             size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//RIGHT,BOTTOM
@@ -175,9 +176,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setColor(color->color)
             ->setVertexBuffer(vbo)
             ->setSrcTexture(0, tex->tex)
-            ->setMatrix(0, model)
-            ->setMatrix(1, view)
-            ->setMatrix(2, proj)
+            ->setMatrix(0, mat)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
             ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->render();

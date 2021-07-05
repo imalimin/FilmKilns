@@ -33,13 +33,13 @@ public:
 
     std::shared_ptr<FkGraphicRender> enableSwapBuffers(bool enable);
 
-    std::shared_ptr<FkGraphicRender> setContext(std::shared_ptr<FkGraphicContext> context);
+    std::shared_ptr<FkGraphicRender> setContext(std::shared_ptr<FkGraphicContext> _context);
 
     std::shared_ptr<FkGraphicRender> setViewport(int x, int y, int width, int height);
 
-    std::shared_ptr<FkGraphicRender> setColor(FkColor color);
+    std::shared_ptr<FkGraphicRender> setColor(FkColor _color);
 
-    std::shared_ptr<FkGraphicRender> setVertexBuffer(uint32_t vbo);
+    std::shared_ptr<FkGraphicRender> setVertexBuffer(uint32_t _vbo);
 
     std::shared_ptr<FkGraphicRender> setSrcTexture(int index, std::shared_ptr<FkGraphicTexture> tex);
 
@@ -47,7 +47,7 @@ public:
 
     std::shared_ptr<FkGraphicRender> setCoordinate(size_t countVertex, size_t countPerVertex, size_t offset, void *data);
 
-    std::shared_ptr<FkGraphicRender> setMatrix(int32_t index, std::shared_ptr<FkMatrix> mat);
+    std::shared_ptr<FkGraphicRender> setMatrix(std::shared_ptr<FkMatrix> _mat);
 
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;
@@ -59,7 +59,7 @@ private:
     std::shared_ptr<FkPositionValue> position = nullptr;
     std::shared_ptr<FkCoordinateValue> coordinate = nullptr;
     bool _enableSwapBuffers = false;
-    std::vector<std::shared_ptr<FkMatrixValue>> mats;
+    std::shared_ptr<FkMatrixValue> mat;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDER_H

@@ -24,7 +24,6 @@ FkGraphicRender::FkGraphicRender(const FkGraphicRender &o) : FkObject(o) {
 }
 
 FkGraphicRender::~FkGraphicRender() {
-    mats.clear();
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::enableSwapBuffers(bool enable) {
@@ -46,9 +45,7 @@ FkResult FkGraphicRender::render() {
 
     program->bind();
     program->addValue(srcTex);
-    for (auto &it : mats) {
-        program->addValue(it);
-    }
+    program->addValue(mat);
     program->addValue(position);
     program->addValue(coordinate);
 
@@ -65,8 +62,8 @@ FkResult FkGraphicRender::render() {
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setContext(
-        std::shared_ptr<FkGraphicContext> context) {
-    this->context = context;
+        std::shared_ptr<FkGraphicContext> _context) {
+    this->context = _context;
     return shared_from_this();
 }
 
@@ -75,13 +72,13 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setViewport(int x, int y, int 
     return shared_from_this();
 }
 
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setColor(FkColor color) {
-    this->color = color;
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setColor(FkColor _color) {
+    this->color = _color;
     return shared_from_this();
 }
 
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setVertexBuffer(uint32_t vbo) {
-    this->vbo = vbo;
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setVertexBuffer(uint32_t _vbo) {
+    this->vbo = _vbo;
     return shared_from_this();
 }
 
@@ -113,10 +110,8 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
     return shared_from_this();
 }
 
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(int32_t index, std::shared_ptr<FkMatrix> mat) {
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(std::shared_ptr<FkMatrix> _mat) {
     auto value = std::make_shared<FkMatrixValue>();
-    value->mat = mat;
-    value->index = index;
-    mats.emplace_back(value);
+    value->mat = _mat;
     return shared_from_this();
 }
