@@ -46,14 +46,14 @@ void FkGraphicScreenAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkGraphicScreenAtom::onCreate() {
-    // st
+    // xyz
     position = new float[8]{
             -1.0f, -1.0f,//LEFT,BOTTOM
             1.0f, -1.0f,//RIGHT,BOTTOM
             -1.0f, 1.0f,//LEFT,TOP
             1.0f, 1.0f//RIGHT,TOP
     };
-    // xy
+    // uv
     coordinate = new float[8]{
             0.0f, 0.0f,//LEFT,BOTTOM
             1.0f, 0.0f,//RIGHT,BOTTOM
@@ -146,19 +146,28 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 
 
     double aspect = (context->context->getWidth() * size->size.getHeight() * 1.0) / (context->context->getHeight() * size->size.getWidth());
-    proj->mat4 = glm::perspective(glm::radians(70.0f), (float) aspect, 0.1f, 100.0f);
-//    proj->mat4 = glm::ortho(0.0f, 1440.0f, 0.0f, 2526.0f, 0.1f, 100.0f);
-    view->mat4 = glm::lookAt(
-            glm::vec3(0.0f, 0.0f, 3.0f), // Camera is at (0,0,3), in World Space
-            glm::vec3(0.0f, 0.0f, 0.0f), // and looks at the origin
-            glm::vec3(0.0f, 1.0f, 0.0f)  // Head is up (set to 0,-1,0 to look upside-down)
-    );
+//    proj->mat4 = glm::perspective(glm::radians(90.0f), (float) aspect, 0.1f, 100.0f);
+//    proj->mat4 = glm::ortho(-context->context->getWidth() / 2.0f, context->context->getWidth() / 2.0f,
+//                            -context->context->getHeight() / 2.0f, context->context->getHeight() / 2.0f,
+//                            0.1f, 100.0f);
+//    view->mat4 = glm::lookAt(
+//            glm::vec3(0.0f, 0.0f, 3.0f), // Camera is at (0,0,3), in World Space
+//            glm::vec3(0.0f, 0.0f, 0.0f), // and looks at the origin
+//            glm::vec3(0.0f, 1.0f, 0.0f)  // Head is up (set to 0,-1,0 to look upside-down)
+//    );
 //    view->mat4 = glm::rotate(view->mat4, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.5f));
-    model->mat4 = glm::scale(model->mat4, glm::vec3(1.0, -1.0, 1.0));
+//    model->mat4 = glm::scale(model->mat4, glm::vec3(1.0, -1.0, 1.0));
+//    model->mat4 = glm::translate(model->mat4, glm::vec3(0.0f, 0.0f, 1.0f));
 //    float *pMat = (float *) mat->get();
 //    for (int i = 0; i < 4; ++i) {
 //        FkLogI(FK_DEF_TAG, "%f, %f, %f, %f", pMat[i * 4 + 0], pMat[i * 4 + 1], pMat[i * 4 + 2], pMat[i * 4 + 3]);
 //    }
+    float pos[]{
+            -size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//LEFT,BOTTOM
+            size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//RIGHT,BOTTOM
+            -size->size.getWidth() / 2.0f, size->size.getHeight() / 2.0f,//LEFT,TOP
+            size->size.getWidth() / 2.0f, size->size.getHeight() / 2.0f//RIGHT,TOP
+    };
     auto ret = FkGraphicRender::with(program)
             ->enableSwapBuffers(true)
             ->setContext(context->context)
@@ -169,7 +178,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setMatrix(0, model)
             ->setMatrix(1, view)
             ->setMatrix(2, proj)
-            ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, position)
+            ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
             ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->render();
     return ret;
