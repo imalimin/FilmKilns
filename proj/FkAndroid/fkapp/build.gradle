@@ -1,16 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-android {
-    signingConfigs {
-        defaultConfig {
-            keyAlias keyAlias
-            keyPassword keyPassword
-            storeFile file('./lmyooyo.jks')
-            storePassword storePassword
-        }
-    }
 
+android {
     compileSdkVersion Integer.parseInt(target_version)
 
     defaultConfig {
@@ -20,12 +12,30 @@ android {
         versionCode versionCode
         versionName versionName
 
-        signingConfig signingConfigs.defaultConfig
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions "version"
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('../lmyooyo.jks')
+            keyAlias rootProject.keyAlias
+            keyPassword rootProject.keyPassword
+            storePassword rootProject.storePassword
+        }
+
+        release {
+            storeFile file('../lmyooyo.jks')
+            keyAlias rootProject.keyAlias
+            keyPassword rootProject.keyPassword
+            storePassword rootProject.storePassword
+        }
+    }
+
     buildTypes {
+        debug {
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

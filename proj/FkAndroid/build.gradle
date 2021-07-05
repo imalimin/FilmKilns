@@ -1,6 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    Properties localProperties = new Properties()
+    File file = project.rootProject.file('local.properties')
+    if (file.exists()) {
+        localProperties.load(file.newReader("UTF-8"))
+    }
+
+    ext {
+        keyAlias = localProperties.get('keyAlias')
+        keyPassword = localProperties.get('keyPassword')
+        storePassword = localProperties.get('storePassword')
+    }
 
     repositories {
         mavenCentral()
