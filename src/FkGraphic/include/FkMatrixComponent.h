@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKMATRIXCOMPONENT_H
 
 #include "FkGraphicComponent.h"
+#include "FkMatrix.h"
 
 FK_CLASS FkMatrixComponent FK_EXTEND FkGraphicComponent {
 public:
@@ -17,6 +18,9 @@ public:
     FkMatrixComponent(const FkMatrixComponent &o);
 
     virtual ~FkMatrixComponent();
+
+public:
+    std::shared_ptr<FkMatrix> value = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKMATRIXCOMPONENT_H

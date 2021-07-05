@@ -6,20 +6,17 @@
 */
 
 #include "FkMVPMatrix.h"
-
-#include <utility>
 #include "ext.hpp"
 
 FkMVPMatrix::FkMVPMatrix(kProjType type)
         : FkMatrix(), type(type), proj(glm::mat4(1.0f)), view(glm::mat4(1.0f)),
-          model(glm::mat4(1.0f)), rotateAngle(0.0f),
-          scale(1.0f, 1.0f, 1.0f), translate(1.0f, 1.0f, 1.0f) {
+          rotateAngle(0.0f), scale(1.0f, 1.0f, 1.0f),
+          translate(0.0f, 0.0f, 00.0f) {
     FK_MARK_SUPER
 }
 
 FkMVPMatrix::FkMVPMatrix(const FkMVPMatrix &o) : FkMatrix(o), type(o.type), proj(o.proj),
-                                                 view(o.view), model(o.model),
-                                                 rotateAngle(o.rotateAngle),
+                                                 view(o.view), rotateAngle(o.rotateAngle),
                                                  scale(o.scale), translate(o.translate) {
     FK_MARK_SUPER
 }
@@ -60,6 +57,7 @@ void FkMVPMatrix::setTranslate(FkFloatVec3 value) {
 }
 
 void FkMVPMatrix::_calc() {
+    glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, rotateAngle, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
     model = glm::translate(model, glm::vec3(translate.x, translate.y, translate.z));

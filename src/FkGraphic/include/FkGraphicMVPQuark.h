@@ -28,6 +28,9 @@ protected:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
+
+private:
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICMVPQUARK_H

@@ -41,7 +41,6 @@ private:
     kProjType type;
     glm::mat4 proj;
     glm::mat4 view;
-    glm::mat4 model;
     float rotateAngle;
     FkFloatVec3 scale;
     FkFloatVec3 translate;

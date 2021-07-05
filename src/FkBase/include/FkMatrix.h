@@ -22,7 +22,7 @@ public:
 
     const void *get();
 
-protected:
+public:
     glm::mat4 mat4;
 };
 

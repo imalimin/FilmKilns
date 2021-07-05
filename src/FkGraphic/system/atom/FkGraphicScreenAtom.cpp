@@ -20,7 +20,8 @@
 #include "FkCoordinateValue.h"
 #include "FkPositionValue.h"
 #include "FkGraphicRender.h"
-#include "FkMVPMatrix.h"
+#include "FkMatrixComponent.h"
+#include "ext.hpp"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  4
@@ -125,6 +126,13 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     }
     size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
     vec.clear();
+    std::shared_ptr<FkMatrixComponent> mat = nullptr;
+    if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkMatrixComponent>())) {
+        return FK_FAIL;
+    }
+    mat = Fk_POINTER_CAST(FkMatrixComponent, vec[0]);
+    vec.clear();
+
     std::shared_ptr<FkColorComponent> color = nullptr;
     if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkColorComponent>())) {
         color = std::make_shared<FkColorComponent>();
@@ -140,29 +148,28 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE * 2, nullptr, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     }
+
     auto model = std::make_shared<FkMatrix>();
     auto view = std::make_shared<FkMatrix>();
     auto proj = std::make_shared<FkMatrix>();
 
-
-    double aspect = (context->context->getWidth() * size->size.getHeight() * 1.0) / (context->context->getHeight() * size->size.getWidth());
-//    proj->mat4 = glm::perspective(glm::radians(90.0f), (float) aspect, 0.1f, 100.0f);
-//    proj->mat4 = glm::ortho(-context->context->getWidth() / 2.0f, context->context->getWidth() / 2.0f,
-//                            -context->context->getHeight() / 2.0f, context->context->getHeight() / 2.0f,
-//                            0.1f, 100.0f);
-//    view->mat4 = glm::lookAt(
-//            glm::vec3(0.0f, 0.0f, 3.0f), // Camera is at (0,0,3), in World Space
-//            glm::vec3(0.0f, 0.0f, 0.0f), // and looks at the origin
-//            glm::vec3(0.0f, 1.0f, 0.0f)  // Head is up (set to 0,-1,0 to look upside-down)
-//    );
+    proj->mat4 = glm::ortho(-context->context->getWidth() / 2.0f, context->context->getWidth() / 2.0f,
+                            -context->context->getHeight() / 2.0f, context->context->getHeight() / 2.0f,
+                            0.1f, 100.0f);
+    view->mat4 = glm::lookAt(
+            glm::vec3(0.0f, 0.0f, 3.0f), // Camera is at (0,0,3), in World Space
+            glm::vec3(0.0f, 0.0f, 0.0f), // and looks at the origin
+            glm::vec3(0.0f, 1.0f, 0.0f)  // Head is up (set to 0,-1,0 to look upside-down)
+    );
 //    view->mat4 = glm::rotate(view->mat4, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.5f));
-//    model->mat4 = glm::scale(model->mat4, glm::vec3(1.0, -1.0, 1.0));
+    model->mat4 = glm::scale(model->mat4, glm::vec3(1.0, -1.0, 1.0));
 //    model->mat4 = glm::translate(model->mat4, glm::vec3(0.0f, 0.0f, 1.0f));
 //    float *pMat = (float *) mat->get();
 //    for (int i = 0; i < 4; ++i) {
 //        FkLogI(FK_DEF_TAG, "%f, %f, %f, %f", pMat[i * 4 + 0], pMat[i * 4 + 1], pMat[i * 4 + 2], pMat[i * 4 + 3]);
 //    }
-    auto mat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
+    mat->value->mat4 = proj->mat4 * view->mat4 * model->mat4;
+
     float pos[]{
             -size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//LEFT,BOTTOM
             size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//RIGHT,BOTTOM
@@ -176,7 +183,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setColor(color->color)
             ->setVertexBuffer(vbo)
             ->setSrcTexture(0, tex->tex)
-            ->setMatrix(mat)
+            ->setMatrix(mat->value)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
             ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->render();
