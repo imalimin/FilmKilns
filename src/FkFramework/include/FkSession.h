@@ -25,7 +25,7 @@ FK_CLASS FkSession FK_EXTEND FkObject {
     friend FkLocalClient;
     friend FkRemoteClient;
 public:
-    AFK_ENUM kState : int {
+    FK_ENUM kState : int {
         IDL = -1,
         OPENED,
     };

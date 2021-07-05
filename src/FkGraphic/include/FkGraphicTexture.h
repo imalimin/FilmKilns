@@ -16,7 +16,7 @@
 
 FK_CLASS FkTexDescription FK_EXTEND FkObject {
 public:
-    AFK_ENUM kWrapMode : int32_t {
+    FK_ENUM kWrapMode : int32_t {
         REPEAT = 0,
         EDGE,
         BORDER,

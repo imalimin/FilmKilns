@@ -12,7 +12,7 @@
 
 FK_CLASS FkColor FK_EXTEND FkObject {
 public:
-    AFK_ENUM kFormat : uint32_t {
+    FK_ENUM kFormat : uint32_t {
         NONE = 0,
         LUMINANCE,
         LUMINANCE2,

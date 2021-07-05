@@ -21,7 +21,7 @@ public:
     virtual const FkClassType &getClassType() const;
 
 protected:
-    FkClassType type;
+    FkClassType clsType;
 };
 
 

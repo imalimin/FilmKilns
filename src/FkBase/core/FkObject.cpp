@@ -17,5 +17,5 @@ FkObject::~FkObject() {
 }
 
 const FkClassType &FkObject::getClassType() const {
-    return type;
+    return clsType;
 }

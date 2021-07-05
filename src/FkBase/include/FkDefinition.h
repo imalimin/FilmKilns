@@ -15,12 +15,12 @@
 #define FK_CLASS class
 #define FK_ABS_CLASS class
 #define FK_INTERFACE class
-#define AFK_ENUM enum class
+#define FK_ENUM enum class
 #define FK_EXTEND : public
 #define FK_NULLABLE
 #define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 
-#define FK_MARK_SUPER type.super(typeid(*this).name());
+#define FK_MARK_SUPER clsType.super(typeid(*this).name());
 #define FK_CLASS_TYPE_EQUALS(src, target) ((src).getClassType() == (target).getClassType())
 #define FK_CLASS_TYPE_EQUALS2(src, target) ((src)->getClassType() == (target)->getClassType())
 #define FK_INSTANCE_OF(src, CLASS) ((src)->getClassType() == FkClassType::type<CLASS>())
@@ -61,7 +61,7 @@ typedef int32_t FkID;
 // +------ KID ------+
 #define FK_KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
 
-AFK_ENUM kState : int {
+FK_ENUM kState : int {
     IDL = -1,
     CREATED,
     STARTED,

@@ -16,7 +16,7 @@
 
 FK_CLASS FkProgramDescription FK_EXTEND FkObject {
 public:
-    AFK_ENUM kType : int32_t {
+    FK_ENUM kType : int32_t {
         NONE = 0,
         MATRIX,
     };
