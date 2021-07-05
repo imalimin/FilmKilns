@@ -7,7 +7,7 @@
 
 #include "FkGraphicMolecule.h"
 #include "FkGraphicLayerPrt.h"
-#include "FkGraphicMVPAtom.h"
+#include "FkGraphicModelAtom.h"
 #include "FkGraphicSourceAtom.h"
 #include "FkGraphicRenderAtom.h"
 #include "FkGraphicScreenAtom.h"
@@ -41,7 +41,7 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkGraphicMVPAtom>()
+    chain->next<FkGraphicModelAtom>()
             .next<FkGraphicSourceAtom>()
             .next<FkGraphicRenderAtom>()
             .next<FkGraphicScreenAtom>();

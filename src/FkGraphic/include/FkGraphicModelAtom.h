@@ -11,13 +11,13 @@
 #include "FkSimpleAtom.h"
 #include "FkLocalClient.h"
 
-FK_CLASS FkGraphicMVPAtom FK_EXTEND FkSimpleAtom {
+FK_CLASS FkGraphicModelAtom FK_EXTEND FkSimpleAtom {
 public:
-    FkGraphicMVPAtom();
+    FkGraphicModelAtom();
 
-    FkGraphicMVPAtom(const FkGraphicMVPAtom &o) = delete;
+    FkGraphicModelAtom(const FkGraphicModelAtom &o) = delete;
 
-    virtual ~FkGraphicMVPAtom();
+    virtual ~FkGraphicModelAtom();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
