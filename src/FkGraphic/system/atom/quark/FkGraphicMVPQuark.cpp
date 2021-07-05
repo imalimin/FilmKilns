@@ -46,6 +46,7 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 3.0f),
                        FkFloatVec3(0.0f, 0.0f, 0.0f),
                        FkFloatVec3(0.0f, 1.0f, 0.0f));
+        matrix->setScale(FkFloatVec3(1.0f, -1.0f, 1.0f));
 
         auto mat = std::make_shared<FkMatrixComponent>();
         mat->value = matrix;

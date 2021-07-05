@@ -111,7 +111,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(std::shared_ptr<FkMatrix> _mat) {
-    auto value = std::make_shared<FkMatrixValue>();
-    value->mat = _mat;
+    mat = std::make_shared<FkMatrixValue>();
+    mat->mat = _mat;
     return shared_from_this();
 }

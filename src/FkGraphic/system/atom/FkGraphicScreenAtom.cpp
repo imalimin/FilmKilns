@@ -149,27 +149,6 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     }
 
-    auto model = std::make_shared<FkMatrix>();
-    auto view = std::make_shared<FkMatrix>();
-    auto proj = std::make_shared<FkMatrix>();
-
-    proj->mat4 = glm::ortho(-context->context->getWidth() / 2.0f, context->context->getWidth() / 2.0f,
-                            -context->context->getHeight() / 2.0f, context->context->getHeight() / 2.0f,
-                            0.1f, 100.0f);
-    view->mat4 = glm::lookAt(
-            glm::vec3(0.0f, 0.0f, 3.0f), // Camera is at (0,0,3), in World Space
-            glm::vec3(0.0f, 0.0f, 0.0f), // and looks at the origin
-            glm::vec3(0.0f, 1.0f, 0.0f)  // Head is up (set to 0,-1,0 to look upside-down)
-    );
-//    view->mat4 = glm::rotate(view->mat4, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.5f));
-    model->mat4 = glm::scale(model->mat4, glm::vec3(1.0, -1.0, 1.0));
-//    model->mat4 = glm::translate(model->mat4, glm::vec3(0.0f, 0.0f, 1.0f));
-//    float *pMat = (float *) mat->get();
-//    for (int i = 0; i < 4; ++i) {
-//        FkLogI(FK_DEF_TAG, "%f, %f, %f, %f", pMat[i * 4 + 0], pMat[i * 4 + 1], pMat[i * 4 + 2], pMat[i * 4 + 3]);
-//    }
-    mat->value->mat4 = proj->mat4 * view->mat4 * model->mat4;
-
     float pos[]{
             -size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//LEFT,BOTTOM
             size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//RIGHT,BOTTOM
