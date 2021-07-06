@@ -8,6 +8,7 @@
 #include "FkGraphicModelAtom.h"
 #include "FkGraphicLayerPrt.h"
 #include "FkGraphicMVPQuark.h"
+#include "FkGraphicCanvasQuark.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkGraphicLayerQuark.h"
@@ -35,7 +36,8 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
     auto ptr = std::make_shared<FkGraphicMVPQuark>();
     chain->next<FkGraphicLayerQuark>()
-            .next<FkGraphicMVPQuark>();
+            ->next<FkGraphicCanvasQuark>()
+            ->next<FkGraphicMVPQuark>();
 }
 
 FkResult FkGraphicModelAtom::onCreate() {

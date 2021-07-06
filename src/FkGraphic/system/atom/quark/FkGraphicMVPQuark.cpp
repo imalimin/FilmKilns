@@ -51,6 +51,7 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         _setScale(matrix, layer);
         _setRotation(matrix, layer);
         _setTranslate(matrix, layer);
+        matrix->calc();
 
         auto mat = std::make_shared<FkMatrixComponent>();
         mat->value = matrix;

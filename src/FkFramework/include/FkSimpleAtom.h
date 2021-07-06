@@ -17,7 +17,7 @@
     desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
         reinterpret_cast<FkPort::PortFunc>(&FkSimpleAtom::dispatchNext)) \
 
-FK_ABS_CLASS FkConnectChain FK_EXTEND FkObject {
+FK_ABS_CLASS FkConnectChain FK_EXTEND FkObject, public enable_shared_from_this<FkConnectChain> {
 public:
     FkConnectChain();
 
@@ -26,9 +26,9 @@ public:
     virtual ~FkConnectChain();
 
     template<class T>
-    FkConnectChain &next() {
+    std::shared_ptr<FkConnectChain> next() {
         _next(std::make_shared<T>());
-        return *this;
+        return shared_from_this();
     }
 
     std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> p);

@@ -34,8 +34,7 @@ public:
 
     void setTranslate(FkFloatVec3 value);
 
-private:
-    void _calc();
+    void calc();
 
 private:
     kProjType type;

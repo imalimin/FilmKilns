@@ -44,9 +44,9 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkGraphicModelAtom>()
-            .next<FkGraphicSourceAtom>()
-            .next<FkGraphicRenderAtom>()
-            .next<FkGraphicScreenAtom>();
+            ->next<FkGraphicSourceAtom>()
+            ->next<FkGraphicRenderAtom>()
+            ->next<FkGraphicScreenAtom>();
 }
 
 FkResult FkGraphicMolecule::onCreate() {

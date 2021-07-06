@@ -29,7 +29,6 @@ void FkMVPMatrix::setViewSize(int32_t width, int32_t height) {
     proj = glm::ortho(-width / 2.0f, width / 2.0f,
                       -height / 2.0f, height / 2.0f,
                       0.1f, 100.0f);
-    _calc();
 }
 
 void FkMVPMatrix::lookAt(FkFloatVec3 cameraPosition, FkFloatVec3 shootVec, FkFloatVec3 headVec) {
@@ -38,25 +37,21 @@ void FkMVPMatrix::lookAt(FkFloatVec3 cameraPosition, FkFloatVec3 shootVec, FkFlo
             glm::vec3(shootVec.x, shootVec.y, shootVec.z), // and looks at the origin
             glm::vec3(headVec.x, headVec.y, headVec.z)  // Head is up (set to 0,-1,0 to look upside-down)
     );
-    _calc();
 }
 
 void FkMVPMatrix::setScale(FkFloatVec3 value) {
     this->scale = value;
-    _calc();
 }
 
 void FkMVPMatrix::setRotation(float angle) {
     this->rotateAngle = angle;
-    _calc();
 }
 
 void FkMVPMatrix::setTranslate(FkFloatVec3 value) {
     this->translate = value;
-    _calc();
 }
 
-void FkMVPMatrix::_calc() {
+void FkMVPMatrix::calc() {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, rotateAngle, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
