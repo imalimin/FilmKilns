@@ -38,6 +38,8 @@ public:
 
     FkID newLayerWithColor(FkSize size, FkColor color);
 
+    FkResult setCanvasSize(FkSize size);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -52,11 +54,14 @@ private:
 
     FkResult _notifyRender(std::shared_ptr<FkMessage> msg);
 
+    FkResult _setCanvasSize(std::shared_ptr<FkMessage> msg);
+
 private:
     static const FkID FK_MSG_NEW_LAYER;
     static const FkID FK_MSG_UPDATE_LAYER_WITH_COLOR;
     static const FkID FK_MSG_SET_SURFACE;
     static const FkID FK_MSG_NOTIFY_RENDER;
+    static const FkID FK_MSG_SET_CANVAS_SIZE;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
 };

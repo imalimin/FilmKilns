@@ -20,6 +20,7 @@ public:
     virtual ~FkRenderRequest();
 
 public:
+    std::shared_ptr<FkGraphicLayer> canvas;
     std::vector<std::shared_ptr<FkGraphicLayer>> layers;
 };
 

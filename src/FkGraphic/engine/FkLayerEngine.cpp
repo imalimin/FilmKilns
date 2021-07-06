@@ -22,6 +22,7 @@ const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
 const FkID FkLayerEngine::FK_MSG_SET_SURFACE = FK_KID('F', 'K', 'E', 0x12);
 const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = FK_KID('F', 'K', 'E', 0x13);
+const FkID FkLayerEngine::FK_MSG_SET_CANVAS_SIZE = FK_KID('F', 'K', 'E', 0x14);
 
 FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_MARK_SUPER
@@ -29,6 +30,7 @@ FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor);
     FK_REG_MSG(FK_MSG_SET_SURFACE, FkLayerEngine::_setSurface);
     FK_REG_MSG(FK_MSG_NOTIFY_RENDER, FkLayerEngine::_notifyRender);
+    FK_REG_MSG(FK_MSG_SET_CANVAS_SIZE, FkLayerEngine::_setCanvasSize);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -114,6 +116,19 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
     return id;
 }
 
+FkResult FkLayerEngine::setCanvasSize(FkSize size) {
+    auto sizeCom = std::make_shared<FkSizeComponent>();
+    sizeCom->size = size;
+    auto layer = std::make_shared<FkGraphicLayer>();
+    layer->id = id;
+    layer->addComponent(colorCom);
+    layer->addComponent(sizeCom);
+    auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_COLOR);
+    msg->sp = layer;
+    sendMessage(msg);
+    return FK_OK;
+}
+
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     auto prt = std::make_shared<FkGraphicNewLayerPrt>();
     auto ret = client->quickSend<FkGraphicNewLayerPrt>(prt, molecule);
@@ -174,4 +189,8 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
 FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
     auto prt = std::make_shared<FkRenderRequestPrt>();
     return client->quickSend<FkRenderRequestPrt>(prt, molecule);
+}
+
+FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
+    return 0;
 }

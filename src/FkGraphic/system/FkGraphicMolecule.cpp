@@ -20,6 +20,7 @@
 #include "FkGraphicTexDelPtl.h"
 #include "FkUpdateTexWithBmpPrt.h"
 #include "FkSetSizeProto.h"
+#include "FkGraphicUpdateCanvasProto.h"
 
 FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -40,6 +41,7 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateTexWithBmpPrt, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateCanvasProto, FkGraphicMolecule::dispatchNext);
 }
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {

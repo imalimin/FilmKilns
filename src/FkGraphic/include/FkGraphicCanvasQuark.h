@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKGRAPHICCANVASQUARK_H
 
 #include "FkQuark.h"
+#include "FkGraphicLayer.h"
 
 FK_CLASS FkGraphicCanvasQuark FK_EXTEND FkQuark {
 public:
@@ -28,6 +29,14 @@ protected:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
+
+private:
+    FkResult _onUpdate(std::shared_ptr<FkProtocol> p);
+
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
+private:
+    std::shared_ptr<FkGraphicLayer> canvas;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICCANVASQUARK_H

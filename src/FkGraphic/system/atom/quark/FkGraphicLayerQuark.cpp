@@ -32,6 +32,7 @@ FkResult FkGraphicLayerQuark::onCreate() {
 }
 
 FkResult FkGraphicLayerQuark::onDestroy() {
+    layers.clear();
     return FkQuark::onDestroy();
 }
 
