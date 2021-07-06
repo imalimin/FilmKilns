@@ -9,6 +9,10 @@
 #define FK_GRAPHIC_FKGRAPHICMVPQUARK_H
 
 #include "FkQuark.h"
+#include "FkFloatVec3.h"
+#include "FkMVPMatrix.h"
+#include "FkGraphicLayer.h"
+#include "FkSize.h"
 
 FK_CLASS FkGraphicMVPQuark FK_EXTEND FkQuark {
 public:
@@ -31,6 +35,24 @@ protected:
 
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
+    FkResult _onSetViewSize(std::shared_ptr<FkProtocol> p);
+
+private:
+    float _getViewScale(std::shared_ptr<FkGraphicLayer> layer);
+
+    FkResult _setRotation(std::shared_ptr<FkMVPMatrix> matrix,
+                          std::shared_ptr<FkGraphicLayer> layer);
+
+    FkResult _setScale(std::shared_ptr<FkMVPMatrix> matrix,
+                       std::shared_ptr<FkGraphicLayer> layer);
+
+    FkResult _setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
+                           std::shared_ptr<FkGraphicLayer> layer);
+
+private:
+    FkSize viewSize;
+    kScaleType scaleType = kScaleType::CENTER_CROP;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICMVPQUARK_H

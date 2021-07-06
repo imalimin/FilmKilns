@@ -16,6 +16,7 @@
 #include "FkRenderRequestPrt.h"
 #include "FkGraphicUpdateTexPrt.h"
 #include "FkGraphicTexDelPtl.h"
+#include "FkSetSizeProto.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
@@ -159,8 +160,14 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
+    FkAssert(nullptr != msg->sp, FK_EMPTY_DATA);
+    auto win = Fk_POINTER_CAST(FkGraphicWindow, msg->sp);
+    auto setSizeProto = std::make_shared<FkSetSizeProto>();
+    setSizeProto->value = win->getSize();
+    client->quickSend<FkSetSizeProto>(setSizeProto, molecule);
+
     auto prt = std::make_shared<FkSetSurfacePrt>();
-    prt->win = std::static_pointer_cast<FkGraphicWindow>(msg->sp);
+    prt->win = win;
     return client->quickSend<FkSetSurfacePrt>(prt, molecule);
 }
 

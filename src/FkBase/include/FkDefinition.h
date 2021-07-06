@@ -69,4 +69,10 @@ FK_ENUM kState : int {
     STOPPED,
 };
 
+FK_ENUM kScaleType : int {
+    CENTER_MATRIX = 0,
+    CENTER_INSIDE,
+    CENTER_CROP,
+};
+
 #endif //FK_BASE_FKDEFINITION_H

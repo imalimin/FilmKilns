@@ -13,6 +13,7 @@
 #include "FkGraphicLayerQuark.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkRenderRequestPrt.h"
+#include "FkSetSizeProto.h"
 
 FkGraphicModelAtom::FkGraphicModelAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -28,6 +29,7 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicModelAtom::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkGraphicModelAtom::dispatchNext);
 }
 
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
