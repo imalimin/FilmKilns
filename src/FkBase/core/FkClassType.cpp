@@ -34,6 +34,10 @@ bool operator==(const FkClassType &o0, const FkClassType &o1) {
     return o0.extends.end() != itr;
 }
 
+bool operator!=(const FkClassType &o0, const FkClassType &o1) {
+    return !(o0 == o1);
+}
+
 std::string FkClassType::toString() const {
     std::string str;
     for (auto itr = extends.begin(); itr != extends.end(); ++itr) {

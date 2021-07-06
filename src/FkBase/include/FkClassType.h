@@ -34,6 +34,8 @@ public:
 
     friend bool operator==(const FkClassType &o0, const FkClassType &o1);
 
+    friend bool operator!=(const FkClassType &o0, const FkClassType &o1);
+
     std::string toString() const;
 
     size_t hashCode() const;

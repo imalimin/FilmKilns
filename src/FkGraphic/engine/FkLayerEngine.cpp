@@ -117,16 +117,9 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
 }
 
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {
-    auto sizeCom = std::make_shared<FkSizeComponent>();
-    sizeCom->size = size;
-    auto layer = std::make_shared<FkGraphicLayer>();
-    layer->id = id;
-    layer->addComponent(colorCom);
-    layer->addComponent(sizeCom);
-    auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_COLOR);
-    msg->sp = layer;
-    sendMessage(msg);
-    return FK_OK;
+    auto msg = FkMessage::obtain(FK_MSG_SET_CANVAS_SIZE);
+    msg->sp = std::make_shared<FkSize>(size);
+    return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
@@ -187,10 +180,17 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
-    auto prt = std::make_shared<FkRenderRequestPrt>();
-    return client->quickSend<FkRenderRequestPrt>(prt, molecule);
+    auto proto = std::make_shared<FkRenderRequestPrt>();
+    proto->req = std::make_shared<FkRenderRequest>();
+    return client->quickSend(proto, molecule);
 }
 
 FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
+//    auto sizeComp = std::make_shared<FkSizeComponent>();
+//    sizeComp->size = size;
+//    auto layer = std::make_shared<FkGraphicLayer>();
+//    layer->id = id;
+//    layer->addComponent(colorCom);
+//    layer->addComponent(sizeComp);
     return 0;
 }

@@ -98,6 +98,13 @@ FkResult FkQuark::accept(const std::shared_ptr<FkProtocol> p) {
     return FK_FAIL;
 }
 
+FkResult FkQuark::accept(const size_t protoType) {
+    if (nullptr != desc->find(protoType)) {
+        return FK_OK;
+    }
+    return FK_FAIL;
+}
+
 FkResult FkQuark::_changeState(kState src, kState dst) {
     std::lock_guard<std::mutex> guard(mtx);
     if (src != state) {

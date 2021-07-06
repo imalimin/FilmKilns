@@ -53,7 +53,8 @@ private:
     FkResult send(std::shared_ptr<FkProtocol> protocol);
 
 private:
-    std::shared_ptr<FkProtocol> templateProtocol = nullptr;
+    std::shared_ptr<FkClassType> classType = nullptr;
+    size_t protoType = 0;
     std::vector<std::shared_ptr<FkQuark>> link;
     std::mutex mtx;
     kState state = kState::IDL;

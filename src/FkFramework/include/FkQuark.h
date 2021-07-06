@@ -52,6 +52,8 @@ private:
 
     FkResult accept(const std::shared_ptr<FkProtocol> p);
 
+    FkResult accept(const size_t protoType);
+
     FkResult _changeState(kState src, kState dst);
 
 private:
