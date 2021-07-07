@@ -20,7 +20,11 @@ public:
         if (type == nullptr) {
             type = new FkClassType();
         }
+#ifdef __FK_DEBUG__
         type->super(typeid(T).name());
+#else
+        type->super(typeid(T).hash_code());
+#endif
         return *type;
     };
 public:
@@ -30,7 +34,13 @@ public:
 
     virtual ~FkClassType();
 
+#ifdef __FK_DEBUG__
+
     void super(const char *name);
+
+#else
+    void super(const size_t &hashCode);
+#endif
 
     friend bool operator==(const FkClassType &o0, const FkClassType &o1);
 
@@ -43,8 +53,12 @@ public:
     std::string getName() const;
 
 private:
+#ifdef __FK_DEBUG__
     std::list<std::string> extends;
     std::hash<std::string> hashValue;
+#else
+    std::list<size_t> extends;
+#endif
 };
 
 
