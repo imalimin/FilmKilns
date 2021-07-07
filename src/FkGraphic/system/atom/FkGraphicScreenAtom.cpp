@@ -115,28 +115,28 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     vec.clear();
     std::shared_ptr<FkGraphicTexComponent> tex = nullptr;
     if (FK_OK !=
-        prt->req->layers[0]->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
+        prt->req->canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
         return FK_FAIL;
     }
     tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
     vec.clear();
     std::shared_ptr<FkSizeComponent> size = nullptr;
-    if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+    if (FK_OK != prt->req->canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
         return FK_FAIL;
     }
     size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
     vec.clear();
     std::shared_ptr<FkMatrixComponent> mat = nullptr;
-    if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkMatrixComponent>())) {
+    if (FK_OK != prt->req->canvas->findComponent(vec, FkClassType::type<FkMatrixComponent>())) {
         return FK_FAIL;
     }
     mat = Fk_POINTER_CAST(FkMatrixComponent, vec[0]);
     vec.clear();
 
     std::shared_ptr<FkColorComponent> color = nullptr;
-    if (FK_OK != prt->req->layers[0]->findComponent(vec, FkClassType::type<FkColorComponent>())) {
+    if (FK_OK != prt->req->canvas->findComponent(vec, FkClassType::type<FkColorComponent>())) {
         color = std::make_shared<FkColorComponent>();
-        color->color = FkColor::white();
+        color->color = FkColor::black();
     } else {
         color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
     }

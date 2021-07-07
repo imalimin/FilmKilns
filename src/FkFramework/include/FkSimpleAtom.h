@@ -31,15 +31,18 @@ public:
         return shared_from_this();
     }
 
-    std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> p);
+    std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> p, bool reverse = false);
 
     bool empty();
+
+    void clear();
 
 private:
     void _next(std::shared_ptr<FkQuark> quark);
 
 private:
     std::list<std::shared_ptr<FkQuark>> chain;
+    std::list<std::shared_ptr<FkQuark>> rChain;
 };
 
 FK_ABS_CLASS FkSimpleAtom FK_EXTEND FkAtom {

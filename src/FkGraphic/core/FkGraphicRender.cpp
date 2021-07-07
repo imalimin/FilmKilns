@@ -43,6 +43,12 @@ FkResult FkGraphicRender::render() {
     glBufferSubData(GL_ARRAY_BUFFER, 0, countOfPosByte, position->data);
     glBufferSubData(GL_ARRAY_BUFFER, countOfPosByte, countOfCoordByte, coordinate->data);
 
+    if (!_enableSwapBuffers) {
+        FkAssert(nullptr != fbo, FK_FAIL);
+        FkAssert(nullptr != targetTex, FK_FAIL);
+        fbo->attach(targetTex, true);
+    }
+
     program->bind();
     program->addValue(srcTex);
     program->addValue(mat);
@@ -56,6 +62,8 @@ FkResult FkGraphicRender::render() {
     program->unbind();
     if (_enableSwapBuffers) {
         context->swapBuffers();
+    } else {
+        fbo->unbind();
     }
     glFlush();
     return FK_FAIL;
@@ -113,5 +121,17 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(std::shared_ptr<FkMatrix> _mat) {
     mat = std::make_shared<FkMatrixValue>();
     mat->mat = _mat;
+    return shared_from_this();
+}
+
+std::shared_ptr<FkGraphicRender>
+FkGraphicRender::setFrameObject(std::shared_ptr<FkGraphicFrameObject> _fbo) {
+    this->fbo = _fbo;
+    return shared_from_this();
+}
+
+std::shared_ptr<FkGraphicRender>
+FkGraphicRender::setTargetTexture(std::shared_ptr<FkGraphicTexture> _tex) {
+    targetTex = _tex;
     return shared_from_this();
 }

@@ -64,6 +64,7 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     auto bmp = FkBitmap::from(msg->arg3);
     FkAssert(nullptr != bmp, FK_EMPTY_DATA);
     setCanvasSize(FkSize(bmp->getWidth(), bmp->getHeight()));
+    notifyRender();
 
     auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
     texPrt->fmt = FkColor::kFormat::RGBA;

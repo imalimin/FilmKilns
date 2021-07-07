@@ -102,10 +102,13 @@ FkResult FkGraphicTexture::create() {
 void FkGraphicTexture::destroy() {
     desc.target = GL_NONE;
     desc.size.set(0, 0);
-    if (GL_NONE != tex && glIsTexture(tex)) {
-        glDeleteTextures(1, &tex);
-        tex = GL_NONE;
-    }
+#ifdef __FK_DEBUG__
+    FkAssert(EGL_NO_CONTEXT != eglGetCurrentContext(), );
+#endif
+    FkAssert(GL_NONE != tex, );
+    FkAssert(glIsTexture(tex), );
+    glDeleteTextures(1, &tex);
+    tex = GL_NONE;
 }
 
 size_t FkGraphicTexture::size() {

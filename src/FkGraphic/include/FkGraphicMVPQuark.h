@@ -39,16 +39,20 @@ private:
     FkResult _onSetViewSize(std::shared_ptr<FkProtocol> p);
 
 private:
-    float _getViewScale(std::shared_ptr<FkGraphicLayer> layer);
+    float _getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize);
 
     FkResult _setRotation(std::shared_ptr<FkMVPMatrix> matrix,
                           std::shared_ptr<FkGraphicLayer> layer);
 
     FkResult _setScale(std::shared_ptr<FkMVPMatrix> matrix,
-                       std::shared_ptr<FkGraphicLayer> layer);
+                       std::shared_ptr<FkGraphicLayer> layer,
+                       FkSize &targetSize,
+                       bool reverseY);
 
     FkResult _setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
                            std::shared_ptr<FkGraphicLayer> layer);
+
+    FkResult _calc(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize, bool reverseY);
 
 private:
     FkSize viewSize;

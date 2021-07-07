@@ -18,6 +18,7 @@
 #include "FkMatrixValue.h"
 #include "FkMatrix.h"
 #include "FkGLDefinition.h"
+#include "FkGraphicFrameObject.h"
 
 FK_CLASS FkGraphicRender FK_EXTEND FkObject, public enable_shared_from_this<FkGraphicRender> {
 public:
@@ -49,6 +50,10 @@ public:
 
     std::shared_ptr<FkGraphicRender> setMatrix(std::shared_ptr<FkMatrix> _mat);
 
+    std::shared_ptr<FkGraphicRender> setFrameObject(std::shared_ptr<FkGraphicFrameObject> _fbo);
+
+    std::shared_ptr<FkGraphicRender> setTargetTexture(std::shared_ptr<FkGraphicTexture> _tex);
+
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;
     FkColor color;
@@ -60,6 +65,8 @@ private:
     std::shared_ptr<FkCoordinateValue> coordinate = nullptr;
     bool _enableSwapBuffers = false;
     std::shared_ptr<FkMatrixValue> mat;
+    std::shared_ptr<FkGraphicFrameObject> fbo = nullptr;
+    std::shared_ptr<FkGraphicTexture> targetTex = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDER_H

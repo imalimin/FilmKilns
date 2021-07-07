@@ -41,22 +41,34 @@ FkResult FkGraphicMVPQuark::onStop() {
 }
 
 FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
-    for (auto &layer : prt->req->layers) {
-        auto matrix = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
-        matrix->setViewSize(viewSize.getWidth(), viewSize.getHeight());
-        matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
-                       FkFloatVec3(0.0f, 0.0f, 0.0f),
-                       FkFloatVec3(0.0f, 1.0f, 0.0f));
-        _setScale(matrix, layer);
-        _setRotation(matrix, layer);
-        _setTranslate(matrix, layer);
-        matrix->calc();
-
-        auto mat = std::make_shared<FkMatrixComponent>();
-        mat->value = matrix;
-        layer->addComponent(mat);
+    auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+        return FK_FAIL;
     }
+    _calc(proto->req->canvas, viewSize, false);
+    for (auto &layer : proto->req->layers) {
+        _calc(layer, Fk_POINTER_CAST(FkSizeComponent, vec[0])->size, true);
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,
+                                  FkSize &targetSize,
+                                  bool reverseY) {
+    auto matrix = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
+    matrix->setViewSize(targetSize.getWidth(), targetSize.getHeight());
+    matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
+                   FkFloatVec3(0.0f, 0.0f, 0.0f),
+                   FkFloatVec3(0.0f, 1.0f, 0.0f));
+    _setScale(matrix, layer, targetSize, reverseY);
+    _setRotation(matrix, layer);
+    _setTranslate(matrix, layer);
+    matrix->calc();
+
+    auto mat = std::make_shared<FkMatrixComponent>();
+    mat->value = matrix;
+    layer->addComponent(mat);
     return FK_OK;
 }
 
@@ -66,7 +78,7 @@ FkResult FkGraphicMVPQuark::_onSetViewSize(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }
 
-float FkGraphicMVPQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer) {
+float FkGraphicMVPQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize) {
     float scale = 1.0f;
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     std::shared_ptr<FkSizeComponent> size = nullptr;
@@ -80,10 +92,10 @@ float FkGraphicMVPQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer) {
             scale = 1.0f;
             break;
         case kScaleType::CENTER_INSIDE:
-            scale = std::min(viewSize.getWidth() * 1.0f / layerSize.getWidth(), viewSize.getHeight() * 1.0f / layerSize.getHeight());
+            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(), targetSize.getHeight() * 1.0f / layerSize.getHeight());
             break;
         case kScaleType::CENTER_CROP:
-            scale = std::max(viewSize.getWidth() * 1.0f / layerSize.getWidth(), viewSize.getHeight() * 1.0f / layerSize.getHeight());
+            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(), targetSize.getHeight() * 1.0f / layerSize.getHeight());
             break;
     }
     return scale;
@@ -95,14 +107,18 @@ FkResult FkGraphicMVPQuark::_setRotation(std::shared_ptr<FkMVPMatrix> matrix,
 }
 
 FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
-                                      std::shared_ptr<FkGraphicLayer> layer) {
-    auto scaleOfType = _getViewScale(layer);
-    FkFloatVec3 scale(1.0f * scaleOfType, -1.0f * scaleOfType, 1.0f);
+                                      std::shared_ptr<FkGraphicLayer> layer,
+                                      FkSize &targetSize,
+                                      bool reverseY) {
+    auto scaleOfType = _getViewScale(layer, targetSize);
+    FkFloatVec3 scale(1.0f * scaleOfType, (reverseY ? -1.0f : 1.0f) * scaleOfType, 1.0f);
     matrix->setScale(scale);
     return FK_OK;
 }
 
 FkResult FkGraphicMVPQuark::_setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
                                           std::shared_ptr<FkGraphicLayer> layer) {
+    FkFloatVec3 trans(0.0f, 0.0f, 0.0f);
+    matrix->setTranslate(trans);
     return FK_OK;
 }

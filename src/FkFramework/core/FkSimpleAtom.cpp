@@ -17,12 +17,13 @@ FkConnectChain::~FkConnectChain() {
 }
 
 void FkConnectChain::_next(std::shared_ptr<FkQuark> quark) {
-    chain.push_back(quark);
+    chain.emplace_back(quark);
+    rChain.emplace_front(quark);
 }
 
-std::shared_ptr<FkSession> FkConnectChain::connectSession(std::shared_ptr<FkProtocol> p) {
+std::shared_ptr<FkSession> FkConnectChain::connectSession(std::shared_ptr<FkProtocol> p, bool reverse) {
     auto session = FkSession::with(p);
-    for (auto &it : chain) {
+    for (auto &it : reverse ? rChain : chain) {
         FkResult ret = session->connectTo(it);
         if (FK_OK != ret) {
             FkLogW(FK_DEF_TAG, "Skip session(%s) connect(%s), ret=%d",
@@ -34,6 +35,11 @@ std::shared_ptr<FkSession> FkConnectChain::connectSession(std::shared_ptr<FkProt
 
 bool FkConnectChain::empty() {
     return chain.empty();
+}
+
+void FkConnectChain::clear() {
+    rChain.clear();
+    chain.clear();
 }
 
 FkSimpleAtom::FkSimpleAtom() : FkAtom() {
@@ -71,6 +77,7 @@ FkResult FkSimpleAtom::onDestroy() {
     }
     ret = dispatchNext(std::make_shared<FkOnDestroyPrt>());
     _disconnectSession();
+    chain->clear();
     return ret;
 }
 
@@ -102,7 +109,8 @@ void FkSimpleAtom::_connectBaseSession() {
         if (mSessionMap.end() != mSessionMap.find(it->getType())) {
             continue;
         }
-        auto session = chain->connectSession(it);
+        bool reverse = FK_INSTANCE_OF(it, FkOnStopPrt) || FK_INSTANCE_OF(it, FkOnDestroyPrt);
+        auto session = chain->connectSession(it, reverse);
         FkResult ret = session->open();
         if (FK_OK == ret) {
             mSessionMap.emplace(std::make_pair(it->getType(), session));

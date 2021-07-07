@@ -57,6 +57,22 @@ FkResult FkGraphicTexQuark::onStop() {
     return FkQuark::onStop();
 }
 
+FkResult FkGraphicTexQuark::_findTexture(std::shared_ptr<FkGraphicLayer> layer) {
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    std::shared_ptr<FkTexComponent> tex = nullptr;
+    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkTexComponent>())) {
+        return FK_FAIL;
+    }
+    tex = Fk_POINTER_CAST(FkTexComponent, vec[0]);
+    auto itr = sMap.find(tex->id);
+    if (itr != sMap.end()) {
+        auto comp = std::make_shared<FkGraphicTexComponent>();
+        comp->tex = itr->second;
+        layer->addComponent(comp);
+    }
+    return FK_OK;
+}
+
 FkResult FkGraphicTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkGraphicTexPtl, p);
     FkTexDescription desc(GL_TEXTURE_2D);
@@ -126,21 +142,10 @@ FkResult FkGraphicTexQuark::_onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p
 }
 
 FkResult FkGraphicTexQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    for (auto &it : prt->req->layers) {
-        vec.clear();
-        std::shared_ptr<FkTexComponent> tex = nullptr;
-        if (FK_OK != it->findComponent(vec, FkClassType::type<FkTexComponent>())) {
-            continue;
-        }
-        tex = Fk_POINTER_CAST(FkTexComponent, vec[0]);
-        auto itr = sMap.find(tex->id);
-        if (itr != sMap.end()) {
-            auto comp = std::make_shared<FkGraphicTexComponent>();
-            comp->tex = itr->second;
-            it->addComponent(comp);
-        }
+    auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    _findTexture(proto->req->canvas);
+    for (auto &layer : proto->req->layers) {
+        _findTexture(layer);
     }
     return FK_OK;
 }

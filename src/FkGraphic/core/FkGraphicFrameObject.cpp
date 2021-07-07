@@ -24,6 +24,9 @@ FkResult FkGraphicFrameObject::create() {
 }
 
 void FkGraphicFrameObject::destroy() {
+#ifdef __FK_DEBUG__
+    FkAssert(EGL_NO_CONTEXT != eglGetCurrentContext(), );
+#endif
     glDeleteFramebuffers(1, &fbo);
 }
 
@@ -39,12 +42,14 @@ void FkGraphicFrameObject::unbind() {
     glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
-FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> o) {
+FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> o, bool stayBind) {
     bind();
     o->bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, o->desc.target, o->tex, 0);
     o->unbind();
-    unbind();
+    if (!stayBind) {
+        unbind();
+    }
     return GL_NO_ERROR != glGetError();
 }
 

@@ -11,6 +11,7 @@
 #include "FkQuark.h"
 #include "FkGraphicTexture.h"
 #include "FkGraphicFrameObject.h"
+#include "FkGraphicLayer.h"
 #include <unordered_map>
 
 FK_CLASS FkGraphicTexQuark FK_EXTEND FkQuark {
@@ -42,6 +43,9 @@ private:
     FkResult _onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p);
 
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
+private:
+    FkResult _findTexture(std::shared_ptr<FkGraphicLayer> layer);
 
 private:
     std::shared_ptr<FkGraphicAllocator> allocator = nullptr;

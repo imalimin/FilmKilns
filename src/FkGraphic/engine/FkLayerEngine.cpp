@@ -135,39 +135,37 @@ FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
-    auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
-    texPrt->fmt = FkColor::kFormat::RGBA;
-    auto ret = client->quickSend<FkGraphicNewTexPtl>(texPrt, molecule);
-    if (FK_OK == ret) {
-        auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
-        auto updateTexPrt = std::make_shared<FkGraphicUpdateTexPrt>();
-        std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-        if (FK_OK == layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
-            updateTexPrt->size = Fk_POINTER_CAST(FkSizeComponent, vec[0])->size;
-        } else {
-            auto delPrt = std::make_shared<FkGraphicTexDelPtl>();
-            delPrt->id = texPrt->id;
-            client->quickSend<FkGraphicTexDelPtl>(delPrt, molecule);
-            return FK_FAIL;
-        }
-        updateTexPrt->id = texPrt->id;
+    auto texProto = std::make_shared<FkGraphicNewTexPtl>();
+    texProto->fmt = FkColor::kFormat::RGBA;
+    FkAssert(FK_OK == client->quickSend(texProto, molecule), FK_FAIL);
 
-        ret = client->quickSend<FkGraphicUpdateTexPrt>(updateTexPrt, molecule);
-        if (FK_OK != ret) {
-            auto delPrt = std::make_shared<FkGraphicTexDelPtl>();
-            delPrt->id = texPrt->id;
-            client->quickSend<FkGraphicTexDelPtl>(delPrt, molecule);
-            return ret;
-        }
-        auto com = std::make_shared<FkTexComponent>();
-        com->id = texPrt->id;
-
-        auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
-        prt->layer = layer;
-        prt->layer->addComponent(com);
-        return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
+    auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
+    auto updateTexPrt = std::make_shared<FkGraphicUpdateTexPrt>();
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    if (FK_OK == layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+        updateTexPrt->size = Fk_POINTER_CAST(FkSizeComponent, vec[0])->size;
+    } else {
+        auto delPrt = std::make_shared<FkGraphicTexDelPtl>();
+        delPrt->id = texProto->id;
+        client->quickSend<FkGraphicTexDelPtl>(delPrt, molecule);
+        return FK_FAIL;
     }
-    return ret;
+    updateTexPrt->id = texProto->id;
+
+    auto ret = client->quickSend<FkGraphicUpdateTexPrt>(updateTexPrt, molecule);
+    if (FK_OK != ret) {
+        auto delPrt = std::make_shared<FkGraphicTexDelPtl>();
+        delPrt->id = texProto->id;
+        client->quickSend<FkGraphicTexDelPtl>(delPrt, molecule);
+        return ret;
+    }
+    auto com = std::make_shared<FkTexComponent>();
+    com->id = texProto->id;
+
+    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
+    prt->layer = layer;
+    prt->layer->addComponent(com);
+    return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
 }
 
 FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
@@ -198,6 +196,11 @@ FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
     auto texProto = std::make_shared<FkGraphicNewTexPtl>();
     texProto->fmt = FkColor::kFormat::RGBA;
     FkAssert(FK_OK == client->quickSend(texProto, molecule), FK_FAIL);
+
+    auto updateTexPrt = std::make_shared<FkGraphicUpdateTexPrt>();
+    updateTexPrt->id = texProto->id;
+    updateTexPrt->size = *size;
+    FkAssert(FK_OK == client->quickSend(updateTexPrt, molecule), FK_FAIL);
 
     auto sizeComp = std::make_shared<FkSizeComponent>();
     sizeComp->size = *size;
