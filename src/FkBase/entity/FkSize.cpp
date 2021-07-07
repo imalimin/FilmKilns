@@ -39,3 +39,7 @@ int32_t FkSize::getHeight() {
 bool FkSize::operator==(const FkSize &o) {
     return width == o.width && height == o.height;
 }
+
+bool FkSize::operator!=(const FkSize &o) {
+    return !((*this) == o);
+}

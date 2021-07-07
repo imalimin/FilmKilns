@@ -61,27 +61,28 @@ FkID FkImageEngine::newLayerWithFile(std::string path) {
 }
 
 FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
+    auto bmp = FkBitmap::from(msg->arg3);
+    FkAssert(nullptr != bmp, FK_EMPTY_DATA);
+    setCanvasSize(FkSize(bmp->getWidth(), bmp->getHeight()));
+
     auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
     texPrt->fmt = FkColor::kFormat::RGBA;
-    auto ret = getClient()->quickSend<FkGraphicNewTexPtl>(texPrt, getMolecule());
-    if (FK_OK == ret) {
-        auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
-        auto updatePrt = std::make_shared<FkUpdateTexWithBmpPrt>();
-        updatePrt->id = texPrt->id;
-        updatePrt->bmp = FkBitmap::from(msg->arg3);
-        FkAssert(nullptr != updatePrt->bmp, FK_EMPTY_DATA);
-        getClient()->quickSend<FkUpdateTexWithBmpPrt>(updatePrt, getMolecule());
+    FkAssert(FK_OK == getClient()->quickSend(texPrt, getMolecule()), FK_EMPTY_DATA);
 
-        auto com = std::make_shared<FkTexComponent>();
-        com->id = texPrt->id;
-        auto sizeCom = std::make_shared<FkSizeComponent>();
-        sizeCom->size.set(updatePrt->bmp->getWidth(), updatePrt->bmp->getHeight());
+    auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
+    auto updatePrt = std::make_shared<FkUpdateTexWithBmpPrt>();
+    updatePrt->id = texPrt->id;
+    updatePrt->bmp = bmp;
+    FkAssert(FK_OK == getClient()->quickSend(updatePrt, getMolecule()), FK_FAIL);
 
-        auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
-        prt->layer = layer;
-        prt->layer->addComponent(com);
-        prt->layer->addComponent(sizeCom);
-        return getClient()->quickSend<FkGraphicUpdateLayerPrt>(prt, getMolecule());
-    }
-    return ret;
+    auto com = std::make_shared<FkTexComponent>();
+    com->id = texPrt->id;
+    auto sizeCom = std::make_shared<FkSizeComponent>();
+    sizeCom->size.set(updatePrt->bmp->getWidth(), updatePrt->bmp->getHeight());
+
+    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
+    prt->layer = layer;
+    prt->layer->addComponent(com);
+    prt->layer->addComponent(sizeCom);
+    return getClient()->quickSend<FkGraphicUpdateLayerPrt>(prt, getMolecule());
 }

@@ -35,6 +35,8 @@ private:
 
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
+
 private:
     std::shared_ptr<FkGraphicLayer> canvas;
 };

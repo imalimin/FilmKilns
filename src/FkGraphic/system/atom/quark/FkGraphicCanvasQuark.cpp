@@ -10,6 +10,7 @@
 #include "FkGraphicUpdateCanvasProto.h"
 #include "FkSizeComponent.h"
 #include "FkTexComponent.h"
+#include "FkQuerySizeProto.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -21,7 +22,8 @@ FkGraphicCanvasQuark::~FkGraphicCanvasQuark() {
 
 void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateCanvasProto, FkGraphicCanvasQuark::_onRenderRequest);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateCanvasProto, FkGraphicCanvasQuark::_onUpdate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
 }
 
 FkResult FkGraphicCanvasQuark::onCreate() {
@@ -60,5 +62,16 @@ FkResult FkGraphicCanvasQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         prt->req = std::make_shared<FkRenderRequest>();
     }
     prt->req->canvas = std::make_shared<FkGraphicLayer>(*canvas);
+    return FK_OK;
+}
+
+FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p) {
+    auto proto = std::static_pointer_cast<FkQuerySizeProto>(p);
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    if (FK_OK == canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+        auto sizeComp = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
+        proto->value = sizeComp->size;
+    }
+    vec.clear();
     return FK_OK;
 }

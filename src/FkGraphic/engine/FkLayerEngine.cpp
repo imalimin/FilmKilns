@@ -17,6 +17,8 @@
 #include "FkGraphicUpdateTexPrt.h"
 #include "FkGraphicTexDelPtl.h"
 #include "FkSetSizeProto.h"
+#include "FkQuerySizeProto.h"
+#include "FkGraphicUpdateCanvasProto.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
@@ -101,6 +103,7 @@ FkID FkLayerEngine::newLayer() {
 FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
     auto id = newLayer();
     if (FK_ID_NONE != id) {
+        setCanvasSize(size);
         auto colorCom = std::make_shared<FkColorComponent>();
         colorCom->color = color;
         auto sizeCom = std::make_shared<FkSizeComponent>();
@@ -186,11 +189,24 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
-//    auto sizeComp = std::make_shared<FkSizeComponent>();
-//    sizeComp->size = size;
-//    auto layer = std::make_shared<FkGraphicLayer>();
-//    layer->id = id;
-//    layer->addComponent(colorCom);
-//    layer->addComponent(sizeComp);
-    return 0;
+    auto size = Fk_POINTER_CAST(FkSize, msg->sp);
+    auto queryProto = std::make_shared<FkQuerySizeProto>();
+    FkAssert(FK_OK == client->quickSend(queryProto, molecule), FK_FAIL);
+    if (nullptr == msg->sp || (*size) == queryProto->value) {
+        return FK_FAIL;
+    }
+    auto texProto = std::make_shared<FkGraphicNewTexPtl>();
+    texProto->fmt = FkColor::kFormat::RGBA;
+    FkAssert(FK_OK == client->quickSend(texProto, molecule), FK_FAIL);
+
+    auto sizeComp = std::make_shared<FkSizeComponent>();
+    sizeComp->size = *size;
+    auto texComp = std::make_shared<FkTexComponent>();
+    texComp->id = texProto->id;
+    auto layer = std::make_shared<FkGraphicLayer>();
+    layer->addComponent(sizeComp);
+    layer->addComponent(texComp);
+    auto updateProto = std::make_shared<FkGraphicUpdateCanvasProto>();
+    updateProto->layer = layer;
+    return client->quickSend(updateProto, molecule);
 }
