@@ -19,6 +19,7 @@ public:
     FK_ENUM kType : int32_t {
         NONE = 0,
         MATRIX,
+        CANVAS_MOSAIC,
     };
 public:
     FkProgramDescription();

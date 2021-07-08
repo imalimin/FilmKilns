@@ -7,12 +7,10 @@
 
 #include "FkGraphicProgram.h"
 #include "FkGraphicMatProgram.h"
+#include "FkCanvasMosaicProgram.h"
 #include "FkTexValue.h"
 #include "FkVertexValue.h"
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <EGL/egl.h>
-#include <vector>
+#include "FkGLDefinition.h"
 
 #define TAG "FkGraphicProgram"
 
@@ -65,13 +63,14 @@ FkResult FkGraphicProgram::create() {
     }
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-    return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
+    FK_GL_CHECK(glLinkProgram(program));
+    FkAssert(GL_NO_ERROR == glGetError(), FK_FAIL);
+    return FK_OK;
 }
 
 void FkGraphicProgram::destroy() {
     if (GL_NONE != program) {
-        glDeleteProgram(program);
+        FK_GL_CHECK(glDeleteProgram(program));
         program = GL_NONE;
     }
 }
@@ -192,6 +191,10 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
     switch (desc.type) {
         case FkProgramDescription::kType::MATRIX: {
             o = new FkGraphicMatProgram(desc);
+            break;
+        }
+        case FkProgramDescription::kType::CANVAS_MOSAIC: {
+            o = new FkCanvasMosaicProgram(desc);
             break;
         }
     }

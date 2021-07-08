@@ -46,12 +46,17 @@ FkResult FkGraphicProgramQuark::onStop() {
 }
 
 FkResult FkGraphicProgramQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto prt = std::static_pointer_cast<FkGraphicLayerPrt>(p);
+    auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
     auto comp = std::make_shared<FkGraphicProgramComponent>();
     FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
     comp->program = allocator->alloc(desc);
     _fillValue(comp->program);
-    prt->layer->addComponent(comp);
+    proto->req->addComponent(comp);
+
+    desc.type = FkProgramDescription::kType::CANVAS_MOSAIC;
+    auto canvasComp = std::make_shared<FkGraphicProgramComponent>();
+    canvasComp->program = allocator->alloc(desc);
+    proto->req->canvas->addComponent(canvasComp);
     return FK_OK;
 }
 
