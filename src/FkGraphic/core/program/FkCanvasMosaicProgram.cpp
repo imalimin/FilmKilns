@@ -38,6 +38,13 @@ FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkProgramValue> value) 
     if (nullptr == value) {
         return FK_FAIL;
     }
+    if (FK_INSTANCE_OF(value, FkPositionValue)) {
+        auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
+        glEnableVertexAttribArray(aPositionLocation);
+        //xy
+        glVertexAttribPointer(aPositionLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
+                              reinterpret_cast<const void *>(pValue->offset));
+    }
     return FkGraphicProgram::addValue(value);
 }
 

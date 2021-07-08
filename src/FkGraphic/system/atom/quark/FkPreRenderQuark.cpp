@@ -11,6 +11,7 @@
 #include "FkGraphicFBOComponent.h"
 #include "FkGraphicProgramComponent.h"
 #include "FkGraphicTexComponent.h"
+#include "FkSizeComponent.h"
 #include "FkGraphicRender.h"
 #include "FkGLDefinition.h"
 
@@ -57,6 +58,12 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     vec.clear();
+    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkGraphicProgramComponent>())) {
+        return FK_FAIL;
+    }
+    auto program = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
+
+    vec.clear();
     if (FK_OK != proto->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {
         return FK_FAIL;
     }
@@ -69,16 +76,16 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto fbo = Fk_POINTER_CAST(FkGraphicFBOComponent, vec[0]);
 
     vec.clear();
-    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkGraphicProgramComponent>())) {
-        return FK_FAIL;
-    }
-    auto program = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
-
-    vec.clear();
     if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
         return FK_FAIL;
     }
     auto tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
+
+    vec.clear();
+    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+        return FK_FAIL;
+    }
+    auto size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
 
     vec.clear();
     context->context->makeCurrent();
@@ -97,7 +104,7 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     };
     auto ret = FkGraphicRender::with(program->program)
             ->setContext(context->context)
-            ->setViewport(0, 0, context->context->getWidth(), context->context->getHeight())
+            ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
             ->setVertexBuffer(vbo)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
             ->setFrameObject(fbo->fbo)

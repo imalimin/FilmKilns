@@ -12,7 +12,6 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::with(std::shared_ptr<FkGraphic
     auto ptr = new FkGraphicRender();
     std::shared_ptr<FkGraphicRender> render(ptr);
     render->program = std::move(program);
-    render->color = FkColor::black();
     return render;
 }
 
@@ -34,9 +33,17 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::enableSwapBuffers(bool enable)
 
 FkResult FkGraphicRender::render() {
     context->makeCurrent();
+    if (_enableBlend) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendEquation(GL_FUNC_ADD);
+    }
+
     glViewport(0, 0, size.getWidth(), size.getHeight());
-    glClearColor(color.fRed(), color.fGreen(), color.fBlue(), color.fAlpha());
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (nullptr != color) {
+        glClearColor(color->fRed(), color->fGreen(), color->fBlue(), color->fAlpha());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     size_t countOfPosByte = position->countVertex * position->countPerVertex * sizeof(float);
@@ -58,6 +65,8 @@ FkResult FkGraphicRender::render() {
     program->addValue(position);
     program->addValue(coordinate);
 
+
+    FkAssert(GL_NO_ERROR == glGetError(), FK_FAIL);
     FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, position->countVertex))
 
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
@@ -68,8 +77,11 @@ FkResult FkGraphicRender::render() {
     } else {
         fbo->unbind();
     }
+    if (_enableBlend) {
+        glDisable(GL_BLEND);
+    }
     glFlush();
-    return FK_FAIL;
+    return FK_OK;
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setContext(
@@ -84,7 +96,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setViewport(int x, int y, int 
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setColor(FkColor _color) {
-    this->color = _color;
+    this->color = std::make_shared<FkColor>(_color);
     return shared_from_this();
 }
 
@@ -136,5 +148,10 @@ FkGraphicRender::setFrameObject(std::shared_ptr<FkGraphicFrameObject> _fbo) {
 std::shared_ptr<FkGraphicRender>
 FkGraphicRender::setTargetTexture(std::shared_ptr<FkGraphicTexture> _tex) {
     targetTex = _tex;
+    return shared_from_this();
+}
+
+std::shared_ptr<FkGraphicRender> FkGraphicRender::enableBlend(bool enable) {
+    this->_enableBlend = enable;
     return shared_from_this();
 }

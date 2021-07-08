@@ -54,9 +54,11 @@ public:
 
     std::shared_ptr<FkGraphicRender> setTargetTexture(std::shared_ptr<FkGraphicTexture> _tex);
 
+    std::shared_ptr<FkGraphicRender> enableBlend(bool enable);
+
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;
-    FkColor color;
+    std::shared_ptr<FkColor> color = nullptr;
     FkSize size;
     std::shared_ptr<FkGraphicProgram> program = nullptr;
     uint32_t vbo = GL_NONE;
@@ -64,6 +66,7 @@ private:
     std::shared_ptr<FkPositionValue> position = nullptr;
     std::shared_ptr<FkCoordinateValue> coordinate = nullptr;
     bool _enableSwapBuffers = false;
+    bool _enableBlend = false;
     std::shared_ptr<FkMatrixValue> mat;
     std::shared_ptr<FkGraphicFrameObject> fbo = nullptr;
     std::shared_ptr<FkGraphicTexture> targetTex = nullptr;

@@ -147,6 +147,7 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto canvasSize = _getCanvasSize(prt->req->canvas);
     auto render = FkGraphicRender::with(program->program)
             ->enableSwapBuffers(false)
+            ->enableBlend(true)
             ->setContext(context->context)
             ->setViewport(0, 0, canvasSize.getWidth(), canvasSize.getHeight())
             ->setColor(FkColor::white())
