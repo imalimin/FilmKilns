@@ -5,18 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_GRAPHIC_FKGRAPHICRENDERATOM_H
-#define FK_GRAPHIC_FKGRAPHICRENDERATOM_H
+#ifndef FK_GRAPHIC_FKPRERENDERQUARK_H
+#define FK_GRAPHIC_FKPRERENDERQUARK_H
 
-#include "FkSimpleAtom.h"
+#include "FkQuark.h"
 
-FK_CLASS FkGraphicRenderAtom FK_EXTEND FkSimpleAtom {
+FK_CLASS FkPreRenderQuark FK_EXTEND FkQuark {
 public:
-    FkGraphicRenderAtom();
+    FkPreRenderQuark();
 
-    FkGraphicRenderAtom(const FkGraphicRenderAtom &o) = delete;
+    FkPreRenderQuark(const FkPreRenderQuark &o) = delete;
 
-    virtual ~FkGraphicRenderAtom();
+    virtual ~FkPreRenderQuark();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
@@ -29,7 +29,8 @@ protected:
 
     virtual FkResult onStop() override;
 
-    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
+private:
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 };
 
-#endif //FK_GRAPHIC_FKGRAPHICRENDERATOM_H
+#endif //FK_GRAPHIC_FKPRERENDERQUARK_H
