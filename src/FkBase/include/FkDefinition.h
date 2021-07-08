@@ -20,10 +20,14 @@
 #define FK_NULLABLE
 #define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 
-#ifdef __FK_DEBUG__
-#define FK_MARK_SUPER clsType.super(typeid(*this).name());
-#else
+#ifndef __FK_DEBUG__
+#define __FK_OPTIMIZE_CLASS_TYPE__
+#endif
+
+#ifdef __FK_OPTIMIZE_CLASS_TYPE__
 #define FK_MARK_SUPER clsType.super(typeid(*this).hash_code());
+#else
+#define FK_MARK_SUPER clsType.super(typeid(*this).name());
 #endif
 
 #define FK_CLASS_TYPE_EQUALS(src, target) ((src).getClassType() == (target).getClassType())
