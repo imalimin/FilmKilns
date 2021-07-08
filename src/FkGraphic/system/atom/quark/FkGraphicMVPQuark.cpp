@@ -118,7 +118,7 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
 
 FkResult FkGraphicMVPQuark::_setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
                                           std::shared_ptr<FkGraphicLayer> layer) {
-    FkFloatVec3 trans(0.0f, 0.0f, 0.0f);
+    FkFloatVec3 trans(100.0f, 0.0f, 0.0f);
     matrix->setTranslate(trans);
     return FK_OK;
 }

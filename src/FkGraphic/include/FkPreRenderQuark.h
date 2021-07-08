@@ -31,6 +31,9 @@ protected:
 
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
+private:
+    uint32_t vbo = 0;
 };
 
 #endif //FK_GRAPHIC_FKPRERENDERQUARK_H

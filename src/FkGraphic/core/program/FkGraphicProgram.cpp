@@ -159,6 +159,9 @@ uint32_t FkGraphicProgram::_createShader(uint32_t type, std::string &shader) {
 }
 
 FkResult FkGraphicProgram::addValue(std::shared_ptr<FkProgramValue> value) {
+    if (nullptr == value) {
+        return FK_FAIL;
+    }
     values.emplace_back(value);
     return FK_OK;
 }

@@ -12,6 +12,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::with(std::shared_ptr<FkGraphic
     auto ptr = new FkGraphicRender();
     std::shared_ptr<FkGraphicRender> render(ptr);
     render->program = std::move(program);
+    render->color = FkColor::black();
     return render;
 }
 
@@ -37,11 +38,13 @@ FkResult FkGraphicRender::render() {
     glClearColor(color.fRed(), color.fGreen(), color.fBlue(), color.fAlpha());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    size_t countOfPosByte = position->countVertex * position->countPerVertex * sizeof(float);
-    size_t countOfCoordByte = coordinate->countVertex * coordinate->countPerVertex * sizeof(float);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    size_t countOfPosByte = position->countVertex * position->countPerVertex * sizeof(float);
     glBufferSubData(GL_ARRAY_BUFFER, 0, countOfPosByte, position->data);
-    glBufferSubData(GL_ARRAY_BUFFER, countOfPosByte, countOfCoordByte, coordinate->data);
+    if (nullptr != coordinate) {
+        size_t countOfCoordByte = coordinate->countVertex * coordinate->countPerVertex * sizeof(float);
+        glBufferSubData(GL_ARRAY_BUFFER, countOfPosByte, countOfCoordByte, coordinate->data);
+    }
 
     if (!_enableSwapBuffers) {
         FkAssert(nullptr != fbo, FK_FAIL);
