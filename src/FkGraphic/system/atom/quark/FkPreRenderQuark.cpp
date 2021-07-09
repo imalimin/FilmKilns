@@ -92,7 +92,7 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     if (GL_NONE == vbo) {
         glGenBuffers(1, &vbo);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE, nullptr, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE * 2, nullptr, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     }
 
@@ -102,11 +102,18 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             -1.0f, 1.0f,//LEFT,TOP
             1.0f, 1.0f//RIGHT,TOP
     };
+    float coordinate[]{
+            0.0f, 0.0f,//LEFT,BOTTOM
+            1.0f, 0.0f,//RIGHT,BOTTOM
+            0.0f, 1.0f,//LEFT,TOP
+            1.0f, 1.0f//RIGHT,TOP
+    };
     auto ret = FkGraphicRender::with(program->program)
             ->setContext(context->context)
             ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
             ->setVertexBuffer(vbo)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
+            ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->setFrameObject(fbo->fbo)
             ->setTargetTexture(tex->tex)
             ->render();

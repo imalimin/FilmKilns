@@ -30,7 +30,8 @@ public:
     virtual FkResult addValue(std::shared_ptr<FkProgramValue> value) override;
 
 private:
-    int32_t aPositionLocation = GL_NONE;
+    int32_t aPositionLocation = -1;
+    int32_t aTextureCoordinateLocation = -1;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICMOSAICPROGRAM_H
