@@ -64,6 +64,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.tencent.bugly:crashreport:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    implementation 'pub.devrel:easypermissions:3.0.0'
     implementation project(path: ':fkandroid')
     implementation project(path: ':hwcommon')
 }

@@ -59,7 +59,7 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     vec.clear();
     if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkGraphicProgramComponent>())) {
-        return FK_FAIL;
+        return FK_SKIP;
     }
     auto program = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
 
