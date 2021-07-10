@@ -72,6 +72,27 @@ class FkImage() : FkEngine() {
         return -1
     }
 
+    fun postTranslate(layer: Int, dx: Int, dy: Int): Int {
+        if (!isNull()) {
+            return nativePostTranslate(getHandle(), layer, dx, dy)
+        }
+        return -1
+    }
+
+    fun postScale(layer: Int, dx: Float, dy: Float): Int {
+        if (!isNull()) {
+            return nativePostScale(getHandle(), layer, dx, dy)
+        }
+        return -1
+    }
+
+    fun postRotation(layer: Int, angle: Float): Int {
+        if (!isNull()) {
+            return nativePostRotation(getHandle(), layer, angle)
+        }
+        return -1
+    }
+
     private external fun nativeCreateInstance(): Long
     private external fun nativeCreate(handle: Long)
     private external fun nativeDestroy(handle: Long)
@@ -89,4 +110,7 @@ class FkImage() : FkEngine() {
         alpha: Int
     ): Int
     private external fun nativeNotifyRender(handle: Long): Int
+    private external fun nativePostTranslate(handle: Long, layer: Int, dx: Int, dy: Int): Int
+    private external fun nativePostScale(handle: Long, layer: Int, dx: Float, dy: Float): Int
+    private external fun nativePostRotation(handle: Long, layer: Int, angle: Float): Int
 }

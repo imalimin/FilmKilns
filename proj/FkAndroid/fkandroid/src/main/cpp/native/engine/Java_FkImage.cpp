@@ -91,6 +91,24 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNotifyRender
     return engine->notifyRender();
 }
 
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostTranslate
+        (JNIEnv *env, jobject that, jlong handle, jint layer, jint dx, jint dy) {
+    auto *engine = castHandle(handle);
+    return engine->postTranslate(layer, dx, dy);
+}
+
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostScale
+        (JNIEnv *env, jobject that, jlong handle, jint layer, jfloat dx, jfloat dy) {
+    auto *engine = castHandle(handle);
+    return engine->postScale(layer, dx, dy);
+}
+
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostRotation
+        (JNIEnv *env, jobject that, jlong handle, jint layer, jfloat angle) {
+    auto *engine = castHandle(handle);
+    return engine->postRotation(layer, angle);
+}
+
 #ifdef __cplusplus
 }
 #endif

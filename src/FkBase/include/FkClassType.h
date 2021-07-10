@@ -21,11 +21,7 @@ public:
         if (type == nullptr) {
             type = new FkClassType();
         }
-#ifdef __FK_OPTIMIZE_CLASS_TYPE__
-        type->super(typeid(T).hash_code());
-#else
         type->super(typeid(T).name());
-#endif
         return *type;
     };
 public:
@@ -35,13 +31,7 @@ public:
 
     virtual ~FkClassType();
 
-#ifdef __FK_OPTIMIZE_CLASS_TYPE__
-
-    void super(const size_t &hashCode);
-
-#else
     void super(const char *name);
-#endif
 
     friend bool operator==(const FkClassType &o0, const FkClassType &o1);
 
@@ -54,12 +44,8 @@ public:
     std::string getName() const;
 
 private:
-#ifdef __FK_OPTIMIZE_CLASS_TYPE__
-    std::list<size_t> extends;
-#else
     std::list<std::string> extends;
     std::hash<std::string> hashValue;
-#endif
 };
 
 

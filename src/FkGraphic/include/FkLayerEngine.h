@@ -40,6 +40,12 @@ public:
 
     FkResult setCanvasSize(FkSize size);
 
+    FkResult postTranslate(FkID layer, int32_t dx, int32_t dy);
+
+    FkResult postScale(FkID layer, float dx, float dy);
+
+    FkResult postRotation(FkID layer, float angle);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -56,12 +62,21 @@ private:
 
     FkResult _setCanvasSize(std::shared_ptr<FkMessage> msg);
 
+    FkResult _postTranslate(std::shared_ptr<FkMessage> msg);
+
+    FkResult _postScale(std::shared_ptr<FkMessage> msg);
+
+    FkResult _postRotation(std::shared_ptr<FkMessage> msg);
+
 private:
     static const FkID FK_MSG_NEW_LAYER;
     static const FkID FK_MSG_UPDATE_LAYER_WITH_COLOR;
     static const FkID FK_MSG_SET_SURFACE;
     static const FkID FK_MSG_NOTIFY_RENDER;
     static const FkID FK_MSG_SET_CANVAS_SIZE;
+    static const FkID FK_MSG_POST_TRANSLATE;
+    static const FkID FK_MSG_POST_SCALE;
+    static const FkID FK_MSG_POST_ROTATION;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
 };

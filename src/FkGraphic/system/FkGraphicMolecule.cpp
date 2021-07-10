@@ -22,6 +22,7 @@
 #include "FkSetSizeProto.h"
 #include "FkQuerySizeProto.h"
 #include "FkGraphicUpdateCanvasProto.h"
+#include "FkLayerPostTransProto.h"
 
 FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -44,6 +45,7 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateCanvasProto, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicMolecule::dispatchNext);
 }
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {

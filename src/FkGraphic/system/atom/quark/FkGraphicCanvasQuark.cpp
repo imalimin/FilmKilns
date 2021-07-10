@@ -11,6 +11,9 @@
 #include "FkSizeComponent.h"
 #include "FkTexComponent.h"
 #include "FkQuerySizeProto.h"
+#include "FkTransComponent.h"
+#include "FkScaleComponent.h"
+#include "FkRotateComponent.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -28,6 +31,9 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 
 FkResult FkGraphicCanvasQuark::onCreate() {
     canvas = std::make_shared<FkGraphicLayer>();
+    canvas->addComponent(std::make_shared<FkTransComponent>());
+    canvas->addComponent(std::make_shared<FkScaleComponent>());
+    canvas->addComponent(std::make_shared<FkRotateComponent>());
     return FkQuark::onCreate();
 }
 

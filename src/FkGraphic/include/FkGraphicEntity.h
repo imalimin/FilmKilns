@@ -26,6 +26,18 @@ public:
     FkResult findComponent(std::vector<std::shared_ptr<FkGraphicComponent>> &vec,
                            const FkClassType &classType);
 
+
+    template<class T>
+    std::shared_ptr<T> findComponent() {
+        std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+        vec.clear();
+
+        if (FK_OK != findComponent(vec, FkClassType::type<T>())) {
+            return nullptr;
+        }
+        return Fk_POINTER_CAST(T, vec[0]);
+    }
+
 private:
     std::list<std::shared_ptr<FkGraphicComponent>> components;
 };

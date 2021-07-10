@@ -10,7 +10,7 @@
 
 #include "FkVec2.h"
 
-FK_CLASS FkIntVec2 FK_EXTEND FkVec2<int32_t>{
+FK_CLASS FkIntVec2 FK_EXTEND FkVec2<int32_t> {
 public:
     FkIntVec2(int32_t x, int32_t y);
 

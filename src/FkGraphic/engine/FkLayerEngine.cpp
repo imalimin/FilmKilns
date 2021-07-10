@@ -19,12 +19,20 @@
 #include "FkSetSizeProto.h"
 #include "FkQuerySizeProto.h"
 #include "FkGraphicUpdateCanvasProto.h"
+#include "FkIntVec2.h"
+#include "FkFloatVec3.h"
+#include "FkLayerPostTransProto.h"
+#include "FkLayerPostScaleProto.h"
+#include "FkLayerPostRotateProto.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
 const FkID FkLayerEngine::FK_MSG_SET_SURFACE = FK_KID('F', 'K', 'E', 0x12);
 const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = FK_KID('F', 'K', 'E', 0x13);
 const FkID FkLayerEngine::FK_MSG_SET_CANVAS_SIZE = FK_KID('F', 'K', 'E', 0x14);
+const FkID FkLayerEngine::FK_MSG_POST_TRANSLATE = FK_KID('F', 'K', 'E', 0x15);
+const FkID FkLayerEngine::FK_MSG_POST_SCALE = FK_KID('F', 'K', 'E', 0x16);
+const FkID FkLayerEngine::FK_MSG_POST_ROTATION = FK_KID('F', 'K', 'E', 0x17);
 
 FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_MARK_SUPER
@@ -33,6 +41,9 @@ FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_REG_MSG(FK_MSG_SET_SURFACE, FkLayerEngine::_setSurface);
     FK_REG_MSG(FK_MSG_NOTIFY_RENDER, FkLayerEngine::_notifyRender);
     FK_REG_MSG(FK_MSG_SET_CANVAS_SIZE, FkLayerEngine::_setCanvasSize);
+    FK_REG_MSG(FK_MSG_POST_TRANSLATE, FkLayerEngine::_postTranslate);
+    FK_REG_MSG(FK_MSG_POST_SCALE, FkLayerEngine::_postScale);
+    FK_REG_MSG(FK_MSG_POST_ROTATION, FkLayerEngine::_postRotation);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -125,6 +136,28 @@ FkResult FkLayerEngine::setCanvasSize(FkSize size) {
     return sendMessage(msg);
 }
 
+FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
+    auto msg = FkMessage::obtain(FK_MSG_POST_TRANSLATE);
+    msg->arg1 = layer;
+    msg->sp = std::make_shared<FkIntVec2>(dx, dy);
+    msg->flags = FkMessage::FLAG_UNIQUE;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::postScale(FkID layer, float dx, float dy) {
+    auto msg = FkMessage::obtain(FK_MSG_POST_SCALE);
+    msg->arg1 = layer;
+    msg->sp = std::make_shared<FkFloatVec3>(dx, dy, 0.0f);
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::postRotation(FkID layer, float angle) {
+    auto msg = FkMessage::obtain(FK_MSG_POST_ROTATION);
+    msg->arg1 = layer;
+    msg->sp = std::make_shared<FkFloatVec3>(angle, angle, angle);
+    return sendMessage(msg);
+}
+
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     auto prt = std::make_shared<FkGraphicNewLayerPrt>();
     auto ret = client->quickSend<FkGraphicNewLayerPrt>(prt, molecule);
@@ -212,4 +245,25 @@ FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
     auto updateProto = std::make_shared<FkGraphicUpdateCanvasProto>();
     updateProto->layer = layer;
     return client->quickSend(updateProto, molecule);
+}
+
+FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkLayerPostTransProto>();
+    proto->layer = msg->arg1;
+    proto->value = *Fk_POINTER_CAST(FkIntVec2, msg->sp);
+    return client->quickSend(proto, molecule);
+}
+
+FkResult FkLayerEngine::_postScale(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkLayerPostScaleProto>();
+    proto->layer = msg->arg1;
+    proto->value = *Fk_POINTER_CAST(FkFloatVec3, msg->sp);
+    return client->quickSend(proto, molecule);
+}
+
+FkResult FkLayerEngine::_postRotation(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkLayerPostRotateProto>();
+    proto->layer = msg->arg1;
+    proto->value = *Fk_POINTER_CAST(FkFloatVec3, msg->sp);
+    return client->quickSend(proto, molecule);
 }

@@ -12,6 +12,10 @@
 #include "FkSizeComponent.h"
 #include "FkTexComponent.h"
 #include "FkRenderRequestPrt.h"
+#include "FkLayerPostTransProto.h"
+#include "FkTransComponent.h"
+#include "FkScaleComponent.h"
+#include "FkRotateComponent.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -25,6 +29,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicLayerQuark::_onNewLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicLayerQuark::_onUpdateLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicLayerQuark::_onRenderRequest);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicLayerQuark::_onPostTranslate);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -45,12 +50,15 @@ FkResult FkGraphicLayerQuark::onStop() {
 }
 
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
-    auto prt = std::static_pointer_cast<FkGraphicNewLayerPrt>(p);
+    auto proto = Fk_POINTER_CAST(FkGraphicNewLayerPrt, p);
     auto layer = std::make_shared<FkGraphicLayer>();
+    layer->addComponent(std::make_shared<FkTransComponent>());
+    layer->addComponent(std::make_shared<FkScaleComponent>());
+    layer->addComponent(std::make_shared<FkRotateComponent>());
     std::lock_guard<std::mutex> guard(mtx);
     ++mCurID;
     layer->id = mCurID;
-    prt->layer = layer;
+    proto->layer = layer;
     layers.emplace(std::make_pair(mCurID, layer));
     return FK_OK;
 }
@@ -85,5 +93,19 @@ FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     for (auto &it : layers) {
         prt->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(*it.second));
     }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkLayerPostTransProto, p);
+    auto itr = layers.find(proto->layer);
+    FkAssert(layers.end() != itr, FK_FAIL);
+
+    auto comp = itr->second->findComponent<FkTransComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+//    comp->position.x += proto->value.x;
+//    comp->position.y += proto->value.y;
+    comp->position += proto->value;
+    FkLogI(FK_DEF_TAG, "(%d, %d), (%d, %d)", comp->position.x, comp->position.y, proto->value.x, proto->value.y);
     return FK_OK;
 }

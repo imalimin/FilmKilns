@@ -10,6 +10,7 @@
 #include "FkMatrixComponent.h"
 #include "FkSetSizeProto.h"
 #include "FkSizeComponent.h"
+#include "FkTransComponent.h"
 
 FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark(), viewSize(1, 1) {
     FK_MARK_SUPER
@@ -118,7 +119,9 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
 
 FkResult FkGraphicMVPQuark::_setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
                                           std::shared_ptr<FkGraphicLayer> layer) {
-    FkFloatVec3 trans(0.0f, 0.0f, 0.0f);
+    auto comp = layer->findComponent<FkTransComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+    FkFloatVec3 trans(comp->position.x, comp->position.y, 0.0f);
     matrix->setTranslate(trans);
     return FK_OK;
 }

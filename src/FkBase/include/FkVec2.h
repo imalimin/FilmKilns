@@ -76,6 +76,12 @@ public:
         return x == vec.x && y == vec.y;
     };
 
+    virtual FkVec2<T> &operator+=(const FkVec2<T> &vec) {
+        x += vec.x;
+        y += vec.y;
+        return *this;
+    };
+
     virtual bool isZero() {
         return 0 == x && 0 == y;
     };
