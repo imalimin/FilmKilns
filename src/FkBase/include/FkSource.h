@@ -90,6 +90,7 @@ public:
         auto itr = sRecycler.begin();
         while (sRecycler.end() != itr) {
             if (delegateEquals(desc, *itr)) {
+                sRecycler.erase(itr);
                 return *itr;
             }
             ++itr;
