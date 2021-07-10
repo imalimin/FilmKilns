@@ -59,21 +59,18 @@ FkResult FkGraphicRender::render() {
         fbo->attach(targetTex, true);
     }
 
-    program->bind();
+    FK_GL_CHECK(program->bind());
     program->addValue(srcTex);
     program->addValue(mat);
     program->addValue(position);
     program->addValue(coordinate);
-
-
-    FkAssert(GL_NO_ERROR == glGetError(), FK_FAIL);
-    FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, position->countVertex))
+    FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, position->countVertex));
 
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-    program->clear();
+    FK_GL_CHECK(program->clear());
     program->unbind();
     if (_enableSwapBuffers) {
-        context->swapBuffers();
+        FK_GL_CHECK(context->swapBuffers());
     } else {
         fbo->unbind();
     }

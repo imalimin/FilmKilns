@@ -30,10 +30,10 @@ public:
     virtual FkResult addValue(std::shared_ptr<FkProgramValue> value) override;
 
 private:
-    int32_t uTextureLocation = GL_NONE;
+    int32_t uTextureLoc = -1;
     int32_t uMVPMatLoc = -1;
-    int32_t aPositionLocation = GL_NONE;
-    int32_t aTextureCoordinateLocation = GL_NONE;
+    int32_t aPosLoc = -1;
+    int32_t aCoordinateLoc = -1;
 
 };
 

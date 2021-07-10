@@ -114,12 +114,12 @@ void FkGraphicProgram::setUniform1i(int32_t location, int32_t value) {
 }
 
 int32_t FkGraphicProgram::getAttribLocation(string name) {
-    if (!_checkProgram()) return GL_NONE;
+    if (!_checkProgram()) return -1;
     return glGetAttribLocation(program, name.c_str());
 }
 
 int32_t FkGraphicProgram::getUniformLocation(string name) {
-    if (!_checkProgram()) return GL_NONE;
+    if (!_checkProgram()) return -1;
     return glGetUniformLocation(program, name.c_str());
 }
 

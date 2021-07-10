@@ -24,10 +24,14 @@ FkGraphicMatProgram::~FkGraphicMatProgram() {
 FkResult FkGraphicMatProgram::create() {
     auto ret = FkGraphicProgram::create();
     if (FK_OK == ret) {
-        aPositionLocation = getAttribLocation("aPosition");
-        uTextureLocation = getUniformLocation("uTexture");
+        aPosLoc = getAttribLocation("aPosition");
+        FkAssert(aPosLoc >= 0, FK_FAIL);
+        uTextureLoc = getUniformLocation("uTexture");
+        FkAssert(uTextureLoc >= 0, FK_FAIL);
         uMVPMatLoc = getUniformLocation("mvp");
-        aTextureCoordinateLocation = getAttribLocation("aTextureCoord");
+        FkAssert(uMVPMatLoc >= 0, FK_FAIL);
+        aCoordinateLoc = getAttribLocation("aTextureCoord");
+        FkAssert(aCoordinateLoc >= 0, FK_FAIL);
     }
     return ret;
 }
@@ -36,9 +40,9 @@ void FkGraphicMatProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
         if (FK_INSTANCE_OF(it, FkPositionValue)) {
-            glDisableVertexAttribArray(aPositionLocation);
+            glDisableVertexAttribArray(aPosLoc);
         } else if (FK_INSTANCE_OF(it, FkCoordinateValue)) {
-            glDisableVertexAttribArray(aTextureCoordinateLocation);
+            glDisableVertexAttribArray(aCoordinateLoc);
         }
     }
     FkGraphicProgram::clear();
@@ -55,19 +59,19 @@ FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkProgramValue> value) {
         } else {
             glActiveTexture(GL_TEXTURE0 + pValue->index);
             glBindTexture(pValue->tex->desc.target, pValue->tex->tex);
-            setUniform1i(uTextureLocation, pValue->index);
+            setUniform1i(uTextureLoc, pValue->index);
         }
     } else if (FK_INSTANCE_OF(value, FkPositionValue)) {
         auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
-        glEnableVertexAttribArray(aPositionLocation);
+        glEnableVertexAttribArray(aPosLoc);
         //xy
-        glVertexAttribPointer(aPositionLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
+        glVertexAttribPointer(aPosLoc, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                               reinterpret_cast<const void *>(pValue->offset));
     } else if (FK_INSTANCE_OF(value, FkCoordinateValue)) {
         auto pValue = Fk_POINTER_CAST(FkCoordinateValue, value);
-        glEnableVertexAttribArray(aTextureCoordinateLocation);
+        glEnableVertexAttribArray(aCoordinateLoc);
         //st
-        glVertexAttribPointer(aTextureCoordinateLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
+        glVertexAttribPointer(aCoordinateLoc, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                               reinterpret_cast<const void *>(pValue->offset));
     } else if (FK_INSTANCE_OF(value, FkMatrixValue)) {
         auto pValue = Fk_POINTER_CAST(FkMatrixValue, value);

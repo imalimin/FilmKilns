@@ -9,6 +9,7 @@
 #include "FkGraphicLayerPrt.h"
 #include "FkGraphicProgramComponent.h"
 #include "FkRenderRequestPrt.h"
+#include "FkGraphicCtxComponent.h"
 
 FkGraphicProgramQuark::FkGraphicProgramQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -47,15 +48,24 @@ FkResult FkGraphicProgramQuark::onStop() {
 
 FkResult FkGraphicProgramQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    vec.clear();
+    if (FK_OK != proto->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {
+        return FK_FAIL;
+    }
+    auto context = Fk_POINTER_CAST(FkGraphicCtxComponent, vec[0]);
+    context->context->makeCurrent();
+
     auto comp = std::make_shared<FkGraphicProgramComponent>();
     FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
     comp->program = allocator->alloc(desc);
     _fillValue(comp->program);
     proto->req->addComponent(comp);
 
-    desc.type = FkProgramDescription::kType::CANVAS_MOSAIC;
+    FkProgramDescription descMosaic(FkProgramDescription::kType::CANVAS_MOSAIC);
     auto canvasComp = std::make_shared<FkGraphicProgramComponent>();
-    canvasComp->program = allocator->alloc(desc);
+    canvasComp->program = allocator->alloc(descMosaic);
+    _fillValue(canvasComp->program);
     proto->req->canvas->addComponent(canvasComp);
     return FK_OK;
 }

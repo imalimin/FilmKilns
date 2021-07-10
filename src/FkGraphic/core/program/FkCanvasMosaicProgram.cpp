@@ -20,10 +20,10 @@ FkCanvasMosaicProgram::~FkCanvasMosaicProgram() {
 FkResult FkCanvasMosaicProgram::create() {
     auto ret = FkGraphicProgram::create();
     if (FK_OK == ret) {
-        aPositionLocation = getAttribLocation("aPosition");
-        FkAssert(aPositionLocation >= 0, FK_FAIL);
-        aTextureCoordinateLocation = getAttribLocation("aTextureCoord");
-        FkAssert(aTextureCoordinateLocation >= 0, FK_FAIL);
+        aPosLoc = getAttribLocation("aPosition");
+        FkAssert(aPosLoc >= 0, FK_FAIL);
+        aCoordinateLoc = getAttribLocation("aTextureCoord");
+        FkAssert(aCoordinateLoc >= 0, FK_FAIL);
     }
     return ret;
 }
@@ -32,9 +32,9 @@ void FkCanvasMosaicProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
         if (FK_INSTANCE_OF(it, FkPositionValue)) {
-            glDisableVertexAttribArray(aPositionLocation);
+            glDisableVertexAttribArray(aPosLoc);
         } else if (FK_INSTANCE_OF(it, FkCoordinateValue)) {
-            glDisableVertexAttribArray(aTextureCoordinateLocation);
+            glDisableVertexAttribArray(aCoordinateLoc);
         }
     }
     FkGraphicProgram::clear();
@@ -46,16 +46,18 @@ FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkProgramValue> value) 
     }
     if (FK_INSTANCE_OF(value, FkPositionValue)) {
         auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
-        glEnableVertexAttribArray(aPositionLocation);
+        FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
         //xy
-        glVertexAttribPointer(aPositionLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                              reinterpret_cast<const void *>(pValue->offset));
+        FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
+                                          pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
+                                          reinterpret_cast<const void *>(pValue->offset)));
     } else if (FK_INSTANCE_OF(value, FkCoordinateValue)) {
         auto pValue = Fk_POINTER_CAST(FkCoordinateValue, value);
-        glEnableVertexAttribArray(aTextureCoordinateLocation);
+        FK_GL_CHECK(glEnableVertexAttribArray(aCoordinateLoc));
         //st
-        glVertexAttribPointer(aTextureCoordinateLocation, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                              reinterpret_cast<const void *>(pValue->offset));
+        FK_GL_CHECK(glVertexAttribPointer(aCoordinateLoc,
+                                          pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
+                                          reinterpret_cast<const void *>(pValue->offset)));
     }
     return FkGraphicProgram::addValue(value);
 }
@@ -77,7 +79,8 @@ std::string FkCanvasMosaicProgram::getFragment() {
         precision mediump float;
         varying mediump vec2 vTextureCoord;
         void main(){
-            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+            vec4 color = vec4(1.0 - vTextureCoord.x, 1.0 - vTextureCoord.y, 0.0, 1.0);
+            gl_FragColor = color;
         })");
     return shader;
 }
