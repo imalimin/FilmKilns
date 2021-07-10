@@ -13,6 +13,7 @@
 #include "FkColor.h"
 #include "FkSize.h"
 #include "FkGraphicWindow.h"
+#include "FkRational.h"
 
 FK_CLASS FkLayerEngine FK_EXTEND FkEngine {
 public:
@@ -44,7 +45,7 @@ public:
 
     FkResult postScale(FkID layer, float dx, float dy);
 
-    FkResult postRotation(FkID layer, float angle);
+    FkResult postRotation(FkID layer, FkRational &rational);
 
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };

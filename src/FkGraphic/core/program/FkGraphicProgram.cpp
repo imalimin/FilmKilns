@@ -174,6 +174,7 @@ void FkGraphicProgram::clear() {
             glBindTexture(pValue->tex->desc.target, GL_NONE);
         }
     }
+    values.clear();
 }
 
 ///+-----------------------------------------------------------+

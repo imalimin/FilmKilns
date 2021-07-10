@@ -20,7 +20,7 @@ public:
     virtual ~FkTransComponent();
 
 public:
-    FkIntVec2 position;
+    FkIntVec2 value;
 };
 
 

@@ -9,7 +9,7 @@
 
 FkLayerPostRotateProto::FkLayerPostRotateProto() : FkProtocol(),
                                                    layer(FK_ID_NONE),
-                                                   value(0.0f, 0.0f, 0.0f) {
+                                                   value(0, 1) {
     FK_MARK_SUPER
 }
 

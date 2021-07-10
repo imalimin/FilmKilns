@@ -13,7 +13,7 @@ FkRotateComponent::FkRotateComponent() : FkGraphicComponent() {
 }
 
 FkRotateComponent::FkRotateComponent(const FkRotateComponent &o)
-        : FkGraphicComponent(o), rotation(o.rotation) {
+        : FkGraphicComponent(o), value(o.value) {
     FK_MARK_SUPER
 
 }

@@ -166,5 +166,6 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
             ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->render();
+//    FkLogI(FK_DEF_TAG, "Render screen");
     return ret;
 }

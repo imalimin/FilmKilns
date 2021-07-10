@@ -55,3 +55,9 @@ double FkRational::toDouble() {
     }
     return num / (double) den;
 }
+
+FkRational &FkRational::operator+=(const FkRational &value) {
+    num += value.num;
+    den += value.den;
+    return *this;
+}

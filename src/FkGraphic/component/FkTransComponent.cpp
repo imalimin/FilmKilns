@@ -7,13 +7,13 @@
 
 #include "FkTransComponent.h"
 
-FkTransComponent::FkTransComponent() : FkGraphicComponent(), position(0, 0) {
+FkTransComponent::FkTransComponent() : FkGraphicComponent(), value(0, 0) {
     FK_MARK_SUPER
 
 }
 
 FkTransComponent::FkTransComponent(const FkTransComponent &o)
-        : FkGraphicComponent(o), position(o.position) {
+        : FkGraphicComponent(o), value(o.value) {
     FK_MARK_SUPER
 
 }

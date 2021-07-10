@@ -16,6 +16,8 @@
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
 #include "FkRotateComponent.h"
+#include "FkLayerPostScaleProto.h"
+#include "FkLayerPostRotateProto.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -30,6 +32,8 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicLayerQuark::_onUpdateLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicLayerQuark::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicLayerQuark::_onPostTranslate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicLayerQuark::_onPostScale);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -103,9 +107,30 @@ FkResult FkGraphicLayerQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
 
     auto comp = itr->second->findComponent<FkTransComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
-//    comp->position.x += proto->value.x;
-//    comp->position.y += proto->value.y;
-    comp->position += proto->value;
-    FkLogI(FK_DEF_TAG, "(%d, %d), (%d, %d)", comp->position.x, comp->position.y, proto->value.x, proto->value.y);
+    comp->value += proto->value;
+//    FkLogI(FK_DEF_TAG, "(%d, %d), (%d, %d)", comp->value.x, comp->value.y, proto->value.x, proto->value.y);
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    auto itr = layers.find(proto->layer);
+    FkAssert(layers.end() != itr, FK_FAIL);
+
+    auto comp = itr->second->findComponent<FkTransComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+//    comp->position += proto->value;
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkLayerPostRotateProto, p);
+    auto itr = layers.find(proto->layer);
+    FkAssert(layers.end() != itr, FK_FAIL);
+
+    auto comp = itr->second->findComponent<FkRotateComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+    comp->value += proto->value;
+    FkLogI(FK_DEF_TAG, "%f, %f", comp->value.num * 1.0f / comp->value.den , proto->value.num * 1.0f / proto->value.den);
     return FK_OK;
 }

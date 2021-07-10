@@ -10,6 +10,7 @@
 
 #include "FkMatrix.h"
 #include "FkFloatVec3.h"
+#include "FkRational.h"
 
 FK_CLASS FkMVPMatrix FK_EXTEND FkMatrix {
 public:
@@ -30,7 +31,7 @@ public:
 
     void setScale(FkFloatVec3 value);
 
-    void setRotation(float angle);
+    void setRotation(FkRational &_radian);
 
     void setTranslate(FkFloatVec3 value);
 
@@ -40,7 +41,7 @@ private:
     kProjType type;
     glm::mat4 proj;
     glm::mat4 view;
-    float rotateAngle;
+    FkRational radian;
     FkFloatVec3 scale;
     FkFloatVec3 translate;
 };

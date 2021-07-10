@@ -104,9 +104,10 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostScale
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostRotation
-        (JNIEnv *env, jobject that, jlong handle, jint layer, jfloat angle) {
+        (JNIEnv *env, jobject that, jlong handle, jint layer, jint num, jint den) {
     auto *engine = castHandle(handle);
-    return engine->postRotation(layer, angle);
+    FkRational rational(num, den);
+    return engine->postRotation(layer, rational);
 }
 
 #ifdef __cplusplus

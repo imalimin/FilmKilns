@@ -9,7 +9,7 @@
 #define FK_GRAPHIC_FKLAYERROTATEPROTO_H
 
 #include "FkProtocol.h"
-#include "FkFloatVec3.h"
+#include "FkRational.h"
 
 FK_CLASS FkLayerPostRotateProto FK_EXTEND FkProtocol {
 public:
@@ -21,7 +21,7 @@ public:
 
 public:
     FkID layer = FK_ID_NONE;
-    FkFloatVec3 value;
+    FkRational value;
 };
 
 #endif //FK_GRAPHIC_FKLAYERROTATEPROTO_H

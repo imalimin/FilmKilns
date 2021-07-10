@@ -21,9 +21,11 @@ public:
 
     ~FkRational();
 
-    FkRational &operator+(FkRational r);
+    virtual FkRational &operator+(FkRational r);
 
-    FkRational &operator=(const FkRational &o);
+    virtual FkRational &operator=(const FkRational &o);
+
+    virtual FkRational &operator+=(const FkRational &value);
 
     float toFloat();
 

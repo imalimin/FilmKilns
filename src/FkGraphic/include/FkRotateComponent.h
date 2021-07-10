@@ -21,7 +21,7 @@ public:
 
 public:
     ///弧度表示，顺时针方向为正向(CW)，r=rotation*PI
-    FkRational rotation;
+    FkRational value;
 };
 
 

@@ -11,6 +11,7 @@
 #include "FkSetSizeProto.h"
 #include "FkSizeComponent.h"
 #include "FkTransComponent.h"
+#include "FkRotateComponent.h"
 
 FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark(), viewSize(1, 1) {
     FK_MARK_SUPER
@@ -104,6 +105,9 @@ float FkGraphicMVPQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer, Fk
 
 FkResult FkGraphicMVPQuark::_setRotation(std::shared_ptr<FkMVPMatrix> matrix,
                                          std::shared_ptr<FkGraphicLayer> layer) {
+    auto comp = layer->findComponent<FkRotateComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+    matrix->setRotation(comp->value);
     return FK_OK;
 }
 
@@ -121,7 +125,7 @@ FkResult FkGraphicMVPQuark::_setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
                                           std::shared_ptr<FkGraphicLayer> layer) {
     auto comp = layer->findComponent<FkTransComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
-    FkFloatVec3 trans(comp->position.x, comp->position.y, 0.0f);
+    FkFloatVec3 trans(comp->value.x, comp->value.y, 0.0f);
     matrix->setTranslate(trans);
     return FK_OK;
 }
