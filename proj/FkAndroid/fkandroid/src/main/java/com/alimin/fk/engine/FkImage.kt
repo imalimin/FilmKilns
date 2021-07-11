@@ -1,8 +1,10 @@
 package com.alimin.fk.engine
 
+import android.view.Choreographer
 import android.view.Surface
 
 class FkImage() : FkEngine() {
+    private var mSyncLock = Object()
     override fun onCreateInstance(): Long = nativeCreateInstance()
     override fun create() {
         super.create()
@@ -13,9 +15,11 @@ class FkImage() : FkEngine() {
 
     override fun destroy() {
         super.destroy()
-        if (!isNull()) {
-            nativeDestroy(getHandle())
-            releaseHandle()
+        synchronized(mSyncLock) {
+            if (!isNull()) {
+                nativeDestroy(getHandle())
+                releaseHandle()
+            }
         }
     }
 
@@ -65,11 +69,22 @@ class FkImage() : FkEngine() {
         return -1
     }
 
+//    private var lastTime = 0L
     fun notifyRender(): Int {
-        if (!isNull()) {
-            return nativeNotifyRender(getHandle())
+        if (isNull()) {
+            return -1
         }
-        return -1
+        Choreographer.getInstance().postFrameCallback {
+            synchronized(mSyncLock) {
+                if (!isNull()) {
+//                    val time = System.currentTimeMillis()
+//                    Log.i("alimin1", "${time - lastTime}")
+//                    lastTime = time
+                    nativeNotifyRender(getHandle())
+                }
+            }
+        }
+        return 0
     }
 
     fun postTranslate(layer: Int, dx: Int, dy: Int): Int {
@@ -109,6 +124,7 @@ class FkImage() : FkEngine() {
         blue: Int,
         alpha: Int
     ): Int
+
     private external fun nativeNotifyRender(handle: Long): Int
     private external fun nativePostTranslate(handle: Long, layer: Int, dx: Int, dy: Int): Int
     private external fun nativePostScale(handle: Long, layer: Int, dx: Float, dy: Float): Int
