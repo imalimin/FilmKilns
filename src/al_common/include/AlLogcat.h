@@ -36,22 +36,22 @@ public:
 };
 
 #define AlLogFormat(fmt)                                                  \
-AlString().append("%s(%d): ").append(fmt).c_str()                       \
+AlString().append("%s: %d ").append(fmt).c_str()                       \
 
 #define AlLogV(tag, fmt, args...)                                         \
-AlLogcat::v(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
+AlLogcat::v(tag, AlLogFormat(fmt), __FILE_NAME__, __LINE__, ##args)        \
 
 #define AlLogD(tag, fmt, args...)                                         \
-AlLogcat::d(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
+AlLogcat::d(tag, AlLogFormat(fmt), __FILE_NAME__, __LINE__, ##args)        \
 
 #define AlLogI(tag, fmt, args...)                                         \
-AlLogcat::i(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
+AlLogcat::i(tag, AlLogFormat(fmt), __FILE_NAME__, __LINE__, ##args)        \
 
 #define AlLogE(tag, fmt, args...)                                         \
-AlLogcat::e(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
+AlLogcat::e(tag, AlLogFormat(fmt), __FILE_NAME__, __LINE__, ##args)        \
 
 #define AlLogW(tag, fmt, args...)                                         \
-AlLogcat::w(tag, AlLogFormat(fmt), __FUNCTION__, __LINE__, ##args)        \
+AlLogcat::w(tag, AlLogFormat(fmt), __FILE_NAME__, __LINE__, ##args)        \
 
 #if !defined(__AL_DEBUG__)
 #undef AlLogD

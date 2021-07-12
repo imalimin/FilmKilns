@@ -11,6 +11,7 @@
 #include "FkSetSizeProto.h"
 #include "FkSizeComponent.h"
 #include "FkTransComponent.h"
+#include "FkScaleComponent.h"
 #include "FkRotateComponent.h"
 
 FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark(), viewSize(1, 1) {
@@ -63,9 +64,9 @@ FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,
     matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
                    FkFloatVec3(0.0f, 0.0f, 0.0f),
                    FkFloatVec3(0.0f, 1.0f, 0.0f));
-    _setScale(matrix, layer, targetSize, reverseY);
-    _setRotation(matrix, layer);
     _setTranslate(matrix, layer);
+    _setRotation(matrix, layer);
+    _setScale(matrix, layer, targetSize, reverseY);
     matrix->calc();
 
     auto mat = std::make_shared<FkMatrixComponent>();
@@ -115,8 +116,10 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
                                       std::shared_ptr<FkGraphicLayer> layer,
                                       FkSize &targetSize,
                                       bool reverseY) {
+    auto comp = layer->findComponent<FkScaleComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
     auto scaleOfType = _getViewScale(layer, targetSize);
-    FkFloatVec3 scale(1.0f * scaleOfType, (reverseY ? -1.0f : 1.0f) * scaleOfType, 1.0f);
+    FkFloatVec3 scale(comp->value.x * scaleOfType, comp->value.y * (reverseY ? -1.0f : 1.0f) * scaleOfType, comp->value.z);
     matrix->setScale(scale);
     return FK_OK;
 }

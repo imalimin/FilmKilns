@@ -12,10 +12,10 @@
 #include "FkSizeComponent.h"
 #include "FkTexComponent.h"
 #include "FkRenderRequestPrt.h"
-#include "FkLayerPostTransProto.h"
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
 #include "FkRotateComponent.h"
+#include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
 
@@ -117,9 +117,11 @@ FkResult FkGraphicLayerQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
-    auto comp = itr->second->findComponent<FkTransComponent>();
+    auto comp = itr->second->findComponent<FkScaleComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
-//    comp->position += proto->value;
+    comp->value.x *= proto->value.x;
+    comp->value.y *= proto->value.y;
+    comp->value.z *= proto->value.z;
     return FK_OK;
 }
 
@@ -133,6 +135,5 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
     auto result = comp->value.toDouble() + proto->value.toDouble();
     comp->value.num = result * 10000;
     comp->value.den = 10000;
-    FkLogI(FK_DEF_TAG, "%f, %f", comp->value.toFloat() , proto->value.toFloat());
     return FK_OK;
 }

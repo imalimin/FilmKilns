@@ -148,7 +148,7 @@ FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
 FkResult FkLayerEngine::postScale(FkID layer, float dx, float dy) {
     auto msg = FkMessage::obtain(FK_MSG_POST_SCALE);
     msg->arg1 = layer;
-    msg->sp = std::make_shared<FkFloatVec3>(dx, dy, 0.0f);
+    msg->sp = std::make_shared<FkFloatVec3>(dx, dy, 1.0f);
     return sendMessage(msg);
 }
 
