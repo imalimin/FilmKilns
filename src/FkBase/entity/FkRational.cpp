@@ -57,7 +57,8 @@ double FkRational::toDouble() {
 }
 
 FkRational &FkRational::operator+=(const FkRational &value) {
-    num += value.num;
-    den += value.den;
+    int32_t gcd = AlMath::gcd(this->den, value.den);
+    num = this->num * value.den / gcd + value.num * this->den / gcd;
+    den = this->den * value.den / gcd;
     return *this;
 }

@@ -85,7 +85,7 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback, FkActSurfaceView.O
     }
 
     override fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF) {
-        engine.postRotation(layer,  dr.num, dr.den)
+        engine.postRotation(layer,  -dr.num, dr.den)
         engine.notifyRender()
     }
 }

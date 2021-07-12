@@ -130,7 +130,9 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
 
     auto comp = itr->second->findComponent<FkRotateComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
-    comp->value += proto->value;
-    FkLogI(FK_DEF_TAG, "%f, %f", comp->value.num * 1.0f / comp->value.den , proto->value.num * 1.0f / proto->value.den);
+    auto result = comp->value.toDouble() + proto->value.toDouble();
+    comp->value.num = result * 10000;
+    comp->value.den = 10000;
+    FkLogI(FK_DEF_TAG, "%f, %f", comp->value.toFloat() , proto->value.toFloat());
     return FK_OK;
 }
