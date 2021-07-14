@@ -19,6 +19,7 @@
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
 #include "FkScaleTypeComponent.h"
+#include "FkMeasureTransProto.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -35,6 +36,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicLayerQuark::_onPostTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicLayerQuark::_onPostScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onTransMeasure);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -139,5 +141,9 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
     auto result = comp->value.toDouble() + proto->value.toDouble();
     comp->value.num = result * 10000;
     comp->value.den = 10000;
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onTransMeasure(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }

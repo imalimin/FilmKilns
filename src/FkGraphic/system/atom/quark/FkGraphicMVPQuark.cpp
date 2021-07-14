@@ -14,6 +14,7 @@
 #include "FkScaleComponent.h"
 #include "FkRotateComponent.h"
 #include "FkScaleTypeComponent.h"
+#include "FkMeasureTransProto.h"
 
 FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark(), viewSize(1, 1) {
     FK_MARK_SUPER
@@ -26,6 +27,7 @@ FkGraphicMVPQuark::~FkGraphicMVPQuark() {
 void FkGraphicMVPQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicMVPQuark::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkGraphicMVPQuark::_onSetViewSize);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicMVPQuark::_onTransMeasure);
 }
 
 FkResult FkGraphicMVPQuark::onCreate() {
@@ -54,6 +56,10 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     for (auto &layer : proto->req->layers) {
         _calc(layer, Fk_POINTER_CAST(FkSizeComponent, vec[0])->size, true);
     }
+    return FK_OK;
+}
+
+FkResult FkGraphicMVPQuark::_onTransMeasure(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }
 
@@ -94,10 +100,12 @@ float FkGraphicMVPQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer, Fk
             scale = 1.0f;
             break;
         case kScaleType::CENTER_INSIDE:
-            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(), targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
             break;
         case kScaleType::CENTER_CROP:
-            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(), targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
             break;
     }
     return scale;
@@ -118,7 +126,8 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
     auto comp = layer->findComponent<FkScaleComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
     auto scaleOfType = _getViewScale(layer, targetSize);
-    FkFloatVec3 scale(comp->value.x * scaleOfType, comp->value.y * (reverseY ? -1.0f : 1.0f) * scaleOfType, comp->value.z);
+    FkFloatVec3 scale(comp->value.x * scaleOfType,
+                      comp->value.y * (reverseY ? -1.0f : 1.0f) * scaleOfType, comp->value.z);
     matrix->setScale(scale);
     return FK_OK;
 }

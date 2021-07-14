@@ -45,6 +45,8 @@ private:
 
     FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onTransMeasure(std::shared_ptr<FkProtocol> p);
+
 private:
     FkID mCurID = 0;
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
