@@ -18,6 +18,7 @@
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
+#include "FkScaleTypeComponent.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -59,6 +60,9 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     layer->addComponent(std::make_shared<FkTransComponent>());
     layer->addComponent(std::make_shared<FkScaleComponent>());
     layer->addComponent(std::make_shared<FkRotateComponent>());
+    auto scaleType = std::make_shared<FkScaleTypeComponent>();
+    scaleType->value = kScaleType::CENTER_MATRIX;
+    layer->addComponent(scaleType);
     std::lock_guard<std::mutex> guard(mtx);
     ++mCurID;
     layer->id = mCurID;

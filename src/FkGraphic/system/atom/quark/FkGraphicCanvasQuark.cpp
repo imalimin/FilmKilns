@@ -14,6 +14,7 @@
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
 #include "FkRotateComponent.h"
+#include "FkScaleTypeComponent.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -34,6 +35,9 @@ FkResult FkGraphicCanvasQuark::onCreate() {
     canvas->addComponent(std::make_shared<FkTransComponent>());
     canvas->addComponent(std::make_shared<FkScaleComponent>());
     canvas->addComponent(std::make_shared<FkRotateComponent>());
+    auto scaleType = std::make_shared<FkScaleTypeComponent>();
+    scaleType->value = kScaleType::CENTER_INSIDE;
+    canvas->addComponent(scaleType);
     return FkQuark::onCreate();
 }
 

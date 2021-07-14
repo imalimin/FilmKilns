@@ -13,6 +13,7 @@
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
 #include "FkRotateComponent.h"
+#include "FkScaleTypeComponent.h"
 
 FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark(), viewSize(1, 1) {
     FK_MARK_SUPER
@@ -83,14 +84,12 @@ FkResult FkGraphicMVPQuark::_onSetViewSize(std::shared_ptr<FkProtocol> p) {
 
 float FkGraphicMVPQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize) {
     float scale = 1.0f;
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    std::shared_ptr<FkSizeComponent> size = nullptr;
-    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
-        return scale;
-    }
-    size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
+    auto scaleType = layer->findComponent<FkScaleTypeComponent>();
+    FkAssert(nullptr != scaleType, scale);
+    auto size = layer->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != size, scale);
     auto &layerSize = size->size;
-    switch (scaleType) {
+    switch (scaleType->value) {
         case kScaleType::CENTER_MATRIX:
             scale = 1.0f;
             break;

@@ -56,7 +56,6 @@ private:
 
 private:
     FkSize viewSize;
-    kScaleType scaleType = kScaleType::CENTER_INSIDE;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICMVPQUARK_H

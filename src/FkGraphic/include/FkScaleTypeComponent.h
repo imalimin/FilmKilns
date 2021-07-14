@@ -8,15 +8,19 @@
 #ifndef FK_GRAPHIC_FKSCALETYPECOMPONENT_H
 #define FK_GRAPHIC_FKSCALETYPECOMPONENT_H
 
-#include "FkObject.h"
+#include "FkGraphicComponent.h"
+#include "FkDefinition.h"
 
-FK_CLASS FkScaleTypeComponent FK_EXTEND FkObject {
+FK_CLASS FkScaleTypeComponent FK_EXTEND FkGraphicComponent {
 public:
     FkScaleTypeComponent();
 
     FkScaleTypeComponent(const FkScaleTypeComponent &o);
 
     virtual ~FkScaleTypeComponent();
+
+public:
+    kScaleType value;
 };
 
 #endif //FK_GRAPHIC_FKSCALETYPECOMPONENT_H

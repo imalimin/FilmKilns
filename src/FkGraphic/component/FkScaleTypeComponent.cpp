@@ -7,11 +7,13 @@
 
 #include "FkScaleTypeComponent.h"
 
-FkScaleTypeComponent::FkScaleTypeComponent() : FkObject() {
+FkScaleTypeComponent::FkScaleTypeComponent()
+        : FkGraphicComponent(), value(kScaleType::CENTER_MATRIX) {
     FK_MARK_SUPER
 }
 
-FkScaleTypeComponent::FkScaleTypeComponent(const FkScaleTypeComponent &o) : FkObject(o) {
+FkScaleTypeComponent::FkScaleTypeComponent(const FkScaleTypeComponent &o) : FkGraphicComponent(o),
+                                                                            value(o.value) {
     FK_MARK_SUPER
 }
 
