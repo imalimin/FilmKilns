@@ -10,6 +10,7 @@
 
 #include "FkProtocol.h"
 #include "FkIntVec2.h"
+#include "FkGraphicLayer.h"
 
 FK_CLASS FkMeasureTransProto FK_EXTEND FkProtocol {
 public:
@@ -20,7 +21,10 @@ public:
     virtual ~FkMeasureTransProto();
 
 public:
+    FkID layerId = FK_ID_NONE;
     FkIntVec2 value;
+    std::shared_ptr<FkGraphicLayer> layer = nullptr;
+    std::shared_ptr<FkGraphicLayer> canvas = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKCALCTRANSPROTO_H

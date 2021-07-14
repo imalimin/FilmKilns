@@ -36,7 +36,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicLayerQuark::_onPostTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicLayerQuark::_onPostScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
-    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onTransMeasure);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onMeasureTrans);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -144,6 +144,10 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }
 
-FkResult FkGraphicLayerQuark::_onTransMeasure(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicLayerQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
+    auto itr = layers.find(proto->layerId);
+    FkAssert(layers.end() != itr, FK_FAIL);
+    proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
     return FK_OK;
 }

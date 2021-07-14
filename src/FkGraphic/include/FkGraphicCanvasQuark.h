@@ -37,6 +37,8 @@ private:
 
     FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
+
 private:
     std::shared_ptr<FkGraphicLayer> canvas;
 };

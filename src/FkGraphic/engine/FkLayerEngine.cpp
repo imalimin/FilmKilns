@@ -24,6 +24,7 @@
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
+#include "FkMeasureTransProto.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
@@ -250,9 +251,13 @@ FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {
+    auto measure = std::make_shared<FkMeasureTransProto>();
+    measure->layerId = msg->arg1;
+    measure->value = *Fk_POINTER_CAST(FkIntVec2, msg->sp);
+    FkAssert(FK_OK == client->quickSend(measure, molecule), FK_FAIL);
     auto proto = std::make_shared<FkLayerPostTransProto>();
-    proto->layer = msg->arg1;
-    proto->value = *Fk_POINTER_CAST(FkIntVec2, msg->sp);
+    proto->layer = measure->layerId;
+    proto->value = measure->value;
     return client->quickSend(proto, molecule);
 }
 

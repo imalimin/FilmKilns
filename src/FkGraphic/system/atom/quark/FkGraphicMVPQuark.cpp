@@ -15,6 +15,7 @@
 #include "FkRotateComponent.h"
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
+#include "ext.hpp"
 
 FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark(), viewSize(1, 1) {
     FK_MARK_SUPER
@@ -27,7 +28,7 @@ FkGraphicMVPQuark::~FkGraphicMVPQuark() {
 void FkGraphicMVPQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicMVPQuark::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkGraphicMVPQuark::_onSetViewSize);
-    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicMVPQuark::_onTransMeasure);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicMVPQuark::_onMeasureTrans);
 }
 
 FkResult FkGraphicMVPQuark::onCreate() {
@@ -59,7 +60,21 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }
 
-FkResult FkGraphicMVPQuark::_onTransMeasure(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
+    auto layerScale = proto->layer->findComponent<FkScaleComponent>();
+    FkAssert(nullptr != layerScale, FK_FAIL);
+    auto layerRotate = proto->layer->findComponent<FkRotateComponent>();
+    FkAssert(nullptr != layerScale, FK_FAIL);
+
+    glm::mat4 mat = glm::mat4(1.0f);
+    auto scale = _getViewScale(proto->canvas, viewSize);
+    mat = glm::rotate(mat, -layerRotate->value.num *1.0f / layerRotate->value.den, glm::vec3(0.0f, 0.0f, 1.0f));
+    mat = glm::scale(mat, glm::vec3(1.0f / scale / layerScale->value.x, 1.0f / scale/ layerScale->value.y, 1.0f));
+    glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
+    vec = vec * mat;
+    proto->value.x = vec.x;
+    proto->value.y = vec.y;
     return FK_OK;
 }
 

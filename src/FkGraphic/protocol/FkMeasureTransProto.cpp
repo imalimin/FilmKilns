@@ -11,7 +11,8 @@ FkMeasureTransProto::FkMeasureTransProto() : FkProtocol(), value(0, 0) {
     FK_MARK_SUPER
 }
 
-FkMeasureTransProto::FkMeasureTransProto(const FkMeasureTransProto &o) : FkProtocol(o), value(o.value) {
+FkMeasureTransProto::FkMeasureTransProto(const FkMeasureTransProto &o)
+        : FkProtocol(o), layerId(o.layerId), value(o.value), layer(o.layer) , canvas(o.canvas) {
     FK_MARK_SUPER
 }
 

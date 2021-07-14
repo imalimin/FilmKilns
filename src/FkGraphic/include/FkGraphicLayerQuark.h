@@ -45,7 +45,7 @@ private:
 
     FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onTransMeasure(std::shared_ptr<FkProtocol> p);
+    FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
 private:
     FkID mCurID = 0;
