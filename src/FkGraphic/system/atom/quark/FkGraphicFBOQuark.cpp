@@ -45,10 +45,10 @@ FkResult FkGraphicFBOQuark::onStop() {
 }
 
 FkResult FkGraphicFBOQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto ptl = std::static_pointer_cast<FkGraphicLayerPrt>(p);
+    auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
     auto comp = std::make_shared<FkGraphicFBOComponent>();
     int32_t desc = 0;
     comp->fbo = allocator->alloc(desc);
-    ptl->layer->addComponent(comp);
+    proto->req->addComponent(comp);
     return FK_OK;
 }
