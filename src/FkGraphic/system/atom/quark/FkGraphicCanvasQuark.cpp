@@ -56,14 +56,23 @@ FkResult FkGraphicCanvasQuark::onStop() {
 }
 
 FkResult FkGraphicCanvasQuark::_onUpdate(std::shared_ptr<FkProtocol> p) {
-    auto proto = std::static_pointer_cast<FkGraphicUpdateCanvasProto>(p);
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    if (FK_OK == proto->layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
-        canvas->addComponent(vec[0]);
+    auto proto = Fk_POINTER_CAST(FkGraphicUpdateCanvasProto, p);
+    auto sizeComp = proto->layer->findComponent<FkSizeComponent>();
+    if (nullptr != sizeComp) {
+        auto canvasSize = canvas->findComponent<FkSizeComponent>();
+        if (nullptr != canvasSize) {
+            canvasSize->size = sizeComp->size;
+        } else {
+            canvas->addComponent(sizeComp);
+            auto scaleComp = canvas->findComponent<FkScaleComponent>();
+            scaleComp->value.x = _getViewScale(canvas, proto->winSize);
+            scaleComp->value.y = scaleComp->value.x;
+            scaleComp->value.z = 1.0f;
+        }
     }
-    vec.clear();
-    if (FK_OK == proto->layer->findComponent(vec, FkClassType::type<FkTexComponent>())) {
-        canvas->addComponent(vec[0]);
+    auto tesComp = proto->layer->findComponent<FkTexComponent>();
+    if (nullptr != tesComp) {
+        canvas->addComponent(tesComp);
     }
     return FK_OK;
 }
@@ -92,4 +101,27 @@ FkResult FkGraphicCanvasQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
     proto->canvas = std::make_shared<FkGraphicLayer>(*canvas);
     return FK_OK;
+}
+
+float FkGraphicCanvasQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize) {
+    float scale = 1.0f;
+    auto scaleType = layer->findComponent<FkScaleTypeComponent>();
+    FkAssert(nullptr != scaleType, scale);
+    auto size = layer->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != size, scale);
+    auto &layerSize = size->size;
+    switch (scaleType->value) {
+        case kScaleType::CENTER_MATRIX:
+            scale = 1.0f;
+            break;
+        case kScaleType::CENTER_INSIDE:
+            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            break;
+        case kScaleType::CENTER_CROP:
+            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            break;
+    }
+    return scale;
 }

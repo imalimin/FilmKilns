@@ -7,11 +7,11 @@
 
 #include "FkGraphicUpdateLayerPrt.h"
 
-FkGraphicUpdateLayerPrt::FkGraphicUpdateLayerPrt() : FkProtocol() {
+FkGraphicUpdateLayerPrt::FkGraphicUpdateLayerPrt() : FkWinSizeProto() {
     FK_MARK_SUPER
 }
 
-FkGraphicUpdateLayerPrt::FkGraphicUpdateLayerPrt(const FkGraphicUpdateLayerPrt &o) : FkProtocol(o), layer(o.layer) {
+FkGraphicUpdateLayerPrt::FkGraphicUpdateLayerPrt(const FkGraphicUpdateLayerPrt &o) : FkWinSizeProto(o), layer(o.layer) {
     FK_MARK_SUPER
     if (o.layer) {
         this->layer = std::make_shared<FkGraphicLayer>(*(o.layer.get()));

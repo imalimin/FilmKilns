@@ -133,9 +133,9 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
                                       bool reverseY) {
     auto comp = layer->findComponent<FkScaleComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
-    auto scaleOfType = _getViewScale(layer, targetSize);
-    FkFloatVec3 scale(comp->value.x * scaleOfType,
-                      comp->value.y * (reverseY ? -1.0f : 1.0f) * scaleOfType, comp->value.z);
+//    auto scaleOfType = _getViewScale(layer, targetSize);
+    FkFloatVec3 scale(comp->value.x,
+                      comp->value.y * (reverseY ? -1.0f : 1.0f), comp->value.z);
     matrix->setScale(scale);
     return FK_OK;
 }

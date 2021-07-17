@@ -8,10 +8,10 @@
 #ifndef FK_GRAPHIC_FKGRAPHICUPDATELAYERPRT_H
 #define FK_GRAPHIC_FKGRAPHICUPDATELAYERPRT_H
 
-#include "FkProtocol.h"
+#include "FkWinSizeProto.h"
 #include "FkGraphicLayer.h"
 
-FK_CLASS FkGraphicUpdateLayerPrt FK_EXTEND FkProtocol {
+FK_CLASS FkGraphicUpdateLayerPrt FK_EXTEND FkWinSizeProto {
 public:
     FkGraphicUpdateLayerPrt();
 

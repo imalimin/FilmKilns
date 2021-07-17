@@ -10,6 +10,7 @@
 
 #include "FkQuark.h"
 #include "FkGraphicLayer.h"
+#include "FkSize.h"
 
 FK_CLASS FkGraphicCanvasQuark FK_EXTEND FkQuark {
 public:
@@ -38,6 +39,9 @@ private:
     FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
 
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
+
+private:
+    float _getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize);
 
 private:
     std::shared_ptr<FkGraphicLayer> canvas;
