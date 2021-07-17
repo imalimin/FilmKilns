@@ -61,14 +61,18 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
+    auto canvasScale = proto->canvas->findComponent<FkScaleComponent>();
+    FkAssert(nullptr != canvasScale, FK_FAIL);
     auto layerScale = proto->layer->findComponent<FkScaleComponent>();
     FkAssert(nullptr != layerScale, FK_FAIL);
     auto layerRotate = proto->layer->findComponent<FkRotateComponent>();
     FkAssert(nullptr != layerScale, FK_FAIL);
 
     glm::mat4 mat = glm::mat4(1.0f);
-    mat = glm::rotate(mat, -layerRotate->value.num *1.0f / layerRotate->value.den, glm::vec3(0.0f, 0.0f, 1.0f));
-    mat = glm::scale(mat, glm::vec3(1.0f / layerScale->value.x, 1.0f / layerScale->value.y, 1.0f));
+    mat = glm::rotate(mat, -layerRotate->value.num * 1.0f / layerRotate->value.den,
+                      glm::vec3(0.0f, 0.0f, 1.0f));
+    mat = glm::scale(mat, glm::vec3(1.0f / canvasScale->value.x / layerScale->value.x,
+                                    1.0f / canvasScale->value.x / layerScale->value.y, 1.0f));
     glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
     vec = vec * mat;
     proto->value.x = vec.x;
