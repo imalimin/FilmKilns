@@ -49,8 +49,8 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
     auto ptr = std::make_shared<FkGraphicMVPQuark>();
     chain->next<FkWinModelQuark>()
-            ->next<FkGraphicLayerQuark>()
             ->next<FkGraphicCanvasQuark>()
+            ->next<FkGraphicLayerQuark>()
             ->next<FkGraphicMVPQuark>();
 }
 

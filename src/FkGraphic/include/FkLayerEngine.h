@@ -52,6 +52,8 @@ protected:
 
     std::shared_ptr<FkGraphicMolecule> getMolecule() { return molecule; };
 
+    FkResult setCanvasSizeInternal(FkSize &size);
+
 private:
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 

@@ -63,8 +63,8 @@ FkID FkImageEngine::newLayerWithFile(std::string path) {
 FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     auto bmp = FkBitmap::from(msg->arg3);
     FkAssert(nullptr != bmp, FK_EMPTY_DATA);
-    setCanvasSize(FkSize(bmp->getWidth(), bmp->getHeight()));
-    notifyRender();
+    FkSize canvasSize(bmp->getWidth(), bmp->getHeight());
+    setCanvasSizeInternal(canvasSize);
 
     auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
     texPrt->fmt = FkColor::kFormat::RGBA;

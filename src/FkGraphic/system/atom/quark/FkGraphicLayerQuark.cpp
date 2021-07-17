@@ -62,9 +62,6 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     layer->addComponent(std::make_shared<FkTransComponent>());
     layer->addComponent(std::make_shared<FkScaleComponent>());
     layer->addComponent(std::make_shared<FkRotateComponent>());
-    auto scaleType = std::make_shared<FkScaleTypeComponent>();
-    scaleType->value = kScaleType::CENTER_MATRIX;
-    layer->addComponent(scaleType);
     std::lock_guard<std::mutex> guard(mtx);
     ++mCurID;
     layer->id = mCurID;
@@ -74,23 +71,33 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
-    auto prt = Fk_POINTER_CAST(FkGraphicUpdateLayerPrt, p);
-    auto itr = layers.find(prt->layer->id);
+    auto proto = Fk_POINTER_CAST(FkGraphicUpdateLayerPrt, p);
+    auto itr = layers.find(proto->layer->id);
     if (layers.end() == itr) {
         return FK_FAIL;
     }
+    auto colorComp = proto->layer->findComponent<FkColorComponent>();
+    if (nullptr != colorComp) {
+        itr->second->addComponent(colorComp);
+    }
+    auto sizeComp = proto->layer->findComponent<FkSizeComponent>();
+    if (nullptr != sizeComp) {
+        auto layerSizeComp = itr->second->findComponent<FkSizeComponent>();
+        if (nullptr != layerSizeComp) {
 
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkColorComponent>())) {
-        itr->second->addComponent(vec[0]);
+        } else {
+            itr->second->addComponent(sizeComp);
+            auto scaleComp = itr->second->findComponent<FkScaleComponent>();
+            if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
+                scaleComp->value.x = _getViewScale(itr->second, proto->scaleType, proto->winSize);
+                scaleComp->value.y = scaleComp->value.x;
+                scaleComp->value.z = 1.0f;
+            }
+        }
     }
-    vec.clear();
-    if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
-        itr->second->addComponent(vec[0]);
-    }
-    vec.clear();
-    if (FK_OK == prt->layer->findComponent(vec, FkClassType::type<FkTexComponent>())) {
-        itr->second->addComponent(vec[0]);
+    auto texComp = proto->layer->findComponent<FkTexComponent>();
+    if (nullptr != texComp) {
+        itr->second->addComponent(texComp);
     }
     return FK_OK;
 }
@@ -150,4 +157,27 @@ FkResult FkGraphicLayerQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     FkAssert(layers.end() != itr, FK_FAIL);
     proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
     return FK_OK;
+}
+
+float FkGraphicLayerQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer,
+                                         kScaleType scaleType,
+                                         FkSize &targetSize) {
+    float scale = 1.0f;
+    auto size = layer->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != size, scale);
+    auto &layerSize = size->size;
+    switch (scaleType) {
+        case kScaleType::CENTER_MATRIX:
+            scale = 1.0f;
+            break;
+        case kScaleType::CENTER_INSIDE:
+            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            break;
+        case kScaleType::CENTER_CROP:
+            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            break;
+    }
+    return scale;
 }

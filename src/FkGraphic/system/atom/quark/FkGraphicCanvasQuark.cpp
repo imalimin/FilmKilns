@@ -16,6 +16,7 @@
 #include "FkRotateComponent.h"
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
+#include "FkGraphicUpdateLayerPrt.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -30,6 +31,7 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateCanvasProto, FkGraphicCanvasQuark::_onUpdate);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicCanvasQuark::_onMeasureTrans);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicCanvasQuark::_onWithCanvasSize);
 }
 
 FkResult FkGraphicCanvasQuark::onCreate() {
@@ -100,6 +102,15 @@ FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p)
 FkResult FkGraphicCanvasQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
     proto->canvas = std::make_shared<FkGraphicLayer>(*canvas);
+    return FK_OK;
+}
+
+FkResult FkGraphicCanvasQuark::_onWithCanvasSize(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkGraphicUpdateLayerPrt, p);
+    auto canvasSize = canvas->findComponent<FkSizeComponent>();
+    if (nullptr != canvasSize) {
+        proto->winSize = canvasSize->size;
+    }
     return FK_OK;
 }
 

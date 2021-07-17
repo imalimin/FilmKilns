@@ -21,7 +21,7 @@ public:
 
 public:
     std::shared_ptr<FkGraphicLayer> layer = nullptr;
-
+    kScaleType scaleType;
 };
 
 

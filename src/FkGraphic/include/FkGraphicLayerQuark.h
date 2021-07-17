@@ -10,6 +10,7 @@
 
 #include "FkQuark.h"
 #include "FkGraphicLayer.h"
+#include "FkSize.h"
 #include <list>
 #include <map>
 
@@ -46,6 +47,9 @@ private:
     FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
 
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
+
+private:
+    float _getViewScale(std::shared_ptr<FkGraphicLayer> layer, kScaleType scaleType, FkSize &targetSize);
 
 private:
     FkID mCurID = 0;

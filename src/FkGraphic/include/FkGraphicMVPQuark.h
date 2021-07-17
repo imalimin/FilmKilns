@@ -39,8 +39,6 @@ private:
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
 private:
-    float _getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize);
-
     FkResult _setRotation(std::shared_ptr<FkMVPMatrix> matrix,
                           std::shared_ptr<FkGraphicLayer> layer);
 

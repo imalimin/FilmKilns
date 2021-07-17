@@ -40,6 +40,8 @@ private:
 
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onWithCanvasSize(std::shared_ptr<FkProtocol> p);
+
 private:
     float _getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize);
 

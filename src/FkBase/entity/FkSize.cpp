@@ -43,3 +43,7 @@ bool FkSize::operator==(const FkSize &o) {
 bool FkSize::operator!=(const FkSize &o) {
     return !((*this) == o);
 }
+
+bool FkSize::isZero() {
+    return width <= 0 || height <= 0;
+}

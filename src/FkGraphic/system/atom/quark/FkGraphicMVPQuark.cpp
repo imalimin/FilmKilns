@@ -67,9 +67,8 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     FkAssert(nullptr != layerScale, FK_FAIL);
 
     glm::mat4 mat = glm::mat4(1.0f);
-    auto scale = _getViewScale(proto->canvas, proto->winSize);
     mat = glm::rotate(mat, -layerRotate->value.num *1.0f / layerRotate->value.den, glm::vec3(0.0f, 0.0f, 1.0f));
-    mat = glm::scale(mat, glm::vec3(1.0f / scale / layerScale->value.x, 1.0f / scale/ layerScale->value.y, 1.0f));
+    mat = glm::scale(mat, glm::vec3(1.0f / layerScale->value.x, 1.0f / layerScale->value.y, 1.0f));
     glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
     vec = vec * mat;
     proto->value.x = vec.x;
@@ -96,29 +95,6 @@ FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,
     return FK_OK;
 }
 
-float FkGraphicMVPQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize) {
-    float scale = 1.0f;
-    auto scaleType = layer->findComponent<FkScaleTypeComponent>();
-    FkAssert(nullptr != scaleType, scale);
-    auto size = layer->findComponent<FkSizeComponent>();
-    FkAssert(nullptr != size, scale);
-    auto &layerSize = size->size;
-    switch (scaleType->value) {
-        case kScaleType::CENTER_MATRIX:
-            scale = 1.0f;
-            break;
-        case kScaleType::CENTER_INSIDE:
-            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
-            break;
-        case kScaleType::CENTER_CROP:
-            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
-            break;
-    }
-    return scale;
-}
-
 FkResult FkGraphicMVPQuark::_setRotation(std::shared_ptr<FkMVPMatrix> matrix,
                                          std::shared_ptr<FkGraphicLayer> layer) {
     auto comp = layer->findComponent<FkRotateComponent>();
@@ -133,7 +109,6 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
                                       bool reverseY) {
     auto comp = layer->findComponent<FkScaleComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
-//    auto scaleOfType = _getViewScale(layer, targetSize);
     FkFloatVec3 scale(comp->value.x,
                       comp->value.y * (reverseY ? -1.0f : 1.0f), comp->value.z);
     matrix->setScale(scale);
