@@ -6,6 +6,30 @@
 */
 
 #include "FkGraphicLayer.h"
+#include "FkSizeComponent.h"
+
+float FkGraphicLayer::calcScaleWithScaleType(std::shared_ptr<FkGraphicLayer> layer,
+                                             kScaleType scaleType,
+                                             FkSize &targetSize) {
+    float scale = 1.0f;
+    auto size = layer->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != size, scale);
+    auto &layerSize = size->size;
+    switch (scaleType) {
+        case kScaleType::CENTER_MATRIX:
+            scale = 1.0f;
+            break;
+        case kScaleType::CENTER_INSIDE:
+            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            break;
+        case kScaleType::CENTER_CROP:
+            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
+                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            break;
+    }
+    return scale;
+}
 
 FkGraphicLayer::FkGraphicLayer() : FkGraphicEntity() {
     FK_MARK_SUPER

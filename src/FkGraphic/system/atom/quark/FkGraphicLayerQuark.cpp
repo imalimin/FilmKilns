@@ -89,7 +89,9 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             itr->second->addComponent(sizeComp);
             auto scaleComp = itr->second->findComponent<FkScaleComponent>();
             if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
-                scaleComp->value.x = _getViewScale(itr->second, proto->scaleType, proto->winSize);
+                scaleComp->value.x = FkGraphicLayer::calcScaleWithScaleType(itr->second,
+                                                                            proto->scaleType,
+                                                                            proto->winSize);
                 scaleComp->value.y = scaleComp->value.x;
                 scaleComp->value.z = 1.0f;
             }
@@ -157,27 +159,4 @@ FkResult FkGraphicLayerQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     FkAssert(layers.end() != itr, FK_FAIL);
     proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
     return FK_OK;
-}
-
-float FkGraphicLayerQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer,
-                                         kScaleType scaleType,
-                                         FkSize &targetSize) {
-    float scale = 1.0f;
-    auto size = layer->findComponent<FkSizeComponent>();
-    FkAssert(nullptr != size, scale);
-    auto &layerSize = size->size;
-    switch (scaleType) {
-        case kScaleType::CENTER_MATRIX:
-            scale = 1.0f;
-            break;
-        case kScaleType::CENTER_INSIDE:
-            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
-            break;
-        case kScaleType::CENTER_CROP:
-            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
-            break;
-    }
-    return scale;
 }

@@ -49,9 +49,6 @@ private:
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
 private:
-    float _getViewScale(std::shared_ptr<FkGraphicLayer> layer, kScaleType scaleType, FkSize &targetSize);
-
-private:
     FkID mCurID = 0;
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
     std::mutex mtx;

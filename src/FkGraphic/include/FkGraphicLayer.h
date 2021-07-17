@@ -10,8 +10,14 @@
 
 #include "FkGraphicEntity.h"
 #include "FkBufferComponent.h"
+#include "FkSize.h"
 
 FK_CLASS FkGraphicLayer FK_EXTEND FkGraphicEntity {
+public:
+    static float calcScaleWithScaleType(std::shared_ptr<FkGraphicLayer> layer,
+                                        kScaleType scaleType,
+                                        FkSize &targetSize);
+
 public:
     FkGraphicLayer();
 

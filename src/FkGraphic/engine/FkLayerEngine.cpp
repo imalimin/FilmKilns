@@ -113,6 +113,7 @@ FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size) {
     layer->addComponent(texComp);
     auto updateProto = std::make_shared<FkGraphicUpdateCanvasProto>();
     updateProto->layer = layer;
+    updateProto->scaleType = kScaleType::CENTER_INSIDE;
     return client->quickSend(updateProto, molecule);
 }
 

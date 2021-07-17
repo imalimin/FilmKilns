@@ -39,9 +39,6 @@ FkResult FkGraphicCanvasQuark::onCreate() {
     canvas->addComponent(std::make_shared<FkTransComponent>());
     canvas->addComponent(std::make_shared<FkScaleComponent>());
     canvas->addComponent(std::make_shared<FkRotateComponent>());
-    auto scaleType = std::make_shared<FkScaleTypeComponent>();
-    scaleType->value = kScaleType::CENTER_INSIDE;
-    canvas->addComponent(scaleType);
     return FkQuark::onCreate();
 }
 
@@ -67,7 +64,8 @@ FkResult FkGraphicCanvasQuark::_onUpdate(std::shared_ptr<FkProtocol> p) {
         } else {
             canvas->addComponent(sizeComp);
             auto scaleComp = canvas->findComponent<FkScaleComponent>();
-            scaleComp->value.x = _getViewScale(canvas, proto->winSize);
+            FkAssert(nullptr != scaleComp, scale);
+            scaleComp->value.x = FkGraphicLayer::calcScaleWithScaleType(canvas, proto->scaleType, proto->winSize);
             scaleComp->value.y = scaleComp->value.x;
             scaleComp->value.z = 1.0f;
         }
@@ -112,27 +110,4 @@ FkResult FkGraphicCanvasQuark::_onWithCanvasSize(std::shared_ptr<FkProtocol> p) 
         proto->winSize = canvasSize->size;
     }
     return FK_OK;
-}
-
-float FkGraphicCanvasQuark::_getViewScale(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize) {
-    float scale = 1.0f;
-    auto scaleType = layer->findComponent<FkScaleTypeComponent>();
-    FkAssert(nullptr != scaleType, scale);
-    auto size = layer->findComponent<FkSizeComponent>();
-    FkAssert(nullptr != size, scale);
-    auto &layerSize = size->size;
-    switch (scaleType->value) {
-        case kScaleType::CENTER_MATRIX:
-            scale = 1.0f;
-            break;
-        case kScaleType::CENTER_INSIDE:
-            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
-            break;
-        case kScaleType::CENTER_CROP:
-            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
-            break;
-    }
-    return scale;
 }
