@@ -31,6 +31,11 @@ protected:
     virtual FkResult onStop() override;
 
 private:
+    FkResult _onSetViewSize(std::shared_ptr<FkProtocol> p);
+
+    FkResult _onWithWinSize(std::shared_ptr<FkProtocol> p);
+
+private:
     FkSize winSize;
 };
 

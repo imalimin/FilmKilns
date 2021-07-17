@@ -36,8 +36,6 @@ protected:
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onSetViewSize(std::shared_ptr<FkProtocol> p);
-
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
 private:
@@ -56,8 +54,6 @@ private:
 
     FkResult _calc(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize, bool reverseY);
 
-private:
-    FkSize viewSize;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICMVPQUARK_H

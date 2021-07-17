@@ -8,10 +8,10 @@
 #ifndef FK_GRAPHIC_FKRENDERREQUESTPRT_H
 #define FK_GRAPHIC_FKRENDERREQUESTPRT_H
 
-#include "FkProtocol.h"
+#include "FkWinSizeProto.h"
 #include "FkRenderRequest.h"
 
-FK_CLASS FkRenderRequestPrt FK_EXTEND FkProtocol {
+FK_CLASS FkRenderRequestPrt FK_EXTEND FkWinSizeProto {
 public:
     FkRenderRequestPrt();
 

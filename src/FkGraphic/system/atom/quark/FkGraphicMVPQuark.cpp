@@ -17,7 +17,7 @@
 #include "FkMeasureTransProto.h"
 #include "ext.hpp"
 
-FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark(), viewSize(1, 1) {
+FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark() {
     FK_MARK_SUPER
 }
 
@@ -27,7 +27,6 @@ FkGraphicMVPQuark::~FkGraphicMVPQuark() {
 
 void FkGraphicMVPQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicMVPQuark::_onRenderRequest);
-    FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkGraphicMVPQuark::_onSetViewSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicMVPQuark::_onMeasureTrans);
 }
 
@@ -53,7 +52,7 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
         return FK_FAIL;
     }
-    _calc(proto->req->canvas, viewSize, false);
+    _calc(proto->req->canvas, proto->winSize, false);
     for (auto &layer : proto->req->layers) {
         _calc(layer, Fk_POINTER_CAST(FkSizeComponent, vec[0])->size, true);
     }
@@ -68,7 +67,7 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     FkAssert(nullptr != layerScale, FK_FAIL);
 
     glm::mat4 mat = glm::mat4(1.0f);
-    auto scale = _getViewScale(proto->canvas, viewSize);
+    auto scale = _getViewScale(proto->canvas, proto->winSize);
     mat = glm::rotate(mat, -layerRotate->value.num *1.0f / layerRotate->value.den, glm::vec3(0.0f, 0.0f, 1.0f));
     mat = glm::scale(mat, glm::vec3(1.0f / scale / layerScale->value.x, 1.0f / scale/ layerScale->value.y, 1.0f));
     glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
@@ -94,12 +93,6 @@ FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,
     auto mat = std::make_shared<FkMatrixComponent>();
     mat->value = matrix;
     layer->addComponent(mat);
-    return FK_OK;
-}
-
-FkResult FkGraphicMVPQuark::_onSetViewSize(std::shared_ptr<FkProtocol> p) {
-    auto prt = Fk_POINTER_CAST(FkSetSizeProto, p);
-    viewSize = prt->value;
     return FK_OK;
 }
 

@@ -7,11 +7,11 @@
 
 #include "FkRenderRequestPrt.h"
 
-FkRenderRequestPrt::FkRenderRequestPrt() : FkProtocol() {
+FkRenderRequestPrt::FkRenderRequestPrt() : FkWinSizeProto() {
     FK_MARK_SUPER
 }
 
-FkRenderRequestPrt::FkRenderRequestPrt(const FkRenderRequestPrt &o) : FkProtocol(o), req(o.req) {
+FkRenderRequestPrt::FkRenderRequestPrt(const FkRenderRequestPrt &o) : FkWinSizeProto(o), req(o.req) {
     FK_MARK_SUPER
 }
 

@@ -8,11 +8,11 @@
 #ifndef FK_GRAPHIC_FKCALCTRANSPROTO_H
 #define FK_GRAPHIC_FKCALCTRANSPROTO_H
 
-#include "FkProtocol.h"
+#include "FkWinSizeProto.h"
 #include "FkIntVec2.h"
 #include "FkGraphicLayer.h"
 
-FK_CLASS FkMeasureTransProto FK_EXTEND FkProtocol {
+FK_CLASS FkMeasureTransProto FK_EXTEND FkWinSizeProto {
 public:
     FkMeasureTransProto();
 
