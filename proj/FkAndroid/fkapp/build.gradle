@@ -16,19 +16,39 @@ android {
         flavorDimensions "version"
     }
 
-    signingConfigs {
-        debug {
-            storeFile file('../lmyooyo.jks')
-            keyAlias rootProject.keyAlias
-            keyPassword rootProject.keyPassword
-            storePassword rootProject.storePassword
-        }
+    File signingFile = file('../lmyooyo.jks')
+    if (signingFile.exists()) {
+        signingConfigs {
+            debug {
+                storeFile signingFile
+                keyAlias rootProject.keyAlias
+                keyPassword rootProject.keyPassword
+                storePassword rootProject.storePassword
+            }
 
-        release {
-            storeFile file('../lmyooyo.jks')
-            keyAlias rootProject.keyAlias
-            keyPassword rootProject.keyPassword
-            storePassword rootProject.storePassword
+            release {
+                storeFile signingFile
+                keyAlias rootProject.keyAlias
+                keyPassword rootProject.keyPassword
+                storePassword rootProject.storePassword
+            }
+        }
+    } else {
+        signingFile = file("../alimin.jks")
+        signingConfigs {
+            debug {
+                storeFile signingFile
+                keyAlias "debug"
+                keyPassword "123456"
+                storePassword "123456"
+            }
+
+            release {
+                storeFile signingFile
+                keyAlias "debug"
+                keyPassword "123456"
+                storePassword "123456"
+            }
         }
     }
 
