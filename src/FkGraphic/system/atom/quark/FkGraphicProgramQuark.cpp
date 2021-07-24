@@ -62,11 +62,13 @@ FkResult FkGraphicProgramQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) 
     _fillValue(comp->program);
     proto->req->addComponent(comp);
 
+    auto canvas = proto->req->getCanvas();
+    FkAssert(nullptr != canvas, FK_FAIL);
     FkProgramDescription descMosaic(FkProgramDescription::kType::CANVAS_MOSAIC);
-    auto canvasComp = std::make_shared<FkGraphicProgramComponent>();
-    canvasComp->program = allocator->alloc(descMosaic);
-    _fillValue(canvasComp->program);
-    proto->req->canvas->addComponent(canvasComp);
+    auto canvasProgramComp = std::make_shared<FkGraphicProgramComponent>();
+    canvasProgramComp->program = allocator->alloc(descMosaic);
+    _fillValue(canvasProgramComp->program);
+    canvas->addComponent(canvasProgramComp);
     return FK_OK;
 }
 

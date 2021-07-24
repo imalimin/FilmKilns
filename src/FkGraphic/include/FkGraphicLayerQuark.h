@@ -49,7 +49,8 @@ private:
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
 private:
-    FkID mCurID = 0;
+    /// 0 is for canvas.
+    FkID mCurID;
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
     std::mutex mtx;
 };

@@ -7,6 +7,18 @@
 
 #include "FkColor.h"
 
+FkColor &FkColor::from(int32_t color) {
+    static FkColor *c;
+    if (c == nullptr) {
+        c = new FkColor();
+    }
+    c->red = color & 0x00FF0000;
+    c->greed = color & 0x0000FF00;
+    c->blue = color & 0x000000FF;
+    c->alpha = color & 0xFF000000;
+    return *c;
+}
+
 FkColor &FkColor::white() {
     static FkColor *color;
     if (color == nullptr) {

@@ -117,6 +117,8 @@ FkResult FkLayerRenderQuark::_drawLayer(std::shared_ptr<FkGraphicLayer> layer,
 
 FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    auto canvas = prt->req->getCanvas();
+    FkAssert(nullptr != canvas, FK_FAIL);
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     std::shared_ptr<FkGraphicCtxComponent> context = nullptr;
     if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {
@@ -144,7 +146,7 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     }
 
-    auto canvasSize = _getCanvasSize(prt->req->canvas);
+    auto canvasSize = _getCanvasSize(canvas);
     auto render = FkGraphicRender::with(program->program)
             ->enableSwapBuffers(false)
             ->enableBlend(true)
@@ -152,17 +154,18 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setViewport(0, 0, canvasSize.getWidth(), canvasSize.getHeight())
             ->setColor(FkColor::white())
             ->setFrameObject(fbo->fbo)
-            ->setTargetTexture(_getCanvasTexture(prt->req->canvas))
+            ->setTargetTexture(_getCanvasTexture(canvas))
             ->setVertexBuffer(vbo);
 
     for (auto &layer : prt->req->layers) {
-        vec.clear();
-        if (FK_OK == layer->findComponent(vec, FkClassType::type<FkColorComponent>())) {
-            vec.clear();
-            if (FK_OK != layer->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
-                auto color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
-                auto tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
-                _drawColor(fbo->fbo, tex->tex, color->color);
+        if (Fk_CANVAS_ID == layer->id) {
+            continue;
+        }
+        auto colorComp = layer->findComponent<FkColorComponent>();
+        if (nullptr != colorComp) {
+            auto texComp = layer->findComponent<FkGraphicTexComponent>();
+            if (nullptr != texComp) {
+                _drawColor(fbo->fbo, texComp->tex, colorComp->color);
             }
         }
         if (FK_OK != _drawLayer(layer, render)) {

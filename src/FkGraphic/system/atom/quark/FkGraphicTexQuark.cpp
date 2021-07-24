@@ -143,7 +143,9 @@ FkResult FkGraphicTexQuark::_onUpdateTexWithBitmap(std::shared_ptr<FkProtocol> p
 
 FkResult FkGraphicTexQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
-    _findTexture(proto->req->canvas);
+    auto canvas = proto->req->getCanvas();
+    FkAssert(nullptr != canvas, FK_FAIL);
+    _findTexture(canvas);
     for (auto &layer : proto->req->layers) {
         _findTexture(layer);
     }

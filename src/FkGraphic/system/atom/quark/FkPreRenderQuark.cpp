@@ -56,9 +56,11 @@ FkResult FkPreRenderQuark::onStop() {
 
 FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    auto canvas = proto->req->getCanvas();
+    FkAssert(nullptr != canvas, FK_FAIL);
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     vec.clear();
-    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkGraphicProgramComponent>())) {
+    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkGraphicProgramComponent>())) {
         return FK_SKIP;
     }
     auto program = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
@@ -76,13 +78,13 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto fbo = Fk_POINTER_CAST(FkGraphicFBOComponent, vec[0]);
 
     vec.clear();
-    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
+    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
         return FK_FAIL;
     }
     auto tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
 
     vec.clear();
-    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
         return FK_FAIL;
     }
     auto size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);

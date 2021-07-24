@@ -36,6 +36,7 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 
 FkResult FkGraphicCanvasQuark::onCreate() {
     canvas = std::make_shared<FkGraphicLayer>();
+    canvas->id = Fk_CANVAS_ID;
     canvas->addComponent(std::make_shared<FkTransComponent>());
     canvas->addComponent(std::make_shared<FkScaleComponent>());
     canvas->addComponent(std::make_shared<FkRotateComponent>());
@@ -79,10 +80,8 @@ FkResult FkGraphicCanvasQuark::_onUpdate(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicCanvasQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto prt = std::static_pointer_cast<FkRenderRequestPrt>(p);
-    if (nullptr == prt->req) {
-        prt->req = std::make_shared<FkRenderRequest>();
-    }
-    prt->req->canvas = std::make_shared<FkGraphicLayer>(*canvas);
+    FkAssert(nullptr != prt->req, FK_EMPTY_DATA);
+    prt->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(*canvas));
     return FK_OK;
 }
 

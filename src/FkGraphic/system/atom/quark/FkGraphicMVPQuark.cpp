@@ -48,13 +48,13 @@ FkResult FkGraphicMVPQuark::onStop() {
 
 FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    if (FK_OK != proto->req->canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
-        return FK_FAIL;
-    }
-    _calc(proto->req->canvas, proto->winSize, false);
+    auto canvas = proto->req->getCanvas();
+    FkAssert(nullptr != canvas, FK_FAIL);
+    auto sizeComp = canvas->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != sizeComp, FK_FAIL);
+    _calc(canvas, proto->winSize, false);
     for (auto &layer : proto->req->layers) {
-        _calc(layer, Fk_POINTER_CAST(FkSizeComponent, vec[0])->size, true);
+        _calc(layer, sizeComp->size, true);
     }
     return FK_OK;
 }

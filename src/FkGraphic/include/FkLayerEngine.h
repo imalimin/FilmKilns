@@ -47,6 +47,8 @@ public:
 
     FkResult postRotation(FkID layer, FkRational &rational);
 
+    FkResult drawPoint(FkID layer, FkColor color, int32_t x, int32_t y);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -80,6 +82,7 @@ private:
     static const FkID FK_MSG_POST_TRANSLATE;
     static const FkID FK_MSG_POST_SCALE;
     static const FkID FK_MSG_POST_ROTATION;
+    static const FkID FK_MSG_DRAW_POINT;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
 };

@@ -87,6 +87,12 @@ class FkImage() : FkEngine() {
         return 0
     }
 
+    /**
+     * @param layer Layer ID, ID 0 is Canvas.
+     * @param dx Delta x position of view
+     * @param dy Delta y position of view
+     * @return Result code.
+     */
     fun postTranslate(layer: Int, dx: Int, dy: Int): Int {
         if (!isNull()) {
             return nativePostTranslate(getHandle(), layer, dx, dy)
@@ -104,6 +110,19 @@ class FkImage() : FkEngine() {
     fun postRotation(layer: Int, num: Int, den: Int): Int {
         if (!isNull()) {
             return nativePostRotation(getHandle(), layer, num, den)
+        }
+        return -1
+    }
+
+    /**
+     * @param layer Layer ID, ID 0 is Canvas.
+     * @param x X position of view
+     * @param y Y position of view
+     * @return Result code.
+     */
+    fun drawPoint(layer: Int, color: Int, x: Int, y: Int): Int {
+        if (!isNull()) {
+            return nativeDrawPoint(getHandle(), layer, color, x, y)
         }
         return -1
     }
@@ -129,4 +148,5 @@ class FkImage() : FkEngine() {
     private external fun nativePostTranslate(handle: Long, layer: Int, dx: Int, dy: Int): Int
     private external fun nativePostScale(handle: Long, layer: Int, dx: Float, dy: Float): Int
     private external fun nativePostRotation(handle: Long, layer: Int, num: Int, den: Int): Int
+    private external fun nativeDrawPoint(handle: Long, layer: Int, color: Int, x: Int, y: Int): Int
 }

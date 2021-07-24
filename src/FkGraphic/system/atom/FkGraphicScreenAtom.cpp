@@ -90,9 +90,8 @@ FkResult FkGraphicScreenAtom::onStop() {
 
 FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
-    if (prt->req->layers.empty()) {
-        return FK_FAIL;
-    }
+    auto canvas = prt->req->getCanvas();
+    FkAssert(nullptr != canvas, FK_FAIL);
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     std::shared_ptr<FkGraphicCtxComponent> context = nullptr;
     if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {
@@ -115,26 +114,26 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     vec.clear();
     std::shared_ptr<FkGraphicTexComponent> tex = nullptr;
     if (FK_OK !=
-        prt->req->canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
+        canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
         return FK_FAIL;
     }
     tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
     vec.clear();
     std::shared_ptr<FkSizeComponent> size = nullptr;
-    if (FK_OK != prt->req->canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
         return FK_FAIL;
     }
     size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
     vec.clear();
     std::shared_ptr<FkMatrixComponent> mat = nullptr;
-    if (FK_OK != prt->req->canvas->findComponent(vec, FkClassType::type<FkMatrixComponent>())) {
+    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkMatrixComponent>())) {
         return FK_FAIL;
     }
     mat = Fk_POINTER_CAST(FkMatrixComponent, vec[0]);
     vec.clear();
 
     std::shared_ptr<FkColorComponent> color = nullptr;
-    if (FK_OK != prt->req->canvas->findComponent(vec, FkClassType::type<FkColorComponent>())) {
+    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkColorComponent>())) {
         color = std::make_shared<FkColorComponent>();
         color->color = FkColor::black();
     } else {

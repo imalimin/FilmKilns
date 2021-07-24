@@ -21,3 +21,11 @@ FkRenderRequest::FkRenderRequest(const FkRenderRequest &o) : FkGraphicEntity(o) 
 FkRenderRequest::~FkRenderRequest() {
     layers.clear();
 }
+
+std::shared_ptr<FkGraphicLayer> FkRenderRequest::getCanvas() {
+    auto itr = std::find_if(layers.begin(), layers.end(),
+                            [](std::shared_ptr<FkGraphicLayer> item) -> bool {
+                                return Fk_CANVAS_ID == item->id;
+                            });
+    return *itr;
+}

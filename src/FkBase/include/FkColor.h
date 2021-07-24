@@ -21,6 +21,8 @@ public:
         RGB565,
     };
 public:
+    static FkColor &from(int32_t color);
+
     static FkColor &white();
 
     static FkColor &black();

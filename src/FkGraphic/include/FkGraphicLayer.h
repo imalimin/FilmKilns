@@ -25,6 +25,8 @@ public:
 
     virtual ~FkGraphicLayer();
 
+    bool operator==(const FkGraphicLayer &obj);
+
 public:
     FkID id = FK_ID_NONE;
 };

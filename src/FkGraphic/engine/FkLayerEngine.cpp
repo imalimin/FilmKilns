@@ -34,6 +34,7 @@ const FkID FkLayerEngine::FK_MSG_SET_CANVAS_SIZE = FK_KID('F', 'K', 'E', 0x14);
 const FkID FkLayerEngine::FK_MSG_POST_TRANSLATE = FK_KID('F', 'K', 'E', 0x15);
 const FkID FkLayerEngine::FK_MSG_POST_SCALE = FK_KID('F', 'K', 'E', 0x16);
 const FkID FkLayerEngine::FK_MSG_POST_ROTATION = FK_KID('F', 'K', 'E', 0x17);
+const FkID FkLayerEngine::FK_MSG_DRAW_POINT = FK_KID('F', 'K', 'E', 0x18);
 
 FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_MARK_SUPER
@@ -186,6 +187,12 @@ FkResult FkLayerEngine::postRotation(FkID layer, FkRational &rational) {
     msg->arg1 = layer;
     msg->sp = std::make_shared<FkRational>(rational);
 //    msg->flags = FkMessage::FLAG_UNIQUE;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t y) {
+    auto msg = FkMessage::obtain(FK_MSG_DRAW_POINT);
+    msg->arg1 = layer;
     return sendMessage(msg);
 }
 

@@ -21,7 +21,7 @@
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
 
-FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
+FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), mCurID(Fk_CANVAS_ID) {
     FK_MARK_SUPER
 }
 

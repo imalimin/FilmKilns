@@ -43,3 +43,7 @@ FkGraphicLayer::FkGraphicLayer(const FkGraphicLayer &o) : FkGraphicEntity(o), id
 FkGraphicLayer::~FkGraphicLayer() {
 
 }
+
+bool FkGraphicLayer::operator==(const FkGraphicLayer &obj) {
+    return this->id == obj.id;
+}
