@@ -1,0 +1,41 @@
+# Android
+# Build your Android project with Gradle.
+# Add steps that test, sign, and distribute the APK, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/android
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - develop
+    - fk/dev
+    exclude:
+    - LICENSE
+    - README.md
+    - .gitattributes
+    - .gitignore
+
+pr:
+  branches:
+    include:
+    - master
+    - develop
+    - fk/dev
+    exclude:
+    - LICENSE
+    - README.md
+    - .gitattributes
+    - .gitignore
+
+pool:
+  vmImage: 'macos-latest'
+
+steps:
+- task: Gradle@2
+  inputs:
+    workingDirectory: 'proj/FkAndroid/'
+    gradleWrapperFile: 'proj/FkAndroid/gradlew'
+    gradleOptions: '-Xmx3072m'
+    publishJUnitResults: false
+    testResultsFiles: '**/TEST-*.xml'
+    tasks: 'assembleDebug'
