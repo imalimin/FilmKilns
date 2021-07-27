@@ -48,6 +48,8 @@ private:
 
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
+
 private:
     /// 0 is for canvas.
     FkID mCurID;

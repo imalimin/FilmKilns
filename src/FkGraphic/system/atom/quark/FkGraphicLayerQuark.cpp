@@ -20,6 +20,8 @@
 #include "FkLayerPostRotateProto.h"
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
+#include "FkDrawPointProto.h"
+#include "FkPointComponent.h"
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), mCurID(Fk_CANVAS_ID) {
     FK_MARK_SUPER
@@ -37,6 +39,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicLayerQuark::_onPostScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onMeasureTrans);
+    FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicLayerQuark::_onDrawPoint);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -158,5 +161,17 @@ FkResult FkGraphicLayerQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layerId);
     FkAssert(layers.end() != itr, FK_FAIL);
     proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkDrawPointProto, p);
+    auto itr = layers.find(proto->layer);
+    if (layers.end() != itr) {
+        auto comp = std::make_shared<FkPointComponent>();
+        comp->value = proto->value;
+        comp->color = proto->color;
+        itr->second->addComponent(comp);
+    }
     return FK_OK;
 }

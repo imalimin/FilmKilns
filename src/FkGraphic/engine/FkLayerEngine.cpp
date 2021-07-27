@@ -25,6 +25,7 @@
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
 #include "FkMeasureTransProto.h"
+#include "FkDrawPointProto.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
@@ -46,6 +47,7 @@ FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
     FK_REG_MSG(FK_MSG_POST_TRANSLATE, FkLayerEngine::_postTranslate);
     FK_REG_MSG(FK_MSG_POST_SCALE, FkLayerEngine::_postScale);
     FK_REG_MSG(FK_MSG_POST_ROTATION, FkLayerEngine::_postRotation);
+    FK_REG_MSG(FK_MSG_DRAW_POINT, FkLayerEngine::_drawPoint);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -191,8 +193,13 @@ FkResult FkLayerEngine::postRotation(FkID layer, FkRational &rational) {
 }
 
 FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t y) {
+    auto comp = std::make_shared<FkDrawPointProto>();
+    comp->layer = layer;
+    comp->color = color;
+    comp->value.x = x;
+    comp->value.y = y;
     auto msg = FkMessage::obtain(FK_MSG_DRAW_POINT);
-    msg->arg1 = layer;
+    msg->sp = comp;
     return sendMessage(msg);
 }
 
@@ -286,5 +293,10 @@ FkResult FkLayerEngine::_postRotation(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkLayerPostRotateProto>();
     proto->layer = msg->arg1;
     proto->value = *Fk_POINTER_CAST(FkRational, msg->sp);
+    return client->quickSend(proto, molecule);
+}
+
+FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
+    auto proto = Fk_POINTER_CAST(FkDrawPointProto, msg->sp);
     return client->quickSend(proto, molecule);
 }

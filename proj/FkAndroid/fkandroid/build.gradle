@@ -99,31 +99,12 @@ task generateCPPSource(type: Exec) {
         def rootDir = new File(getRootDir().parentFile.parentFile, "src")
         def templateDir = new File(getProjectDir(), "templates")
         VelocityEngine engine = new VelocityEngine()
-        engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath());
+        engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath())
         engine.init()
         generateCPPAndHeader(engine, rootDir, m, pkt, c)
         println("Generate done.")
     } else {
         println("Generate nothing.")
-    }
-}
-
-task generateCPPSources {
-    def rootDir = new File(getRootDir().parentFile.parentFile, "src")
-    def templateDir = new File(getProjectDir(), "templates")
-    def jsonFile = file('cpp_sources.json')
-    def entities = new JsonSlurper().parseText(jsonFile.text)
-
-    VelocityEngine engine = new VelocityEngine()
-    engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath());
-    engine.init()
-
-    for (item in entities) {
-        for (pkt in item.packages) {
-            for (src in pkt.src) {
-                generateCPPAndHeader(engine, rootDir, item.module, pkt.package, src)
-            }
-        }
     }
 }
 

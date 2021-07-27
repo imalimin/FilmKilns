@@ -42,6 +42,8 @@ private:
 
     FkResult _onWithCanvasSize(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
+
 private:
     std::shared_ptr<FkGraphicLayer> canvas;
 };
