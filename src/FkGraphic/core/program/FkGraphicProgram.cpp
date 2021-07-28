@@ -8,6 +8,7 @@
 #include "FkGraphicProgram.h"
 #include "FkGraphicMatProgram.h"
 #include "FkCanvasMosaicProgram.h"
+#include "FkGraphicPointProgram.h"
 #include "FkTexValue.h"
 #include "FkVertexValue.h"
 #include "FkGLDefinition.h"
@@ -201,6 +202,9 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
             o = new FkCanvasMosaicProgram(desc);
             break;
         }
+        case FkProgramDescription::kType::POINT:
+            o = new FkGraphicPointProgram(desc);
+            break;
     }
     if (o) {
         o->create();

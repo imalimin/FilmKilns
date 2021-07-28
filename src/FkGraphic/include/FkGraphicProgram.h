@@ -20,6 +20,8 @@ public:
         NONE = 0,
         MATRIX,
         CANVAS_MOSAIC,
+        POINT,
+        LINE,
     };
 public:
     FkProgramDescription();
