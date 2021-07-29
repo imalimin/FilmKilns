@@ -6,6 +6,8 @@
 */
 
 #include "FkGraphicPointProgram.h"
+#include "FkGLDefinition.h"
+#include "FkPositionValue.h"
 
 FkGraphicPointProgram::FkGraphicPointProgram(const FkProgramDescription &desc) : FkGraphicProgram(
         desc) {
@@ -17,14 +19,37 @@ FkGraphicPointProgram::~FkGraphicPointProgram() {
 }
 
 FkResult FkGraphicPointProgram::create() {
-    return FkGraphicProgram::create();
+    auto ret = FkGraphicProgram::create();
+    if (FK_OK == ret) {
+        aPosLoc = getAttribLocation("aPosition");
+        FkAssert(aPosLoc >= 0, FK_FAIL);
+        uSizeLoc = getAttribLocation("size");
+        FkAssert(uSizeLoc >= 0, FK_FAIL);
+    }
+    return ret;
 }
 
 void FkGraphicPointProgram::clear() {
+    for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
+        auto it = *itr;
+        if (FK_INSTANCE_OF(it, FkPositionValue)) {
+            glDisableVertexAttribArray(aPosLoc);
+        }
+    }
     FkGraphicProgram::clear();
 }
 
 FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkProgramValue> value) {
+    if (nullptr == value) {
+        return FK_FAIL;
+    }
+    if (FK_INSTANCE_OF(value, FkPositionValue)) {
+        auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
+        FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
+        FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
+                                          pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
+                                          reinterpret_cast<const void *>(pValue->offset)));
+    }
     return FkGraphicProgram::addValue(value);
 }
 
@@ -44,11 +69,9 @@ std::string FkGraphicPointProgram::getVertex() {
 std::string FkGraphicPointProgram::getFragment() {
     std::string shader(R"(
         precision mediump float;
-        uniform sampler2D uTexture;
-        uniform vec4 color;
         void main() {
-                vec4 c = texture2D(uTexture, vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y));
-                gl_FragColor = color * c;
+            vec4 color = vec4(1.0 - gl_PointCoord.x, 1.0 - gl_PointCoord.y, 0.0, 1.0);
+            gl_FragColor = color;
         })");
     return shader;
 }

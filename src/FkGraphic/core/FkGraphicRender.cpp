@@ -152,3 +152,8 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::enableBlend(bool enable) {
     this->_enableBlend = enable;
     return shared_from_this();
 }
+
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setPointColor(FkColor _color) {
+    this->pointColor = std::make_shared<FkColor>(_color);
+    return shared_from_this();
+}

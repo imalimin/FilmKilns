@@ -28,6 +28,10 @@ public:
     virtual std::string getVertex() override;
 
     virtual std::string getFragment() override;
+
+private:
+    int32_t aPosLoc = -1;
+    int32_t uSizeLoc = -1;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICPOINTPROGRAM_H

@@ -19,6 +19,7 @@
 #include "FkMatrix.h"
 #include "FkGLDefinition.h"
 #include "FkGraphicFrameObject.h"
+#include "FkColorValue.h"
 
 FK_CLASS FkGraphicRender FK_EXTEND FkObject, public enable_shared_from_this<FkGraphicRender> {
 public:
@@ -56,6 +57,8 @@ public:
 
     std::shared_ptr<FkGraphicRender> enableBlend(bool enable);
 
+    std::shared_ptr<FkGraphicRender> setPointColor(FkColor _color);
+
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;
     std::shared_ptr<FkColor> color = nullptr;
@@ -70,6 +73,7 @@ private:
     std::shared_ptr<FkMatrixValue> mat;
     std::shared_ptr<FkGraphicFrameObject> fbo = nullptr;
     std::shared_ptr<FkGraphicTexture> targetTex = nullptr;
+    std::shared_ptr<FkColorValue> pointColor = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDER_H
