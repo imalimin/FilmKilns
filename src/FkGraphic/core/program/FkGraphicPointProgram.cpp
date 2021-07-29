@@ -23,7 +23,7 @@ FkResult FkGraphicPointProgram::create() {
     if (FK_OK == ret) {
         aPosLoc = getAttribLocation("aPosition");
         FkAssert(aPosLoc >= 0, FK_FAIL);
-        uSizeLoc = getAttribLocation("size");
+        uSizeLoc = getUniformLocation("size");
         FkAssert(uSizeLoc >= 0, FK_FAIL);
     }
     return ret;

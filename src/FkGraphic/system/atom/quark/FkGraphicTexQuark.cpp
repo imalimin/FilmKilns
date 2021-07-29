@@ -147,6 +147,9 @@ FkResult FkGraphicTexQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FkAssert(nullptr != canvas, FK_FAIL);
     _findTexture(canvas);
     for (auto &layer : proto->req->layers) {
+        if (Fk_CANVAS_ID == layer->id) {
+            continue;
+        }
         _findTexture(layer);
     }
     return FK_OK;

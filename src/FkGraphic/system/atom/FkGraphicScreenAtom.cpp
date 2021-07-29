@@ -88,57 +88,27 @@ FkResult FkGraphicScreenAtom::onStop() {
 }
 
 FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
-    auto canvas = prt->req->getCanvas();
+    auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    auto canvas = proto->req->getCanvas();
     FkAssert(nullptr != canvas, FK_FAIL);
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    std::shared_ptr<FkGraphicCtxComponent> context = nullptr;
-    if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {
-        return FK_FAIL;
-    }
-    context = Fk_POINTER_CAST(FkGraphicCtxComponent, vec[0]);
-    vec.clear();
-    std::shared_ptr<FkGraphicFBOComponent> fbo = nullptr;
-    if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicFBOComponent>())) {
-        return FK_FAIL;
-    }
-    fbo = Fk_POINTER_CAST(FkGraphicFBOComponent, vec[0]);
-    vec.clear();
-    std::shared_ptr<FkGraphicProgramComponent> programCom = nullptr;
-    if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicProgramComponent>())) {
-        return FK_FAIL;
-    }
-    programCom = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
+    auto context = proto->req->findComponent<FkGraphicCtxComponent>();
+    FkAssert(nullptr != context, FK_FAIL);
+    auto fbo = proto->req->findComponent<FkGraphicFBOComponent>();
+    FkAssert(nullptr != fbo, FK_FAIL);
+    auto programCom = proto->req->findComponent<FkGraphicProgramComponent>();
+    FkAssert(nullptr != programCom, FK_FAIL);
     auto program = programCom->program;
-    vec.clear();
-    std::shared_ptr<FkGraphicTexComponent> tex = nullptr;
-    if (FK_OK !=
-        canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
-        return FK_FAIL;
-    }
-    tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
-    vec.clear();
-    std::shared_ptr<FkSizeComponent> size = nullptr;
-    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
-        return FK_FAIL;
-    }
-    size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
-    vec.clear();
-    std::shared_ptr<FkMatrixComponent> mat = nullptr;
-    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkMatrixComponent>())) {
-        return FK_FAIL;
-    }
-    mat = Fk_POINTER_CAST(FkMatrixComponent, vec[0]);
-    vec.clear();
-
-    std::shared_ptr<FkColorComponent> color = nullptr;
-    if (FK_OK != canvas->findComponent(vec, FkClassType::type<FkColorComponent>())) {
+    auto tex = proto->req->findComponent<FkGraphicTexComponent>();
+    FkAssert(nullptr != tex, FK_FAIL);
+    auto size = proto->req->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != size, FK_FAIL);
+    auto mat = proto->req->findComponent<FkMatrixComponent>();
+    FkAssert(nullptr != mat, FK_FAIL);
+    auto color = proto->req->findComponent<FkColorComponent>();
+    if (nullptr == color) {
         color = std::make_shared<FkColorComponent>();
         color->color = FkColor::black();
-    } else {
-        color = Fk_POINTER_CAST(FkColorComponent, vec[0]);
     }
-    vec.clear();
 
     if (GL_NONE == vbo) {
         glGenBuffers(1, &vbo);

@@ -69,6 +69,12 @@ FkResult FkGraphicProgramQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) 
     canvasProgramComp->program = allocator->alloc(descMosaic);
     _fillValue(canvasProgramComp->program);
     canvas->addComponent(canvasProgramComp);
+
+    FkProgramDescription descPoint(FkProgramDescription::kType::POINT);
+    auto pointProgramComp = std::make_shared<FkGraphicProgramComponent>();
+    pointProgramComp->program = allocator->alloc(descPoint);
+    _fillValue(pointProgramComp->program);
+    canvas->addComponent(pointProgramComp);
     return FK_OK;
 }
 
