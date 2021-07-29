@@ -27,7 +27,7 @@ public:
 
     virtual void clear() override;
 
-    virtual FkResult addValue(std::shared_ptr<FkProgramValue> value) override;
+    virtual FkResult addValue(std::shared_ptr<FkGraphicComponent> value) override;
 
 private:
     int32_t uTextureLoc = -1;

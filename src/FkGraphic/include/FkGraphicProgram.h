@@ -11,7 +11,7 @@
 #include "FkSource.h"
 #include "FkDefinition.h"
 #include "FkFloatVec2.h"
-#include "FkProgramValue.h"
+#include "FkGraphicComponent.h"
 #include <vector>
 
 FK_CLASS FkProgramDescription FK_EXTEND FkObject {
@@ -60,7 +60,7 @@ public:
 
     virtual void clear();
 
-    virtual FkResult addValue(std::shared_ptr<FkProgramValue> value);
+    virtual FkResult addValue(std::shared_ptr<FkGraphicComponent> value);
 
 protected:
     int32_t getAttribLocation(string name);
@@ -87,7 +87,7 @@ private:
 public:
     FkProgramDescription desc;
     uint32_t program = 0;
-    std::vector<std::shared_ptr<FkProgramValue>> values;
+    std::vector<std::shared_ptr<FkGraphicComponent>> values;
 };
 
 FK_CLASS FkGraphicProgramAllocator FK_EXTEND FkSourceAllocator<

@@ -21,6 +21,7 @@ public:
 
 public:
     std::shared_ptr<FkGraphicTexture> tex = nullptr;
+    int32_t index = 0;
 };
 
 

@@ -6,10 +6,10 @@
 */
 
 #include "FkGraphicMatProgram.h"
-#include "FkTexValue.h"
-#include "FkCoordinateValue.h"
-#include "FkPositionValue.h"
-#include "FkMatrixValue.h"
+#include "FkGraphicTexComponent.h"
+#include "FkCoordinateComponent.h"
+#include "FkPositionComponent.h"
+#include "FkMatrixComponent.h"
 
 FkGraphicMatProgram::FkGraphicMatProgram(const FkProgramDescription &desc)
         : FkGraphicProgram(desc) {
@@ -39,21 +39,21 @@ FkResult FkGraphicMatProgram::create() {
 void FkGraphicMatProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkPositionValue)) {
+        if (FK_INSTANCE_OF(it, FkPositionComponent)) {
             glDisableVertexAttribArray(aPosLoc);
-        } else if (FK_INSTANCE_OF(it, FkCoordinateValue)) {
+        } else if (FK_INSTANCE_OF(it, FkCoordinateComponent)) {
             glDisableVertexAttribArray(aCoordinateLoc);
         }
     }
     FkGraphicProgram::clear();
 }
 
-FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkProgramValue> value) {
+FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkGraphicComponent> value) {
     if (nullptr == value) {
         return FK_FAIL;
     }
-    if (FK_INSTANCE_OF(value, FkTexValue)) {
-        auto pValue = Fk_POINTER_CAST(FkTexValue, value);
+    if (FK_INSTANCE_OF(value, FkGraphicTexComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkGraphicTexComponent, value);
         if (GL_NONE == pValue->tex->tex) {
             glBindTexture(pValue->tex->desc.target, GL_NONE);
         } else {
@@ -61,22 +61,22 @@ FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkProgramValue> value) {
             glBindTexture(pValue->tex->desc.target, pValue->tex->tex);
             setUniform1i(uTextureLoc, pValue->index);
         }
-    } else if (FK_INSTANCE_OF(value, FkPositionValue)) {
-        auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
+    } else if (FK_INSTANCE_OF(value, FkPositionComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkPositionComponent, value);
         glEnableVertexAttribArray(aPosLoc);
         //xy
         glVertexAttribPointer(aPosLoc, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                               reinterpret_cast<const void *>(pValue->offset));
-    } else if (FK_INSTANCE_OF(value, FkCoordinateValue)) {
-        auto pValue = Fk_POINTER_CAST(FkCoordinateValue, value);
+    } else if (FK_INSTANCE_OF(value, FkCoordinateComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkCoordinateComponent, value);
         glEnableVertexAttribArray(aCoordinateLoc);
         //st
         glVertexAttribPointer(aCoordinateLoc, pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                               reinterpret_cast<const void *>(pValue->offset));
-    } else if (FK_INSTANCE_OF(value, FkMatrixValue)) {
-        auto pValue = Fk_POINTER_CAST(FkMatrixValue, value);
+    } else if (FK_INSTANCE_OF(value, FkMatrixComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkMatrixComponent, value);
         glUniformMatrix4fv(uMVPMatLoc, 1, GL_FALSE,
-                           reinterpret_cast<const GLfloat *>(pValue->mat->get()));
+                           reinterpret_cast<const GLfloat *>(pValue->value->get()));
     }
     return FkGraphicProgram::addValue(value);
 }

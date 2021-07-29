@@ -7,7 +7,7 @@
 
 #include "FkGraphicPointProgram.h"
 #include "FkGLDefinition.h"
-#include "FkPositionValue.h"
+#include "FkPositionComponent.h"
 
 FkGraphicPointProgram::FkGraphicPointProgram(const FkProgramDescription &desc) : FkGraphicProgram(
         desc) {
@@ -32,19 +32,19 @@ FkResult FkGraphicPointProgram::create() {
 void FkGraphicPointProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkPositionValue)) {
+        if (FK_INSTANCE_OF(it, FkPositionComponent)) {
             glDisableVertexAttribArray(aPosLoc);
         }
     }
     FkGraphicProgram::clear();
 }
 
-FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkProgramValue> value) {
+FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkGraphicComponent> value) {
     if (nullptr == value) {
         return FK_FAIL;
     }
-    if (FK_INSTANCE_OF(value, FkPositionValue)) {
-        auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
+    if (FK_INSTANCE_OF(value, FkPositionComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkPositionComponent, value);
         FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
         FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
                                           pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,

@@ -12,7 +12,7 @@ FkGraphicTexComponent::FkGraphicTexComponent() : FkGraphicComponent() {
 }
 
 FkGraphicTexComponent::FkGraphicTexComponent(const FkGraphicTexComponent &o)
-        : FkGraphicComponent(o), tex(o.tex) {
+        : FkGraphicComponent(o), tex(o.tex), index(o.index) {
     FK_MARK_SUPER
 }
 

@@ -11,7 +11,8 @@ FkMatrixComponent::FkMatrixComponent() : FkGraphicComponent() {
     FK_MARK_SUPER
 }
 
-FkMatrixComponent::FkMatrixComponent(const FkMatrixComponent &o) : FkGraphicComponent(o) {
+FkMatrixComponent::FkMatrixComponent(const FkMatrixComponent &o)
+        : FkGraphicComponent(o), value(o.value) {
     FK_MARK_SUPER
 }
 

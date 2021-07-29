@@ -6,8 +6,8 @@
 */
 
 #include "FkCanvasMosaicProgram.h"
-#include "FkPositionValue.h"
-#include "FkCoordinateValue.h"
+#include "FkPositionComponent.h"
+#include "FkCoordinateComponent.h"
 
 FkCanvasMosaicProgram::FkCanvasMosaicProgram(const FkProgramDescription &desc) : FkGraphicProgram(desc) {
     FK_MARK_SUPER
@@ -31,28 +31,28 @@ FkResult FkCanvasMosaicProgram::create() {
 void FkCanvasMosaicProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkPositionValue)) {
+        if (FK_INSTANCE_OF(it, FkPositionComponent)) {
             glDisableVertexAttribArray(aPosLoc);
-        } else if (FK_INSTANCE_OF(it, FkCoordinateValue)) {
+        } else if (FK_INSTANCE_OF(it, FkCoordinateComponent)) {
             glDisableVertexAttribArray(aCoordinateLoc);
         }
     }
     FkGraphicProgram::clear();
 }
 
-FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkProgramValue> value) {
+FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkGraphicComponent> value) {
     if (nullptr == value) {
         return FK_FAIL;
     }
-    if (FK_INSTANCE_OF(value, FkPositionValue)) {
-        auto pValue = Fk_POINTER_CAST(FkPositionValue, value);
+    if (FK_INSTANCE_OF(value, FkPositionComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkPositionComponent, value);
         FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
         //xy
         FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
                                           pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                                           reinterpret_cast<const void *>(pValue->offset)));
-    } else if (FK_INSTANCE_OF(value, FkCoordinateValue)) {
-        auto pValue = Fk_POINTER_CAST(FkCoordinateValue, value);
+    } else if (FK_INSTANCE_OF(value, FkCoordinateComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkCoordinateComponent, value);
         FK_GL_CHECK(glEnableVertexAttribArray(aCoordinateLoc));
         //st
         FK_GL_CHECK(glVertexAttribPointer(aCoordinateLoc,

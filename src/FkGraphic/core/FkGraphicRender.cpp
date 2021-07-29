@@ -104,7 +104,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setVertexBuffer(uint32_t _vbo)
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setSrcTexture(
         int index, std::shared_ptr<FkGraphicTexture> tex) {
-    srcTex = std::make_shared<FkTexValue>();
+    srcTex = std::make_shared<FkGraphicTexComponent>();
     srcTex->index = index;
     srcTex->tex = tex;
     return shared_from_this();
@@ -112,7 +112,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setSrcTexture(
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setPosition(
         size_t countVertex, size_t countPerVertex, size_t offset, void *data) {
-    position = std::make_shared<FkPositionValue>();
+    position = std::make_shared<FkPositionComponent>();
     position->countVertex = countVertex;
     position->countPerVertex = countPerVertex;
     position->offset = offset;
@@ -122,7 +122,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setPosition(
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
         size_t countVertex, size_t countPerVertex, size_t offset, void *data) {
-    coordinate = std::make_shared<FkCoordinateValue>();
+    coordinate = std::make_shared<FkCoordinateComponent>();
     coordinate->countVertex = countVertex;
     coordinate->countPerVertex = countPerVertex;
     coordinate->offset = offset;
@@ -131,8 +131,8 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(std::shared_ptr<FkMatrix> _mat) {
-    mat = std::make_shared<FkMatrixValue>();
-    mat->mat = _mat;
+    mat = std::make_shared<FkMatrixComponent>();
+    mat->value = _mat;
     return shared_from_this();
 }
 
@@ -154,6 +154,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::enableBlend(bool enable) {
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setPointColor(FkColor _color) {
-    this->pointColor = std::make_shared<FkColor>(_color);
+    this->pointColor = std::make_shared<FkColorComponent>();
+    this->pointColor->color = _color;
     return shared_from_this();
 }
