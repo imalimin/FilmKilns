@@ -11,13 +11,13 @@
 #include "FkBufferComponent.h"
 #include "FkGraphicTexture.h"
 
-FK_CLASS FkTexComponent FK_EXTEND FkBufferComponent {
+FK_CLASS FkTexIDComponent FK_EXTEND FkBufferComponent {
 public:
-    FkTexComponent();
+    FkTexIDComponent();
 
-    FkTexComponent(const FkTexComponent &o);
+    FkTexIDComponent(const FkTexIDComponent &o);
 
-    virtual ~FkTexComponent();
+    virtual ~FkTexIDComponent();
 
 public:
     FkID id = FK_ID_NONE;

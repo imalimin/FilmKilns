@@ -10,7 +10,7 @@
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkColorComponent.h"
 #include "FkSizeComponent.h"
-#include "FkTexComponent.h"
+#include "FkTexIDComponent.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
 #include "FkRenderRequestPrt.h"
@@ -109,7 +109,7 @@ FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size) {
 
     auto sizeComp = std::make_shared<FkSizeComponent>();
     sizeComp->size = size;
-    auto texComp = std::make_shared<FkTexComponent>();
+    auto texComp = std::make_shared<FkTexIDComponent>();
     texComp->id = texProto->id;
     auto layer = std::make_shared<FkGraphicLayer>();
     layer->addComponent(sizeComp);
@@ -237,7 +237,7 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
         client->quickSend<FkGraphicTexDelPtl>(delPrt, molecule);
         return ret;
     }
-    auto com = std::make_shared<FkTexComponent>();
+    auto com = std::make_shared<FkTexIDComponent>();
     com->id = texProto->id;
 
     auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();

@@ -10,7 +10,7 @@
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkColorComponent.h"
 #include "FkSizeComponent.h"
-#include "FkTexComponent.h"
+#include "FkTexIDComponent.h"
 #include "FkRenderRequestPrt.h"
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
@@ -100,9 +100,9 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             }
         }
     }
-    auto texComp = proto->layer->findComponent<FkTexComponent>();
-    if (nullptr != texComp) {
-        itr->second->addComponent(texComp);
+    auto texIDComp = proto->layer->findComponent<FkTexIDComponent>();
+    if (nullptr != texIDComp) {
+        itr->second->addComponent(texIDComp);
     }
     return FK_OK;
 }

@@ -108,7 +108,7 @@ FkResult FkLayerRenderQuark::_drawLayer(std::shared_ptr<FkGraphicLayer> layer,
             1.0f, 1.0f//RIGHT,TOP
     };
     render->setSrcTexture(0, tex->tex)
-            ->setMatrix(mat->value)
+            ->setMatrix(mat)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
             ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->render();

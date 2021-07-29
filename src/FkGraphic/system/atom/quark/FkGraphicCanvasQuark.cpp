@@ -9,7 +9,7 @@
 #include "FkRenderRequestPrt.h"
 #include "FkGraphicUpdateCanvasProto.h"
 #include "FkSizeComponent.h"
-#include "FkTexComponent.h"
+#include "FkTexIDComponent.h"
 #include "FkQuerySizeProto.h"
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
@@ -74,9 +74,9 @@ FkResult FkGraphicCanvasQuark::_onUpdate(std::shared_ptr<FkProtocol> p) {
             scaleComp->value.z = 1.0f;
         }
     }
-    auto tesComp = proto->layer->findComponent<FkTexComponent>();
-    if (nullptr != tesComp) {
-        canvas->addComponent(tesComp);
+    auto texIDComp = proto->layer->findComponent<FkTexIDComponent>();
+    if (nullptr != texIDComp) {
+        canvas->addComponent(texIDComp);
     }
     return FK_OK;
 }

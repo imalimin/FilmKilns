@@ -7,7 +7,7 @@
 
 #include "FkGraphicTexQuark.h"
 #include "FkGraphicNewTexPtl.h"
-#include "FkTexComponent.h"
+#include "FkTexIDComponent.h"
 #include "FkGraphicTexComponent.h"
 #include "FkRenderRequestPrt.h"
 #include "FkGraphicUpdateTexPrt.h"
@@ -59,11 +59,11 @@ FkResult FkGraphicTexQuark::onStop() {
 
 FkResult FkGraphicTexQuark::_findTexture(std::shared_ptr<FkGraphicLayer> layer) {
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    std::shared_ptr<FkTexComponent> tex = nullptr;
-    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkTexComponent>())) {
+    std::shared_ptr<FkTexIDComponent> tex = nullptr;
+    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkTexIDComponent>())) {
         return FK_FAIL;
     }
-    tex = Fk_POINTER_CAST(FkTexComponent, vec[0]);
+    tex = Fk_POINTER_CAST(FkTexIDComponent, vec[0]);
     auto itr = sMap.find(tex->id);
     if (itr != sMap.end()) {
         auto comp = std::make_shared<FkGraphicTexComponent>();

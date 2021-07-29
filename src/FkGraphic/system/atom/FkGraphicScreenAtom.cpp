@@ -160,7 +160,7 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setColor(color->color)
             ->setVertexBuffer(vbo)
             ->setSrcTexture(0, tex->tex)
-            ->setMatrix(mat->value)
+            ->setMatrix(mat)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
             ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
             ->render();

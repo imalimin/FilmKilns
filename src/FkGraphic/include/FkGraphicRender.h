@@ -49,7 +49,7 @@ public:
 
     std::shared_ptr<FkGraphicRender> setCoordinate(size_t countVertex, size_t countPerVertex, size_t offset, void *data);
 
-    std::shared_ptr<FkGraphicRender> setMatrix(std::shared_ptr<FkMatrix> _mat);
+    std::shared_ptr<FkGraphicRender> setMatrix(std::shared_ptr<FkMatrixComponent> _comp);
 
     std::shared_ptr<FkGraphicRender> setFrameObject(std::shared_ptr<FkGraphicFrameObject> _fbo);
 

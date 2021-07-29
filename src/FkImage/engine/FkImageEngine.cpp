@@ -12,7 +12,7 @@
 #include "FkUpdateTexWithBmpPrt.h"
 #include "FkDefinition.h"
 #include "FkSizeComponent.h"
-#include "FkTexComponent.h"
+#include "FkTexIDComponent.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include <zconf.h>
 
@@ -76,7 +76,7 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     updatePrt->bmp = bmp;
     FkAssert(FK_OK == getClient()->quickSend(updatePrt, getMolecule()), FK_FAIL);
 
-    auto com = std::make_shared<FkTexComponent>();
+    auto com = std::make_shared<FkTexIDComponent>();
     com->id = texPrt->id;
     auto sizeCom = std::make_shared<FkSizeComponent>();
     sizeCom->size.set(updatePrt->bmp->getWidth(), updatePrt->bmp->getHeight());

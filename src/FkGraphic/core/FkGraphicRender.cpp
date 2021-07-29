@@ -130,9 +130,8 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
     return shared_from_this();
 }
 
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(std::shared_ptr<FkMatrix> _mat) {
-    mat = std::make_shared<FkMatrixComponent>();
-    mat->value = _mat;
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setMatrix(std::shared_ptr<FkMatrixComponent> _comp) {
+    mat = _comp;
     return shared_from_this();
 }
 

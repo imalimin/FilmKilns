@@ -5,16 +5,16 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkTexComponent.h"
+#include "FkTexIDComponent.h"
 
-FkTexComponent::FkTexComponent() : FkBufferComponent() {
+FkTexIDComponent::FkTexIDComponent() : FkBufferComponent() {
     FK_MARK_SUPER
 }
 
-FkTexComponent::FkTexComponent(const FkTexComponent &o) : FkBufferComponent(o), id(o.id) {
+FkTexIDComponent::FkTexIDComponent(const FkTexIDComponent &o) : FkBufferComponent(o), id(o.id) {
     FK_MARK_SUPER
 }
 
-FkTexComponent::~FkTexComponent() {
+FkTexIDComponent::~FkTexIDComponent() {
     id = FK_ID_NONE;
 }
