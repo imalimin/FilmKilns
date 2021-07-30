@@ -50,6 +50,7 @@ FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkGraphicComponent> val
                                           pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                                           reinterpret_cast<const void *>(pValue->offset)));
     }
+    setUniform1f(uSizeLoc, 1.0f);
     return FkGraphicProgram::addValue(value);
 }
 

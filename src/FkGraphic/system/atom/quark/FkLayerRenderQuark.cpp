@@ -37,6 +37,7 @@ void FkLayerRenderQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 FkResult FkLayerRenderQuark::onCreate() {
+    allocator = std::make_shared<FkGraphicProgramAllocator>();
     return FkQuark::onCreate();
 }
 
@@ -172,6 +173,21 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             continue;
         }
     }
+
+    FkProgramDescription desc(FkProgramDescription::kType::POINT);
+    auto pointProgramComp = std::make_shared<FkGraphicProgramComponent>();
+    pointProgramComp->program = allocator->alloc(desc);
+
+    float pos0[]{0.5f, 0.5f};
+    FkGraphicRender::with(pointProgramComp->program)
+            ->enableSwapBuffers(false)
+            ->setContext(context->context)
+            ->setViewport(0, 0, canvasSize.getWidth(), canvasSize.getHeight())
+            ->setVertexBuffer(vbo)
+            ->setFrameObject(fbo->fbo)
+            ->setTargetTexture(_getCanvasTexture(canvas))
+            ->setPosition(1, 2, 0, pos0)
+            ->render(FkGraphicRender::kRenderMode::POINTS);
     return FK_OK;
 }
 

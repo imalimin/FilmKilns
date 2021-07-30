@@ -20,7 +20,6 @@
 #include "FkPositionComponent.h"
 #include "FkGraphicRender.h"
 #include "FkMatrixComponent.h"
-#include "ext.hpp"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  4
@@ -98,13 +97,13 @@ FkResult FkGraphicScreenAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto programCom = proto->req->findComponent<FkGraphicProgramComponent>();
     FkAssert(nullptr != programCom, FK_FAIL);
     auto program = programCom->program;
-    auto tex = proto->req->findComponent<FkGraphicTexComponent>();
+    auto tex = canvas->findComponent<FkGraphicTexComponent>();
     FkAssert(nullptr != tex, FK_FAIL);
-    auto size = proto->req->findComponent<FkSizeComponent>();
+    auto size = canvas->findComponent<FkSizeComponent>();
     FkAssert(nullptr != size, FK_FAIL);
-    auto mat = proto->req->findComponent<FkMatrixComponent>();
+    auto mat = canvas->findComponent<FkMatrixComponent>();
     FkAssert(nullptr != mat, FK_FAIL);
-    auto color = proto->req->findComponent<FkColorComponent>();
+    auto color = canvas->findComponent<FkColorComponent>();
     if (nullptr == color) {
         color = std::make_shared<FkColorComponent>();
         color->color = FkColor::black();

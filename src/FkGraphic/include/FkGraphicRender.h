@@ -23,6 +23,11 @@
 
 FK_CLASS FkGraphicRender FK_EXTEND FkObject, public enable_shared_from_this<FkGraphicRender> {
 public:
+    FK_ENUM kRenderMode {
+        TRIANGLE_STRIP = 0,
+        POINTS
+    };
+public:
     static std::shared_ptr<FkGraphicRender> with(std::shared_ptr<FkGraphicProgram> program);
 
     FkGraphicRender();
@@ -31,7 +36,7 @@ public:
 
     virtual ~FkGraphicRender();
 
-    FkResult render();
+    FkResult render(kRenderMode mode = kRenderMode::TRIANGLE_STRIP);
 
     std::shared_ptr<FkGraphicRender> enableSwapBuffers(bool enable);
 
@@ -58,6 +63,9 @@ public:
     std::shared_ptr<FkGraphicRender> enableBlend(bool enable);
 
     std::shared_ptr<FkGraphicRender> setPointColor(FkColor _color);
+
+private:
+    int _getRenderMode(kRenderMode mode);
 
 private:
     std::shared_ptr<FkGraphicContext> context = nullptr;

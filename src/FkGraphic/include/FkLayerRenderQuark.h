@@ -51,6 +51,7 @@ private:
 
 private:
     uint32_t vbo = 0;
+    std::shared_ptr<FkGraphicProgramAllocator> allocator = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKLAYERRENDERQUARK_H

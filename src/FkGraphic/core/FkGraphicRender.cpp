@@ -6,7 +6,6 @@
 */
 
 #include "FkGraphicRender.h"
-#include <utility>
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::with(std::shared_ptr<FkGraphicProgram> program) {
     auto ptr = new FkGraphicRender();
@@ -31,7 +30,7 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::enableSwapBuffers(bool enable)
     return shared_from_this();
 }
 
-FkResult FkGraphicRender::render() {
+FkResult FkGraphicRender::render(kRenderMode mode) {
     context->makeCurrent();
     if (_enableBlend) {
         glEnable(GL_BLEND);
@@ -64,7 +63,7 @@ FkResult FkGraphicRender::render() {
     program->addValue(mat);
     program->addValue(position);
     program->addValue(coordinate);
-    FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, position->countVertex));
+    FK_GL_CHECK(glDrawArrays(_getRenderMode(mode), 0, position->countVertex));
 
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
     FK_GL_CHECK(program->clear());
@@ -79,6 +78,16 @@ FkResult FkGraphicRender::render() {
     }
     glFlush();
     return FK_OK;
+}
+
+int FkGraphicRender::_getRenderMode(kRenderMode mode) {
+    switch (mode) {
+        case kRenderMode::POINTS:
+            return GL_POINTS;
+        case kRenderMode::TRIANGLE_STRIP:
+        default:
+            return GL_TRIANGLE_STRIP;
+    }
 }
 
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setContext(
