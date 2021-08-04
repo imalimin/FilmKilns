@@ -63,6 +63,8 @@ FkResult FkGraphicRender::render(kRenderMode mode) {
     program->addValue(mat);
     program->addValue(position);
     program->addValue(coordinate);
+    program->addValue(pointColor);
+    program->addValue(pointSizeOfPixel);
     FK_GL_CHECK(glDrawArrays(_getRenderMode(mode), 0, position->countVertex));
 
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
@@ -161,8 +163,10 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::enableBlend(bool enable) {
     return shared_from_this();
 }
 
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setPointColor(FkColor _color) {
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setPointConfig(FkColor _color, int sizeOfPixel) {
     this->pointColor = std::make_shared<FkColorComponent>();
     this->pointColor->color = _color;
+    this->pointSizeOfPixel = std::make_shared<FkSizeComponent>();
+    this->pointSizeOfPixel->size.set(sizeOfPixel, sizeOfPixel);
     return shared_from_this();
 }

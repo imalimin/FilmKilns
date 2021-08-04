@@ -71,9 +71,9 @@ protected:
 
     void setUniform2fv(int32_t location, FkFloatVec2 &vec2);
 
-    void setUniform2fv(int32_t location, int32_t count, float *array);
+    void setUniform2fv(int32_t location, int32_t countOfArrayPtr, float *array);
 
-    void setUniform4fv(int32_t location, int32_t count, float *array);
+    void setUniform4fv(int32_t location, int32_t countOfArrayPtr, float *array);
 
     void setUniformMatrix4fv(int32_t location, float *value);
 

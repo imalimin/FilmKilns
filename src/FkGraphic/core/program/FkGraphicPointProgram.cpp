@@ -8,6 +8,8 @@
 #include "FkGraphicPointProgram.h"
 #include "FkGLDefinition.h"
 #include "FkPositionComponent.h"
+#include "FkColorComponent.h"
+#include "FkSizeComponent.h"
 
 FkGraphicPointProgram::FkGraphicPointProgram(const FkProgramDescription &desc) : FkGraphicProgram(
         desc) {
@@ -24,6 +26,8 @@ FkResult FkGraphicPointProgram::create() {
         aPosLoc = getAttribLocation("aPosition");
         FkAssert(aPosLoc >= 0, FK_FAIL);
         uSizeLoc = getUniformLocation("size");
+        FkAssert(uSizeLoc >= 0, FK_FAIL);
+        uColorLoc = getUniformLocation("color");
         FkAssert(uSizeLoc >= 0, FK_FAIL);
     }
     return ret;
@@ -49,18 +53,23 @@ FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkGraphicComponent> val
         FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
                                           pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
                                           reinterpret_cast<const void *>(pValue->offset)));
+    } else if (FK_INSTANCE_OF(value, FkColorComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkColorComponent, value);
+        FK_GL_CHECK(setUniform4fv(uColorLoc, 1, pValue->color.fArray()));
+    } else if (FK_INSTANCE_OF(value, FkSizeComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkSizeComponent, value);
+        FK_GL_CHECK(setUniform1f(uSizeLoc, pValue->size.getWidth()));
     }
-    setUniform1f(uSizeLoc, 1.0f);
     return FkGraphicProgram::addValue(value);
 }
 
 std::string FkGraphicPointProgram::getVertex() {
     std::string shader(R"(
         attribute vec4 aPosition;
-        uniform float size;
+        uniform float size; // Pixel Size;Rect
         void main() {
             vec4 pos = aPosition;
-            pos.y = -pos.y;
+            pos.y = pos.y;
             gl_Position = pos;
             gl_PointSize = size;
         })");
@@ -70,8 +79,8 @@ std::string FkGraphicPointProgram::getVertex() {
 std::string FkGraphicPointProgram::getFragment() {
     std::string shader(R"(
         precision mediump float;
+        uniform vec4 color;
         void main() {
-            vec4 color = vec4(1.0 - gl_PointCoord.x, 1.0 - gl_PointCoord.y, 0.0, 1.0);
             gl_FragColor = color;
         })");
     return shader;

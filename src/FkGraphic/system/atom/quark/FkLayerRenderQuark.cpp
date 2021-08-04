@@ -178,7 +178,7 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto pointProgramComp = std::make_shared<FkGraphicProgramComponent>();
     pointProgramComp->program = allocator->alloc(desc);
 
-    float pos0[]{0.5f, 0.5f};
+    float pos0[]{-0.5f, 0.5f};
     FkGraphicRender::with(pointProgramComp->program)
             ->enableSwapBuffers(false)
             ->setContext(context->context)
@@ -187,6 +187,7 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setFrameObject(fbo->fbo)
             ->setTargetTexture(_getCanvasTexture(canvas))
             ->setPosition(1, 2, 0, pos0)
+            ->setPointConfig(FkColor::white(), std::min(canvasSize.getWidth(), canvasSize.getHeight()) * 0.03f)
             ->render(FkGraphicRender::kRenderMode::POINTS);
     return FK_OK;
 }

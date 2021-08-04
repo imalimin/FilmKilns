@@ -53,7 +53,7 @@ FkColor::FkColor(const FkColor &o)
 }
 
 FkColor::~FkColor() {
-
+    delete[] _fArray;
 }
 
 float FkColor::fRed() {
@@ -70,4 +70,15 @@ float FkColor::fBlue() {
 
 float FkColor::fAlpha() {
     return alpha / 255.0f;
+}
+
+float *FkColor::fArray() {
+    if (nullptr == _fArray) {
+        _fArray = new float[4];
+    }
+    _fArray[0] = fRed();
+    _fArray[1] = fGreen();
+    _fArray[2] = fBlue();
+    _fArray[3] = fAlpha();
+    return _fArray;
 }

@@ -98,12 +98,12 @@ void FkGraphicProgram::setUniform2fv(int32_t location, FkFloatVec2 &vec2) {
     delete[] value;
 }
 
-void FkGraphicProgram::setUniform2fv(int32_t location, int32_t count, float *array) {
-    glUniform2fv(location, count, array);
+void FkGraphicProgram::setUniform2fv(int32_t location, int32_t countOfArrayPtr, float *array) {
+    glUniform2fv(location, countOfArrayPtr, array);
 }
 
-void FkGraphicProgram::setUniform4fv(int32_t location, int32_t count, float *array) {
-    glUniform4fv(location, count, array);
+void FkGraphicProgram::setUniform4fv(int32_t location, int32_t countOfArrayPtr, float *array) {
+    glUniform4fv(location, countOfArrayPtr, array);
 }
 
 void FkGraphicProgram::setUniformMatrix4fv(int32_t location, float *value) {

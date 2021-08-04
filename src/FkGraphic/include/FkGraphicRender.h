@@ -20,6 +20,7 @@
 #include "FkGLDefinition.h"
 #include "FkGraphicFrameObject.h"
 #include "FkColorComponent.h"
+#include "FkSizeComponent.h"
 
 FK_CLASS FkGraphicRender FK_EXTEND FkObject, public enable_shared_from_this<FkGraphicRender> {
 public:
@@ -62,7 +63,7 @@ public:
 
     std::shared_ptr<FkGraphicRender> enableBlend(bool enable);
 
-    std::shared_ptr<FkGraphicRender> setPointColor(FkColor _color);
+    std::shared_ptr<FkGraphicRender> setPointConfig(FkColor _color, int sizeOfPixel);
 
 private:
     int _getRenderMode(kRenderMode mode);
@@ -82,6 +83,7 @@ private:
     std::shared_ptr<FkGraphicFrameObject> fbo = nullptr;
     std::shared_ptr<FkGraphicTexture> targetTex = nullptr;
     std::shared_ptr<FkColorComponent> pointColor = nullptr;
+    std::shared_ptr<FkSizeComponent> pointSizeOfPixel = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDER_H
