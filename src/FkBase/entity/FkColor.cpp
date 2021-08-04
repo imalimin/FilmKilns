@@ -27,7 +27,7 @@ FkColor &FkColor::white() {
     color->red = 255;
     color->greed = 255;
     color->blue = 255;
-    color->alpha = 0;
+    color->alpha = 255;
     return *color;
 }
 
@@ -39,7 +39,7 @@ FkColor &FkColor::black() {
     color->red = 0;
     color->greed = 0;
     color->blue = 0;
-    color->alpha = 0;
+    color->alpha = 255;
     return *color;
 }
 

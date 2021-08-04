@@ -181,6 +181,7 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     float pos0[]{-0.5f, 0.5f};
     FkGraphicRender::with(pointProgramComp->program)
             ->enableSwapBuffers(false)
+            ->enableBlend(true)
             ->setContext(context->context)
             ->setViewport(0, 0, canvasSize.getWidth(), canvasSize.getHeight())
             ->setVertexBuffer(vbo)

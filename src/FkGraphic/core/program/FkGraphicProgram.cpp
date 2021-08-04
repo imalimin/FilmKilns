@@ -12,6 +12,7 @@
 #include "FkGraphicTexComponent.h"
 #include "FkVertexComponent.h"
 #include "FkGLDefinition.h"
+#include "FkDefinition.h"
 
 #define TAG "FkGraphicProgram"
 
@@ -51,17 +52,12 @@ FkGraphicProgram::~FkGraphicProgram() {
 
 FkResult FkGraphicProgram::create() {
     program = glCreateProgram();
-    if (program == GL_NONE) {
-        FkLogE(TAG, "Create program failed: %d", glGetError());
-        return GL_NONE;
-    }
+    FkAssert(GL_NONE != program, GL_NONE);
     std::string vertex = getVertex();
     std::string fragment = getFragment();
     GLuint vertexShader = _createShader(GL_VERTEX_SHADER, vertex);
     GLuint fragmentShader = _createShader(GL_FRAGMENT_SHADER, fragment);
-    if (GL_NONE == vertexShader || GL_NONE == fragmentShader) {
-        return GL_NONE;
-    }
+    FkAssert(GL_NONE != vertexShader && GL_NONE != fragmentShader, GL_NONE);
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
     FK_GL_CHECK(glLinkProgram(program));
@@ -130,10 +126,7 @@ bool FkGraphicProgram::_checkProgram() {
 
 uint32_t FkGraphicProgram::_createShader(uint32_t type, std::string &shader) {
     GLuint shaderId = glCreateShader(type);
-    if (shaderId == 0) {
-        FkLogE(TAG, "Create Shader Failed: %d", glGetError());
-        return GL_NONE;
-    }
+    FkAssert(shaderId != 0, GL_NONE);
     //Load shader code.
     const char *str = shader.c_str();
     glShaderSource(shaderId, 1, &str, 0);
@@ -156,6 +149,7 @@ uint32_t FkGraphicProgram::_createShader(uint32_t type, std::string &shader) {
         glDeleteShader(shaderId);
         shaderId = GL_NONE;
     }
+    FkAssert(shaderId != 0, GL_NONE);
     return shaderId;
 }
 

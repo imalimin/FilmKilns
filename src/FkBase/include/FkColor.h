@@ -49,7 +49,7 @@ public:
     uint16_t red;
     uint16_t greed;
     uint16_t blue;
-    uint16_t alpha;
+    uint16_t alpha; // 0 mean transparent, 255 mean no transparent.
     float *_fArray = nullptr;
 };
 

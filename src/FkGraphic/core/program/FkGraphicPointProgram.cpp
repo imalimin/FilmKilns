@@ -81,7 +81,12 @@ std::string FkGraphicPointProgram::getFragment() {
         precision mediump float;
         uniform vec4 color;
         void main() {
-            gl_FragColor = color;
+            float d = abs(distance(vec2(gl_PointCoord.x, gl_PointCoord.y), vec2(0.5, 0.5)));
+            if (d > 0.5) {
+                gl_FragColor = vec4(0, 0, 0, 0.0);
+            } else {
+                gl_FragColor = color;
+            }
         })");
     return shader;
 }
