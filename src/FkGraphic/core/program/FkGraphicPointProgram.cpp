@@ -10,6 +10,7 @@
 #include "FkPositionComponent.h"
 #include "FkColorComponent.h"
 #include "FkSizeComponent.h"
+#include "FkShapeComponent.h"
 
 FkGraphicPointProgram::FkGraphicPointProgram(const FkProgramDescription &desc) : FkGraphicProgram(
         desc) {
@@ -28,7 +29,9 @@ FkResult FkGraphicPointProgram::create() {
         uSizeLoc = getUniformLocation("size");
         FkAssert(uSizeLoc >= 0, FK_FAIL);
         uColorLoc = getUniformLocation("color");
-        FkAssert(uSizeLoc >= 0, FK_FAIL);
+        FkAssert(uColorLoc >= 0, FK_FAIL);
+        uModeLoc = getUniformLocation("mode");
+        FkAssert(uModeLoc >= 0, FK_FAIL);
     }
     return ret;
 }
@@ -59,6 +62,9 @@ FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkGraphicComponent> val
     } else if (FK_INSTANCE_OF(value, FkSizeComponent)) {
         auto pValue = Fk_POINTER_CAST(FkSizeComponent, value);
         FK_GL_CHECK(setUniform1f(uSizeLoc, pValue->size.getWidth()));
+    } else if (FK_INSTANCE_OF(value, FkShapeComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkShapeComponent, value);
+        FK_GL_CHECK(setUniform1i(uModeLoc, (int) pValue->type));
     }
     return FkGraphicProgram::addValue(value);
 }
@@ -80,10 +86,15 @@ std::string FkGraphicPointProgram::getFragment() {
     std::string shader(R"(
         precision mediump float;
         uniform vec4 color;
+        uniform int mode;
         void main() {
-            float d = abs(distance(vec2(gl_PointCoord.x, gl_PointCoord.y), vec2(0.5, 0.5)));
-            if (d > 0.5) {
-                gl_FragColor = vec4(0, 0, 0, 0.0);
+            if (1 == mode) {
+                float d = abs(distance(vec2(gl_PointCoord.x, gl_PointCoord.y), vec2(0.5, 0.5)));
+                if (d > 0.5) {
+                    gl_FragColor = vec4(0, 0, 0, 0.0);
+                } else {
+                    gl_FragColor = color;
+                }
             } else {
                 gl_FragColor = color;
             }

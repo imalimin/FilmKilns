@@ -33,6 +33,7 @@ private:
     int32_t aPosLoc = -1;
     int32_t uSizeLoc = -1;
     int32_t uColorLoc = -1;
+    int32_t uModeLoc = -1;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICPOINTPROGRAM_H

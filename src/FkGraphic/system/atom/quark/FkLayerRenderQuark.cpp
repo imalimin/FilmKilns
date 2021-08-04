@@ -188,7 +188,7 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setFrameObject(fbo->fbo)
             ->setTargetTexture(_getCanvasTexture(canvas))
             ->setPosition(1, 2, 0, pos0)
-            ->setPointConfig(FkColor::white(), std::min(canvasSize.getWidth(), canvasSize.getHeight()) * 0.03f)
+            ->setPointConfig(FkColor::white(), FkShape::kType::ROUND, std::min(canvasSize.getWidth(), canvasSize.getHeight()) * 0.03f)
             ->render(FkGraphicRender::kRenderMode::POINTS);
     return FK_OK;
 }
