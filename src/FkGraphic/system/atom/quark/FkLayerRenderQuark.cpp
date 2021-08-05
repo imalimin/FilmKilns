@@ -119,7 +119,7 @@ FkResult FkLayerRenderQuark::_drawLayer(std::shared_ptr<FkGraphicLayer> layer,
 FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
     auto canvas = prt->req->getCanvas();
-    FkAssert(nullptr != canvas, FK_FAIL);
+    FkAssert(nullptr == canvas, FK_FAIL);
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
     std::shared_ptr<FkGraphicCtxComponent> context = nullptr;
     if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {

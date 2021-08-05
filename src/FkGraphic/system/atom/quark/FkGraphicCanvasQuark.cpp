@@ -68,7 +68,7 @@ FkResult FkGraphicCanvasQuark::_onUpdate(std::shared_ptr<FkProtocol> p) {
         } else {
             canvas->addComponent(sizeComp);
             auto scaleComp = canvas->findComponent<FkScaleComponent>();
-            FkAssert(nullptr != scaleComp, scale);
+            FkAssert(nullptr != scaleComp, FK_FAIL);
             scaleComp->value.x = FkGraphicLayer::calcScaleWithScaleType(canvas, proto->scaleType, proto->winSize);
             scaleComp->value.y = scaleComp->value.x;
             scaleComp->value.z = 1.0f;

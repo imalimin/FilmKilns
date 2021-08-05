@@ -10,18 +10,18 @@
 #include "FkGraphicTexture.h"
 #include "GLES2/gl2.h"
 #include "FkGraphicLayer.h"
-#include "FkTexComponent.h"
+#include "FkTexIDComponent.h"
 #include "FkScaleComponent.h"
 #include "FkGraphicFrameObject.h"
 #include "FkGraphicProgram.h"
 
 TEST(FkGraphicEntityTest, Context) {
     auto layer = std::make_shared<FkGraphicLayer>();
-    auto tex = std::make_shared<FkTexComponent>();
+    auto tex = std::make_shared<FkTexIDComponent>();
     layer->addComponent(tex);
 
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    EXPECT_EQ(layer->findComponent(vec, FkClassType::type<FkTexComponent>()), FK_OK);
+    EXPECT_EQ(layer->findComponent(vec, FkClassType::type<FkTexIDComponent >()), FK_OK);
     vec.clear();
     EXPECT_NE(layer->findComponent(vec, FkClassType::type<FkScaleComponent>()), FK_OK);
 }
