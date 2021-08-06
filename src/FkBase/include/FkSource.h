@@ -102,6 +102,7 @@ public:
 
     virtual bool delegateEquals(D &desc, T *) = 0;
 
+    /// Return used bytes.
     virtual size_t size() {
         std::lock_guard<std::mutex> guard(mtx);
         size_t size = 0;
@@ -113,6 +114,7 @@ public:
         return size;
     }
 
+    /// Return used and cache bytes.
     virtual size_t capacity() {
         std::lock_guard<std::mutex> guard(mtx);
         size_t size = 0;
@@ -128,6 +130,10 @@ public:
             ++itr1;
         }
         return size;
+    }
+
+    virtual void clean() {
+
     }
 
 protected:
