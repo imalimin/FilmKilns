@@ -10,7 +10,6 @@ import android.widget.FrameLayout
 import com.alimin.fk.app.R
 import com.alimin.fk.engine.FkImage
 import com.alimin.fk.entity.FkRational
-import com.alimin.fk.module.FkModuleTest
 import com.alimin.fk.widgets.FkActSurfaceView
 import com.lmy.common.ui.BaseActivity
 import kotlinx.android.synthetic.main.activity_image.*
@@ -29,7 +28,6 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback, FkActSurfaceView.O
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         if (EasyPermissions.hasPermissions(this, *perms)) {
-            FkModuleTest().testAll()
             engine.create()
             surfaceView = FkActSurfaceView(this)
             surfaceView?.holder?.addCallback(this)
