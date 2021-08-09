@@ -51,6 +51,9 @@ private:
     FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
 
 private:
+    void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
+
+private:
     /// 0 is for canvas.
     FkID mCurID;
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;

@@ -16,6 +16,7 @@
 #include "FkGraphicUpdateTexPrt.h"
 #include "FkGraphicTexDelPtl.h"
 #include "FkUpdateTexWithBmpPrt.h"
+#include "FkGraphicVBOQuark.h"
 
 FkGraphicSourceAtom::FkGraphicSourceAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -38,6 +39,7 @@ void FkGraphicSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkGraphicContextQuark>()
             ->next<FkGraphicTexQuark>()
             ->next<FkGraphicFBOQuark>()
+            ->next<FkGraphicVBOQuark>()
             ->next<FkGraphicProgramQuark>();
 }
 

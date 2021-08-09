@@ -18,10 +18,17 @@ public:
 
     virtual ~FkVertexComponent();
 
+    FkResult setup(size_t _countVertex, size_t _countPerVertex, size_t _bytes, void *_data);
+
+    void *getData();
+
+    size_t getSize();
+
 public:
     size_t countVertex = 0;
     size_t countPerVertex = 0;
-    size_t offset = 0;
+
+private:
     void *data = nullptr;
     size_t byteOfData = 0;
 };

@@ -22,6 +22,15 @@
 #include "FkMeasureTransProto.h"
 #include "FkDrawPointProto.h"
 #include "FkPointComponent.h"
+#include "FkVertexComponent.h"
+#include "FkCoordinateComponent.h"
+
+//每个点占多少字节
+#define SIZE_OF_VERTEX  sizeof(float)
+//多少个坐标
+#define COUNT_VERTEX  4
+//每个坐标的维度
+#define COUNT_PER_VERTEX  2
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), mCurID(Fk_CANVAS_ID) {
     FK_MARK_SUPER
@@ -57,6 +66,36 @@ FkResult FkGraphicLayerQuark::onStart() {
 
 FkResult FkGraphicLayerQuark::onStop() {
     return FkQuark::onStop();
+}
+
+void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
+    auto sizeComp = layer->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != sizeComp, );
+    auto vertex = layer->findComponent<FkVertexComponent>();
+    if (nullptr == vertex) {
+        vertex = std::make_shared<FkVertexComponent>();
+        layer->addComponent(vertex);
+    }
+    auto coord = layer->findComponent<FkCoordinateComponent>();
+    if (nullptr == coord) {
+        coord = std::make_shared<FkCoordinateComponent>();
+        layer->addComponent(coord);
+    }
+
+    float pos[]{
+            -sizeComp->size.getWidth() / 2.0f, -sizeComp->size.getHeight() / 2.0f,//LEFT,BOTTOM
+            sizeComp->size.getWidth() / 2.0f, -sizeComp->size.getHeight() / 2.0f,//RIGHT,BOTTOM
+            -sizeComp->size.getWidth() / 2.0f, sizeComp->size.getHeight() / 2.0f,//LEFT,TOP
+            sizeComp->size.getWidth() / 2.0f, sizeComp->size.getHeight() / 2.0f//RIGHT,TOP
+    };
+    float coordinate[]{
+            0.0f, 0.0f,//LEFT,BOTTOM
+            1.0f, 0.0f,//RIGHT,BOTTOM
+            0.0f, 1.0f,//LEFT,TOP
+            1.0f, 1.0f//RIGHT,TOP
+    };
+    vertex->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, pos);
+    coord->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, coordinate);
 }
 
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
@@ -104,6 +143,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     if (nullptr != texIDComp) {
         itr->second->addComponent(texIDComp);
     }
+    _setupVertex(itr->second);
     return FK_OK;
 }
 

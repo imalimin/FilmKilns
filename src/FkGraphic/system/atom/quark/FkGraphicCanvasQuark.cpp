@@ -19,6 +19,15 @@
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkDrawPointProto.h"
 #include "FkPointComponent.h"
+#include "FkVertexComponent.h"
+#include "FkCoordinateComponent.h"
+
+//每个点占多少字节
+#define SIZE_OF_VERTEX  sizeof(float)
+//多少个坐标
+#define COUNT_VERTEX  4
+//每个坐标的维度
+#define COUNT_PER_VERTEX  2
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -58,6 +67,36 @@ FkResult FkGraphicCanvasQuark::onStop() {
     return FkQuark::onStop();
 }
 
+void FkGraphicCanvasQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
+    auto sizeComp = layer->findComponent<FkSizeComponent>();
+    FkAssert(nullptr != sizeComp, );
+    auto vertex = layer->findComponent<FkVertexComponent>();
+    if (nullptr == vertex) {
+        vertex = std::make_shared<FkVertexComponent>();
+        layer->addComponent(vertex);
+    }
+    auto coord = layer->findComponent<FkCoordinateComponent>();
+    if (nullptr == coord) {
+        coord = std::make_shared<FkCoordinateComponent>();
+        layer->addComponent(coord);
+    }
+
+    float pos[]{
+            -sizeComp->size.getWidth() / 2.0f, -sizeComp->size.getHeight() / 2.0f,//LEFT,BOTTOM
+            sizeComp->size.getWidth() / 2.0f, -sizeComp->size.getHeight() / 2.0f,//RIGHT,BOTTOM
+            -sizeComp->size.getWidth() / 2.0f, sizeComp->size.getHeight() / 2.0f,//LEFT,TOP
+            sizeComp->size.getWidth() / 2.0f, sizeComp->size.getHeight() / 2.0f//RIGHT,TOP
+    };
+    float coordinate[]{
+            0.0f, 0.0f,//LEFT,BOTTOM
+            1.0f, 0.0f,//RIGHT,BOTTOM
+            0.0f, 1.0f,//LEFT,TOP
+            1.0f, 1.0f//RIGHT,TOP
+    };
+    vertex->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, pos);
+    coord->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, coordinate);
+}
+
 FkResult FkGraphicCanvasQuark::_onUpdate(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkGraphicUpdateCanvasProto, p);
     auto sizeComp = proto->layer->findComponent<FkSizeComponent>();
@@ -78,6 +117,7 @@ FkResult FkGraphicCanvasQuark::_onUpdate(std::shared_ptr<FkProtocol> p) {
     if (nullptr != texIDComp) {
         canvas->addComponent(texIDComp);
     }
+    _setupVertex(canvas);
     return FK_OK;
 }
 

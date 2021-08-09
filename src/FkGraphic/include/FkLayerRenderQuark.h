@@ -50,7 +50,6 @@ private:
                         FkColor &color);
 
 private:
-    uint32_t vbo = 0;
     std::shared_ptr<FkGraphicProgramAllocator> allocator = nullptr;
 };
 

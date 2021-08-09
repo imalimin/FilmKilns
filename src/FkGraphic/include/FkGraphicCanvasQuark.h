@@ -45,6 +45,9 @@ private:
     FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
 
 private:
+    void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
+
+private:
     std::shared_ptr<FkGraphicLayer> canvas;
 };
 

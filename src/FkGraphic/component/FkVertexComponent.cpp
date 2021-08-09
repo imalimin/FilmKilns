@@ -13,10 +13,35 @@ FkVertexComponent::FkVertexComponent() : FkGraphicComponent() {
 
 FkVertexComponent::FkVertexComponent(const FkVertexComponent &o)
         : FkGraphicComponent(o), countVertex(o.countVertex), countPerVertex(o.countPerVertex),
-          offset(o.offset), byteOfData(o.byteOfData) {
+          byteOfData(o.byteOfData) {
     FK_MARK_SUPER
+    if (nullptr != o.data) {
+        memcpy(data, o.data, o.byteOfData);
+    }
 }
 
 FkVertexComponent::~FkVertexComponent() {
+    if (nullptr != data) {
+        free(data);
+        data = nullptr;
+    }
+}
 
+FkResult FkVertexComponent::setup(size_t _countVertex, size_t _countPerVertex,
+                                  size_t _bytes, void *_data) {
+    countVertex = _countVertex;
+    countPerVertex = _countPerVertex;
+    byteOfData = _countVertex * _countPerVertex * _bytes;
+    FkAssert(byteOfData > 0, FK_FAIL);
+    data = malloc(byteOfData);
+    memcpy(data, _data, byteOfData);
+    return FK_OK;
+}
+
+void *FkVertexComponent::getData() {
+    return data;
+}
+
+size_t FkVertexComponent::getSize() {
+    return byteOfData;
 }

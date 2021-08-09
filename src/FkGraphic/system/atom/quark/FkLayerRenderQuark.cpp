@@ -17,13 +17,6 @@
 #include "FkGraphicRender.h"
 #include "FkMatrixComponent.h"
 
-//每个点占多少字节
-#define SIZE_OF_VERTEX  4
-//一个顶点坐标包含几个点
-#define COUNT_PER_VERTEX  2
-//所有顶点坐标总共多少字节
-#define VERTEX_BYTE_SIZE  COUNT_PER_VERTEX * SIZE_OF_VERTEX * sizeof(float)
-
 FkLayerRenderQuark::FkLayerRenderQuark() : FkQuark() {
     FK_MARK_SUPER
 }
@@ -42,10 +35,6 @@ FkResult FkLayerRenderQuark::onCreate() {
 }
 
 FkResult FkLayerRenderQuark::onDestroy() {
-    if (GL_NONE != vbo) {
-        glDeleteBuffers(1, &vbo);
-        vbo = GL_NONE;
-    }
     return FkQuark::onDestroy();
 }
 
@@ -95,19 +84,6 @@ FkResult FkLayerRenderQuark::_drawLayer(std::shared_ptr<FkGraphicLayer> layer,
     }
     mat = Fk_POINTER_CAST(FkMatrixComponent, vec[0]);
     vec.clear();
-
-    float pos[]{
-            -size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//LEFT,BOTTOM
-            size->size.getWidth() / 2.0f, -size->size.getHeight() / 2.0f,//RIGHT,BOTTOM
-            -size->size.getWidth() / 2.0f, size->size.getHeight() / 2.0f,//LEFT,TOP
-            size->size.getWidth() / 2.0f, size->size.getHeight() / 2.0f//RIGHT,TOP
-    };
-    float coordinate[]{
-            0.0f, 0.0f,//LEFT,BOTTOM
-            1.0f, 0.0f,//RIGHT,BOTTOM
-            0.0f, 1.0f,//LEFT,TOP
-            1.0f, 1.0f//RIGHT,TOP
-    };
     render->setSrcTexture(0, tex->tex)
             ->setMatrix(mat)
             ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
@@ -178,18 +154,18 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto pointProgramComp = std::make_shared<FkGraphicProgramComponent>();
     pointProgramComp->program = allocator->alloc(desc);
 
-    float pos0[]{-0.5f, 0.5f};
-    FkGraphicRender::with(pointProgramComp->program)
-            ->enableSwapBuffers(false)
-            ->enableBlend(true)
-            ->setContext(context->context)
-            ->setViewport(0, 0, canvasSize.getWidth(), canvasSize.getHeight())
-            ->setVertexBuffer(vbo)
-            ->setFrameObject(fbo->fbo)
-            ->setTargetTexture(_getCanvasTexture(canvas))
-            ->setPosition(1, 2, 0, pos0)
-            ->setPointConfig(FkColor::white(), FkShape::kType::ROUND, std::min(canvasSize.getWidth(), canvasSize.getHeight()) * 0.03f)
-            ->render(FkGraphicRender::kRenderMode::POINTS);
+//    float pos0[]{-0.5f, 0.5f};
+//    FkGraphicRender::with(pointProgramComp->program)
+//            ->enableSwapBuffers(false)
+//            ->enableBlend(true)
+//            ->setContext(context->context)
+//            ->setViewport(0, 0, canvasSize.getWidth(), canvasSize.getHeight())
+//            ->setVertexBuffer(vbo)
+//            ->setFrameObject(fbo->fbo)
+//            ->setTargetTexture(_getCanvasTexture(canvas))
+//            ->setPosition(1, 2, 0, pos0)
+//            ->setPointConfig(FkColor::white(), FkShape::kType::ROUND, std::min(canvasSize.getWidth(), canvasSize.getHeight()) * 0.03f)
+//            ->render(FkGraphicRender::kRenderMode::POINTS);
     return FK_OK;
 }
 
