@@ -63,6 +63,7 @@ typedef int32_t FkResult;
 #define FK_INVALID_DATA -4
 #define FK_EMPTY_DATA -5
 #define FK_SKIP -6
+#define FK_NPE -7
 
 // +------ ID ------+
 typedef int32_t FkID;

@@ -7,16 +7,16 @@
 
 #include "FkVertexComponent.h"
 
-FkVertexComponent::FkVertexComponent() : FkGraphicComponent() {
+FkVertexComponent::FkVertexComponent() : FkGraphicComponent(), desc() {
     FK_MARK_SUPER
 }
 
 FkVertexComponent::FkVertexComponent(const FkVertexComponent &o)
-        : FkGraphicComponent(o), countVertex(o.countVertex), countPerVertex(o.countPerVertex),
-          byteOfData(o.byteOfData) {
+        : FkGraphicComponent(o), desc(o.desc) {
     FK_MARK_SUPER
     if (nullptr != o.data) {
-        memcpy(data, o.data, o.byteOfData);
+        auto size = o.desc.countVertex * o.desc.countPerVertex * o.desc.format;
+        memcpy(data, o.data, size);
     }
 }
 
@@ -29,12 +29,12 @@ FkVertexComponent::~FkVertexComponent() {
 
 FkResult FkVertexComponent::setup(size_t _countVertex, size_t _countPerVertex,
                                   size_t _bytes, void *_data) {
-    countVertex = _countVertex;
-    countPerVertex = _countPerVertex;
-    byteOfData = _countVertex * _countPerVertex * _bytes;
-    FkAssert(byteOfData > 0, FK_FAIL);
-    data = malloc(byteOfData);
-    memcpy(data, _data, byteOfData);
+    desc.countVertex = _countVertex;
+    desc.countPerVertex = _countPerVertex;
+    desc.format = _bytes;
+    FkAssert(getSize() > 0, FK_FAIL);
+    data = malloc(getSize());
+    memcpy(data, _data, getSize());
     return FK_OK;
 }
 
@@ -43,5 +43,5 @@ void *FkVertexComponent::getData() {
 }
 
 size_t FkVertexComponent::getSize() {
-    return byteOfData;
+    return desc.countVertex * desc.countPerVertex * desc.format;
 }

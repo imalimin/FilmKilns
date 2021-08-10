@@ -44,14 +44,6 @@ FkResult FkGraphicRender::render(kRenderMode mode) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    size_t countOfPosByte = position->countVertex * position->countPerVertex * sizeof(float);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, countOfPosByte, position->data);
-    if (nullptr != coordinate) {
-        size_t countOfCoordByte = coordinate->countVertex * coordinate->countPerVertex * sizeof(float);
-        glBufferSubData(GL_ARRAY_BUFFER, countOfPosByte, countOfCoordByte, coordinate->data);
-    }
-
     if (!_enableSwapBuffers) {
         FkAssert(nullptr != fbo, FK_FAIL);
         FkAssert(nullptr != targetTex, FK_FAIL);
@@ -59,16 +51,16 @@ FkResult FkGraphicRender::render(kRenderMode mode) {
     }
 
     FK_GL_CHECK(program->bind());
+    vertexObj->bind();
     program->addValue(srcTex);
     program->addValue(mat);
-    program->addValue(position);
-    program->addValue(coordinate);
+    program->addValue(vertexObj);
     program->addValue(pointColor);
     program->addValue(pointSizeOfPixel);
     program->addValue(pointShape);
-    FK_GL_CHECK(glDrawArrays(_getRenderMode(mode), 0, position->countVertex));
+    FK_GL_CHECK(glDrawArrays(_getRenderMode(mode), 0, countVertex));
 
-    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+    vertexObj->unbind();
     FK_GL_CHECK(program->clear());
     program->unbind();
     if (_enableSwapBuffers) {
@@ -109,11 +101,6 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setColor(FkColor _color) {
     return shared_from_this();
 }
 
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setVertexBuffer(uint32_t _vbo) {
-    this->vbo = _vbo;
-    return shared_from_this();
-}
-
 std::shared_ptr<FkGraphicRender> FkGraphicRender::setSrcTexture(
         int index, std::shared_ptr<FkGraphicTexture> tex) {
     srcTex = std::make_shared<FkGraphicTexComponent>();
@@ -122,23 +109,17 @@ std::shared_ptr<FkGraphicRender> FkGraphicRender::setSrcTexture(
     return shared_from_this();
 }
 
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setPosition(
-        size_t countVertex, size_t countPerVertex, size_t offset, void *data) {
-    position = std::make_shared<FkPositionComponent>();
-    position->countVertex = countVertex;
-    position->countPerVertex = countPerVertex;
-    position->offset = offset;
-    position->data = data;
-    return shared_from_this();
-}
-
-std::shared_ptr<FkGraphicRender> FkGraphicRender::setCoordinate(
-        size_t countVertex, size_t countPerVertex, size_t offset, void *data) {
-    coordinate = std::make_shared<FkCoordinateComponent>();
-    coordinate->countVertex = countVertex;
-    coordinate->countPerVertex = countPerVertex;
-    coordinate->offset = offset;
-    coordinate->data = data;
+std::shared_ptr<FkGraphicRender> FkGraphicRender::setVertexObj(
+        std::shared_ptr<FkVertexObjectComponent> _vertexObj) {
+    int32_t offset = 0;
+    FkVertexDesc desc;
+    this->vertexObj = _vertexObj;
+    if (FK_OK ==
+        _vertexObj->getValueLoc(FkVertexObjectComponent::kValueLoc::VERTEX, offset, desc)) {
+        this->countVertex = desc.countVertex;
+    } else {
+        FkLogW(FK_DEF_TAG, "Get vertex count error.");
+    }
     return shared_from_this();
 }
 

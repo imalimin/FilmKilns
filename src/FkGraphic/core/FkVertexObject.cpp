@@ -10,6 +10,21 @@
 
 #define TAG "FkVBODescription"
 
+FkVertexDesc::FkVertexDesc() : FkObject() {
+    FK_MARK_SUPER
+}
+
+FkVertexDesc::FkVertexDesc(const FkVertexDesc &o) : FkObject(),
+                                                    countVertex(o.countVertex),
+                                                    countPerVertex(o.countPerVertex),
+                                                    format(o.format) {
+    FK_MARK_SUPER
+}
+
+FkVertexDesc::~FkVertexDesc() {
+
+}
+
 FkVBODescription::FkVBODescription(size_t size) : FkObject(), size(size) {
     FK_MARK_SUPER
 }
@@ -27,7 +42,7 @@ FkVertexObject::FkVertexObject(FkVBODescription &desc) : FkSource(), desc(desc) 
 }
 
 FkVertexObject::~FkVertexObject() {
-    FkAssert(GL_NONE == vbo, );
+    FkAssert(GL_NONE == vbo,);
 }
 
 FkResult FkVertexObject::create() {
@@ -50,6 +65,19 @@ void FkVertexObject::destroy() {
 
 size_t FkVertexObject::size() {
     return desc.size;
+}
+
+void FkVertexObject::bind() {
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+}
+
+void FkVertexObject::unbind() {
+    glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
+}
+
+
+FkResult FkVertexObject::set(float *data, size_t size, int32_t offset) {
+    return FK_OK;
 }
 
 FkVertexObjectAllocator::FkVertexObjectAllocator()

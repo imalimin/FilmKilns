@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKVERTEXCOMPONENT_H
 
 #include "FkGraphicComponent.h"
+#include "FkVertexObject.h"
 
 FK_CLASS FkVertexComponent FK_EXTEND FkGraphicComponent {
 public:
@@ -25,12 +26,10 @@ public:
     size_t getSize();
 
 public:
-    size_t countVertex = 0;
-    size_t countPerVertex = 0;
+    FkVertexDesc desc;
 
 private:
     void *data = nullptr;
-    size_t byteOfData = 0;
 };
 
 #endif //FK_GRAPHIC_FKVERTEXCOMPONENT_H

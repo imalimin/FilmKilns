@@ -16,6 +16,7 @@
 #include "FkGLDefinition.h"
 #include "FkGraphicRender.h"
 #include "FkMatrixComponent.h"
+#include "FkVertexObjectComponent.h"
 
 FkLayerRenderQuark::FkLayerRenderQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -84,10 +85,12 @@ FkResult FkLayerRenderQuark::_drawLayer(std::shared_ptr<FkGraphicLayer> layer,
     }
     mat = Fk_POINTER_CAST(FkMatrixComponent, vec[0]);
     vec.clear();
+    auto verObj = layer->findComponent<FkVertexObjectComponent>();
+    FkAssert(nullptr != verObj, FK_NPE);
+
     render->setSrcTexture(0, tex->tex)
             ->setMatrix(mat)
-            ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
-            ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
+            ->setVertexObj(verObj)
             ->render();
     return FK_OK;
 }
@@ -116,12 +119,6 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     program = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);
 
     context->context->makeCurrent();
-    if (GL_NONE == vbo) {
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE * 2, nullptr, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-    }
 
     auto canvasSize = _getCanvasSize(canvas);
     auto render = FkGraphicRender::with(program->program)
@@ -131,8 +128,7 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             ->setViewport(0, 0, canvasSize.getWidth(), canvasSize.getHeight())
             ->setColor(FkColor::white())
             ->setFrameObject(fbo->fbo)
-            ->setTargetTexture(_getCanvasTexture(canvas))
-            ->setVertexBuffer(vbo);
+            ->setTargetTexture(_getCanvasTexture(canvas));
 
     for (auto &layer : prt->req->layers) {
         if (Fk_CANVAS_ID == layer->id) {

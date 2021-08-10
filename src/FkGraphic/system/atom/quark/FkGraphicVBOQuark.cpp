@@ -56,15 +56,9 @@ FkResult FkGraphicVBOQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 
         FkVBODescription desc(vComp->getSize() + cComp->getSize());
         auto comp = std::make_shared<FkVertexObjectComponent>();
-        comp->vbo = allocator->alloc(desc);
-        FkAssert(nullptr != comp->vbo, FK_FAIL);
-
-        int offset = 0;
-        glBufferSubData(GL_ARRAY_BUFFER, offset, vComp->getSize(),
-                        reinterpret_cast<const void *>(vComp->getSize()));
-        offset += vComp->getSize();
-        glBufferSubData(GL_ARRAY_BUFFER, offset, cComp->getSize(),
-                        reinterpret_cast<const void *>(cComp->getSize()));
+        comp->setup(allocator->alloc(desc),
+                    static_cast<float *>(vComp->getData()), vComp->desc,
+                    static_cast<float *>(cComp->getData()), cComp->desc);
         layer->addComponent(comp);
     }
     return FK_OK;

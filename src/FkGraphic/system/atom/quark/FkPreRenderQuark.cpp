@@ -12,15 +12,9 @@
 #include "FkGraphicProgramComponent.h"
 #include "FkGraphicTexComponent.h"
 #include "FkSizeComponent.h"
+#include "FkVertexObjectComponent.h"
 #include "FkGraphicRender.h"
 #include "FkGLDefinition.h"
-
-//每个点占多少字节
-#define SIZE_OF_VERTEX  4
-//一个顶点坐标包含几个点
-#define COUNT_PER_VERTEX  2
-//所有顶点坐标总共多少字节
-#define VERTEX_BYTE_SIZE  COUNT_PER_VERTEX * SIZE_OF_VERTEX * sizeof(float)
 
 FkPreRenderQuark::FkPreRenderQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -39,10 +33,6 @@ FkResult FkPreRenderQuark::onCreate() {
 }
 
 FkResult FkPreRenderQuark::onDestroy() {
-    if (GL_NONE != vbo) {
-        glDeleteBuffers(1, &vbo);
-        vbo = GL_NONE;
-    }
     return FkQuark::onDestroy();
 }
 
@@ -88,36 +78,18 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         return FK_FAIL;
     }
     auto size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
-
-    vec.clear();
-    context->context->makeCurrent();
-    if (GL_NONE == vbo) {
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, VERTEX_BYTE_SIZE * 2, nullptr, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
-    }
-
-    float pos[]{
-            -1.0f, -1.0f,//LEFT,BOTTOM
-            1.0f, -1.0f,//RIGHT,BOTTOM
-            -1.0f, 1.0f,//LEFT,TOP
-            1.0f, 1.0f//RIGHT,TOP
-    };
-    float coordinate[]{
-            0.0f, 0.0f,//LEFT,BOTTOM
-            1.0f, 0.0f,//RIGHT,BOTTOM
-            0.0f, 1.0f,//LEFT,TOP
-            1.0f, 1.0f//RIGHT,TOP
-    };
-    auto ret = FkGraphicRender::with(program->program)
-            ->setContext(context->context)
-            ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
-            ->setVertexBuffer(vbo)
-            ->setPosition(SIZE_OF_VERTEX, COUNT_PER_VERTEX, 0, pos)
-            ->setCoordinate(SIZE_OF_VERTEX, COUNT_PER_VERTEX, VERTEX_BYTE_SIZE, coordinate)
-            ->setFrameObject(fbo->fbo)
-            ->setTargetTexture(tex->tex)
-            ->render();
-    return ret;
+//    auto verObj = canvas->findComponent<FkVertexObjectComponent>();
+//    FkAssert(nullptr != verObj, FK_NPE);
+//
+//    vec.clear();
+//    context->context->makeCurrent();
+//    auto ret = FkGraphicRender::with(program->program)
+//            ->setContext(context->context)
+//            ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
+//            ->setVertexObj(verObj)
+//            ->setFrameObject(fbo->fbo)
+//            ->setTargetTexture(tex->tex)
+//            ->render();
+//    return ret;
+    return FK_OK;
 }

@@ -22,6 +22,7 @@
 #include "FkColorComponent.h"
 #include "FkSizeComponent.h"
 #include "FkShapeComponent.h"
+#include "FkVertexObjectComponent.h"
 
 FK_CLASS FkGraphicRender FK_EXTEND FkObject, public enable_shared_from_this<FkGraphicRender> {
 public:
@@ -48,13 +49,9 @@ public:
 
     std::shared_ptr<FkGraphicRender> setColor(FkColor _color);
 
-    std::shared_ptr<FkGraphicRender> setVertexBuffer(uint32_t _vbo);
-
     std::shared_ptr<FkGraphicRender> setSrcTexture(int index, std::shared_ptr<FkGraphicTexture> tex);
 
-    std::shared_ptr<FkGraphicRender> setPosition(size_t countVertex, size_t countPerVertex, size_t offset, void *data);
-
-    std::shared_ptr<FkGraphicRender> setCoordinate(size_t countVertex, size_t countPerVertex, size_t offset, void *data);
+    std::shared_ptr<FkGraphicRender> setVertexObj(std::shared_ptr<FkVertexObjectComponent> _vertexObj);
 
     std::shared_ptr<FkGraphicRender> setMatrix(std::shared_ptr<FkMatrixComponent> _comp);
 
@@ -74,10 +71,9 @@ private:
     std::shared_ptr<FkColor> color = nullptr;
     FkSize size;
     std::shared_ptr<FkGraphicProgram> program = nullptr;
-    uint32_t vbo = GL_NONE;
     std::shared_ptr<FkGraphicTexComponent> srcTex = nullptr;
-    std::shared_ptr<FkPositionComponent> position = nullptr;
-    std::shared_ptr<FkCoordinateComponent> coordinate = nullptr;
+    int32_t countVertex = 0;
+    std::shared_ptr<FkVertexObjectComponent> vertexObj = nullptr;
     bool _enableSwapBuffers = false;
     bool _enableBlend = false;
     std::shared_ptr<FkMatrixComponent> mat;

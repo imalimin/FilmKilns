@@ -6,8 +6,7 @@
 */
 
 #include "FkCanvasMosaicProgram.h"
-#include "FkPositionComponent.h"
-#include "FkCoordinateComponent.h"
+#include "FkVertexObjectComponent.h"
 
 FkCanvasMosaicProgram::FkCanvasMosaicProgram(const FkProgramDescription &desc) : FkGraphicProgram(desc) {
     FK_MARK_SUPER
@@ -31,9 +30,8 @@ FkResult FkCanvasMosaicProgram::create() {
 void FkCanvasMosaicProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkPositionComponent)) {
+        if (FK_INSTANCE_OF(it, FkVertexObjectComponent)) {
             glDisableVertexAttribArray(aPosLoc);
-        } else if (FK_INSTANCE_OF(it, FkCoordinateComponent)) {
             glDisableVertexAttribArray(aCoordinateLoc);
         }
     }
@@ -44,20 +42,27 @@ FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkGraphicComponent> val
     if (nullptr == value) {
         return FK_FAIL;
     }
-    if (FK_INSTANCE_OF(value, FkPositionComponent)) {
-        auto pValue = Fk_POINTER_CAST(FkPositionComponent, value);
+    if (FK_INSTANCE_OF(value, FkVertexObjectComponent)) {
+        auto pValue = Fk_POINTER_CAST(FkVertexObjectComponent, value);
+        int offset = 0;
+        FkVertexDesc desc;
+        FkAssert(FK_OK == pValue->getValueLoc(FkVertexObjectComponent::kValueLoc::VERTEX,
+                                              offset, desc), FK_FAIL);
+
         FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
         //xy
         FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
-                                          pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                                          reinterpret_cast<const void *>(pValue->offset)));
-    } else if (FK_INSTANCE_OF(value, FkCoordinateComponent)) {
-        auto pValue = Fk_POINTER_CAST(FkCoordinateComponent, value);
+                                          desc.countPerVertex, GL_FLOAT, GL_FALSE, 0,
+                                          reinterpret_cast<const void *>(offset)));
+
+        offset = 0;
+        FkAssert(FK_OK == pValue->getValueLoc(FkVertexObjectComponent::kValueLoc::COORDINATE,
+                                              offset, desc), FK_FAIL);
         FK_GL_CHECK(glEnableVertexAttribArray(aCoordinateLoc));
         //st
         FK_GL_CHECK(glVertexAttribPointer(aCoordinateLoc,
-                                          pValue->countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                                          reinterpret_cast<const void *>(pValue->offset)));
+                                          desc.countPerVertex, GL_FLOAT, GL_FALSE, 0,
+                                          reinterpret_cast<const void *>(offset)));
     }
     return FkGraphicProgram::addValue(value);
 }

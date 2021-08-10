@@ -10,6 +10,20 @@
 
 #include "FkSource.h"
 
+FK_CLASS FkVertexDesc FK_EXTEND FkObject {
+public:
+    FkVertexDesc();
+
+    FkVertexDesc(const FkVertexDesc &o);
+
+    virtual ~FkVertexDesc();
+
+public:
+    size_t countVertex = 0;
+    size_t countPerVertex = 0;
+    size_t format = 0;
+};
+
 FK_CLASS FkVBODescription FK_EXTEND FkObject {
 public:
     FkVBODescription(size_t size);
@@ -35,6 +49,12 @@ public:
     virtual void destroy() override;
 
     virtual size_t size() override;
+
+    virtual void bind();
+
+    virtual void unbind();
+
+    virtual FkResult set(float *data, size_t size, int32_t offset);
 
 private:
     FkVBODescription desc;
