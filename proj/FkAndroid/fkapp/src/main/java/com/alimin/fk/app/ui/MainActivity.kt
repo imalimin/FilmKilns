@@ -12,7 +12,8 @@ class MainActivity : BaseActivity() {
 
     override val layoutResID: Int = R.layout.activity_main
     private val ITEMS = arrayListOf(
-        Action("Image") { startActivity(Intent(this, ImageActivity::class.java)) }
+        Action("Image") { startActivity(Intent(this, ImageActivity::class.java)) },
+        Action("Audio") { startActivity(Intent(this, AudioActivity::class.java)) }
     )
 
     override fun initView() {
