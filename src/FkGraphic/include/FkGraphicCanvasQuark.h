@@ -8,11 +8,11 @@
 #ifndef FK_GRAPHIC_FKGRAPHICCANVASQUARK_H
 #define FK_GRAPHIC_FKGRAPHICCANVASQUARK_H
 
-#include "FkQuark.h"
+#include "FkGraphicLayerQuark.h"
 #include "FkGraphicLayer.h"
 #include "FkSize.h"
 
-FK_CLASS FkGraphicCanvasQuark FK_EXTEND FkQuark {
+FK_CLASS FkGraphicCanvasQuark FK_EXTEND FkGraphicLayerQuark {
 public:
     FkGraphicCanvasQuark();
 
@@ -32,23 +32,12 @@ protected:
     virtual FkResult onStop() override;
 
 private:
-    FkResult _onUpdate(std::shared_ptr<FkProtocol> p);
-
-    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
-
     FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
 
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onWithCanvasSize(std::shared_ptr<FkProtocol> p);
+    std::shared_ptr<FkGraphicLayer> _getCanvas();
 
-    FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
-
-private:
-    void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
-
-private:
-    std::shared_ptr<FkGraphicLayer> canvas;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICCANVASQUARK_H

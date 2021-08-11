@@ -17,7 +17,6 @@
 #include "FkRenderRequestPrt.h"
 #include "FkSetSizeProto.h"
 #include "FkQuerySizeProto.h"
-#include "FkGraphicUpdateCanvasProto.h"
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
@@ -39,7 +38,6 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkGraphicModelAtom::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateCanvasProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicModelAtom::dispatchNext);

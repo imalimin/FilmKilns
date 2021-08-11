@@ -53,3 +53,8 @@ FkResult FkPortDesc::query(std::list<std::shared_ptr<FkProtocol>> &protocols) {
     }
     return FK_OK;
 }
+
+void FkPortDesc::clear() {
+    std::lock_guard<std::mutex> guard(mtx);
+    ports.clear();
+}

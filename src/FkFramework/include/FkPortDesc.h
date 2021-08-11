@@ -35,6 +35,8 @@ public:
 
     FkResult query(std::list<std::shared_ptr<FkProtocol>> &protocols);
 
+    void clear();
+
 private:
     std::unordered_map<FkProtocol::Type, std::shared_ptr<FkPort>> ports;
     std::mutex mtx;

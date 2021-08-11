@@ -9,7 +9,7 @@
 #include "FkSetSizeProto.h"
 #include "FkRenderRequestPrt.h"
 #include "FkMeasureTransProto.h"
-#include "FkGraphicUpdateCanvasProto.h"
+#include "FkGraphicUpdateLayerPrt.h"
 
 FkWinModelQuark::FkWinModelQuark() : FkQuark(), winSize(0, 0) {
     FK_MARK_SUPER
@@ -23,7 +23,7 @@ void FkWinModelQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkWinModelQuark::_onSetViewSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkWinModelQuark::_onWithWinSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkWinModelQuark::_onWithWinSize);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateCanvasProto, FkWinModelQuark::_onWithWinSize);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkWinModelQuark::_onWithWinSize);
 }
 
 FkResult FkWinModelQuark::onCreate() {

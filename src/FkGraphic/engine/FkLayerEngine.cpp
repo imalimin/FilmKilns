@@ -18,7 +18,6 @@
 #include "FkGraphicTexDelPtl.h"
 #include "FkSetSizeProto.h"
 #include "FkQuerySizeProto.h"
-#include "FkGraphicUpdateCanvasProto.h"
 #include "FkIntVec2.h"
 #include "FkFloatVec3.h"
 #include "FkLayerPostTransProto.h"
@@ -111,10 +110,12 @@ FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size) {
     sizeComp->size = size;
     auto texComp = std::make_shared<FkTexIDComponent>();
     texComp->id = texProto->id;
+
     auto layer = std::make_shared<FkGraphicLayer>();
+    layer->id = Fk_CANVAS_ID;
     layer->addComponent(sizeComp);
     layer->addComponent(texComp);
-    auto updateProto = std::make_shared<FkGraphicUpdateCanvasProto>();
+    auto updateProto = std::make_shared<FkGraphicUpdateLayerPrt>();
     updateProto->layer = layer;
     updateProto->scaleType = kScaleType::CENTER_INSIDE;
     return client->quickSend(updateProto, molecule);

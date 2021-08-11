@@ -36,6 +36,9 @@ protected:
 private:
     FkResult _onNewLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
+
+protected:
     FkResult _onUpdateLayer(std::shared_ptr<FkProtocol> p);
 
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
@@ -46,14 +49,12 @@ private:
 
     FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
-
     FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
 
 private:
     void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
 
-private:
+protected:
     /// 0 is for canvas.
     FkID mCurID;
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
