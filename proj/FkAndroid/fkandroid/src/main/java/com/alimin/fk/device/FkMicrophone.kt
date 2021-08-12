@@ -2,6 +2,7 @@ package com.alimin.fk.device
 
 import android.media.AudioFormat
 import android.media.AudioRecord
+import android.media.AudioTimestamp
 import android.media.MediaRecorder
 import android.os.Build
 import android.os.Handler
@@ -21,6 +22,7 @@ open class FkMicrophone : FkDevice() {
     }
 
     private lateinit var mRecord: AudioRecord
+    private val timestamp = AudioTimestamp()
     private var settings: FkAudioSettings? = null
     private var mByteBuffer: ByteBuffer? = null
     private var minBufSize = 0
@@ -36,10 +38,13 @@ open class FkMicrophone : FkDevice() {
             } else {
                 0
             }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                mRecord.getTimestamp(timestamp, AudioTimestamp.TIMEBASE_MONOTONIC)
+            }
             if (size > 0) {
                 bos?.write(mByteBuffer!!.array(), 0, size)
             }
-            Log.i(TAG, "Read: $size")
+            Log.i(TAG, "Read: ${timestamp.nanoTime}/${System.nanoTime()}, ${timestamp.framePosition}, $size")
         }
         Log.i(TAG, "Stop record loop")
     }
