@@ -5,6 +5,7 @@ import android.view.View
 import com.alimin.fk.app.R
 import com.alimin.fk.device.FkMicrophone
 import com.alimin.fk.device.FkSpeaker
+import com.alimin.fk.device.FkSyncStrategy
 import com.alimin.fk.entity.FkAudioSettings
 import com.lmy.common.ui.BaseActivity
 import kotlinx.android.synthetic.main.activity_audio.*
@@ -21,6 +22,7 @@ class AudioActivity : BaseActivity(), View.OnClickListener {
     private val mMicrophone = FkMicrophone()
     private val mSpeaker = FkSpeaker()
     private val settings = FkAudioSettings(16, 44100, 2)
+    private var strategy = FkSyncStrategy()
 
     @AfterPermissionGranted(REQ_PERMISSION)
     override fun initView() {
@@ -29,8 +31,10 @@ class AudioActivity : BaseActivity(), View.OnClickListener {
         )
         if (EasyPermissions.hasPermissions(this, *perms)) {
             mRecordBtn.setOnClickListener(this)
+            mMicrophone.strategy = strategy
+            mSpeaker.strategy = strategy
             mMicrophone.init(settings, File(externalCacheDir, "000001.pcm").absolutePath)
-            mSpeaker.init(settings, File(externalCacheDir, "000000.pcm").absolutePath)
+            mSpeaker.init(settings, File(externalCacheDir, "test.pcm").absolutePath)
         } else {
             EasyPermissions.requestPermissions(
                 this, "Request audio record permission", REQ_PERMISSION, *perms

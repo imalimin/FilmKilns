@@ -21,6 +21,7 @@ open class FkMicrophone : FkDevice() {
         const val TAG = "FkMicrophone"
     }
 
+    var strategy: FkSyncStrategy? = null
     private lateinit var mRecord: AudioRecord
     private val timestamp = AudioTimestamp()
     private var settings: FkAudioSettings? = null
@@ -32,6 +33,10 @@ open class FkMicrophone : FkDevice() {
     private var bos: FileOutputStream? = null
 
     private fun handleMessage(msg: Message) {
+        if (0 == msg.what) {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO)
+            return
+        }
         while (AudioRecord.RECORDSTATE_RECORDING == mRecord.recordingState) {
             val size = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mRecord.read(mByteBuffer!!, minBufSize, AudioRecord.READ_BLOCKING)
@@ -40,11 +45,29 @@ open class FkMicrophone : FkDevice() {
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 mRecord.getTimestamp(timestamp, AudioTimestamp.TIMEBASE_MONOTONIC)
+                if (size > 0) {
+                    val delta = timestamp.nanoTime - strategy!!.farTimestampInNano
+                    val deltaSize = delta * settings!!.channels * settings!!.sampleRate * settings!!.channels * (settings!!.format / 8) / 1000000000
+                    if (deltaSize > size) {
+                        continue
+                    }
+                    var offset = 0L
+                    if (deltaSize > 0) {
+                        offset = deltaSize
+                        Log.i(TAG, "Read: $deltaSize")
+                    } else if (deltaSize < 0) {
+                        offset = 0
+                        val empty = ByteArray((-deltaSize).toInt())
+                        for (i in empty.indices) {
+                            empty[i] = 0
+                        }
+                        Log.i(TAG, "Read: $deltaSize")
+                        bos?.write(empty, 0, empty.size)
+                    }
+                    bos?.write(mByteBuffer!!.array(), offset.toInt(), (size - deltaSize).toInt())
+                }
             }
-            if (size > 0) {
-                bos?.write(mByteBuffer!!.array(), 0, size)
-            }
-            Log.i(TAG, "Read: ${timestamp.nanoTime}/${System.nanoTime()}, ${timestamp.framePosition}, $size")
+//            Log.i(TAG, "Read: ${timestamp.nanoTime}/${System.nanoTime()}, ${timestamp.framePosition}, $size")
         }
         Log.i(TAG, "Stop record loop")
     }
@@ -94,12 +117,13 @@ open class FkMicrophone : FkDevice() {
             return FkResult.FK_INVALID_STATE
         }
         try {
+            strategy?.nearTimestampInNano = 0
             mRecord.startRecording()
             if (AudioRecord.RECORDSTATE_RECORDING != mRecord.recordingState) {
                 Log.e(TAG, "Start failed. Invalid state: ${mRecord.recordingState}")
                 return FkResult.FK_INVALID_STATE
             }
-            mHandler?.sendEmptyMessage(0)
+            mHandler?.sendEmptyMessage(1)
             return FkResult.FK_OK
         } catch (e: IllegalStateException) {
             e.printStackTrace()
@@ -122,6 +146,7 @@ open class FkMicrophone : FkDevice() {
     }
 
     fun release(): FkResult {
+        stop()
         if (AudioRecord.RECORDSTATE_STOPPED != mRecord.recordingState) {
             Log.e(TAG, "Invalid state: ${mRecord.recordingState}")
             return FkResult.FK_INVALID_STATE

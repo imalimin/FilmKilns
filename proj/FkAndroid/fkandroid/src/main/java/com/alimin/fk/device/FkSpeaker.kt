@@ -17,6 +17,7 @@ open class FkSpeaker : FkDevice() {
         const val TAG = "FkSpeaker"
     }
 
+    var strategy: FkSyncStrategy? = null
     private lateinit var mTrack: AudioTrack
     private val timestamp = AudioTimestamp()
     private var settings: FkAudioSettings? = null
@@ -24,23 +25,32 @@ open class FkSpeaker : FkDevice() {
     private var minBufSize = 0
     private val mThread = HandlerThread(TAG)
     private var mHandler: Handler? = null
+    private var mIsPlaying = false
 
     private var bis: FileInputStream? = null
 
     private fun handleMessage(msg: Message) {
-        while (AudioTrack.PLAYSTATE_PLAYING == mTrack.playState) {
+        if (0 == msg.what) {
+            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO)
+            return
+        }
+        while (mIsPlaying && AudioTrack.PLAYSTATE_PLAYING == mTrack.playState) {
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     val size = bis?.read(mByteBuffer!!.array(), 0, minBufSize)
+                    mByteBuffer!!.rewind()
                     mTrack.write(mByteBuffer!!, size!!, AudioTrack.WRITE_BLOCKING)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        if (strategy?.farTimestampInNano!! <= 0) {
+                            mTrack.getTimestamp(timestamp)
+                            strategy?.farTimestampInNano = timestamp.nanoTime
+                        }
+                    }
+//                    Log.i(TAG, "Read: ${timestamp.nanoTime}/${System.nanoTime()}, ${timestamp.framePosition}, $size")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                mTrack.getTimestamp(timestamp)
-            }
-            Log.i(TAG, "Read: ${timestamp.nanoTime}/${System.nanoTime()}, ${timestamp.framePosition}")
         }
         Log.i(TAG, "Stop play loop")
     }
@@ -65,9 +75,9 @@ open class FkSpeaker : FkDevice() {
         mByteBuffer = ByteBuffer.allocateDirect(minBufSize)
         mTrack = AudioTrack(
             AudioManager.STREAM_MUSIC,
-            settings.sampleRate,
-            settings.channels,
-            AudioFormat.ENCODING_PCM_16BIT,
+            sampleRate,
+            channelConfig,
+            audioFormat,
             minBufSize,
             AudioTrack.MODE_STREAM
         )
@@ -98,7 +108,9 @@ open class FkSpeaker : FkDevice() {
                 Log.e(TAG, "Start failed. Invalid state: ${mTrack.playState}")
                 return FkResult.FK_INVALID_STATE
             }
-            mHandler?.sendEmptyMessage(0)
+            strategy?.farTimestampInNano = 0
+            mIsPlaying = true
+            mHandler?.sendEmptyMessage(1)
             return FkResult.FK_OK
         } catch (e: IllegalStateException) {
             e.printStackTrace()
@@ -112,6 +124,7 @@ open class FkSpeaker : FkDevice() {
             return FkResult.FK_INVALID_STATE
         }
         try {
+            mIsPlaying = false
             mTrack.pause()
             return FkResult.FK_OK
         } catch (e: IllegalStateException) {
@@ -126,6 +139,7 @@ open class FkSpeaker : FkDevice() {
             return FkResult.FK_INVALID_STATE
         }
         try {
+            mIsPlaying = false
             mTrack.stop()
             return FkResult.FK_OK
         } catch (e: IllegalStateException) {
@@ -135,6 +149,7 @@ open class FkSpeaker : FkDevice() {
     }
 
     fun release(): FkResult {
+        stop()
         if (AudioTrack.PLAYSTATE_STOPPED != mTrack.playState) {
             Log.e(TAG, "Invalid state: ${mTrack.playState}")
             return FkResult.FK_INVALID_STATE
