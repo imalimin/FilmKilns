@@ -6,6 +6,10 @@
 */
 
 #include "FkPortDesc.h"
+#include "FkOnCreatePrt.h"
+#include "FkOnDestroyPrt.h"
+#include "FkOnStartPrt.h"
+#include "FkOnStopPrt.h"
 
 FkPortDesc::FkPortDesc() : FkObject() {
 
@@ -56,5 +60,15 @@ FkResult FkPortDesc::query(std::list<std::shared_ptr<FkProtocol>> &protocols) {
 
 void FkPortDesc::clear() {
     std::lock_guard<std::mutex> guard(mtx);
-    ports.clear();
+    auto itr = ports.begin();
+    while (itr != ports.end()) {
+        if (itr->first != FkClassType::type<FkOnCreatePrt>().hashCode()
+            && itr->first != FkClassType::type<FkOnDestroyPrt>().hashCode()
+            && itr->first != FkClassType::type<FkOnStartPrt>().hashCode()
+            && itr->first != FkClassType::type<FkOnStopPrt>().hashCode()) {
+            itr = ports.erase(itr);
+        } else {
+            ++itr;
+        }
+    }
 }
