@@ -29,6 +29,7 @@ open class FkMicrophone : FkDevice() {
     private var minBufSize = 0
     private val mThread = HandlerThread(TAG)
     private var mHandler: Handler? = null
+    private var fixed = false
 
     private var bos: FileOutputStream? = null
 
@@ -45,26 +46,33 @@ open class FkMicrophone : FkDevice() {
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 mRecord.getTimestamp(timestamp, AudioTimestamp.TIMEBASE_MONOTONIC)
-                if (size > 0) {
+                if (size > 0 && strategy!!.farTimestampInNano != Long.MIN_VALUE) {
                     val delta = timestamp.nanoTime - strategy!!.farTimestampInNano
-                    val deltaSize = delta * settings!!.channels * settings!!.sampleRate * settings!!.channels * (settings!!.format / 8) / 1000000000
-                    if (deltaSize > size) {
+                    if (fixed || 0L == delta) {
+                        fixed = true
+                        bos?.write(mByteBuffer!!.array(), 0, size)
                         continue
                     }
-                    var offset = 0L
+                    Log.i(TAG, "Delta: $delta")
+                    val deltaSize = delta * settings!!.channels * settings!!.sampleRate * settings!!.channels * (settings!!.format / 8) / 1000000000
                     if (deltaSize > 0) {
-                        offset = deltaSize
-                        Log.i(TAG, "Read: $deltaSize")
-                    } else if (deltaSize < 0) {
-                        offset = 0
-                        val empty = ByteArray((-deltaSize).toInt())
+                        fixed = true
+                        val empty = ByteArray(deltaSize.toInt())
                         for (i in empty.indices) {
                             empty[i] = 0
                         }
-                        Log.i(TAG, "Read: $deltaSize")
                         bos?.write(empty, 0, empty.size)
+                        continue
                     }
-                    bos?.write(mByteBuffer!!.array(), offset.toInt(), (size - deltaSize).toInt())
+                    if (-deltaSize > size) {
+                        continue
+                    }
+                    fixed = true
+                    bos?.write(
+                        mByteBuffer!!.array(),
+                        (-deltaSize).toInt(),
+                        (size - deltaSize).toInt()
+                    )
                 }
             }
 //            Log.i(TAG, "Read: ${timestamp.nanoTime}/${System.nanoTime()}, ${timestamp.framePosition}, $size")
@@ -117,7 +125,8 @@ open class FkMicrophone : FkDevice() {
             return FkResult.FK_INVALID_STATE
         }
         try {
-            strategy?.nearTimestampInNano = 0
+            fixed = false
+            strategy?.nearTimestampInNano = Long.MIN_VALUE
             mRecord.startRecording()
             if (AudioRecord.RECORDSTATE_RECORDING != mRecord.recordingState) {
                 Log.e(TAG, "Start failed. Invalid state: ${mRecord.recordingState}")

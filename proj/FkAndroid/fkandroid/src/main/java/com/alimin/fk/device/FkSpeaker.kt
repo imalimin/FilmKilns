@@ -41,9 +41,11 @@ open class FkSpeaker : FkDevice() {
                     mByteBuffer!!.rewind()
                     mTrack.write(mByteBuffer!!, size!!, AudioTrack.WRITE_BLOCKING)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        if (strategy?.farTimestampInNano!! <= 0) {
+                        if (strategy?.farTimestampInNano!! == Long.MIN_VALUE) {
                             mTrack.getTimestamp(timestamp)
-                            strategy?.farTimestampInNano = timestamp.nanoTime
+                            if (0L != timestamp.nanoTime) {
+                                strategy?.farTimestampInNano = timestamp.nanoTime
+                            }
                         }
                     }
 //                    Log.i(TAG, "Read: ${timestamp.nanoTime}/${System.nanoTime()}, ${timestamp.framePosition}, $size")
@@ -108,7 +110,7 @@ open class FkSpeaker : FkDevice() {
                 Log.e(TAG, "Start failed. Invalid state: ${mTrack.playState}")
                 return FkResult.FK_INVALID_STATE
             }
-            strategy?.farTimestampInNano = 0
+            strategy?.farTimestampInNano = Long.MIN_VALUE
             mIsPlaying = true
             mHandler?.sendEmptyMessage(1)
             return FkResult.FK_OK

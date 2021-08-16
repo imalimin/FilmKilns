@@ -62,11 +62,11 @@ class AudioActivity : BaseActivity(), View.OnClickListener {
             R.id.mRecordBtn -> {
                 mRecordBtn.isSelected = !mRecordBtn.isSelected
                 if (mRecordBtn.isSelected) {
-                    mSpeaker.start()
                     mMicrophone.start()
+                    mSpeaker.start()
                 } else {
-                    mMicrophone.stop()
                     mSpeaker.stop()
+                    mMicrophone.stop()
                 }
             }
         }
