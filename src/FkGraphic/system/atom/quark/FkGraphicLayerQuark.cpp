@@ -116,7 +116,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkGraphicUpdateLayerPrt, p);
     auto itr = layers.find(proto->layer->id);
     if (layers.end() == itr) {
-        return FK_FAIL;
+        return FK_SKIP;
     }
     auto colorComp = proto->layer->findComponent<FkColorComponent>();
     if (nullptr != colorComp) {
