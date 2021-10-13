@@ -43,11 +43,11 @@ protected:
 
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onPostTranslate(std::shared_ptr<FkProtocol> p);
+    virtual FkResult _onPostTranslate(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onPostScale(std::shared_ptr<FkProtocol> p);
+    virtual FkResult _onPostScale(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
+    virtual FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
 
     FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
 

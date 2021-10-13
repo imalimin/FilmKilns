@@ -31,6 +31,12 @@ protected:
 
     virtual FkResult onStop() override;
 
+    FkResult _onPostTranslate(std::shared_ptr<FkProtocol> p) override;
+
+    FkResult _onPostScale(std::shared_ptr<FkProtocol> p) override;
+
+    FkResult _onPostRotate(std::shared_ptr<FkProtocol> p) override;
+
 private:
     FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
 

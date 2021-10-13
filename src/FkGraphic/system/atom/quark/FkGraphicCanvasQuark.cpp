@@ -67,6 +67,30 @@ FkResult FkGraphicCanvasQuark::onStop() {
     return FkGraphicLayerQuark::onStop();
 }
 
+FkResult FkGraphicCanvasQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    if (proto->layer != Fk_CANVAS_ID) {
+        return FK_OK;
+    }
+    return FkGraphicLayerQuark::_onPostTranslate(p);
+}
+
+FkResult FkGraphicCanvasQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    if (proto->layer != Fk_CANVAS_ID) {
+        return FK_OK;
+    }
+    return FkGraphicLayerQuark::_onPostScale(p);
+}
+
+FkResult FkGraphicCanvasQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    if (proto->layer != Fk_CANVAS_ID) {
+        return FK_OK;
+    }
+    return FkGraphicLayerQuark::_onPostRotate(p);
+}
+
 FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p) {
     auto proto = std::static_pointer_cast<FkQuerySizeProto>(p);
     std::vector<std::shared_ptr<FkGraphicComponent>> vec;

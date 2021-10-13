@@ -78,18 +78,18 @@ FkResult FkPreRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         return FK_FAIL;
     }
     auto size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
-//    auto verObj = canvas->findComponent<FkVertexObjectComponent>();
-//    FkAssert(nullptr != verObj, FK_NPE);
-//
-//    vec.clear();
-//    context->context->makeCurrent();
-//    auto ret = FkGraphicRender::with(program->program)
-//            ->setContext(context->context)
-//            ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
-//            ->setVertexObj(verObj)
-//            ->setFrameObject(fbo->fbo)
-//            ->setTargetTexture(tex->tex)
-//            ->render();
-//    return ret;
-    return FK_OK;
+    auto verObj = canvas->findComponent<FkVertexObjectComponent>();
+    FkAssert(nullptr != verObj, FK_NPE);
+
+    vec.clear();
+    context->context->makeCurrent();
+    auto ret = FkGraphicRender::with(program->program)
+            ->setContext(context->context)
+            ->setViewport(0, 0, size->size.getWidth(), size->size.getHeight())
+            ->setVertexObj(verObj)
+            ->setFrameObject(fbo->fbo)
+            ->setTargetTexture(tex->tex)
+            ->render();
+    return ret;
+//    return FK_OK;
 }
