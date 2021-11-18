@@ -43,26 +43,24 @@ FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkGraphicComponent> val
         return FK_FAIL;
     }
     if (FK_INSTANCE_OF(value, FkVertexObjectComponent)) {
-        auto pValue = Fk_POINTER_CAST(FkVertexObjectComponent, value);
-        int offset = 0;
-        FkVertexDesc desc;
-        FkAssert(FK_OK == pValue->getValueLoc(FkVertexObjectComponent::kValueLoc::VERTEX,
-                                              offset, desc), FK_FAIL);
-
-        FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
-        //xy
-        FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
-                                          desc.countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                                          reinterpret_cast<const void *>(offset)));
-
-        offset = 0;
-        FkAssert(FK_OK == pValue->getValueLoc(FkVertexObjectComponent::kValueLoc::COORDINATE,
-                                              offset, desc), FK_FAIL);
-        FK_GL_CHECK(glEnableVertexAttribArray(aCoordinateLoc));
+        float pos[]{
+                -1.0f, -1.0f,//LEFT,BOTTOM
+                1.0f / 2.0f, -1.0f,//RIGHT,BOTTOM
+                -1.0f / 2.0f, 1.0f,//LEFT,TOP
+                1.0f / 2.0f, 1.0f//RIGHT,TOP
+        };
+        float coordinate[]{
+                0.0f, 0.0f,//LEFT,BOTTOM
+                1.0f, 0.0f,//RIGHT,BOTTOM
+                0.0f, 1.0f,//LEFT,TOP
+                1.0f, 1.0f//RIGHT,TOP
+        };
+        glEnableVertexAttribArray(aPosLoc);
         //st
-        FK_GL_CHECK(glVertexAttribPointer(aCoordinateLoc,
-                                          desc.countPerVertex, GL_FLOAT, GL_FALSE, 0,
-                                          reinterpret_cast<const void *>(offset)));
+        glVertexAttribPointer(aPosLoc, 2, GL_FLOAT, GL_FALSE, 2 * 4 * sizeof(float), pos);
+        glEnableVertexAttribArray(aCoordinateLoc);
+        //st
+        glVertexAttribPointer(aCoordinateLoc, 2, GL_FLOAT, GL_FALSE, 2 * 4 * sizeof(float), coordinate);
     }
     return FkGraphicProgram::addValue(value);
 }

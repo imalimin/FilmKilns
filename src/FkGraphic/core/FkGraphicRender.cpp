@@ -51,7 +51,9 @@ FkResult FkGraphicRender::render(kRenderMode mode) {
     }
 
     FK_GL_CHECK(program->bind());
-    vertexObj->bind();
+    if (vertexObj) {
+        vertexObj->bind();
+    }
     program->addValue(srcTex);
     program->addValue(mat);
     program->addValue(vertexObj);
@@ -60,7 +62,9 @@ FkResult FkGraphicRender::render(kRenderMode mode) {
     program->addValue(pointShape);
     FK_GL_CHECK(glDrawArrays(_getRenderMode(mode), 0, countVertex));
 
-    vertexObj->unbind();
+    if (vertexObj) {
+        vertexObj->unbind();
+    }
     FK_GL_CHECK(program->clear());
     program->unbind();
     if (_enableSwapBuffers) {
