@@ -7,14 +7,45 @@
 
 #include "FkRenderEngine.h"
 
-FkRenderEngine::FkRenderEngine() : FkObject() {
-    FK_MARK_SUPER
-}
-
-FkRenderEngine::FkRenderEngine(const FkRenderEngine &o) : FkObject(o) {
+FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
     FK_MARK_SUPER
 }
 
 FkRenderEngine::~FkRenderEngine() {
 
+}
+FkResult FkRenderEngine::onCreate() {
+    auto ret = FkEngine::onCreate();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    client->quickSend<FkOnCreatePrt>(molecule);
+    return ret;
+}
+
+FkResult FkRenderEngine::onDestroy() {
+    auto ret = FkEngine::onDestroy();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    client->quickSend<FkOnDestroyPrt>(molecule);
+    return ret;
+}
+
+FkResult FkRenderEngine::onStart() {
+    auto ret = FkEngine::onStart();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    client->quickSend<FkOnStartPrt>(molecule);
+    return ret;
+}
+
+FkResult FkRenderEngine::onStop() {
+    auto ret = FkEngine::onStop();
+    if (FK_OK != ret) {
+        return ret;
+    }
+    client->quickSend<FkOnStopPrt>(molecule);
+    return ret;
 }

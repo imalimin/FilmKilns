@@ -8,15 +8,28 @@
 #ifndef FK_GRAPHIC_FKRENDERENGINE_H
 #define FK_GRAPHIC_FKRENDERENGINE_H
 
-#include "FkObject.h"
+#include "FkEngine.h"
+#include "FkRenderMolecule.h"
 
-FK_CLASS FkRenderEngine FK_EXTEND FkObject {
+FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
 public:
-    FkRenderEngine();
+    FkRenderEngine(std::string name);
 
-    FkRenderEngine(const FkRenderEngine &o);
+    FkRenderEngine(const FkRenderEngine &o) = delete;
 
     virtual ~FkRenderEngine();
+
+    virtual FkResult onCreate() override;
+
+    virtual FkResult onDestroy() override;
+
+    virtual FkResult onStart() override;
+
+    virtual FkResult onStop() override;
+
+private:
+    std::shared_ptr<FkSessionClient> client;
+    std::shared_ptr<FkRenderMolecule> molecule;
 };
 
 #endif //FK_GRAPHIC_FKRENDERENGINE_H
