@@ -7,6 +7,7 @@
 
 #include "MyPrinter.h"
 #include "FkDefinition.h"
+#include "FkTestResultHolder.h"
 
 #define TAG "FkTest"
 
@@ -30,17 +31,20 @@ void MyPrinter::OnTestEnd(const ::testing::TestInfo &test_info) {
     auto *result = test_info.result();
     auto passed = result && result->Passed();
     std::string fmt = "%s %s Line: %d";
+    char msg[512];
     if (passed) {
-        AlLogcat::i(TAG, fmt.c_str(),
-                    "[ PASSED ]",
-                    test_info.test_case_name(),
-                    test_info.line());
+        sprintf(msg, fmt.c_str(),
+                "[ PASSED ]",
+                test_info.test_case_name(),
+                test_info.line());
     } else {
-        AlLogcat::e(TAG, "%s %s Line: %d",
-                    "[ FAILED ]",
-                    test_info.test_case_name(),
-                    test_info.line());
+        sprintf(msg, fmt.c_str(),
+                "[ FAILED ]",
+                test_info.test_case_name(),
+                test_info.line());
     }
+    AlLogcat::i(TAG, "%s", msg);
+    FkTestResultHolder::getInstance()->push(msg, passed);
 }
 
 void MyPrinter::OnTestPartResult(const ::testing::TestPartResult &test_part_result) {

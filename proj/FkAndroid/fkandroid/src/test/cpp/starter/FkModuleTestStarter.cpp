@@ -7,6 +7,7 @@
 
 #include "MyPrinter.h"
 #include "gtest/gtest.h"
+#include "FkTestResultHolder.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,6 +31,18 @@ JNIEXPORT jboolean JNICALL Java_com_alimin_fk_FkModuleTestStarter_nativeRunTestC
     char **argv = nullptr;
     ::testing::InitGoogleTest(&argc, argv);
     return 0 == RUN_ALL_TESTS() ? JNI_TRUE : JNI_FALSE;
+}
+
+JNIEXPORT jobjectArray JNICALL Java_com_alimin_fk_FkModuleTestStarter_nativeGetResult
+        (JNIEnv *env, jobject thiz) {
+    std::vector<std::string> vec;
+    FkTestResultHolder::getInstance()->pop(vec);
+    FkTestResultHolder::getInstance()->clear();
+    auto result = env->NewObjectArray(vec.size(), env->FindClass("java/lang/String"), nullptr);
+    for (int i = 0; i < vec.size(); ++i) {
+        env->SetObjectArrayElement(result, i, env->NewStringUTF(vec[i].c_str()));
+    }
+    return result;
 }
 
 #ifdef __cplusplus

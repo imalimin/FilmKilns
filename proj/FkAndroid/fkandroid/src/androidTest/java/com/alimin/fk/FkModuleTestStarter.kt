@@ -17,7 +17,9 @@ class FkModuleTestStarter {
         checkUnitTestEnable()
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         FilmKilns.init(appContext)
-        assertTrue(nativeRunAllTest())
+        val ret = nativeRunAllTest()
+        val result = nativeGetResult()
+        assertTrue("${result.size} cases FAILED: " + result.contentToString(), ret)
     }
 
     @Test
@@ -30,4 +32,5 @@ class FkModuleTestStarter {
 
     private external fun nativeRunAllTest(): Boolean
     private external fun nativeRunTestClassType(): Boolean
+    private external fun nativeGetResult(): Array<String>
 }
