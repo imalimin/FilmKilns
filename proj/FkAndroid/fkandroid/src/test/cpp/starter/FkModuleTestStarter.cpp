@@ -14,7 +14,7 @@ extern "C" {
 
 #include "jni.h"
 
-JNIEXPORT jboolean JNICALL Java_com_alimin_fk_CPPTest_testAll
+JNIEXPORT jboolean JNICALL Java_com_alimin_fk_FkModuleTestStarter_nativeRunAllTest
         (JNIEnv *env, jobject thiz) {
     FK_SETUP_PRINTER
     int argc = 0;
@@ -23,7 +23,7 @@ JNIEXPORT jboolean JNICALL Java_com_alimin_fk_CPPTest_testAll
     return 0 == RUN_ALL_TESTS() ? JNI_TRUE : JNI_FALSE;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_alimin_fk_CPPTest_testClassType
+JNIEXPORT jboolean JNICALL Java_com_alimin_fk_FkModuleTestStarter_nativeRunTestClassType
         (JNIEnv *env, jobject thiz) {
     FK_SETUP_PRINTER
     int argc = 0;

@@ -10,6 +10,7 @@ include_directories(
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
         ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
+        ${PROJECT_SOURCE_FK_DIR}/FkImage/include
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
@@ -54,10 +55,12 @@ add_library(gmock_main STATIC IMPORTED)
 set_target_properties(gmock_main PROPERTIES IMPORTED_LOCATION
         "${GTEST}/libs/${ANDROID_ABI}/libgmock_main.a")
 
+aux_source_directory(${PROJECT_SOURCE_DIR}/starter SOURCES_STARTER)
 aux_source_directory(${PROJECT_SOURCE_DIR}/base SOURCES_BASE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/module SOURCES_MODULE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/samples SOURCES_SAMPLES)
 
+list(APPEND SOURCES_ROOT ${SOURCES_STARTER})
 list(APPEND SOURCES_ROOT ${SOURCES_BASE})
 list(APPEND SOURCES_ROOT ${SOURCES_MODULE})
 list(APPEND SOURCES_ROOT ${SOURCES_SAMPLES})
@@ -68,5 +71,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} gtest_main gtest al_common FkBase FkFramework FkGraphic ${log-lib})
+set(MODULES ${MODULE_NAME} gtest_main gtest al_common FkBase FkFramework FkGraphic FkImage ${log-lib})
 target_link_libraries(${MODULES})

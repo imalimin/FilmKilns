@@ -7,29 +7,27 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class CPPUnitTest {
-    private fun checkUnitTest() {
+class FkModuleTestStarter {
+    private fun checkUnitTestEnable() {
         assertTrue("Enable unit test please.", BuildConfig.ENABLE_UNIT_TEST)
     }
 
     @Test
-    fun testAll() {
-        checkUnitTest()
+    fun runAllTest() {
+        checkUnitTestEnable()
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         FilmKilns.init(appContext)
-        assertTrue(CPPTest().testAll())
+        assertTrue(nativeRunAllTest())
     }
 
     @Test
-    fun testClassType() {
-        checkUnitTest()
+    fun runTestClassType() {
+        checkUnitTestEnable()
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         FilmKilns.init(appContext)
-        assertTrue(CPPTest().testClassType())
+        assertTrue(nativeRunTestClassType())
     }
-}
 
-class CPPTest {
-    external fun testAll(): Boolean
-    external fun testClassType(): Boolean
+    private external fun nativeRunAllTest(): Boolean
+    private external fun nativeRunTestClassType(): Boolean
 }
