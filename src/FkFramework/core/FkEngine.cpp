@@ -41,12 +41,12 @@ FkEngine::FkEngine(std::string name) : FkObject(), name(std::move(name)), state(
 }
 
 FkEngine::~FkEngine() {
-    std::lock_guard<std::mutex> guard(mtx);
+    std::lock_guard<std::recursive_mutex> guard(mtx);
     FkAssert(kState::IDL == state, );
 }
 
 FkResult FkEngine::create() {
-    auto ret = _changeState(kState::IDL, kState::CREATED);
+    auto ret = _changeState((uint32_t) kState::IDL, kState::CREATING);
     if (FK_OK != ret) {
         return ret;
     }
@@ -59,12 +59,15 @@ FkResult FkEngine::create() {
 }
 
 FkResult FkEngine::destroy() {
+    if (nullptr == mThread) {
+        return FK_INVALID_STATE;
+    }
     sendMessage(FkMessage::obtain(FK_MSG_DESTROY));
     mThread->quitSafely();
     mThread = nullptr;
     delete mHandler;
     mHandler = nullptr;
-    auto ret = _changeState(kState::STOPPED, kState::IDL);
+    auto ret = _changeState(((uint32_t) kState::STOPPED) | ((uint32_t) kState::STOPPING), kState::IDL);
     if (FK_OK != ret) {
         return ret;
     }
@@ -72,18 +75,16 @@ FkResult FkEngine::destroy() {
 }
 
 FkResult FkEngine::start() {
-    std::lock_guard<std::mutex> guard(mtx);
-    if (kState::CREATED != state && kState::STOPPED != state) {
-        FkLogW(FK_DEF_TAG, "Invalid state");
-        return FK_INVALID_STATE;
+    auto ret = _changeState(((uint32_t) kState::CREATED) | ((uint32_t) kState::CREATING), kState::STARTING);
+    if (FK_OK != ret) {
+        return ret;
     }
-    this->state = kState::STARTED;
     sendMessage(FkMessage::obtain(FK_MSG_START));
     return FK_OK;
 }
 
 FkResult FkEngine::stop() {
-    auto ret = _changeState(kState::STARTED, kState::STOPPED);
+    auto ret = _changeState(((uint32_t) kState::STARTED) | ((uint32_t) kState::STARTING), kState::STOPPING);
     if (FK_OK != ret) {
         return ret;
     }
@@ -92,7 +93,7 @@ FkResult FkEngine::stop() {
 }
 
 FkResult FkEngine::onCreate() {
-    return FK_OK;
+    return _changeState((uint32_t) kState::CREATING, kState::CREATED);
 }
 
 FkResult FkEngine::onDestroy() {
@@ -100,11 +101,11 @@ FkResult FkEngine::onDestroy() {
 }
 
 FkResult FkEngine::onStart() {
-    return FK_OK;
+    return _changeState((uint32_t) kState::STARTING, kState::STARTED);
 }
 
 FkResult FkEngine::onStop() {
-    return FK_OK;
+    return _changeState((uint32_t) kState::STOPPING, kState::STOPPED);
 }
 
 FkResult FkEngine::_onCreate(std::shared_ptr<FkMessage> msg) {
@@ -123,14 +124,14 @@ FkResult FkEngine::_onStop(std::shared_ptr<FkMessage> msg) {
     return onStop();
 }
 
-FkResult FkEngine::_changeState(kState src, kState dst) {
-    std::lock_guard<std::mutex> guard(mtx);
-    if (src != state) {
-        FkLogW(FK_DEF_TAG, "Invalid state");
-        return FK_INVALID_STATE;
+FkResult FkEngine::_changeState(uint32_t src, kState dst) {
+    std::lock_guard<std::recursive_mutex> guard(mtx);
+    if (src & ((uint32_t) state)) {
+        this->state = dst;
+        return FK_OK;
     }
-    this->state = dst;
-    return FK_OK;
+    FkLogW(FK_DEF_TAG, "Invalid state");
+    return FK_INVALID_STATE;
 }
 
 FkResult FkEngine::registerMessage(FkID what, FkMessageHandler handler) {
@@ -139,7 +140,7 @@ FkResult FkEngine::registerMessage(FkID what, FkMessageHandler handler) {
 }
 
 void FkEngine::_dispatch(std::shared_ptr<FkMessage> msg) {
-    std::lock_guard<std::mutex> guard(mtx);
+    std::lock_guard<std::recursive_mutex> guard(mtx);
     if (kState::IDL == state) {
         FkLogW(FK_DEF_TAG, "Invalid state");
         return;

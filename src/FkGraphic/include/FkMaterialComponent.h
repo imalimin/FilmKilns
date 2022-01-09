@@ -20,5 +20,4 @@ public:
 
 };
 
-
 #endif //FK_GRAPHIC_FKMATERIALCOMPONENT_H

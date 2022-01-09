@@ -19,6 +19,7 @@ public:
 
     virtual ~FkRenderEngine();
 
+protected:
     virtual FkResult onCreate() override;
 
     virtual FkResult onDestroy() override;

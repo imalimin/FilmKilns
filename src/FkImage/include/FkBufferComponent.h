@@ -8,7 +8,7 @@
 #ifndef FK_GRAPHIC_FKBUFFERCOMPONENT_H
 #define FK_GRAPHIC_FKBUFFERCOMPONENT_H
 
-#include "FkMaterialComponent.h"
+#include "FkGraphicComponent.h"
 
 FK_CLASS FkBufferComponent FK_EXTEND FkGraphicComponent {
 public:

@@ -6,6 +6,7 @@
 */
 
 #include "FkRenderSourceAtom.h"
+#include "FkRenderDefine.h"
 
 FkRenderSourceAtom::FkRenderSourceAtom() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -16,7 +17,7 @@ FkRenderSourceAtom::~FkRenderSourceAtom() {
 }
 
 void FkRenderSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-//    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMolecule::_onDrawLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderSourceAtom::_onRender);
 }
 
 void FkRenderSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
@@ -52,4 +53,8 @@ FkResult FkRenderSourceAtom::onStop() {
         return ret;
     }
     return ret;
+}
+
+FkResult FkRenderSourceAtom::_onRender(std::shared_ptr<FkProtocol> p) {
+    return FK_OK;
 }

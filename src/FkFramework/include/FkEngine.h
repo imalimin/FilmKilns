@@ -55,6 +55,15 @@ public:
 
     virtual FkResult stop();
 
+//    template<class T>
+//    std::future<T> sendFuture(std::shared_ptr<T> protocol) {
+//        auto prom = std::make_shared<std::promise<T>>();
+//        auto *msg = AlMessage::obtain(MSG_FUTURE);
+//        msg->sp = std::move(prom);
+//        mHandler->sendMessage(msg);
+//        return prom->get_future();
+//    }
+protected:
     virtual FkResult onCreate();
 
     virtual FkResult onDestroy();
@@ -65,15 +74,6 @@ public:
 
     FkResult sendMessage(std::shared_ptr<FkMessage> msg);
 
-//    template<class T>
-//    std::future<T> sendFuture(std::shared_ptr<T> protocol) {
-//        auto prom = std::make_shared<std::promise<T>>();
-//        auto *msg = AlMessage::obtain(MSG_FUTURE);
-//        msg->sp = std::move(prom);
-//        mHandler->sendMessage(msg);
-//        return prom->get_future();
-//    }
-protected:
     FkResult registerMessage(FkID what, FkMessageHandler handler);
 
 private:
@@ -85,7 +85,7 @@ private:
 
     virtual FkResult _onStop(std::shared_ptr<FkMessage> msg);
 
-    FkResult _changeState(kState src, kState dst);
+    FkResult _changeState(uint32_t src, kState dst);
 
     void _dispatch(std::shared_ptr<FkMessage> msg);
 
@@ -98,7 +98,7 @@ private:
     std::shared_ptr<FkHandlerThread> mThread = nullptr;
     FkHandler *mHandler = nullptr;
     std::map<FkID, FkMessageHandlerPair> mMsgMap;
-    std::mutex mtx;
+    std::recursive_mutex mtx;
     kState state = kState::IDL;
 };
 

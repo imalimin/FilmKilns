@@ -76,10 +76,13 @@ typedef int32_t FkID;
 #define FK_KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
 
 FK_ENUM kState : int {
-    IDL = -1,
-    CREATED,
-    STARTED,
-    STOPPED,
+    IDL = 1,
+    CREATING = 1 << 1,
+    CREATED = 1 << 2,
+    STARTING = 1 << 3,
+    STARTED = 1 << 4,
+    STOPPING = 1 << 5,
+    STOPPED = 1 << 6,
 };
 
 FK_ENUM kScaleType : int {
