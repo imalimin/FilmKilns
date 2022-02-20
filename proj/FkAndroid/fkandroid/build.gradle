@@ -113,6 +113,14 @@ static def generateClassAndHeader(VelocityEngine engine, File rootDir, String mo
     def srcFile = new File(rootDir, "${module}/${pkt}/${className}.cpp")
     def tagHeader = "${module.replace("Fk", "Fk_")}_${className}_H".toUpperCase()
     def timeStr = Calendar.getInstance(Locale.CHINA).time.toLocaleString()
+    // Check dirs.
+    if (!headerFile.parentFile.exists()) {
+        headerFile.parentFile.mkdirs()
+    }
+    if (!srcFile.parentFile.exists()) {
+        srcFile.parentFile.mkdirs()
+    }
+
     VelocityContext ctx = new VelocityContext()
     ctx.put("moduleName", module)
     ctx.put("className", className)
