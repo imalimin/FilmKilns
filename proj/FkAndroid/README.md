@@ -17,6 +17,19 @@ Framework
 +  FkFramework   | FkBase +
 +-------------------------+
 
+ESC(Entity-Component-System)
+-------
+
+Component A -+
+Component B  +-> Entity
+Component C -+
+
+System A -+
+System B -+
+          +-> World
+Entity A -+
+Entity B -+
+
 License
 -------
 

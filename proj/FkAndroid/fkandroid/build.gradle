@@ -92,30 +92,33 @@ dependencies {
 
 /**
  * Generate .cpp and .h source by command
- * ./gradlew generateCPPSource -Pm=FkGraphic -Ppkt=core -Pc=FkTest
+ * ./gradlew genCppClass -Pm=FkGraphic -Ppkt=core -Pc=FkTest
  */
-task generateCPPSource(type: Exec) {
+task genCppClass(type: Exec) {
     if (project.hasProperty('m') && project.hasProperty('pkt') && project.hasProperty('c')) {
         def rootDir = new File(getRootDir().parentFile.parentFile, "src")
         def templateDir = new File(getProjectDir(), "templates")
         VelocityEngine engine = new VelocityEngine()
         engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath())
         engine.init()
-        generateCPPAndHeader(engine, rootDir, m, pkt, c)
+        generateClassAndHeader(engine, rootDir, m, pkt, c)
         println("Generate done.")
     } else {
         println("Generate nothing.")
     }
 }
 
-static def generateCPPAndHeader(VelocityEngine engine, File rootDir, String module, String pkt, String className) {
+static def generateClassAndHeader(VelocityEngine engine, File rootDir, String module, String pkt, String className) {
     def headerFile = new File(rootDir, "${module}/include/${className}.h")
     def srcFile = new File(rootDir, "${module}/${pkt}/${className}.cpp")
     def tagHeader = "${module.replace("Fk", "Fk_")}_${className}_H".toUpperCase()
+    def timeStr = Calendar.getInstance(Locale.CHINA).time.toLocaleString()
     VelocityContext ctx = new VelocityContext()
     ctx.put("moduleName", module)
     ctx.put("className", className)
     ctx.put("tagHeader", tagHeader)
+    ctx.put("author", System.getenv().get("USERNAME"))
+    ctx.put("time", timeStr)
     if (!headerFile.exists()) {
         writeSource(engine, ctx, "FkHeader.txt", headerFile)
         println("New   h: ${headerFile.path}")
@@ -124,7 +127,6 @@ static def generateCPPAndHeader(VelocityEngine engine, File rootDir, String modu
         writeSource(engine, ctx, "FkCPP.txt", srcFile)
         println("New cpp: ${srcFile.path}")
     }
-
 }
 
 static def writeSource(VelocityEngine engine, VelocityContext ctx, String templateStr, File out) {
