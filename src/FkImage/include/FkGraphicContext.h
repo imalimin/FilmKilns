@@ -8,55 +8,15 @@
 #ifndef FK_GRAPHIC_FKGRAPHICCONTEXT_H
 #define FK_GRAPHIC_FKGRAPHICCONTEXT_H
 
-#include "FkObject.h"
-#include "FkGraphicWindow.h"
-#include <EGL/egl.h>
+#include "FkContextCompo.h"
 
-FK_CLASS FkGraphicContext FK_EXTEND FkObject {
+FK_CLASS FkGraphicContext FK_EXTEND FkContextCompo {
 public:
-    FkGraphicContext(const char *alias);
-
     FkGraphicContext(const std::string alias);
 
     FkGraphicContext(const FkGraphicContext &o) = delete;
 
     virtual ~FkGraphicContext();
-
-    FkResult makeCurrent();
-
-    FkResult create(std::shared_ptr<FkGraphicContext> context = nullptr,
-                    std::shared_ptr<FkGraphicWindow> win = nullptr);
-
-    FkResult update(std::shared_ptr<FkGraphicWindow> win);
-
-    void destroy();
-
-    FkResult swapBuffers();
-
-    int32_t getWidth();
-
-    int32_t getHeight();
-
-private:
-    EGLDisplay _createDisplay(EGLNativeDisplayType display_id);
-
-    EGLConfig _createConfig(EGLDisplay display, const int *configSpec);
-
-    EGLContext _createContext(EGLDisplay display, EGLConfig config, EGLContext sharedContext);
-
-    EGLSurface _createPbufferSurface(EGLDisplay display, EGLConfig config);
-
-    EGLSurface _createWindowSurface(EGLDisplay display, EGLConfig config, std::shared_ptr<FkGraphicWindow> win);
-
-    bool _checkError();
-
-private:
-    std::string alias;
-    FkSize size;
-    EGLDisplay eglDisplay = EGL_NO_DISPLAY;
-    EGLConfig eglConfig = nullptr;
-    EGLContext eglContext = EGL_NO_CONTEXT;
-    EGLSurface eglSurface = EGL_NO_SURFACE;
 };
 
 

@@ -3,20 +3,21 @@
 *
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
+*
+* AUTHOR: Alimin
+* CREATE TIME: 2022-2-20 23:29:28
 */
 
-#include "FkGraphicComponent.h"
+#include "FkEnvEntity.h"
 
-FkGraphicComponent::FkGraphicComponent() : FkComponent() {
+FkEnvEntity::FkEnvEntity() : FkEntity() {
     FK_MARK_SUPER
-
 }
 
-FkGraphicComponent::FkGraphicComponent(const FkGraphicComponent &o) : FkComponent() {
+FkEnvEntity::FkEnvEntity(const FkEnvEntity &o) : FkEntity(o) {
     FK_MARK_SUPER
-
 }
 
-FkGraphicComponent::~FkGraphicComponent() {
-}
+FkEnvEntity::~FkEnvEntity() {
 
+}

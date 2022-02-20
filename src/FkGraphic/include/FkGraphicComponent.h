@@ -8,9 +8,9 @@
 #ifndef FK_GRAPHIC_FKGRAPHICCOMPONENT_H
 #define FK_GRAPHIC_FKGRAPHICCOMPONENT_H
 
-#include "FkObject.h"
+#include "FkComponent.h"
 
-FK_CLASS FkGraphicComponent FK_EXTEND FkObject {
+FK_CLASS FkGraphicComponent FK_EXTEND FkComponent {
 public:
     FkGraphicComponent();
 

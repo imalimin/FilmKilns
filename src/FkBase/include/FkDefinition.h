@@ -17,6 +17,7 @@
 #define FK_INTERFACE class
 #define FK_ENUM enum class
 #define FK_EXTEND : public
+#define FK_EXT_AND , public
 #define FK_NULLABLE
 #define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 

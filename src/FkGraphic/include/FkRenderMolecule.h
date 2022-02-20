@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKRENDERMOLECULE_H
 
 #include "FkSimpleMolecule.h"
+#include "FkContextCompo.h"
 
 FK_CLASS FkRenderMolecule FK_EXTEND FkSimpleMolecule {
 public:
@@ -33,6 +34,9 @@ protected:
 
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> p);
+
+private:
+    std::shared_ptr<FkContextCompo> context = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKRENDERMOLECULE_H

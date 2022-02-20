@@ -36,6 +36,9 @@ FkResult FkRenderMolecule::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
+    context = std::make_shared<FkContextCompo>("Render");
+    context->create();
+    context->makeCurrent();
     return ret;
 }
 
@@ -44,6 +47,7 @@ FkResult FkRenderMolecule::onDestroy() {
     if (FK_OK != ret) {
         return ret;
     }
+    context->destroy();
     return ret;
 }
 
@@ -64,5 +68,11 @@ FkResult FkRenderMolecule::onStop() {
 }
 
 FkResult FkRenderMolecule::_onRender(std::shared_ptr<FkProtocol> p) {
+    auto proto = std::static_pointer_cast<FkRenderProto>(p);
+    if (proto == nullptr) {
+        return FK_NPE;
+    }
+    context->makeCurrent();
+    proto->env->addComponent(context);
     return FK_OK;
 }

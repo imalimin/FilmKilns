@@ -39,3 +39,7 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task helpMe(type: Exec) {
+    println("genCppClass -Pm=FkGraphic -Ppkt=core -Pc=FkTest")
+}
