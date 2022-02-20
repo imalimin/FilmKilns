@@ -12,7 +12,38 @@
 #include "FkSession.h"
 #include "FkProtocol.h"
 
-FK_ABS_CLASS FkSessionClient FK_EXTEND FkObject {
+
+FK_ABS_CLASS FkSessionClient FK_EXTEND FkObject, std::enable_shared_from_this<FkSessionClient> {
+private:
+    FK_ABS_CLASS FkSessionBuilder FK_EXTEND FkObject, std::enable_shared_from_this<FkSessionBuilder> {
+    public:
+        FkSessionBuilder(std::shared_ptr<FkSessionClient> client) : FkObject() {
+            this->client = client;
+        }
+
+        FkSessionBuilder(const FkSessionBuilder &o) = delete;
+
+        virtual ~FkSessionBuilder() {
+
+        }
+
+        std::shared_ptr<FkSessionBuilder> with(std::list<std::shared_ptr<FkQuark>> quarks) {
+            for (auto &it : quarks) {
+                chain.emplace_back(it);
+            }
+            return shared_from_this();
+        }
+
+        FkResult send(std::shared_ptr<FkProtocol> proto) {
+            auto session = FkSession::with(proto);
+            return client->send(session, proto, chain);
+        }
+
+    private:
+        std::shared_ptr<FkSessionClient> client;
+        std::list<std::shared_ptr<FkQuark>> chain;
+    };
+
 public:
     FkSessionClient(const FkSessionClient &o) = delete;
 
@@ -22,82 +53,70 @@ public:
 
     virtual FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol) = 0;
 
+    FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> proto, std::list<std::shared_ptr<FkQuark>> chain) {
+        for (auto it = chain.begin(); it != chain.end(); ++it) {
+            auto ret = session->connectTo(*it);
+            if (FK_OK != ret) {
+                return ret;
+            }
+        }
+        auto ret = session->open();
+        if (FK_OK != ret) {
+            return ret;
+        }
+        ret = this->send(session, proto);
+        if (FK_OK != ret) {
+            FkLogW(FK_DEF_TAG, "quickSend failed with ret=%d", ret);
+            auto ret1 = session->close();
+            if (FK_OK != ret1) {
+                FkLogW(FK_DEF_TAG, "quickSend failed & close session with ret=%d", ret1);
+            }
+            return ret;
+        }
+        return session->close();
+    }
+
     template<typename... Args>
-    FkResult quickSend(std::shared_ptr<FkProtocol> proto, Args... chain) {
+    FkResult quickSend(std::shared_ptr<FkProtocol> proto, Args... quarks) {
+        std::list<std::shared_ptr<FkQuark>> chain;
+        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        for (auto &it : ll) {
+            chain.emplace_back(it);
+        }
         auto session = FkSession::with(proto);
-        auto ll = initializer_list<std::shared_ptr<FkQuark>>{chain...};
-        for (auto it = ll.begin(); it != ll.end(); ++it) {
-            auto ret = session->connectTo(*it);
-            if (FK_OK != ret) {
-                return ret;
-            }
-        }
-        auto ret = session->open();
-        if (FK_OK != ret) {
-            return ret;
-        }
-        ret = this->send(session, proto);
-        if (FK_OK != ret) {
-            FkLogW(FK_DEF_TAG, "quickSend failed with ret=%d", ret);
-            auto ret1 = session->close();
-            if (FK_OK != ret1) {
-                FkLogW(FK_DEF_TAG, "quickSend failed & close session with ret=%d", ret1);
-            }
-            return ret;
-        }
-        return session->close();
+        return send(session, proto, chain);
     }
 
     template<class T, typename... Args>
-    FkResult quickSend(std::shared_ptr<T> proto, Args... chain) {
+    FkResult quickSend(std::shared_ptr<T> proto, Args... quarks) {
+        std::list<std::shared_ptr<FkQuark>> chain;
+        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        for (auto &it : ll) {
+            chain.emplace_back(it);
+        }
         auto session = FkSession::with(std::make_shared<T>());
-        auto ll = initializer_list<std::shared_ptr<FkQuark>>{chain...};
-        for (auto it = ll.begin(); it != ll.end(); ++it) {
-            auto ret = session->connectTo(*it);
-            if (FK_OK != ret) {
-                return ret;
-            }
-        }
-        auto ret = session->open();
-        if (FK_OK != ret) {
-            return ret;
-        }
-        ret = this->send(session, proto);
-        if (FK_OK != ret) {
-            FkLogW(FK_DEF_TAG, "quickSend failed with ret=%d", ret);
-            auto ret1 = session->close();
-            if (FK_OK != ret1) {
-                FkLogW(FK_DEF_TAG, "quickSend failed & close session with ret=%d", ret1);
-            }
-            return ret;
-        }
-        return session->close();
+        return send(session, proto, chain);
     }
 
     template<class T, typename... Args>
-    FkResult quickSend(Args... chain) {
+    FkResult quickSend(Args... quarks) {
+        std::list<std::shared_ptr<FkQuark>> chain;
+        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        for (auto &it : ll) {
+            chain.emplace_back(it);
+        }
         auto session = FkSession::with(std::make_shared<T>());
-        auto ll = initializer_list<std::shared_ptr<FkQuark>>{chain...};
-        for (auto it = ll.begin(); it != ll.end(); ++it) {
-            auto ret = session->connectTo(*it);
-            if (FK_OK != ret) {
-                return ret;
-            }
+        return send(session, std::make_shared<T>(), chain);
+    }
+
+    template<typename... Args>
+    std::shared_ptr<FkSessionBuilder> with(Args... quarks) {
+        std::list<std::shared_ptr<FkQuark>> chain;
+        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        for (auto &it : ll) {
+            chain.emplace_back(it);
         }
-        auto ret = session->open();
-        if (FK_OK != ret) {
-            return ret;
-        }
-        ret = this->send(session, std::make_shared<T>());
-        if (FK_OK != ret) {
-            FkLogW(FK_DEF_TAG, "quickSend failed with ret=%d", ret);
-            auto ret1 = session->close();
-            if (FK_OK != ret1) {
-                FkLogW(FK_DEF_TAG, "quickSend failed & close session with ret=%d", ret1);
-            }
-            return ret;
-        }
-        return session->close();
+        return std::make_shared<FkSessionBuilder>(shared_from_this())->with(chain);
     }
 };
 

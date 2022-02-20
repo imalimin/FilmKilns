@@ -19,6 +19,8 @@ public:
 
     virtual ~FkRenderEngine();
 
+    FkResult render();
+
 protected:
     virtual FkResult onCreate() override;
 
@@ -28,7 +30,10 @@ protected:
 
     virtual FkResult onStop() override;
 
+    FkResult _onRender(std::shared_ptr<FkMessage> msg);
+
 private:
+    static const FkID FK_MSG_RENDER;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkRenderMolecule> molecule;
 };

@@ -7,15 +7,10 @@
 
 #include "FkSessionClient.h"
 
-FkSessionClient::FkSessionClient() {
-
+FkSessionClient::FkSessionClient() : FkObject() {
+    FK_MARK_SUPER
 }
 
 FkSessionClient::~FkSessionClient() {
 
-}
-
-FkResult FkSessionClient::send(std::shared_ptr<FkSession> session,
-                                 std::shared_ptr<FkProtocol> protocol) {
-    return session->send(std::move(protocol));
 }
