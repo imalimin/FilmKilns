@@ -43,7 +43,7 @@ FkResult FkQuark::onStop() {
 }
 
 FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
-    if (this->state != kState::STARTED
+    if (this->state != kState::RUNNING
         && !FK_INSTANCE_OF(p, FkOnCreatePrt)
         && !FK_INSTANCE_OF(p, FkOnDestroyPrt)
         && !FK_INSTANCE_OF(p, FkOnStartPrt)
@@ -77,7 +77,7 @@ FkResult FkQuark::_onDestroy(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onStart(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(kState::CREATED, kState::STARTED);
+    auto ret = _changeState(kState::CREATED, kState::RUNNING);
     if (FK_OK != ret) {
         return ret;
     }
@@ -85,7 +85,7 @@ FkResult FkQuark::_onStart(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onStop(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(kState::STARTED, kState::STOPPED);
+    auto ret = _changeState(kState::RUNNING, kState::STOPPED);
     if (FK_OK != ret) {
         return ret;
     }

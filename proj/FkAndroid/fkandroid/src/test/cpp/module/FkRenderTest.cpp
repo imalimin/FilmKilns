@@ -19,3 +19,15 @@ TEST(FkRenderTest, Livecycle) {
     EXPECT_EQ(engine->destroy(), FK_OK);
     EXPECT_NE(engine->destroy(), FK_OK);
 }
+
+TEST(FkRenderTest, Render) {
+    auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
+    EXPECT_NE(engine->render(), FK_OK);
+    EXPECT_EQ(engine->create(), FK_OK);
+    EXPECT_NE(engine->render(), FK_OK);
+    EXPECT_EQ(engine->start(), FK_OK);
+    EXPECT_EQ(engine->render(), FK_OK);
+    EXPECT_EQ(engine->stop(), FK_OK);
+    EXPECT_NE(engine->render(), FK_OK);
+    EXPECT_EQ(engine->destroy(), FK_OK);
+}

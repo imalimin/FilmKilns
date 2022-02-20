@@ -54,7 +54,8 @@ FkResult FkEngine::create() {
     mHandler = new FkHandler(mThread->getLooper(), [this](std::shared_ptr<FkMessage> msg) {
         this->_dispatch(std::move(msg));
     });
-    sendMessage(FkMessage::obtain(FK_MSG_CREATE));
+    auto msg = FkMessage::obtain(FK_MSG_CREATE);
+    sendMessage(msg, true);
     return FK_OK;
 }
 
@@ -62,7 +63,8 @@ FkResult FkEngine::destroy() {
     if (nullptr == mThread) {
         return FK_INVALID_STATE;
     }
-    sendMessage(FkMessage::obtain(FK_MSG_DESTROY));
+    auto msg = FkMessage::obtain(FK_MSG_DESTROY);
+    sendMessage(msg, true);
     mThread->quitSafely();
     mThread = nullptr;
     delete mHandler;
@@ -79,21 +81,23 @@ FkResult FkEngine::start() {
     if (FK_OK != ret) {
         return ret;
     }
-    sendMessage(FkMessage::obtain(FK_MSG_START));
+    auto msg = FkMessage::obtain(FK_MSG_START);
+    sendMessage(msg, true);
     return FK_OK;
 }
 
 FkResult FkEngine::stop() {
-    auto ret = _changeState(((uint32_t) kState::STARTED) | ((uint32_t) kState::STARTING), kState::STOPPING);
+    auto ret = _changeState(((uint32_t) kState::RUNNING) | ((uint32_t) kState::STARTING), kState::STOPPING);
     if (FK_OK != ret) {
         return ret;
     }
-    sendMessage(FkMessage::obtain(FK_MSG_STOP));
+    auto msg = FkMessage::obtain(FK_MSG_STOP);
+    sendMessage(msg, true);
     return FK_OK;
 }
 
 FkResult FkEngine::onCreate() {
-    return _changeState((uint32_t) kState::CREATING, kState::CREATED);
+    return FK_OK;
 }
 
 FkResult FkEngine::onDestroy() {
@@ -101,14 +105,18 @@ FkResult FkEngine::onDestroy() {
 }
 
 FkResult FkEngine::onStart() {
-    return _changeState((uint32_t) kState::STARTING, kState::STARTED);
+    return FK_OK;
 }
 
 FkResult FkEngine::onStop() {
-    return _changeState((uint32_t) kState::STOPPING, kState::STOPPED);
+    return FK_OK;
 }
 
 FkResult FkEngine::_onCreate(std::shared_ptr<FkMessage> msg) {
+    auto ret = _changeState((uint32_t) kState::CREATING, kState::CREATED);
+    if (FK_OK != ret) {
+        return ret;
+    }
     return onCreate();
 }
 
@@ -117,10 +125,18 @@ FkResult FkEngine::_onDestroy(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkEngine::_onStart(std::shared_ptr<FkMessage> msg) {
+    auto ret = _changeState((uint32_t) kState::STARTING, kState::RUNNING);
+    if (FK_OK != ret) {
+        return ret;
+    }
     return onStart();
 }
 
 FkResult FkEngine::_onStop(std::shared_ptr<FkMessage> msg) {
+    auto ret = _changeState((uint32_t) kState::STOPPING, kState::STOPPED);
+    if (FK_OK != ret) {
+        return ret;
+    }
     return onStop();
 }
 
@@ -151,7 +167,16 @@ void FkEngine::_dispatch(std::shared_ptr<FkMessage> msg) {
     }
 }
 
-FkResult FkEngine::sendMessage(std::shared_ptr<FkMessage> msg) {
+FkResult FkEngine::sendMessage(std::shared_ptr<FkMessage> &msg, bool internal) {
+    if (internal) {
+        if (kState::IDL == state) {
+            return FK_INVALID_STATE;
+        }
+    } else {
+        if (kState::STARTING != state && kState::RUNNING != state) {
+            return FK_INVALID_STATE;
+        }
+    }
     mHandler->sendMessage(std::move(msg));
     return FK_OK;
 }

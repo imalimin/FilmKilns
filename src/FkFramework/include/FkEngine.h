@@ -72,7 +72,7 @@ protected:
 
     virtual FkResult onStop();
 
-    FkResult sendMessage(std::shared_ptr<FkMessage> msg);
+    FkResult sendMessage(std::shared_ptr<FkMessage> &msg, bool internal = false);
 
     FkResult registerMessage(FkID what, FkMessageHandler handler);
 

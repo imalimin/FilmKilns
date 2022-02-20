@@ -9,7 +9,6 @@
 #define FK_GRAPHIC_FKRENDERENGINE_H
 
 #include "FkEngine.h"
-#include "FkRenderMolecule.h"
 
 FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
 public:
@@ -35,7 +34,7 @@ protected:
 private:
     static const FkID FK_MSG_RENDER;
     std::shared_ptr<FkSessionClient> client;
-    std::shared_ptr<FkRenderMolecule> molecule;
+    std::shared_ptr<FkQuark> molecule;
 };
 
 #endif //FK_GRAPHIC_FKRENDERENGINE_H

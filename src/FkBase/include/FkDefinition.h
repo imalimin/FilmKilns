@@ -80,7 +80,7 @@ FK_ENUM kState : int {
     CREATING = 1 << 1,
     CREATED = 1 << 2,
     STARTING = 1 << 3,
-    STARTED = 1 << 4,
+    RUNNING = 1 << 4,
     STOPPING = 1 << 5,
     STOPPED = 1 << 6,
 };

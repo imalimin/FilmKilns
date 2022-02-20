@@ -7,12 +7,15 @@
 
 #include "FkRenderEngine.h"
 #include "FkRenderDefine.h"
+#include "FkRenderMolecule.h"
 
 const FkID FkRenderEngine::FK_MSG_RENDER = FK_KID('F', 'R', 'E', 0x01);
 
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_RENDER, FkRenderEngine::_onRender);
+    client = std::make_shared<FkLocalClient>();
+    molecule = std::make_shared<FkRenderMolecule>();
 }
 
 FkRenderEngine::~FkRenderEngine() {
@@ -55,7 +58,8 @@ FkResult FkRenderEngine::onStop() {
 }
 
 FkResult FkRenderEngine::render() {
-    return sendMessage(FkMessage::obtain(FK_MSG_RENDER));
+    auto msg = FkMessage::obtain(FK_MSG_RENDER);
+    return sendMessage(msg);
 }
 
 FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {

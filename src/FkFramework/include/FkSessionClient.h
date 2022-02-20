@@ -13,9 +13,9 @@
 #include "FkProtocol.h"
 
 
-FK_ABS_CLASS FkSessionClient FK_EXTEND FkObject, std::enable_shared_from_this<FkSessionClient> {
+FK_ABS_CLASS FkSessionClient FK_EXTEND FkObject, public std::enable_shared_from_this<FkSessionClient> {
 private:
-    FK_ABS_CLASS FkSessionBuilder FK_EXTEND FkObject, std::enable_shared_from_this<FkSessionBuilder> {
+    FK_ABS_CLASS FkSessionBuilder FK_EXTEND FkObject, public std::enable_shared_from_this<FkSessionBuilder> {
     public:
         FkSessionBuilder(std::shared_ptr<FkSessionClient> client) : FkObject() {
             this->client = client;
@@ -116,7 +116,8 @@ public:
         for (auto &it : ll) {
             chain.emplace_back(it);
         }
-        return std::make_shared<FkSessionBuilder>(shared_from_this())->with(chain);
+        auto builder = std::make_shared<FkSessionBuilder>(shared_from_this());
+        return builder->with(chain);
     }
 };
 
