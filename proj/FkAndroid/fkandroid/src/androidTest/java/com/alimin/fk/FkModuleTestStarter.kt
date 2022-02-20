@@ -19,7 +19,12 @@ class FkModuleTestStarter {
         FilmKilns.init(appContext)
         val ret = nativeRunAllTest()
         val result = nativeGetResult()
-        assertTrue("${result.size} cases FAILED: " + result.contentToString(), ret)
+        val sb = StringBuffer();
+        result.forEach {
+            sb.append(it)
+            sb.append("\n")
+        }
+        assertTrue("${result.size} CASES FAILED: \n${sb}", ret)
     }
 
     @Test

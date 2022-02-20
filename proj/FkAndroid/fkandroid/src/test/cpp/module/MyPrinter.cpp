@@ -29,22 +29,24 @@ void MyPrinter::OnTestStart(const ::testing::TestInfo &test_info) {
 
 void MyPrinter::OnTestEnd(const ::testing::TestInfo &test_info) {
     auto *result = test_info.result();
-    auto passed = result && result->Passed();
-    std::string fmt = "%s %s Line: %d";
-    char msg[512];
-    if (passed) {
-        sprintf(msg, fmt.c_str(),
-                "[ PASSED ]",
-                test_info.test_case_name(),
-                test_info.line());
-    } else {
-        sprintf(msg, fmt.c_str(),
-                "[ FAILED ]",
-                test_info.test_case_name(),
-                test_info.line());
+    if (result == nullptr) {
+        FkTestResultHolder::getInstance()->push("[ FAILED ] result is NULL.", false);
+        return;
     }
-    AlLogcat::i(TAG, "%s", msg);
-    FkTestResultHolder::getInstance()->push(msg, passed);
+    for (int i = 0; i < test_info.result()->total_part_count(); ++i) {
+        auto ret = test_info.result()->GetTestPartResult(i);
+        std::ostringstream caseNameOss;
+        caseNameOss << test_info.test_case_name() << "-" << test_info.name();
+        std::ostringstream oss;
+        if (ret.passed()) {
+            oss << "[ PASSED ] " << caseNameOss.str();
+        } else {
+            oss << "[ FAILED ] " << caseNameOss.str() << " ";
+            oss << ret.file_name() << ": " << ret.line_number() << "\n";
+            oss << ret.message();
+        }
+        FkTestResultHolder::getInstance()->push(oss.str(), ret.passed());
+    }
 }
 
 void MyPrinter::OnTestPartResult(const ::testing::TestPartResult &test_part_result) {
