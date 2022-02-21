@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKRENDERENGINE_H
 
 #include "FkEngine.h"
+#include "FkSize.h"
 
 FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
 public:
@@ -19,6 +20,8 @@ public:
     virtual ~FkRenderEngine();
 
     FkResult render();
+
+    FkID newMaterial();
 
 protected:
     virtual FkResult onCreate() override;
@@ -31,8 +34,11 @@ protected:
 
     FkResult _onRender(std::shared_ptr<FkMessage> msg);
 
+    FkResult _onNewMaterial(std::shared_ptr<FkMessage> msg);
+
 private:
     static const FkID FK_MSG_RENDER;
+    static const FkID FK_MSG_NEW_MATERIAL;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
 };

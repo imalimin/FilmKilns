@@ -6,6 +6,7 @@
 */
 
 #include "FkRenderModelAtom.h"
+#include "FkIDQuark.h"
 #include "FkRenderDefine.h"
 
 FkRenderModelAtom::FkRenderModelAtom() : FkSimpleMolecule() {
@@ -21,6 +22,7 @@ void FkRenderModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkRenderModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkIDQuark>();
 }
 
 FkResult FkRenderModelAtom::onCreate() {

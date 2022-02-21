@@ -8,12 +8,15 @@
 #include "FkRenderEngine.h"
 #include "FkRenderDefine.h"
 #include "FkRenderMolecule.h"
+#include "FkNumber.h"
 
 const FkID FkRenderEngine::FK_MSG_RENDER = FK_KID('F', 'R', 'E', 0x01);
+const FkID FkRenderEngine::FK_MSG_NEW_MATERIAL = FK_KID('F', 'R', 'E', 0x02);
 
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_RENDER, FkRenderEngine::_onRender);
+    FK_REG_MSG(FK_MSG_NEW_MATERIAL, FkRenderEngine::_onNewMaterial);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
 }
@@ -65,4 +68,23 @@ FkResult FkRenderEngine::render() {
 FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkRenderProto>();
     return client->with(molecule)->send(proto);
+}
+
+FkID FkRenderEngine::newMaterial() {
+    auto msg = FkMessage::obtain(FK_MSG_NEW_MATERIAL);
+    msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
+    auto ret = sendMessage(msg);
+    if (FK_OK == ret) {
+        auto result = std::static_pointer_cast<FkInt>(msg->promise->get_future().get());
+        if (result) {
+            return result->get();
+        }
+    }
+    return FK_ID_NONE;
+}
+
+FkResult FkRenderEngine::_onNewMaterial(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkGenIDProto>();
+    auto ret = client->with(molecule)->send(proto);
+    return ret;
 }

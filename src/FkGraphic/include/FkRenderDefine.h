@@ -9,5 +9,6 @@
 #define FK_GRAPHIC_FKRENDERDEFINE_H
 
 #include "FkRenderProto.h"
+#include "FkGenIDProto.h"
 
 #endif //FK_GRAPHIC_FKRENDERDEFINE_H
