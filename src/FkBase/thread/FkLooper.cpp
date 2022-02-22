@@ -97,7 +97,6 @@ void FkLooper::_loop() {
             if (msg->target) {
                 msg->target->dispatchMessage(msg);
             }
-            FkMessage::recycle(msg);
         }
         if (exitSafely) {
             if (exiting && 0 == queue.size()) {

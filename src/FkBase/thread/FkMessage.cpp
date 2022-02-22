@@ -7,6 +7,11 @@
 
 #include "FkMessage.h"
 
+#ifdef TAG
+#undef TAG
+#endif
+#define TAG "FkMessage"
+
 const int32_t FkMessage::FLAG_NORMAL = 0x01;
 const int32_t FkMessage::FLAG_UNIQUE = 0x02;
 const int32_t FkMessage::FLAG_FIRST_ALWAYS = 0x04;
@@ -27,21 +32,16 @@ std::shared_ptr<FkMessage> FkMessage::obtain(FkID what, int32_t flags) {
 std::shared_ptr<FkMessage> FkMessage::obtain(FkID what,
                                              std::shared_ptr<FkObject> sp,
                                              int32_t flags) {
-    auto msg = FkMessageManager::getInstance()->popOne();
+    int32_t desc = 0;
+    auto msg = FkMessageAllocator::getInstance()->alloc(desc);
     if (msg) {
+        msg->destroy();
         msg->what = what;
-        msg->arg1 = 0;
-        msg->arg2 = 0;
-        msg->arg3 = "";
         msg->sp = std::move(sp);
         msg->flags = flags;
         return msg;
     }
     return std::make_shared<FkMessage>(what, sp, flags);
-}
-
-void FkMessage::recycle(std::shared_ptr<FkMessage> msg) {
-    FkMessageManager::getInstance()->recycle(msg);
 }
 
 FkMessage::FkMessage()
@@ -59,38 +59,55 @@ FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp)
 }
 
 FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp, int32_t flags)
-        : FkObject(), what(what), arg1(0), arg2(0), arg3(""), sp(std::move(sp)), flags(flags) {
+        : FkSource(), what(what), arg1(0), arg2(0), arg3(""), sp(std::move(sp)),
+          flags(flags), promise(nullptr), target(nullptr) {
 }
 
 FkMessage::~FkMessage() {
 }
 
-FkMessageManager *FkMessageManager::instance = new FkMessageManager();
+FkResult FkMessage::create() {
+    return FK_OK;
+}
 
-FkMessageManager *FkMessageManager::getInstance() {
+void FkMessage::destroy() {
+    what = FK_ID_NONE;
+    arg1 = 0;
+    arg2 = 0;
+    arg3 = "";
+    sp = nullptr;
+    flags = FkMessage::FLAG_NORMAL;
+    promise = nullptr;
+    target = nullptr;
+}
+
+size_t FkMessage::size() {
+    return 1;
+}
+
+FkMessageAllocator *FkMessageAllocator::instance = new FkMessageAllocator();
+
+FkMessageAllocator *FkMessageAllocator::getInstance() {
     return instance;
 }
 
-std::shared_ptr<FkMessage> FkMessageManager::popOne() {
-    std::lock_guard<std::mutex> guard(poolMtx);
-    if (!pool.empty()) {
-        auto msg = pool.front();
-        pool.pop();
-        return msg;
-    }
-    return nullptr;
+FkMessageAllocator::FkMessageAllocator() : FkSourceAllocator<FkMessage, int32_t>() {
+    FK_MARK_SUPER
 }
 
-void FkMessageManager::recycle(std::shared_ptr<FkMessage> msg) {
-    if (nullptr == msg) {
-        return;
+FkMessageAllocator::~FkMessageAllocator() {
+
+}
+
+FkMessage *FkMessageAllocator::delegateAlloc(int32_t &desc) {
+    auto o = new FkMessage(desc);
+    if (FK_OK != o->create()) {
+        delete o;
+        return nullptr;
     }
-    std::lock_guard<std::mutex> guard(poolMtx);
-    msg->what = FK_ID_NONE;
-    msg->arg1 = 0;
-    msg->arg2 = 0;
-    msg->arg3 = "";
-    msg->sp = nullptr;
-    msg->flags = FkMessage::FLAG_NORMAL;
-    pool.push(msg);
+    return o;
+}
+
+bool FkMessageAllocator::delegateEquals(int32_t &desc, FkMessage *value) {
+    return true;
 }

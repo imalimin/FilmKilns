@@ -8,7 +8,7 @@
 #ifndef FK_BASE_FKMESSAGE_H
 #define FK_BASE_FKMESSAGE_H
 
-#include "FkObject.h"
+#include "FkSource.h"
 #include <queue>
 #include <future>
 
@@ -16,9 +16,7 @@ class FkLooper;
 
 class FkHandler;
 
-class FkMessageManager;
-
-FK_CLASS FkMessage FK_EXTEND FkObject {
+FK_CLASS FkMessage FK_EXTEND FkSource {
 public:
     FkID what = 0;
     int32_t arg1 = 0;
@@ -43,6 +41,12 @@ public:
 
     FkMessage(const FkMessage &o) = delete;
 
+    virtual FkResult create() override;
+
+    virtual void destroy() override;
+
+    virtual size_t size() override;
+
 public:
     virtual ~FkMessage();
 
@@ -63,30 +67,25 @@ public:
                                         std::shared_ptr<FkObject> sp,
                                         int32_t queueMode);
 
-    static void recycle(std::shared_ptr<FkMessage> msg);
-
 };
 
-FK_CLASS FkMessageManager FK_EXTEND FkObject {
-private:
-    friend FkMessage;
-
-    static FkMessageManager *getInstance();
-
-    FkMessageManager() : FkObject() {}
-
-    FkMessageManager(FkMessageManager &o) = delete;
+FK_CLASS FkMessageAllocator FK_EXTEND FkSourceAllocator<FkMessage, int32_t> {
+public:
+    static FkMessageAllocator *getInstance();
 
 public:
-    void recycle(std::shared_ptr<FkMessage> msg);
+    FkMessageAllocator();
 
-    std::shared_ptr<FkMessage> popOne();
+    FkMessageAllocator(const FkMessageAllocator &o) = delete;
+
+    ~FkMessageAllocator();
+
+    virtual FkMessage *delegateAlloc(int32_t &desc) override;
+
+    virtual bool delegateEquals(int32_t &desc, FkMessage *value) override;
 
 private:
-    static FkMessageManager *instance;
-    std::queue<std::shared_ptr<FkMessage>> pool;
-    std::mutex poolMtx;
-
+    static FkMessageAllocator *instance;
 };
 
 

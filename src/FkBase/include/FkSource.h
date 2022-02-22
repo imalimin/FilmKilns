@@ -48,12 +48,12 @@ public:
     }
 
     void release() {
-        std::lock_guard<std::mutex> guard(mtx);
-        auto itr0 = sMap.begin();
-        while (sMap.end() != itr0) {
+        std::lock_guard<std::recursive_mutex> guard(mtx);
+        auto itr0 = usingMap.begin();
+        while (usingMap.end() != itr0) {
             itr0->second->destroy();
             delete itr0->second;
-            itr0 = sMap.erase(itr0);
+            itr0 = usingMap.erase(itr0);
         }
         auto itr1 = sRecycler.begin();
         while (sRecycler.end() != itr1) {
@@ -64,7 +64,7 @@ public:
     }
 
     std::shared_ptr<T> alloc(D &desc) {
-        std::lock_guard<std::mutex> guard(mtx);
+        std::lock_guard<std::recursive_mutex> guard(mtx);
         T *ptr = findFromRecycler(desc);
         if (nullptr == ptr) {
             ptr = delegateAlloc(desc);
@@ -82,7 +82,7 @@ public:
         }
         ++current;
         o->id = current;
-        sMap.insert(std::make_pair(o->id, o.get()));
+        usingMap.insert(std::make_pair(o->id, o.get()));
         return o;
     }
 
@@ -104,10 +104,10 @@ public:
 
     /// Return used bytes.
     virtual size_t size() {
-        std::lock_guard<std::mutex> guard(mtx);
+        std::lock_guard<std::recursive_mutex> guard(mtx);
         size_t size = 0;
-        auto itr0 = sMap.begin();
-        while (sMap.end() != itr0) {
+        auto itr0 = usingMap.begin();
+        while (usingMap.end() != itr0) {
             size += itr0->second->size();
             ++itr0;
         }
@@ -116,10 +116,10 @@ public:
 
     /// Return used and cache bytes.
     virtual size_t capacity() {
-        std::lock_guard<std::mutex> guard(mtx);
+        std::lock_guard<std::recursive_mutex> guard(mtx);
         size_t size = 0;
-        auto itr0 = sMap.begin();
-        while (sMap.end() != itr0) {
+        auto itr0 = usingMap.begin();
+        while (usingMap.end() != itr0) {
             size += itr0->second->size();
             ++itr0;
         }
@@ -138,9 +138,9 @@ public:
 
 protected:
     void recycle(T *o) {
-        std::lock_guard<std::mutex> guard(mtx);
-        auto itr = sMap.find(o->id);
-        if (sMap.end() != itr) {
+        std::lock_guard<std::recursive_mutex> guard(mtx);
+        auto itr = usingMap.find(o->id);
+        if (usingMap.end() != itr) {
             if (sRecycler.empty()) {
                 sRecycler.push_back(o);
             } else {
@@ -152,14 +152,14 @@ protected:
                 }
                 sRecycler.insert(pos, o);
             }
-            sMap.erase(itr);
+            usingMap.erase(itr);
         }
     }
 
 private:
-    std::mutex mtx;
+    std::recursive_mutex mtx;
     FkID current = FK_ID_NONE;
-    std::unordered_map<FkID, T *> sMap;
+    std::unordered_map<FkID, T *> usingMap;
     std::list<T *> sRecycler;
 };
 
