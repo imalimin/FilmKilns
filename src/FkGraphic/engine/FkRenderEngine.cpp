@@ -74,10 +74,11 @@ FkID FkRenderEngine::newMaterial() {
     auto msg = FkMessage::obtain(FK_MSG_NEW_MATERIAL);
     msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
     auto ret = sendMessage(msg);
-    if (FK_OK == ret) {
-        auto result = std::static_pointer_cast<FkInt>(msg->promise->get_future().get());
-        if (result) {
-            return result->get();
+    std::shared_ptr<FkObject> result = nullptr;
+    if (FK_OK == ret && (result = msg->promise->get_future().get())) {
+        auto value = std::static_pointer_cast<FkInt>(result);
+        if (value) {
+            return value->get();
         }
     }
     return FK_ID_NONE;
