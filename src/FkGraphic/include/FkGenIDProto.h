@@ -20,6 +20,9 @@ public:
     FkGenIDProto(const FkGenIDProto &o);
 
     virtual ~FkGenIDProto();
+
+public:
+    FkID id = FK_ID_NONE;
 };
 
 #endif //FK_GRAPHIC_FKGENIDPROTO_H

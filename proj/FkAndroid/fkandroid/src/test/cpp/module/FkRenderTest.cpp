@@ -9,13 +9,6 @@
 #include "FkRenderEngine.h"
 #include "FkTestDefine.h"
 
-#define FK_NEW_RENDER_INSTANCE \
-auto engine = std::make_shared<FkRenderEngine>("RenderEngine"); \
-EXPECT_EQ(engine->create(), FK_OK); \
-EXPECT_EQ(engine->start(), FK_OK);                              \
-
-#define  FK_DELETE_RE
-
 TEST(FkRenderTest, Livecycle) {
     auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
     EXPECT_EQ(engine->create(), FK_OK);
@@ -42,6 +35,6 @@ TEST(FkRenderTest, Render) {
 
 TEST(FkRenderTest, NewMaterial) {
     FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
-    engine->newMaterial();
+    EXPECT_NE(engine->newMaterial(), FK_ID_NONE);
     FK_DELETE_INSTANCE(engine)
 }

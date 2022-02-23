@@ -68,10 +68,7 @@ FkResult FkRenderMolecule::onStop() {
 }
 
 FkResult FkRenderMolecule::_onRender(std::shared_ptr<FkProtocol> p) {
-    auto proto = std::static_pointer_cast<FkRenderProto>(p);
-    if (proto == nullptr) {
-        return FK_NPE;
-    }
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
     context->makeCurrent();
     proto->env->addComponent(context);
     return FK_OK;

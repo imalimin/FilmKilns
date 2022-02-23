@@ -177,6 +177,6 @@ FkResult FkEngine::sendMessage(std::shared_ptr<FkMessage> &msg, bool internal) {
             return FK_INVALID_STATE;
         }
     }
-    mHandler->sendMessage(std::move(msg));
+    mHandler->sendMessage(msg);
     return FK_OK;
 }

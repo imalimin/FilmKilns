@@ -34,6 +34,11 @@ protected:
 
 private:
     FkResult _onGenID(std::shared_ptr<FkProtocol> p);
+
+private:
+    std::mutex mtx;
+    FkID next = FK_ID_NONE;
+    std::list<FkID> ids;
 };
 
 #endif //FK_GRAPHIC_FKIDQUARK_H

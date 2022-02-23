@@ -8,6 +8,7 @@
 #ifndef FK_GRAPHIC_FKRENDERDEFINE_H
 #define FK_GRAPHIC_FKRENDERDEFINE_H
 
+#include "FkFrameworkDefine.h"
 #include "FkRenderProto.h"
 #include "FkGenIDProto.h"
 

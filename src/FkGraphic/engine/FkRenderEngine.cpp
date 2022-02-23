@@ -87,5 +87,8 @@ FkID FkRenderEngine::newMaterial() {
 FkResult FkRenderEngine::_onNewMaterial(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkGenIDProto>();
     auto ret = client->with(molecule)->send(proto);
+    if (msg->promise != nullptr) {
+        msg->promise->set_value(std::make_shared<FkInt>(proto->id));
+    }
     return ret;
 }

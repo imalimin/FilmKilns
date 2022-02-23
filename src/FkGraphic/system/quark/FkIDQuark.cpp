@@ -10,6 +10,7 @@
 
 #include "FkIDQuark.h"
 #include "FkGenIDProto.h"
+#include "FkFrameworkDefine.h"
 
 FkIDQuark::FkIDQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -24,6 +25,7 @@ void FkIDQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 FkResult FkIDQuark::onCreate() {
+    ++next;
     return FkQuark::onCreate();
 }
 
@@ -40,5 +42,9 @@ FkResult FkIDQuark::onStop() {
 }
 
 FkResult FkIDQuark::_onGenID(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkGenIDProto, p);
+    std::lock_guard<std::mutex> guard(mtx);
+    proto->id = next;
+    ++next;
     return FK_OK;
 }
