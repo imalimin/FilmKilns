@@ -53,7 +53,7 @@ public:
 
     virtual FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol) = 0;
 
-    FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> proto, std::list<std::shared_ptr<FkQuark>> chain) {
+    FkResult send(std::shared_ptr<FkSession> &session, std::shared_ptr<FkProtocol> proto, std::list<std::shared_ptr<FkQuark>> &chain) {
         for (auto it = chain.begin(); it != chain.end(); ++it) {
             auto ret = session->connectTo(*it);
             if (FK_OK != ret) {
@@ -105,8 +105,9 @@ public:
         for (auto &it : ll) {
             chain.emplace_back(it);
         }
-        auto session = FkSession::with(std::make_shared<T>());
-        return send(session, std::make_shared<T>(), chain);
+        auto proto = std::make_shared<T>();
+        auto session = FkSession::with(proto);
+        return send(session, proto, chain);
     }
 
     template<typename... Args>

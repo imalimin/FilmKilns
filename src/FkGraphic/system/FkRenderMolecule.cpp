@@ -22,6 +22,7 @@ FkRenderMolecule::~FkRenderMolecule() {
 
 void FkRenderMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderMolecule::_onRender);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGenIDProto, FkRenderMolecule::dispatchNext);
 }
 
 void FkRenderMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
