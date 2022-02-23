@@ -72,7 +72,7 @@ protected:
 
     virtual FkResult onStop();
 
-    FkResult sendMessage(std::shared_ptr<FkMessage> &msg, bool internal = false);
+    FkResult sendMessage(std::shared_ptr<FkMessage> &msg, bool ignoreState = false);
 
     FkResult registerMessage(FkID what, FkMessageHandler handler);
 
@@ -85,7 +85,7 @@ private:
 
     virtual FkResult _onStop(std::shared_ptr<FkMessage> msg);
 
-    FkResult _changeState(uint32_t src, kState dst);
+    FkResult _changeState(kState &_state, uint32_t src, kState dst);
 
     void _dispatch(std::shared_ptr<FkMessage> &msg);
 
@@ -99,7 +99,9 @@ private:
     FkHandler *mHandler = nullptr;
     std::map<FkID, FkMessageHandlerPair> mMsgMap;
     std::recursive_mutex mtx;
-    kState state = kState::IDL;
+    std::mutex msgMtx;
+    kState outsideState = kState::IDL;
+    kState internalState = kState::IDL;
 };
 
 

@@ -24,6 +24,7 @@ FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
 FkRenderEngine::~FkRenderEngine() {
 
 }
+
 FkResult FkRenderEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     if (FK_OK != ret) {

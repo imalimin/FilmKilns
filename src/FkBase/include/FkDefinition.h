@@ -84,6 +84,7 @@ FK_ENUM kState : int {
     RUNNING = 1 << 4,
     STOPPING = 1 << 5,
     STOPPED = 1 << 6,
+    DESTROYING = 1 << 7,
 };
 
 FK_ENUM kScaleType : int {
