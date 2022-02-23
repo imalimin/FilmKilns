@@ -22,7 +22,7 @@ std::shared_ptr<FkMessage> FkMessage::obtain(FkID what) {
 }
 
 std::shared_ptr<FkMessage> FkMessage::obtain(FkID what, std::shared_ptr<FkObject> sp) {
-    return obtain(what, std::move(sp), FLAG_NORMAL);
+    return obtain(what, sp, FLAG_NORMAL);
 }
 
 std::shared_ptr<FkMessage> FkMessage::obtain(FkID what, int32_t flags) {
@@ -37,7 +37,7 @@ std::shared_ptr<FkMessage> FkMessage::obtain(FkID what,
     if (msg) {
         msg->destroy();
         msg->what = what;
-        msg->sp = std::move(sp);
+        msg->sp = sp;
         msg->flags = flags;
         return msg;
     }
@@ -55,11 +55,11 @@ FkMessage::FkMessage(FkID what)
 }
 
 FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp)
-        : FkMessage(what, std::move(sp), FLAG_NORMAL) {
+        : FkMessage(what, sp, FLAG_NORMAL) {
 }
 
 FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp, int32_t flags)
-        : FkSource(), what(what), arg1(0), arg2(0), arg3(""), sp(std::move(sp)),
+        : FkSource(), what(what), arg1(0), arg2(0), arg3(""), sp(sp),
           flags(flags), promise(nullptr), target(nullptr) {
 }
 

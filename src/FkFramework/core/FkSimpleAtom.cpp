@@ -152,7 +152,7 @@ void FkSimpleAtom::_disconnectSession() {
 FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     auto itr = mSessionMap.find(p->getType());
     if (mSessionMap.end() != itr) {
-        return client->send(itr->second, std::move(p));
+        return client->send(itr->second, p);
     }
     FkLogW(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty.", getClassType().getName().c_str());
     return FK_SKIP;

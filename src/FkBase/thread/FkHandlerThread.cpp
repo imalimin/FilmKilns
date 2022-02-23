@@ -16,7 +16,7 @@ std::shared_ptr<FkHandlerThread> FkHandlerThread::create(std::string name) {
 
 FkHandlerThread::FkHandlerThread(std::string name)
         : FkObject(),
-          name(std::move(name)),
+          name(name),
           mThread(thread(&FkHandlerThread::run, std::ref(*this))),
           exiting(false),
           exited(false) {

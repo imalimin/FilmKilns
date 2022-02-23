@@ -86,7 +86,7 @@ FkResult FkGraphicModelAtom::onStop() {
 }
 
 FkResult FkGraphicModelAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
-    return dispatchNext(std::move(p));
+    return dispatchNext(p);
 }
 
 FkResult FkGraphicModelAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {

@@ -12,7 +12,7 @@
 const uint32_t FkPort::NONE = 0;
 
 FkPort::FkPort(uint32_t port, std::shared_ptr<FkProtocol> protocol, FkPort::PortFunc func)
-        : FkObject(), port(port), protocol(std::move(protocol)), func(func) {
+        : FkObject(), port(port), protocol(protocol), func(func) {
 
 }
 
@@ -23,5 +23,5 @@ FkPort::~FkPort() {
 }
 
 FkResult FkPort::chat(FkQuark *target, std::shared_ptr<FkProtocol> p) const {
-    return (target->*func)(std::move(p));
+    return (target->*func)(p);
 }

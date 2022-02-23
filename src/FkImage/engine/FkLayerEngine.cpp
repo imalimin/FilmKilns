@@ -36,7 +36,7 @@ const FkID FkLayerEngine::FK_MSG_POST_SCALE = FK_KID('F', 'K', 'E', 0x16);
 const FkID FkLayerEngine::FK_MSG_POST_ROTATION = FK_KID('F', 'K', 'E', 0x17);
 const FkID FkLayerEngine::FK_MSG_DRAW_POINT = FK_KID('F', 'K', 'E', 0x18);
 
-FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(std::move(name)) {
+FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(name) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_NEW_LAYER, FkLayerEngine::_newLayer);
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor);
@@ -129,7 +129,7 @@ FkResult FkLayerEngine::notifyRender() {
 
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
     auto msg = FkMessage::obtain(FK_MSG_SET_SURFACE);
-    msg->sp = std::move(win);
+    msg->sp = win;
     return sendMessage(msg);;
 }
 

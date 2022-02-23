@@ -59,7 +59,7 @@ public:
 //    std::future<T> sendFuture(std::shared_ptr<T> protocol) {
 //        auto prom = std::make_shared<std::promise<T>>();
 //        auto *msg = AlMessage::obtain(MSG_FUTURE);
-//        msg->sp = std::move(prom);
+//        msg->sp = prom;
 //        mHandler->sendMessage(msg);
 //        return prom->get_future();
 //    }
@@ -87,7 +87,7 @@ private:
 
     FkResult _changeState(uint32_t src, kState dst);
 
-    void _dispatch(std::shared_ptr<FkMessage> msg);
+    void _dispatch(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID FK_MSG_CREATE;

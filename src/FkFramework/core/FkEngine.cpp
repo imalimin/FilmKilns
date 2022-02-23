@@ -32,7 +32,7 @@ const FkID FkEngine::FK_MSG_DESTROY = FK_KID('F', 'K', 'E', 0x02);
 const FkID FkEngine::FK_MSG_START = FK_KID('F', 'K', 'E', 0x03);
 const FkID FkEngine::FK_MSG_STOP = FK_KID('F', 'K', 'E', 0x04);
 
-FkEngine::FkEngine(std::string name) : FkObject(), name(std::move(name)), state(kState::IDL) {
+FkEngine::FkEngine(std::string name) : FkObject(), name(name), state(kState::IDL) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_CREATE, FkEngine::_onCreate);
     FK_REG_MSG(FK_MSG_DESTROY, FkEngine::_onDestroy);
@@ -52,7 +52,7 @@ FkResult FkEngine::create() {
     }
     mThread = FkHandlerThread::create(name);
     mHandler = new FkHandler(mThread->getLooper(), [this](std::shared_ptr<FkMessage> msg) {
-        this->_dispatch(std::move(msg));
+        this->_dispatch(msg);
     });
     auto msg = FkMessage::obtain(FK_MSG_CREATE);
     sendMessage(msg, true);
@@ -155,7 +155,7 @@ FkResult FkEngine::registerMessage(FkID what, FkMessageHandler handler) {
     return FK_OK;
 }
 
-void FkEngine::_dispatch(std::shared_ptr<FkMessage> msg) {
+void FkEngine::_dispatch(std::shared_ptr<FkMessage> &msg) {
     std::lock_guard<std::recursive_mutex> guard(mtx);
     if (kState::IDL == state) {
         FkLogW(FK_DEF_TAG, "Invalid state");
@@ -163,7 +163,7 @@ void FkEngine::_dispatch(std::shared_ptr<FkMessage> msg) {
     }
     auto itr = mMsgMap.find(msg->what);
     if (mMsgMap.end() != itr) {
-        itr->second.handle(this, std::move(msg));
+        itr->second.handle(this, msg);
     }
 }
 

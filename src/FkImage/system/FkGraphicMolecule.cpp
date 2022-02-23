@@ -94,5 +94,5 @@ FkResult FkGraphicMolecule::onStop() {
 }
 
 FkResult FkGraphicMolecule::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
-    return dispatchNext(std::move(p));
+    return dispatchNext(p);
 }

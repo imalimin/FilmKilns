@@ -61,5 +61,5 @@ FkResult FkSimpleIncrease2Atom::onStop() {
 
 FkResult FkSimpleIncrease2Atom::_onIncrease2(std::shared_ptr<FkProtocol> p) {
     auto cp = std::static_pointer_cast<FkCalculatePrt>(p);
-    return dispatchNext(std::move(p));
+    return dispatchNext(p);
 }

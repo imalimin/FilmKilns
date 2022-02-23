@@ -6,16 +6,18 @@
 */
 
 #include "FkHandler.h"
+
+#include <utility>
 #include "FkDefinition.h"
 
-FkHandler::FkHandler(FkHandler::Callback callback) : FkObject(), callback(std::move(callback)) {
+FkHandler::FkHandler(FkHandler::Callback callback) : FkObject(), callback(callback) {
     FK_MARK_SUPER
     this->looper = FkLooper::myLooper();
     FkAssert(nullptr != looper, );
 }
 
 FkHandler::FkHandler(FkLooper *looper, FkHandler::Callback callback)
-        : FkObject(), callback(std::move(callback)) {
+        : FkObject(), callback(callback) {
     this->looper = looper;
     FkAssert(nullptr != looper, );
 }
@@ -27,17 +29,17 @@ FkHandler::~FkHandler() {
 
 void FkHandler::dispatchMessage(std::shared_ptr<FkMessage> msg) {
     if (callback) {
-        callback(std::move(msg));
+        callback(msg);
     }
 }
 
 void FkHandler::sendMessage(std::shared_ptr<FkMessage> msg) {
-    _enqueueMessage(std::move(msg));
+    _enqueueMessage(msg);
 }
 
 void FkHandler::_enqueueMessage(std::shared_ptr<FkMessage> msg) {
     if (this->looper) {
         msg->target = this;
-        this->looper->sendMessage(std::move(msg));
+        this->looper->sendMessage(msg);
     }
 }

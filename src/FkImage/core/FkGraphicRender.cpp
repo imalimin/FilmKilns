@@ -10,7 +10,7 @@
 std::shared_ptr<FkGraphicRender> FkGraphicRender::with(std::shared_ptr<FkGraphicProgram> program) {
     auto ptr = new FkGraphicRender();
     std::shared_ptr<FkGraphicRender> render(ptr);
-    render->program = std::move(program);
+    render->program = program;
     return render;
 }
 

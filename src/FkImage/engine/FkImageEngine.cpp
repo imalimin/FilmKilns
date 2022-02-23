@@ -18,7 +18,7 @@
 
 const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'I', 0x10);
 
-FkImageEngine::FkImageEngine(std::string name) : FkLayerEngine(std::move(name)) {
+FkImageEngine::FkImageEngine(std::string name) : FkLayerEngine(name) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_FILE, FkImageEngine::_updateLayerWithFile);
 }
@@ -53,7 +53,7 @@ FkID FkImageEngine::newLayerWithFile(std::string path) {
         auto layer = std::make_shared<FkGraphicLayer>();
         layer->id = id;
         auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_FILE);
-        msg->arg3 = std::move(path);
+        msg->arg3 = path;
         msg->sp = layer;
         sendMessage(msg);
     }
