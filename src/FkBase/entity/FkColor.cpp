@@ -82,3 +82,11 @@ float *FkColor::fArray() {
     _fArray[3] = fAlpha();
     return _fArray;
 }
+
+int32_t FkColor::toInt() {
+    int32_t color = 0xFF000000;
+    color |= (((uint8_t) red) << 16);
+    color |= (((uint8_t) greed) << 8);
+    color |= (((uint8_t) blue) << 0);
+    return color;
+}

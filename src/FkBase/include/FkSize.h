@@ -16,11 +16,13 @@ public:
 
     FkSize(int32_t width, int32_t height);
 
+    FkSize(int64_t size);
+
     FkSize(const FkSize &o);
 
     virtual ~FkSize();
 
-    virtual void set(int32_t width, int32_t height);
+    virtual void set(int32_t _width, int32_t _height);
 
     virtual int32_t getWidth();
 
@@ -31,6 +33,8 @@ public:
     virtual bool operator!=(const FkSize &o);
 
     virtual bool isZero();
+
+    int64_t toInt64();
 
 private:
     int32_t width = 0;

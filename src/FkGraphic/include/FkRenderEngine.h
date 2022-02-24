@@ -10,6 +10,8 @@
 
 #include "FkEngine.h"
 #include "FkSize.h"
+#include "FkColor.h"
+#include "FkMaterialCompo.h"
 
 FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
 public:
@@ -21,7 +23,9 @@ public:
 
     FkResult render();
 
-    FkID newMaterial();
+    std::shared_ptr<FkMaterialCompo> newMaterial();
+
+    FkResult updateMaterial(std::shared_ptr<FkMaterialCompo> &material, FkSize size, FkColor color);
 
 protected:
     virtual FkResult onCreate() override;
@@ -36,9 +40,12 @@ protected:
 
     FkResult _onNewMaterial(std::shared_ptr<FkMessage> msg);
 
+    FkResult _onUpdateMaterial(std::shared_ptr<FkMessage> msg);
+
 private:
     static const FkID FK_MSG_RENDER;
     static const FkID FK_MSG_NEW_MATERIAL;
+    static const FkID FK_MSG_UPDATE_MATERIAL;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
 };

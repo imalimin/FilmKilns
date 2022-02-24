@@ -15,6 +15,11 @@ FkSize::FkSize(int32_t width, int32_t height) : FkObject(), width(width), height
 
 }
 
+FkSize::FkSize(int64_t size) : FkObject() {
+    width = size >> 32;
+    height = (int32_t) (size & 0x00000000FFFFFFFF);
+}
+
 FkSize::FkSize(const FkSize &o) : FkObject(o), width(o.width), height(o.height) {
 
 }
@@ -23,9 +28,9 @@ FkSize::~FkSize() {
 
 }
 
-void FkSize::set(int32_t width, int32_t height) {
-    this->width = width;
-    this->height = height;
+void FkSize::set(int32_t _width, int32_t _height) {
+    this->width = _width;
+    this->height = _height;
 }
 
 int32_t FkSize::getWidth() {
@@ -46,4 +51,11 @@ bool FkSize::operator!=(const FkSize &o) {
 
 bool FkSize::isZero() {
     return width <= 0 || height <= 0;
+}
+
+int64_t FkSize::toInt64() {
+    int64_t size = width;
+    size = (size << 32);
+    size |= height;
+    return size;
 }

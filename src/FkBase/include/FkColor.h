@@ -44,6 +44,8 @@ public:
 
     float *fArray();
 
+    int32_t toInt();
+
 public:
     kFormat format;
     uint16_t red;

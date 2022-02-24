@@ -35,6 +35,8 @@ TEST(FkRenderTest, Render) {
 
 TEST(FkRenderTest, NewMaterial) {
     FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
-    EXPECT_NE(engine->newMaterial(), FK_ID_NONE);
+    auto material = engine->newMaterial();
+    EXPECT_EQ(material->isUseless(), false);
+    EXPECT_EQ(engine->updateMaterial(material, FkSize(32, 32), FkColor::white()), FK_OK);
     FK_DELETE_INSTANCE(engine)
 }
