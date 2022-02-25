@@ -7,6 +7,8 @@
 
 #include "FkRenderSourceAtom.h"
 #include "FkRenderDefine.h"
+#include "FkNewTexProto.h"
+#include "FkRenderTexQuark.h"
 
 FkRenderSourceAtom::FkRenderSourceAtom() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -18,9 +20,11 @@ FkRenderSourceAtom::~FkRenderSourceAtom() {
 
 void FkRenderSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderSourceAtom::_onRender);
+    FK_PORT_DESC_QUICK_ADD(desc, FkNewTexProto, FkRenderSourceAtom::dispatchNext);
 }
 
 void FkRenderSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkRenderTexQuark>();
 }
 
 FkResult FkRenderSourceAtom::onCreate() {

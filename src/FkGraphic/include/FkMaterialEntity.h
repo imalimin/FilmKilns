@@ -12,6 +12,7 @@
 #define FK_GRAPHIC_FKMATERIALENTITY_H
 
 #include "FkEntity.h"
+#include "FkMaterialCompo.h"
 
 FK_CLASS FkMaterialEntity FK_EXTEND FkEntity {
 public:
@@ -20,6 +21,9 @@ public:
     FkMaterialEntity(const FkMaterialEntity &o);
 
     virtual ~FkMaterialEntity();
+
+    std::shared_ptr<FkMaterialCompo> getMaterial();
+
 };
 
 #endif //FK_GRAPHIC_FKMATERIALENTITY_H

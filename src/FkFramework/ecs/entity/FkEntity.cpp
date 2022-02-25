@@ -23,7 +23,7 @@ FkEntity::FkEntity(const FkEntity &o) : FkObject() {
 }
 
 FkEntity::~FkEntity() {
-
+    components.clear();
 }
 
 FkResult FkEntity::addComponent(std::shared_ptr<FkComponent> comp) {

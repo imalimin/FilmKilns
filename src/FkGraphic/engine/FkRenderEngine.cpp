@@ -109,5 +109,7 @@ FkResult FkRenderEngine::_onUpdateMaterial(std::shared_ptr<FkMessage> msg) {
     shared_ptr<FkMaterialCompo> material = std::dynamic_pointer_cast<FkMaterialCompo>(msg->sp);
     FkColor color = FkColor::from(msg->arg1);
     FkSize size = FkSize(msg->arg2);
-    return FK_OK;
+    auto proto = std::make_shared<FkNewTexProto>();
+    proto->texEntity = std::make_shared<FkTexEntity>();
+    return client->with(molecule)->send(proto);
 }

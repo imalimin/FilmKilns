@@ -11,5 +11,6 @@
 #include "FkFrameworkDefine.h"
 #include "FkRenderProto.h"
 #include "FkGenIDProto.h"
+#include "FkNewTexProto.h"
 
 #endif //FK_GRAPHIC_FKRENDERDEFINE_H

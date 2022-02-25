@@ -21,3 +21,7 @@ FkMaterialEntity::FkMaterialEntity(const FkMaterialEntity &o) : FkEntity(o) {
 FkMaterialEntity::~FkMaterialEntity() {
 
 }
+
+std::shared_ptr<FkMaterialCompo> FkMaterialEntity::getMaterial() {
+    return findComponent<FkMaterialCompo>();
+}
