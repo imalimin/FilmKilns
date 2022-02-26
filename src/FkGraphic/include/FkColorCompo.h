@@ -12,14 +12,18 @@
 #define FK_GRAPHIC_FKCOLORCOMPO_H
 
 #include "FkComponent.h"
+#include "FkColor.h"
 
 FK_CLASS FkColorCompo FK_EXTEND FkComponent {
 public:
-    FkColorCompo();
+    FkColorCompo(FkColor color);
 
     FkColorCompo(const FkColorCompo &o);
 
     virtual ~FkColorCompo();
+
+public:
+    FkColor color;
 };
 
 #endif //FK_GRAPHIC_FKCOLORCOMPO_H

@@ -9,12 +9,14 @@
 */
 
 #include "FkTexEntity.h"
+#include "FkSizeCompo.h"
+#include "FkFormatCompo.h"
 
 FkTexEntity::FkTexEntity() : FkMaterialEntity() {
     FK_MARK_SUPER
 }
 
-FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o), size(o.size) {
+FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o) {
     FK_MARK_SUPER
 }
 
@@ -32,4 +34,12 @@ FkSize FkTexEntity::size() {
         return compo->size;
     }
     return FkSize(0, 0);
+}
+
+FkColor::kFormat FkTexEntity::format() {
+    auto compo = findComponent<FkFormatCompo>();
+    if (compo) {
+        return compo->fmt;
+    }
+    return FkColor::kFormat::NONE;
 }

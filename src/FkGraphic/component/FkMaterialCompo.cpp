@@ -10,11 +10,11 @@
 
 #include "FkMaterialCompo.h"
 
-FkMaterialCompo::FkMaterialCompo(FkID id) : FkGraphicComponent(), id(id) {
+FkMaterialCompo::FkMaterialCompo(FkID id) : FkGraphicComponent(), _id(id) {
     FK_MARK_SUPER
 }
 
-FkMaterialCompo::FkMaterialCompo(const FkMaterialCompo &o) : FkGraphicComponent(o), id(o.id) {
+FkMaterialCompo::FkMaterialCompo(const FkMaterialCompo &o) : FkGraphicComponent(o), _id(o._id) {
     FK_MARK_SUPER
 }
 
@@ -23,5 +23,9 @@ FkMaterialCompo::~FkMaterialCompo() {
 }
 
 bool FkMaterialCompo::isUseless() {
-    return id == FK_ID_NONE;
+    return _id == FK_ID_NONE;
+}
+
+FkID FkMaterialCompo::id() const {
+    return _id;
 }

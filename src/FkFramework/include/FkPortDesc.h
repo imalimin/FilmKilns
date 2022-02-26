@@ -16,10 +16,13 @@
     desc->add(port, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
         reinterpret_cast<FkPort::PortFunc>(&method)) \
 
-
 #define FK_PORT_DESC_QUICK_ADD(desc, PRT, method) \
     desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
         reinterpret_cast<FkPort::PortFunc>(&method)) \
+
+#define FK_PORT_DELIVERY(desc, PRT, CLASS) \
+    desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
+        reinterpret_cast<FkPort::PortFunc>(&CLASS::dispatchNext)) \
 
 FK_CLASS FkPortDesc FK_EXTEND FkObject {
 public:

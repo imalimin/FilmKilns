@@ -8,6 +8,9 @@
 #include "FkRenderEngine.h"
 #include "FkRenderDefine.h"
 #include "FkRenderMolecule.h"
+#include "FkColorCompo.h"
+#include "FkSizeCompo.h"
+#include "FkFormatCompo.h"
 #include "FkNumber.h"
 
 const FkID FkRenderEngine::FK_MSG_RENDER = FK_KID('F', 'R', 'E', 0x01);
@@ -106,10 +109,11 @@ FkResult FkRenderEngine::updateMaterial(shared_ptr<FkMaterialCompo> &material,
 }
 
 FkResult FkRenderEngine::_onUpdateMaterial(std::shared_ptr<FkMessage> msg) {
-    shared_ptr<FkMaterialCompo> material = std::dynamic_pointer_cast<FkMaterialCompo>(msg->sp);
-    FkColor color = FkColor::from(msg->arg1);
-    FkSize size = FkSize(msg->arg2);
     auto proto = std::make_shared<FkNewTexProto>();
     proto->texEntity = std::make_shared<FkTexEntity>();
+    proto->texEntity->addComponent(std::make_shared<FkColorCompo>(FkColor::from(msg->arg1)));
+    proto->texEntity->addComponent(std::make_shared<FkSizeCompo>(FkSize(msg->arg2)));
+    proto->texEntity->addComponent(std::dynamic_pointer_cast<FkComponent>(msg->sp));
+    proto->texEntity->addComponent(std::make_shared<FkFormatCompo>(FkColor::kFormat::RGBA));
     return client->with(molecule)->send(proto);
 }

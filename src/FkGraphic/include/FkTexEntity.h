@@ -12,8 +12,9 @@
 #define FK_GRAPHIC_FKTEXENTITY_H
 
 #include "FkMaterialEntity.h"
-#include "FkSizeCompo.h"
 #include "FkTexCompo.h"
+#include "FkSize.h"
+#include "FkColor.h"
 
 FK_CLASS FkTexEntity FK_EXTEND FkMaterialEntity {
 public:
@@ -26,6 +27,8 @@ public:
     std::shared_ptr<FkTexCompo> tex();
 
     FkSize size();
+
+    FkColor::kFormat format();
 
 };
 

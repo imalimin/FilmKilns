@@ -10,11 +10,11 @@
 
 #include "FkColorCompo.h"
 
-FkColorCompo::FkColorCompo() : FkComponent() {
+FkColorCompo::FkColorCompo(FkColor color) : FkComponent(), color(color) {
     FK_MARK_SUPER
 }
 
-FkColorCompo::FkColorCompo(const FkColorCompo &o) : FkComponent(o) {
+FkColorCompo::FkColorCompo(const FkColorCompo &o) : FkComponent(o), color(o.color) {
     FK_MARK_SUPER
 }
 

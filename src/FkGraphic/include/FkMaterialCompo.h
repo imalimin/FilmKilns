@@ -23,8 +23,10 @@ public:
 
     bool isUseless();
 
+    FkID id() const;
+
 private:
-    FkID id = FK_ID_NONE;
+    FkID _id = FK_ID_NONE;
 };
 
 #endif //FK_GRAPHIC_FKMATERIALCOMPO_H

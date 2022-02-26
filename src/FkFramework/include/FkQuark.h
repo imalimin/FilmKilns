@@ -10,6 +10,7 @@
 
 #include "FkObject.h"
 #include "FkPortDesc.h"
+#include "FkFrameworkDefine.h"
 #include <mutex>
 
 class FkSession;

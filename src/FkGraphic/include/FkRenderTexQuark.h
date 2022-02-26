@@ -12,6 +12,8 @@
 #define FK_GRAPHIC_FKRENDERTEXQUARK_H
 
 #include "FkQuark.h"
+#include "FkGraphicTexture.h"
+#include "FkGraphicFrameObject.h"
 
 FK_CLASS FkRenderTexQuark FK_EXTEND FkQuark {
 public:
@@ -33,7 +35,12 @@ protected:
     virtual FkResult onStop() override;
 
 private:
-    FkResult _onNewTex(std::shared_ptr<FkProtocol> p);
+    FkResult _onAllocTex(std::shared_ptr<FkProtocol> p);
+
+private:
+    std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
+    std::unordered_map<FkID, std::shared_ptr<FkGraphicTexture>> sMap;
+    std::shared_ptr<FkGraphicFBOAllocator> fboAllocator = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKRENDERTEXQUARK_H
