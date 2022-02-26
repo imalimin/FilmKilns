@@ -67,6 +67,7 @@ typedef int32_t FkResult;
 #define FK_NPE -7
 #define FK_FILE_NOT_FOUND -8
 #define FK_PORT_NOT_FOUND -9
+#define FK_SOURCE_NOT_FOUND -10
 
 // +------ ID ------+
 typedef int32_t FkID;

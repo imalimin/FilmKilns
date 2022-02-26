@@ -13,7 +13,7 @@ FkColor &FkColor::from(int32_t color) {
         c = new FkColor();
     }
     c->red = (color >> 24) & 0x000000FF;
-    c->greed = (color >> 16) & 0x000000FF;
+    c->green = (color >> 16) & 0x000000FF;
     c->blue = (color >> 8) & 0x000000FF;
     c->alpha = (color >> 0) & 0x000000FF;
     return *c;
@@ -25,7 +25,7 @@ FkColor &FkColor::white() {
         color = new FkColor();
     }
     color->red = 255;
-    color->greed = 255;
+    color->green = 255;
     color->blue = 255;
     color->alpha = 255;
     return *color;
@@ -37,7 +37,7 @@ FkColor &FkColor::black() {
         color = new FkColor();
     }
     color->red = 0;
-    color->greed = 0;
+    color->green = 0;
     color->blue = 0;
     color->alpha = 255;
     return *color;
@@ -48,7 +48,7 @@ FkColor::FkColor() {
 }
 
 FkColor::FkColor(const FkColor &o)
-        : FkObject(), format(o.format), red(o.red), greed(o.greed), blue(o.blue), alpha(o.alpha) {
+        : FkObject(), format(o.format), red(o.red), green(o.green), blue(o.blue), alpha(o.alpha) {
     FK_MARK_SUPER
 }
 
@@ -61,7 +61,7 @@ float FkColor::fRed() {
 }
 
 float FkColor::fGreen() {
-    return greed / 255.0f;
+    return green / 255.0f;
 }
 
 float FkColor::fBlue() {
@@ -89,7 +89,7 @@ int32_t FkColor::toInt() {
     color = color << 8;
     color |= ((uint8_t) red);
     color = color << 8;
-    color |= ((uint8_t) greed);
+    color |= ((uint8_t) green);
     color = color << 8;
     color |= ((uint8_t) blue);
     return color;

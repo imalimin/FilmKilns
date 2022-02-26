@@ -11,9 +11,9 @@
 #ifndef FK_GRAPHIC_FKMATERIALCOMPO_H
 #define FK_GRAPHIC_FKMATERIALCOMPO_H
 
-#include "FkGraphicComponent.h"
+#include "FkComponent.h"
 
-FK_CLASS FkMaterialCompo FK_EXTEND FkGraphicComponent {
+FK_CLASS FkMaterialCompo FK_EXTEND FkComponent {
 public:
     FkMaterialCompo(FkID id);
 

@@ -10,11 +10,11 @@
 
 #include "FkMaterialCompo.h"
 
-FkMaterialCompo::FkMaterialCompo(FkID id) : FkGraphicComponent(), _id(id) {
+FkMaterialCompo::FkMaterialCompo(FkID id) : FkComponent(), _id(id) {
     FK_MARK_SUPER
 }
 
-FkMaterialCompo::FkMaterialCompo(const FkMaterialCompo &o) : FkGraphicComponent(o), _id(o._id) {
+FkMaterialCompo::FkMaterialCompo(const FkMaterialCompo &o) : FkComponent(o), _id(o._id) {
     FK_MARK_SUPER
 }
 

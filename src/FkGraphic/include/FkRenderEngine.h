@@ -11,7 +11,8 @@
 #include "FkEngine.h"
 #include "FkSize.h"
 #include "FkColor.h"
-#include "FkMaterialCompo.h"
+#include "FkMaterialEntity.h"
+#include "FkDeviceEntity.h"
 
 FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
 public:
@@ -21,7 +22,7 @@ public:
 
     virtual ~FkRenderEngine();
 
-    FkResult render();
+    FkResult render(std::shared_ptr<FkMaterialCompo> &material, std::shared_ptr<FkDeviceEntity> &device);
 
     std::shared_ptr<FkMaterialCompo> newMaterial();
 
@@ -40,7 +41,7 @@ protected:
 
     FkResult _onNewMaterial(std::shared_ptr<FkMessage> msg);
 
-    FkResult _onUpdateMaterial(std::shared_ptr<FkMessage> msg);
+    FkResult _onUpdateMaterial(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID FK_MSG_RENDER;

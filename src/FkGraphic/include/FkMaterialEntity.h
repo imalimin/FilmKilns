@@ -16,7 +16,7 @@
 
 FK_CLASS FkMaterialEntity FK_EXTEND FkEntity {
 public:
-    FkMaterialEntity();
+    FkMaterialEntity(std::shared_ptr<FkMaterialCompo> material);
 
     FkMaterialEntity(const FkMaterialEntity &o);
 

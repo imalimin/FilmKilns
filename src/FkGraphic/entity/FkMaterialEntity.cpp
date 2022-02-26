@@ -10,8 +10,9 @@
 
 #include "FkMaterialEntity.h"
 
-FkMaterialEntity::FkMaterialEntity() : FkEntity() {
+FkMaterialEntity::FkMaterialEntity(std::shared_ptr<FkMaterialCompo> material) : FkEntity() {
     FK_MARK_SUPER
+    addComponent(material);
 }
 
 FkMaterialEntity::FkMaterialEntity(const FkMaterialEntity &o) : FkEntity(o) {

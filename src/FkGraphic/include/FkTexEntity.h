@@ -13,18 +13,31 @@
 
 #include "FkMaterialEntity.h"
 #include "FkTexCompo.h"
+#include "FkFboCompo.h"
 #include "FkSize.h"
 #include "FkColor.h"
 
 FK_CLASS FkTexEntity FK_EXTEND FkMaterialEntity {
 public:
-    FkTexEntity();
+    FkTexEntity(std::shared_ptr<FkMaterialCompo> &material);
+
+    FkTexEntity(std::shared_ptr<FkMaterialCompo> &material, std::shared_ptr<FkTexCompo> &tex);
 
     FkTexEntity(const FkTexEntity &o);
 
     virtual ~FkTexEntity();
 
+    /**
+     * @NotNull
+     * @return
+     */
     std::shared_ptr<FkTexCompo> tex();
+
+    /**
+     * @Nullbale
+     * @return
+     */
+    std::shared_ptr<FkFboCompo> fbo();
 
     FkSize size();
 

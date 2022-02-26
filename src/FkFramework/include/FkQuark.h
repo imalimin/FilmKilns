@@ -23,6 +23,8 @@ public:
 public:
     FkQuark();
 
+    FkQuark(const FkQuark &o) = delete;
+
     virtual ~FkQuark();
 
 protected:
@@ -41,8 +43,6 @@ protected:
     FkResult queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols);
 
 private:
-    FkQuark(const FkQuark &o) : FkObject() {};
-
     FkResult _onCreate(std::shared_ptr<FkProtocol> p);
 
     FkResult _onDestroy(std::shared_ptr<FkProtocol> p);

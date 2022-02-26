@@ -78,7 +78,7 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithColor
     FkColor color;
     color.format = FkColor::kFormat::RGBA;
     color.red = red;
-    color.greed = green;
+    color.green = green;
     color.blue = blue;
     color.alpha = alpha;
     auto *engine = castHandle(handle);

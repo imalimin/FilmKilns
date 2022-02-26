@@ -8,6 +8,7 @@
 #include "gtest/gtest.h"
 #include "FkRenderEngine.h"
 #include "FkTestDefine.h"
+#include "FkFuncCompo.h"
 
 TEST(FkRenderTest, Livecycle) {
     auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
@@ -23,20 +24,50 @@ TEST(FkRenderTest, Livecycle) {
 
 TEST(FkRenderTest, Render) {
     auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
-    EXPECT_NE(engine->render(), FK_OK);
+    auto material = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
+    auto dst = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
+    auto device = std::make_shared<FkDeviceEntity>(dst);
+    EXPECT_NE(engine->render(material, device), FK_OK);
     EXPECT_EQ(engine->create(), FK_OK);
-    EXPECT_NE(engine->render(), FK_OK);
+    EXPECT_NE(engine->render(material, device), FK_OK);
     EXPECT_EQ(engine->start(), FK_OK);
-    EXPECT_EQ(engine->render(), FK_OK);
+    EXPECT_EQ(engine->render(material, device), FK_OK);
     EXPECT_EQ(engine->stop(), FK_OK);
-    EXPECT_NE(engine->render(), FK_OK);
+    EXPECT_NE(engine->render(material, device), FK_OK);
     EXPECT_EQ(engine->destroy(), FK_OK);
 }
 
 TEST(FkRenderTest, NewMaterial) {
+    int width = 32;
+    int height = 32;
     FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
-    auto material = engine->newMaterial();
-    EXPECT_EQ(material->isUseless(), false);
-    EXPECT_EQ(engine->updateMaterial(material, FkSize(32, 32), FkColor::white()), FK_OK);
+    auto src = engine->newMaterial();
+    EXPECT_EQ(src->isUseless(), false);
+
+    auto color = FkColor::white();
+    EXPECT_EQ(engine->updateMaterial(src, FkSize(width, height), color), FK_OK);
+
+    auto buf = std::make_shared<FkBuffer>(width * height * 4);
+    memset(buf->data(), 125, buf->capacity());
+    auto promise = std::make_shared<std::promise<int>>();
+    std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkBufDeviceEntity>(buf);
+    device->addComponent(std::make_shared<FkFuncCompo>([promise]() {
+        promise->set_value(FK_OK);
+    }));
+    EXPECT_EQ(engine->render(src, device), FK_OK);
+
+    EXPECT_EQ(promise->get_future().get(), FK_OK);
+    // Center
+    int pos = height / 2 * width * 4 + width / 2 * 4;
+    auto red = buf->data()[pos + 0];
+    auto green = buf->data()[pos + 1];
+    auto blue = buf->data()[pos + 2];
+    auto alpha = buf->data()[pos + 3];
+    FkLogE("aliminabcd", "%d, %d, %d, %d", red, green, blue, alpha);
+    EXPECT_EQ(red, color.red);
+    EXPECT_EQ(green, color.green);
+    EXPECT_EQ(blue, color.blue);
+    EXPECT_EQ(alpha, color.alpha);
+
     FK_DELETE_INSTANCE(engine)
 }

@@ -66,14 +66,27 @@ FkResult FkRenderEngine::onStop() {
     return ret;
 }
 
-FkResult FkRenderEngine::render() {
+FkResult FkRenderEngine::render(std::shared_ptr<FkMaterialCompo> &material,
+                                std::shared_ptr<FkDeviceEntity> &device) {
     auto msg = FkMessage::obtain(FK_MSG_RENDER);
+    auto proto = std::make_shared<FkRenderProto>();
+    proto->material = std::make_shared<FkMaterialEntity>(material);
+    proto->device = device;
+    msg->sp = proto;
     return sendMessage(msg);
 }
 
 FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
+    auto temp = dynamic_pointer_cast<FkRenderProto>(msg->sp);
     auto proto = std::make_shared<FkRenderProto>();
-    return client->with(molecule)->send(proto);
+    proto->material = std::make_shared<FkMaterialEntity>(temp->material->getMaterial());
+    proto->device = temp->device;
+    auto ret = client->with(molecule)->send(proto);
+    auto bufDevice = std::dynamic_pointer_cast<FkBufDeviceEntity>(proto->device);
+    if (bufDevice) {
+        bufDevice->finish();
+    }
+    return ret;
 }
 
 std::shared_ptr<FkMaterialCompo> FkRenderEngine::newMaterial() {
@@ -108,12 +121,12 @@ FkResult FkRenderEngine::updateMaterial(shared_ptr<FkMaterialCompo> &material,
     return sendMessage(msg);
 }
 
-FkResult FkRenderEngine::_onUpdateMaterial(std::shared_ptr<FkMessage> msg) {
+FkResult FkRenderEngine::_onUpdateMaterial(std::shared_ptr<FkMessage> &msg) {
     auto proto = std::make_shared<FkNewTexProto>();
-    proto->texEntity = std::make_shared<FkTexEntity>();
+    auto material = std::dynamic_pointer_cast<FkMaterialCompo>(msg->sp);
+    proto->texEntity = std::make_shared<FkTexEntity>(material);
     proto->texEntity->addComponent(std::make_shared<FkColorCompo>(FkColor::from(msg->arg1)));
     proto->texEntity->addComponent(std::make_shared<FkSizeCompo>(FkSize(msg->arg2)));
-    proto->texEntity->addComponent(std::dynamic_pointer_cast<FkComponent>(msg->sp));
     proto->texEntity->addComponent(std::make_shared<FkFormatCompo>(FkColor::kFormat::RGBA));
     return client->with(molecule)->send(proto);
 }

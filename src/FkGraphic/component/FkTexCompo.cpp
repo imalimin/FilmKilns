@@ -10,7 +10,7 @@
 
 #include "FkTexCompo.h"
 
-FkTexCompo::FkTexCompo() : FkComponent() {
+FkTexCompo::FkTexCompo(std::shared_ptr<FkGraphicTexture> &tex) : FkComponent(), tex(tex) {
     FK_MARK_SUPER
 }
 

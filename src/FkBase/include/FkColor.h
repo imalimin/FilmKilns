@@ -49,7 +49,7 @@ public:
 public:
     kFormat format;
     uint16_t red;
-    uint16_t greed;
+    uint16_t green;
     uint16_t blue;
     uint16_t alpha; // 0 mean transparent, 255 mean no transparent.
     float *_fArray = nullptr;

@@ -12,8 +12,14 @@
 #include "FkSizeCompo.h"
 #include "FkFormatCompo.h"
 
-FkTexEntity::FkTexEntity() : FkMaterialEntity() {
+FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material) : FkMaterialEntity(material) {
     FK_MARK_SUPER
+}
+
+FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material,
+                         std::shared_ptr<FkTexCompo> &tex) : FkMaterialEntity(material) {
+    FK_MARK_SUPER
+    addComponent(tex);
 }
 
 FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o) {
@@ -26,6 +32,10 @@ FkTexEntity::~FkTexEntity() {
 
 std::shared_ptr<FkTexCompo> FkTexEntity::tex() {
     return findComponent<FkTexCompo>();
+}
+
+std::shared_ptr<FkFboCompo> FkTexEntity::fbo() {
+    return findComponent<FkFboCompo>();
 }
 
 FkSize FkTexEntity::size() {

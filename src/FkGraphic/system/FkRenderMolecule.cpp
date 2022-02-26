@@ -72,6 +72,9 @@ FkResult FkRenderMolecule::onStop() {
 FkResult FkRenderMolecule::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
     context->makeCurrent();
+    if (proto->env == nullptr) {
+        proto->env = std::make_shared<FkEnvEntity>();
+    }
     proto->env->addComponent(context);
-    return FK_OK;
+    return dispatchNext(p);
 }

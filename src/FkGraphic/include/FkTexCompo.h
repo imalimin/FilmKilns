@@ -12,14 +12,18 @@
 #define FK_GRAPHIC_FKTEXCOMPO_H
 
 #include "FkComponent.h"
+#include "FkGraphicTexture.h"
 
 FK_CLASS FkTexCompo FK_EXTEND FkComponent {
 public:
-    FkTexCompo();
+    FkTexCompo(std::shared_ptr<FkGraphicTexture> &tex);
 
     FkTexCompo(const FkTexCompo &o);
 
     virtual ~FkTexCompo();
+
+public:
+    std::shared_ptr<FkGraphicTexture> tex = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKTEXCOMPO_H

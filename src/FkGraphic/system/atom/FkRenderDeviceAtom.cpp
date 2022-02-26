@@ -7,6 +7,7 @@
 
 #include "FkRenderDeviceAtom.h"
 #include "FkRenderDefine.h"
+#include "FkBufDeviceQuark.h"
 
 FkRenderDeviceAtom::FkRenderDeviceAtom() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -21,6 +22,7 @@ void FkRenderDeviceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkRenderDeviceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkBufDeviceQuark>();
 }
 
 FkResult FkRenderDeviceAtom::onCreate() {
@@ -56,5 +58,5 @@ FkResult FkRenderDeviceAtom::onStop() {
 }
 
 FkResult FkRenderDeviceAtom::_onRender(std::shared_ptr<FkProtocol> p) {
-    return FK_OK;
+    return dispatchNext(p);
 }
