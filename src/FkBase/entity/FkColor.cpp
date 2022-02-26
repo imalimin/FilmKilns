@@ -12,10 +12,10 @@ FkColor &FkColor::from(int32_t color) {
     if (c == nullptr) {
         c = new FkColor();
     }
-    c->red = color & 0x00FF0000;
-    c->greed = color & 0x0000FF00;
-    c->blue = color & 0x000000FF;
-    c->alpha = color & 0xFF000000;
+    c->red = (color >> 24) & 0x000000FF;
+    c->greed = (color >> 16) & 0x000000FF;
+    c->blue = (color >> 8) & 0x000000FF;
+    c->alpha = (color >> 0) & 0x000000FF;
     return *c;
 }
 
@@ -84,9 +84,13 @@ float *FkColor::fArray() {
 }
 
 int32_t FkColor::toInt() {
-    int32_t color = 0xFF000000;
-    color |= (((uint8_t) red) << 16);
-    color |= (((uint8_t) greed) << 8);
-    color |= (((uint8_t) blue) << 0);
+    int32_t color = 0;
+    color |= ((uint8_t) alpha);
+    color = color << 8;
+    color |= ((uint8_t) red);
+    color = color << 8;
+    color |= ((uint8_t) greed);
+    color = color << 8;
+    color |= ((uint8_t) blue);
     return color;
 }
