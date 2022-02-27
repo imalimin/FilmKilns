@@ -20,7 +20,6 @@ FkRenderTexQuark::FkRenderTexQuark() : FkQuark() {
 }
 
 FkRenderTexQuark::~FkRenderTexQuark() {
-    FkLogI("aliminabcd", "~FkRenderTexQuark");
 }
 
 void FkRenderTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
@@ -98,11 +97,21 @@ FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         return FK_SOURCE_NOT_FOUND;
     }
     proto->material->addComponent(std::make_shared<FkTexCompo>(tex));
-    proto->material->addComponent(std::make_shared<FkSizeCompo>(tex->desc.size));
+    auto sizeCompo = proto->material->findComponent<FkSizeCompo>();
+    if (sizeCompo == nullptr) {
+        sizeCompo = std::make_shared<FkSizeCompo>(tex->desc.size);
+        proto->material->addComponent(sizeCompo);
+    }
+    sizeCompo->size = tex->desc.size;
     if (!proto->device->getMaterial()->isUseless()) {
         tex = _findTex(proto->device->getMaterial()->id());
         proto->device->addComponent(std::make_shared<FkTexCompo>(tex));
-        proto->device->addComponent(std::make_shared<FkSizeCompo>(tex->desc.size));
+        sizeCompo = proto->device->findComponent<FkSizeCompo>();
+        if (sizeCompo == nullptr) {
+            sizeCompo = std::make_shared<FkSizeCompo>(tex->desc.size);
+            proto->device->addComponent(sizeCompo);
+        }
+        sizeCompo->size = tex->desc.size;
     }
     return FK_OK;
 }

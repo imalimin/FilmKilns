@@ -78,7 +78,8 @@ FkResult FkRenderMvpQuark::_setRotation(std::shared_ptr<FkMVPMatrix> matrix,
                                         std::shared_ptr<FkMaterialEntity> &material) {
 //    auto comp = layer->findComponent<FkRotateComponent>();
 //    FkAssert(nullptr != comp, FK_FAIL);
-//    matrix->setRotation(comp->value);
+    FkRational value(0, 1);
+    matrix->setRotation(value);
     return FK_OK;
 }
 
@@ -88,9 +89,8 @@ FkResult FkRenderMvpQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
                                       bool reverseY) {
 //    auto comp = layer->findComponent<FkScaleComponent>();
 //    FkAssert(nullptr != comp, FK_FAIL);
-//    FkFloatVec3 scale(comp->value.x,
-//                      comp->value.y * (reverseY ? -1.0f : 1.0f), comp->value.z);
-//    matrix->setScale(scale);
+    FkFloatVec3 scale(1.0f, 1.0f, 1.0f);
+    matrix->setScale(scale);
     return FK_OK;
 }
 
@@ -98,7 +98,7 @@ FkResult FkRenderMvpQuark::_setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
                                          std::shared_ptr<FkMaterialEntity> &material) {
 //    auto comp = layer->findComponent<FkTransComponent>();
 //    FkAssert(nullptr != comp, FK_FAIL);
-//    FkFloatVec3 trans(comp->value.x, comp->value.y, 0.0f);
-//    matrix->setTranslate(trans);
+    FkFloatVec3 trans(0.0f, 0.0f, 0.0f);
+    matrix->setTranslate(trans);
     return FK_OK;
 }

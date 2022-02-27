@@ -22,6 +22,8 @@ public:
 
     const void *get();
 
+    virtual std::string toString();
+
 public:
     glm::mat4 mat4;
 };

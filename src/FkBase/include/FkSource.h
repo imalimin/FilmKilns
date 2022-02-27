@@ -45,7 +45,6 @@ public:
     FkSourceAllocator(const FkSourceAllocator &o) = delete;
 
     virtual ~FkSourceAllocator() {
-        FkLogI("aliminabcd", "~%s", typeid(this).name());
     }
 
     void release() {
@@ -139,7 +138,6 @@ public:
 
 protected:
     void recycle(T *o) {
-        FkLogI("aliminabcd", "recycle: %s", typeid(o).name());
         std::lock_guard<std::recursive_mutex> guard(mtx);
         auto itr = usingMap.find(o->id);
         if (usingMap.end() != itr) {

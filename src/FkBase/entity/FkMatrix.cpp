@@ -17,7 +17,7 @@ FkMatrix::FkMatrix(const FkMatrix &o) : FkObject(o), mat4(o.mat4) {
 }
 
 FkMatrix::~FkMatrix() {
-    glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
+
 }
 
 const void *FkMatrix::get() {
@@ -29,4 +29,8 @@ const void *FkMatrix::get() {
 //    model  = glm::translate(model, glm::vec3(1.0f, 1.0f, 1.0f));
 //    mat4 = proj * model;
     return glm::value_ptr(mat4);
+}
+
+std::string FkMatrix::toString() {
+    return Object::toString();
 }

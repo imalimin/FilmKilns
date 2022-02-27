@@ -27,7 +27,6 @@ FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
 }
 
 FkRenderEngine::~FkRenderEngine() {
-    FkLogI("aliminabcd", "~FkRenderEngine");
 }
 
 FkResult FkRenderEngine::onCreate() {
@@ -68,6 +67,9 @@ FkResult FkRenderEngine::onStop() {
 
 FkResult FkRenderEngine::render(std::shared_ptr<FkMaterialCompo> &material,
                                 std::shared_ptr<FkDeviceEntity> &device) {
+    if (material == nullptr || device == nullptr) {
+        return FK_NPE;
+    }
     auto msg = FkMessage::obtain(FK_MSG_RENDER);
     auto proto = std::make_shared<FkRenderProto>();
     proto->material = std::make_shared<FkMaterialEntity>(material);
