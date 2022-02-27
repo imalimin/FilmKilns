@@ -70,6 +70,11 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
         }
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), tex));
     }
+    if (tex->desc.size != proto->texEntity->size()) {
+        tex->update(tex->desc.fmt,
+                    proto->texEntity->size().getWidth(),
+                    proto->texEntity->size().getHeight());
+    }
     auto colorCompo = proto->texEntity->findComponent<FkColorCompo>();
     auto fboCompo = proto->texEntity->fbo();
     if (colorCompo && fboCompo) {

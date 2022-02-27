@@ -12,10 +12,10 @@ FkColor &FkColor::from(int32_t color) {
     if (c == nullptr) {
         c = new FkColor();
     }
-    c->red = (color >> 24) & 0x000000FF;
-    c->green = (color >> 16) & 0x000000FF;
-    c->blue = (color >> 8) & 0x000000FF;
-    c->alpha = (color >> 0) & 0x000000FF;
+    c->alpha = (color >> 24) & 0x000000FF;
+    c->red = (color >> 16) & 0x000000FF;
+    c->green = (color >> 8) & 0x000000FF;
+    c->blue = (color >> 0) & 0x000000FF;
     return *c;
 }
 

@@ -138,6 +138,9 @@ size_t FkGraphicTexture::size() {
 
 void FkGraphicTexture::update(FkColor::kFormat fmt, int32_t width, int32_t height, uint8_t *pixels) {
     FkAssert(fmt != FkColor::kFormat::NONE, );
+    if (width != desc.size.getWidth() || height != desc.size.getHeight()) {
+        applied = false;
+    }
     desc.fmt = fmt;
     desc.size.set(width, height);
     bind();

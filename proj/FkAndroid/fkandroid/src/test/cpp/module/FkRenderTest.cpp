@@ -38,13 +38,18 @@ TEST(FkRenderTest, Render) {
 }
 
 TEST(FkRenderTest, NewMaterial) {
-    int width = 32;
-    int height = 32;
     FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
     auto src = engine->newMaterial();
     EXPECT_EQ(src->isUseless(), false);
+    FK_DELETE_INSTANCE(engine)
+}
 
-    auto color = FkColor::white();
+static void testRenderColor(std::shared_ptr<FkRenderEngine> &engine,
+                            std::shared_ptr<FkMaterialCompo> &src,
+                            FkSize &size,
+                            FkColor &color) {
+    int width = size.getWidth();
+    int height = size.getHeight();
     EXPECT_EQ(engine->updateMaterial(src, FkSize(width, height), color), FK_OK);
 
     auto buf = std::make_shared<FkBuffer>(width * height * 4);
@@ -63,11 +68,23 @@ TEST(FkRenderTest, NewMaterial) {
     auto green = buf->data()[pos + 1];
     auto blue = buf->data()[pos + 2];
     auto alpha = buf->data()[pos + 3];
-    FkLogE("aliminabcd", "%d, %d, %d, %d", red, green, blue, alpha);
     EXPECT_EQ(red, color.red);
     EXPECT_EQ(green, color.green);
     EXPECT_EQ(blue, color.blue);
     EXPECT_EQ(alpha, color.alpha);
+}
 
+TEST(FkRenderTest, Render2Buffer) {
+    FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
+    auto src = engine->newMaterial();
+    EXPECT_EQ(src->isUseless(), false);
+    FkSize size(32, 32);
+    // Test white
+    auto white = FkColor::white();
+    testRenderColor(engine, src, size, white);
+    // Test black
+    size = FkSize(128, 128);
+    auto black = FkColor::black();
+    testRenderColor(engine, src, size, black);
     FK_DELETE_INSTANCE(engine)
 }
