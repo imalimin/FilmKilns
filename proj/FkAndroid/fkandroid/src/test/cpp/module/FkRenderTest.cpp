@@ -88,3 +88,43 @@ TEST(FkRenderTest, Render2Buffer) {
     testRenderColor(engine, src, size, black);
     FK_DELETE_INSTANCE(engine)
 }
+
+TEST(FkRenderTest, RenderLayer) {
+    FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
+    auto src0 = engine->newMaterial();
+    EXPECT_EQ(src0->isUseless(), false);
+    FkSize size(32, 32);
+    auto white = FkColor::white();
+    EXPECT_EQ(engine->updateMaterial(src0, size, white), FK_OK);
+
+    auto src1 = engine->newMaterial();
+    EXPECT_EQ(src1->isUseless(), false);
+    auto black = FkColor::black();
+    EXPECT_EQ(engine->updateMaterial(src1, size, black), FK_OK);
+
+    std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(src1);
+    EXPECT_EQ(engine->render(src0, device), FK_OK);
+
+    //Export
+    auto buf = std::make_shared<FkBuffer>(size.getWidth() * size.getHeight() * 4);
+    memset(buf->data(), 125, buf->capacity());
+    auto promise = std::make_shared<std::promise<int>>();
+    std::shared_ptr<FkDeviceEntity> bufDevice = std::make_shared<FkBufDeviceEntity>(buf);
+    bufDevice->addComponent(std::make_shared<FkFuncCompo>([promise, buf, size]() {
+        promise->set_value(FK_OK);
+    }));
+    EXPECT_EQ(engine->render(src1, bufDevice), FK_OK);
+    EXPECT_EQ(promise->get_future().get(), FK_OK);
+    // Center
+    int pos = size.getHeight() / 2 * size.getWidth() * 4 + size.getWidth() / 2 * 4;
+    auto red = buf->data()[pos + 0];
+    auto green = buf->data()[pos + 1];
+    auto blue = buf->data()[pos + 2];
+    auto alpha = buf->data()[pos + 3];
+    EXPECT_EQ(red, white.red);
+    EXPECT_EQ(green, white.green);
+    EXPECT_EQ(blue, white.blue);
+    EXPECT_EQ(alpha, white.alpha);
+
+    FK_DELETE_INSTANCE(engine)
+}

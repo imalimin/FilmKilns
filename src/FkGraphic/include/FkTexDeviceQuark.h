@@ -3,20 +3,21 @@
 *
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
+*
+* AUTHOR: Alimin
+* CREATE TIME: 2022-2-27 12:55:44
 */
 
-#ifndef FK_GRAPHIC_FKRENDERSOURCEATOM_H
-#define FK_GRAPHIC_FKRENDERSOURCEATOM_H
+#ifndef FK_GRAPHIC_FKTEXDEVICEQUARK_H
+#define FK_GRAPHIC_FKTEXDEVICEQUARK_H
 
-#include "FkSimpleMolecule.h"
+#include "FkQuark.h"
 
-FK_CLASS FkRenderSourceAtom FK_EXTEND FkSimpleMolecule {
+FK_CLASS FkTexDeviceQuark FK_EXTEND FkQuark {
 public:
-    FkRenderSourceAtom();
+    FkTexDeviceQuark();
 
-    FkRenderSourceAtom(const FkRenderSourceAtom &o) = delete;
-
-    virtual ~FkRenderSourceAtom();
+    virtual ~FkTexDeviceQuark();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
@@ -29,8 +30,8 @@ protected:
 
     virtual FkResult onStop() override;
 
-    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
-
+private:
+    FkResult _onRender(std::shared_ptr<FkProtocol> p);
 };
 
-#endif //FK_GRAPHIC_FKRENDERSOURCEATOM_H
+#endif //FK_GRAPHIC_FKTEXDEVICEQUARK_H

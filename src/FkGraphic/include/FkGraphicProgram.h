@@ -60,7 +60,7 @@ public:
 
     virtual void clear();
 
-    virtual FkResult addValue(std::shared_ptr<FkGraphicComponent> value);
+    virtual FkResult addValue(std::shared_ptr<FkComponent> value);
 
 protected:
     int32_t getAttribLocation(string name);
@@ -87,7 +87,7 @@ private:
 public:
     FkProgramDescription desc;
     uint32_t program = 0;
-    std::vector<std::shared_ptr<FkGraphicComponent>> values;
+    std::vector<std::shared_ptr<FkComponent>> values;
 };
 
 FK_CLASS FkGraphicProgramAllocator FK_EXTEND FkSourceAllocator<

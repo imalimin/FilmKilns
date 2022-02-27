@@ -9,8 +9,8 @@
 #include "FkGraphicMatProgram.h"
 #include "FkCanvasMosaicProgram.h"
 #include "FkGraphicPointProgram.h"
-#include "FkGraphicTexComponent.h"
-#include "FkVertexComponent.h"
+#include "FkTexCompo.h"
+#include "FkVboCompo.h"
 #include "FkGLDefinition.h"
 #include "FkDefinition.h"
 
@@ -153,7 +153,7 @@ uint32_t FkGraphicProgram::_createShader(uint32_t type, std::string &shader) {
     return shaderId;
 }
 
-FkResult FkGraphicProgram::addValue(std::shared_ptr<FkGraphicComponent> value) {
+FkResult FkGraphicProgram::addValue(std::shared_ptr<FkComponent> value) {
     if (nullptr == value) {
         return FK_FAIL;
     }
@@ -164,8 +164,8 @@ FkResult FkGraphicProgram::addValue(std::shared_ptr<FkGraphicComponent> value) {
 void FkGraphicProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkGraphicTexComponent)) {
-            auto pValue = Fk_POINTER_CAST(FkGraphicTexComponent, it);
+        if (FK_INSTANCE_OF(it, FkTexCompo)) {
+            auto pValue = Fk_POINTER_CAST(FkTexCompo, it);
             glBindTexture(pValue->tex->desc.target, GL_NONE);
         }
     }

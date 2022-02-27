@@ -7,10 +7,10 @@
 
 #include "FkGraphicPointProgram.h"
 #include "FkGLDefinition.h"
-#include "FkVertexObjectComponent.h"
-#include "FkColorComponent.h"
-#include "FkSizeComponent.h"
-#include "FkShapeComponent.h"
+#include "FkVboCompo.h"
+#include "FkColorCompo.h"
+#include "FkSizeCompo.h"
+//#include "FkShapeComponent.h"
 
 FkGraphicPointProgram::FkGraphicPointProgram(const FkProgramDescription &desc) : FkGraphicProgram(
         desc) {
@@ -39,22 +39,22 @@ FkResult FkGraphicPointProgram::create() {
 void FkGraphicPointProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkVertexObjectComponent)) {
+        if (FK_INSTANCE_OF(it, FkVboCompo)) {
             glDisableVertexAttribArray(aPosLoc);
         }
     }
     FkGraphicProgram::clear();
 }
 
-FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkGraphicComponent> value) {
+FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkComponent> value) {
     if (nullptr == value) {
         return FK_FAIL;
     }
-    if (FK_INSTANCE_OF(value, FkVertexObjectComponent)) {
-        auto pValue = Fk_POINTER_CAST(FkVertexObjectComponent, value);
+    if (FK_INSTANCE_OF(value, FkVboCompo)) {
+        auto pValue = Fk_POINTER_CAST(FkVboCompo, value);
         int offset = 0;
         FkVertexDesc desc;
-        FkAssert(FK_OK == pValue->getValueLoc(FkVertexObjectComponent::kValueLoc::VERTEX,
+        FkAssert(FK_OK == pValue->getValueLoc(FkVboCompo::kValueLoc::VERTEX,
                                               offset, desc), FK_FAIL);
 
         FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
@@ -62,16 +62,17 @@ FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkGraphicComponent> val
         FK_GL_CHECK(glVertexAttribPointer(aPosLoc,
                                           desc.countPerVertex, GL_FLOAT, GL_FALSE, 0,
                                           reinterpret_cast<const void *>(offset)));
-    } else if (FK_INSTANCE_OF(value, FkColorComponent)) {
-        auto pValue = Fk_POINTER_CAST(FkColorComponent, value);
+    } else if (FK_INSTANCE_OF(value, FkColorCompo)) {
+        auto pValue = Fk_POINTER_CAST(FkColorCompo, value);
         FK_GL_CHECK(setUniform4fv(uColorLoc, 1, pValue->color.fArray()));
-    } else if (FK_INSTANCE_OF(value, FkSizeComponent)) {
-        auto pValue = Fk_POINTER_CAST(FkSizeComponent, value);
+    } else if (FK_INSTANCE_OF(value, FkSizeCompo)) {
+        auto pValue = Fk_POINTER_CAST(FkSizeCompo, value);
         FK_GL_CHECK(setUniform1f(uSizeLoc, pValue->size.getWidth()));
-    } else if (FK_INSTANCE_OF(value, FkShapeComponent)) {
-        auto pValue = Fk_POINTER_CAST(FkShapeComponent, value);
-        FK_GL_CHECK(setUniform1i(uModeLoc, (int) pValue->type));
     }
+//    else if (FK_INSTANCE_OF(value, FkShapeComponent)) {
+//        auto pValue = Fk_POINTER_CAST(FkShapeComponent, value);
+//        FK_GL_CHECK(setUniform1i(uModeLoc, (int) pValue->type));
+//    }
     return FkGraphicProgram::addValue(value);
 }
 

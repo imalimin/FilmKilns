@@ -6,7 +6,7 @@
 */
 
 #include "FkCanvasMosaicProgram.h"
-#include "FkVertexObjectComponent.h"
+#include "FkVboCompo.h"
 
 FkCanvasMosaicProgram::FkCanvasMosaicProgram(const FkProgramDescription &desc) : FkGraphicProgram(desc) {
     FK_MARK_SUPER
@@ -30,7 +30,7 @@ FkResult FkCanvasMosaicProgram::create() {
 void FkCanvasMosaicProgram::clear() {
     for (auto itr = values.rbegin(); itr != values.rend(); ++itr) {
         auto it = *itr;
-        if (FK_INSTANCE_OF(it, FkVertexObjectComponent)) {
+        if (FK_INSTANCE_OF(it, FkVboCompo)) {
             glDisableVertexAttribArray(aPosLoc);
             glDisableVertexAttribArray(aCoordinateLoc);
         }
@@ -38,11 +38,11 @@ void FkCanvasMosaicProgram::clear() {
     FkGraphicProgram::clear();
 }
 
-FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkGraphicComponent> value) {
+FkResult FkCanvasMosaicProgram::addValue(std::shared_ptr<FkComponent> value) {
     if (nullptr == value) {
         return FK_FAIL;
     }
-    if (FK_INSTANCE_OF(value, FkVertexObjectComponent)) {
+    if (FK_INSTANCE_OF(value, FkVboCompo)) {
         float pos[]{
                 -1.0f, -1.0f,//LEFT,BOTTOM
                 1.0f / 2.0f, -1.0f,//RIGHT,BOTTOM

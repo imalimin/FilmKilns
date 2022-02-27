@@ -13,6 +13,8 @@
 
 #include "FkMaterialEntity.h"
 #include "FkBuffer.h"
+#include "FkTexCompo.h"
+#include "FkSize.h"
 
 FK_CLASS FkDeviceEntity FK_EXTEND FkMaterialEntity {
 public:
@@ -34,6 +36,27 @@ public:
     std::shared_ptr<FkBuffer> buffer();
 
     void finish();
+};
+
+FK_CLASS FkTexDeviceEntity FK_EXTEND FkDeviceEntity {
+public:
+    FkTexDeviceEntity(std::shared_ptr<FkMaterialCompo> material);
+
+    FkTexDeviceEntity(const FkTexDeviceEntity &o);
+
+    virtual ~FkTexDeviceEntity();
+
+    void finish();
+
+    /**
+     * @NotNull
+     * @return
+     */
+    std::shared_ptr<FkTexCompo> tex();
+
+    FkSize size();
+
+    FkColor::kFormat format();
 };
 
 #endif //FK_GRAPHIC_FKDEVICEENTITY_H

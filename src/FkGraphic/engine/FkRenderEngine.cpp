@@ -27,7 +27,7 @@ FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
 }
 
 FkRenderEngine::~FkRenderEngine() {
-
+    FkLogI("aliminabcd", "~FkRenderEngine");
 }
 
 FkResult FkRenderEngine::onCreate() {
@@ -71,16 +71,14 @@ FkResult FkRenderEngine::render(std::shared_ptr<FkMaterialCompo> &material,
     auto msg = FkMessage::obtain(FK_MSG_RENDER);
     auto proto = std::make_shared<FkRenderProto>();
     proto->material = std::make_shared<FkMaterialEntity>(material);
-    proto->device = device;
-    msg->sp = proto;
+    proto->device = std::move(device);
+    msg->sp = std::move(proto);
     return sendMessage(msg);
 }
 
 FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
-    auto temp = dynamic_pointer_cast<FkRenderProto>(msg->sp);
-    auto proto = std::make_shared<FkRenderProto>();
-    proto->material = std::make_shared<FkMaterialEntity>(temp->material->getMaterial());
-    proto->device = temp->device;
+    auto sp = std::move(msg->sp);
+    auto proto = dynamic_pointer_cast<FkRenderProto>(sp);
     auto ret = client->with(molecule)->send(proto);
     auto bufDevice = std::dynamic_pointer_cast<FkBufDeviceEntity>(proto->device);
     if (bufDevice) {

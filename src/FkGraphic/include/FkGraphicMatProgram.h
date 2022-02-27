@@ -5,19 +5,19 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#ifndef FK_GRAPHIC_FKGRAPHICMOSAICPROGRAM_H
-#define FK_GRAPHIC_FKGRAPHICMOSAICPROGRAM_H
+#ifndef FK_GRAPHIC_FKGRAPHICMATPROGRAM_H
+#define FK_GRAPHIC_FKGRAPHICMATPROGRAM_H
 
 #include "FkGraphicProgram.h"
 #include "FkGLDefinition.h"
 
-FK_CLASS FkCanvasMosaicProgram FK_EXTEND FkGraphicProgram {
+FK_CLASS FkGraphicMatProgram FK_EXTEND FkGraphicProgram {
 public:
-    FkCanvasMosaicProgram(const FkProgramDescription &desc);
+    FkGraphicMatProgram(const FkProgramDescription &desc);
 
-    FkCanvasMosaicProgram(const FkCanvasMosaicProgram &o) = delete;
+    FkGraphicMatProgram(const FkGraphicMatProgram &o) = delete;
 
-    virtual ~FkCanvasMosaicProgram();
+    virtual ~FkGraphicMatProgram();
 
     virtual FkResult create() override;
 
@@ -27,11 +27,14 @@ public:
 
     virtual void clear() override;
 
-    virtual FkResult addValue(std::shared_ptr<FkGraphicComponent> value) override;
+    virtual FkResult addValue(std::shared_ptr<FkComponent> value) override;
 
 private:
+    int32_t uTextureLoc = -1;
+    int32_t uMVPMatLoc = -1;
     int32_t aPosLoc = -1;
     int32_t aCoordinateLoc = -1;
+
 };
 
-#endif //FK_GRAPHIC_FKGRAPHICMOSAICPROGRAM_H
+#endif //FK_GRAPHIC_FKGRAPHICMATPROGRAM_H

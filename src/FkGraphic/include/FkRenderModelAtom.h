@@ -32,7 +32,7 @@ protected:
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
 
 private:
-    FkResult _onRender(std::shared_ptr<FkProtocol> p);
+    FkResult _onRender(std::shared_ptr<FkProtocol> &p);
 };
 
 #endif //FK_GRAPHIC_FKRENDERMODELATOM_H

@@ -11,6 +11,8 @@
 #include "FkDeviceEntity.h"
 #include "FkBufCompo.h"
 #include "FkFuncCompo.h"
+#include "FkSizeCompo.h"
+#include "FkFormatCompo.h"
 
 FkDeviceEntity::FkDeviceEntity(std::shared_ptr<FkMaterialCompo> material)
         : FkMaterialEntity(material) {
@@ -52,4 +54,44 @@ void FkBufDeviceEntity::finish() {
     if (compo) {
         return compo->func();
     }
+}
+
+FkTexDeviceEntity::FkTexDeviceEntity(std::shared_ptr<FkMaterialCompo> material)
+        : FkDeviceEntity(material) {
+    FK_MARK_SUPER
+}
+
+FkTexDeviceEntity::FkTexDeviceEntity(const FkTexDeviceEntity &o) : FkDeviceEntity(o) {
+    FK_MARK_SUPER
+}
+
+FkTexDeviceEntity::~FkTexDeviceEntity() {
+
+}
+
+void FkTexDeviceEntity::finish() {
+    auto compo = findComponent<FkFuncCompo>();
+    if (compo) {
+        return compo->func();
+    }
+}
+
+std::shared_ptr<FkTexCompo> FkTexDeviceEntity::tex() {
+    return findComponent<FkTexCompo>();
+}
+
+FkSize FkTexDeviceEntity::size() {
+    auto compo = findComponent<FkSizeCompo>();
+    if (compo) {
+        return compo->size;
+    }
+    return FkSize(0, 0);
+}
+
+FkColor::kFormat FkTexDeviceEntity::format() {
+    auto compo = findComponent<FkFormatCompo>();
+    if (compo) {
+        return compo->fmt;
+    }
+    return FkColor::kFormat::NONE;
 }

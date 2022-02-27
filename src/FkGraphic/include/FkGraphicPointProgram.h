@@ -22,7 +22,7 @@ public:
 
     virtual void clear() override;
 
-    virtual FkResult addValue(std::shared_ptr<FkGraphicComponent> value) override;
+    virtual FkResult addValue(std::shared_ptr<FkComponent> value) override;
 
 public:
     virtual std::string getVertex() override;

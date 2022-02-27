@@ -17,5 +17,5 @@ FkGraphicProgramComponent::FkGraphicProgramComponent(const FkGraphicProgramCompo
 }
 
 FkGraphicProgramComponent::~FkGraphicProgramComponent() {
-    program = 0;
+    program = nullptr;
 }

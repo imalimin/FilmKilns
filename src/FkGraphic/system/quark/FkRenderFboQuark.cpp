@@ -34,7 +34,7 @@ FkResult FkRenderFboQuark::onDestroy() {
 }
 
 FkResult FkRenderFboQuark::onStart() {
-    auto ret = FkQuark::onCreate();
+    auto ret = FkQuark::onStart();
     if (FK_OK != ret) {
         return ret;
     }

@@ -3,20 +3,22 @@
 *
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
+*
+* AUTHOR: Alimin
+* CREATE TIME: 2022-2-27 13:47:00
 */
 
-#ifndef FK_GRAPHIC_FKRENDERSOURCEATOM_H
-#define FK_GRAPHIC_FKRENDERSOURCEATOM_H
+#ifndef FK_GRAPHIC_FKRENDERVBOQUARK_H
+#define FK_GRAPHIC_FKRENDERVBOQUARK_H
 
-#include "FkSimpleMolecule.h"
+#include "FkQuark.h"
+#include "FkVertexObject.h"
 
-FK_CLASS FkRenderSourceAtom FK_EXTEND FkSimpleMolecule {
+FK_CLASS FkRenderVboQuark FK_EXTEND FkQuark {
 public:
-    FkRenderSourceAtom();
+    FkRenderVboQuark();
 
-    FkRenderSourceAtom(const FkRenderSourceAtom &o) = delete;
-
-    virtual ~FkRenderSourceAtom();
+    virtual ~FkRenderVboQuark();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
@@ -29,8 +31,11 @@ protected:
 
     virtual FkResult onStop() override;
 
-    virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
+private:
+    FkResult _onRender(std::shared_ptr<FkProtocol> &p);
 
+private:
+    std::shared_ptr<FkVertexObjectAllocator> allocator = nullptr;
 };
 
-#endif //FK_GRAPHIC_FKRENDERSOURCEATOM_H
+#endif //FK_GRAPHIC_FKRENDERVBOQUARK_H
