@@ -20,6 +20,8 @@ public:
     FkTransEntity(const FkTransEntity &o);
 
     virtual ~FkTransEntity();
+
+    void setTranslate(int32_t x, int32_t y);
 };
 
 #endif //FK_GRAPHIC_FKTRANSENTITY_H
