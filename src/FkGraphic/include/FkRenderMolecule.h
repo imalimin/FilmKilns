@@ -35,8 +35,11 @@ protected:
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onUpdateWindow(std::shared_ptr<FkProtocol> p);
+
 private:
     std::shared_ptr<FkContextCompo> context = nullptr;
+    std::shared_ptr<FkContextCompo> contextOfWin = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKRENDERMOLECULE_H

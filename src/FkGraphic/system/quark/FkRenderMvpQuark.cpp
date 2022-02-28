@@ -49,11 +49,16 @@ FkResult FkRenderMvpQuark::onStop() {
 
 FkResult FkRenderMvpQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    if (!FK_INSTANCE_OF(proto->device, FkTexDeviceEntity)) {
+    FkSize targetSize;
+    if (FK_INSTANCE_OF(proto->device, FkTexDeviceEntity)) {
+        FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkTexDeviceEntity, proto->device);
+        targetSize = device->size();
+    } else if (FK_INSTANCE_OF(proto->device, FkScreenEntity)) {
+        FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkContextCompo, proto->env->getContext());
+        targetSize.set(context->getWidth(), context->getHeight());
+    } else {
         return FK_SKIP;
     }
-    FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkTexDeviceEntity, proto->device);
-    auto targetSize = device->size();
     auto matrix = _calcMatrix(proto->trans, targetSize, false);
     if (matrix) {
         auto mat = std::make_shared<FkMatCompo>();
@@ -79,7 +84,6 @@ std::shared_ptr<FkMVPMatrix> FkRenderMvpQuark::_calcMatrix(
     }
     matrix->calc();
     return matrix;
-    return FK_OK;
 }
 
 FkResult FkRenderMvpQuark::_setRotation(std::shared_ptr<FkMVPMatrix> &matrix,

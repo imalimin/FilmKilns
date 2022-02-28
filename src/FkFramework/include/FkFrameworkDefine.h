@@ -14,7 +14,7 @@
 #define FK_CAST_NULLABLE_PTR(name, type, value, statement)\
 std::shared_ptr<type> name = nullptr;\
 do {\
-    name = std::static_pointer_cast<type>(value);\
+    name = std::dynamic_pointer_cast<type>(value);\
     if (name == nullptr) {\
         statement;\
     }\

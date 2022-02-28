@@ -11,6 +11,7 @@
 #include "FkRenderMvpQuark.h"
 #include "FkRenderInfoQuark.h"
 #include "FkPositionQuark.h"
+#include "FkSizeCompo.h"
 
 FkRenderModelAtom::FkRenderModelAtom() : FkSimpleMolecule() {
     FK_MARK_SUPER

@@ -49,7 +49,7 @@ FkResult FkRenderProgramQuark::onStop() {
 
 FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    if (!FK_INSTANCE_OF(proto->device, FkTexDeviceEntity)) {
+    if (FK_INSTANCE_OF(proto->device, FkBufDeviceEntity)) {
         return FK_SKIP;
     }
     auto compo = std::make_shared<FkRenderProgramCompo>();

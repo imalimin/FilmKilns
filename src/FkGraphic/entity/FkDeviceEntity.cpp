@@ -95,3 +95,16 @@ FkColor::kFormat FkTexDeviceEntity::format() {
     }
     return FkColor::kFormat::NONE;
 }
+
+FkScreenEntity::FkScreenEntity()
+        : FkDeviceEntity(std::make_shared<FkMaterialCompo>(FK_ID_NONE)) {
+    FK_MARK_SUPER
+}
+
+FkScreenEntity::FkScreenEntity(const FkTexDeviceEntity &o) : FkDeviceEntity(o) {
+    FK_MARK_SUPER
+}
+
+FkScreenEntity::~FkScreenEntity() {
+
+}

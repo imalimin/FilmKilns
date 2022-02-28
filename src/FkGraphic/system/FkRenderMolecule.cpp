@@ -11,6 +11,7 @@
 #include "FkRenderProcessAtom.h"
 #include "FkRenderDeviceAtom.h"
 #include "FkRenderDefine.h"
+#include "FkWindowProto.h"
 
 FkRenderMolecule::FkRenderMolecule() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -24,6 +25,7 @@ void FkRenderMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderMolecule::_onRender);
     FK_PORT_DELIVERY(desc, FkGenIDProto, FkRenderMolecule);
     FK_PORT_DELIVERY(desc, FkNewTexProto, FkRenderMolecule);
+    FK_PORT_DESC_QUICK_ADD(desc, FkWindowProto, FkRenderMolecule::_onUpdateWindow);
 }
 
 void FkRenderMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
@@ -71,10 +73,22 @@ FkResult FkRenderMolecule::onStop() {
 
 FkResult FkRenderMolecule::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    context->makeCurrent();
+    auto ctx = contextOfWin ? contextOfWin : this->context;
+    ctx->makeCurrent();
     if (proto->env == nullptr) {
         proto->env = std::make_shared<FkEnvEntity>();
     }
-    proto->env->addComponent(context);
+    proto->env->addComponent(ctx);
+    return dispatchNext(p);
+}
+
+FkResult FkRenderMolecule::_onUpdateWindow(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkWindowProto, p);
+    if (nullptr == contextOfWin) {
+        contextOfWin = std::make_shared<FkContextCompo>("EGLAttach");
+        return contextOfWin->create(context, proto->win);
+    } else {
+        return contextOfWin->update(proto->win);
+    }
     return dispatchNext(p);
 }

@@ -59,4 +59,13 @@ public:
     FkColor::kFormat format();
 };
 
+FK_CLASS FkScreenEntity FK_EXTEND FkDeviceEntity {
+public:
+    FkScreenEntity();
+
+    FkScreenEntity(const FkTexDeviceEntity &o);
+
+    virtual ~FkScreenEntity();
+};
+
 #endif //FK_GRAPHIC_FKDEVICEENTITY_H

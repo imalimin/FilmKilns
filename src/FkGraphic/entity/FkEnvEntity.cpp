@@ -21,3 +21,7 @@ FkEnvEntity::FkEnvEntity(const FkEnvEntity &o) : FkEntity(o) {
 FkEnvEntity::~FkEnvEntity() {
 
 }
+
+std::shared_ptr<FkContextCompo> FkEnvEntity::getContext() {
+    return findComponent<FkContextCompo>();
+}

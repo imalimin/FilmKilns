@@ -14,6 +14,7 @@
 #include "FkMaterialEntity.h"
 #include "FkDeviceEntity.h"
 #include "FkTransEntity.h"
+#include "FkGraphicWindow.h"
 
 FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
 public:
@@ -33,6 +34,8 @@ public:
 
     FkResult updateMaterial(std::shared_ptr<FkMaterialCompo> &material, FkSize size, FkColor color);
 
+    FkResult updateWindow(std::shared_ptr<FkGraphicWindow> win);
+
 protected:
     virtual FkResult onCreate() override;
 
@@ -48,10 +51,13 @@ protected:
 
     FkResult _onUpdateMaterial(std::shared_ptr<FkMessage> &msg);
 
+    FkResult _onUpdateWindow(std::shared_ptr<FkMessage> &msg);
+
 private:
     static const FkID FK_MSG_RENDER;
     static const FkID FK_MSG_NEW_MATERIAL;
     static const FkID FK_MSG_UPDATE_MATERIAL;
+    static const FkID FK_MSG_UPDATE_WINDOW;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
 };

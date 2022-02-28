@@ -10,6 +10,7 @@
 
 #include "FkQuark.h"
 #include "FkGraphicCtxComponent.h"
+#include "FkRenderEngine.h"
 
 FK_CLASS FkGraphicContextQuark FK_EXTEND FkQuark {
 public:
@@ -43,6 +44,9 @@ private:
     static const FkID FK_MSG_NEW_LAYER;
     std::shared_ptr<FkGraphicContext> context = nullptr;
     std::shared_ptr<FkGraphicContext> contextOfWin = nullptr;
+    std::shared_ptr<FkRenderEngine> engine = nullptr;
+    std::shared_ptr<FkMaterialCompo> material = nullptr;
+    std::shared_ptr<FkGraphicWindow> win = nullptr;
 };
 
 

@@ -12,6 +12,7 @@
 #define FK_GRAPHIC_FKENVENTITY_H
 
 #include "FkEntity.h"
+#include "FkContextCompo.h"
 
 FK_CLASS FkEnvEntity FK_EXTEND FkEntity {
 public:
@@ -20,6 +21,8 @@ public:
     FkEnvEntity(const FkEnvEntity &o);
 
     virtual ~FkEnvEntity();
+
+    std::shared_ptr<FkContextCompo> getContext();
 };
 
 #endif //FK_GRAPHIC_FKENVENTITY_H

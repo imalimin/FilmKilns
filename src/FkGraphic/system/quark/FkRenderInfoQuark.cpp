@@ -55,9 +55,6 @@ FkResult FkRenderInfoQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkRenderInfoQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    if (!FK_INSTANCE_OF(proto->device, FkTexDeviceEntity)) {
-        return FK_SKIP;
-    }
     auto itr = sMap.find(proto->material->getMaterial()->id());
     if (itr != sMap.end()) {
         proto->material->addComponent(std::make_shared<FkSizeCompo>(itr->second));

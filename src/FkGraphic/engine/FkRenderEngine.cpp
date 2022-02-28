@@ -12,16 +12,19 @@
 #include "FkSizeCompo.h"
 #include "FkFormatCompo.h"
 #include "FkNumber.h"
+#include "FkWindowProto.h"
 
 const FkID FkRenderEngine::FK_MSG_RENDER = FK_KID('F', 'R', 'E', 0x01);
 const FkID FkRenderEngine::FK_MSG_NEW_MATERIAL = FK_KID('F', 'R', 'E', 0x02);
 const FkID FkRenderEngine::FK_MSG_UPDATE_MATERIAL = FK_KID('F', 'R', 'E', 0x03);
+const FkID FkRenderEngine::FK_MSG_UPDATE_WINDOW = FK_KID('F', 'R', 'E', 0x04);
 
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_RENDER, FkRenderEngine::_onRender);
     FK_REG_MSG(FK_MSG_NEW_MATERIAL, FkRenderEngine::_onNewMaterial);
     FK_REG_MSG(FK_MSG_UPDATE_MATERIAL, FkRenderEngine::_onUpdateMaterial);
+    FK_REG_MSG(FK_MSG_UPDATE_WINDOW, FkRenderEngine::_onUpdateWindow);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
 }
@@ -79,7 +82,7 @@ FkResult FkRenderEngine::render(std::shared_ptr<FkMaterialCompo> &material,
     }
     auto msg = FkMessage::obtain(FK_MSG_RENDER);
     auto proto = std::make_shared<FkRenderProto>();
-    proto->material = std::make_shared<FkMaterialEntity>(material);
+    proto->material = std::make_shared<FkTexEntity>(material);
     proto->device = std::move(device);
     proto->trans = std::move(transEntity);
     msg->sp = std::move(proto);
@@ -136,5 +139,17 @@ FkResult FkRenderEngine::_onUpdateMaterial(std::shared_ptr<FkMessage> &msg) {
     proto->texEntity->addComponent(std::make_shared<FkColorCompo>(FkColor::from(msg->arg1)));
     proto->texEntity->addComponent(std::make_shared<FkSizeCompo>(FkSize(msg->arg2)));
     proto->texEntity->addComponent(std::make_shared<FkFormatCompo>(FkColor::kFormat::RGBA));
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkRenderEngine::updateWindow(std::shared_ptr<FkGraphicWindow> win) {
+    auto msg = FkMessage::obtain(FK_MSG_UPDATE_WINDOW);
+    msg->sp = std::move(win);
+    return sendMessage(msg);
+}
+
+FkResult FkRenderEngine::_onUpdateWindow(shared_ptr<FkMessage> &msg) {
+    auto proto = std::make_shared<FkWindowProto>();
+    proto->win = std::dynamic_pointer_cast<FkGraphicWindow>(msg->sp);
     return client->with(molecule)->send(proto);
 }

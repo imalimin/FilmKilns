@@ -36,11 +36,7 @@ void FkGraphicSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkGraphicSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkGraphicContextQuark>()
-            ->next<FkGraphicTexQuark>()
-            ->next<FkGraphicFBOQuark>()
-            ->next<FkGraphicVBOQuark>()
-            ->next<FkGraphicProgramQuark>();
+    chain->next<FkGraphicContextQuark>();
 }
 
 FkResult FkGraphicSourceAtom::onCreate() {
