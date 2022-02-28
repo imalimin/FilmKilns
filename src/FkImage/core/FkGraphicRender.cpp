@@ -54,12 +54,12 @@ FkResult FkGraphicRender::render(kRenderMode mode) {
     if (vertexObj) {
         vertexObj->bind();
     }
-//    program->addValue(srcTex);
-//    program->addValue(mat);
-//    program->addValue(vertexObj);
-//    program->addValue(pointColor);
-//    program->addValue(pointSizeOfPixel);
-//    program->addValue(pointShape);
+    program->addValue(srcTex);
+    program->addValue(mat);
+    program->addValue(vertexObj);
+    program->addValue(pointColor);
+    program->addValue(pointSizeOfPixel);
+    program->addValue(pointShape);
     FK_GL_CHECK(glDrawArrays(_getRenderMode(mode), 0, countVertex));
 
     if (vertexObj) {

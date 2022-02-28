@@ -109,6 +109,7 @@ TEST(FkRenderTest, RenderLayer) {
     auto black = FkColor::black();
     EXPECT_EQ(engine->updateMaterial(src1, size, black), FK_OK);
 
+
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(src1);
     EXPECT_EQ(engine->render(src0, device), FK_OK);
     testColor(engine, src1, size, white);

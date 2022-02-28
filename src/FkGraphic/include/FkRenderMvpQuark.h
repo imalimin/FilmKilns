@@ -14,6 +14,7 @@
 #include "FkQuark.h"
 #include "FkMVPMatrix.h"
 #include "FkMaterialEntity.h"
+#include "FkTransEntity.h"
 #include "FkSize.h"
 
 FK_CLASS FkRenderMvpQuark FK_EXTEND FkQuark {
@@ -37,18 +38,18 @@ private:
     FkResult _onRender(std::shared_ptr<FkProtocol> &p);
 
 private:
-    FkResult _setRotation(std::shared_ptr<FkMVPMatrix> matrix,
-                          std::shared_ptr<FkMaterialEntity> &material);
+    FkResult _setRotation(std::shared_ptr<FkMVPMatrix> &matrix,
+                          std::shared_ptr<FkTransEntity> &transEntity);
 
-    FkResult _setScale(std::shared_ptr<FkMVPMatrix> matrix,
-                       std::shared_ptr<FkMaterialEntity> &material,
+    FkResult _setScale(std::shared_ptr<FkMVPMatrix> &matrix,
+                       std::shared_ptr<FkTransEntity> &transEntity,
                        FkSize &targetSize,
                        bool reverseY);
 
-    FkResult _setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
-                           std::shared_ptr<FkMaterialEntity> &material);
+    FkResult _setTranslate(std::shared_ptr<FkMVPMatrix> &matrix,
+                           std::shared_ptr<FkTransEntity> &transEntity);
 
-    FkResult _calc(std::shared_ptr<FkMaterialEntity> &material, FkSize &targetSize, bool reverseY);
+    std::shared_ptr<FkMVPMatrix> _calcMatrix(std::shared_ptr<FkTransEntity> transEntity, FkSize &targetSize, bool reverseY);
 };
 
 #endif //FK_GRAPHIC_FKRENDERMVPQUARK_H
