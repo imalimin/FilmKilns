@@ -92,6 +92,9 @@ FkResult FkRenderEngine::renderDeviceWithTrans(std::shared_ptr<FkMaterialCompo> 
 FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
     auto sp = std::move(msg->sp);
     auto proto = dynamic_pointer_cast<FkRenderProto>(sp);
+    if (proto->env == nullptr) {
+        proto->env = std::make_shared<FkEnvEntity>();
+    }
     auto ret = client->with(molecule)->send(proto);
     auto bufDevice = std::dynamic_pointer_cast<FkBufDeviceEntity>(proto->device);
     if (bufDevice) {

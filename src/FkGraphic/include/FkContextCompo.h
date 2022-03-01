@@ -38,6 +38,8 @@ public:
 
     int32_t getHeight();
 
+    bool isPBuffer();
+
 private:
     EGLDisplay _createDisplay(EGLNativeDisplayType display_id);
 

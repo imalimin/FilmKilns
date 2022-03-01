@@ -71,6 +71,7 @@ FkResult FkContextCompo::create(std::shared_ptr<FkContextCompo> context,
         size = win->getSize();
         eglSurface = _createWindowSurface(eglDisplay, eglConfig, win);
     } else {
+        size = FkSize(0, 0);
         eglSurface = _createPbufferSurface(eglDisplay, eglConfig);
     }
     if (EGL_NO_SURFACE == eglSurface) {
@@ -252,4 +253,8 @@ int32_t FkContextCompo::getWidth() {
 
 int32_t FkContextCompo::getHeight() {
     return size.getHeight();
+}
+
+bool FkContextCompo::isPBuffer() {
+    return size.getWidth() == 0 && size.getHeight() == 0;
 }
