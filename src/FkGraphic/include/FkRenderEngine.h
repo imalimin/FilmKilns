@@ -24,9 +24,9 @@ public:
 
     virtual ~FkRenderEngine();
 
-    FkResult render(std::shared_ptr<FkMaterialCompo> &material, std::shared_ptr<FkDeviceEntity> &device);
+    FkResult renderDevice(std::shared_ptr<FkMaterialCompo> &material, std::shared_ptr<FkDeviceEntity> &device);
 
-    FkResult render(std::shared_ptr<FkMaterialCompo> &material,
+    FkResult renderDeviceWithTrans(std::shared_ptr<FkMaterialCompo> &material,
                     std::shared_ptr<FkTransEntity> &transEntity,
                     std::shared_ptr<FkDeviceEntity> &device);
 

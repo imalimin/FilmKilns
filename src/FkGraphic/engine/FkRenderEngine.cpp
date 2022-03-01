@@ -68,13 +68,13 @@ FkResult FkRenderEngine::onStop() {
     return ret;
 }
 
-FkResult FkRenderEngine::render(std::shared_ptr<FkMaterialCompo> &material,
+FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialCompo> &material,
                                 std::shared_ptr<FkDeviceEntity> &device) {
     auto transEntity = std::make_shared<FkTransEntity>();
-    return render(material, transEntity, device);
+    return renderDeviceWithTrans(material, transEntity, device);
 }
 
-FkResult FkRenderEngine::render(std::shared_ptr<FkMaterialCompo> &material,
+FkResult FkRenderEngine::renderDeviceWithTrans(std::shared_ptr<FkMaterialCompo> &material,
                 std::shared_ptr<FkTransEntity> &transEntity,
                 std::shared_ptr<FkDeviceEntity> &device) {
     if (material == nullptr || device == nullptr) {

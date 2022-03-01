@@ -89,7 +89,7 @@ FkResult FkGraphicContextQuark::_onSetSurface(std::shared_ptr<FkProtocol> p) {
     if (win) {
         auto ret = engine->updateWindow(ptl->win);
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
-        ret = engine->render(material, device);
+        ret = engine->renderDevice(material, device);
     }
     return FK_OK;
 }

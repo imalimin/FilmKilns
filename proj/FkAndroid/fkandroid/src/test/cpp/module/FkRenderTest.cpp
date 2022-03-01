@@ -29,16 +29,16 @@ TEST(FkRenderTest, Render) {
     auto material = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
     auto dst = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
     auto device = std::make_shared<FkDeviceEntity>(dst);
-    EXPECT_NE(engine->render(material, device), FK_OK);
+    EXPECT_NE(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->create(), FK_OK);
     device = std::make_shared<FkDeviceEntity>(dst);
-    EXPECT_NE(engine->render(material, device), FK_OK);
+    EXPECT_NE(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->start(), FK_OK);
     device = std::make_shared<FkDeviceEntity>(dst);
-    EXPECT_EQ(engine->render(material, device), FK_OK);
+    EXPECT_EQ(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->stop(), FK_OK);
     device = std::make_shared<FkDeviceEntity>(dst);
-    EXPECT_NE(engine->render(material, device), FK_OK);
+    EXPECT_NE(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->destroy(), FK_OK);
 }
 
@@ -66,7 +66,7 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
 //        FkBitmap::write(path, buf->data(), buf->capacity(), size.getWidth(), size.getHeight());
         promise->set_value(FK_OK);
     }));
-    EXPECT_EQ(engine->render(src, device), FK_OK);
+    EXPECT_EQ(engine->renderDevice(src, device), FK_OK);
     EXPECT_EQ(promise->get_future().get(), FK_OK);
     // Center
     int index = pos.y / 2 * pos.x * 4 + pos.x / 2 * 4;
@@ -116,7 +116,7 @@ TEST(FkRenderTest, RenderLayer) {
     trans->setTranslate(size.getWidth() / 2, 0);
 
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(src1);
-    EXPECT_EQ(engine->render(src0, trans, device), FK_OK);
+    EXPECT_EQ(engine->renderDeviceWithTrans(src0, trans, device), FK_OK);
     FkIntVec2 pos(0, 0);
     testColor(engine, src1, size, pos, black);
     pos = FkIntVec2(size.getWidth(), 0);
