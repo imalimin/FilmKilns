@@ -27,7 +27,11 @@
 #include "FkMeasureTransProto.h"
 #include "FkDrawPointProto.h"
 
-FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
+#define RENDER_ALIAS "RenderEngine"
+
+FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule(),
+                                         renderEngine(
+                                                 std::make_shared<FkRenderEngine>(RENDER_ALIAS)) {
     FK_MARK_SUPER
 }
 
@@ -56,7 +60,9 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkGraphicModelAtom>()
-            ->next<FkGraphicSourceAtom>();
+            ->next<FkGraphicSourceAtom>()
+            ->next<FkGraphicRenderAtom>()
+            ->next<FkGraphicScreenAtom>();
 }
 
 FkResult FkGraphicMolecule::onCreate() {
@@ -64,6 +70,7 @@ FkResult FkGraphicMolecule::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
+    renderEngine->create();
     return ret;
 }
 
@@ -72,6 +79,7 @@ FkResult FkGraphicMolecule::onDestroy() {
     if (FK_OK != ret) {
         return ret;
     }
+    renderEngine->destroy();
     return ret;
 }
 
@@ -80,6 +88,7 @@ FkResult FkGraphicMolecule::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
+    renderEngine->start();
     return ret;
 }
 
@@ -88,6 +97,7 @@ FkResult FkGraphicMolecule::onStop() {
     if (FK_OK != ret) {
         return ret;
     }
+    renderEngine->stop();
     return ret;
 }
 

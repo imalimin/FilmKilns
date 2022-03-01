@@ -8,7 +8,6 @@
 #include "FkGraphicModelAtom.h"
 #include "FkWinModelQuark.h"
 #include "FkGraphicLayerPrt.h"
-#include "FkGraphicMVPQuark.h"
 #include "FkGraphicCanvasQuark.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
@@ -20,7 +19,6 @@
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
-#include "FkMeasureTransProto.h"
 #include "FkDrawPointProto.h"
 
 FkGraphicModelAtom::FkGraphicModelAtom() : FkSimpleAtom() {
@@ -42,15 +40,14 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicModelAtom::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicModelAtom::dispatchNext);
+//    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicModelAtom::dispatchNext);
 }
 
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkWinModelQuark>()
             ->next<FkGraphicCanvasQuark>()
-            ->next<FkGraphicLayerQuark>()
-            ->next<FkGraphicMVPQuark>();
+            ->next<FkGraphicLayerQuark>();
 }
 
 FkResult FkGraphicModelAtom::onCreate() {

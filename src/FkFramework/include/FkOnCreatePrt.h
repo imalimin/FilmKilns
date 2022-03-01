@@ -9,6 +9,7 @@
 #define FK_FRAMEWORK_FKONCREATEPROT_H
 
 #include "FkProtocol.h"
+#include "FkQuarkContext.h"
 
 FK_CLASS FkOnCreatePrt FK_EXTEND FkProtocol {
 public:
@@ -18,6 +19,8 @@ public:
 
     virtual ~FkOnCreatePrt();
 
+public:
+    std::shared_ptr<FkQuarkContext> context = nullptr;
 };
 
 #endif //FK_FRAMEWORK_FKONCREATEPROT_H

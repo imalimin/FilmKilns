@@ -26,6 +26,14 @@ FkQuark::~FkQuark() {
 
 }
 
+std::shared_ptr<FkQuarkContext> FkQuark::withContext() {
+    return context;
+}
+
+std::shared_ptr<FkQuarkContext> FkQuark::getContext() {
+    return context;
+}
+
 FkResult FkQuark::onCreate() {
     return FK_OK;
 }
@@ -63,6 +71,13 @@ FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
     auto ret = _changeState(kState::IDL, kState::CREATED);
     if (FK_OK != ret) {
         return ret;
+    }
+    auto proto = std::dynamic_pointer_cast<FkOnCreatePrt>(p);
+    if (proto && proto->context) {
+        context = proto->context;
+    } else if (proto) {
+        context = withContext();
+        proto->context = context;
     }
     describeProtocols(desc);
     return onCreate();
