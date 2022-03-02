@@ -11,7 +11,7 @@
 #include "FkTexDeviceQuark.h"
 #include "FkScreenQuark.h"
 
-FkRenderDeviceAtom::FkRenderDeviceAtom() : FkSimpleMolecule() {
+FkRenderDeviceAtom::FkRenderDeviceAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
 }
 
@@ -30,7 +30,7 @@ void FkRenderDeviceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkRenderDeviceAtom::onCreate() {
-    auto ret = FkSimpleMolecule::onCreate();
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
@@ -38,7 +38,7 @@ FkResult FkRenderDeviceAtom::onCreate() {
 }
 
 FkResult FkRenderDeviceAtom::onDestroy() {
-    auto ret = FkSimpleMolecule::onDestroy();
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -46,7 +46,7 @@ FkResult FkRenderDeviceAtom::onDestroy() {
 }
 
 FkResult FkRenderDeviceAtom::onStart() {
-    auto ret = FkSimpleMolecule::onStart();
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -54,7 +54,7 @@ FkResult FkRenderDeviceAtom::onStart() {
 }
 
 FkResult FkRenderDeviceAtom::onStop() {
-    auto ret = FkSimpleMolecule::onStop();
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }

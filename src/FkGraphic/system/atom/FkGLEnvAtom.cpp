@@ -12,7 +12,7 @@
 #include "FkRenderProto.h"
 #include "FkWindowProto.h"
 
-FkGLEnvAtom::FkGLEnvAtom() : FkSimpleMolecule() {
+FkGLEnvAtom::FkGLEnvAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
 }
 
@@ -29,7 +29,7 @@ void FkGLEnvAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkGLEnvAtom::onCreate() {
-    auto ret = FkSimpleMolecule::onCreate();
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
@@ -39,7 +39,7 @@ FkResult FkGLEnvAtom::onCreate() {
 }
 
 FkResult FkGLEnvAtom::onDestroy() {
-    auto ret = FkSimpleMolecule::onDestroy();
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -48,7 +48,7 @@ FkResult FkGLEnvAtom::onDestroy() {
 }
 
 FkResult FkGLEnvAtom::onStart() {
-    auto ret = FkSimpleMolecule::onStart();
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -58,7 +58,7 @@ FkResult FkGLEnvAtom::onStart() {
 }
 
 FkResult FkGLEnvAtom::onStop() {
-    auto ret = FkSimpleMolecule::onStop();
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }

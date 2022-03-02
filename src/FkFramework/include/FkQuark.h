@@ -31,8 +31,6 @@ public:
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) = 0;
 
-    virtual std::shared_ptr<FkQuarkContext> withContext();
-
     virtual std::shared_ptr<FkQuarkContext> getContext();
 
     virtual FkResult onCreate();

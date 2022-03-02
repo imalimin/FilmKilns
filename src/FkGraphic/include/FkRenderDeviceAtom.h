@@ -10,11 +10,9 @@
 
 #include "FkSimpleMolecule.h"
 
-FK_CLASS FkRenderDeviceAtom FK_EXTEND FkSimpleMolecule {
+FK_CLASS FkRenderDeviceAtom FK_EXTEND FkSimpleAtom {
 public:
     FkRenderDeviceAtom();
-
-    FkRenderDeviceAtom(const FkRenderDeviceAtom &o) = delete;
 
     virtual ~FkRenderDeviceAtom();
 

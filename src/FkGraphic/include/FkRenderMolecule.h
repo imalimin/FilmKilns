@@ -21,6 +21,8 @@ public:
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
 
+    virtual std::shared_ptr<FkQuarkContext> shareContextToSubQuark() override;
+
     virtual FkResult onCreate() override;
 
     virtual FkResult onDestroy() override;
@@ -30,6 +32,9 @@ protected:
     virtual FkResult onStop() override;
 
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
+
+private:
+    std::shared_ptr<FkQuarkContext> context = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKRENDERMOLECULE_H

@@ -58,6 +58,14 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicMolecule::dispatchNext);
 }
 
+std::shared_ptr<FkQuarkContext> FkGraphicMolecule::shareContextToSubQuark() {
+    if (context == nullptr) {
+        context = std::make_shared<FkQuarkContext>();
+//        context->addComponent(renderEngine);
+    }
+    return context;
+}
+
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkGraphicModelAtom>()
             ->next<FkGraphicSourceAtom>()

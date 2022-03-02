@@ -8,7 +8,7 @@
 #include "FkRenderProcessAtom.h"
 #include "FkRenderDefine.h"
 
-FkRenderProcessAtom::FkRenderProcessAtom() : FkSimpleMolecule() {
+FkRenderProcessAtom::FkRenderProcessAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
 }
 
@@ -24,7 +24,7 @@ void FkRenderProcessAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkRenderProcessAtom::onCreate() {
-    auto ret = FkSimpleMolecule::onCreate();
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
@@ -32,7 +32,7 @@ FkResult FkRenderProcessAtom::onCreate() {
 }
 
 FkResult FkRenderProcessAtom::onDestroy() {
-    auto ret = FkSimpleMolecule::onDestroy();
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -40,7 +40,7 @@ FkResult FkRenderProcessAtom::onDestroy() {
 }
 
 FkResult FkRenderProcessAtom::onStart() {
-    auto ret = FkSimpleMolecule::onStart();
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -48,7 +48,7 @@ FkResult FkRenderProcessAtom::onStart() {
 }
 
 FkResult FkRenderProcessAtom::onStop() {
-    auto ret = FkSimpleMolecule::onStop();
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }

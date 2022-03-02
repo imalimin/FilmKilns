@@ -13,7 +13,7 @@
 #include "FkRenderVboQuark.h"
 #include "FkRenderProgramQuark.h"
 
-FkRenderSourceAtom::FkRenderSourceAtom() : FkSimpleMolecule() {
+FkRenderSourceAtom::FkRenderSourceAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
 }
 
@@ -34,7 +34,7 @@ void FkRenderSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkRenderSourceAtom::onCreate() {
-    auto ret = FkSimpleMolecule::onCreate();
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
@@ -42,7 +42,7 @@ FkResult FkRenderSourceAtom::onCreate() {
 }
 
 FkResult FkRenderSourceAtom::onDestroy() {
-    auto ret = FkSimpleMolecule::onDestroy();
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -50,7 +50,7 @@ FkResult FkRenderSourceAtom::onDestroy() {
 }
 
 FkResult FkRenderSourceAtom::onStart() {
-    auto ret = FkSimpleMolecule::onStart();
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -58,7 +58,7 @@ FkResult FkRenderSourceAtom::onStart() {
 }
 
 FkResult FkRenderSourceAtom::onStop() {
-    auto ret = FkSimpleMolecule::onStop();
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }

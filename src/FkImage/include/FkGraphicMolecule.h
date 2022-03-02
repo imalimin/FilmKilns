@@ -24,6 +24,8 @@ public:
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
 
+    virtual std::shared_ptr<FkQuarkContext> shareContextToSubQuark() override;
+
     virtual FkResult onCreate() override;
 
     virtual FkResult onDestroy() override;
@@ -39,6 +41,7 @@ private:
 
 private:
     std::shared_ptr<FkRenderEngine> renderEngine = nullptr;
+    std::shared_ptr<FkQuarkContext> context = nullptr;
 };
 
 

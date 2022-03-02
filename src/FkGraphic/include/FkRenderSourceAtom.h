@@ -8,13 +8,11 @@
 #ifndef FK_GRAPHIC_FKRENDERSOURCEATOM_H
 #define FK_GRAPHIC_FKRENDERSOURCEATOM_H
 
-#include "FkSimpleMolecule.h"
+#include "FkSimpleAtom.h"
 
-FK_CLASS FkRenderSourceAtom FK_EXTEND FkSimpleMolecule {
+FK_CLASS FkRenderSourceAtom FK_EXTEND FkSimpleAtom {
 public:
     FkRenderSourceAtom();
-
-    FkRenderSourceAtom(const FkRenderSourceAtom &o) = delete;
 
     virtual ~FkRenderSourceAtom();
 

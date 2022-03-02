@@ -26,10 +26,6 @@ FkQuark::~FkQuark() {
 
 }
 
-std::shared_ptr<FkQuarkContext> FkQuark::withContext() {
-    return context;
-}
-
 std::shared_ptr<FkQuarkContext> FkQuark::getContext() {
     return context;
 }
@@ -73,11 +69,8 @@ FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
         return ret;
     }
     auto proto = std::dynamic_pointer_cast<FkOnCreatePrt>(p);
-    if (proto && proto->context) {
+    if (proto) {
         context = proto->context;
-    } else if (proto) {
-        context = withContext();
-        proto->context = context;
     }
     describeProtocols(desc);
     return onCreate();

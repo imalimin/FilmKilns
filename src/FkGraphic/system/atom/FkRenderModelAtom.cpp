@@ -13,7 +13,7 @@
 #include "FkPositionQuark.h"
 #include "FkSizeCompo.h"
 
-FkRenderModelAtom::FkRenderModelAtom() : FkSimpleMolecule() {
+FkRenderModelAtom::FkRenderModelAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
 }
 
@@ -35,7 +35,7 @@ void FkRenderModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkRenderModelAtom::onCreate() {
-    auto ret = FkSimpleMolecule::onCreate();
+    auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
@@ -43,7 +43,7 @@ FkResult FkRenderModelAtom::onCreate() {
 }
 
 FkResult FkRenderModelAtom::onDestroy() {
-    auto ret = FkSimpleMolecule::onDestroy();
+    auto ret = FkSimpleAtom::onDestroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -51,7 +51,7 @@ FkResult FkRenderModelAtom::onDestroy() {
 }
 
 FkResult FkRenderModelAtom::onStart() {
-    auto ret = FkSimpleMolecule::onStart();
+    auto ret = FkSimpleAtom::onStart();
     if (FK_OK != ret) {
         return ret;
     }
@@ -59,7 +59,7 @@ FkResult FkRenderModelAtom::onStart() {
 }
 
 FkResult FkRenderModelAtom::onStop() {
-    auto ret = FkSimpleMolecule::onStop();
+    auto ret = FkSimpleAtom::onStop();
     if (FK_OK != ret) {
         return ret;
     }

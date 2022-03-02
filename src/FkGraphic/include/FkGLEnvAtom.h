@@ -11,10 +11,10 @@
 #ifndef FK_GRAPHIC_FKGLENVATOM_H
 #define FK_GRAPHIC_FKGLENVATOM_H
 
-#include "FkSimpleMolecule.h"
+#include "FkSimpleAtom.h"
 #include "FkContextCompo.h"
 
-FK_CLASS FkGLEnvAtom FK_EXTEND FkSimpleMolecule {
+FK_CLASS FkGLEnvAtom FK_EXTEND FkSimpleAtom {
 public:
     FkGLEnvAtom();
 

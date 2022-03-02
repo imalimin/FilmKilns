@@ -8,13 +8,11 @@
 #ifndef FK_GRAPHIC_FKRENDERPROCESSATOM_H
 #define FK_GRAPHIC_FKRENDERPROCESSATOM_H
 
-#include "FkSimpleMolecule.h"
+#include "FkSimpleAtom.h"
 
-FK_CLASS FkRenderProcessAtom FK_EXTEND FkSimpleMolecule {
+FK_CLASS FkRenderProcessAtom FK_EXTEND FkSimpleAtom {
 public:
     FkRenderProcessAtom();
-
-    FkRenderProcessAtom(const FkRenderProcessAtom &o) = delete;
 
     virtual ~FkRenderProcessAtom();
 
