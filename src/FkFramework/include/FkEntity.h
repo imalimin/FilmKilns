@@ -26,7 +26,7 @@ public:
 
     FkResult addComponent(std::shared_ptr<FkComponent> comp);
 
-    FkResult findComponent(std::vector<std::shared_ptr<FkComponent>> &vec,
+    FkResult findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                            const FkClassType &classType);
 
 
@@ -35,10 +35,10 @@ public:
         std::vector<std::shared_ptr<FkComponent>> vec;
         vec.clear();
 
-        if (FK_OK != findComponent(vec, FkClassType::type<T>())) {
+        if (FK_OK != findComponents(vec, FkClassType::type<T>())) {
             return nullptr;
         }
-        return Fk_POINTER_CAST(T, vec[0]);
+        return std::dynamic_pointer_cast<T>(vec[0]);
     }
 
 private:

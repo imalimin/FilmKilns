@@ -48,8 +48,8 @@ FkResult FkLayerRenderQuark::onStop() {
 }
 
 FkSize FkLayerRenderQuark::_getCanvasSize(std::shared_ptr<FkGraphicLayer> canvas) {
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    if (FK_OK == canvas->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+    std::vector<std::shared_ptr<FkComponent>> vec;
+    if (FK_OK == canvas->findComponents(vec, FkClassType::type<FkSizeComponent>())) {
         return Fk_POINTER_CAST(FkSizeComponent, vec[0])->size;
     }
     return FkSize(1, 1);
@@ -57,8 +57,8 @@ FkSize FkLayerRenderQuark::_getCanvasSize(std::shared_ptr<FkGraphicLayer> canvas
 
 std::shared_ptr<FkGraphicTexture> FkLayerRenderQuark::_getCanvasTexture(
         std::shared_ptr<FkGraphicLayer> canvas) {
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    if (FK_OK == canvas->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
+    std::vector<std::shared_ptr<FkComponent>> vec;
+    if (FK_OK == canvas->findComponents(vec, FkClassType::type<FkGraphicTexComponent>())) {
         return Fk_POINTER_CAST(FkGraphicTexComponent, vec[0])->tex;
     }
     return nullptr;
@@ -66,21 +66,21 @@ std::shared_ptr<FkGraphicTexture> FkLayerRenderQuark::_getCanvasTexture(
 
 FkResult FkLayerRenderQuark::_drawLayer(std::shared_ptr<FkGraphicLayer> layer,
                                          std::shared_ptr<FkGraphicRender> render) {
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    std::vector<std::shared_ptr<FkComponent>> vec;
     std::shared_ptr<FkGraphicTexComponent> tex = nullptr;
     std::shared_ptr<FkSizeComponent> size = nullptr;
     std::shared_ptr<FkMatrixComponent> mat = nullptr;
-    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkGraphicTexComponent>())) {
+    if (FK_OK != layer->findComponents(vec, FkClassType::type<FkGraphicTexComponent>())) {
         return FK_FAIL;
     }
     tex = Fk_POINTER_CAST(FkGraphicTexComponent, vec[0]);
     vec.clear();
-    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+    if (FK_OK != layer->findComponents(vec, FkClassType::type<FkSizeComponent>())) {
         return FK_FAIL;
     }
     size = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
     vec.clear();
-    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkMatrixComponent>())) {
+    if (FK_OK != layer->findComponents(vec, FkClassType::type<FkMatrixComponent>())) {
         return FK_FAIL;
     }
     mat = Fk_POINTER_CAST(FkMatrixComponent, vec[0]);
@@ -99,21 +99,21 @@ FkResult FkLayerRenderQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto prt = Fk_POINTER_CAST(FkRenderRequestPrt, p);
     auto canvas = prt->req->getCanvas();
     FkAssert(nullptr != canvas, FK_FAIL);
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    std::vector<std::shared_ptr<FkComponent>> vec;
     std::shared_ptr<FkGraphicCtxComponent> context = nullptr;
-    if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {
+    if (FK_OK != prt->req->findComponents(vec, FkClassType::type<FkGraphicCtxComponent>())) {
         return FK_FAIL;
     }
     context = Fk_POINTER_CAST(FkGraphicCtxComponent, vec[0]);
     vec.clear();
     std::shared_ptr<FkGraphicFBOComponent> fbo = nullptr;
-    if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicFBOComponent>())) {
+    if (FK_OK != prt->req->findComponents(vec, FkClassType::type<FkGraphicFBOComponent>())) {
         return FK_FAIL;
     }
     fbo = Fk_POINTER_CAST(FkGraphicFBOComponent, vec[0]);
     vec.clear();
     std::shared_ptr<FkGraphicProgramComponent> program = nullptr;
-    if (FK_OK != prt->req->findComponent(vec, FkClassType::type<FkGraphicProgramComponent>())) {
+    if (FK_OK != prt->req->findComponents(vec, FkClassType::type<FkGraphicProgramComponent>())) {
         return FK_FAIL;
     }
     program = Fk_POINTER_CAST(FkGraphicProgramComponent, vec[0]);

@@ -8,38 +8,18 @@
 #ifndef FK_GRAPHIC_FKGRAPHICENTITY_H
 #define FK_GRAPHIC_FKGRAPHICENTITY_H
 
-#include "FkObject.h"
+#include "FkEntity.h"
 #include "FkGraphicComponent.h"
 #include <vector>
 #include <list>
 
-FK_CLASS FkGraphicEntity FK_EXTEND FkObject {
+FK_CLASS FkGraphicEntity FK_EXTEND FkEntity {
 public:
     FkGraphicEntity();
 
     FkGraphicEntity(const FkGraphicEntity &o);
 
     virtual ~FkGraphicEntity();
-
-    FkResult addComponent(std::shared_ptr<FkGraphicComponent> comp);
-
-    FkResult findComponent(std::vector<std::shared_ptr<FkGraphicComponent>> &vec,
-                           const FkClassType &classType);
-
-
-    template<class T>
-    std::shared_ptr<T> findComponent() {
-        std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-        vec.clear();
-
-        if (FK_OK != findComponent(vec, FkClassType::type<T>())) {
-            return nullptr;
-        }
-        return Fk_POINTER_CAST(T, vec[0]);
-    }
-
-private:
-    std::list<std::shared_ptr<FkGraphicComponent>> components;
 };
 
 

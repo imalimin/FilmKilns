@@ -31,7 +31,7 @@ FkResult FkEntity::addComponent(std::shared_ptr<FkComponent> comp) {
     return FK_OK;
 }
 
-FkResult FkEntity::findComponent(std::vector<std::shared_ptr<FkComponent>> &vec,
+FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                                         const FkClassType &classType) {
     for (auto & component : components) {
         if (component->getClassType() == classType) {

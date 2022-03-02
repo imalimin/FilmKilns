@@ -93,8 +93,8 @@ FkResult FkGraphicCanvasQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p) {
     auto proto = std::static_pointer_cast<FkQuerySizeProto>(p);
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    if (FK_OK == _getCanvas()->findComponent(vec, FkClassType::type<FkSizeComponent>())) {
+    std::vector<std::shared_ptr<FkComponent>> vec;
+    if (FK_OK == _getCanvas()->findComponents(vec, FkClassType::type<FkSizeComponent>())) {
         auto sizeComp = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
         proto->value = sizeComp->size;
     }

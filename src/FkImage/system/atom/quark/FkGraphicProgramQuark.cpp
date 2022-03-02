@@ -48,9 +48,9 @@ FkResult FkGraphicProgramQuark::onStop() {
 
 FkResult FkGraphicProgramQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    std::vector<std::shared_ptr<FkComponent>> vec;
     vec.clear();
-    if (FK_OK != proto->req->findComponent(vec, FkClassType::type<FkGraphicCtxComponent>())) {
+    if (FK_OK != proto->req->findComponents(vec, FkClassType::type<FkGraphicCtxComponent>())) {
         return FK_FAIL;
     }
     auto context = Fk_POINTER_CAST(FkGraphicCtxComponent, vec[0]);
@@ -63,7 +63,7 @@ FkResult FkGraphicProgramQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) 
     proto->req->addComponent(comp);
 
     auto canvas = proto->req->getCanvas();
-    FkAssert(nullptr != canvas, FK_FAIL);
+    FkAssert(nullptr != canvas, FK_NPE);
     FkProgramDescription descMosaic(FkProgramDescription::kType::CANVAS_MOSAIC);
     auto canvasProgramComp = std::make_shared<FkGraphicProgramComponent>();
     canvasProgramComp->program = allocator->alloc(descMosaic);

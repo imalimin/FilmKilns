@@ -24,6 +24,7 @@
 #include "FkPointComponent.h"
 #include "FkVertexComponent.h"
 #include "FkCoordinateComponent.h"
+#include "FkRenderContext.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -32,7 +33,7 @@
 //每个坐标的维度
 #define COUNT_PER_VERTEX  2
 
-FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), mCurID(Fk_CANVAS_ID) {
+FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
     FK_MARK_SUPER
 }
 
@@ -99,16 +100,18 @@ void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
 }
 
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkGraphicNewLayerPrt, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkGraphicNewLayerPrt, p);
     auto layer = std::make_shared<FkGraphicLayer>();
     layer->addComponent(std::make_shared<FkTransComponent>());
     layer->addComponent(std::make_shared<FkScaleComponent>());
     layer->addComponent(std::make_shared<FkRotateComponent>());
-    std::lock_guard<std::mutex> guard(mtx);
-    ++mCurID;
-    layer->id = mCurID;
+
+    auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+    FkAssert(renderEngine != nullptr, FK_NPE);
+    layer->material = renderEngine->newMaterial();
+    layer->id = layer->material->id();
     proto->layer = layer;
-    layers.emplace(std::make_pair(mCurID, layer));
+    layers.emplace(std::make_pair(layer->id, layer));
     return FK_OK;
 }
 

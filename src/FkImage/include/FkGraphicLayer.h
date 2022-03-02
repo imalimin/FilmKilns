@@ -11,6 +11,7 @@
 #include "FkGraphicEntity.h"
 #include "FkBufferComponent.h"
 #include "FkSize.h"
+#include "FkMaterialCompo.h"
 
 FK_CLASS FkGraphicLayer FK_EXTEND FkGraphicEntity {
 public:
@@ -29,6 +30,7 @@ public:
 
 public:
     FkID id = FK_ID_NONE;
+    std::shared_ptr<FkMaterialCompo> material = nullptr;
 };
 
 

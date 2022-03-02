@@ -55,8 +55,6 @@ private:
     void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
 
 protected:
-    /// 0 is for canvas.
-    FkID mCurID;
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
     std::mutex mtx;
 };

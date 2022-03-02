@@ -101,10 +101,12 @@ TEST(FkSimpleAtomTest, Run) {
     FkLocalClient client;
     auto atom = std::make_shared<FkSimpleIncrease2Atom>();
     //Live create
-    auto onCreateSes = FkSession::with(std::make_shared<FkOnCreatePrt>());
+    auto proto = std::make_shared<FkOnCreatePrt>();
+    proto->context = std::make_shared<FkQuarkContext>();
+    auto onCreateSes = FkSession::with(proto);
     EXPECT_EQ(onCreateSes->connectTo(atom), FK_OK);
     EXPECT_EQ(onCreateSes->open(), FK_OK);
-    EXPECT_EQ(client.send(onCreateSes, std::make_shared<FkOnCreatePrt>()), FK_OK);
+    EXPECT_EQ(client.send(onCreateSes, proto), FK_OK);
     EXPECT_EQ(onCreateSes->close(), FK_OK);
     // Live start
     auto onStartSes = FkSession::with(std::make_shared<FkOnStartPrt>());
@@ -112,6 +114,8 @@ TEST(FkSimpleAtomTest, Run) {
     EXPECT_EQ(onStartSes->open(), FK_OK);
     EXPECT_EQ(client.send(onStartSes, std::make_shared<FkOnStartPrt>()), FK_OK);
     EXPECT_EQ(onStartSes->close(), FK_OK);
+    //checkout context
+    EXPECT_NE(atom->getContext(), nullptr);
     //run
     auto runSes = FkSession::with(std::make_shared<FkCalculatePrt>());
     EXPECT_EQ(runSes->connectTo(atom), FK_OK);

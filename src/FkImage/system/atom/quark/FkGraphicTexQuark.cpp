@@ -58,9 +58,9 @@ FkResult FkGraphicTexQuark::onStop() {
 }
 
 FkResult FkGraphicTexQuark::_findTexture(std::shared_ptr<FkGraphicLayer> layer) {
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
+    std::vector<std::shared_ptr<FkComponent>> vec;
     std::shared_ptr<FkTexIDComponent> tex = nullptr;
-    if (FK_OK != layer->findComponent(vec, FkClassType::type<FkTexIDComponent>())) {
+    if (FK_OK != layer->findComponents(vec, FkClassType::type<FkTexIDComponent>())) {
         return FK_FAIL;
     }
     tex = Fk_POINTER_CAST(FkTexIDComponent, vec[0]);

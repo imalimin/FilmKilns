@@ -11,6 +11,7 @@
 #include "FkGLEnvAtom.h"
 #include "FkRenderProto.h"
 #include "FkWindowProto.h"
+#include "FkEmptyQuark.h"
 
 FkGLEnvAtom::FkGLEnvAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -26,6 +27,7 @@ void FkGLEnvAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkGLEnvAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
+    chain->next<FkEmptyQuark>();
 }
 
 FkResult FkGLEnvAtom::onCreate() {

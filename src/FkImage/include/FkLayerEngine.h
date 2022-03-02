@@ -31,11 +31,11 @@ public:
 
     virtual FkResult onStop() override;
 
-    FkResult notifyRender();
-
     FkResult setSurface(std::shared_ptr<FkGraphicWindow> win);
 
     FkID newLayer();
+
+    FkResult notifyRender();
 
     FkID newLayerWithColor(FkSize size, FkColor color);
 
@@ -57,11 +57,11 @@ protected:
     FkResult setCanvasSizeInternal(FkSize &size);
 
 private:
+    FkResult _setSurface(std::shared_ptr<FkMessage> msg);
+
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 
     FkResult _updateLayerWithColor(std::shared_ptr<FkMessage> msg);
-
-    FkResult _setSurface(std::shared_ptr<FkMessage> msg);
 
     FkResult _notifyRender(std::shared_ptr<FkMessage> msg);
 

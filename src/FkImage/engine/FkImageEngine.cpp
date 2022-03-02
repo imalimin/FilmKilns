@@ -49,14 +49,14 @@ FkID FkImageEngine::newLayerWithFile(std::string path) {
         return FK_ID_NONE;
     }
     auto id = newLayer();
-    if (FK_ID_NONE != id) {
-        auto layer = std::make_shared<FkGraphicLayer>();
-        layer->id = id;
-        auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_FILE);
-        msg->arg3 = path;
-        msg->sp = layer;
-        sendMessage(msg);
-    }
+//    if (FK_ID_NONE != id) {
+//        auto layer = std::make_shared<FkGraphicLayer>();
+//        layer->id = id;
+//        auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_FILE);
+//        msg->arg3 = path;
+//        msg->sp = layer;
+//        sendMessage(msg);
+//    }
     return id;
 }
 

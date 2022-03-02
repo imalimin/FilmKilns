@@ -43,14 +43,14 @@ FkResult FkWinModelQuark::onStop() {
 }
 
 FkResult FkWinModelQuark::_onSetViewSize(std::shared_ptr<FkProtocol> p) {
-    auto prt = Fk_POINTER_CAST(FkSetSizeProto, p);
-    winSize = prt->value;
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkSetSizeProto, p);
+    winSize = proto->value;
     return FK_OK;
 }
 
 FkResult FkWinModelQuark::_onWithWinSize(std::shared_ptr<FkProtocol> p) {
     if (FK_INSTANCE_OF(p, FkWinSizeProto)) {
-        auto proto = Fk_POINTER_CAST(FkWinSizeProto, p);
+        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkWinSizeProto, p);
         proto->winSize = winSize;
     }
     return FK_OK;
