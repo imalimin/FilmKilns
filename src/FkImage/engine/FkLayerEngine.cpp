@@ -94,7 +94,7 @@ FkResult FkLayerEngine::onStop() {
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
     auto msg = FkMessage::obtain(FK_MSG_SET_SURFACE);
     msg->sp = win;
-    return sendMessage(msg);;
+    return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
@@ -107,6 +107,18 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkSetSurfacePrt>();
     proto->win = win;
     return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::notifyRender() {
+    auto msg = FkMessage::obtain(FK_MSG_NOTIFY_RENDER);
+    msg->flags = FkMessage::FLAG_UNIQUE;
+    return sendMessage(msg);;
+}
+
+FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkRenderRequestPrt>();
+    proto->req = std::make_shared<FkRenderRequest>();
+    return client->quickSend(proto, molecule);
 }
 
 FkID FkLayerEngine::newLayer() {
@@ -169,11 +181,6 @@ FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size) {
-//    auto queryProto = std::make_shared<FkQuerySizeProto>();
-//    FkAssert(FK_OK == client->with(molecule)->send(queryProto), FK_FAIL);
-//    if (size == queryProto->value) {
-//        return FK_FAIL;
-//    }
     auto sizeComp = std::make_shared<FkSizeComponent>();
     sizeComp->size = size;
 
@@ -184,12 +191,6 @@ FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size) {
     updateProto->layer = layer;
     updateProto->scaleType = kScaleType::CENTER_INSIDE;
     return client->with(molecule)->send(updateProto);
-}
-
-FkResult FkLayerEngine::notifyRender() {
-    auto msg = FkMessage::obtain(FK_MSG_NOTIFY_RENDER);
-    msg->flags = FkMessage::FLAG_UNIQUE;
-    return sendMessage(msg);;
 }
 
 FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
@@ -224,12 +225,6 @@ FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t 
     auto msg = FkMessage::obtain(FK_MSG_DRAW_POINT);
     msg->sp = comp;
     return sendMessage(msg);
-}
-
-FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
-    auto proto = std::make_shared<FkRenderRequestPrt>();
-    proto->req = std::make_shared<FkRenderRequest>();
-    return client->quickSend(proto, molecule);
 }
 
 FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {

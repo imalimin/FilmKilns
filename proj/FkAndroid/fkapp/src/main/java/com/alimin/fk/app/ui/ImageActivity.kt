@@ -58,11 +58,11 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback, FkActSurfaceView.O
     override fun surfaceCreated(holder: SurfaceHolder) {
         engine.start()
         engine.attachToSurface(holder.surface)
-        layer = engine.newLayerWithColor(512,512, 255,255,255, 255)
+        layer = engine.newLayerWithColor(512,512, 0,255,255, 255)
 //        layer = engine.newLayerWithFile("/sdcard/000000.jpg")
 //        Log.i("FilmKilns", "newLayer: $layer")
 //        engine.drawPoint(0, 0xff0000, 300, 300)
-//        engine.notifyRender()
+        engine.notifyRender()
     }
 
     override fun onRequestPermissionsResult(

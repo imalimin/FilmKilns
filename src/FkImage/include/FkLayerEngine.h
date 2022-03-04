@@ -33,13 +33,13 @@ public:
 
     FkResult setSurface(std::shared_ptr<FkGraphicWindow> win);
 
+    FkResult notifyRender();
+
     FkID newLayer();
 
     FkID newLayerWithColor(FkSize size, FkColor color);
 
     FkResult setCanvasSize(FkSize size);
-
-    FkResult notifyRender();
 
     FkResult postTranslate(FkID layer, int32_t dx, int32_t dy);
 
@@ -59,13 +59,13 @@ protected:
 private:
     FkResult _setSurface(std::shared_ptr<FkMessage> msg);
 
+    FkResult _notifyRender(std::shared_ptr<FkMessage> msg);
+
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 
     FkResult _updateLayerWithColor(std::shared_ptr<FkMessage> msg);
 
     FkResult _setCanvasSize(std::shared_ptr<FkMessage> msg);
-
-    FkResult _notifyRender(std::shared_ptr<FkMessage> msg);
 
     FkResult _postTranslate(std::shared_ptr<FkMessage> msg);
 

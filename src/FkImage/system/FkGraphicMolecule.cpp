@@ -47,7 +47,7 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkGraphicUpdateTexPrt, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkGraphicNewTexPtl, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkSetSurfacePrt, FkGraphicMolecule);
-    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkRenderRequestPrt, FkGraphicMolecule);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateTexWithBmpPrt, FkGraphicMolecule::dispatchNext);
     FK_PORT_DELIVERY(desc, FkSetSizeProto, FkGraphicMolecule);
@@ -75,38 +75,38 @@ void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkGraphicMolecule::onCreate() {
+    renderEngine->create();
     auto ret = FkSimpleMolecule::onCreate();
     if (FK_OK != ret) {
         return ret;
     }
-    renderEngine->create();
     return ret;
 }
 
 FkResult FkGraphicMolecule::onDestroy() {
     auto ret = FkSimpleMolecule::onDestroy();
+    renderEngine->destroy();
     if (FK_OK != ret) {
         return ret;
     }
-    renderEngine->destroy();
     return ret;
 }
 
 FkResult FkGraphicMolecule::onStart() {
+    renderEngine->start();
     auto ret = FkSimpleMolecule::onStart();
     if (FK_OK != ret) {
         return ret;
     }
-    renderEngine->start();
     return ret;
 }
 
 FkResult FkGraphicMolecule::onStop() {
     auto ret = FkSimpleMolecule::onStop();
+    renderEngine->stop();
     if (FK_OK != ret) {
         return ret;
     }
-    renderEngine->stop();
     return ret;
 }
 

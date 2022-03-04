@@ -46,8 +46,6 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 FkResult FkGraphicCanvasQuark::onCreate() {
-    auto canvas = newLayerEntity();
-    layers.emplace(std::make_pair(Fk_CANVAS_ID, canvas));
     return FkGraphicLayerQuark::onCreate();
 }
 
@@ -56,6 +54,7 @@ FkResult FkGraphicCanvasQuark::onDestroy() {
 }
 
 FkResult FkGraphicCanvasQuark::onStart() {
+    _initializeCanvas();
     return FkGraphicLayerQuark::onStart();
 }
 
@@ -106,4 +105,15 @@ std::shared_ptr<FkGraphicLayer> FkGraphicCanvasQuark::_getCanvas() {
     auto itr = layers.find(Fk_CANVAS_ID);
     FkAssert(layers.end() != itr, nullptr);
     return itr->second;
+}
+
+FkResult FkGraphicCanvasQuark::_initializeCanvas() {
+    if (layers.empty()) {
+        auto canvas = newLayerEntity();
+        auto ret = canvas->id != FK_ID_NONE;
+        canvas->id = Fk_CANVAS_ID;
+        layers.emplace(std::make_pair(Fk_CANVAS_ID, canvas));
+        return ret ? FK_OK : FK_FAIL;
+    }
+    return FK_FAIL;
 }

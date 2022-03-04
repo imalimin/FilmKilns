@@ -44,6 +44,8 @@ private:
 
     std::shared_ptr<FkGraphicLayer> _getCanvas();
 
+    FkResult _initializeCanvas();
+
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICCANVASQUARK_H

@@ -9,6 +9,8 @@
 #define FK_GRAPHIC_FKGRAPHICRENDERATOM_H
 
 #include "FkSimpleAtom.h"
+#include "FkTransEntity.h"
+#include "FkGraphicLayer.h"
 
 FK_CLASS FkGraphicRenderAtom FK_EXTEND FkSimpleAtom {
 public:
@@ -30,6 +32,13 @@ protected:
     virtual FkResult onStop() override;
 
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
+
+private:
+    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+
+    std::shared_ptr<FkTransEntity> _makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer);
+
+    FkResult _drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas);
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDERATOM_H

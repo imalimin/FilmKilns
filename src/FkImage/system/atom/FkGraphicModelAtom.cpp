@@ -34,7 +34,7 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkGraphicNewLayerPrt, FkGraphicModelAtom);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DELIVERY(desc, FkGraphicNewTexPtl, FkGraphicModelAtom);
-    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicModelAtom::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkRenderRequestPrt, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkSetSizeProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkQuerySizeProto, FkGraphicModelAtom);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicModelAtom::dispatchNext);
@@ -45,8 +45,7 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkWinModelQuark>()
-            ->next<FkGraphicCanvasQuark>()
+    chain->next<FkGraphicCanvasQuark>()
             ->next<FkGraphicLayerQuark>();
 }
 
@@ -84,9 +83,4 @@ FkResult FkGraphicModelAtom::onStop() {
 
 FkResult FkGraphicModelAtom::_onDrawLayer(std::shared_ptr<FkProtocol> p) {
     return dispatchNext(p);
-}
-
-FkResult FkGraphicModelAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
-    auto ret = FkSimpleAtom::dispatchNext(p);
-    return ret;
 }

@@ -35,7 +35,8 @@ FkGraphicLayer::FkGraphicLayer() : FkGraphicEntity() {
     FK_MARK_SUPER
 }
 
-FkGraphicLayer::FkGraphicLayer(const FkGraphicLayer &o) : FkGraphicEntity(o), id(o.id) {
+FkGraphicLayer::FkGraphicLayer(const FkGraphicLayer &o)
+        : FkGraphicEntity(o), id(o.id), material(o.material) {
     FK_MARK_SUPER
 
 }

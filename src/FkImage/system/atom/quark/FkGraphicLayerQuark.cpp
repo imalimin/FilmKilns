@@ -128,6 +128,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     if (layers.end() == itr) {
         return FK_SKIP;
     }
+    FkResult ret = FK_OK;
     auto layer = itr->second;
     auto colorComp = proto->layer->findComponent<FkColorComponent>();
     if (nullptr != colorComp) {
@@ -139,9 +140,9 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     auto sizeComp = proto->layer->findComponent<FkSizeComponent>();
     if (nullptr != sizeComp) {
         auto layerSizeComp = layer->findComponent<FkSizeComponent>();
-        if (nullptr != layerSizeComp) {
+        if (layerSizeComp == nullptr) {
+            layerSizeComp = std::make_shared<FkSizeComponent>();
             layerSizeComp->size = sizeComp->size;
-        } else {
             layer->addComponent(sizeComp);
             auto scaleComp = layer->findComponent<FkScaleComponent>();
             if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
@@ -152,10 +153,11 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
                 scaleComp->value.z = 1.0f;
             }
         }
-
+        layerSizeComp->size = sizeComp->size;
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
         FkAssert(renderEngine != nullptr, nullptr);
-        renderEngine->updateMaterial(layer->material, layerSizeComp->size, colorComp->color);
+        ret = renderEngine->updateMaterial(layer->material, layerSizeComp->size, colorComp->color);
+        FkAssert(FK_OK == ret, ret);
     }
 
     if (Fk_CANVAS_ID == layer->id) {
@@ -164,13 +166,13 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             proto->winSize = canvasSize->size;
         }
     }
-    return FK_OK;
+    return ret;
 }
 
 FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto prt = std::static_pointer_cast<FkRenderRequestPrt>(p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     for (auto &it : layers) {
-        prt->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(*it.second));
+        proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(*it.second));
     }
     return FK_OK;
 }
