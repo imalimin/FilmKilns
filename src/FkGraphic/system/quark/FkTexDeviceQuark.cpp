@@ -71,6 +71,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     auto srcTexCompo = material->tex();
     auto fboCompo = material->fbo();
     auto dstTexCompo = device->tex();
+    auto size = dstTexCompo->tex->desc.size;
 
     auto programCompo = proto->material->findComponent<FkRenderProgramCompo>();
     auto vboCompo = proto->material->findComponent<FkVboCompo>();
@@ -82,6 +83,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         FkLogW(FK_DEF_TAG, "Get vertex count error.");
     }
 
+    glViewport(0, 0, size.getWidth(), size.getHeight());
     fboCompo->fbo->attach(dstTexCompo->tex, true);
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
