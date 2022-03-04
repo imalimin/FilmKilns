@@ -16,16 +16,6 @@ FkSimpleMolecule::~FkSimpleMolecule() {
 
 }
 
-FkResult FkSimpleMolecule::dispatch(std::shared_ptr<FkProtocol> p) {
-    if (FK_INSTANCE_OF(p, FkOnCreatePrt)) {
-        auto proto = std::dynamic_pointer_cast<FkOnCreatePrt>(p);
-        if (proto) {
-            proto->context = shareContextToSubQuark();
-        }
-    }
-    return FkSimpleAtom::dispatch(p);
-}
-
 FkResult FkSimpleMolecule::onCreate() {
     auto ret = FkSimpleAtom::onCreate();
     if (FK_OK != ret) {

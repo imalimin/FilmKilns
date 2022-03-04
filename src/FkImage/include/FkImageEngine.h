@@ -13,7 +13,7 @@
 
 FK_CLASS FkImageEngine FK_EXTEND FkLayerEngine {
 public:
-    FkImageEngine(std::string name);
+    FkImageEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name);
 
     FkImageEngine(const FkImageEngine &o) = delete;
 

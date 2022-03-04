@@ -20,10 +20,10 @@ TEST(FkGraphicEntityTest, Context) {
     auto tex = std::make_shared<FkTexIDComponent>();
     layer->addComponent(tex);
 
-    std::vector<std::shared_ptr<FkGraphicComponent>> vec;
-    EXPECT_EQ(layer->findComponent(vec, FkClassType::type<FkTexIDComponent >()), FK_OK);
+    std::vector<std::shared_ptr<FkComponent>> vec;
+    EXPECT_EQ(layer->findComponents(vec, FkClassType::type<FkTexIDComponent >()), FK_OK);
     vec.clear();
-    EXPECT_NE(layer->findComponent(vec, FkClassType::type<FkScaleComponent>()), FK_OK);
+    EXPECT_NE(layer->findComponents(vec, FkClassType::type<FkScaleComponent>()), FK_OK);
 }
 
 TEST(FkGraphicTest, Context) {

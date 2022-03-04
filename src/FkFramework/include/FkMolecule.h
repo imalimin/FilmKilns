@@ -19,10 +19,6 @@ public:
     virtual ~FkMolecule();
 
 protected:
-    virtual std::shared_ptr<FkQuarkContext> shareContextToSubQuark() = 0;
-
-    virtual FkResult dispatch(std::shared_ptr<FkProtocol> p) override;
-
     virtual FkResult onCreate() override;
 
     virtual FkResult onDestroy() override;

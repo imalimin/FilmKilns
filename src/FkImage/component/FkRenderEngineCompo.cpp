@@ -10,7 +10,7 @@
 
 #include "FkRenderEngineCompo.h"
 
-FkRenderEngineCompo::FkRenderEngineCompo(std::shared_ptr<FkRenderEngine> &_engine)
+FkRenderEngineCompo::FkRenderEngineCompo(std::shared_ptr<FkEngine> &_engine)
         : FkComponent(), engine(_engine) {
     FK_MARK_SUPER
 }

@@ -28,7 +28,7 @@ std::shared_ptr<FkRenderEngine> FkRenderContext::getRenderEngine() {
     if (context) {
         auto proto = context->findComponent<FkRenderEngineCompo>();
         if (proto) {
-            return proto->engine;
+            return std::dynamic_pointer_cast<FkRenderEngine>(proto->engine);
         }
     }
     return nullptr;

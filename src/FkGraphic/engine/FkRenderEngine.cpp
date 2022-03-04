@@ -34,38 +34,28 @@ FkRenderEngine::~FkRenderEngine() {
 
 FkResult FkRenderEngine::onCreate() {
     auto ret = FkEngine::onCreate();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnCreatePrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    auto proto = std::make_shared<FkOnCreatePrt>();
+    proto->context = std::make_shared<FkQuarkContext>();
+    return client->with(molecule)->send(proto);
 }
 
 FkResult FkRenderEngine::onDestroy() {
     auto ret = FkEngine::onDestroy();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnDestroyPrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    return client->quickSend<FkOnDestroyPrt>(molecule);
 }
 
 FkResult FkRenderEngine::onStart() {
     auto ret = FkEngine::onStart();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnStartPrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    return client->quickSend<FkOnStartPrt>(molecule);
 }
 
 FkResult FkRenderEngine::onStop() {
     auto ret = FkEngine::onStop();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnStopPrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    return client->quickSend<FkOnStopPrt>(molecule);
 }
 
 FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialCompo> &material,

@@ -12,18 +12,18 @@
 #define FK_IMAGE_FKRENDERENGINECOMPO_H
 
 #include "FkComponent.h"
-#include "FkRenderEngine.h"
+#include "FkEngine.h"
 
 FK_CLASS FkRenderEngineCompo FK_EXTEND FkComponent {
 public:
-    FkRenderEngineCompo(std::shared_ptr<FkRenderEngine> &_engine);
+    FkRenderEngineCompo(std::shared_ptr<FkEngine> &_engine);
 
     FkRenderEngineCompo(const FkRenderEngineCompo &o);
 
     virtual ~FkRenderEngineCompo();
 
 public:
-    std::shared_ptr<FkRenderEngine> engine = nullptr;
+    std::shared_ptr<FkEngine> engine = nullptr;
 };
 
 #endif //FK_IMAGE_FKRENDERENGINECOMPO_H

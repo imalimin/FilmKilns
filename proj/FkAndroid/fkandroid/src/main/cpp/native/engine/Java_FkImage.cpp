@@ -10,6 +10,10 @@
 #include "android/native_window_jni.h"
 #include "FkImageEngine.h"
 #include "FkGraphicWindow.h"
+#include "FkRenderEngine.h"
+
+#define RENDER_ALIAS "RenderEngine"
+#define IMAGE_ENGINE_ALIAS "ImageEngine"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +25,8 @@ static FkImageEngine *castHandle(jlong handle) {
 
 JNIEXPORT jlong JNICALL Java_com_alimin_fk_engine_FkImage_nativeCreateInstance
         (JNIEnv *env, jobject that) {
-    auto *p = new FkImageEngine("FkImage");
+    std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>(RENDER_ALIAS);
+    auto *p = new FkImageEngine(renderEngine, IMAGE_ENGINE_ALIAS);
     return reinterpret_cast<jlong>(p);
 }
 

@@ -17,7 +17,7 @@
 
 FK_CLASS FkLayerEngine FK_EXTEND FkEngine {
 public:
-    FkLayerEngine(std::string name);
+    FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name);
 
     FkLayerEngine(const FkLayerEngine &o) = delete;
 
@@ -87,6 +87,7 @@ private:
     static const FkID FK_MSG_DRAW_POINT;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
+    std::shared_ptr<FkEngine> renderEngine = nullptr;
 };
 
 

@@ -25,6 +25,7 @@
 #include "FkLayerPostRotateProto.h"
 #include "FkMeasureTransProto.h"
 #include "FkDrawPointProto.h"
+#include "FkRenderEngineCompo.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
@@ -36,7 +37,8 @@ const FkID FkLayerEngine::FK_MSG_POST_SCALE = FK_KID('F', 'K', 'E', 0x16);
 const FkID FkLayerEngine::FK_MSG_POST_ROTATION = FK_KID('F', 'K', 'E', 0x17);
 const FkID FkLayerEngine::FK_MSG_DRAW_POINT = FK_KID('F', 'K', 'E', 0x18);
 
-FkLayerEngine::FkLayerEngine(std::string name) : FkEngine(name) {
+FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
+        : FkEngine(name), renderEngine(renderEngine) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_NEW_LAYER, FkLayerEngine::_newLayer);
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor);
@@ -57,38 +59,37 @@ FkLayerEngine::~FkLayerEngine() {
 
 FkResult FkLayerEngine::onCreate() {
     auto ret = FkEngine::onCreate();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnCreatePrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    ret = renderEngine->create();
+    FkAssert(ret == FK_OK, ret);
+    auto proto = std::make_shared<FkOnCreatePrt>();
+    proto->context = std::make_shared<FkQuarkContext>();
+    proto->context->addComponent(std::make_shared<FkRenderEngineCompo>(renderEngine));
+    return client->with(molecule)->send(proto);
 }
 
 FkResult FkLayerEngine::onDestroy() {
     auto ret = FkEngine::onDestroy();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnDestroyPrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    ret = renderEngine->destroy();
+    FkAssert(ret == FK_OK, ret);
+    return client->quickSend<FkOnDestroyPrt>(molecule);
 }
 
 FkResult FkLayerEngine::onStart() {
     auto ret = FkEngine::onStart();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnStartPrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    ret = renderEngine->start();
+    FkAssert(ret == FK_OK, ret);
+    return client->quickSend<FkOnStartPrt>(molecule);
 }
 
 FkResult FkLayerEngine::onStop() {
     auto ret = FkEngine::onStop();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    client->quickSend<FkOnStopPrt>(molecule);
-    return ret;
+    FkAssert(ret == FK_OK, ret);
+    ret = renderEngine->stop();
+    FkAssert(ret == FK_OK, ret);
+    return client->quickSend<FkOnStopPrt>(molecule);
 }
 
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {

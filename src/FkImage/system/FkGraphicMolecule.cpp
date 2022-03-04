@@ -28,11 +28,7 @@
 #include "FkDrawPointProto.h"
 #include "FkRenderEngineCompo.h"
 
-#define RENDER_ALIAS "RenderEngine"
-
-FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule(),
-                                         renderEngine(
-                                                 std::make_shared<FkRenderEngine>(RENDER_ALIAS)) {
+FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
     FK_MARK_SUPER
 }
 
@@ -59,14 +55,6 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicMolecule::dispatchNext);
 }
 
-std::shared_ptr<FkQuarkContext> FkGraphicMolecule::shareContextToSubQuark() {
-    if (context == nullptr) {
-        context = std::make_shared<FkQuarkContext>();
-        context->addComponent(std::make_shared<FkRenderEngineCompo>(renderEngine));
-    }
-    return context;
-}
-
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkGraphicModelAtom>()
             ->next<FkGraphicSourceAtom>()
@@ -75,7 +63,6 @@ void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
 }
 
 FkResult FkGraphicMolecule::onCreate() {
-    renderEngine->create();
     auto ret = FkSimpleMolecule::onCreate();
     if (FK_OK != ret) {
         return ret;
@@ -85,7 +72,6 @@ FkResult FkGraphicMolecule::onCreate() {
 
 FkResult FkGraphicMolecule::onDestroy() {
     auto ret = FkSimpleMolecule::onDestroy();
-    renderEngine->destroy();
     if (FK_OK != ret) {
         return ret;
     }
@@ -93,7 +79,6 @@ FkResult FkGraphicMolecule::onDestroy() {
 }
 
 FkResult FkGraphicMolecule::onStart() {
-    renderEngine->start();
     auto ret = FkSimpleMolecule::onStart();
     if (FK_OK != ret) {
         return ret;
@@ -103,7 +88,6 @@ FkResult FkGraphicMolecule::onStart() {
 
 FkResult FkGraphicMolecule::onStop() {
     auto ret = FkSimpleMolecule::onStop();
-    renderEngine->stop();
     if (FK_OK != ret) {
         return ret;
     }

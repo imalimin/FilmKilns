@@ -29,13 +29,6 @@ void FkRenderMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkWindowProto, FkRenderMolecule);
 }
 
-std::shared_ptr<FkQuarkContext> FkRenderMolecule::shareContextToSubQuark() {
-    if (context == nullptr) {
-        context = std::make_shared<FkQuarkContext>();
-    }
-    return context;
-}
-
 void FkRenderMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkGLEnvAtom>()
             ->next<FkRenderModelAtom>()
