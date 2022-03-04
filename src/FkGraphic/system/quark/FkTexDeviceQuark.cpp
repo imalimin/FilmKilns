@@ -71,7 +71,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     auto srcTexCompo = material->tex();
     auto fboCompo = material->fbo();
     auto dstTexCompo = device->tex();
-    auto size = dstTexCompo->tex->desc.size;
+    auto size = device->size();
 
     auto programCompo = proto->material->findComponent<FkRenderProgramCompo>();
     auto vboCompo = proto->material->findComponent<FkVboCompo>();

@@ -108,3 +108,11 @@ FkScreenEntity::FkScreenEntity(const FkTexDeviceEntity &o) : FkDeviceEntity(o) {
 FkScreenEntity::~FkScreenEntity() {
 
 }
+
+FkSize FkScreenEntity::size() {
+    auto compo = findComponent<FkSizeCompo>();
+    if (compo) {
+        return compo->size;
+    }
+    return FkSize(0, 0);
+}

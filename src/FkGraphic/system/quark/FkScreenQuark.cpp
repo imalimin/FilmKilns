@@ -39,7 +39,7 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     auto srcTexCompo = material->tex();
     auto fboCompo = material->fbo();
     auto context = proto->env->getContext();
-    auto size = srcTexCompo->tex->desc.size;
+    auto size = device->size();
 
     auto programCompo = proto->material->findComponent<FkRenderProgramCompo>();
     auto vboCompo = proto->material->findComponent<FkVboCompo>();

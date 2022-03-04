@@ -54,8 +54,8 @@ FkResult FkRenderMvpQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
         FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkTexDeviceEntity, proto->device);
         targetSize = device->size();
     } else if (FK_INSTANCE_OF(proto->device, FkScreenEntity)) {
-        FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkContextCompo, proto->env->getContext());
-        targetSize.set(context->getWidth(), context->getHeight());
+        FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkScreenEntity, proto->device);
+        targetSize = device->size();
     } else {
         return FK_SKIP;
     }

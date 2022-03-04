@@ -66,6 +66,8 @@ public:
     FkScreenEntity(const FkTexDeviceEntity &o);
 
     virtual ~FkScreenEntity();
+
+    FkSize size();
 };
 
 #endif //FK_GRAPHIC_FKDEVICEENTITY_H

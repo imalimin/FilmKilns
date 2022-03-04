@@ -12,6 +12,7 @@
 #include "FkRenderProto.h"
 #include "FkWindowProto.h"
 #include "FkEmptyQuark.h"
+#include "FkSizeCompo.h"
 
 FkGLEnvAtom::FkGLEnvAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -69,6 +70,10 @@ FkResult FkGLEnvAtom::onStop() {
 }
 FkResult FkGLEnvAtom::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
+    if (FK_INSTANCE_OF(proto->device, FkScreenEntity)) {
+        auto size = FkSize(context->getWidth(), context->getHeight());
+        proto->device->addComponent(std::make_shared<FkSizeCompo>(size));
+    }
     context->makeCurrent();
     proto->env->addComponent(context);
     return dispatchNext(p);
