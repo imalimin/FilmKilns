@@ -76,14 +76,19 @@ FkResult FkGLEnvAtom::_onRender(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGLEnvAtom::_onUpdateWindow(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkWindowProto, p);
+    FkResult ret = FK_OK;
     if (context && proto->win) {
-        return _changeWithWindow(proto->win);
+        ret = _changeWithWindow(proto->win);
     } else if (context && proto->win == nullptr) {
-        return _changeWithoutWindow();
+        ret = _changeWithoutWindow();
     } else if (context == nullptr && proto->win) {
         _initializeWithWindow(proto->win);
     } else {
         _initializeWithoutWindow();
+    }
+    context->makeCurrent();
+    if (FK_OK != ret) {
+        return ret;
     }
     return dispatchNext(p);
 }
