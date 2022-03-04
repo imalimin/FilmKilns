@@ -46,11 +46,7 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 FkResult FkGraphicCanvasQuark::onCreate() {
-    auto canvas = std::make_shared<FkGraphicLayer>();
-    canvas->id = Fk_CANVAS_ID;
-    canvas->addComponent(std::make_shared<FkTransComponent>());
-    canvas->addComponent(std::make_shared<FkScaleComponent>());
-    canvas->addComponent(std::make_shared<FkRotateComponent>());
+    auto canvas = newLayerEntity();
     layers.emplace(std::make_pair(Fk_CANVAS_ID, canvas));
     return FkGraphicLayerQuark::onCreate();
 }
@@ -92,13 +88,11 @@ FkResult FkGraphicCanvasQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p) {
-    auto proto = std::static_pointer_cast<FkQuerySizeProto>(p);
-    std::vector<std::shared_ptr<FkComponent>> vec;
-    if (FK_OK == _getCanvas()->findComponents(vec, FkClassType::type<FkSizeComponent>())) {
-        auto sizeComp = Fk_POINTER_CAST(FkSizeComponent, vec[0]);
-        proto->value = sizeComp->size;
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQuerySizeProto, p);
+    auto compo = _getCanvas()->findComponent<FkSizeComponent>();
+    if (compo) {
+        proto->value = compo->size;
     }
-    vec.clear();
     return FK_OK;
 }
 

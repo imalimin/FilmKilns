@@ -51,6 +51,8 @@ protected:
 
     FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
 
+    std::shared_ptr<FkGraphicLayer> newLayerEntity();
+
 private:
     void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
 

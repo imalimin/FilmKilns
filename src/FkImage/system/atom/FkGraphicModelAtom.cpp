@@ -33,10 +33,10 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicModelAtom::_onDrawLayer);
     FK_PORT_DELIVERY(desc, FkGraphicNewLayerPrt, FkGraphicModelAtom);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicModelAtom::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicModelAtom::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkGraphicNewTexPtl, FkGraphicModelAtom);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DELIVERY(desc, FkSetSizeProto, FkGraphicModelAtom);
-    FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicModelAtom::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkQuerySizeProto, FkGraphicModelAtom);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicModelAtom::dispatchNext);

@@ -44,14 +44,14 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMolecule::_onDrawLayer);
     FK_PORT_DELIVERY(desc, FkGraphicNewLayerPrt, FkGraphicMolecule);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateTexPrt, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkGraphicUpdateTexPrt, FkGraphicMolecule);
+    FK_PORT_DELIVERY(desc, FkGraphicNewTexPtl, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkSetSurfacePrt, FkGraphicMolecule);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateTexWithBmpPrt, FkGraphicMolecule::dispatchNext);
     FK_PORT_DELIVERY(desc, FkSetSizeProto, FkGraphicMolecule);
-    FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkQuerySizeProto, FkGraphicMolecule);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicMolecule::dispatchNext);

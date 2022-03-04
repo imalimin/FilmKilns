@@ -129,42 +129,6 @@ FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     return ret;
 }
 
-FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size) {
-    auto queryProto = std::make_shared<FkQuerySizeProto>();
-    FkAssert(FK_OK == client->quickSend(queryProto, molecule), FK_FAIL);
-    if (size == queryProto->value) {
-        return FK_FAIL;
-    }
-    auto texProto = std::make_shared<FkGraphicNewTexPtl>();
-    texProto->fmt = FkColor::kFormat::RGBA;
-    FkAssert(FK_OK == client->quickSend(texProto, molecule), FK_FAIL);
-
-    auto updateTexPrt = std::make_shared<FkGraphicUpdateTexPrt>();
-    updateTexPrt->id = texProto->id;
-    updateTexPrt->size = size;
-    FkAssert(FK_OK == client->quickSend(updateTexPrt, molecule), FK_FAIL);
-
-    auto sizeComp = std::make_shared<FkSizeComponent>();
-    sizeComp->size = size;
-    auto texComp = std::make_shared<FkTexIDComponent>();
-    texComp->id = texProto->id;
-
-    auto layer = std::make_shared<FkGraphicLayer>();
-    layer->id = Fk_CANVAS_ID;
-    layer->addComponent(sizeComp);
-    layer->addComponent(texComp);
-    auto updateProto = std::make_shared<FkGraphicUpdateLayerPrt>();
-    updateProto->layer = layer;
-    updateProto->scaleType = kScaleType::CENTER_INSIDE;
-    return client->quickSend(updateProto, molecule);
-}
-
-FkResult FkLayerEngine::notifyRender() {
-    auto msg = FkMessage::obtain(FK_MSG_NOTIFY_RENDER);
-    msg->flags = FkMessage::FLAG_UNIQUE;
-    return sendMessage(msg);;
-}
-
 FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
     auto id = newLayer();
     if (FK_ID_NONE != id) {
@@ -184,10 +148,48 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
     return id;
 }
 
+FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
+    auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
+    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
+    prt->layer = layer;
+    prt->scaleType = kScaleType::CENTER_INSIDE;
+    return client->with(molecule)->send(prt);
+}
+
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {
     auto msg = FkMessage::obtain(FK_MSG_SET_CANVAS_SIZE);
     msg->sp = std::make_shared<FkSize>(size);
     return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
+    FkAssert(nullptr != msg->sp, FK_NPE);
+    auto size = std::dynamic_pointer_cast<FkSize>(msg->sp);
+    return setCanvasSizeInternal(*size);
+}
+
+FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size) {
+//    auto queryProto = std::make_shared<FkQuerySizeProto>();
+//    FkAssert(FK_OK == client->with(molecule)->send(queryProto), FK_FAIL);
+//    if (size == queryProto->value) {
+//        return FK_FAIL;
+//    }
+    auto sizeComp = std::make_shared<FkSizeComponent>();
+    sizeComp->size = size;
+
+    auto layer = std::make_shared<FkGraphicLayer>();
+    layer->id = Fk_CANVAS_ID;
+    layer->addComponent(sizeComp);
+    auto updateProto = std::make_shared<FkGraphicUpdateLayerPrt>();
+    updateProto->layer = layer;
+    updateProto->scaleType = kScaleType::CENTER_INSIDE;
+    return client->with(molecule)->send(updateProto);
+}
+
+FkResult FkLayerEngine::notifyRender() {
+    auto msg = FkMessage::obtain(FK_MSG_NOTIFY_RENDER);
+    msg->flags = FkMessage::FLAG_UNIQUE;
+    return sendMessage(msg);;
 }
 
 FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
@@ -224,51 +226,10 @@ FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t 
     return sendMessage(msg);
 }
 
-FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
-    auto texProto = std::make_shared<FkGraphicNewTexPtl>();
-    texProto->fmt = FkColor::kFormat::RGBA;
-    FkAssert(FK_OK == client->quickSend(texProto, molecule), FK_FAIL);
-
-    auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
-    auto updateTexPrt = std::make_shared<FkGraphicUpdateTexPrt>();
-    std::vector<std::shared_ptr<FkComponent>> vec;
-    if (FK_OK == layer->findComponents(vec, FkClassType::type<FkSizeComponent>())) {
-        updateTexPrt->size = Fk_POINTER_CAST(FkSizeComponent, vec[0])->size;
-    } else {
-        auto delPrt = std::make_shared<FkGraphicTexDelPtl>();
-        delPrt->id = texProto->id;
-        client->quickSend<FkGraphicTexDelPtl>(delPrt, molecule);
-        return FK_FAIL;
-    }
-    updateTexPrt->id = texProto->id;
-
-    auto ret = client->quickSend<FkGraphicUpdateTexPrt>(updateTexPrt, molecule);
-    if (FK_OK != ret) {
-        auto delPrt = std::make_shared<FkGraphicTexDelPtl>();
-        delPrt->id = texProto->id;
-        client->quickSend<FkGraphicTexDelPtl>(delPrt, molecule);
-        return ret;
-    }
-    auto com = std::make_shared<FkTexIDComponent>();
-    com->id = texProto->id;
-
-    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
-    prt->layer = layer;
-    prt->layer->addComponent(com);
-    prt->scaleType = kScaleType::CENTER_INSIDE;
-    return client->quickSend<FkGraphicUpdateLayerPrt>(prt, molecule);
-}
-
 FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkRenderRequestPrt>();
     proto->req = std::make_shared<FkRenderRequest>();
     return client->quickSend(proto, molecule);
-}
-
-FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
-    FkAssert(nullptr != msg->sp, FK_EMPTY_DATA);
-    auto size = Fk_POINTER_CAST(FkSize, msg->sp);
-    return setCanvasSizeInternal(*size);
 }
 
 FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {

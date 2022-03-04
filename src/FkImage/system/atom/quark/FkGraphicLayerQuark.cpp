@@ -101,18 +101,25 @@ void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
 
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkGraphicNewLayerPrt, p);
+    proto->layer = newLayerEntity();
+    if (proto->layer) {
+        layers.emplace(std::make_pair(proto->layer->id, proto->layer));
+        return FK_OK;
+    }
+    return FK_FAIL;
+}
+
+std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::newLayerEntity() {
     auto layer = std::make_shared<FkGraphicLayer>();
     layer->addComponent(std::make_shared<FkTransComponent>());
     layer->addComponent(std::make_shared<FkScaleComponent>());
     layer->addComponent(std::make_shared<FkRotateComponent>());
 
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
-    FkAssert(renderEngine != nullptr, FK_NPE);
+    FkAssert(renderEngine != nullptr, nullptr);
     layer->material = renderEngine->newMaterial();
     layer->id = layer->material->id();
-    proto->layer = layer;
-    layers.emplace(std::make_pair(layer->id, layer));
-    return FK_OK;
+    return layer;
 }
 
 FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
@@ -121,35 +128,38 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     if (layers.end() == itr) {
         return FK_SKIP;
     }
+    auto layer = itr->second;
     auto colorComp = proto->layer->findComponent<FkColorComponent>();
     if (nullptr != colorComp) {
-        itr->second->addComponent(colorComp);
+        layer->addComponent(colorComp);
+    } else {
+        colorComp = std::make_shared<FkColorComponent>();
+        colorComp->color = FkColor::white();
     }
     auto sizeComp = proto->layer->findComponent<FkSizeComponent>();
     if (nullptr != sizeComp) {
-        auto layerSizeComp = itr->second->findComponent<FkSizeComponent>();
+        auto layerSizeComp = layer->findComponent<FkSizeComponent>();
         if (nullptr != layerSizeComp) {
             layerSizeComp->size = sizeComp->size;
         } else {
-            itr->second->addComponent(sizeComp);
-            auto scaleComp = itr->second->findComponent<FkScaleComponent>();
+            layer->addComponent(sizeComp);
+            auto scaleComp = layer->findComponent<FkScaleComponent>();
             if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
-                scaleComp->value.x = FkGraphicLayer::calcScaleWithScaleType(itr->second,
+                scaleComp->value.x = FkGraphicLayer::calcScaleWithScaleType(layer,
                                                                             proto->scaleType,
                                                                             proto->winSize);
                 scaleComp->value.y = scaleComp->value.x;
                 scaleComp->value.z = 1.0f;
             }
         }
-    }
-    auto texIDComp = proto->layer->findComponent<FkTexIDComponent>();
-    if (nullptr != texIDComp) {
-        itr->second->addComponent(texIDComp);
-    }
-    _setupVertex(itr->second);
 
-    if (Fk_CANVAS_ID == itr->second->id) {
-        auto canvasSize = itr->second->findComponent<FkSizeComponent>();
+        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        FkAssert(renderEngine != nullptr, nullptr);
+        renderEngine->updateMaterial(layer->material, layerSizeComp->size, colorComp->color);
+    }
+
+    if (Fk_CANVAS_ID == layer->id) {
+        auto canvasSize = layer->findComponent<FkSizeComponent>();
         if (nullptr != canvasSize) {
             proto->winSize = canvasSize->size;
         }

@@ -30,8 +30,8 @@ FkGraphicSourceAtom::~FkGraphicSourceAtom() {
 
 void FkGraphicSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSurfacePrt, FkGraphicSourceAtom::_onSetSurface);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateTexPrt, FkGraphicSourceAtom::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewTexPtl, FkGraphicSourceAtom::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkGraphicUpdateTexPrt, FkGraphicSourceAtom);
+    FK_PORT_DELIVERY(desc, FkGraphicNewTexPtl, FkGraphicSourceAtom);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicSourceAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicSourceAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateTexWithBmpPrt, FkGraphicSourceAtom::dispatchNext);
