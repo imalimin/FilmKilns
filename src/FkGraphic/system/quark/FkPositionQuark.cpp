@@ -55,7 +55,7 @@ FkResult FkPositionQuark::onStop() {
 
 FkResult FkPositionQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->material);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->materials);
     auto srcSize = material->size();
     float pos[]{
             -srcSize.getWidth() / 2.0f, -srcSize.getHeight() / 2.0f,//LEFT,BOTTOM

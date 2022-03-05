@@ -25,6 +25,8 @@ public:
 
     FkTexEntity(const FkTexEntity &o);
 
+    FkTexEntity(const FkMaterialEntity &o);
+
     virtual ~FkTexEntity();
 
     /**

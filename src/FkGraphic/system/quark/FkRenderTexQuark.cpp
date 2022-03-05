@@ -92,16 +92,16 @@ FkResult FkRenderTexQuark::_onAllocTexWithBmp(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    auto material = proto->material->getMaterial();
+    auto material = proto->materials->getMaterial();
     auto tex = _findTex(material->id());
     if (nullptr == tex) {
         return FK_SOURCE_NOT_FOUND;
     }
-    proto->material->addComponent(std::make_shared<FkTexCompo>(tex));
-    auto sizeCompo = proto->material->findComponent<FkSizeCompo>();
+    proto->materials->addComponent(std::make_shared<FkTexCompo>(tex));
+    auto sizeCompo = proto->materials->findComponent<FkSizeCompo>();
     if (sizeCompo == nullptr) {
         sizeCompo = std::make_shared<FkSizeCompo>(tex->desc.size);
-        proto->material->addComponent(sizeCompo);
+        proto->materials->addComponent(sizeCompo);
     }
     sizeCompo->size = tex->desc.size;
     if (!proto->device->getMaterial()->isUseless()) {

@@ -58,6 +58,6 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     if (compo->program == nullptr) {
         return FK_SOURCE_NOT_FOUND;
     }
-    proto->material->addComponent(compo);
+    proto->materials->addComponent(compo);
     return FK_OK;
 }

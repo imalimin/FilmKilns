@@ -24,16 +24,11 @@ FkRenderModelAtom::~FkRenderModelAtom() {
 
 void FkRenderModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderModelAtom::_onRender);
-    FK_PORT_DELIVERY(desc, FkNewTexProto, FkRenderModelAtom);
-    FK_PORT_DELIVERY(desc, FkNewBmpTexProto, FkRenderModelAtom);
     FK_PORT_DELIVERY(desc, FkGenIDProto, FkRenderModelAtom);
 }
 
 void FkRenderModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkIDQuark>()
-            ->next<FkRenderInfoQuark>()
-            ->next<FkPositionQuark>()
-            ->next<FkRenderMvpQuark>();
+    chain->next<FkIDQuark>();
 }
 
 FkResult FkRenderModelAtom::onCreate() {

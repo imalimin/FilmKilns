@@ -6,6 +6,7 @@ set(PROJECT_SOURCE_FK_DIR ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/prebuild/shared/gtest/include
+        ${PROJECT_SOURCE_FK_DIR}/glm
         ${PROJECT_SOURCE_FK_DIR}/al_common/include
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include

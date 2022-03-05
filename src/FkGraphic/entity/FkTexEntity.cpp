@@ -26,6 +26,10 @@ FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o) {
     FK_MARK_SUPER
 }
 
+FkTexEntity::FkTexEntity(const FkMaterialEntity &o) : FkMaterialEntity(o) {
+    FK_MARK_SUPER
+}
+
 FkTexEntity::~FkTexEntity() {
 
 }

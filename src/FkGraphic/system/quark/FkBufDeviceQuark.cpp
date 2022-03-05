@@ -62,7 +62,7 @@ FkResult FkBufDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         return FK_SKIP;
     }
     FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkBufDeviceEntity, proto->device);
-    FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->material);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->materials);
     auto fboCompo = material->fbo();
     if (fboCompo == nullptr) {
         return FK_NPE;

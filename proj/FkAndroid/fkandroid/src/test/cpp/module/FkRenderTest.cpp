@@ -11,6 +11,11 @@
 #include "FkFuncCompo.h"
 #include "FkBitmap.h"
 #include "FkIntVec2.h"
+#include "FkVertexCompo.h"
+#include "FkCoordinateCompo.h"
+#include "FkMatCompo.h"
+#include "FkMVPMatrix.h"
+#include "FkIntVec2.h"
 
 TEST(FkRenderTest, Livecycle) {
     auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
@@ -26,7 +31,7 @@ TEST(FkRenderTest, Livecycle) {
 
 TEST(FkRenderTest, Render) {
     auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
-    auto material = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
+    auto material = std::make_shared<FkMaterialEntity>(std::make_shared<FkMaterialCompo>(FK_ID_NONE));
     auto dst = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
     auto device = std::make_shared<FkDeviceEntity>(dst);
     EXPECT_NE(engine->renderDevice(material, device), FK_OK);
@@ -49,6 +54,41 @@ TEST(FkRenderTest, NewMaterial) {
     FK_DELETE_INSTANCE(engine)
 }
 
+static std::shared_ptr<FkMaterialEntity> makeMaterials(std::shared_ptr<FkMaterialCompo> &material,
+                                                       FkSize &size,
+                                                       FkIntVec2 trans) {
+    auto materials = std::make_shared<FkMaterialEntity>(material);
+    float pos[]{
+            -size.getWidth() / 2.0f, -size.getHeight() / 2.0f,//LEFT,BOTTOM
+            size.getWidth() / 2.0f, -size.getHeight() / 2.0f,//RIGHT,BOTTOM
+            -size.getWidth() / 2.0f, size.getHeight() / 2.0f,//LEFT,TOP
+            size.getWidth() / 2.0f, size.getHeight() / 2.0f//RIGHT,TOP
+    };
+    float coordinate[]{
+            0.0f, 0.0f,//LEFT,BOTTOM
+            1.0f, 0.0f,//RIGHT,BOTTOM
+            0.0f, 1.0f,//LEFT,TOP
+            1.0f, 1.0f//RIGHT,TOP
+    };
+    int bytePerVertex = sizeof(float);
+    int countOfVertex = 4;
+    int countPerVertex = 2;
+    auto vertex = std::make_shared<FkVertexCompo>();
+    auto coord = std::make_shared<FkCoordinateCompo>();
+    vertex->setup(countOfVertex, countPerVertex, bytePerVertex, pos);
+    coord->setup(countOfVertex, countPerVertex, bytePerVertex, coordinate);
+    materials->addComponent(vertex);
+    materials->addComponent(coord);
+    auto matCompo = std::make_shared<FkMatCompo>();
+    auto mat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
+    FkFloatVec3 transVec3(trans.x, trans.y, 0.0f);
+    mat->setTranslate(transVec3);
+    mat->calc();
+    matCompo->value = mat;
+    materials->addComponent(matCompo);
+    return materials;
+}
+
 static void testColor(std::shared_ptr<FkRenderEngine> &engine,
                       std::shared_ptr<FkMaterialCompo> &src,
                       FkSize &size,
@@ -57,16 +97,17 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
     int width = size.getWidth();
     int height = size.getHeight();
 
-    auto buf = std::make_shared<FkBuffer>(width * height * 4);
+    auto buf = FkBuffer::alloc(width * height * 4);
     memset(buf->data(), 125, buf->capacity());
     auto promise = std::make_shared<std::promise<int>>();
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkBufDeviceEntity>(buf);
     device->addComponent(std::make_shared<FkFuncCompo>([promise, buf, &size]() {
-//        std::string path = "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/000000.bmp";
-//        FkBitmap::write(path, buf->data(), buf->capacity(), size.getWidth(), size.getHeight());
+        std::string path = "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/000000.bmp";
+        FkBitmap::write(path, buf->data(), buf->capacity(), size.getWidth(), size.getHeight());
         promise->set_value(FK_OK);
     }));
-    EXPECT_EQ(engine->renderDevice(src, device), FK_OK);
+    auto materials = makeMaterials(src, size, FkIntVec2(0, 0));
+    EXPECT_EQ(engine->renderDevice(materials, device), FK_OK);
     EXPECT_EQ(promise->get_future().get(), FK_OK);
     // Center
     int index = pos.y / 2 * pos.x * 4 + pos.x / 2 * 4;
@@ -79,7 +120,6 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
     EXPECT_EQ(blue, color.blue);
     EXPECT_EQ(alpha, color.alpha);
 }
-
 
 TEST(FkRenderTest, Render2Buffer) {
     FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
@@ -101,25 +141,23 @@ TEST(FkRenderTest, Render2Buffer) {
 
 TEST(FkRenderTest, RenderLayer) {
     FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
-    auto src0 = engine->newMaterial();
-    EXPECT_EQ(src0->isUseless(), false);
+    auto whiteMaterial = engine->newMaterial();
+    EXPECT_EQ(whiteMaterial->isUseless(), false);
     FkSize size(32, 32);
     auto white = FkColor::white();
-    EXPECT_EQ(engine->updateMaterial(src0, size, white), FK_OK);
+    EXPECT_EQ(engine->updateMaterial(whiteMaterial, size, white), FK_OK);
 
-    auto src1 = engine->newMaterial();
-    EXPECT_EQ(src1->isUseless(), false);
+    auto blackMaterial = engine->newMaterial();
+    EXPECT_EQ(blackMaterial->isUseless(), false);
     auto black = FkColor::black();
-    EXPECT_EQ(engine->updateMaterial(src1, size, black), FK_OK);
+    EXPECT_EQ(engine->updateMaterial(blackMaterial, size, black), FK_OK);
 
-    auto trans = std::make_shared<FkTransEntity>();
-    trans->setTranslate(size.getWidth() / 2, 0);
-
-    std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(src1);
-    EXPECT_EQ(engine->renderDeviceWithTrans(src0, trans, device), FK_OK);
+    std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(blackMaterial);
+    auto materials = makeMaterials(whiteMaterial, size, FkIntVec2(size.getWidth() / 2, 0));
+    EXPECT_EQ(engine->renderDevice(materials, device), FK_OK);
     FkIntVec2 pos(0, 0);
-    testColor(engine, src1, size, pos, black);
+    testColor(engine, blackMaterial, size, pos, black);
     pos = FkIntVec2(size.getWidth(), 0);
-    testColor(engine, src1, size, pos, white);
+    testColor(engine, blackMaterial, size, pos, white);
     FK_DELETE_INSTANCE(engine)
 }

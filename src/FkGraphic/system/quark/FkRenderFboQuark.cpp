@@ -56,7 +56,7 @@ FkResult FkRenderFboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
         return FK_SOURCE_NOT_FOUND;
     }
     auto compo = std::make_shared<FkFboCompo>(fbo);
-    proto->material->addComponent(compo);
+    proto->materials->addComponent(compo);
     return FK_OK;
 }
 

@@ -67,15 +67,15 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         return FK_SKIP;
     }
     FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkTexDeviceEntity, proto->device);
-    FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->material);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->materials);
     auto srcTexCompo = material->tex();
     auto fboCompo = material->fbo();
     auto dstTexCompo = device->tex();
     auto size = device->size();
 
-    auto programCompo = proto->material->findComponent<FkRenderProgramCompo>();
-    auto vboCompo = proto->material->findComponent<FkVboCompo>();
-    auto matCompo = proto->material->findComponent<FkMatCompo>();
+    auto programCompo = proto->materials->findComponent<FkRenderProgramCompo>();
+    auto vboCompo = proto->materials->findComponent<FkVboCompo>();
+    auto matCompo = proto->materials->findComponent<FkMatCompo>();
 
     int32_t offset = 0;
     FkVertexDesc desc;

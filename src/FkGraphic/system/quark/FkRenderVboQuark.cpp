@@ -51,15 +51,15 @@ FkResult FkRenderVboQuark::onStop() {
 
 FkResult FkRenderVboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    auto vertexCompo =  proto->material->findComponent<FkVertexCompo>();
-    auto coordCompo =  proto->material->findComponent<FkCoordinateCompo>();
+    auto vertexCompo =  proto->materials->findComponent<FkVertexCompo>();
+    auto coordCompo =  proto->materials->findComponent<FkCoordinateCompo>();
     if (vertexCompo && coordCompo) {
         FkVBODescription desc(vertexCompo->size() + coordCompo->size());
         auto comp = std::make_shared<FkVboCompo>();
         comp->setup(allocator->alloc(desc),
                     static_cast<float *>(vertexCompo->data()), vertexCompo->desc,
                     static_cast<float *>(coordCompo->data()), coordCompo->desc);
-        proto->material->addComponent(comp);
+        proto->materials->addComponent(comp);
     }
     return FK_OK;
 }

@@ -57,9 +57,9 @@ FkResult FkRenderInfoQuark::_onSaveMaterialSize(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkRenderInfoQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    auto itr = sMap.find(proto->material->getMaterial()->id());
+    auto itr = sMap.find(proto->materials->getMaterial()->id());
     FkAssert(itr != sMap.end(), FK_SOURCE_NOT_FOUND);
-    proto->material->addComponent(std::make_shared<FkSizeCompo>(itr->second));
+    proto->materials->addComponent(std::make_shared<FkSizeCompo>(itr->second));
     itr = sMap.find(proto->device->getMaterial()->id());
     if (itr != sMap.end()) {
         proto->device->addComponent(std::make_shared<FkSizeCompo>(itr->second));

@@ -49,7 +49,7 @@ private:
     FkResult _setTranslate(std::shared_ptr<FkMVPMatrix> &matrix,
                            std::shared_ptr<FkTransEntity> &transEntity);
 
-    std::shared_ptr<FkMVPMatrix> _calcMatrix(std::shared_ptr<FkTransEntity> transEntity, FkSize &targetSize, bool reverseY);
+    std::shared_ptr<FkMVPMatrix> _calcMatrix(std::shared_ptr<FkMaterialEntity> materials, FkSize &targetSize, bool reverseY);
 };
 
 #endif //FK_GRAPHIC_FKRENDERMVPQUARK_H

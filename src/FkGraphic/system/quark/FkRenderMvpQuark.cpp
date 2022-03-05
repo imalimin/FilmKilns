@@ -59,17 +59,17 @@ FkResult FkRenderMvpQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     } else {
         return FK_SKIP;
     }
-    auto matrix = _calcMatrix(proto->trans, targetSize, false);
+    auto matrix = _calcMatrix(proto->materials, targetSize, false);
     if (matrix) {
         auto mat = std::make_shared<FkMatCompo>();
         mat->value = matrix;
-        proto->material->addComponent(mat);
+        proto->materials->addComponent(mat);
     }
     return FK_OK;
 }
 
 std::shared_ptr<FkMVPMatrix> FkRenderMvpQuark::_calcMatrix(
-        std::shared_ptr<FkTransEntity> transEntity,
+        std::shared_ptr<FkMaterialEntity> materials,
         FkSize &targetSize,
         bool reverseY) {
     auto matrix = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
@@ -77,11 +77,11 @@ std::shared_ptr<FkMVPMatrix> FkRenderMvpQuark::_calcMatrix(
     matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
                    FkFloatVec3(0.0f, 0.0f, 0.0f),
                    FkFloatVec3(0.0f, 1.0f, 0.0f));
-    if (transEntity) {
-        _setTranslate(matrix, transEntity);
-        _setRotation(matrix, transEntity);
-        _setScale(matrix, transEntity, targetSize, reverseY);
-    }
+//    if (transEntity) {
+//        _setTranslate(matrix, transEntity);
+//        _setRotation(matrix, transEntity);
+//        _setScale(matrix, transEntity, targetSize, reverseY);
+//    }
     matrix->calc();
     return matrix;
 }

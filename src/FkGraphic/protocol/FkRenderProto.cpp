@@ -12,8 +12,7 @@ FkRenderProto::FkRenderProto() : FkProtocol() {
 }
 
 FkRenderProto::FkRenderProto(const FkRenderProto &o) : FkProtocol(o), env(o.env),
-                                                       material(o.material), device(o.device),
-                                                       trans(o.trans) {
+                                                       materials(o.materials), device(o.device) {
     FK_MARK_SUPER
 }
 
