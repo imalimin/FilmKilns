@@ -83,6 +83,9 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         FkLogW(FK_DEF_TAG, "Get vertex count error.");
     }
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
     glViewport(0, 0, size.getWidth(), size.getHeight());
     fboCompo->fbo->attach(dstTexCompo->tex, true);
     FK_GL_CHECK(programCompo->program->bind());
@@ -97,6 +100,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();
     vboCompo->unbind();
+    glDisable(GL_BLEND);
     glFlush();
     return FK_OK;
 }

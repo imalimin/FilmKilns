@@ -36,7 +36,7 @@ FkResult FkVertexCompo::setup(size_t _countVertex, size_t _countPerVertex,
     desc.format = _bytes;
     FkAssert(size() > 0, FK_FAIL);
 
-    buf = std::make_shared<FkBuffer>(size());
+    buf = FkBuffer::alloc(size());
     memcpy(data(), _data, size());
     return FK_OK;
 }

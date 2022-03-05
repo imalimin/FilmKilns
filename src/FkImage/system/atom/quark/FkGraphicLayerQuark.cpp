@@ -25,6 +25,7 @@
 #include "FkVertexComponent.h"
 #include "FkCoordinateComponent.h"
 #include "FkRenderContext.h"
+#include "FkBitmapCompo.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -156,8 +157,20 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
         layerSizeComp->size = sizeComp->size;
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
         FkAssert(renderEngine != nullptr, nullptr);
-        ret = renderEngine->updateMaterial(layer->material, layerSizeComp->size, colorComp->color);
-        FkAssert(FK_OK == ret, ret);
+        auto bmpCompo = proto->layer->findComponent<FkBitmapCompo>();
+        if (bmpCompo) {
+            auto buf = FkBuffer::alloc(bmpCompo->bmp->getByteSize());
+            memcpy(buf->data(), bmpCompo->bmp->getPixels(), buf->capacity());
+            ret = renderEngine->updateMaterialWithBitmap(layer->material,
+                                                         layerSizeComp->size,
+                                                         buf);
+            FkAssert(FK_OK == ret, ret);
+        } else {
+            ret = renderEngine->updateMaterial(layer->material,
+                                               layerSizeComp->size,
+                                               colorComp->color);
+            FkAssert(FK_OK == ret, ret);
+        }
     }
 
     if (Fk_CANVAS_ID == layer->id) {

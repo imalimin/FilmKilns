@@ -57,7 +57,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         if (Fk_CANVAS_ID == layer->id) {
             continue;
         }
-        auto transEntity = _makeTransEntity(canvas);
+        auto transEntity = _makeTransEntity(canvas, true);
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(canvas->material);
         auto ret = renderEngine->renderDeviceWithTrans(layer->material, transEntity, device);
         FkAssert(FK_OK == ret, ret);
@@ -66,10 +66,13 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 }
 
 std::shared_ptr<FkTransEntity>
-FkGraphicRenderAtom::_makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer) {
+FkGraphicRenderAtom::_makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer,
+                                      bool reverseY) {
+    auto scale = layer->findComponent<FkScaleComponent>()->value;
+    scale.y = scale.y * (reverseY ? -1.0f : 1.0f);
     auto trans = std::make_shared<FkTransEntity>();
     trans->addComponent(layer->findComponent<FkTransComponent>());
-    trans->addComponent(layer->findComponent<FkScaleComponent>());
+    trans->addComponent(std::make_shared<FkScaleComponent>(scale));
     trans->addComponent(layer->findComponent<FkRotateComponent>());
     return trans;
 }
@@ -77,7 +80,7 @@ FkGraphicRenderAtom::_makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer) {
 FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas) {
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
-    auto transEntity = _makeTransEntity(canvas);
+    auto transEntity = _makeTransEntity(canvas, false);
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
     auto ret = renderEngine->renderDeviceWithTrans(canvas->material, transEntity, device);
     FkAssert(FK_OK == ret, ret);

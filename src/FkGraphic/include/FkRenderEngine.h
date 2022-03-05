@@ -15,6 +15,7 @@
 #include "FkDeviceEntity.h"
 #include "FkTransEntity.h"
 #include "FkGraphicWindow.h"
+#include "FkBuffer.h"
 
 FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
 public:
@@ -34,6 +35,8 @@ public:
 
     FkResult updateMaterial(std::shared_ptr<FkMaterialCompo> &material, FkSize size, FkColor color);
 
+    FkResult updateMaterialWithBitmap(std::shared_ptr<FkMaterialCompo> &material, FkSize size, std::shared_ptr<FkBuffer> buf);
+
     FkResult updateWindow(std::shared_ptr<FkGraphicWindow> win);
 
 protected:
@@ -51,6 +54,8 @@ protected:
 
     FkResult _onUpdateMaterial(std::shared_ptr<FkMessage> &msg);
 
+    FkResult _onUpdateMaterialWithBitmap(std::shared_ptr<FkMessage> &msg);
+
     FkResult _onUpdateWindow(std::shared_ptr<FkMessage> &msg);
 
 private:
@@ -58,6 +63,7 @@ private:
     static const FkID FK_MSG_NEW_MATERIAL;
     static const FkID FK_MSG_UPDATE_MATERIAL;
     static const FkID FK_MSG_UPDATE_WINDOW;
+    static const FkID FK_MSG_UPDATE_MATERIAL_WITH_BITMAP;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
 };

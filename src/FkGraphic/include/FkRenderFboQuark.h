@@ -34,7 +34,7 @@ protected:
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> &p);
 
-    FkResult _onAllocTex(std::shared_ptr<FkProtocol> &p);
+    FkResult _onWithFbo(std::shared_ptr<FkProtocol> &p);
 
 private:
     std::shared_ptr<FkGraphicFBOAllocator> fboAllocator = nullptr;

@@ -33,7 +33,7 @@ protected:
     virtual FkResult onStop() override;
 
 private:
-    FkResult _onAllocTex(std::shared_ptr<FkProtocol> p);
+    FkResult _onSaveMaterialSize(std::shared_ptr<FkProtocol> p);
 
     FkResult _onRender(std::shared_ptr<FkProtocol> &p);
 

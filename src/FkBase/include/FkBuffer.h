@@ -12,9 +12,12 @@
 
 FK_CLASS FkBuffer FK_EXTEND FkObject {
 public:
-    FkBuffer(size_t size);
+    static std::shared_ptr<FkBuffer> wrap(uint8_t *data, size_t size);
 
-    FkBuffer(const FkBuffer &o);
+    static std::shared_ptr<FkBuffer> alloc(size_t size);
+
+public:
+    FkBuffer(const FkBuffer &o) = delete;
 
     virtual ~FkBuffer();
 
@@ -23,8 +26,14 @@ public:
     uint8_t *data() const;
 
 private:
+    FkBuffer(uint8_t *data, size_t size);
+
+    FkBuffer(size_t size);
+
+private:
     uint8_t *_data = nullptr;
     size_t _capacity = 0;
+    bool isRef = false;
 };
 
 #endif //FK_BASE_FKBUFFER_H

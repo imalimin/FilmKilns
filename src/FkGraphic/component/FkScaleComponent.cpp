@@ -11,6 +11,10 @@ FkScaleComponent::FkScaleComponent() : FkGraphicComponent(), value(1.0f, 1.0f, 1
     FK_MARK_SUPER
 }
 
+FkScaleComponent::FkScaleComponent(FkFloatVec3 value) : FkGraphicComponent(), value(value) {
+    FK_MARK_SUPER
+}
+
 FkScaleComponent::FkScaleComponent(const FkScaleComponent &o)
         : FkGraphicComponent(o), value(o.value) {
     FK_MARK_SUPER

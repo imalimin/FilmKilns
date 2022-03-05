@@ -14,6 +14,8 @@
 #include "FkGLDefinition.h"
 #include "FkSizeCompo.h"
 #include "FkColorCompo.h"
+#include "FkNewBmpTexProto.h"
+#include "FkBufCompo.h"
 
 FkRenderTexQuark::FkRenderTexQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -24,6 +26,7 @@ FkRenderTexQuark::~FkRenderTexQuark() {
 
 void FkRenderTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkNewTexProto, FkRenderTexQuark::_onAllocTex);
+    FK_PORT_DESC_QUICK_ADD(desc, FkNewBmpTexProto, FkRenderTexQuark::_onAllocTexWithBmp);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderTexQuark::_onRender);
 }
 
@@ -69,24 +72,22 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
         }
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), tex));
     }
-    if (tex->desc.size != proto->texEntity->size()) {
+    auto bufCompo = proto->texEntity->findComponent<FkBufCompo>();
+    if (bufCompo) {
+        tex->update(tex->desc.fmt,
+                    proto->texEntity->size().getWidth(),
+                    proto->texEntity->size().getHeight(),
+                    bufCompo->buf->data());
+    } else if (tex->desc.size != proto->texEntity->size()) {
         tex->update(tex->desc.fmt,
                     proto->texEntity->size().getWidth(),
                     proto->texEntity->size().getHeight());
     }
-    auto colorCompo = proto->texEntity->findComponent<FkColorCompo>();
-    auto fboCompo = proto->texEntity->fbo();
-    if (colorCompo && fboCompo) {
-        auto size = tex->desc.size;
-        glFinish();
-        fboCompo->fbo->attach(tex, true);
-        glViewport(0, 0, size.getWidth(), size.getHeight());
-        glClearColor(colorCompo->color.fRed(), colorCompo->color.fGreen(),
-                     colorCompo->color.fBlue(), colorCompo->color.fAlpha());
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        fboCompo->fbo->detach(tex->desc.target);
-    }
-    return FK_OK;
+    return _drawColor(tex, proto->texEntity);
+}
+
+FkResult FkRenderTexQuark::_onAllocTexWithBmp(std::shared_ptr<FkProtocol> p) {
+    return _onAllocTex(p);
 }
 
 FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> p) {
@@ -122,4 +123,21 @@ std::shared_ptr<FkGraphicTexture> FkRenderTexQuark::_findTex(FkID id) {
         return itr->second;
     }
     return nullptr;
+}
+
+FkResult FkRenderTexQuark::_drawColor(std::shared_ptr<FkGraphicTexture> &tex,
+                                      std::shared_ptr<FkTexEntity> &texEntity) {
+    auto colorCompo = texEntity->findComponent<FkColorCompo>();
+    auto fboCompo = texEntity->fbo();
+    if (colorCompo && fboCompo) {
+        auto size = tex->desc.size;
+        fboCompo->fbo->attach(tex, true);
+        glViewport(0, 0, size.getWidth(), size.getHeight());
+        glClearColor(colorCompo->color.fRed(), colorCompo->color.fGreen(),
+                     colorCompo->color.fBlue(), colorCompo->color.fAlpha());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        fboCompo->fbo->detach(tex->desc.target);
+        return FK_OK;
+    }
+    return FK_FAIL;
 }

@@ -8,6 +8,7 @@
 #include "FkRenderSourceAtom.h"
 #include "FkRenderDefine.h"
 #include "FkNewTexProto.h"
+#include "FkNewBmpTexProto.h"
 #include "FkRenderTexQuark.h"
 #include "FkRenderFboQuark.h"
 #include "FkRenderVboQuark.h"
@@ -24,6 +25,7 @@ FkRenderSourceAtom::~FkRenderSourceAtom() {
 void FkRenderSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkRenderProto, FkRenderSourceAtom);
     FK_PORT_DELIVERY(desc, FkNewTexProto, FkRenderSourceAtom);
+    FK_PORT_DELIVERY(desc, FkNewBmpTexProto, FkRenderSourceAtom);
 }
 
 void FkRenderSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

@@ -13,6 +13,7 @@
 #include "FkGLEnvAtom.h"
 #include "FkRenderDefine.h"
 #include "FkWindowProto.h"
+#include "FkNewBmpTexProto.h"
 
 FkRenderMolecule::FkRenderMolecule() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -26,6 +27,7 @@ void FkRenderMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkRenderProto, FkRenderMolecule);
     FK_PORT_DELIVERY(desc, FkGenIDProto, FkRenderMolecule);
     FK_PORT_DELIVERY(desc, FkNewTexProto, FkRenderMolecule);
+    FK_PORT_DELIVERY(desc, FkNewBmpTexProto, FkRenderMolecule);
     FK_PORT_DELIVERY(desc, FkWindowProto, FkRenderMolecule);
 }
 

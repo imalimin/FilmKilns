@@ -22,7 +22,7 @@ FkRenderFboQuark::~FkRenderFboQuark() {
 }
 void FkRenderFboQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderFboQuark::_onRender);
-    FK_PORT_DESC_QUICK_ADD(desc, FkNewTexProto, FkRenderFboQuark::_onAllocTex);
+    FK_PORT_DESC_QUICK_ADD(desc, FkNewTexProto, FkRenderFboQuark::_onWithFbo);
 }
 
 FkResult FkRenderFboQuark::onCreate() {
@@ -60,7 +60,7 @@ FkResult FkRenderFboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     return FK_OK;
 }
 
-FkResult FkRenderFboQuark::_onAllocTex(shared_ptr<FkProtocol> &p) {
+FkResult FkRenderFboQuark::_onWithFbo(shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkNewTexProto, p);
     int32_t desc = 0;
     auto fbo = fboAllocator->alloc(desc);

@@ -36,7 +36,8 @@ protected:
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
-    std::shared_ptr<FkTransEntity> _makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer);
+    std::shared_ptr<FkTransEntity> _makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer,
+                                                    bool reverseY);
 
     FkResult _drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas);
 };

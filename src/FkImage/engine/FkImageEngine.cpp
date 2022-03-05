@@ -14,6 +14,7 @@
 #include "FkSizeComponent.h"
 #include "FkTexIDComponent.h"
 #include "FkGraphicUpdateLayerPrt.h"
+#include "FkBitmapCompo.h"
 #include <zconf.h>
 
 const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'I', 0x10);
@@ -50,41 +51,31 @@ FkID FkImageEngine::newLayerWithFile(std::string path) {
         return FK_ID_NONE;
     }
     auto id = newLayer();
-//    if (FK_ID_NONE != id) {
-//        auto layer = std::make_shared<FkGraphicLayer>();
-//        layer->id = id;
-//        auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_FILE);
-//        msg->arg3 = path;
-//        msg->sp = layer;
-//        sendMessage(msg);
-//    }
+    if (FK_ID_NONE != id) {
+        auto layer = std::make_shared<FkGraphicLayer>();
+        layer->id = id;
+        auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_FILE);
+        msg->arg3 = path;
+        msg->sp = layer;
+        sendMessage(msg);
+    }
     return id;
 }
 
 FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     auto bmp = FkBitmap::from(msg->arg3);
     FkAssert(nullptr != bmp, FK_EMPTY_DATA);
-    FkSize canvasSize(bmp->getWidth(), bmp->getHeight());
-    setCanvasSizeInternal(canvasSize);
+    FkSize size(bmp->getWidth(), bmp->getHeight());
+    setCanvasSizeInternal(size, true);
 
-    auto texPrt = std::make_shared<FkGraphicNewTexPtl>();
-    texPrt->fmt = FkColor::kFormat::RGBA;
-    FkAssert(FK_OK == getClient()->quickSend(texPrt, getMolecule()), FK_EMPTY_DATA);
+    auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
+    layer->addComponent(std::make_shared<FkBitmapCompo>(bmp));
 
-    auto layer = Fk_POINTER_CAST(FkGraphicLayer, msg->sp);
-    auto updatePrt = std::make_shared<FkUpdateTexWithBmpPrt>();
-    updatePrt->id = texPrt->id;
-    updatePrt->bmp = bmp;
-    FkAssert(FK_OK == getClient()->quickSend(updatePrt, getMolecule()), FK_FAIL);
+    auto sizeCompo = std::make_shared<FkSizeComponent>();
+    sizeCompo->size = size;
 
-    auto com = std::make_shared<FkTexIDComponent>();
-    com->id = texPrt->id;
-    auto sizeCom = std::make_shared<FkSizeComponent>();
-    sizeCom->size.set(updatePrt->bmp->getWidth(), updatePrt->bmp->getHeight());
-
-    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
-    prt->layer = layer;
-    prt->layer->addComponent(com);
-    prt->layer->addComponent(sizeCom);
-    return getClient()->quickSend<FkGraphicUpdateLayerPrt>(prt, getMolecule());
+    auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
+    proto->layer = layer;
+    proto->layer->addComponent(sizeCompo);
+    return getClient()->with(getMolecule())->send(proto);
 }

@@ -15,6 +15,8 @@ FK_CLASS FkScaleComponent FK_EXTEND FkGraphicComponent {
 public:
     FkScaleComponent();
 
+    FkScaleComponent(FkFloatVec3 value);
+
     FkScaleComponent(const FkScaleComponent &o);
 
     virtual ~FkScaleComponent();

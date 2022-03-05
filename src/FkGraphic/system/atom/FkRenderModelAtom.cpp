@@ -12,6 +12,7 @@
 #include "FkRenderInfoQuark.h"
 #include "FkPositionQuark.h"
 #include "FkSizeCompo.h"
+#include "FkNewBmpTexProto.h"
 
 FkRenderModelAtom::FkRenderModelAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -24,6 +25,7 @@ FkRenderModelAtom::~FkRenderModelAtom() {
 void FkRenderModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderModelAtom::_onRender);
     FK_PORT_DELIVERY(desc, FkNewTexProto, FkRenderModelAtom);
+    FK_PORT_DELIVERY(desc, FkNewBmpTexProto, FkRenderModelAtom);
     FK_PORT_DELIVERY(desc, FkGenIDProto, FkRenderModelAtom);
 }
 
