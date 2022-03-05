@@ -50,8 +50,8 @@ FkResult FkWinModelQuark::_onSetViewSize(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkWinModelQuark::_onWithWinSize(std::shared_ptr<FkProtocol> p) {
-    if (FK_INSTANCE_OF(p, FkRenderRequestPrt)) {
-        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
+    if (FK_INSTANCE_OF(p, FkWinSizeProto)) {
+        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkWinSizeProto, p);
         proto->winSize = winSize;
     }
     return FK_OK;

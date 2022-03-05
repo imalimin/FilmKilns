@@ -47,7 +47,7 @@ FkResult FkGraphicMVPQuark::onStop() {
 }
 
 FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkRenderRequestPrt, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     auto canvas = proto->req->getCanvas();
     FkAssert(nullptr != canvas, FK_FAIL);
     auto sizeComp = canvas->findComponent<FkSizeComponent>();
@@ -63,7 +63,7 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
     auto canvasScale = proto->canvas->findComponent<FkScaleComponent>();
     FkAssert(nullptr != canvasScale, FK_FAIL);
     auto layerScale = proto->layer->findComponent<FkScaleComponent>();

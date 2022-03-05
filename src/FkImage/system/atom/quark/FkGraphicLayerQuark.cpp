@@ -124,9 +124,17 @@ std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::newLayerEntity() {
 }
 
 FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkGraphicUpdateLayerPrt, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkGraphicUpdateLayerPrt, p);
     auto itr = layers.find(proto->layer->id);
     if (layers.end() == itr) {
+        itr = layers.find(Fk_CANVAS_ID);
+        if (layers.end() != itr) {
+            auto canvas = itr->second;
+            auto canvasSizeCompo = canvas->findComponent<FkSizeComponent>();
+            if (nullptr != canvasSizeCompo) {
+                proto->winSize = canvasSizeCompo->size;
+            }
+        }
         return FK_SKIP;
     }
     FkResult ret = FK_OK;
@@ -173,13 +181,6 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
         }
     }
     _setupVertex(itr->second);
-
-    if (Fk_CANVAS_ID == layer->id) {
-        auto canvasSize = layer->findComponent<FkSizeComponent>();
-        if (nullptr != canvasSize) {
-            proto->winSize = canvasSize->size;
-        }
-    }
     return ret;
 }
 
