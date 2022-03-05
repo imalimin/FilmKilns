@@ -10,6 +10,7 @@
 #include "FkRenderRequestPrt.h"
 #include "FkMeasureTransProto.h"
 #include "FkGraphicUpdateLayerPrt.h"
+#include "FkSetSurfacePrt.h"
 
 FkWinModelQuark::FkWinModelQuark() : FkQuark(), winSize(0, 0) {
     FK_MARK_SUPER
@@ -20,7 +21,7 @@ FkWinModelQuark::~FkWinModelQuark() {
 }
 
 void FkWinModelQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DESC_QUICK_ADD(desc, FkSetSizeProto, FkWinModelQuark::_onSetViewSize);
+    FK_PORT_DESC_QUICK_ADD(desc, FkSetSurfacePrt, FkWinModelQuark::_onSetViewSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkWinModelQuark::_onWithWinSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkWinModelQuark::_onWithWinSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkWinModelQuark::_onWithWinSize);
@@ -43,14 +44,14 @@ FkResult FkWinModelQuark::onStop() {
 }
 
 FkResult FkWinModelQuark::_onSetViewSize(std::shared_ptr<FkProtocol> p) {
-    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkSetSizeProto, p);
-    winSize = proto->value;
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkSetSurfacePrt, p);
+    winSize = proto->win->getSize();
     return FK_OK;
 }
 
 FkResult FkWinModelQuark::_onWithWinSize(std::shared_ptr<FkProtocol> p) {
-    if (FK_INSTANCE_OF(p, FkWinSizeProto)) {
-        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkWinSizeProto, p);
+    if (FK_INSTANCE_OF(p, FkRenderRequestPrt)) {
+        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
         proto->winSize = winSize;
     }
     return FK_OK;

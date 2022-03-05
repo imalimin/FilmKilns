@@ -22,8 +22,8 @@
 #include "FkMeasureTransProto.h"
 #include "FkDrawPointProto.h"
 #include "FkPointComponent.h"
-#include "FkVertexComponent.h"
-#include "FkCoordinateComponent.h"
+#include "FkVertexCompo.h"
+#include "FkCoordinateCompo.h"
 #include "FkRenderContext.h"
 #include "FkBitmapCompo.h"
 
@@ -73,14 +73,14 @@ FkResult FkGraphicLayerQuark::onStop() {
 void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
     auto sizeComp = layer->findComponent<FkSizeComponent>();
     FkAssert(nullptr != sizeComp, );
-    auto vertex = layer->findComponent<FkVertexComponent>();
+    auto vertex = layer->findComponent<FkVertexCompo>();
     if (nullptr == vertex) {
-        vertex = std::make_shared<FkVertexComponent>();
+        vertex = std::make_shared<FkVertexCompo>();
         layer->addComponent(vertex);
     }
-    auto coord = layer->findComponent<FkCoordinateComponent>();
+    auto coord = layer->findComponent<FkCoordinateCompo>();
     if (nullptr == coord) {
-        coord = std::make_shared<FkCoordinateComponent>();
+        coord = std::make_shared<FkCoordinateCompo>();
         layer->addComponent(coord);
     }
 
@@ -172,6 +172,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             FkAssert(FK_OK == ret, ret);
         }
     }
+    _setupVertex(itr->second);
 
     if (Fk_CANVAS_ID == layer->id) {
         auto canvasSize = layer->findComponent<FkSizeComponent>();

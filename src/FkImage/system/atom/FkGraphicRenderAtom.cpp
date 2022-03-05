@@ -12,9 +12,9 @@
 #include "FkEmptyQuark.h"
 #include "FkDeviceEntity.h"
 #include "FkRenderContext.h"
-#include "FkTransComponent.h"
-#include "FkScaleComponent.h"
-#include "FkRotateComponent.h"
+#include "FkVertexCompo.h"
+#include "FkCoordinateCompo.h"
+#include "FkMatCompo.h"
 
 FkGraphicRenderAtom::FkGraphicRenderAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -57,32 +57,29 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         if (Fk_CANVAS_ID == layer->id) {
             continue;
         }
-        auto transEntity = _makeTransEntity(canvas, true);
+        auto materials = _makeRenderMaterials(layer);
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(canvas->material);
-        auto ret = renderEngine->renderDeviceWithTrans(layer->material, transEntity, device);
+        auto ret = renderEngine->renderDevice(materials, device);
         FkAssert(FK_OK == ret, ret);
     }
     return _drawCanvas2Screen(canvas);
 }
 
-std::shared_ptr<FkTransEntity>
-FkGraphicRenderAtom::_makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer,
-                                      bool reverseY) {
-    auto scale = layer->findComponent<FkScaleComponent>()->value;
-    scale.y = scale.y * (reverseY ? -1.0f : 1.0f);
-    auto trans = std::make_shared<FkTransEntity>();
-    trans->addComponent(layer->findComponent<FkTransComponent>());
-    trans->addComponent(std::make_shared<FkScaleComponent>(scale));
-    trans->addComponent(layer->findComponent<FkRotateComponent>());
-    return trans;
+std::shared_ptr<FkMaterialEntity>
+FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer) {
+    auto materials = std::make_shared<FkMaterialEntity>(layer->material);
+    materials->addComponent(layer->findComponent<FkVertexCompo>());
+    materials->addComponent(layer->findComponent<FkCoordinateCompo>());
+    materials->addComponent(layer->findComponent<FkMatCompo>());
+    return materials;
 }
 
 FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas) {
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
-    auto transEntity = _makeTransEntity(canvas, false);
+    auto materials = _makeRenderMaterials(canvas);
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
-    auto ret = renderEngine->renderDeviceWithTrans(canvas->material, transEntity, device);
+    auto ret = renderEngine->renderDevice(materials, device);
     FkAssert(FK_OK == ret, ret);
     return ret;
 }

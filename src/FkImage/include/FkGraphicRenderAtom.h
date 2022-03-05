@@ -11,6 +11,7 @@
 #include "FkSimpleAtom.h"
 #include "FkTransEntity.h"
 #include "FkGraphicLayer.h"
+#include "FkMaterialEntity.h"
 
 FK_CLASS FkGraphicRenderAtom FK_EXTEND FkSimpleAtom {
 public:
@@ -36,8 +37,7 @@ protected:
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
-    std::shared_ptr<FkTransEntity> _makeTransEntity(std::shared_ptr<FkGraphicLayer> &layer,
-                                                    bool reverseY);
+    std::shared_ptr<FkMaterialEntity> _makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer);
 
     FkResult _drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas);
 };

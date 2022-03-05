@@ -100,13 +100,8 @@ FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
 
 FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
     FkAssert(nullptr != msg->sp, FK_NPE);
-    auto win = std::dynamic_pointer_cast<FkGraphicWindow>(msg->sp);
-    auto setSizeProto = std::make_shared<FkSetSizeProto>();
-    setSizeProto->value = win->getSize();
-    client->with(molecule)->send(setSizeProto);
-
     auto proto = std::make_shared<FkSetSurfacePrt>();
-    proto->win = win;
+    proto->win = std::dynamic_pointer_cast<FkGraphicWindow>(msg->sp);
     return client->with(molecule)->send(proto);
 }
 

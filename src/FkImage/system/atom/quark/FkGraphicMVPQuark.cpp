@@ -7,7 +7,7 @@
 
 #include "FkGraphicMVPQuark.h"
 #include "FkRenderRequestPrt.h"
-#include "FkMatrixComponent.h"
+#include "FkMatCompo.h"
 #include "FkSetSizeProto.h"
 #include "FkSizeComponent.h"
 #include "FkTransComponent.h"
@@ -96,7 +96,7 @@ FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,
     _setScale(matrix, layer, targetSize, reverseY);
     matrix->calc();
 
-    auto mat = std::make_shared<FkMatrixComponent>();
+    auto mat = std::make_shared<FkMatCompo>();
     mat->value = matrix;
     layer->addComponent(mat);
     return FK_OK;
