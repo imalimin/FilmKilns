@@ -6,22 +6,13 @@
 */
 
 #include "FkGraphicCanvasQuark.h"
-#include "FkRenderRequestPrt.h"
 #include "FkSizeCompo.h"
 #include "FkQuerySizeProto.h"
-#include "FkTransComponent.h"
-#include "FkScaleComponent.h"
-#include "FkRotateComponent.h"
-#include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
-#include "FkGraphicUpdateLayerPrt.h"
-#include "FkDrawPointProto.h"
-#include "FkPointComponent.h"
-#include "FkVertexCompo.h"
-#include "FkCoordinateCompo.h"
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
+#include "FkGraphicNewLayerPrt.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkGraphicLayerQuark() {
     FK_MARK_SUPER
@@ -32,16 +23,14 @@ FkGraphicCanvasQuark::~FkGraphicCanvasQuark() {
 }
 
 void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    desc->clear();
-    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicCanvasQuark::_onUpdateLayer);
+    FkGraphicLayerQuark::describeProtocols(desc);
+    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicCanvasQuark::_onDelivery);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicCanvasQuark::_onPostTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicCanvasQuark::_onPostScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicCanvasQuark::_onPostRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicCanvasQuark::_onMeasureTrans);
-    FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicCanvasQuark::_onDrawPoint);
-
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
+
 }
 
 FkResult FkGraphicCanvasQuark::onCreate() {
@@ -115,4 +104,8 @@ FkResult FkGraphicCanvasQuark::_initializeCanvas() {
         return ret ? FK_OK : FK_FAIL;
     }
     return FK_FAIL;
+}
+
+FkResult FkGraphicCanvasQuark::_onDelivery(std::shared_ptr<FkProtocol> p) {
+    return FK_OK;
 }

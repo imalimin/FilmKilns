@@ -8,7 +8,6 @@
 #include "FkGraphicMVPQuark.h"
 #include "FkRenderRequestPrt.h"
 #include "FkMatCompo.h"
-#include "FkSetSizeProto.h"
 #include "FkSizeCompo.h"
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"

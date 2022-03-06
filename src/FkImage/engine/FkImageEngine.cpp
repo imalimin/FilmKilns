@@ -6,10 +6,8 @@
 */
 
 #include "FkImageEngine.h"
-#include "FkGraphicNewTexPtl.h"
 #include "FkGraphicLayer.h"
 #include "FkBitmap.h"
-#include "FkUpdateTexWithBmpPrt.h"
 #include "FkDefinition.h"
 #include "FkSizeCompo.h"
 #include "FkGraphicUpdateLayerPrt.h"

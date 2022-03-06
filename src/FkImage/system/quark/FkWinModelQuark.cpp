@@ -6,7 +6,6 @@
 */
 
 #include "FkWinModelQuark.h"
-#include "FkSetSizeProto.h"
 #include "FkRenderRequestPrt.h"
 #include "FkMeasureTransProto.h"
 #include "FkGraphicUpdateLayerPrt.h"

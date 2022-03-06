@@ -6,19 +6,13 @@
 */
 
 #include "FkGraphicMolecule.h"
-#include "FkGraphicLayerPrt.h"
 #include "FkGraphicModelAtom.h"
 #include "FkGraphicSourceAtom.h"
 #include "FkGraphicRenderAtom.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
-#include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
 #include "FkRenderRequestPrt.h"
-#include "FkGraphicUpdateTexPrt.h"
-#include "FkGraphicTexDelPtl.h"
-#include "FkUpdateTexWithBmpPrt.h"
-#include "FkSetSizeProto.h"
 #include "FkQuerySizeProto.h"
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
@@ -36,22 +30,16 @@ FkGraphicMolecule::~FkGraphicMolecule() {
 }
 
 void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicLayerPrt, FkGraphicMolecule::_onDrawLayer);
     FK_PORT_DELIVERY(desc, FkGraphicNewLayerPrt, FkGraphicMolecule);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DELIVERY(desc, FkGraphicUpdateTexPrt, FkGraphicMolecule);
-    FK_PORT_DELIVERY(desc, FkGraphicNewTexPtl, FkGraphicMolecule);
+    FK_PORT_DELIVERY(desc, FkGraphicUpdateLayerPrt, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkSetSurfacePrt, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkRenderRequestPrt, FkGraphicMolecule);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkUpdateTexWithBmpPrt, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DELIVERY(desc, FkSetSizeProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkQuerySizeProto, FkGraphicMolecule);
-    FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkLayerPostTransProto, FkGraphicMolecule);
+    FK_PORT_DELIVERY(desc, FkLayerPostScaleProto, FkGraphicMolecule);
+    FK_PORT_DELIVERY(desc, FkLayerPostRotateProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkMeasureTransProto, FkGraphicMolecule);
-    FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkDrawPointProto, FkGraphicMolecule);
 }
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {

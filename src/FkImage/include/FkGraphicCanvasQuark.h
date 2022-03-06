@@ -42,6 +42,8 @@ private:
 
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onDelivery(std::shared_ptr<FkProtocol> p);
+
     std::shared_ptr<FkGraphicLayer> _getCanvas();
 
     FkResult _initializeCanvas();
