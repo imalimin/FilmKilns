@@ -9,7 +9,7 @@
 #include "FkRenderRequestPrt.h"
 #include "FkMatCompo.h"
 #include "FkSetSizeProto.h"
-#include "FkSizeComponent.h"
+#include "FkSizeCompo.h"
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
 #include "FkRotateComponent.h"
@@ -50,7 +50,7 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     auto canvas = proto->req->getCanvas();
     FkAssert(nullptr != canvas, FK_FAIL);
-    auto sizeComp = canvas->findComponent<FkSizeComponent>();
+    auto sizeComp = canvas->findComponent<FkSizeCompo>();
     FkAssert(nullptr != sizeComp, FK_FAIL);
     _calc(canvas, proto->winSize, false);
     for (auto &layer : proto->req->layers) {

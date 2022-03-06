@@ -8,9 +8,8 @@
 #include "FkGraphicLayerQuark.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
-#include "FkColorComponent.h"
-#include "FkSizeComponent.h"
-#include "FkTexIDComponent.h"
+#include "FkColorCompo.h"
+#include "FkSizeCompo.h"
 #include "FkRenderRequestPrt.h"
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
@@ -71,7 +70,7 @@ FkResult FkGraphicLayerQuark::onStop() {
 }
 
 void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
-    auto sizeComp = layer->findComponent<FkSizeComponent>();
+    auto sizeComp = layer->findComponent<FkSizeCompo>();
     FkAssert(nullptr != sizeComp, );
     auto vertex = layer->findComponent<FkVertexCompo>();
     if (nullptr == vertex) {
@@ -130,7 +129,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
         itr = layers.find(Fk_CANVAS_ID);
         if (layers.end() != itr) {
             auto canvas = itr->second;
-            auto canvasSizeCompo = canvas->findComponent<FkSizeComponent>();
+            auto canvasSizeCompo = canvas->findComponent<FkSizeCompo>();
             if (nullptr != canvasSizeCompo) {
                 proto->winSize = canvasSizeCompo->size;
             }
@@ -139,20 +138,18 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     }
     FkResult ret = FK_OK;
     auto layer = itr->second;
-    auto colorComp = proto->layer->findComponent<FkColorComponent>();
+    auto colorComp = proto->layer->findComponent<FkColorCompo>();
     if (nullptr != colorComp) {
         layer->addComponent(colorComp);
     } else {
-        colorComp = std::make_shared<FkColorComponent>();
-        colorComp->color = FkColor::black();
+        colorComp = std::make_shared<FkColorCompo>(FkColor::black());
     }
-    auto sizeComp = proto->layer->findComponent<FkSizeComponent>();
+    auto sizeComp = proto->layer->findComponent<FkSizeCompo>();
     if (nullptr != sizeComp) {
-        auto layerSizeComp = layer->findComponent<FkSizeComponent>();
+        auto layerSizeComp = layer->findComponent<FkSizeCompo>();
         if (layerSizeComp == nullptr) {
-            layerSizeComp = std::make_shared<FkSizeComponent>();
-            layerSizeComp->size = sizeComp->size;
-            layer->addComponent(sizeComp);
+            layerSizeComp = std::make_shared<FkSizeCompo>(sizeComp->size);
+            layer->addComponent(layerSizeComp);
             auto scaleComp = layer->findComponent<FkScaleComponent>();
             if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
                 scaleComp->value.x = FkGraphicLayer::calcScaleWithScaleType(layer,

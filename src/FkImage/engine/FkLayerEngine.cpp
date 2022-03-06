@@ -8,9 +8,8 @@
 #include "FkLayerEngine.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
-#include "FkColorComponent.h"
-#include "FkSizeComponent.h"
-#include "FkTexIDComponent.h"
+#include "FkColorCompo.h"
+#include "FkSizeCompo.h"
 #include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
 #include "FkRenderRequestPrt.h"
@@ -140,10 +139,8 @@ FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
 FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
     auto id = newLayer();
     if (FK_ID_NONE != id) {
-        auto colorCom = std::make_shared<FkColorComponent>();
-        colorCom->color = color;
-        auto sizeCom = std::make_shared<FkSizeComponent>();
-        sizeCom->size = size;
+        auto colorCom = std::make_shared<FkColorCompo>(color);
+        auto sizeCom = std::make_shared<FkSizeCompo>(size);
         auto layer = std::make_shared<FkGraphicLayer>();
         layer->id = id;
         layer->addComponent(colorCom);
@@ -160,7 +157,7 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
     auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
     prt->layer = layer;
     prt->scaleType = kScaleType::CENTER_INSIDE;
-    auto sizeCom = prt->layer->findComponent<FkSizeComponent>();
+    auto sizeCom = prt->layer->findComponent<FkSizeCompo>();
     if (sizeCom) {
         setCanvasSizeInternal(sizeCom->size, true);
     }
@@ -190,8 +187,7 @@ FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size, bool isInitialize) {
         return FK_FAIL;
     }
 
-    auto sizeComp = std::make_shared<FkSizeComponent>();
-    sizeComp->size = size;
+    auto sizeComp = std::make_shared<FkSizeCompo>(size);
 
     auto layer = std::make_shared<FkGraphicLayer>();
     layer->id = Fk_CANVAS_ID;

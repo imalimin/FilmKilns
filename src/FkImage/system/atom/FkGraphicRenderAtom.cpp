@@ -7,14 +7,13 @@
 
 #include "FkGraphicRenderAtom.h"
 #include "FkRenderRequestPrt.h"
-#include "FkPreRenderQuark.h"
-#include "FkLayerRenderQuark.h"
 #include "FkEmptyQuark.h"
 #include "FkDeviceEntity.h"
 #include "FkRenderContext.h"
 #include "FkVertexCompo.h"
 #include "FkCoordinateCompo.h"
 #include "FkMatCompo.h"
+#include "FkSizeCompo.h"
 
 FkGraphicRenderAtom::FkGraphicRenderAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -53,7 +52,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
     auto canvas = proto->req->getCanvas();
-    auto canvasSizeCompo = canvas->findComponent<FkSizeComponent>();
+    auto canvasSizeCompo = canvas->findComponent<FkSizeCompo>();
     if (canvasSizeCompo) {
         renderEngine->updateMaterial(canvas->material, canvasSizeCompo->size, FkColor::black());
     }

@@ -7,8 +7,7 @@
 
 #include "FkGraphicCanvasQuark.h"
 #include "FkRenderRequestPrt.h"
-#include "FkSizeComponent.h"
-#include "FkTexIDComponent.h"
+#include "FkSizeCompo.h"
 #include "FkQuerySizeProto.h"
 #include "FkTransComponent.h"
 #include "FkScaleComponent.h"
@@ -18,8 +17,8 @@
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkDrawPointProto.h"
 #include "FkPointComponent.h"
-#include "FkVertexComponent.h"
-#include "FkCoordinateComponent.h"
+#include "FkVertexCompo.h"
+#include "FkCoordinateCompo.h"
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
@@ -88,7 +87,7 @@ FkResult FkGraphicCanvasQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQuerySizeProto, p);
-    auto compo = _getCanvas()->findComponent<FkSizeComponent>();
+    auto compo = _getCanvas()->findComponent<FkSizeCompo>();
     if (compo) {
         proto->value = compo->size;
     }

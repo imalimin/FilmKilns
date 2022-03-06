@@ -11,8 +11,7 @@
 #include "FkBitmap.h"
 #include "FkUpdateTexWithBmpPrt.h"
 #include "FkDefinition.h"
-#include "FkSizeComponent.h"
-#include "FkTexIDComponent.h"
+#include "FkSizeCompo.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkBitmapCompo.h"
 #include <zconf.h>
@@ -71,11 +70,8 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
     layer->addComponent(std::make_shared<FkBitmapCompo>(bmp));
 
-    auto sizeCompo = std::make_shared<FkSizeComponent>();
-    sizeCompo->size = size;
-
     auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
     proto->layer = layer;
-    proto->layer->addComponent(sizeCompo);
+    proto->layer->addComponent(std::make_shared<FkSizeCompo>(size));
     return getClient()->with(getMolecule())->send(proto);
 }

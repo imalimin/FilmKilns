@@ -10,7 +10,6 @@
 #include "FkGraphicModelAtom.h"
 #include "FkGraphicSourceAtom.h"
 #include "FkGraphicRenderAtom.h"
-#include "FkGraphicScreenAtom.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkGraphicNewTexPtl.h"

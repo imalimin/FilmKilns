@@ -6,13 +6,13 @@
 */
 
 #include "FkGraphicLayer.h"
-#include "FkSizeComponent.h"
+#include "FkSizeCompo.h"
 
 float FkGraphicLayer::calcScaleWithScaleType(std::shared_ptr<FkGraphicLayer> layer,
                                              kScaleType scaleType,
                                              FkSize &targetSize) {
     float scale = 1.0f;
-    auto size = layer->findComponent<FkSizeComponent>();
+    auto size = layer->findComponent<FkSizeCompo>();
     FkAssert(nullptr != size, scale);
     auto &layerSize = size->size;
     switch (scaleType) {

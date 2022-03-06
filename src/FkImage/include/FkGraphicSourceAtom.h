@@ -9,7 +9,6 @@
 #define FK_GRAPHIC_FKGRAPHICSOURCEATOM_H
 
 #include "FkSimpleAtom.h"
-#include "FkLocalClient.h"
 
 FK_CLASS FkGraphicSourceAtom FK_EXTEND FkSimpleAtom {
 public:

@@ -6,17 +6,7 @@
 */
 
 #include "FkGraphicSourceAtom.h"
-#include "FkGraphicContextQuark.h"
-#include "FkGraphicTexQuark.h"
-#include "FkGraphicFBOQuark.h"
-#include "FkGraphicProgramQuark.h"
-#include "FkGraphicNewTexPtl.h"
 #include "FkSetSurfacePrt.h"
-#include "FkRenderRequestPrt.h"
-#include "FkGraphicUpdateTexPrt.h"
-#include "FkGraphicTexDelPtl.h"
-#include "FkUpdateTexWithBmpPrt.h"
-#include "FkGraphicVBOQuark.h"
 #include "FkRenderContext.h"
 #include "FkEmptyQuark.h"
 
@@ -30,11 +20,6 @@ FkGraphicSourceAtom::~FkGraphicSourceAtom() {
 
 void FkGraphicSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSurfacePrt, FkGraphicSourceAtom::_onSetSurface);
-    FK_PORT_DELIVERY(desc, FkGraphicUpdateTexPrt, FkGraphicSourceAtom);
-    FK_PORT_DELIVERY(desc, FkGraphicNewTexPtl, FkGraphicSourceAtom);
-    FK_PORT_DESC_QUICK_ADD(desc, FkGraphicTexDelPtl, FkGraphicSourceAtom::dispatchNext);
-    FK_PORT_DELIVERY(desc, FkRenderRequestPrt, FkGraphicSourceAtom);
-    FK_PORT_DESC_QUICK_ADD(desc, FkUpdateTexWithBmpPrt, FkGraphicSourceAtom::dispatchNext);
 }
 
 void FkGraphicSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
