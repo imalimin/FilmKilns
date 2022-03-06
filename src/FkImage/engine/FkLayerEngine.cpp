@@ -198,7 +198,6 @@ FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
     auto msg = FkMessage::obtain(FK_MSG_POST_TRANSLATE);
     msg->arg1 = layer;
     msg->sp = std::make_shared<FkIntVec2>(dx, dy);
-//    msg->flags = FkMessage::FLAG_UNIQUE;
     return sendMessage(msg);
 }
 
@@ -231,14 +230,13 @@ FkResult FkLayerEngine::postRotation(FkID layer, FkRational &rational) {
     auto msg = FkMessage::obtain(FK_MSG_POST_ROTATION);
     msg->arg1 = layer;
     msg->sp = std::make_shared<FkRational>(rational);
-    msg->flags = FkMessage::FLAG_UNIQUE;
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_postRotation(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkLayerPostRotateProto>();
     proto->layer = msg->arg1;
-    proto->value = *Fk_POINTER_CAST(FkRational, msg->sp);
+    proto->value = *std::dynamic_pointer_cast<FkRational>(msg->sp);
     return client->quickSend(proto, molecule);
 }
 

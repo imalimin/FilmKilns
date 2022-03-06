@@ -30,8 +30,7 @@ class FkActSurfaceView : SurfaceView {
     private var minScaleVelocity = 0.02
     //Rotate gesture
     private var isDoublePointer = false
-    private var startRotate = 0.0
-    private var previousRotate = 0.0
+    private var previousRotate = Double.MAX_VALUE
     private var action: ACTION = ACTION.IDL
 
     constructor(context: Context) : super(context) {
@@ -84,19 +83,17 @@ class FkActSurfaceView : SurfaceView {
             MotionEvent.ACTION_POINTER_DOWN -> {
                 parent.requestDisallowInterceptTouchEvent(true)
                 isDoublePointer = true
-                val spanX = event.getX(0) - event.getX(1)
-                val spanY = event.getY(0) - event.getY(1)
-                startRotate = atan2(spanY, spanX).toDouble()
-                previousRotate = startRotate
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 isDoublePointer = false
                 action = ACTION.IDL
+                previousRotate = Double.MAX_VALUE
                 renderDetectForce()
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 isDoublePointer = false
                 action = ACTION.IDL
+                previousRotate = Double.MAX_VALUE
                 val xy = PointF(
                     event.x * 2 / measuredWidth.toFloat() - 1f,
                     -(event.y * 2 / measuredHeight.toFloat() - 1f)
@@ -111,30 +108,37 @@ class FkActSurfaceView : SurfaceView {
                 if (isDoublePointer) {
                     val spanX = event.getX(0) - event.getX(1)
                     val spanY = event.getY(0) - event.getY(1)
-                    val anchor = PointF(
-                        (event.getX(0) + event.getX(1)) / 2.0f,
-                        (event.getY(0) + event.getY(1)) / 2.0f
-                    )
-                    anchor.x = anchor.x * 2 / measuredWidth.toFloat() - 1f
-                    anchor.y = -(anchor.y * 2 / measuredHeight.toFloat() - 1f)
-                    val rotate = atan2(spanY, spanX).toDouble()
-                    val delta = rotate - previousRotate
-                    if (abs(delta) > minRotateVelocity && ACTION.IDL == action) {
-                        action = ACTION.ROTATE
+                    val rotate = Math.PI + atan2(spanY, spanX).toDouble()
+                    if (abs(previousRotate - rotate) > Math.PI) {
+                        previousRotate = Double.MAX_VALUE
                     }
-//                    if (ACTION.ROTATE == action) {
-                    onRotateListener?.onRotate(
-                        this@FkActSurfaceView,
-                        FkRational((delta * PRECISIONS / Math.PI).toInt(), PRECISIONS),
-                        anchor
-                    )
-                    renderDetect()
+                    if (previousRotate != Double.MAX_VALUE) {
+                        val delta = previousRotate - rotate
+                        if (abs(delta) > minRotateVelocity && ACTION.IDL == action) {
+                            action = ACTION.ROTATE
+                        }
+                        onRotateListener?.onRotate(
+                            this@FkActSurfaceView,
+                            FkRational((delta * PRECISIONS).toInt(), PRECISIONS),
+                            getAnchor(event)
+                        )
+                        renderDetect()
+                    }
                     previousRotate = rotate
-//                    }
                 }
             }
         }
         return true
+    }
+
+    private fun getAnchor(event: MotionEvent) :PointF {
+        val anchor = PointF(
+            (event.getX(0) + event.getX(1)) / 2.0f,
+            (event.getY(0) + event.getY(1)) / 2.0f
+        )
+        anchor.x = anchor.x * 2 / measuredWidth.toFloat() - 1f
+        anchor.y = -(anchor.y * 2 / measuredHeight.toFloat() - 1f)
+        return anchor
     }
 
     fun setOnScrollListener(
@@ -325,6 +329,6 @@ class FkActSurfaceView : SurfaceView {
     }
 
     companion object {
-        const val PRECISIONS = 100000
+        const val PRECISIONS = 100000000
     }
 }

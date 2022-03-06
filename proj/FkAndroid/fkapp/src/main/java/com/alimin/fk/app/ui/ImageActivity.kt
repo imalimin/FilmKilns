@@ -90,7 +90,7 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF) {
-        engine.postRotation(layer,  -dr.num, dr.den)
+        engine.postRotation(layer, dr.num, dr.den)
     }
 
     override fun onScale(v: SurfaceView, ds: FkRational, anchor: PointF) {

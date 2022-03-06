@@ -222,8 +222,8 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
     auto comp = itr->second->findComponent<FkRotateComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
     auto result = comp->value.toDouble() + proto->value.toDouble();
-    comp->value.num = result * 10000;
-    comp->value.den = 10000;
+    comp->value.num = result * 100000000;
+    comp->value.den = 100000000;
     return FK_OK;
 }
 
