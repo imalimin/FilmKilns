@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkRotateComponent.h"
+#include "../include/FkRotateComponent.h"
 
 FkRotateComponent::FkRotateComponent() : FkGraphicComponent() {
     FK_MARK_SUPER

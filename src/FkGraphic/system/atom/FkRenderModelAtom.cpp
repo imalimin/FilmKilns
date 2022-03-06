@@ -8,9 +8,6 @@
 #include "FkRenderModelAtom.h"
 #include "FkIDQuark.h"
 #include "FkRenderDefine.h"
-#include "FkRenderMvpQuark.h"
-#include "FkRenderInfoQuark.h"
-#include "FkPositionQuark.h"
 #include "FkSizeCompo.h"
 #include "FkNewBmpTexProto.h"
 

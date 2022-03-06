@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkTransComponent.h"
+#include "../include/FkTransComponent.h"
 
 FkTransComponent::FkTransComponent() : FkGraphicComponent(), value(0, 0) {
     FK_MARK_SUPER

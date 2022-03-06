@@ -9,7 +9,6 @@
 #define FK_GRAPHIC_FKGRAPHICRENDERATOM_H
 
 #include "FkSimpleAtom.h"
-#include "FkTransEntity.h"
 #include "FkGraphicLayer.h"
 #include "FkMaterialEntity.h"
 

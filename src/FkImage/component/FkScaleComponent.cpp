@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkScaleComponent.h"
+#include "../include/FkScaleComponent.h"
 
 FkScaleComponent::FkScaleComponent() : FkGraphicComponent(), value(1.0f, 1.0f, 1.0f) {
     FK_MARK_SUPER

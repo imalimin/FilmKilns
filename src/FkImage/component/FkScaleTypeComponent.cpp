@@ -5,7 +5,7 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "FkScaleTypeComponent.h"
+#include "../include/FkScaleTypeComponent.h"
 
 FkScaleTypeComponent::FkScaleTypeComponent()
         : FkGraphicComponent(), value(kScaleType::CENTER_MATRIX) {

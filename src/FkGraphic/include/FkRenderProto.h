@@ -11,7 +11,6 @@
 #include "FkProtocol.h"
 #include "FkEnvEntity.h"
 #include "FkMaterialEntity.h"
-#include "FkTransEntity.h"
 #include "FkDeviceEntity.h"
 
 FK_CLASS FkRenderProto FK_EXTEND FkProtocol {

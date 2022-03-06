@@ -13,7 +13,6 @@
 #include "FkColor.h"
 #include "FkMaterialEntity.h"
 #include "FkDeviceEntity.h"
-#include "FkTransEntity.h"
 #include "FkGraphicWindow.h"
 #include "FkBuffer.h"
 
