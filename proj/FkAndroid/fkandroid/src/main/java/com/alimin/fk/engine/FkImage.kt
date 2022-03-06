@@ -87,6 +87,13 @@ class FkImage() : FkEngine() {
         return 0
     }
 
+    fun setCanvasSize(width: Int, height: Int): Int {
+        if (!isNull()) {
+            return nativeSetCanvasSize(getHandle(), width, height)
+        }
+        return -1
+    }
+
     /**
      * @param layer Layer ID, ID 0 is Canvas.
      * @param dx Delta x position of view
@@ -143,6 +150,7 @@ class FkImage() : FkEngine() {
         blue: Int,
         alpha: Int
     ): Int
+    private external fun nativeSetCanvasSize(handle: Long, width: Int, height: Int): Int
 
     private external fun nativeNotifyRender(handle: Long): Int
     private external fun nativePostTranslate(handle: Long, layer: Int, dx: Int, dy: Int): Int

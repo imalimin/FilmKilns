@@ -59,6 +59,7 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback, FkActSurfaceView.O
         engine.start()
         engine.attachToSurface(holder.surface)
         layer = engine.newLayerWithFile("/sdcard/000000.jpg")
+//        engine.setCanvasSize(512, 512)
 //        layer = engine.newLayerWithColor(512,512, 0,255,255, 255)
 //        Log.i("FilmKilns", "newLayer: $layer")
 //        engine.drawPoint(0, 0xff0000, 300, 300)

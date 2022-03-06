@@ -96,6 +96,12 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNotifyRender
     return engine->notifyRender();
 }
 
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSetCanvasSize
+        (JNIEnv *env, jobject that, jlong handle, jint width, jint height) {
+    auto *engine = castHandle(handle);
+    return engine->setCanvasSize(FkSize(width, height));
+}
+
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostTranslate
         (JNIEnv *env, jobject that, jlong handle, jint layer, jint dx, jint dy) {
     auto *engine = castHandle(handle);

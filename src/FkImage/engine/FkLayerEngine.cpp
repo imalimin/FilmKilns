@@ -181,7 +181,8 @@ FkResult FkLayerEngine::_setCanvasSize(std::shared_ptr<FkMessage> msg) {
 
 FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size, bool isInitialize) {
     auto queryProto = std::make_shared<FkQuerySizeProto>();
-    FkAssert(FK_OK == client->quickSend(queryProto, molecule), FK_FAIL);
+    auto ret = client->with(molecule)->send(queryProto);
+    FkAssert(FK_OK == ret, FK_FAIL);
     if (isInitialize && !queryProto->value.isZero()) {
         return FK_FAIL;
     }
@@ -209,6 +210,17 @@ FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
     return sendMessage(msg);
 }
 
+FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {
+    auto measure = std::make_shared<FkMeasureTransProto>();
+    measure->layerId = msg->arg1;
+    measure->value = *std::dynamic_pointer_cast<FkIntVec2>(msg->sp);
+    FkAssert(FK_OK == client->quickSend(measure, molecule), FK_FAIL);
+    auto proto = std::make_shared<FkLayerPostTransProto>();
+    proto->layer = measure->layerId;
+    proto->value = measure->value;
+    return client->quickSend(proto, molecule);
+}
+
 FkResult FkLayerEngine::postScale(FkID layer, float dx, float dy) {
     auto msg = FkMessage::obtain(FK_MSG_POST_SCALE);
     msg->arg1 = layer;
@@ -216,12 +228,26 @@ FkResult FkLayerEngine::postScale(FkID layer, float dx, float dy) {
     return sendMessage(msg);
 }
 
+FkResult FkLayerEngine::_postScale(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkLayerPostScaleProto>();
+    proto->layer = msg->arg1;
+    proto->value = *Fk_POINTER_CAST(FkFloatVec3, msg->sp);
+    return client->quickSend(proto, molecule);
+}
+
 FkResult FkLayerEngine::postRotation(FkID layer, FkRational &rational) {
     auto msg = FkMessage::obtain(FK_MSG_POST_ROTATION);
     msg->arg1 = layer;
     msg->sp = std::make_shared<FkRational>(rational);
-//    msg->flags = FkMessage::FLAG_UNIQUE;
+    msg->flags = FkMessage::FLAG_UNIQUE;
     return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_postRotation(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkLayerPostRotateProto>();
+    proto->layer = msg->arg1;
+    proto->value = *Fk_POINTER_CAST(FkRational, msg->sp);
+    return client->quickSend(proto, molecule);
 }
 
 FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t y) {
@@ -233,31 +259,6 @@ FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t 
     auto msg = FkMessage::obtain(FK_MSG_DRAW_POINT);
     msg->sp = comp;
     return sendMessage(msg);
-}
-
-FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {
-    auto measure = std::make_shared<FkMeasureTransProto>();
-    measure->layerId = msg->arg1;
-    measure->value = *Fk_POINTER_CAST(FkIntVec2, msg->sp);
-    FkAssert(FK_OK == client->quickSend(measure, molecule), FK_FAIL);
-    auto proto = std::make_shared<FkLayerPostTransProto>();
-    proto->layer = measure->layerId;
-    proto->value = measure->value;
-    return client->quickSend(proto, molecule);
-}
-
-FkResult FkLayerEngine::_postScale(std::shared_ptr<FkMessage> msg) {
-    auto proto = std::make_shared<FkLayerPostScaleProto>();
-    proto->layer = msg->arg1;
-    proto->value = *Fk_POINTER_CAST(FkFloatVec3, msg->sp);
-    return client->quickSend(proto, molecule);
-}
-
-FkResult FkLayerEngine::_postRotation(std::shared_ptr<FkMessage> msg) {
-    auto proto = std::make_shared<FkLayerPostRotateProto>();
-    proto->layer = msg->arg1;
-    proto->value = *Fk_POINTER_CAST(FkRational, msg->sp);
-    return client->quickSend(proto, molecule);
 }
 
 FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {

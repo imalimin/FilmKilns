@@ -22,6 +22,7 @@
 #include "FkDrawPointProto.h"
 #include "FkGraphicMVPQuark.h"
 #include "FkSetSurfacePrt.h"
+#include "FkMeasureTransProto.h"
 
 FkGraphicModelAtom::FkGraphicModelAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -42,7 +43,7 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicModelAtom::dispatchNext);
-//    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicModelAtom::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkMeasureTransProto, FkGraphicModelAtom);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicModelAtom::dispatchNext);
     FK_PORT_DELIVERY(desc, FkSetSurfacePrt, FkGraphicModelAtom);
 }

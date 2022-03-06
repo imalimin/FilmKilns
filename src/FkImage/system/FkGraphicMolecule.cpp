@@ -51,7 +51,7 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicMolecule::dispatchNext);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicMolecule::dispatchNext);
-    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicMolecule::dispatchNext);
+    FK_PORT_DELIVERY(desc, FkMeasureTransProto, FkGraphicMolecule);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicMolecule::dispatchNext);
 }
 
@@ -59,7 +59,6 @@ void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkGraphicModelAtom>()
             ->next<FkGraphicSourceAtom>()
             ->next<FkGraphicRenderAtom>();
-//            ->next<FkGraphicScreenAtom>();
 }
 
 FkResult FkGraphicMolecule::onCreate() {

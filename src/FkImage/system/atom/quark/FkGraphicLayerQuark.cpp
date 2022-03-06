@@ -144,7 +144,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
         layer->addComponent(colorComp);
     } else {
         colorComp = std::make_shared<FkColorComponent>();
-        colorComp->color = FkColor::white();
+        colorComp->color = FkColor::black();
     }
     auto sizeComp = proto->layer->findComponent<FkSizeComponent>();
     if (nullptr != sizeComp) {
@@ -218,7 +218,7 @@ FkResult FkGraphicLayerQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkLayerPostRotateProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerPostRotateProto, p);
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
