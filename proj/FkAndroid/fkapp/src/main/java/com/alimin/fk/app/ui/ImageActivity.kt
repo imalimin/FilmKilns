@@ -15,7 +15,12 @@ import kotlinx.android.synthetic.main.activity_image.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
-class ImageActivity : BaseActivity(), SurfaceHolder.Callback, FkActSurfaceView.OnScrollListener, FkActSurfaceView.OnRotateListener, FkActSurfaceView.OnScaleListener {
+class ImageActivity : BaseActivity(),
+    SurfaceHolder.Callback,
+    FkActSurfaceView.OnScrollListener,
+    FkActSurfaceView.OnRotateListener,
+    FkActSurfaceView.OnScaleListener,
+    FkActSurfaceView.OnActionListener {
     override val layoutResID: Int = R.layout.activity_image
     private var surfaceView: FkActSurfaceView? = null
     private var engine: FkImage = FkImage()
@@ -33,6 +38,7 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback, FkActSurfaceView.O
             surfaceView?.setOnScrollListener(this)
             surfaceView?.setOnScaleListener(this)
             surfaceView?.setOnRotateListener(this)
+            surfaceView?.setOnActionListener(this)
             val lp = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             surfaceHolder.addView(surfaceView, lp)
         } else {
@@ -81,16 +87,17 @@ class ImageActivity : BaseActivity(), SurfaceHolder.Callback, FkActSurfaceView.O
 
     override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float, status: Int) {
         engine.postTranslate(layer, (dx * v.measuredWidth / 2).toInt(), (-dy * v.measuredHeight / 2).toInt())
-        engine.notifyRender()
     }
 
     override fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF) {
         engine.postRotation(layer,  -dr.num, dr.den)
-        engine.notifyRender()
     }
 
     override fun onScale(v: SurfaceView, ds: FkRational, anchor: PointF) {
         engine.postScale(layer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
+    }
+
+    override fun onRender(v: SurfaceView) {
         engine.notifyRender()
     }
 }

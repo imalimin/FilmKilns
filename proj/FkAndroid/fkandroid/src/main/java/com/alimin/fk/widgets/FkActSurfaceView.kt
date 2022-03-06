@@ -22,6 +22,7 @@ class FkActSurfaceView : SurfaceView {
     private var onClickListener: OnClickListener? = null
     private var onScaleListener: OnScaleListener? = null
     private var onRotateListener: OnRotateListener? = null
+    private var onActionListener: OnActionListener? = null
 
     private val mCurrentPosition = PointF(0f, 0f)
     private var minFlingVelocity = 0
@@ -60,6 +61,20 @@ class FkActSurfaceView : SurfaceView {
         minFlingVelocity = ViewConfiguration.get(context).scaledMinimumFlingVelocity
     }
 
+    private var lastRenderTime = 0L
+    private fun renderDetect() {
+        val time = System.currentTimeMillis()
+        val cost = time - lastRenderTime
+        if (cost > 16) {
+            renderDetectForce()
+            lastRenderTime = time
+        }
+    }
+
+    private fun renderDetectForce() {
+        onActionListener?.onRender(this)
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
         mScaleDetector.onTouchEvent(event)
@@ -77,6 +92,7 @@ class FkActSurfaceView : SurfaceView {
             MotionEvent.ACTION_POINTER_UP -> {
                 isDoublePointer = false
                 action = ACTION.IDL
+                renderDetectForce()
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 isDoublePointer = false
@@ -89,6 +105,7 @@ class FkActSurfaceView : SurfaceView {
                     this@FkActSurfaceView, xy.x, xy.y,
                     0f, 0f, 0
                 )
+                renderDetectForce()
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isDoublePointer) {
@@ -111,6 +128,7 @@ class FkActSurfaceView : SurfaceView {
                         FkRational((delta * PRECISIONS / Math.PI).toInt(), PRECISIONS),
                         anchor
                     )
+                    renderDetect()
                     previousRotate = rotate
 //                    }
                 }
@@ -175,6 +193,10 @@ class FkActSurfaceView : SurfaceView {
         onRotateListener = listener
     }
 
+    fun setOnActionListener(listener: OnActionListener) {
+        onActionListener = listener
+    }
+
     interface OnScrollListener {
         /**
          * @param status 0:IDL,1:SCROLL
@@ -196,6 +218,10 @@ class FkActSurfaceView : SurfaceView {
 
     interface OnRotateListener {
         fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF)
+    }
+
+    interface OnActionListener {
+        fun onRender(v: SurfaceView)
     }
 
     /**
@@ -261,6 +287,7 @@ class FkActSurfaceView : SurfaceView {
                 this@FkActSurfaceView, xy.x, xy.y,
                 -distanceX / width.toFloat() * 2f, distanceY / height.toFloat() * 2f, 1
             )
+            renderDetect()
             return true
         }
     }
@@ -292,6 +319,7 @@ class FkActSurfaceView : SurfaceView {
             )
             onScaleListener?.onScale(this@FkActSurfaceView, FkRational(num, den), anchor)
             previousScaleFactor = detector.scaleFactor
+            renderDetect()
             return super.onScale(detector)
         }
     }
