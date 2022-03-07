@@ -13,6 +13,7 @@
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
 #include "FkGraphicNewLayerPrt.h"
+#include "FkRenderRequestPrt.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkGraphicLayerQuark() {
     FK_MARK_SUPER
@@ -30,6 +31,7 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicCanvasQuark::_onPostRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicCanvasQuark::_onMeasureTrans);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
 
 }
 
@@ -48,6 +50,15 @@ FkResult FkGraphicCanvasQuark::onStart() {
 
 FkResult FkGraphicCanvasQuark::onStop() {
     return FkGraphicLayerQuark::onStop();
+}
+
+FkResult FkGraphicCanvasQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
+    auto sizeCompo = _getCanvas()->findComponent<FkSizeCompo>();
+    if (sizeCompo == nullptr) {
+        FkLogE(FK_DEF_TAG, "Empty canvas.");
+        return FK_EMPTY_CANVAS;
+    }
+    return FkGraphicLayerQuark::_onRenderRequest(p);
 }
 
 FkResult FkGraphicCanvasQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {

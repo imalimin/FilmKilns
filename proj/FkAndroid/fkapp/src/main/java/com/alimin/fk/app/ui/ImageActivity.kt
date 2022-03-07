@@ -1,11 +1,18 @@
 package com.alimin.fk.app.ui
 
 import android.Manifest
+import android.content.ContentUris
+import android.content.Intent
+import android.database.Cursor
 import android.graphics.PointF
+import android.net.Uri
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import com.alimin.fk.app.R
 import com.alimin.fk.engine.FkImage
 import com.alimin.fk.entity.FkRational
@@ -14,6 +21,7 @@ import com.lmy.common.ui.BaseActivity
 import kotlinx.android.synthetic.main.activity_image.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
+
 
 class ImageActivity : BaseActivity(),
     SurfaceHolder.Callback,
@@ -41,11 +49,59 @@ class ImageActivity : BaseActivity(),
             surfaceView?.setOnActionListener(this)
             val lp = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             surfaceHolder.addView(surfaceView, lp)
+            pickPicture()
         } else {
             EasyPermissions.requestPermissions(
                 this, "Request write sdcard permission", REQ_PERMISSION, *perms
             )
         }
+    }
+
+    private fun pickPicture() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQ_PICK_PICTURE)
+    }
+
+    private fun pickPictureAction(uri: Uri) {
+        var imagePath: String? = null
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            val docId = DocumentsContract.getDocumentId(uri)
+            if ("com.android.providers.media.documents" == uri.authority) {
+                val id = docId.split(":").toTypedArray()[1]
+                val selection = MediaStore.Images.Media._ID + "=" + id
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
+            } else if ("com.android.providers.downloads.documents" == uri.getAuthority()) {
+                val contentUri: Uri = ContentUris.withAppendedId(
+                    Uri.parse("content://downloads/public_downloads"),
+                    java.lang.Long.valueOf(docId)
+                )
+                imagePath = getImagePath(contentUri, null)
+            }
+        } else if ("content".equals(uri.scheme, ignoreCase = true)) {
+            imagePath = getImagePath(uri, null)
+        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
+            imagePath = uri.path
+        }
+
+        if (imagePath?.isNotEmpty() == true) {
+            engine.start()
+            layer = engine.newLayerWithFile(imagePath)
+            engine.notifyRender()
+        }else {
+            Toast.makeText(this, "File Not Found!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun getImagePath(uri: Uri, selection: String?): String? {
+        var path: String? = null
+        val cursor: Cursor? = contentResolver.query(uri, null, selection, null, null)
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
+            }
+            cursor.close()
+        }
+        return path
     }
 
     override fun onDestroy() {
@@ -64,12 +120,17 @@ class ImageActivity : BaseActivity(),
     override fun surfaceCreated(holder: SurfaceHolder) {
         engine.start()
         engine.attachToSurface(holder.surface)
-        layer = engine.newLayerWithFile("/sdcard/000000.jpg")
 //        engine.setCanvasSize(512, 512)
 //        layer = engine.newLayerWithColor(512,512, 0,255,255, 255)
 //        Log.i("FilmKilns", "newLayer: $layer")
 //        engine.drawPoint(0, 0xff0000, 300, 300)
-        engine.notifyRender()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQ_PICK_PICTURE -> if (data != null) pickPictureAction(data.data!!)
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -83,6 +144,7 @@ class ImageActivity : BaseActivity(),
 
     companion object {
         private const val REQ_PERMISSION = 123
+        private const val REQ_PICK_PICTURE = 124
     }
 
     override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float, status: Int) {

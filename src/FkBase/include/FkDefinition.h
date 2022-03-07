@@ -69,6 +69,8 @@ typedef int32_t FkResult;
 #define FK_PORT_NOT_FOUND -9
 #define FK_SOURCE_NOT_FOUND -10
 #define FK_NOT_SUPPORT -11
+//Image
+#define FK_EMPTY_CANVAS -100
 
 // +------ ID ------+
 typedef int32_t FkID;

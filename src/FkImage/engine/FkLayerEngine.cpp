@@ -115,10 +115,13 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
 FkID FkLayerEngine::newLayer() {
     auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
     msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
-    sendMessage(msg);
-    auto result = std::static_pointer_cast<FkGraphicNewLayerPrt>(msg->promise->get_future().get());
-    if (result->layer) {
-        return result->layer->id;
+    auto ret = sendMessage(msg);
+    if (FK_OK == ret) {
+        auto result = std::static_pointer_cast<FkGraphicNewLayerPrt>(
+                msg->promise->get_future().get());
+        if (result->layer) {
+            return result->layer->id;
+        }
     }
     return FK_ID_NONE;
 }
