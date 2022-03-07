@@ -43,7 +43,7 @@ FkResult FkRenderTexQuark::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    allocator = std::make_shared<FkGraphicAllocator>();
+    allocator = std::make_shared<FkGraphicAllocator>(1080 * 1920 * 4 * 10);
     return FkQuark::onStart();
 }
 

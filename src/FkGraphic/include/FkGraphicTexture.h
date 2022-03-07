@@ -72,7 +72,7 @@ public:
 
 FK_CLASS FkGraphicAllocator FK_EXTEND FkSourceAllocator<FkGraphicTexture, FkTexDescription> {
 public:
-    FkGraphicAllocator();
+    FkGraphicAllocator(int capacity);
 
     FkGraphicAllocator(const FkGraphicTexture &o) = delete;
 

@@ -91,7 +91,7 @@ FkMessageAllocator *FkMessageAllocator::getInstance() {
     return instance;
 }
 
-FkMessageAllocator::FkMessageAllocator() : FkSourceAllocator<FkMessage, int32_t>() {
+FkMessageAllocator::FkMessageAllocator() : FkSourceAllocator<FkMessage, int32_t>(50) {
     FK_MARK_SUPER
 }
 

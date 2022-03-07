@@ -160,7 +160,7 @@ FkResult FkGraphicTexture::update(FkColor::kFormat fmt, int32_t width, int32_t h
     return FK_OK;
 }
 
-FkGraphicAllocator::FkGraphicAllocator() : FkSourceAllocator<FkGraphicTexture, FkTexDescription>() {
+FkGraphicAllocator::FkGraphicAllocator(int capacity) : FkSourceAllocator<FkGraphicTexture, FkTexDescription>(capacity) {
     FK_MARK_SUPER
 }
 

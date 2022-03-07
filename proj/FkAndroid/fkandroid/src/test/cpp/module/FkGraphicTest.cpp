@@ -6,38 +6,26 @@
 */
 
 #include "gtest/gtest.h"
-#include "FkGraphicContext.h"
+#include "FkContextCompo.h"
 #include "FkGraphicTexture.h"
 #include "GLES2/gl2.h"
 #include "FkGraphicLayer.h"
-#include "FkTexIDComponent.h"
 #include "FkScaleComponent.h"
 #include "FkGraphicFrameObject.h"
 #include "FkGraphicProgram.h"
 
-TEST(FkGraphicEntityTest, Context) {
-    auto layer = std::make_shared<FkGraphicLayer>();
-    auto tex = std::make_shared<FkTexIDComponent>();
-    layer->addComponent(tex);
-
-    std::vector<std::shared_ptr<FkComponent>> vec;
-    EXPECT_EQ(layer->findComponents(vec, FkClassType::type<FkTexIDComponent >()), FK_OK);
-    vec.clear();
-    EXPECT_NE(layer->findComponents(vec, FkClassType::type<FkScaleComponent>()), FK_OK);
-}
-
 TEST(FkGraphicTest, Context) {
-    auto context = std::make_shared<FkGraphicContext>("Test");
+    auto context = std::make_shared<FkContextCompo>("Test");
     EXPECT_EQ(context->create(), FK_OK);
     context->destroy();
 }
 
 TEST(FkGraphicTest, Alloc) {
-    auto context = std::make_shared<FkGraphicContext>("Test");
+    auto context = std::make_shared<FkContextCompo>("Test");
     EXPECT_EQ(context->create(), FK_OK);
     EXPECT_EQ(context->makeCurrent(), FK_OK);
 
-    auto allocator = std::make_shared<FkGraphicAllocator>();
+    auto allocator = std::make_shared<FkGraphicAllocator>(1080 * 1920 * 4 * 10);
     {
         FkTexDescription desc(GL_TEXTURE_2D);
         desc.fmt = FkColor::kFormat::RGBA;
@@ -57,11 +45,11 @@ TEST(FkGraphicTest, Alloc) {
 }
 
 TEST(FkGraphicFBOTest, Alloc) {
-    auto context = std::make_shared<FkGraphicContext>("Test");
+    auto context = std::make_shared<FkContextCompo>("Test");
     EXPECT_EQ(context->create(), FK_OK);
     EXPECT_EQ(context->makeCurrent(), FK_OK);
 
-    auto allocator = std::make_shared<FkGraphicFBOAllocator>();
+    auto allocator = std::make_shared<FkGraphicFBOAllocator>(10);
     {
         int32_t desc = 0;
         auto fbo = allocator->alloc(desc);
@@ -79,11 +67,11 @@ TEST(FkGraphicFBOTest, Alloc) {
 }
 
 TEST(FkGraphicProgramTest, Alloc) {
-    auto context = std::make_shared<FkGraphicContext>("Test");
+    auto context = std::make_shared<FkContextCompo>("Test");
     EXPECT_EQ(context->create(), FK_OK);
     EXPECT_EQ(context->makeCurrent(), FK_OK);
 
-    auto allocator = std::make_shared<FkGraphicProgramAllocator>();
+    auto allocator = std::make_shared<FkGraphicProgramAllocator>(10);
     {
         FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
         auto program = allocator->alloc(desc);

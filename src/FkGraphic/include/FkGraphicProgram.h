@@ -94,7 +94,7 @@ FK_CLASS FkGraphicProgramAllocator FK_EXTEND FkSourceAllocator<
         FkGraphicProgram,
         FkProgramDescription> {
 public:
-    FkGraphicProgramAllocator();
+    FkGraphicProgramAllocator(int capacity);
 
     FkGraphicProgramAllocator(const FkProgramDescription &o) = delete;
 

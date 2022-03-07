@@ -40,7 +40,7 @@ private:
 
 FK_CLASS FkGraphicFBOAllocator FK_EXTEND FkSourceAllocator<FkGraphicFrameObject, int32_t> {
 public:
-    FkGraphicFBOAllocator();
+    FkGraphicFBOAllocator(int capacity);
 
     FkGraphicFBOAllocator(const FkGraphicTexture &o) = delete;
 

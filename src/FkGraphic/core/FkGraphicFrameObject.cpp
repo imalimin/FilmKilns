@@ -60,8 +60,8 @@ FkResult FkGraphicFrameObject::detach(uint32_t target) {
     return GL_NO_ERROR != glGetError();
 }
 
-FkGraphicFBOAllocator::FkGraphicFBOAllocator()
-        : FkSourceAllocator<FkGraphicFrameObject, int32_t>() {
+FkGraphicFBOAllocator::FkGraphicFBOAllocator(int capacity)
+        : FkSourceAllocator<FkGraphicFrameObject, int32_t>(capacity) {
 
 }
 

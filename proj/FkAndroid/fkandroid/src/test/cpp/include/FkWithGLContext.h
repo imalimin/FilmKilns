@@ -6,14 +6,14 @@
 #define FKANDROID_FKWITHGLCONTEXT_H
 
 #include "gtest/gtest.h"
-#include "FkGraphicContext.h"
+#include "FkContextCompo.h"
 
 class FkWithGLContext : public testing::Test {
     void SetUp() override;
 
     void TearDown() override;
 
-    std::shared_ptr<FkGraphicContext> context;
+    std::shared_ptr<FkContextCompo> context;
 };
 
 #endif //FKANDROID_FKWITHGLCONTEXT_H

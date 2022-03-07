@@ -37,7 +37,7 @@ FkResult FkRenderProgramQuark::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    allocator = std::make_shared<FkGraphicProgramAllocator>();
+    allocator = std::make_shared<FkGraphicProgramAllocator>(10);
     return FkQuark::onStart();
 }
 

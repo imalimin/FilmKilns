@@ -80,8 +80,8 @@ FkResult FkVertexObject::set(float *data, size_t size, int32_t offset) {
     return FK_OK;
 }
 
-FkVertexObjectAllocator::FkVertexObjectAllocator()
-        : FkSourceAllocator<FkVertexObject, FkVBODescription>() {
+FkVertexObjectAllocator::FkVertexObjectAllocator(int capacity)
+        : FkSourceAllocator<FkVertexObject, FkVBODescription>(capacity) {
 
 }
 

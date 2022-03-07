@@ -40,7 +40,7 @@ FkResult FkRenderVboQuark::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    allocator = std::make_shared<FkVertexObjectAllocator>();
+    allocator = std::make_shared<FkVertexObjectAllocator>(4 * 2 * sizeof(float) * 10);
     return FkQuark::onStart();
 }
 

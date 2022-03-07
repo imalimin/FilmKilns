@@ -176,8 +176,8 @@ void FkGraphicProgram::clear() {
 ///|               FkGraphicProgramAllocator                   |
 ///+-----------------------------------------------------------+
 
-FkGraphicProgramAllocator::FkGraphicProgramAllocator()
-        : FkSourceAllocator<FkGraphicProgram, FkProgramDescription>() {
+FkGraphicProgramAllocator::FkGraphicProgramAllocator(int capacity)
+        : FkSourceAllocator<FkGraphicProgram, FkProgramDescription>(capacity) {
     FK_MARK_SUPER
 }
 

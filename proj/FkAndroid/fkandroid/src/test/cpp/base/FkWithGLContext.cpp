@@ -5,9 +5,10 @@
 #include "FkWithGLContext.h"
 
 void FkWithGLContext::SetUp() {
-    context = std::make_shared<FkGraphicContext>("Test");
+    context = std::make_shared<FkContextCompo>("Test");
     EXPECT_EQ(context->create(), FK_OK);
     EXPECT_EQ(context->makeCurrent(), FK_OK);
+    EXPECT_NE(eglGetCurrentContext(), EGL_NO_CONTEXT);
 }
 
 void FkWithGLContext::TearDown() {

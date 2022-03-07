@@ -38,7 +38,7 @@ FkResult FkRenderFboQuark::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    fboAllocator = std::make_shared<FkGraphicFBOAllocator>();
+    fboAllocator = std::make_shared<FkGraphicFBOAllocator>(10);
     return FkQuark::onStart();
 }
 

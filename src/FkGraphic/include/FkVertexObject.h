@@ -63,7 +63,7 @@ private:
 
 FK_CLASS FkVertexObjectAllocator FK_EXTEND FkSourceAllocator<FkVertexObject, FkVBODescription> {
 public:
-    FkVertexObjectAllocator();
+    FkVertexObjectAllocator(int capacity);
 
     FkVertexObjectAllocator(const FkVertexObjectAllocator &o) = delete;
 

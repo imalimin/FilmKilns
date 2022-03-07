@@ -6,7 +6,7 @@
 #include "FkVertexObject.h"
 
 TEST_F(FkWithGLContext, FkVertexObjectAllocOne) {
-    auto allocator = std::make_shared<FkVertexObjectAllocator>();
+    auto allocator = std::make_shared<FkVertexObjectAllocator>(320);
     FkVBODescription desc(sizeof(float) * 2 * 2);
     auto vbo0 = allocator->alloc(desc);
     EXPECT_NE(vbo0, nullptr);
@@ -14,7 +14,7 @@ TEST_F(FkWithGLContext, FkVertexObjectAllocOne) {
 }
 
 TEST_F(FkWithGLContext, FkVertexObjectAllocTwo) {
-    auto allocator = std::make_shared<FkVertexObjectAllocator>();
+    auto allocator = std::make_shared<FkVertexObjectAllocator>(320);
     FkVBODescription desc0(sizeof(float) * 2 * 2);
     auto vbo0 = allocator->alloc(desc0);
     EXPECT_NE(vbo0, nullptr);
@@ -27,7 +27,7 @@ TEST_F(FkWithGLContext, FkVertexObjectAllocTwo) {
 }
 
 TEST_F(FkWithGLContext, FkVertexObjectAllocTwoAndRecyle) {
-    auto allocator = std::make_shared<FkVertexObjectAllocator>();
+    auto allocator = std::make_shared<FkVertexObjectAllocator>(320);
     FkVBODescription desc0(sizeof(float) * 2 * 2);
     {
         auto vbo0 = allocator->alloc(desc0);
@@ -43,7 +43,7 @@ TEST_F(FkWithGLContext, FkVertexObjectAllocTwoAndRecyle) {
 }
 
 TEST_F(FkWithGLContext, FkVertexObjectAllocTwoAndRecyle1) {
-    auto allocator = std::make_shared<FkVertexObjectAllocator>();
+    auto allocator = std::make_shared<FkVertexObjectAllocator>(320);
     FkVBODescription desc0(sizeof(float) * 2 * 2);
     {
         auto vbo0 = allocator->alloc(desc0);
