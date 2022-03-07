@@ -85,7 +85,6 @@ public:
         ++current;
         o->id = current;
         usingMap.insert(std::make_pair(o->id, o.get()));
-        usingCapacity += o->size();
         return o;
     }
 
@@ -95,7 +94,6 @@ public:
             auto o = *itr;
             if (delegateEquals(desc, o)) {
                 sRecycler.erase(itr);
-                cacheCapacity -= o->size();
                 return o;
             }
             ++itr;
@@ -107,14 +105,16 @@ public:
 
     virtual bool delegateEquals(D &desc, T *) = 0;
 
-    /// Return used bytes.
+    /// Return using bytes.
     virtual size_t size() {
-        return usingCapacity;
+        std::lock_guard<std::recursive_mutex> guard(mtx);
+        return _calcUsingCapacity();
     }
 
     /// Return used and cache bytes.
     virtual size_t capacity() {
-        return cacheCapacity + size();
+        std::lock_guard<std::recursive_mutex> guard(mtx);
+        return _calcUsingCapacity() + _calcCacheCapacity();
     }
 
     virtual void clean() {
@@ -122,39 +122,57 @@ public:
     }
 
 protected:
-    void recycle(T *o) {
+    virtual void recycle(T *o) {
         std::lock_guard<std::recursive_mutex> guard(mtx);
         auto itr = usingMap.find(o->id);
         if (usingMap.end() != itr) {
             sRecycler.push_front(o);
-            cacheCapacity += o->size();
             usingMap.erase(itr);
-            usingCapacity -= o->size();
         }
         _dropCacheWhenBiggerThanCapacityLimit();
     }
 
+private:
     void _dropCacheWhenBiggerThanCapacityLimit() {
-        FkLogI(FK_DEF_TAG, "Drop cache begin: %d", capacity());
         auto itr = sRecycler.end();
         --itr;
-        while (capacity() > _capacity && itr != sRecycler.begin()) {
+        size_t size = _calcUsingCapacity() + _calcCacheCapacity();
+//        FkLogI(FK_DEF_TAG, "Drop cache begin: %d", size);
+        while (size > _capacity && itr != sRecycler.begin()) {
             auto o = *itr;
+            size -= o->size();
             o->destroy();
             delete o;
-            itr = sRecycler.erase(itr--);
-            cacheCapacity -= o->size();
+            sRecycler.erase(itr--);
         }
-        FkLogI(FK_DEF_TAG, "Drop cache finish: %d", capacity());
+//        FkLogI(FK_DEF_TAG, "Drop cache finish: %d", size);
+    }
+
+    size_t _calcUsingCapacity() {
+        size_t size = 0;
+        auto itr0 = usingMap.begin();
+        while (usingMap.end() != itr0) {
+            size += itr0->second->size();
+            ++itr0;
+        }
+        return size;
+    }
+
+    size_t _calcCacheCapacity() {
+        size_t size = 0;
+        auto itr1 = sRecycler.begin();
+        while (sRecycler.end() != itr1) {
+            size += (*itr1)->size();
+            ++itr1;
+        }
+        return size;
     }
 
 private:
     std::recursive_mutex mtx;
     FkID current = FK_ID_NONE;
     std::unordered_map<FkID, T *> usingMap;
-    int64_t usingCapacity = 0;
     std::list<T *> sRecycler;
-    int64_t cacheCapacity = 0;
     int _capacity = 0;
 };
 

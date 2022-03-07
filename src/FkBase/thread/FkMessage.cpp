@@ -61,6 +61,7 @@ FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp)
 FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp, int32_t flags)
         : FkSource(), what(what), arg1(0), arg2(0), arg3(""), sp(sp),
           flags(flags), promise(nullptr), target(nullptr) {
+    FK_MARK_SUPER
 }
 
 FkMessage::~FkMessage() {
@@ -110,4 +111,9 @@ FkMessage *FkMessageAllocator::delegateAlloc(int32_t &desc) {
 
 bool FkMessageAllocator::delegateEquals(int32_t &desc, FkMessage *value) {
     return true;
+}
+
+void FkMessageAllocator::recycle(FkMessage *o) {
+    FkSourceAllocator::recycle(o);
+//    FkLogI(TAG, "Drop cache finish: %d, %d", size(), capacity());
 }

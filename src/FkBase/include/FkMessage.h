@@ -84,6 +84,8 @@ public:
 
     virtual bool delegateEquals(int32_t &desc, FkMessage *value) override;
 
+    virtual void recycle(FkMessage *o) override;
+
 private:
     static FkMessageAllocator *instance;
 };
