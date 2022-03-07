@@ -31,12 +31,14 @@ FkResult FkSession::connectTo(const std::shared_ptr<FkQuark> quark) {
         return FK_INVALID_STATE;
     }
     if (nullptr == quark) {
+        FkLogE(FK_DEF_TAG, "Quark is null.");
         return FK_FAIL;
     }
     if (FK_OK == quark->accept(protoType)) {
         link.emplace_back(quark);
         return FK_OK;
     }
+    FkLogE(FK_DEF_TAG, "FkSession connect failed.");
     return FK_FAIL;
 }
 

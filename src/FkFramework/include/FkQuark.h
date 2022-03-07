@@ -58,7 +58,7 @@ private:
 
     FkResult accept(const size_t protoType);
 
-    FkResult _changeState(kState src, kState dst);
+    FkResult _changeState(uint32_t src, kState dst);
 
 private:
     std::shared_ptr<FkQuarkContext> context = nullptr;

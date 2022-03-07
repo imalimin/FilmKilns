@@ -64,8 +64,9 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(kState::IDL, kState::CREATED);
+    auto ret = _changeState((uint32_t) kState::IDL, kState::CREATED);
     if (FK_OK != ret) {
+        FkLogE(FK_DEF_TAG, "Quark(%s) create failed with %d", getClassType().getName().c_str(), ret);
         return ret;
     }
     auto proto = std::dynamic_pointer_cast<FkOnCreatePrt>(p);
@@ -77,7 +78,7 @@ FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onDestroy(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(kState::STOPPED, kState::IDL);
+    auto ret = _changeState((uint32_t) kState::STOPPED, kState::IDL);
     if (FK_OK != ret) {
         return ret;
     }
@@ -85,7 +86,8 @@ FkResult FkQuark::_onDestroy(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onStart(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(kState::CREATED, kState::RUNNING);
+    auto from = (uint32_t) kState::CREATED | (uint32_t) kState::STOPPED;
+    auto ret = _changeState(from, kState::RUNNING);
     if (FK_OK != ret) {
         return ret;
     }
@@ -93,7 +95,7 @@ FkResult FkQuark::_onStart(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkQuark::_onStop(std::shared_ptr<FkProtocol> p) {
-    auto ret = _changeState(kState::RUNNING, kState::STOPPED);
+    auto ret = _changeState((uint32_t) kState::RUNNING, kState::STOPPED);
     if (FK_OK != ret) {
         return ret;
     }
@@ -114,9 +116,9 @@ FkResult FkQuark::accept(const size_t protoType) {
     return FK_FAIL;
 }
 
-FkResult FkQuark::_changeState(kState src, kState dst) {
+FkResult FkQuark::_changeState(uint32_t src, kState dst) {
     std::lock_guard<std::mutex> guard(mtx);
-    if (src != state) {
+    if (src & ((uint32_t) dst)) {
         FkLogW(FK_DEF_TAG, "Invalid state");
         return FK_INVALID_STATE;
     }

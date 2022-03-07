@@ -57,11 +57,13 @@ public:
         for (auto it = chain.begin(); it != chain.end(); ++it) {
             auto ret = session->connectTo(*it);
             if (FK_OK != ret) {
+                FkLogW(FK_DEF_TAG, "quickSend session connect failed with ret=%d", ret);
                 return ret;
             }
         }
         auto ret = session->open();
         if (FK_OK != ret) {
+            FkLogW(FK_DEF_TAG, "quickSend session open failed with ret=%d", ret);
             return ret;
         }
         ret = this->send(session, proto);

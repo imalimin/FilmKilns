@@ -79,7 +79,8 @@ FkResult FkEngine::destroy() {
 }
 
 FkResult FkEngine::start() {
-    auto ret = _changeState(outsideState, (uint32_t) kState::CREATED, kState::RUNNING);
+    auto from = (uint32_t) kState::CREATED | (uint32_t) kState::STOPPED;
+    auto ret = _changeState(outsideState, from, kState::RUNNING);
     if (FK_OK != ret) {
         return ret;
     }
@@ -147,7 +148,8 @@ FkResult FkEngine::_onDestroy(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkEngine::_onStart(std::shared_ptr<FkMessage> msg) {
-    auto ret = _changeState(internalState, (uint32_t) kState::CREATED, kState::STARTING);
+    auto from = (uint32_t) kState::CREATED | (uint32_t) kState::STOPPED;
+    auto ret = _changeState(internalState, from, kState::STARTING);
     if (FK_OK != ret) {
         return ret;
     }
