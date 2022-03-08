@@ -80,7 +80,7 @@ typedef int32_t FkID;
 // +------ KID ------+
 #define FK_KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
 
-FK_ENUM kState : int {
+FK_ENUM kState : uint32_t {
     IDL = 1,
     CREATING = 1 << 1,
     CREATED = 1 << 2,

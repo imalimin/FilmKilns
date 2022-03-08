@@ -118,12 +118,12 @@ FkResult FkQuark::accept(const size_t protoType) {
 
 FkResult FkQuark::_changeState(uint32_t src, kState dst) {
     std::lock_guard<std::mutex> guard(mtx);
-    if (src & ((uint32_t) dst)) {
-        FkLogW(FK_DEF_TAG, "Invalid state");
-        return FK_INVALID_STATE;
+    if (src & ((uint32_t) this->state)) {
+        this->state = dst;
+        return FK_OK;
     }
-    this->state = dst;
-    return FK_OK;
+    FkLogW(FK_DEF_TAG, "Invalid state");
+    return FK_INVALID_STATE;
 }
 
 FkResult FkQuark::queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols) {
