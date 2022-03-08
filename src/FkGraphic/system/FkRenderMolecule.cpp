@@ -14,6 +14,7 @@
 #include "FkRenderDefine.h"
 #include "FkWindowProto.h"
 #include "FkNewBmpTexProto.h"
+#include "FkRmMaterialProto.h"
 
 FkRenderMolecule::FkRenderMolecule() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -29,6 +30,7 @@ void FkRenderMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkNewTexProto, FkRenderMolecule);
     FK_PORT_DELIVERY(desc, FkNewBmpTexProto, FkRenderMolecule);
     FK_PORT_DELIVERY(desc, FkWindowProto, FkRenderMolecule);
+    FK_PORT_DELIVERY(desc, FkRmMaterialProto, FkRenderMolecule);
 }
 
 void FkRenderMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {

@@ -16,6 +16,7 @@
 #include "FkColorCompo.h"
 #include "FkNewBmpTexProto.h"
 #include "FkBufCompo.h"
+#include "FkRmMaterialProto.h"
 
 FkRenderTexQuark::FkRenderTexQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -28,6 +29,7 @@ void FkRenderTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkNewTexProto, FkRenderTexQuark::_onAllocTex);
     FK_PORT_DESC_QUICK_ADD(desc, FkNewBmpTexProto, FkRenderTexQuark::_onAllocTexWithBmp);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderTexQuark::_onRender);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRmMaterialProto, FkRenderTexQuark::_onRemoveTex);
 }
 
 FkResult FkRenderTexQuark::onCreate() {
@@ -140,4 +142,16 @@ FkResult FkRenderTexQuark::_drawColor(std::shared_ptr<FkGraphicTexture> &tex,
         return FK_OK;
     }
     return FK_FAIL;
+}
+
+FkResult FkRenderTexQuark::_onRemoveTex(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRmMaterialProto, p);
+    if (proto->material == nullptr) {
+        return FK_NPE;
+    }
+    auto itr = sMap.find(proto->material->id());
+    if (itr != sMap.end()) {
+        sMap.erase(itr);
+    }
+    return FK_OK;
 }

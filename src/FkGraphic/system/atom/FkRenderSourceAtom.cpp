@@ -13,6 +13,7 @@
 #include "FkRenderFboQuark.h"
 #include "FkRenderVboQuark.h"
 #include "FkRenderProgramQuark.h"
+#include "FkRmMaterialProto.h"
 
 FkRenderSourceAtom::FkRenderSourceAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -26,6 +27,7 @@ void FkRenderSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkRenderProto, FkRenderSourceAtom);
     FK_PORT_DELIVERY(desc, FkNewTexProto, FkRenderSourceAtom);
     FK_PORT_DELIVERY(desc, FkNewBmpTexProto, FkRenderSourceAtom);
+    FK_PORT_DELIVERY(desc, FkRmMaterialProto, FkRenderSourceAtom);
 }
 
 void FkRenderSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

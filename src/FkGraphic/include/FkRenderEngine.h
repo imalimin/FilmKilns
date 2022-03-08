@@ -26,7 +26,9 @@ public:
 
     FkResult renderDevice(std::shared_ptr<FkMaterialEntity> &materials, std::shared_ptr<FkDeviceEntity> &device);
 
-    std::shared_ptr<FkMaterialCompo> newMaterial();
+    std::shared_ptr<FkMaterialCompo> addMaterial();
+
+    FkResult removeMaterial(std::shared_ptr<FkMaterialCompo> &material);
 
     FkResult updateMaterial(std::shared_ptr<FkMaterialCompo> &material, FkSize size, FkColor color);
 
@@ -45,7 +47,9 @@ protected:
 
     FkResult _onRender(std::shared_ptr<FkMessage> msg);
 
-    FkResult _onNewMaterial(std::shared_ptr<FkMessage> msg);
+    FkResult _onAddMaterial(std::shared_ptr<FkMessage> msg);
+
+    FkResult _onRemoveMaterial(std::shared_ptr<FkMessage> msg);
 
     FkResult _onUpdateMaterial(std::shared_ptr<FkMessage> &msg);
 
@@ -55,7 +59,8 @@ protected:
 
 private:
     static const FkID FK_MSG_RENDER;
-    static const FkID FK_MSG_NEW_MATERIAL;
+    static const FkID FK_MSG_ADD_MATERIAL;
+    static const FkID FK_MSG_REMOVE_MATERIAL;
     static const FkID FK_MSG_UPDATE_MATERIAL;
     static const FkID FK_MSG_UPDATE_WINDOW;
     static const FkID FK_MSG_UPDATE_MATERIAL_WITH_BITMAP;

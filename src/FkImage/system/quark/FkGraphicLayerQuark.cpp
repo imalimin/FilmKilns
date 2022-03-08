@@ -117,7 +117,7 @@ std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::newLayerEntity() {
 
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
-    layer->material = renderEngine->newMaterial();
+    layer->material = renderEngine->addMaterial();
     layer->id = layer->material->id();
     return layer;
 }

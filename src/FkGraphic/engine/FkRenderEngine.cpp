@@ -15,20 +15,23 @@
 #include "FkWindowProto.h"
 #include "FkNewBmpTexProto.h"
 #include "FkBufCompo.h"
+#include "FkRmMaterialProto.h"
 
 const FkID FkRenderEngine::FK_MSG_RENDER = FK_KID('F', 'R', 'E', 0x01);
-const FkID FkRenderEngine::FK_MSG_NEW_MATERIAL = FK_KID('F', 'R', 'E', 0x02);
+const FkID FkRenderEngine::FK_MSG_ADD_MATERIAL = FK_KID('F', 'R', 'E', 0x02);
 const FkID FkRenderEngine::FK_MSG_UPDATE_MATERIAL = FK_KID('F', 'R', 'E', 0x03);
 const FkID FkRenderEngine::FK_MSG_UPDATE_WINDOW = FK_KID('F', 'R', 'E', 0x04);
 const FkID FkRenderEngine::FK_MSG_UPDATE_MATERIAL_WITH_BITMAP = FK_KID('F', 'R', 'E', 0x05);
+const FkID FkRenderEngine::FK_MSG_REMOVE_MATERIAL = FK_KID('F', 'R', 'E', 0x06);
 
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_RENDER, FkRenderEngine::_onRender);
-    FK_REG_MSG(FK_MSG_NEW_MATERIAL, FkRenderEngine::_onNewMaterial);
+    FK_REG_MSG(FK_MSG_ADD_MATERIAL, FkRenderEngine::_onAddMaterial);
     FK_REG_MSG(FK_MSG_UPDATE_MATERIAL, FkRenderEngine::_onUpdateMaterial);
     FK_REG_MSG(FK_MSG_UPDATE_MATERIAL_WITH_BITMAP, FkRenderEngine::_onUpdateMaterialWithBitmap);
     FK_REG_MSG(FK_MSG_UPDATE_WINDOW, FkRenderEngine::_onUpdateWindow);
+    FK_REG_MSG(FK_MSG_REMOVE_MATERIAL, FkRenderEngine::_onRemoveMaterial);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
 }
@@ -89,8 +92,8 @@ FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
     return ret;
 }
 
-std::shared_ptr<FkMaterialCompo> FkRenderEngine::newMaterial() {
-    auto msg = FkMessage::obtain(FK_MSG_NEW_MATERIAL);
+std::shared_ptr<FkMaterialCompo> FkRenderEngine::addMaterial() {
+    auto msg = FkMessage::obtain(FK_MSG_ADD_MATERIAL);
     msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
     auto ret = sendMessage(msg);
     std::shared_ptr<FkObject> result = nullptr;
@@ -103,12 +106,29 @@ std::shared_ptr<FkMaterialCompo> FkRenderEngine::newMaterial() {
     return std::make_shared<FkMaterialCompo>(FK_ID_NONE);
 }
 
-FkResult FkRenderEngine::_onNewMaterial(std::shared_ptr<FkMessage> msg) {
+FkResult FkRenderEngine::_onAddMaterial(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkGenIDProto>();
     auto ret = client->with(molecule)->send(proto);
     if (msg->promise != nullptr) {
         msg->promise->set_value(std::make_shared<FkInt>(proto->id));
     }
+    return ret;
+}
+
+FkResult FkRenderEngine::removeMaterial(std::shared_ptr<FkMaterialCompo> &material) {
+    if (material == nullptr) {
+        return FK_NPE;
+    }
+    auto msg = FkMessage::obtain(FK_MSG_REMOVE_MATERIAL);
+    msg->sp = material;
+    auto ret = sendMessage(msg);
+    return ret;
+}
+
+FkResult FkRenderEngine::_onRemoveMaterial(std::shared_ptr<FkMessage> msg) {
+    auto material = std::dynamic_pointer_cast<FkMaterialCompo>(msg->sp);
+    auto proto = std::make_shared<FkRmMaterialProto>(material);
+    auto ret = client->with(molecule)->send(proto);
     return ret;
 }
 

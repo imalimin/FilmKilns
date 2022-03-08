@@ -41,6 +41,8 @@ private:
 
     FkResult _onRender(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onRemoveTex(std::shared_ptr<FkProtocol> &p);
+
 private:
     std::shared_ptr<FkGraphicTexture> _findTex(FkID id);
 
