@@ -103,7 +103,7 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
 FkResult FkLayerEngine::notifyRender() {
     auto msg = FkMessage::obtain(FK_MSG_NOTIFY_RENDER);
     msg->flags = FkMessage::FLAG_UNIQUE;
-    return sendMessage(msg);;
+    return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {

@@ -120,6 +120,7 @@ class ImageActivity : BaseActivity(),
     override fun surfaceCreated(holder: SurfaceHolder) {
         engine.start()
         engine.attachToSurface(holder.surface)
+        engine.notifyRender()
 //        engine.setCanvasSize(512, 512)
 //        layer = engine.newLayerWithColor(512,512, 0,255,255, 255)
 //        Log.i("FilmKilns", "newLayer: $layer")
