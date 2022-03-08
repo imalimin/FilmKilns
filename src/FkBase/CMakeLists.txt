@@ -8,6 +8,7 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../glm
         ${PROJECT_SOURCE_DIR}/../al_common/include
+        ${THIRD_PARTY_DIR}/cjson/include
         )
 include_directories(${INCLUDES})
 
@@ -30,6 +31,13 @@ if (${ENABLE_BAN_WARNING})
     endforeach (var)
 endif ()
 message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+
+#------------------STATIC START----------------------
+add_library(cJSON STATIC IMPORTED)
+set_target_properties(cJSON PROPERTIES IMPORTED_LOCATION
+        "${THIRD_PARTY_DIR}/cjson/static/${ANDROID_ABI}/libcjson.a")
+
+#------------------STATIC END----------------------
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
@@ -58,5 +66,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common ${log-lib})
+set(MODULES ${MODULE_NAME} al_common cJSON ${log-lib})
 target_link_libraries(${MODULES})
