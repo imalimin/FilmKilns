@@ -11,7 +11,6 @@
 #include "FkSimpleMolecule.h"
 #include "FkAtom.h"
 #include "FkLocalClient.h"
-#include "FkRenderEngine.h"
 
 FK_CLASS FkGraphicMolecule FK_EXTEND FkSimpleMolecule {
 public:
@@ -38,7 +37,6 @@ private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
 private:
-    std::shared_ptr<FkRenderEngine> renderEngine = nullptr;
     std::shared_ptr<FkQuarkContext> context = nullptr;
 };
 
