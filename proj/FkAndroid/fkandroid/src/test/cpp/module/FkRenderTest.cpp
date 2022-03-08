@@ -7,7 +7,6 @@
 
 #include "gtest/gtest.h"
 #include "FkRenderEngine.h"
-#include "FkTestDefine.h"
 #include "FkFuncCompo.h"
 #include "FkBitmap.h"
 #include "FkIntVec2.h"
@@ -17,19 +16,28 @@
 #include "FkMVPMatrix.h"
 #include "FkIntVec2.h"
 
-TEST(FkRenderTest, Livecycle) {
-    auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
-    EXPECT_EQ(engine->create(), FK_OK);
-    EXPECT_NE(engine->create(), FK_OK);
-    EXPECT_EQ(engine->start(), FK_OK);
-    EXPECT_NE(engine->start(), FK_OK);
-    EXPECT_EQ(engine->stop(), FK_OK);
-    EXPECT_NE(engine->stop(), FK_OK);
-    EXPECT_EQ(engine->destroy(), FK_OK);
-    EXPECT_NE(engine->destroy(), FK_OK);
-}
+class FkRenderEngineTest : public testing::Test {
+    void SetUp() override {
+        engine = std::make_shared<FkRenderEngine>("RenderEngine");
+        EXPECT_EQ(engine->create(), FK_OK);
+        EXPECT_NE(engine->create(), FK_OK);
+        EXPECT_EQ(engine->start(), FK_OK);
+        EXPECT_NE(engine->start(), FK_OK);
+    }
 
-TEST(FkRenderTest, Render) {
+    void TearDown() override {
+        EXPECT_EQ(engine->stop(), FK_OK);
+        EXPECT_NE(engine->stop(), FK_OK);
+        EXPECT_EQ(engine->destroy(), FK_OK);
+        EXPECT_NE(engine->destroy(), FK_OK);
+        engine = nullptr;
+    }
+
+protected:
+    std::shared_ptr<FkRenderEngine> engine = nullptr;
+};
+
+TEST(FkRenderEngineTest_, Render) {
     auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
     auto material = std::make_shared<FkMaterialEntity>(std::make_shared<FkMaterialCompo>(FK_ID_NONE));
     auto dst = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
@@ -47,11 +55,10 @@ TEST(FkRenderTest, Render) {
     EXPECT_EQ(engine->destroy(), FK_OK);
 }
 
-TEST(FkRenderTest, NewMaterial) {
-    FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
-    auto src = engine->newMaterial();
+TEST_F(FkRenderEngineTest, NewAndRemoveMaterial) {
+    auto src = engine->addMaterial();
     EXPECT_EQ(src->isUseless(), false);
-    FK_DELETE_INSTANCE(engine)
+    EXPECT_EQ(engine->removeMaterial(src), FK_OK);
 }
 
 static std::shared_ptr<FkMaterialEntity> makeMaterials(std::shared_ptr<FkMaterialCompo> &material,
@@ -121,43 +128,30 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
     EXPECT_EQ(alpha, color.alpha);
 }
 
-TEST(FkRenderTest, Render2Buffer) {
-    FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
-    auto src = engine->newMaterial();
+TEST_F(FkRenderEngineTest, Render2Buffer) {
+    auto src = engine->addMaterial();
     EXPECT_EQ(src->isUseless(), false);
-    FkSize size(32, 32);
-    FkIntVec2 pos(size.getWidth() / 2, size.getHeight() / 2);
-    // Test white
-    auto white = FkColor::white();
-    EXPECT_EQ(engine->updateMaterial(src, size, white), FK_OK);
-    testColor(engine, src, size, pos, white);
+    FkSize size(128, 128);
     // Test black
-    size = FkSize(128, 128);
     auto black = FkColor::black();
+    FkIntVec2 pos(size.getWidth() / 2, size.getHeight() / 2);
     EXPECT_EQ(engine->updateMaterial(src, size, black), FK_OK);
     testColor(engine, src, size, pos, black);
-    FK_DELETE_INSTANCE(engine)
-}
-
-TEST(FkRenderTest, RenderLayer) {
-    FK_NEW_INSTANCE(engine, FkRenderEngine, "RenderEngine")
-    auto whiteMaterial = engine->newMaterial();
-    EXPECT_EQ(whiteMaterial->isUseless(), false);
-    FkSize size(32, 32);
+    // Test white
     auto white = FkColor::white();
-    EXPECT_EQ(engine->updateMaterial(whiteMaterial, size, white), FK_OK);
+    size = FkSize(32, 32);
+    pos = FkIntVec2(size.getWidth() / 2, size.getHeight() / 2);
+    EXPECT_EQ(engine->updateMaterial(src, size, white), FK_OK);
+    testColor(engine, src, size, pos, white);
 
-    auto blackMaterial = engine->newMaterial();
+    auto blackMaterial = engine->addMaterial();
     EXPECT_EQ(blackMaterial->isUseless(), false);
-    auto black = FkColor::black();
     EXPECT_EQ(engine->updateMaterial(blackMaterial, size, black), FK_OK);
 
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(blackMaterial);
-    auto materials = makeMaterials(whiteMaterial, size, FkIntVec2(size.getWidth() / 2, 0));
+    auto materials = makeMaterials(src, size, FkIntVec2(size.getWidth() / 2, 0));
     EXPECT_EQ(engine->renderDevice(materials, device), FK_OK);
-    FkIntVec2 pos(0, 0);
     testColor(engine, blackMaterial, size, pos, black);
     pos = FkIntVec2(size.getWidth(), 0);
     testColor(engine, blackMaterial, size, pos, white);
-    FK_DELETE_INSTANCE(engine)
 }

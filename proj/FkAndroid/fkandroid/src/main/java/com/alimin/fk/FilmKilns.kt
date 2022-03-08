@@ -9,7 +9,6 @@ class FilmKilns {
             if (BuildConfig.ENABLE_UNIT_TEST) {
                 System.loadLibrary("FkAndroidTest")
             }
-            System.loadLibrary("cjson")
             System.loadLibrary("al_common")
             System.loadLibrary("al_bitmap")
             System.loadLibrary("FkBase")
