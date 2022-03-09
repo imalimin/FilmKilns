@@ -14,17 +14,25 @@
 #include "FkGraphicFrameObject.h"
 #include "FkGraphicProgram.h"
 
-TEST(FkGraphicTest, Context) {
-    auto context = std::make_shared<FkContextCompo>("Test");
-    EXPECT_EQ(context->create(), FK_OK);
-    context->destroy();
-}
+class FkGraphicContextTest : public testing::Test {
+    void SetUp() override {
+        context = std::make_shared<FkContextCompo>("Test");
+        EXPECT_EQ(context->create(), FK_OK);
+        EXPECT_EQ(context->makeCurrent(), FK_OK);
+        EXPECT_NE(eglGetCurrentContext(), nullptr);
+    }
 
-TEST(FkGraphicTest, Alloc) {
-    auto context = std::make_shared<FkContextCompo>("Test");
-    EXPECT_EQ(context->create(), FK_OK);
-    EXPECT_EQ(context->makeCurrent(), FK_OK);
+    void TearDown() override {
+        context->destroy();
+        EXPECT_EQ(eglGetCurrentContext(), nullptr);
+        context = nullptr;
+    }
 
+protected:
+    std::shared_ptr<FkContextCompo> context = nullptr;
+};
+
+TEST_F(FkGraphicContextTest, AllocTex) {
     auto allocator = std::make_shared<FkGraphicAllocator>(1080 * 1920 * 4 * 10);
     {
         FkTexDescription desc(GL_TEXTURE_2D);
@@ -39,16 +47,9 @@ TEST(FkGraphicTest, Alloc) {
     allocator->release();
     EXPECT_EQ(allocator->size(), 0);
     EXPECT_EQ(allocator->capacity(), 0);
-
-    context->destroy();
-    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
 }
 
-TEST(FkGraphicFBOTest, Alloc) {
-    auto context = std::make_shared<FkContextCompo>("Test");
-    EXPECT_EQ(context->create(), FK_OK);
-    EXPECT_EQ(context->makeCurrent(), FK_OK);
-
+TEST_F(FkGraphicContextTest, AllocFbo) {
     auto allocator = std::make_shared<FkGraphicFBOAllocator>(10);
     {
         int32_t desc = 0;
@@ -61,16 +62,9 @@ TEST(FkGraphicFBOTest, Alloc) {
     allocator->release();
     EXPECT_EQ(allocator->size(), 0);
     EXPECT_EQ(allocator->capacity(), 0);
-
-    context->destroy();
-    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
 }
 
-TEST(FkGraphicProgramTest, Alloc) {
-    auto context = std::make_shared<FkContextCompo>("Test");
-    EXPECT_EQ(context->create(), FK_OK);
-    EXPECT_EQ(context->makeCurrent(), FK_OK);
-
+TEST_F(FkGraphicContextTest, AllocProgram) {
     auto allocator = std::make_shared<FkGraphicProgramAllocator>(10);
     {
         FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
@@ -83,7 +77,4 @@ TEST(FkGraphicProgramTest, Alloc) {
     allocator->release();
     EXPECT_EQ(allocator->size(), 0);
     EXPECT_EQ(allocator->capacity(), 0);
-
-    context->destroy();
-    EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
 }

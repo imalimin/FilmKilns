@@ -2,8 +2,27 @@
 // Created by Alimin on 2021/8/5.
 //
 
-#include "FkWithGLContext.h"
+#include "gtest/gtest.h"
+#include "FkContextCompo.h"
 #include "FkVertexObject.h"
+
+class FkWithGLContext : public testing::Test {
+    void SetUp() override {
+        context = std::make_shared<FkContextCompo>("Test");
+        EXPECT_EQ(context->create(), FK_OK);
+        EXPECT_EQ(context->makeCurrent(), FK_OK);
+        EXPECT_NE(eglGetCurrentContext(), EGL_NO_CONTEXT);
+    }
+
+    void TearDown() override {
+        context->destroy();
+        EXPECT_EQ(eglGetCurrentContext(), EGL_NO_CONTEXT);
+        context = nullptr;
+    }
+
+protected:
+    std::shared_ptr<FkContextCompo> context = nullptr;
+};
 
 TEST_F(FkWithGLContext, FkVertexObjectAllocOne) {
     auto allocator = std::make_shared<FkVertexObjectAllocator>(320);
