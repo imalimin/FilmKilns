@@ -28,6 +28,15 @@ public:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
+
+    FkResult save(std::string file);
+
+private:
+    FkResult _onSave(std::shared_ptr<FkMessage> &msg);
+
+private:
+    std::shared_ptr<FkEngine> imageEngine = nullptr;
+    static const FkID FK_MSG_SAVE;
 };
 
 #endif //FK_IMAGE_FKIMAGEFILEENGINE_H

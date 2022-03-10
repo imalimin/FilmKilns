@@ -1,10 +1,16 @@
 package com.alimin.fk
 
-import androidx.test.InstrumentationRegistry
+import android.app.Application
+import android.content.Context
+import android.util.Log
 import androidx.test.runner.AndroidJUnit4
+import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 @RunWith(AndroidJUnit4::class)
 class FkModuleTestStarter {
@@ -15,8 +21,10 @@ class FkModuleTestStarter {
     @Test
     fun runAllTest() {
         checkUnitTestEnable()
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val appContext = ApplicationProvider.getApplicationContext<Application>()
         FilmKilns.init(appContext)
+        initializeAssets(appContext)
+
         val ret = nativeRunAllTest()
         val result = nativeGetResult()
         val sb = StringBuffer();
@@ -27,15 +35,32 @@ class FkModuleTestStarter {
         assertTrue("${result.size} CASES FAILED: \n${sb}", ret)
     }
 
-    @Test
-    fun runTestClassType() {
-        checkUnitTestEnable()
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        FilmKilns.init(appContext)
-        assertTrue(nativeRunTestClassType())
-    }
-
     private external fun nativeRunAllTest(): Boolean
     private external fun nativeRunTestClassType(): Boolean
     private external fun nativeGetResult(): Array<String>
+
+    private fun initializeAssets(context: Context) {
+        context.assets.list("images")?.forEach {
+            val dstDir = File(context.externalCacheDir, "images")
+            if (!dstDir.exists()) {
+                dstDir.mkdirs()
+            }
+            val dstFile = File(dstDir, it)
+            if (!dstFile.exists()) {
+                val fos = FileOutputStream(dstFile)
+
+                val buf = ByteArray(1024 * 4)
+                val fis = context.assets.open("images/${it}")
+                var len = 0
+                while (true) {
+                    len = fis.read(buf)
+                    if (len <= 0) {
+                        break
+                    }
+                    fos.write(buf, 0, len)
+                }
+            }
+            Log.i("aliminabcd", dstDir.absolutePath)
+        }
+    }
 }

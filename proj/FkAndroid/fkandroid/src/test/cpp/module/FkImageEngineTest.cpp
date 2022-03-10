@@ -32,3 +32,8 @@ TEST_F(FkImageEngineTest, newLayerWithColor) {
     auto color = FkColor::white();
     EXPECT_GT(engine->newLayerWithColor(size, color), 0);
 }
+
+TEST_F(FkImageEngineTest, newLayerWithFile) {
+    std::string path = "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/images/image_0.jpg";
+    EXPECT_GT(engine->newLayerWithFile(path), 0);
+}
