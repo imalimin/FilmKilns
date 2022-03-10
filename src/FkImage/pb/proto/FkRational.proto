@@ -1,0 +1,7 @@
+syntax = "proto3";
+package fk_pb;
+
+message FkRational {
+    int32 num = 1;
+    int32 den = 2;
+}

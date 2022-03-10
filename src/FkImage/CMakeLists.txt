@@ -12,6 +12,7 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}/../FkFramework/include
         ${PROJECT_SOURCE_DIR}/../FkBitmap/include
         ${PROJECT_SOURCE_DIR}/../FkGraphic/include
+        ${THIRD_PARTY_DIR}/protobuf/include
         )
 include_directories(${INCLUDES})
 
@@ -35,6 +36,13 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
+#------------------STATIC START----------------------
+add_library(proto_buf STATIC IMPORTED)
+set_target_properties(proto_buf PROPERTIES IMPORTED_LOCATION
+        "${THIRD_PARTY_DIR}/protobuf/static/${ANDROID_ABI}/libprotobuf.a")
+
+#------------------STATIC END----------------------
+
 #aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/core/program SOURCES_CORE_PROGRAM)
 aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
@@ -45,6 +53,7 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/component SOURCES_COMPONENT)
 aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
 aux_source_directory(${PROJECT_SOURCE_DIR}/protocol SOURCES_PROTOCOL)
 aux_source_directory(${PROJECT_SOURCE_DIR}/engine SOURCES_ENGINE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/pb SOURCES_PROTO_BUF)
 #aux_source_directory(${PROJECT_SOURCE_DIR}/model SOURCES_MODEL)
 
 #list(APPEND SOURCES_ROOT ${SOURCES_CORE})
@@ -57,6 +66,7 @@ list(APPEND SOURCES_ROOT ${SOURCES_COMPONENT})
 list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
 list(APPEND SOURCES_ROOT ${SOURCES_PROTOCOL})
 list(APPEND SOURCES_ROOT ${SOURCES_ENGINE})
+list(APPEND SOURCES_ROOT ${SOURCES_PROTO_BUF})
 #list(APPEND SOURCES_ROOT ${SOURCES_MODEL})
 
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
@@ -80,6 +90,7 @@ set(MODULES ${MODULE_NAME}
         GLESv2
         EGL
         android
+        proto_buf
         al_common
         al_bitmap
         FkBase
