@@ -16,8 +16,10 @@
 
 const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = FK_KID('F', 'K', 'I', 0x10);
 
-FkImageEngine::FkImageEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
-        : FkLayerEngine(renderEngine, name) {
+FkImageEngine::FkImageEngine(std::shared_ptr<FkEngine> &renderEngine,
+                             std::string &workspace,
+                             std::string name)
+        : FkLayerEngine(renderEngine, name), workspace(workspace) {
     FK_MARK_SUPER
     FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_FILE, FkImageEngine::_updateLayerWithFile);
 }

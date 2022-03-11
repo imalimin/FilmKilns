@@ -3,9 +3,9 @@ package com.alimin.fk.engine
 import android.view.Choreographer
 import android.view.Surface
 
-class FkImage() : FkEngine() {
+class FkImage(val workspace: String) : FkEngine() {
     private var mSyncLock = Object()
-    override fun onCreateInstance(): Long = nativeCreateInstance()
+    override fun onCreateInstance(): Long = nativeCreateInstance(workspace)
     override fun create() {
         super.create()
         if (!isNull()) {
@@ -134,7 +134,7 @@ class FkImage() : FkEngine() {
         return -1
     }
 
-    private external fun nativeCreateInstance(): Long
+    private external fun nativeCreateInstance(workspace: String): Long
     private external fun nativeCreate(handle: Long)
     private external fun nativeDestroy(handle: Long)
     private external fun nativeStart(handle: Long)

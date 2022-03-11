@@ -13,7 +13,7 @@
 
 FK_CLASS FkImageEngine FK_EXTEND FkLayerEngine {
 public:
-    FkImageEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name);
+    FkImageEngine(std::shared_ptr<FkEngine> &renderEngine, std::string &workspace, std::string name);
 
     FkImageEngine(const FkImageEngine &o) = delete;
 
@@ -34,6 +34,7 @@ private:
 
 private:
     static const FkID FK_MSG_UPDATE_LAYER_WITH_FILE;
+    std::string workspace;
 };
 
 #endif //FK_IMAGE_FKIMAGEENGINE_H

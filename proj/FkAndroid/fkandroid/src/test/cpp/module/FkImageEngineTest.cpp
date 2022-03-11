@@ -11,8 +11,9 @@
 
 class FkImageEngineTest : public testing::Test {
     void SetUp() override {
+        std::string workspace = "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/";
         std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>("RenderEngine");
-        engine = std::make_shared<FkImageEngine>(renderEngine, "ImageEngine");
+        engine = std::make_shared<FkImageEngine>(renderEngine, workspace, "ImageEngine");
         EXPECT_EQ(engine->create(), FK_OK);
         EXPECT_EQ(engine->start(), FK_OK);
     }

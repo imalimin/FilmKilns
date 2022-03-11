@@ -21,6 +21,7 @@ import com.lmy.common.ui.BaseActivity
 import kotlinx.android.synthetic.main.activity_image.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
+import java.io.File
 
 
 class ImageActivity : BaseActivity(),
@@ -31,11 +32,16 @@ class ImageActivity : BaseActivity(),
     FkActSurfaceView.OnActionListener {
     override val layoutResID: Int = R.layout.activity_image
     private var surfaceView: FkActSurfaceView? = null
-    private var engine: FkImage = FkImage()
+    private lateinit var engine: FkImage
     private var layer = -1
 
     @AfterPermissionGranted(REQ_PERMISSION)
     override fun initView() {
+        val workspace = File(externalCacheDir, "workspace")
+        if (!workspace.exists()) {
+            workspace.mkdirs()
+        }
+        engine = FkImage(workspace.absolutePath)
         val perms = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )

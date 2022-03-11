@@ -24,9 +24,12 @@ static FkImageEngine *castHandle(jlong handle) {
 }
 
 JNIEXPORT jlong JNICALL Java_com_alimin_fk_engine_FkImage_nativeCreateInstance
-        (JNIEnv *env, jobject that) {
+        (JNIEnv *env, jobject that, jstring workspace) {
+    auto pWorkspace = env->GetStringUTFChars(workspace, nullptr);
+    env->ReleaseStringUTFChars(workspace, pWorkspace);
     std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>(RENDER_ALIAS);
-    auto *p = new FkImageEngine(renderEngine, IMAGE_ENGINE_ALIAS);
+    std::string workspaceStr(pWorkspace);
+    auto *p = new FkImageEngine(renderEngine, workspaceStr, IMAGE_ENGINE_ALIAS);
     return reinterpret_cast<jlong>(p);
 }
 
