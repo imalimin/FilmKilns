@@ -22,7 +22,7 @@ public:
     virtual ~FkFileUtils();
 
 public:
-    static FkResult copy(std::string &src, std::string dst);
+    static FkResult copy(std::string src, std::string &dst);
 
     static FkResult mkdirs(std::string dir);
 

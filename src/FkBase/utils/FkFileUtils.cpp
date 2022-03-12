@@ -22,9 +22,10 @@ FkFileUtils::~FkFileUtils() {
 
 }
 
-FkResult FkFileUtils::copy(std::string &src, std::string dst) {
+FkResult FkFileUtils::copy(std::string src, std::string &dst) {
     FILE *srcFile = fopen(src.c_str(), "rb");
     if (srcFile == nullptr) {
+        FkLogE(FK_DEF_TAG, "Open file failed: %s ", strerror(errno));
         return FK_FILE_NOT_FOUND;
     }
     FILE *dstFile = fopen(dst.c_str(), "wb");
