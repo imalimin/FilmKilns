@@ -27,7 +27,7 @@ FkImageEngine::FkImageEngine(std::shared_ptr<FkEngine> &renderEngine,
 }
 
 FkImageEngine::~FkImageEngine() {
-
+    workspace = "";
 }
 
 FkResult FkImageEngine::onCreate() {
