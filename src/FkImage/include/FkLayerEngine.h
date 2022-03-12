@@ -14,6 +14,7 @@
 #include "FkSize.h"
 #include "FkGraphicWindow.h"
 #include "FkRational.h"
+#include "FkGraphicLayer.h"
 
 FK_CLASS FkLayerEngine FK_EXTEND FkEngine {
 public:
@@ -49,6 +50,8 @@ public:
 
     FkResult drawPoint(FkID layer, FkColor color, int32_t x, int32_t y);
 
+    FkResult queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>> &vec);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -75,6 +78,8 @@ private:
 
     FkResult _drawPoint(std::shared_ptr<FkMessage> msg);
 
+    FkResult _queryLayers(std::shared_ptr<FkMessage> msg);
+
 private:
     static const FkID FK_MSG_NEW_LAYER;
     static const FkID FK_MSG_UPDATE_LAYER_WITH_COLOR;
@@ -85,6 +90,7 @@ private:
     static const FkID FK_MSG_POST_SCALE;
     static const FkID FK_MSG_POST_ROTATION;
     static const FkID FK_MSG_DRAW_POINT;
+    static const FkID FK_MSG_QUERY_LAYERS;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
     std::shared_ptr<FkEngine> renderEngine = nullptr;

@@ -41,6 +41,15 @@ public:
         return std::dynamic_pointer_cast<T>(vec[0]);
     }
 
+    template<class T>
+    FkResult copyComponentFrom(std::shared_ptr<FkEntity> src) {
+        auto compo = src->findComponent<T>();
+        if (compo) {
+            return addComponent(compo);
+        }
+        return FK_SOURCE_NOT_FOUND;
+    }
+
 private:
     std::list<std::shared_ptr<FkComponent>> components;
 };

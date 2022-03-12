@@ -94,24 +94,19 @@ FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
 
 std::shared_ptr<FkMaterialCompo> FkRenderEngine::addMaterial() {
     auto msg = FkMessage::obtain(FK_MSG_ADD_MATERIAL);
-    msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
+    msg->withPromise();
     auto ret = sendMessage(msg);
-    std::shared_ptr<FkObject> result = nullptr;
-    if (FK_OK == ret && (result = msg->promise->get_future().get())) {
-        auto value = std::static_pointer_cast<FkInt>(result);
-        if (value) {
-            return std::make_shared<FkMaterialCompo>(value->get());
-        }
+    FkID id = FK_ID_NONE;
+    if (FK_OK == ret) {
+        msg->getPromiseResult(id);
     }
-    return std::make_shared<FkMaterialCompo>(FK_ID_NONE);
+    return std::make_shared<FkMaterialCompo>(id);
 }
 
 FkResult FkRenderEngine::_onAddMaterial(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkGenIDProto>();
     auto ret = client->with(molecule)->send(proto);
-    if (msg->promise != nullptr) {
-        msg->promise->set_value(std::make_shared<FkInt>(proto->id));
-    }
+    msg->setPromiseResult(proto->id);
     return ret;
 }
 

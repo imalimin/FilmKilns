@@ -11,6 +11,7 @@
 #include "FkSource.h"
 #include <queue>
 #include <future>
+#include <any>
 
 class FkLooper;
 
@@ -23,12 +24,12 @@ public:
     int64_t arg2 = 0;
     std::string arg3;
     std::shared_ptr<FkObject> sp;
-    std::shared_ptr<std::promise<std::shared_ptr<FkObject>>> promise;
     int32_t flags = FLAG_NORMAL;
 private:
     friend FkLooper;
     friend FkHandler;
     FkHandler *target = nullptr;
+    std::shared_ptr<std::promise<std::any>> promise;
 
 public:
     FkMessage();
@@ -46,6 +47,25 @@ public:
     virtual void destroy() override;
 
     virtual size_t size() override;
+
+    void withPromise();
+
+    bool hasPromise();
+
+    void setPromiseResult(std::any any);
+
+    template<typename T>
+    FkResult getPromiseResult(T &o) {
+        if (hasPromise()) {
+            auto any = promise->get_future().get();
+            if (any.has_value()) {
+                o = std::any_cast<T>(any);
+                return FK_OK;
+            }
+        }
+        return FK_FAIL;
+    }
+
 
 public:
     virtual ~FkMessage();

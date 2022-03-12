@@ -86,6 +86,20 @@ size_t FkMessage::size() {
     return 1;
 }
 
+void FkMessage::withPromise() {
+    promise = std::make_shared<std::promise<std::any>>();
+}
+
+bool FkMessage::hasPromise() {
+    return promise != nullptr;
+}
+
+void FkMessage::setPromiseResult(std::any any) {
+    if (hasPromise()) {
+        promise->set_value(any);
+    }
+}
+
 FkMessageAllocator *FkMessageAllocator::instance = new FkMessageAllocator();
 
 FkMessageAllocator *FkMessageAllocator::getInstance() {

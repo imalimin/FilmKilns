@@ -39,6 +39,8 @@ private:
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
 protected:
+    std::shared_ptr<FkGraphicLayer> newLayerEntity();
+
     FkResult _onUpdateLayer(std::shared_ptr<FkProtocol> p);
 
     virtual FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
@@ -51,7 +53,7 @@ protected:
 
     FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
 
-    std::shared_ptr<FkGraphicLayer> newLayerEntity();
+    FkResult _onQueryLayers(std::shared_ptr<FkProtocol> p);
 
 private:
     void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);

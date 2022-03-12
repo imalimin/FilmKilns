@@ -25,6 +25,8 @@
 #include "FkCoordinateCompo.h"
 #include "FkRenderContext.h"
 #include "FkBitmapCompo.h"
+#include "FkFilePathCompo.h"
+#include "FkQueryLayersProto.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -50,6 +52,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onMeasureTrans);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicLayerQuark::_onDrawPoint);
+    FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -170,6 +173,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
                                                          layerSizeComp->size,
                                                          buf);
             FkAssert(FK_OK == ret, ret);
+            layer->copyComponentFrom<FkFilePathCompo>(proto->layer);
         } else {
             ret = renderEngine->updateMaterial(layer->material,
                                                layerSizeComp->size,
@@ -243,6 +247,14 @@ FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
         comp->value = proto->value;
         comp->color = proto->color;
         itr->second->addComponent(comp);
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onQueryLayers(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkQueryLayersProto, p);
+    for (auto &itr : layers) {
+        proto->layers.emplace_back(std::make_shared<FkGraphicLayer>(*(itr.second)));
     }
     return FK_OK;
 }

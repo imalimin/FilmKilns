@@ -20,17 +20,19 @@
 #include "FkLayerPostRotateProto.h"
 #include "FkMeasureTransProto.h"
 #include "FkDrawPointProto.h"
+#include "FkQueryLayersProto.h"
 #include "FkRenderEngineCompo.h"
 
-const FkID FkLayerEngine::FK_MSG_NEW_LAYER = FK_KID('F', 'K', 'E', 0x10);
-const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = FK_KID('F', 'K', 'E', 0x11);
-const FkID FkLayerEngine::FK_MSG_SET_SURFACE = FK_KID('F', 'K', 'E', 0x12);
-const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = FK_KID('F', 'K', 'E', 0x13);
-const FkID FkLayerEngine::FK_MSG_SET_CANVAS_SIZE = FK_KID('F', 'K', 'E', 0x14);
-const FkID FkLayerEngine::FK_MSG_POST_TRANSLATE = FK_KID('F', 'K', 'E', 0x15);
-const FkID FkLayerEngine::FK_MSG_POST_SCALE = FK_KID('F', 'K', 'E', 0x16);
-const FkID FkLayerEngine::FK_MSG_POST_ROTATION = FK_KID('F', 'K', 'E', 0x17);
-const FkID FkLayerEngine::FK_MSG_DRAW_POINT = FK_KID('F', 'K', 'E', 0x18);
+const FkID FkLayerEngine::FK_MSG_NEW_LAYER = 0x1;
+const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = 0x2;
+const FkID FkLayerEngine::FK_MSG_SET_SURFACE = 0x3;
+const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = 0x4;
+const FkID FkLayerEngine::FK_MSG_SET_CANVAS_SIZE = 0x5;
+const FkID FkLayerEngine::FK_MSG_POST_TRANSLATE = 0x6;
+const FkID FkLayerEngine::FK_MSG_POST_SCALE = 0x7;
+const FkID FkLayerEngine::FK_MSG_POST_ROTATION = 0x8;
+const FkID FkLayerEngine::FK_MSG_DRAW_POINT = 0x9;
+const FkID FkLayerEngine::FK_MSG_QUERY_LAYERS = 0x10;
 
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {
@@ -44,6 +46,7 @@ FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::strin
     FK_REG_MSG(FK_MSG_POST_SCALE, FkLayerEngine::_postScale);
     FK_REG_MSG(FK_MSG_POST_ROTATION, FkLayerEngine::_postRotation);
     FK_REG_MSG(FK_MSG_DRAW_POINT, FkLayerEngine::_drawPoint);
+    FK_REG_MSG(FK_MSG_QUERY_LAYERS, FkLayerEngine::_queryLayers);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -114,24 +117,19 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
 
 FkID FkLayerEngine::newLayer() {
     auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
-    msg->promise = std::make_shared<std::promise<std::shared_ptr<FkObject>>>();
+    msg->withPromise();
     auto ret = sendMessage(msg);
+    FkID id = FK_ID_NONE;
     if (FK_OK == ret) {
-        auto result = std::static_pointer_cast<FkGraphicNewLayerPrt>(
-                msg->promise->get_future().get());
-        if (result->layer) {
-            return result->layer->id;
-        }
+        msg->getPromiseResult(id);
     }
-    return FK_ID_NONE;
+    return id;
 }
 
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
-    auto prt = std::make_shared<FkGraphicNewLayerPrt>();
-    auto ret = client->quickSend<FkGraphicNewLayerPrt>(prt, molecule);
-    if (nullptr != msg->promise) {
-        msg->promise->set_value(prt);
-    }
+    auto proto = std::make_shared<FkGraphicNewLayerPrt>();
+    auto ret = client->with(molecule)->send(proto);
+    msg->setPromiseResult(proto->layer ? proto->layer->id : FK_ID_NONE);
     return ret;
 }
 
@@ -244,17 +242,34 @@ FkResult FkLayerEngine::_postRotation(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t y) {
-    auto comp = std::make_shared<FkDrawPointProto>();
-    comp->layer = layer;
-    comp->color = color;
-    comp->value.x = x;
-    comp->value.y = y;
+    auto proto = std::make_shared<FkDrawPointProto>();
+    proto->layer = layer;
+    proto->color = color;
+    proto->value.x = x;
+    proto->value.y = y;
     auto msg = FkMessage::obtain(FK_MSG_DRAW_POINT);
-    msg->sp = comp;
+    msg->sp = proto;
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
     auto proto = Fk_POINTER_CAST(FkDrawPointProto, msg->sp);
     return client->quickSend(proto, molecule);
+}
+
+FkResult FkLayerEngine::queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>> &vec) {
+    auto msg = FkMessage::obtain(FK_MSG_QUERY_LAYERS);
+    msg->withPromise();
+    auto ret = sendMessage(msg);
+    if (FK_OK == ret && FK_OK == msg->getPromiseResult(vec)) {
+        return FK_OK;
+    }
+    return ret;
+}
+
+FkResult FkLayerEngine::_queryLayers(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkQueryLayersProto>();
+    auto ret = client->with(molecule)->send(proto);
+    msg->setPromiseResult(proto->layers);
+    return ret;
 }
