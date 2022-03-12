@@ -15,6 +15,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import com.alimin.fk.app.R
 import com.alimin.fk.engine.FkImage
+import com.alimin.fk.engine.FkImageFile
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.widgets.FkActSurfaceView
 import com.lmy.common.ui.BaseActivity
@@ -33,6 +34,7 @@ class ImageActivity : BaseActivity(),
     override val layoutResID: Int = R.layout.activity_image
     private var surfaceView: FkActSurfaceView? = null
     private lateinit var engine: FkImage
+    private lateinit var fileEngine: FkImageFile
     private var layer = -1
 
     @AfterPermissionGranted(REQ_PERMISSION)
@@ -42,11 +44,14 @@ class ImageActivity : BaseActivity(),
             workspace.mkdirs()
         }
         engine = FkImage(workspace.absolutePath)
+        fileEngine = FkImageFile(engine)
         val perms = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         if (EasyPermissions.hasPermissions(this, *perms)) {
             engine.create()
+            fileEngine.create()
+            fileEngine.start()
             surfaceView = FkActSurfaceView(this)
             surfaceView?.holder?.addCallback(this)
             surfaceView?.setOnScrollListener(this)
@@ -113,6 +118,8 @@ class ImageActivity : BaseActivity(),
     override fun onDestroy() {
         super.onDestroy()
         engine.destroy()
+        fileEngine.stop()
+        fileEngine.destroy()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {

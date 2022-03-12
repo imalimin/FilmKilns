@@ -31,10 +31,14 @@ public:
 
     virtual FkResult onStop() override;
 
-    FkResult save(std::string file);
+    FkResult save(std::string &file);
+
+    FkResult load(std::string &file);
 
 private:
-    FkResult _onSave(std::shared_ptr<FkMessage> &msg);
+    FkResult _save(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _load(std::shared_ptr<FkMessage> &msg);
 
     FkResult _fillLayer(void* dst, std::shared_ptr<FkGraphicLayer> &src);
 
@@ -45,8 +49,9 @@ private:
     FkResult _copyLayerFile(std::string &dir, std::string &src);
 
 private:
-    std::shared_ptr<FkEngine> imageEngine = nullptr;
     static const FkID FK_MSG_SAVE;
+    static const FkID FK_MSG_LOAD;
+    std::shared_ptr<FkEngine> imageEngine = nullptr;
 };
 
 #endif //FK_IMAGE_FKIMAGEFILEENGINE_H

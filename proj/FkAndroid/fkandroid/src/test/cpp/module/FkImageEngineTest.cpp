@@ -18,6 +18,11 @@
 class FkImageEngineTest : public testing::Test {
 protected:
     virtual void SetUp() override {
+        fkpFile = FkString(FK_ANDROID_TEST_CACHE_DIR)
+                .append("/draft/")
+                .append(FkTimeUtils::getCurrentTimeUS())
+                .append(".fkp")
+                .toString();
         workspace = FkString(FK_ANDROID_TEST_CACHE_DIR)
                 .append("/draft/")
                 .append(FkTimeUtils::getCurrentTimeUS())
@@ -38,6 +43,7 @@ protected:
 
 protected:
     std::string workspace;
+    std::string fkpFile;
     std::shared_ptr<FkImageEngine> engine = nullptr;
 };
 
@@ -73,14 +79,10 @@ protected:
     std::shared_ptr<FkImageFileEngine> fileEngine = nullptr;
 };
 
-TEST_F(FkImageFileEngineTest, saveFileLayer) {
+TEST_F(FkImageFileEngineTest, saveFkp) {
     std::string path = FK_ANDROID_TEST_CACHE_IMAGE_0;
     EXPECT_GT(engine->newLayerWithFile(path), 0);
-    auto draftFile = FkString(FK_ANDROID_TEST_CACHE_DIR)
-            .append("/draft/")
-            .append(FkTimeUtils::getCurrentTimeUS())
-            .append(".fkp")
-            .toString();
-    EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(draftFile)), FK_OK);
-    EXPECT_EQ(fileEngine->save(draftFile), FK_OK);
+    EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
+    EXPECT_EQ(fileEngine->save(fkpFile), FK_OK);
+    EXPECT_EQ(fileEngine->load(fkpFile), FK_OK);
 }

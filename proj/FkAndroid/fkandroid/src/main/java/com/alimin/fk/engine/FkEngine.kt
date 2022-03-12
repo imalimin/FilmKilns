@@ -15,7 +15,7 @@ abstract class FkEngine {
         return 0L == handle
     }
 
-    protected fun getHandle(): Long {
+    open fun getHandle(): Long {
         return handle
     }
 
