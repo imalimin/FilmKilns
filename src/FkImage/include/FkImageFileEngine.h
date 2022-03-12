@@ -12,6 +12,8 @@
 #define FK_IMAGE_FKIMAGEFILEENGINE_H
 
 #include "FkEngine.h"
+#include "FkGraphicLayer.h"
+#include <any>
 
 FK_CLASS FkImageFileEngine FK_EXTEND FkEngine {
 public:
@@ -33,6 +35,14 @@ public:
 
 private:
     FkResult _onSave(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _fillLayer(void* dst, std::shared_ptr<FkGraphicLayer> &src);
+
+    std::string _createTempDir(std::string &file);
+
+    FkResult _writeModel2File(std::string &dir, std::any model);
+
+    FkResult _copyLayerFile(std::string &dir, std::string &src);
 
 private:
     std::shared_ptr<FkEngine> imageEngine = nullptr;

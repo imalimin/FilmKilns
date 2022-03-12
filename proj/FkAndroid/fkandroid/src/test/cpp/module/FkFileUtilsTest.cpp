@@ -65,3 +65,13 @@ TEST_F(FkFileUtilsTest, exist) {
             .toString();
     EXPECT_EQ(FkFileUtils::exist(dir), false);
 }
+
+TEST_F(FkFileUtilsTest, parent) {
+    std::string dir = FK_ANDROID_TEST_CACHE_DIR;
+    EXPECT_EQ(FkFileUtils::exist(dir), true);
+    dir = FkString(FK_ANDROID_TEST_CACHE_DIR)
+            .append("/")
+            .append(FkTimeUtils::getCurrentTimeUS())
+            .toString();
+    EXPECT_EQ(FkFileUtils::parent(dir), FK_ANDROID_TEST_CACHE_DIR);
+}

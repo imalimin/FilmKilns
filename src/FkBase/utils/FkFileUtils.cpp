@@ -80,3 +80,11 @@ std::string FkFileUtils::suffix(std::string &file) {
     }
     return file.substr(pos, file.length());
 }
+
+std::string FkFileUtils::parent(std::string &file) {
+    std::string::size_type pos = file.find_last_of('/');
+    if (pos == std::string::npos) {
+        return file;
+    }
+    return file.substr(0, pos);
+}

@@ -31,6 +31,8 @@ public:
     static std::string name(std::string &file);
 
     static std::string suffix(std::string &file);
+
+    static std::string parent(std::string &file);
 };
 
 #endif //FK_BASE_FKFILEUTILS_H

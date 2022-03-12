@@ -1,0 +1,9 @@
+syntax = "proto3";
+package fk_pb;
+
+import "FkImageLayer.proto";
+
+message FkPictureModel {
+  FkImageLayer canvas = 1;
+  repeated FkImageLayer layers = 2;
+}

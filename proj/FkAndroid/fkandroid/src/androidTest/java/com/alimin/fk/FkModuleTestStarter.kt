@@ -40,6 +40,7 @@ class FkModuleTestStarter {
     private external fun nativeGetResult(): Array<String>
 
     private fun initializeAssets(context: Context) {
+        initializeDir(context)
         context.assets.list("images")?.forEach {
             val dstDir = File(context.externalCacheDir, "images")
             if (!dstDir.exists()) {
@@ -60,7 +61,17 @@ class FkModuleTestStarter {
                     fos.write(buf, 0, len)
                 }
             }
-            Log.i("aliminabcd", dstDir.absolutePath)
+        }
+    }
+
+    private fun initializeDir(context: Context) {
+        var dir = File(context.externalCacheDir, "draft")
+        if (dir.exists()) {
+            dir.deleteRecursively()
+        }
+        dir = File(context.externalCacheDir, "mkdirs")
+        if (dir.exists()) {
+            dir.deleteRecursively()
         }
     }
 }

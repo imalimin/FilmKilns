@@ -79,7 +79,8 @@ TEST_F(FkImageFileEngineTest, saveFileLayer) {
     auto draftFile = FkString(FK_ANDROID_TEST_CACHE_DIR)
             .append("/draft/")
             .append(FkTimeUtils::getCurrentTimeUS())
+            .append(".fkp")
             .toString();
-    EXPECT_EQ(FkFileUtils::mkdirs(draftFile), FK_OK);
+    EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(draftFile)), FK_OK);
     EXPECT_EQ(fileEngine->save(draftFile), FK_OK);
 }

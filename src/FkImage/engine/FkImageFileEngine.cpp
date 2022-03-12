@@ -10,6 +10,14 @@
 
 #include "FkImageFileEngine.h"
 #include "FkImageEngine.h"
+#include "FkFilePathCompo.h"
+#include "FkScaleComponent.h"
+#include "FkRotateComponent.h"
+#include "FkTransComponent.h"
+#include "FkSizeCompo.h"
+#include "FkPictureModel.pb.h"
+#include "FkFileUtils.h"
+#include <fstream>
 
 const FkID FkImageFileEngine::FK_MSG_SAVE = 0x1;
 
@@ -54,5 +62,88 @@ FkResult FkImageFileEngine::save(std::string file) {
 }
 
 FkResult FkImageFileEngine::_onSave(std::shared_ptr<FkMessage> &msg) {
+    auto file = msg->arg3;
+    auto dir = _createTempDir(file);
+    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
+    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
+    auto model = std::make_shared<fk_pb::FkPictureModel>();
+    for (auto &layer : layers) {
+        if (layer->id == Fk_CANVAS_ID) {
+            auto canvas = new fk_pb::FkImageLayer();
+            model->set_allocated_canvas(canvas);
+            _fillLayer(canvas, layer);
+        } else {
+            auto fileCompo = layer->findComponent<FkFilePathCompo>();
+            if (fileCompo) {
+                _copyLayerFile(dir, fileCompo->str);
+            }
+            auto pbLayer = model->add_layers();
+            _fillLayer(pbLayer, layer);
+        }
+    }
+
+    return _writeModel2File(dir, model);
+}
+
+FkResult FkImageFileEngine::_fillLayer(void* dst,
+                                      std::shared_ptr<FkGraphicLayer> &src) {
+    auto *pbLayer = static_cast<fk_pb::FkImageLayer *>(dst);
+    auto fileCompo = src->findComponent<FkFilePathCompo>();
+    auto scaleCompo = src->findComponent<FkScaleComponent>();
+    auto rotateCompo = src->findComponent<FkRotateComponent>();
+    auto transCompo = src->findComponent<FkTransComponent>();
+    auto sizeCompo = src->findComponent<FkSizeCompo>();
+    if (fileCompo) {
+        pbLayer->set_file(FkFileUtils::name(fileCompo->str));
+    }
+    if (scaleCompo) {
+        auto value = new fk_pb::FkFloatVec3();
+        value->set_x(scaleCompo->value.x);
+        value->set_y(scaleCompo->value.y);
+        value->set_z(scaleCompo->value.z);
+        pbLayer->set_allocated_scale(value);
+    }
+    if (rotateCompo) {
+        auto value = new fk_pb::FkRational();
+        value->set_num(rotateCompo->value.num);
+        value->set_den(rotateCompo->value.den);
+        pbLayer->set_allocated_rotation(value);
+    }
+    if (transCompo) {
+        auto value = new fk_pb::FkIntVec3();
+        value->set_x(transCompo->value.x);
+        value->set_y(transCompo->value.y);
+        value->set_z(0);
+        pbLayer->set_allocated_trans(value);
+    }
+    if (sizeCompo) {
+        auto value = new fk_pb::FkSize();
+        value->set_width(sizeCompo->size.getWidth());
+        value->set_height(sizeCompo->size.getHeight());
+        pbLayer->set_allocated_size(value);
+    }
     return FK_OK;
+}
+
+std::string FkImageFileEngine::_createTempDir(std::string &file) {
+    auto dir = file;
+    dir.append(".dir");
+    FkFileUtils::mkdirs(dir);
+    return dir;
+}
+
+FkResult FkImageFileEngine::_writeModel2File(std::string &dir, std::any model) {
+    auto modelFile = dir;
+    modelFile.append("/model.pb");
+    fstream stream;
+    stream.open(modelFile.c_str(), ios::out | ios::binary);
+    return std::any_cast<std::shared_ptr<fk_pb::FkPictureModel>>(model)
+                   ->SerializeToOstream(&stream) ? FK_OK : FK_IO_FAIL;
+}
+
+FkResult FkImageFileEngine::_copyLayerFile(std::string &dir, std::string &src) {
+    std::string dst = dir;
+    dst.append("/");
+    dst.append(FkFileUtils::name(src));
+    return FkFileUtils::copy(src, dst);
 }

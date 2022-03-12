@@ -32,6 +32,9 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/unknown_field_set.h>
 #include "FkSize.pb.h"
+#include "FkRational.pb.h"
+#include "FkIntVec3.pb.h"
+#include "FkFloatVec3.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_FkImageLayer_2eproto
@@ -188,8 +191,26 @@ class FkImageLayer final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kFileFieldNumber = 5,
     kSizeFieldNumber = 1,
+    kRotationFieldNumber = 2,
+    kScaleFieldNumber = 3,
+    kTransFieldNumber = 4,
   };
+  // string file = 5;
+  void clear_file();
+  const std::string& file() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_file(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_file();
+  PROTOBUF_NODISCARD std::string* release_file();
+  void set_allocated_file(std::string* file);
+  private:
+  const std::string& _internal_file() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_file(const std::string& value);
+  std::string* _internal_mutable_file();
+  public:
+
   // .fk_pb.FkSize size = 1;
   bool has_size() const;
   private:
@@ -208,6 +229,60 @@ class FkImageLayer final :
       ::fk_pb::FkSize* size);
   ::fk_pb::FkSize* unsafe_arena_release_size();
 
+  // .fk_pb.FkRational rotation = 2;
+  bool has_rotation() const;
+  private:
+  bool _internal_has_rotation() const;
+  public:
+  void clear_rotation();
+  const ::fk_pb::FkRational& rotation() const;
+  PROTOBUF_NODISCARD ::fk_pb::FkRational* release_rotation();
+  ::fk_pb::FkRational* mutable_rotation();
+  void set_allocated_rotation(::fk_pb::FkRational* rotation);
+  private:
+  const ::fk_pb::FkRational& _internal_rotation() const;
+  ::fk_pb::FkRational* _internal_mutable_rotation();
+  public:
+  void unsafe_arena_set_allocated_rotation(
+      ::fk_pb::FkRational* rotation);
+  ::fk_pb::FkRational* unsafe_arena_release_rotation();
+
+  // .fk_pb.FkFloatVec3 scale = 3;
+  bool has_scale() const;
+  private:
+  bool _internal_has_scale() const;
+  public:
+  void clear_scale();
+  const ::fk_pb::FkFloatVec3& scale() const;
+  PROTOBUF_NODISCARD ::fk_pb::FkFloatVec3* release_scale();
+  ::fk_pb::FkFloatVec3* mutable_scale();
+  void set_allocated_scale(::fk_pb::FkFloatVec3* scale);
+  private:
+  const ::fk_pb::FkFloatVec3& _internal_scale() const;
+  ::fk_pb::FkFloatVec3* _internal_mutable_scale();
+  public:
+  void unsafe_arena_set_allocated_scale(
+      ::fk_pb::FkFloatVec3* scale);
+  ::fk_pb::FkFloatVec3* unsafe_arena_release_scale();
+
+  // .fk_pb.FkIntVec3 trans = 4;
+  bool has_trans() const;
+  private:
+  bool _internal_has_trans() const;
+  public:
+  void clear_trans();
+  const ::fk_pb::FkIntVec3& trans() const;
+  PROTOBUF_NODISCARD ::fk_pb::FkIntVec3* release_trans();
+  ::fk_pb::FkIntVec3* mutable_trans();
+  void set_allocated_trans(::fk_pb::FkIntVec3* trans);
+  private:
+  const ::fk_pb::FkIntVec3& _internal_trans() const;
+  ::fk_pb::FkIntVec3* _internal_mutable_trans();
+  public:
+  void unsafe_arena_set_allocated_trans(
+      ::fk_pb::FkIntVec3* trans);
+  ::fk_pb::FkIntVec3* unsafe_arena_release_trans();
+
   // @@protoc_insertion_point(class_scope:fk_pb.FkImageLayer)
  private:
   class _Internal;
@@ -215,7 +290,11 @@ class FkImageLayer final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_;
   ::fk_pb::FkSize* size_;
+  ::fk_pb::FkRational* rotation_;
+  ::fk_pb::FkFloatVec3* scale_;
+  ::fk_pb::FkIntVec3* trans_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_FkImageLayer_2eproto;
 };
@@ -314,6 +393,315 @@ inline void FkImageLayer::set_allocated_size(::fk_pb::FkSize* size) {
   }
   size_ = size;
   // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.size)
+}
+
+// .fk_pb.FkRational rotation = 2;
+inline bool FkImageLayer::_internal_has_rotation() const {
+  return this != internal_default_instance() && rotation_ != nullptr;
+}
+inline bool FkImageLayer::has_rotation() const {
+  return _internal_has_rotation();
+}
+inline const ::fk_pb::FkRational& FkImageLayer::_internal_rotation() const {
+  const ::fk_pb::FkRational* p = rotation_;
+  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkRational&>(
+      ::fk_pb::_FkRational_default_instance_);
+}
+inline const ::fk_pb::FkRational& FkImageLayer::rotation() const {
+  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.rotation)
+  return _internal_rotation();
+}
+inline void FkImageLayer::unsafe_arena_set_allocated_rotation(
+    ::fk_pb::FkRational* rotation) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(rotation_);
+  }
+  rotation_ = rotation;
+  if (rotation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkImageLayer.rotation)
+}
+inline ::fk_pb::FkRational* FkImageLayer::release_rotation() {
+  
+  ::fk_pb::FkRational* temp = rotation_;
+  rotation_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::fk_pb::FkRational* FkImageLayer::unsafe_arena_release_rotation() {
+  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.rotation)
+  
+  ::fk_pb::FkRational* temp = rotation_;
+  rotation_ = nullptr;
+  return temp;
+}
+inline ::fk_pb::FkRational* FkImageLayer::_internal_mutable_rotation() {
+  
+  if (rotation_ == nullptr) {
+    auto* p = CreateMaybeMessage<::fk_pb::FkRational>(GetArenaForAllocation());
+    rotation_ = p;
+  }
+  return rotation_;
+}
+inline ::fk_pb::FkRational* FkImageLayer::mutable_rotation() {
+  ::fk_pb::FkRational* _msg = _internal_mutable_rotation();
+  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.rotation)
+  return _msg;
+}
+inline void FkImageLayer::set_allocated_rotation(::fk_pb::FkRational* rotation) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(rotation_);
+  }
+  if (rotation) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(rotation));
+    if (message_arena != submessage_arena) {
+      rotation = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, rotation, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  rotation_ = rotation;
+  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.rotation)
+}
+
+// .fk_pb.FkFloatVec3 scale = 3;
+inline bool FkImageLayer::_internal_has_scale() const {
+  return this != internal_default_instance() && scale_ != nullptr;
+}
+inline bool FkImageLayer::has_scale() const {
+  return _internal_has_scale();
+}
+inline const ::fk_pb::FkFloatVec3& FkImageLayer::_internal_scale() const {
+  const ::fk_pb::FkFloatVec3* p = scale_;
+  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkFloatVec3&>(
+      ::fk_pb::_FkFloatVec3_default_instance_);
+}
+inline const ::fk_pb::FkFloatVec3& FkImageLayer::scale() const {
+  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.scale)
+  return _internal_scale();
+}
+inline void FkImageLayer::unsafe_arena_set_allocated_scale(
+    ::fk_pb::FkFloatVec3* scale) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(scale_);
+  }
+  scale_ = scale;
+  if (scale) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkImageLayer.scale)
+}
+inline ::fk_pb::FkFloatVec3* FkImageLayer::release_scale() {
+  
+  ::fk_pb::FkFloatVec3* temp = scale_;
+  scale_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::fk_pb::FkFloatVec3* FkImageLayer::unsafe_arena_release_scale() {
+  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.scale)
+  
+  ::fk_pb::FkFloatVec3* temp = scale_;
+  scale_ = nullptr;
+  return temp;
+}
+inline ::fk_pb::FkFloatVec3* FkImageLayer::_internal_mutable_scale() {
+  
+  if (scale_ == nullptr) {
+    auto* p = CreateMaybeMessage<::fk_pb::FkFloatVec3>(GetArenaForAllocation());
+    scale_ = p;
+  }
+  return scale_;
+}
+inline ::fk_pb::FkFloatVec3* FkImageLayer::mutable_scale() {
+  ::fk_pb::FkFloatVec3* _msg = _internal_mutable_scale();
+  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.scale)
+  return _msg;
+}
+inline void FkImageLayer::set_allocated_scale(::fk_pb::FkFloatVec3* scale) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(scale_);
+  }
+  if (scale) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(scale));
+    if (message_arena != submessage_arena) {
+      scale = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, scale, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  scale_ = scale;
+  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.scale)
+}
+
+// .fk_pb.FkIntVec3 trans = 4;
+inline bool FkImageLayer::_internal_has_trans() const {
+  return this != internal_default_instance() && trans_ != nullptr;
+}
+inline bool FkImageLayer::has_trans() const {
+  return _internal_has_trans();
+}
+inline const ::fk_pb::FkIntVec3& FkImageLayer::_internal_trans() const {
+  const ::fk_pb::FkIntVec3* p = trans_;
+  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkIntVec3&>(
+      ::fk_pb::_FkIntVec3_default_instance_);
+}
+inline const ::fk_pb::FkIntVec3& FkImageLayer::trans() const {
+  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.trans)
+  return _internal_trans();
+}
+inline void FkImageLayer::unsafe_arena_set_allocated_trans(
+    ::fk_pb::FkIntVec3* trans) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans_);
+  }
+  trans_ = trans;
+  if (trans) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkImageLayer.trans)
+}
+inline ::fk_pb::FkIntVec3* FkImageLayer::release_trans() {
+  
+  ::fk_pb::FkIntVec3* temp = trans_;
+  trans_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::fk_pb::FkIntVec3* FkImageLayer::unsafe_arena_release_trans() {
+  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.trans)
+  
+  ::fk_pb::FkIntVec3* temp = trans_;
+  trans_ = nullptr;
+  return temp;
+}
+inline ::fk_pb::FkIntVec3* FkImageLayer::_internal_mutable_trans() {
+  
+  if (trans_ == nullptr) {
+    auto* p = CreateMaybeMessage<::fk_pb::FkIntVec3>(GetArenaForAllocation());
+    trans_ = p;
+  }
+  return trans_;
+}
+inline ::fk_pb::FkIntVec3* FkImageLayer::mutable_trans() {
+  ::fk_pb::FkIntVec3* _msg = _internal_mutable_trans();
+  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.trans)
+  return _msg;
+}
+inline void FkImageLayer::set_allocated_trans(::fk_pb::FkIntVec3* trans) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans_);
+  }
+  if (trans) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper<
+            ::PROTOBUF_NAMESPACE_ID::MessageLite>::GetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans));
+    if (message_arena != submessage_arena) {
+      trans = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, trans, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  trans_ = trans;
+  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.trans)
+}
+
+// string file = 5;
+inline void FkImageLayer::clear_file() {
+  file_.ClearToEmpty();
+}
+inline const std::string& FkImageLayer::file() const {
+  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.file)
+  return _internal_file();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void FkImageLayer::set_file(ArgT0&& arg0, ArgT... args) {
+ 
+ file_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:fk_pb.FkImageLayer.file)
+}
+inline std::string* FkImageLayer::mutable_file() {
+  std::string* _s = _internal_mutable_file();
+  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.file)
+  return _s;
+}
+inline const std::string& FkImageLayer::_internal_file() const {
+  return file_.Get();
+}
+inline void FkImageLayer::_internal_set_file(const std::string& value) {
+  
+  file_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* FkImageLayer::_internal_mutable_file() {
+  
+  return file_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* FkImageLayer::release_file() {
+  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.file)
+  return file_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void FkImageLayer::set_allocated_file(std::string* file) {
+  if (file != nullptr) {
+    
+  } else {
+    
+  }
+  file_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), file,
+      GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (file_.IsDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited())) {
+    file_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.file)
 }
 
 #ifdef __GNUC__
