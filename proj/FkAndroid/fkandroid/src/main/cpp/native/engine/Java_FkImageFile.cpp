@@ -53,6 +53,26 @@ JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImageFile_nativeStop
     engine->stop();
 }
 
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImageFile_nativeSave
+        (JNIEnv *env, jobject that, jlong handle, jstring file) {
+    auto pFile = env->GetStringUTFChars(file, nullptr);
+    std::string fileStr(pFile);
+    env->ReleaseStringUTFChars(file, pFile);
+
+    auto engine = castHandle(handle);
+    return engine->save(fileStr);
+}
+
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImageFile_nativeLoad
+        (JNIEnv *env, jobject that, jlong handle, jstring file) {
+    auto pFile = env->GetStringUTFChars(file, nullptr);
+    std::string fileStr(pFile);
+    env->ReleaseStringUTFChars(file, pFile);
+
+    auto engine = castHandle(handle);
+    return engine->load(fileStr);
+}
+
 #ifdef __cplusplus
 }
 #endif

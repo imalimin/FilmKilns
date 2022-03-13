@@ -36,7 +36,7 @@ public:
 
     FkResult notifyRender();
 
-    FkID newLayer();
+    FkID newLayer(FkID expectId = FK_ID_NONE);
 
     FkID newLayerWithColor(FkSize size, FkColor color);
 

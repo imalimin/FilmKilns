@@ -27,7 +27,7 @@ public:
 
     virtual FkResult onStop() override;
 
-    FkID newLayerWithFile(std::string path);
+    FkID newLayerWithFile(std::string path, FkID expectId = FK_ID_NONE);
 
 private:
     FkResult _updateLayerWithFile(std::shared_ptr<FkMessage> msg);

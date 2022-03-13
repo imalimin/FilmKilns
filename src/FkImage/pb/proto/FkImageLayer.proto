@@ -14,4 +14,5 @@ message FkImageLayer {
     FkFloatVec3 scale = 3;
     FkIntVec3 trans = 4;
     string file = 5;
+    int32 id = 6;
 }

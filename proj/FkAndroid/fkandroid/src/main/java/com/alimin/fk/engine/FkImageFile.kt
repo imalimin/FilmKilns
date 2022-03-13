@@ -34,9 +34,26 @@ class FkImageFile(val engine: FkImage) : FkEngine() {
         }
     }
 
+    fun save(file: String): Int {
+        if (!isNull()) {
+            return nativeSave(getHandle(), file)
+        }
+        return -1
+    }
+
+    fun load(file: String): Int {
+        if (!isNull()) {
+            return nativeLoad(getHandle(), file)
+        }
+        return -1
+    }
+
     private external fun nativeCreateInstance(imageEngineHandle: Long): Long
     private external fun nativeCreate(handle: Long)
     private external fun nativeDestroy(handle: Long)
     private external fun nativeStart(handle: Long)
     private external fun nativeStop(handle: Long)
+
+    private external fun nativeSave(handle: Long, file: String):Int
+    private external fun nativeLoad(handle: Long, file: String):Int
 }

@@ -58,6 +58,9 @@ FkResult FkImageFileEngine::onStop() {
 }
 
 FkResult FkImageFileEngine::save(std::string &file) {
+    layers.clear();
+    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
+
     auto msg = FkMessage::obtain(FK_MSG_SAVE);
     msg->arg3 = file;
     return sendMessage(msg);
@@ -66,8 +69,6 @@ FkResult FkImageFileEngine::save(std::string &file) {
 FkResult FkImageFileEngine::_save(std::shared_ptr<FkMessage> &msg) {
     auto file = msg->arg3;
     auto dir = _createTempDir(file);
-    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
-    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
     auto model = std::make_shared<fk_pb::FkPictureModel>();
     for (auto &layer : layers) {
         if (layer->id == Fk_CANVAS_ID) {
@@ -95,8 +96,9 @@ FkResult FkImageFileEngine::load(std::string &file) {
 
 FkResult FkImageFileEngine::_load(std::shared_ptr<FkMessage> &msg) {
     auto engine = _cast2ImageEngine(imageEngine);
-    auto file = msg->arg3;
-    file.append(".dir");
+    auto dir = msg->arg3;
+    dir.append(".dir");
+    auto file = dir;
     file.append("/model.pb");
     fstream stream;
     stream.open(file.c_str(), ios::in | ios::binary);
@@ -104,7 +106,9 @@ FkResult FkImageFileEngine::_load(std::shared_ptr<FkMessage> &msg) {
     model->ParseFromIstream(&stream);
     for (auto &layer : model->layers()) {
         if (!layer.file().empty()) {
-            engine->newLayerWithFile(layer.file());
+            auto layerFile = dir;
+            layerFile.append(layer.file());
+            engine->newLayerWithFile(layerFile, layer.id());
         }
     }
     auto canvasSize = model->canvas().size();
@@ -120,6 +124,7 @@ FkResult FkImageFileEngine::_fillLayer(void* dst,
     auto rotateCompo = src->findComponent<FkRotateComponent>();
     auto transCompo = src->findComponent<FkTransComponent>();
     auto sizeCompo = src->findComponent<FkSizeCompo>();
+    pbLayer->set_id(src->id);
     pbLayer->set_file(fileCompo ? FkFileUtils::name(fileCompo->str) : "");
     if (scaleCompo) {
         auto value = new fk_pb::FkFloatVec3();

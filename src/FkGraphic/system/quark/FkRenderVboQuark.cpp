@@ -46,6 +46,7 @@ FkResult FkRenderVboQuark::onStart() {
 
 FkResult FkRenderVboQuark::onStop() {
     allocator->release();
+    allocator = nullptr;
     return FkQuark::onStop();
 }
 

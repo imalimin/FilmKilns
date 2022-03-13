@@ -196,6 +196,7 @@ class FkImageLayer final :
     kRotationFieldNumber = 2,
     kScaleFieldNumber = 3,
     kTransFieldNumber = 4,
+    kIdFieldNumber = 6,
   };
   // string file = 5;
   void clear_file();
@@ -283,6 +284,15 @@ class FkImageLayer final :
       ::fk_pb::FkIntVec3* trans);
   ::fk_pb::FkIntVec3* unsafe_arena_release_trans();
 
+  // int32 id = 6;
+  void clear_id();
+  int32_t id() const;
+  void set_id(int32_t value);
+  private:
+  int32_t _internal_id() const;
+  void _internal_set_id(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:fk_pb.FkImageLayer)
  private:
   class _Internal;
@@ -295,6 +305,7 @@ class FkImageLayer final :
   ::fk_pb::FkRational* rotation_;
   ::fk_pb::FkFloatVec3* scale_;
   ::fk_pb::FkIntVec3* trans_;
+  int32_t id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_FkImageLayer_2eproto;
 };
@@ -702,6 +713,26 @@ inline void FkImageLayer::set_allocated_file(std::string* file) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.file)
+}
+
+// int32 id = 6;
+inline void FkImageLayer::clear_id() {
+  id_ = 0;
+}
+inline int32_t FkImageLayer::_internal_id() const {
+  return id_;
+}
+inline int32_t FkImageLayer::id() const {
+  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.id)
+  return _internal_id();
+}
+inline void FkImageLayer::_internal_set_id(int32_t value) {
+  
+  id_ = value;
+}
+inline void FkImageLayer::set_id(int32_t value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:fk_pb.FkImageLayer.id)
 }
 
 #ifdef __GNUC__

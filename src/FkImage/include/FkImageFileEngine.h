@@ -52,6 +52,7 @@ private:
     static const FkID FK_MSG_SAVE;
     static const FkID FK_MSG_LOAD;
     std::shared_ptr<FkEngine> imageEngine = nullptr;
+    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
 };
 
 #endif //FK_IMAGE_FKIMAGEFILEENGINE_H

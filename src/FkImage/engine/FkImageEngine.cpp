@@ -46,12 +46,12 @@ FkResult FkImageEngine::onStop() {
     return FkLayerEngine::onStop();
 }
 
-FkID FkImageEngine::newLayerWithFile(std::string path) {
+FkID FkImageEngine::newLayerWithFile(std::string path, FkID expectId) {
     if (!FkFileUtils::exist(path)) {
         FkLogE("File not found: %s", path.c_str());
         return FK_ID_NONE;
     }
-    auto id = newLayer();
+    auto id = newLayer(expectId);
     if (FK_ID_NONE != id) {
         auto layer = std::make_shared<FkGraphicLayer>();
         layer->id = id;

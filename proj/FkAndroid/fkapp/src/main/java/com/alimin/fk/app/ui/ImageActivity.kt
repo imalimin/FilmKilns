@@ -33,9 +33,11 @@ class ImageActivity : BaseActivity(),
     FkActSurfaceView.OnActionListener {
     override val layoutResID: Int = R.layout.activity_image
     private var surfaceView: FkActSurfaceView? = null
+    private lateinit var cacheFile: File
     private lateinit var engine: FkImage
     private lateinit var fileEngine: FkImageFile
     private var layer = -1
+    private var pickImagePath: String? = null
 
     @AfterPermissionGranted(REQ_PERMISSION)
     override fun initView() {
@@ -43,6 +45,7 @@ class ImageActivity : BaseActivity(),
         if (!workspace.exists()) {
             workspace.mkdirs()
         }
+        cacheFile = File(externalCacheDir, "/${System.currentTimeMillis()}.fkp")
         engine = FkImage(workspace.absolutePath)
         fileEngine = FkImageFile(engine)
         val perms = arrayOf(
@@ -51,7 +54,6 @@ class ImageActivity : BaseActivity(),
         if (EasyPermissions.hasPermissions(this, *perms)) {
             engine.create()
             fileEngine.create()
-            fileEngine.start()
             surfaceView = FkActSurfaceView(this)
             surfaceView?.holder?.addCallback(this)
             surfaceView?.setOnScrollListener(this)
@@ -74,31 +76,26 @@ class ImageActivity : BaseActivity(),
     }
 
     private fun pickPictureAction(uri: Uri) {
-        var imagePath: String? = null
         if (DocumentsContract.isDocumentUri(this, uri)) {
             val docId = DocumentsContract.getDocumentId(uri)
             if ("com.android.providers.media.documents" == uri.authority) {
                 val id = docId.split(":").toTypedArray()[1]
                 val selection = MediaStore.Images.Media._ID + "=" + id
-                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
+                pickImagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
             } else if ("com.android.providers.downloads.documents" == uri.getAuthority()) {
                 val contentUri: Uri = ContentUris.withAppendedId(
                     Uri.parse("content://downloads/public_downloads"),
                     java.lang.Long.valueOf(docId)
                 )
-                imagePath = getImagePath(contentUri, null)
+                pickImagePath = getImagePath(contentUri, null)
             }
         } else if ("content".equals(uri.scheme, ignoreCase = true)) {
-            imagePath = getImagePath(uri, null)
+            pickImagePath = getImagePath(uri, null)
         } else if ("file".equals(uri.scheme, ignoreCase = true)) {
-            imagePath = uri.path
+            pickImagePath = uri.path
         }
 
-        if (imagePath?.isNotEmpty() == true) {
-            engine.start()
-            layer = engine.newLayerWithFile(imagePath)
-            engine.notifyRender()
-        }else {
+        if (pickImagePath?.isEmpty() == true) {
             Toast.makeText(this, "File Not Found!", Toast.LENGTH_LONG).show()
         }
     }
@@ -115,23 +112,39 @@ class ImageActivity : BaseActivity(),
         return path
     }
 
+    override fun onStart() {
+        super.onStart()
+        engine.start()
+        fileEngine.start()
+        fileEngine.load(cacheFile.absolutePath)
+        if (pickImagePath?.isNotEmpty() == true) {
+            layer = engine.newLayerWithFile(pickImagePath!!)
+            engine.notifyRender()
+            pickImagePath = null
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        fileEngine.save(cacheFile.absolutePath)
+        fileEngine.stop()
+        engine.stop()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        engine.destroy()
-        fileEngine.stop()
         fileEngine.destroy()
+        engine.destroy()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        engine.stop()
         engine.detachFromSurface(holder.surface)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        engine.start()
         engine.attachToSurface(holder.surface)
         engine.notifyRender()
 //        engine.setCanvasSize(512, 512)

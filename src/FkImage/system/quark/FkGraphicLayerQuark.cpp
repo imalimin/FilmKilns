@@ -60,7 +60,6 @@ FkResult FkGraphicLayerQuark::onCreate() {
 }
 
 FkResult FkGraphicLayerQuark::onDestroy() {
-    layers.clear();
     return FkQuark::onDestroy();
 }
 
@@ -69,6 +68,7 @@ FkResult FkGraphicLayerQuark::onStart() {
 }
 
 FkResult FkGraphicLayerQuark::onStop() {
+    layers.clear();
     return FkQuark::onStop();
 }
 
@@ -102,9 +102,16 @@ void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
     coord->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, coordinate);
 }
 
+bool FkGraphicLayerQuark::_isExistLayer(FkID id) {
+    return layers.find(id) != layers.end();
+}
+
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkGraphicNewLayerPrt, p);
     proto->layer = newLayerEntity();
+    if (FK_ID_NONE != proto->expectId && !_isExistLayer(proto->expectId)) {
+        proto->layer->id = proto->expectId;
+    }
     if (proto->layer) {
         layers.emplace(std::make_pair(proto->layer->id, proto->layer));
         return FK_OK;

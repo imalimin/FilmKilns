@@ -69,9 +69,9 @@ FkResult FkLayerEngine::onCreate() {
 FkResult FkLayerEngine::onDestroy() {
     auto ret = FkEngine::onDestroy();
     FkAssert(ret == FK_OK, ret);
-    ret = renderEngine->destroy();
+    ret = client->quickSend<FkOnDestroyPrt>(molecule);
     FkAssert(ret == FK_OK, ret);
-    return client->quickSend<FkOnDestroyPrt>(molecule);
+    return renderEngine->destroy();
 }
 
 FkResult FkLayerEngine::onStart() {
@@ -85,9 +85,9 @@ FkResult FkLayerEngine::onStart() {
 FkResult FkLayerEngine::onStop() {
     auto ret = FkEngine::onStop();
     FkAssert(ret == FK_OK, ret);
-    ret = renderEngine->stop();
+    ret = client->quickSend<FkOnStopPrt>(molecule);
     FkAssert(ret == FK_OK, ret);
-    return client->quickSend<FkOnStopPrt>(molecule);
+    return renderEngine->stop();
 }
 
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
@@ -115,8 +115,9 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
     return client->quickSend(proto, molecule);
 }
 
-FkID FkLayerEngine::newLayer() {
+FkID FkLayerEngine::newLayer(FkID expectId) {
     auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
+    msg->arg1 = expectId;
     msg->withPromise();
     auto ret = sendMessage(msg);
     FkID id = FK_ID_NONE;
@@ -128,6 +129,7 @@ FkID FkLayerEngine::newLayer() {
 
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkGraphicNewLayerPrt>();
+    proto->expectId = msg->arg1;
     auto ret = client->with(molecule)->send(proto);
     msg->setPromiseResult(proto->layer ? proto->layer->id : FK_ID_NONE);
     return ret;

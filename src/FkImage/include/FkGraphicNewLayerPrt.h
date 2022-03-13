@@ -20,6 +20,7 @@ public:
     virtual ~FkGraphicNewLayerPrt();
 
 public:
+    FkID expectId = FK_ID_NONE;
     std::shared_ptr<FkGraphicLayer> layer = nullptr;
 
 };

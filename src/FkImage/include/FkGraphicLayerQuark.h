@@ -58,6 +58,8 @@ protected:
 private:
     void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
 
+    bool _isExistLayer(FkID id);
+
 protected:
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
     std::mutex mtx;

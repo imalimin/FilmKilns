@@ -23,7 +23,8 @@ constexpr FkImageLayer::FkImageLayer(
   , size_(nullptr)
   , rotation_(nullptr)
   , scale_(nullptr)
-  , trans_(nullptr){}
+  , trans_(nullptr)
+  , id_(0){}
 struct FkImageLayerDefaultTypeInternal {
   constexpr FkImageLayerDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -50,6 +51,7 @@ const uint32_t TableStruct_FkImageLayer_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, scale_),
   PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, trans_),
   PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, file_),
+  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, id_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::fk_pb::FkImageLayer)},
@@ -62,11 +64,11 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_FkImageLayer_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\022FkImageLayer.proto\022\005fk_pb\032\014FkSize.prot"
   "o\032\020FkRational.proto\032\017FkIntVec3.proto\032\021Fk"
-  "FloatVec3.proto\"\242\001\n\014FkImageLayer\022\033\n\004size"
+  "FloatVec3.proto\"\256\001\n\014FkImageLayer\022\033\n\004size"
   "\030\001 \001(\0132\r.fk_pb.FkSize\022#\n\010rotation\030\002 \001(\0132"
   "\021.fk_pb.FkRational\022!\n\005scale\030\003 \001(\0132\022.fk_p"
   "b.FkFloatVec3\022\037\n\005trans\030\004 \001(\0132\020.fk_pb.FkI"
-  "ntVec3\022\014\n\004file\030\005 \001(\tb\006proto3"
+  "ntVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_FkImageLayer_2eproto_deps[4] = {
   &::descriptor_table_FkFloatVec3_2eproto,
@@ -76,7 +78,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkImageLayer_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkImageLayer_2eproto = {
-  false, false, 268, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
+  false, false, 280, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
   &descriptor_table_FkImageLayer_2eproto_once, descriptor_table_FkImageLayer_2eproto_deps, 4, 1,
   schemas, file_default_instances, TableStruct_FkImageLayer_2eproto::offsets,
   file_level_metadata_FkImageLayer_2eproto, file_level_enum_descriptors_FkImageLayer_2eproto, file_level_service_descriptors_FkImageLayer_2eproto,
@@ -179,6 +181,7 @@ FkImageLayer::FkImageLayer(const FkImageLayer& from)
   } else {
     trans_ = nullptr;
   }
+  id_ = from.id_;
   // @@protoc_insertion_point(copy_constructor:fk_pb.FkImageLayer)
 }
 
@@ -189,8 +192,8 @@ file_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&size_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&trans_) -
-    reinterpret_cast<char*>(&size_)) + sizeof(trans_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&id_) -
+    reinterpret_cast<char*>(&size_)) + sizeof(id_));
 }
 
 FkImageLayer::~FkImageLayer() {
@@ -242,6 +245,7 @@ void FkImageLayer::Clear() {
     delete trans_;
   }
   trans_ = nullptr;
+  id_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -289,6 +293,14 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
           auto str = _internal_mutable_file();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "fk_pb.FkImageLayer.file"));
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 id = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -364,6 +376,12 @@ uint8_t* FkImageLayer::_InternalSerialize(
         5, this->_internal_file(), target);
   }
 
+  // int32 id = 6;
+  if (this->_internal_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(6, this->_internal_id(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -415,6 +433,11 @@ size_t FkImageLayer::ByteSizeLong() const {
         *trans_);
   }
 
+  // int32 id = 6;
+  if (this->_internal_id() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_id());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
 }
 
@@ -452,6 +475,9 @@ void FkImageLayer::MergeFrom(const FkImageLayer& from) {
   if (from._internal_has_trans()) {
     _internal_mutable_trans()->::fk_pb::FkIntVec3::MergeFrom(from._internal_trans());
   }
+  if (from._internal_id() != 0) {
+    _internal_set_id(from._internal_id());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -477,8 +503,8 @@ void FkImageLayer::InternalSwap(FkImageLayer* other) {
       &other->file_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(FkImageLayer, trans_)
-      + sizeof(FkImageLayer::trans_)
+      PROTOBUF_FIELD_OFFSET(FkImageLayer, id_)
+      + sizeof(FkImageLayer::id_)
       - PROTOBUF_FIELD_OFFSET(FkImageLayer, size_)>(
           reinterpret_cast<char*>(&size_),
           reinterpret_cast<char*>(&other->size_));
