@@ -105,6 +105,9 @@ FkResult FkImageFileEngine::_load(std::shared_ptr<FkMessage> &msg) {
             layerFile.append(layer.file());
             engine->newLayerWithFile(layerFile, layer.id());
             engine->setTranslate(layer.id(), layer.trans().x(), layer.trans().y());
+            engine->setScale(layer.id(), layer.scale().x(), layer.scale().y());
+            FkRational rational(layer.rotation().num(), layer.rotation().den());
+            engine->setRotation(layer.id(), rational);
         }
     }
     auto canvasSize = model->canvas().size();

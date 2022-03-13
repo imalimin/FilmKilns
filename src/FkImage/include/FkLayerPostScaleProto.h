@@ -8,10 +8,9 @@
 #ifndef FK_GRAPHIC_FKLAYERSCALEPROTO_H
 #define FK_GRAPHIC_FKLAYERSCALEPROTO_H
 
-#include "FkProtocol.h"
-#include "FkFloatVec3.h"
+#include "FkFloatVec3Proto.h"
 
-FK_CLASS FkLayerPostScaleProto FK_EXTEND FkProtocol {
+FK_CLASS FkLayerPostScaleProto FK_EXTEND FkFloatVec3Proto {
 public:
     FkLayerPostScaleProto();
 
@@ -21,7 +20,6 @@ public:
 
 public:
     FkID layer = FK_ID_NONE;
-    FkFloatVec3 value;
 };
 
 #endif //FK_GRAPHIC_FKLAYERSCALEPROTO_H

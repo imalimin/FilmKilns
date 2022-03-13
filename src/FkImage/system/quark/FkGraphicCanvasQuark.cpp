@@ -14,6 +14,9 @@
 #include "FkLayerPostRotateProto.h"
 #include "FkGraphicNewLayerPrt.h"
 #include "FkRenderRequestPrt.h"
+#include "FkLayerSetTransProto.h"
+#include "FkLayerSetRotateProto.h"
+#include "FkLayerSetScaleProto.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkGraphicLayerQuark() {
     FK_MARK_SUPER
@@ -27,8 +30,11 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FkGraphicLayerQuark::describeProtocols(desc);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicCanvasQuark::_onDelivery);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicCanvasQuark::_onPostTranslate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetTransProto, FkGraphicCanvasQuark::_onSetTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicCanvasQuark::_onPostScale);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetScaleProto, FkGraphicCanvasQuark::_onSetScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicCanvasQuark::_onPostRotate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetRotateProto, FkGraphicCanvasQuark::_onSetRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicCanvasQuark::_onMeasureTrans);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
@@ -62,7 +68,15 @@ FkResult FkGraphicCanvasQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicCanvasQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerPostTransProto, p);
+    if (proto->layer != Fk_CANVAS_ID) {
+        return FK_OK;
+    }
+    return FkGraphicLayerQuark::_onPostTranslate(p);
+}
+
+FkResult FkGraphicCanvasQuark::_onSetTranslate(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetTransProto, p);
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
@@ -70,7 +84,15 @@ FkResult FkGraphicCanvasQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicCanvasQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerPostScaleProto, p);
+    if (proto->layer != Fk_CANVAS_ID) {
+        return FK_OK;
+    }
+    return FkGraphicLayerQuark::_onPostScale(p);
+}
+
+FkResult FkGraphicCanvasQuark::_onSetScale(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetScaleProto, p);
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
@@ -78,7 +100,15 @@ FkResult FkGraphicCanvasQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicCanvasQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerPostRotateProto, p);
+    if (proto->layer != Fk_CANVAS_ID) {
+        return FK_OK;
+    }
+    return FkGraphicLayerQuark::_onPostRotate(p);
+}
+
+FkResult FkGraphicCanvasQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetRotateProto, p);
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }

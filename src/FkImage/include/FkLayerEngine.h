@@ -48,7 +48,11 @@ public:
 
     FkResult postScale(FkID layer, float dx, float dy);
 
+    FkResult setScale(FkID layer, float x, float y);
+
     FkResult postRotation(FkID layer, FkRational &rational);
+
+    FkResult setRotation(FkID layer, FkRational &rational);
 
     FkResult drawPoint(FkID layer, FkColor color, int32_t x, int32_t y);
 
@@ -78,7 +82,11 @@ private:
 
     FkResult _postScale(std::shared_ptr<FkMessage> msg);
 
+    FkResult _setScale(std::shared_ptr<FkMessage> msg);
+
     FkResult _postRotation(std::shared_ptr<FkMessage> msg);
+
+    FkResult _setRotation(std::shared_ptr<FkMessage> msg);
 
     FkResult _drawPoint(std::shared_ptr<FkMessage> msg);
 

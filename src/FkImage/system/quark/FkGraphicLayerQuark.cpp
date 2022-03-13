@@ -28,6 +28,8 @@
 #include "FkFilePathCompo.h"
 #include "FkQueryLayersProto.h"
 #include "FkLayerSetTransProto.h"
+#include "FkLayerSetRotateProto.h"
+#include "FkLayerSetScaleProto.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -49,9 +51,11 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicLayerQuark::_onUpdateLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicLayerQuark::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicLayerQuark::_onPostTranslate);
-    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetTransProto, FkGraphicLayerQuark::_onPostTranslate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetTransProto, FkGraphicLayerQuark::_onSetTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicLayerQuark::_onPostScale);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetScaleProto, FkGraphicLayerQuark::_onSetScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetRotateProto, FkGraphicLayerQuark::_onSetRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onMeasureTrans);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicLayerQuark::_onDrawPoint);
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
@@ -210,7 +214,7 @@ FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkLayerPostTransProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerPostTransProto, p);
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
@@ -221,7 +225,7 @@ FkResult FkGraphicLayerQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onSetTranslate(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkLayerSetTransProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetTransProto, p);
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
@@ -232,7 +236,7 @@ FkResult FkGraphicLayerQuark::_onSetTranslate(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkLayerPostScaleProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerPostScaleProto, p);
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
@@ -241,6 +245,17 @@ FkResult FkGraphicLayerQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
     comp->value.x *= proto->value.x;
     comp->value.y *= proto->value.y;
     comp->value.z *= proto->value.z;
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onSetScale(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetScaleProto, p);
+    auto itr = layers.find(proto->layer);
+    FkAssert(layers.end() != itr, FK_FAIL);
+
+    auto comp = itr->second->findComponent<FkScaleComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+    comp->value = proto->value;
     return FK_OK;
 }
 
@@ -257,8 +272,19 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }
 
+FkResult FkGraphicLayerQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetRotateProto, p);
+    auto itr = layers.find(proto->layer);
+    FkAssert(layers.end() != itr, FK_FAIL);
+
+    auto comp = itr->second->findComponent<FkRotateComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+    comp->value = proto->value;
+    return FK_OK;
+}
+
 FkResult FkGraphicLayerQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
     auto itr = layers.find(proto->layerId);
     FkAssert(layers.end() != itr, FK_FAIL);
     proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
@@ -266,7 +292,7 @@ FkResult FkGraphicLayerQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkDrawPointProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawPointProto, p);
     auto itr = layers.find(proto->layer);
     if (layers.end() != itr) {
         auto comp = std::make_shared<FkPointComponent>();
@@ -278,7 +304,7 @@ FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onQueryLayers(std::shared_ptr<FkProtocol> p) {
-    auto proto = Fk_POINTER_CAST(FkQueryLayersProto, p);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQueryLayersProto, p);
     for (auto &itr : layers) {
         proto->layers.emplace_back(std::make_shared<FkGraphicLayer>(*(itr.second)));
     }

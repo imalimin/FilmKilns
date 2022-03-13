@@ -23,6 +23,8 @@
 #include "FkQueryLayersProto.h"
 #include "FkRenderEngineCompo.h"
 #include "FkLayerSetTransProto.h"
+#include "FkLayerSetRotateProto.h"
+#include "FkLayerSetScaleProto.h"
 
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {
@@ -224,6 +226,21 @@ FkResult FkLayerEngine::_postScale(std::shared_ptr<FkMessage> msg) {
     return client->quickSend(proto, molecule);
 }
 
+FkResult FkLayerEngine::setScale(FkID layer, float x, float y) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setScale));
+    msg->arg1 = layer;
+    msg->sp = std::make_shared<FkFloatVec3>(x, y, 1.0f);
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setScale(std::shared_ptr<FkMessage> msg) {
+    auto vec = std::dynamic_pointer_cast<FkFloatVec3>(msg->sp);
+    auto proto = std::make_shared<FkLayerSetScaleProto>();
+    proto->layer = msg->arg1;
+    proto->value = *vec;
+    return client->quickSend(proto, molecule);
+}
+
 FkResult FkLayerEngine::postRotation(FkID layer, FkRational &rational) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_postRotation));
     msg->arg1 = layer;
@@ -235,6 +252,21 @@ FkResult FkLayerEngine::_postRotation(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkLayerPostRotateProto>();
     proto->layer = msg->arg1;
     proto->value = *std::dynamic_pointer_cast<FkRational>(msg->sp);
+    return client->quickSend(proto, molecule);
+}
+
+FkResult FkLayerEngine::setRotation(FkID layer, FkRational &rational) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setRotation));
+    msg->arg1 = layer;
+    msg->sp = std::make_shared<FkRational>(rational);
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setRotation(std::shared_ptr<FkMessage> msg) {
+    auto value = std::dynamic_pointer_cast<FkRational>(msg->sp);
+    auto proto = std::make_shared<FkLayerSetRotateProto>();
+    proto->layer = msg->arg1;
+    proto->value = *value;
     return client->quickSend(proto, molecule);
 }
 

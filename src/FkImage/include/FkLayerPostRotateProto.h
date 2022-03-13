@@ -8,10 +8,9 @@
 #ifndef FK_GRAPHIC_FKLAYERROTATEPROTO_H
 #define FK_GRAPHIC_FKLAYERROTATEPROTO_H
 
-#include "FkProtocol.h"
-#include "FkRational.h"
+#include "FkRationalProto.h"
 
-FK_CLASS FkLayerPostRotateProto FK_EXTEND FkProtocol {
+FK_CLASS FkLayerPostRotateProto FK_EXTEND FkRationalProto {
 public:
     FkLayerPostRotateProto();
 
@@ -21,7 +20,6 @@ public:
 
 public:
     FkID layer = FK_ID_NONE;
-    FkRational value;
 };
 
 #endif //FK_GRAPHIC_FKLAYERROTATEPROTO_H

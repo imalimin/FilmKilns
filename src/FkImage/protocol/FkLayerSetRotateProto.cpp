@@ -3,20 +3,23 @@
 *
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
+*
+* AUTHOR: Alimin
+* CREATE TIME: 2022-3-13 13:23:03
 */
 
-#include "FkLayerPostRotateProto.h"
+#include "FkLayerSetRotateProto.h"
 
-FkLayerPostRotateProto::FkLayerPostRotateProto()
+FkLayerSetRotateProto::FkLayerSetRotateProto()
         : FkRationalProto(), layer(FK_ID_NONE) {
     FK_MARK_SUPER
 }
 
-FkLayerPostRotateProto::FkLayerPostRotateProto(const FkLayerPostRotateProto &o)
+FkLayerSetRotateProto::FkLayerSetRotateProto(const FkLayerSetRotateProto &o)
         : FkRationalProto(o), layer(o.layer) {
     FK_MARK_SUPER
 }
 
-FkLayerPostRotateProto::~FkLayerPostRotateProto() {
+FkLayerSetRotateProto::~FkLayerSetRotateProto() {
 
 }

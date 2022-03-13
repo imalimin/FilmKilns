@@ -3,20 +3,23 @@
 *
 * This source code is licensed under the MIT license found in the
 * LICENSE file in the root directory of this source tree.
+*
+* AUTHOR: Alimin
+* CREATE TIME: 2022-3-13 13:22:55
 */
 
-#include "FkLayerPostScaleProto.h"
+#include "FkLayerSetScaleProto.h"
 
-FkLayerPostScaleProto::FkLayerPostScaleProto()
+FkLayerSetScaleProto::FkLayerSetScaleProto()
         : FkFloatVec3Proto(), layer(FK_ID_NONE) {
     FK_MARK_SUPER
 }
 
-FkLayerPostScaleProto::FkLayerPostScaleProto(const FkLayerPostScaleProto &o)
+FkLayerSetScaleProto::FkLayerSetScaleProto(const FkLayerSetScaleProto &o)
         : FkFloatVec3Proto(o), layer(o.layer) {
     FK_MARK_SUPER
 }
 
-FkLayerPostScaleProto::~FkLayerPostScaleProto() {
+FkLayerSetScaleProto::~FkLayerSetScaleProto() {
 
 }

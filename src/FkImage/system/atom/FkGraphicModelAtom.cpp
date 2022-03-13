@@ -22,6 +22,8 @@
 #include "FkMeasureTransProto.h"
 #include "FkQueryLayersProto.h"
 #include "FkLayerSetTransProto.h"
+#include "FkLayerSetRotateProto.h"
+#include "FkLayerSetScaleProto.h"
 
 FkGraphicModelAtom::FkGraphicModelAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -44,6 +46,8 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkSetSurfacePrt, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkQueryLayersProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkLayerSetTransProto, FkGraphicModelAtom);
+    FK_PORT_DELIVERY(desc, FkLayerSetRotateProto, FkGraphicModelAtom);
+    FK_PORT_DELIVERY(desc, FkLayerSetScaleProto, FkGraphicModelAtom);
 }
 
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

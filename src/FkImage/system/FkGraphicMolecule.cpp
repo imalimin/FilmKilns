@@ -22,6 +22,8 @@
 #include "FkQueryLayersProto.h"
 #include "FkRenderEngineCompo.h"
 #include "FkLayerSetTransProto.h"
+#include "FkLayerSetRotateProto.h"
+#include "FkLayerSetScaleProto.h"
 
 FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
     FK_MARK_SUPER
@@ -44,6 +46,8 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkDrawPointProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkQueryLayersProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkLayerSetTransProto, FkGraphicMolecule);
+    FK_PORT_DELIVERY(desc, FkLayerSetRotateProto, FkGraphicMolecule);
+    FK_PORT_DELIVERY(desc, FkLayerSetScaleProto, FkGraphicMolecule);
 }
 
 void FkGraphicMolecule::onConnect(std::shared_ptr<FkConnectChain> chain) {

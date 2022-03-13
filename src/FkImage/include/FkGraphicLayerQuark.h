@@ -51,7 +51,11 @@ protected:
 
     virtual FkResult _onPostScale(std::shared_ptr<FkProtocol> p);
 
+    virtual FkResult _onSetScale(std::shared_ptr<FkProtocol> p);
+
     virtual FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
+
+    virtual FkResult _onSetRotate(std::shared_ptr<FkProtocol> p);
 
     FkResult _onDrawPoint(std::shared_ptr<FkProtocol> p);
 
