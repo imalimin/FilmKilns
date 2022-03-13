@@ -85,16 +85,6 @@ private:
     FkResult _queryLayers(std::shared_ptr<FkMessage> msg);
 
 private:
-    static const FkID FK_MSG_NEW_LAYER;
-    static const FkID FK_MSG_UPDATE_LAYER_WITH_COLOR;
-    static const FkID FK_MSG_SET_SURFACE;
-    static const FkID FK_MSG_NOTIFY_RENDER;
-    static const FkID FK_MSG_SET_CANVAS_SIZE;
-    static const FkID FK_MSG_POST_TRANSLATE;
-    static const FkID FK_MSG_POST_SCALE;
-    static const FkID FK_MSG_POST_ROTATION;
-    static const FkID FK_MSG_DRAW_POINT;
-    static const FkID FK_MSG_QUERY_LAYERS;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
     std::shared_ptr<FkEngine> renderEngine = nullptr;

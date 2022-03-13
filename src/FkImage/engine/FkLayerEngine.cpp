@@ -24,30 +24,9 @@
 #include "FkRenderEngineCompo.h"
 #include "FkLayerSetTransProto.h"
 
-const FkID FkLayerEngine::FK_MSG_NEW_LAYER = 0x1;
-const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = 0x2;
-const FkID FkLayerEngine::FK_MSG_SET_SURFACE = 0x3;
-const FkID FkLayerEngine::FK_MSG_NOTIFY_RENDER = 0x4;
-const FkID FkLayerEngine::FK_MSG_SET_CANVAS_SIZE = 0x5;
-const FkID FkLayerEngine::FK_MSG_POST_TRANSLATE = 0x6;
-const FkID FkLayerEngine::FK_MSG_POST_SCALE = 0x7;
-const FkID FkLayerEngine::FK_MSG_POST_ROTATION = 0x8;
-const FkID FkLayerEngine::FK_MSG_DRAW_POINT = 0x9;
-const FkID FkLayerEngine::FK_MSG_QUERY_LAYERS = 0x10;
-
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {
     FK_MARK_SUPER
-    FK_REG_MSG(FK_MSG_NEW_LAYER, FkLayerEngine::_newLayer);
-    FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_COLOR, FkLayerEngine::_updateLayerWithColor);
-    FK_REG_MSG(FK_MSG_SET_SURFACE, FkLayerEngine::_setSurface);
-    FK_REG_MSG(FK_MSG_NOTIFY_RENDER, FkLayerEngine::_notifyRender);
-    FK_REG_MSG(FK_MSG_SET_CANVAS_SIZE, FkLayerEngine::_setCanvasSize);
-    FK_REG_MSG(FK_MSG_POST_TRANSLATE, FkLayerEngine::_postTranslate);
-    FK_REG_MSG(FK_MSG_POST_SCALE, FkLayerEngine::_postScale);
-    FK_REG_MSG(FK_MSG_POST_ROTATION, FkLayerEngine::_postRotation);
-    FK_REG_MSG(FK_MSG_DRAW_POINT, FkLayerEngine::_drawPoint);
-    FK_REG_MSG(FK_MSG_QUERY_LAYERS, FkLayerEngine::_queryLayers);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -92,7 +71,7 @@ FkResult FkLayerEngine::onStop() {
 }
 
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
-    auto msg = FkMessage::obtain(FK_MSG_SET_SURFACE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setSurface));
     msg->sp = win;
     return sendMessage(msg);
 }
@@ -105,7 +84,7 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::notifyRender() {
-    auto msg = FkMessage::obtain(FK_MSG_NOTIFY_RENDER);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_notifyRender));
     msg->flags = FkMessage::FLAG_UNIQUE;
     return sendMessage(msg);
 }
@@ -117,7 +96,7 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
 }
 
 FkID FkLayerEngine::newLayer(FkID expectId) {
-    auto msg = FkMessage::obtain(FK_MSG_NEW_LAYER);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_newLayer));
     msg->arg1 = expectId;
     msg->withPromise();
     auto ret = sendMessage(msg);
@@ -145,7 +124,7 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
         layer->id = id;
         layer->addComponent(colorCom);
         layer->addComponent(sizeCom);
-        auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_COLOR);
+        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayerWithColor));
         msg->sp = layer;
         sendMessage(msg);
     }
@@ -165,7 +144,7 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {
-    auto msg = FkMessage::obtain(FK_MSG_SET_CANVAS_SIZE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setCanvasSize));
     msg->sp = std::make_shared<FkSize>(size);
     return sendMessage(msg);
 }
@@ -232,7 +211,7 @@ FkResult FkLayerEngine::_setTranslate(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::postScale(FkID layer, float dx, float dy) {
-    auto msg = FkMessage::obtain(FK_MSG_POST_SCALE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_postScale));
     msg->arg1 = layer;
     msg->sp = std::make_shared<FkFloatVec3>(dx, dy, 1.0f);
     return sendMessage(msg);
@@ -246,7 +225,7 @@ FkResult FkLayerEngine::_postScale(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::postRotation(FkID layer, FkRational &rational) {
-    auto msg = FkMessage::obtain(FK_MSG_POST_ROTATION);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_postRotation));
     msg->arg1 = layer;
     msg->sp = std::make_shared<FkRational>(rational);
     return sendMessage(msg);
@@ -265,7 +244,7 @@ FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t 
     proto->color = color;
     proto->value.x = x;
     proto->value.y = y;
-    auto msg = FkMessage::obtain(FK_MSG_DRAW_POINT);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPoint));
     msg->sp = proto;
     return sendMessage(msg);
 }
@@ -276,7 +255,7 @@ FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>> &vec) {
-    auto msg = FkMessage::obtain(FK_MSG_QUERY_LAYERS);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_queryLayers));
     msg->withPromise();
     auto ret = sendMessage(msg);
     if (FK_OK == ret && FK_OK == msg->getPromiseResult(vec)) {

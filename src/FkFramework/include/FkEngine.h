@@ -76,8 +76,6 @@ protected:
 
     FkResult sendMessage(std::shared_ptr<FkMessage> &msg, bool ignoreState = false);
 
-    FkResult registerMessage(FkID what, FkMsgHandle::Func func);
-
 private:
     virtual FkResult _onCreate(std::shared_ptr<FkMessage> msg);
 
@@ -95,7 +93,6 @@ private:
     std::string name;
     std::shared_ptr<FkHandlerThread> mThread = nullptr;
     FkHandler *mHandler = nullptr;
-    std::map<FkID, FkMsgHandle> mMsgMap;
     std::recursive_mutex mtx;
     std::mutex msgMtx;
     kState outsideState = kState::IDL;

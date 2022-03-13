@@ -19,9 +19,6 @@
 #include "FkFileUtils.h"
 #include <fstream>
 
-const FkID FkImageFileEngine::FK_MSG_SAVE = 0x1;
-const FkID FkImageFileEngine::FK_MSG_LOAD = 0x2;
-
 static std::shared_ptr<FkImageEngine> _cast2ImageEngine(std::shared_ptr<FkEngine> &imageEngine) {
     return std::dynamic_pointer_cast<FkImageEngine>(imageEngine);
 }
@@ -29,8 +26,6 @@ static std::shared_ptr<FkImageEngine> _cast2ImageEngine(std::shared_ptr<FkEngine
 FkImageFileEngine::FkImageFileEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name)
         : FkEngine(name), imageEngine(imageEngine) {
     FK_MARK_SUPER
-    FK_REG_MSG(FK_MSG_SAVE, FkImageFileEngine::_save);
-    FK_REG_MSG(FK_MSG_LOAD, FkImageFileEngine::_load);
 }
 
 FkImageFileEngine::~FkImageFileEngine() {
@@ -61,7 +56,7 @@ FkResult FkImageFileEngine::save(std::string &file) {
     layers.clear();
     auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
 
-    auto msg = FkMessage::obtain(FK_MSG_SAVE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageFileEngine::_save));
     msg->arg3 = file;
     return sendMessage(msg);
 }
@@ -89,7 +84,7 @@ FkResult FkImageFileEngine::_save(std::shared_ptr<FkMessage> &msg) {
 }
 
 FkResult FkImageFileEngine::load(std::string &file) {
-    auto msg = FkMessage::obtain(FK_MSG_LOAD);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageFileEngine::_load));
     msg->arg3 = file;
     return sendMessage(msg);
 }

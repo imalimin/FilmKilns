@@ -179,12 +179,6 @@ FkResult FkEngine::_changeState(kState &_state, uint32_t src, kState dst) {
     return FK_INVALID_STATE;
 }
 
-FkResult FkEngine::registerMessage(FkID what, FkMsgHandle::Func func) {
-    std::lock_guard<std::mutex> guard(msgMtx);
-    mMsgMap.emplace(std::make_pair(what, FkMsgHandle(func)));
-    return FK_OK;
-}
-
 void FkEngine::_dispatch(std::shared_ptr<FkMessage> &msg) {
     {
         std::lock_guard<std::recursive_mutex> guard(mtx);
@@ -198,12 +192,6 @@ void FkEngine::_dispatch(std::shared_ptr<FkMessage> &msg) {
     if (msg->any.has_value()) {
         auto func = std::any_cast<FkMsgHandle>(msg->any);
         func(this, msg);
-    } else {
-        auto itr = mMsgMap.find(msg->what);
-        if (mMsgMap.end() != itr) {
-            auto func = itr->second;
-            func(this, msg);
-        }
     }
 }
 

@@ -58,12 +58,6 @@ protected:
     FkResult _onUpdateWindow(std::shared_ptr<FkMessage> &msg);
 
 private:
-    static const FkID FK_MSG_RENDER;
-    static const FkID FK_MSG_ADD_MATERIAL;
-    static const FkID FK_MSG_REMOVE_MATERIAL;
-    static const FkID FK_MSG_UPDATE_MATERIAL;
-    static const FkID FK_MSG_UPDATE_WINDOW;
-    static const FkID FK_MSG_UPDATE_MATERIAL_WITH_BITMAP;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
 };

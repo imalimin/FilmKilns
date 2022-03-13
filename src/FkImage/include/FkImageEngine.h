@@ -33,7 +33,6 @@ private:
     FkResult _updateLayerWithFile(std::shared_ptr<FkMessage> msg);
 
 private:
-    static const FkID FK_MSG_UPDATE_LAYER_WITH_FILE;
     std::string workspace;
 };
 

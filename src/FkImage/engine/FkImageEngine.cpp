@@ -16,14 +16,11 @@
 #include "FkFileUtils.h"
 #include "FkString.h"
 
-const FkID FkImageEngine::FK_MSG_UPDATE_LAYER_WITH_FILE = 0x100;
-
 FkImageEngine::FkImageEngine(std::shared_ptr<FkEngine> &renderEngine,
                              std::string &workspace,
                              std::string name)
         : FkLayerEngine(renderEngine, name), workspace(workspace) {
     FK_MARK_SUPER
-    FK_REG_MSG(FK_MSG_UPDATE_LAYER_WITH_FILE, FkImageEngine::_updateLayerWithFile);
 }
 
 FkImageEngine::~FkImageEngine() {
@@ -55,7 +52,7 @@ FkID FkImageEngine::newLayerWithFile(std::string path, FkID expectId) {
     if (FK_ID_NONE != id) {
         auto layer = std::make_shared<FkGraphicLayer>();
         layer->id = id;
-        auto msg = FkMessage::obtain(FK_MSG_UPDATE_LAYER_WITH_FILE);
+        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageEngine::_updateLayerWithFile));
         msg->arg3 = path;
         msg->sp = layer;
         sendMessage(msg);

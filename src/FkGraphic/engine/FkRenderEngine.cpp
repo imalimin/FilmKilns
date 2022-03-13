@@ -17,21 +17,8 @@
 #include "FkBufCompo.h"
 #include "FkRmMaterialProto.h"
 
-const FkID FkRenderEngine::FK_MSG_RENDER = FK_KID('F', 'R', 'E', 0x01);
-const FkID FkRenderEngine::FK_MSG_ADD_MATERIAL = FK_KID('F', 'R', 'E', 0x02);
-const FkID FkRenderEngine::FK_MSG_UPDATE_MATERIAL = FK_KID('F', 'R', 'E', 0x03);
-const FkID FkRenderEngine::FK_MSG_UPDATE_WINDOW = FK_KID('F', 'R', 'E', 0x04);
-const FkID FkRenderEngine::FK_MSG_UPDATE_MATERIAL_WITH_BITMAP = FK_KID('F', 'R', 'E', 0x05);
-const FkID FkRenderEngine::FK_MSG_REMOVE_MATERIAL = FK_KID('F', 'R', 'E', 0x06);
-
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
     FK_MARK_SUPER
-    FK_REG_MSG(FK_MSG_RENDER, FkRenderEngine::_onRender);
-    FK_REG_MSG(FK_MSG_ADD_MATERIAL, FkRenderEngine::_onAddMaterial);
-    FK_REG_MSG(FK_MSG_UPDATE_MATERIAL, FkRenderEngine::_onUpdateMaterial);
-    FK_REG_MSG(FK_MSG_UPDATE_MATERIAL_WITH_BITMAP, FkRenderEngine::_onUpdateMaterialWithBitmap);
-    FK_REG_MSG(FK_MSG_UPDATE_WINDOW, FkRenderEngine::_onUpdateWindow);
-    FK_REG_MSG(FK_MSG_REMOVE_MATERIAL, FkRenderEngine::_onRemoveMaterial);
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
 }
@@ -70,7 +57,7 @@ FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialEntity> &materia
     if (materials == nullptr || device == nullptr) {
         return FK_NPE;
     }
-    auto msg = FkMessage::obtain(FK_MSG_RENDER);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onRender));
     auto proto = std::make_shared<FkRenderProto>();
     proto->materials = std::make_shared<FkTexEntity>(*materials);
     proto->device = std::move(device);
@@ -93,7 +80,7 @@ FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
 }
 
 std::shared_ptr<FkMaterialCompo> FkRenderEngine::addMaterial() {
-    auto msg = FkMessage::obtain(FK_MSG_ADD_MATERIAL);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onAddMaterial));
     msg->withPromise();
     auto ret = sendMessage(msg);
     FkID id = FK_ID_NONE;
@@ -114,7 +101,7 @@ FkResult FkRenderEngine::removeMaterial(std::shared_ptr<FkMaterialCompo> &materi
     if (material == nullptr) {
         return FK_NPE;
     }
-    auto msg = FkMessage::obtain(FK_MSG_REMOVE_MATERIAL);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onRemoveMaterial));
     msg->sp = material;
     auto ret = sendMessage(msg);
     return ret;
@@ -129,7 +116,7 @@ FkResult FkRenderEngine::_onRemoveMaterial(std::shared_ptr<FkMessage> msg) {
 
 FkResult FkRenderEngine::updateMaterial(shared_ptr<FkMaterialCompo> &material,
                                         FkSize size, FkColor color) {
-    auto msg = FkMessage::obtain(FK_MSG_UPDATE_MATERIAL);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onUpdateMaterial));
     msg->sp = material;
     msg->arg1 = color.toInt();
     msg->arg2 = size.toInt64();
@@ -152,7 +139,7 @@ FkResult FkRenderEngine::updateMaterialWithBitmap(std::shared_ptr<FkMaterialComp
     texEntity->addComponent(std::make_shared<FkSizeCompo>(size));
     texEntity->addComponent(std::make_shared<FkBufCompo>(buf));
     texEntity->addComponent(std::make_shared<FkFormatCompo>(FkColor::kFormat::RGBA));
-    auto msg = FkMessage::obtain(FK_MSG_UPDATE_MATERIAL_WITH_BITMAP);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onUpdateMaterialWithBitmap));
     msg->sp = texEntity;
     return sendMessage(msg);
 }
@@ -164,7 +151,7 @@ FkResult FkRenderEngine::_onUpdateMaterialWithBitmap(std::shared_ptr<FkMessage> 
 }
 
 FkResult FkRenderEngine::updateWindow(std::shared_ptr<FkGraphicWindow> win) {
-    auto msg = FkMessage::obtain(FK_MSG_UPDATE_WINDOW);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onUpdateWindow));
     msg->sp = std::move(win);
     return sendMessage(msg);
 }
