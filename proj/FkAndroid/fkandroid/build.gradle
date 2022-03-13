@@ -21,7 +21,8 @@ android {
             cmake {
                 arguments "-DANDROID_ARM_NEON=TRUE",
                         "-DANDROID_CPP_FEATURES=rtti exceptions",
-                        "-DENABLE_FK=TRUE"
+                        "-DENABLE_FK=TRUE",
+                        "-DOPTIMIZE_CLASS_TYPE=TRUE"
             }
         }
         ndk {
