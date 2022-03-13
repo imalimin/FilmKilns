@@ -21,10 +21,6 @@
 #define FK_NULLABLE
 #define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 
-#ifndef __FK_DEBUG__
-#define __FK_OPTIMIZE_CLASS_TYPE__
-#endif
-
 #ifdef __FK_OPTIMIZE_CLASS_TYPE__
 #define FK_MARK_SUPER clsType.super(typeid(*this).hash_code());
 #else

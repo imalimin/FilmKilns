@@ -24,10 +24,20 @@ FkClassType::~FkClassType() {
 
 }
 
+#ifdef __FK_OPTIMIZE_CLASS_TYPE__
+
+void FkClassType::super(const size_t hashCode) {
+    extends.emplace_back(hashCode);
+}
+
+#else
+
 void FkClassType::super(const char *name) {
     std::string key(name);
     extends.emplace_back(key);
 }
+
+#endif
 
 bool operator==(const FkClassType &o0, const FkClassType &o1) {
     auto target = o1.extends.back();
@@ -42,7 +52,11 @@ bool operator!=(const FkClassType &o0, const FkClassType &o1) {
 std::string FkClassType::toString() const {
     std::string str;
     for (auto itr = extends.begin(); itr != extends.end(); ++itr) {
+#ifdef __FK_OPTIMIZE_CLASS_TYPE__
+        str.append(FkString::valueOf<size_t>(*itr));
+#else
         str.append(*itr);
+#endif
         if ((--extends.end()) != itr) {
             str.append(FK_POINTER);
         }
@@ -54,9 +68,17 @@ size_t FkClassType::hashCode() const {
     if (extends.empty()) {
         return 0;
     }
+#ifdef __FK_OPTIMIZE_CLASS_TYPE__
+    return extends.back();
+#else
     return hashValue(extends.back());
+#endif
 }
 
 std::string FkClassType::getName() const {
+#ifdef __FK_OPTIMIZE_CLASS_TYPE__
+    return FkString::valueOf<size_t>(*(--extends.end()));
+#else
     return *(--extends.end());
+#endif
 }
