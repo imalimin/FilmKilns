@@ -8,10 +8,10 @@
 #ifndef FK_GRAPHIC_FKLAYERTRANSPROTO_H
 #define FK_GRAPHIC_FKLAYERTRANSPROTO_H
 
-#include "FkProtocol.h"
+#include "FkIntVec2Proto.h"
 #include "FkIntVec2.h"
 
-FK_CLASS FkLayerPostTransProto FK_EXTEND FkProtocol {
+FK_CLASS FkLayerPostTransProto FK_EXTEND FkIntVec2Proto {
 public:
     FkLayerPostTransProto();
 
@@ -21,7 +21,6 @@ public:
 
 public:
     FkID layer = FK_ID_NONE;
-    FkIntVec2 value;
 };
 
 #endif //FK_GRAPHIC_FKLAYERTRANSPROTO_H

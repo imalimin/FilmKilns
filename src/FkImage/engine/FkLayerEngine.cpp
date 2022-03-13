@@ -22,6 +22,7 @@
 #include "FkDrawPointProto.h"
 #include "FkQueryLayersProto.h"
 #include "FkRenderEngineCompo.h"
+#include "FkLayerSetTransProto.h"
 
 const FkID FkLayerEngine::FK_MSG_NEW_LAYER = 0x1;
 const FkID FkLayerEngine::FK_MSG_UPDATE_LAYER_WITH_COLOR = 0x2;
@@ -198,7 +199,7 @@ FkResult FkLayerEngine::setCanvasSizeInternal(FkSize &size, bool isInitialize) {
 }
 
 FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
-    auto msg = FkMessage::obtain(FK_MSG_POST_TRANSLATE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_postTranslate));
     msg->arg1 = layer;
     msg->sp = std::make_shared<FkIntVec2>(dx, dy);
     return sendMessage(msg);
@@ -212,6 +213,21 @@ FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkLayerPostTransProto>();
     proto->layer = measure->layerId;
     proto->value = measure->value;
+    return client->quickSend(proto, molecule);
+}
+
+FkResult FkLayerEngine::setTranslate(FkID layer, int32_t x, int32_t y) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setTranslate));
+    msg->arg1 = layer;
+    msg->sp = std::make_shared<FkIntVec2>(x, y);
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setTranslate(std::shared_ptr<FkMessage> msg) {
+    auto vec = std::dynamic_pointer_cast<FkIntVec2>(msg->sp);
+    auto proto = std::make_shared<FkLayerSetTransProto>();
+    proto->layer = msg->arg1;
+    proto->value = *vec;
     return client->quickSend(proto, molecule);
 }
 

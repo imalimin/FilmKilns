@@ -44,6 +44,8 @@ public:
 
     FkResult postTranslate(FkID layer, int32_t dx, int32_t dy);
 
+    FkResult setTranslate(FkID layer, int32_t x, int32_t y);
+
     FkResult postScale(FkID layer, float dx, float dy);
 
     FkResult postRotation(FkID layer, FkRational &rational);
@@ -71,6 +73,8 @@ private:
     FkResult _setCanvasSize(std::shared_ptr<FkMessage> msg);
 
     FkResult _postTranslate(std::shared_ptr<FkMessage> msg);
+
+    FkResult _setTranslate(std::shared_ptr<FkMessage> msg);
 
     FkResult _postScale(std::shared_ptr<FkMessage> msg);
 

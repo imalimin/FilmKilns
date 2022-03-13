@@ -7,15 +7,13 @@
 
 #include "FkLayerPostTransProto.h"
 
-FkLayerPostTransProto::FkLayerPostTransProto() : FkProtocol(),
-                                                 layer(FK_ID_NONE),
-                                                 value(0, 0) {
+FkLayerPostTransProto::FkLayerPostTransProto() : FkIntVec2Proto(),
+                                                 layer(FK_ID_NONE) {
     FK_MARK_SUPER
 }
 
-FkLayerPostTransProto::FkLayerPostTransProto(const FkLayerPostTransProto &o) : FkProtocol(o),
-                                                                               layer(o.layer),
-                                                                               value(o.value) {
+FkLayerPostTransProto::FkLayerPostTransProto(const FkLayerPostTransProto &o) : FkIntVec2Proto(o),
+                                                                               layer(o.layer) {
     FK_MARK_SUPER
 }
 

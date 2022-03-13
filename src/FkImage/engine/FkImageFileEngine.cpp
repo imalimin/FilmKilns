@@ -109,6 +109,7 @@ FkResult FkImageFileEngine::_load(std::shared_ptr<FkMessage> &msg) {
             auto layerFile = dir;
             layerFile.append(layer.file());
             engine->newLayerWithFile(layerFile, layer.id());
+            engine->setTranslate(layer.id(), layer.trans().x(), layer.trans().y());
         }
     }
     auto canvasSize = model->canvas().size();

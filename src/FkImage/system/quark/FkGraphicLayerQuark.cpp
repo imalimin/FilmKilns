@@ -27,6 +27,7 @@
 #include "FkBitmapCompo.h"
 #include "FkFilePathCompo.h"
 #include "FkQueryLayersProto.h"
+#include "FkLayerSetTransProto.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -35,7 +36,7 @@
 //每个坐标的维度
 #define COUNT_PER_VERTEX  2
 
-FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
+FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), lastId(FK_ID_NONE + 1) {
     FK_MARK_SUPER
 }
 
@@ -48,6 +49,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicLayerQuark::_onUpdateLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicLayerQuark::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicLayerQuark::_onPostTranslate);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetTransProto, FkGraphicLayerQuark::_onPostTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicLayerQuark::_onPostScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onMeasureTrans);
@@ -106,13 +108,20 @@ bool FkGraphicLayerQuark::_isExistLayer(FkID id) {
     return layers.find(id) != layers.end();
 }
 
+FkID FkGraphicLayerQuark::_generateId(FkID expectId) {
+    if (FK_ID_NONE != expectId && !_isExistLayer(expectId)) {
+        lastId = std::max(lastId, expectId);
+    } else {
+        ++lastId;
+    }
+    return lastId;
+}
+
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkGraphicNewLayerPrt, p);
     proto->layer = newLayerEntity();
-    if (FK_ID_NONE != proto->expectId && !_isExistLayer(proto->expectId)) {
-        proto->layer->id = proto->expectId;
-    }
     if (proto->layer) {
+        proto->layer->id = _generateId(proto->expectId);
         layers.emplace(std::make_pair(proto->layer->id, proto->layer));
         return FK_OK;
     }
@@ -208,7 +217,17 @@ FkResult FkGraphicLayerQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
     auto comp = itr->second->findComponent<FkTransComponent>();
     FkAssert(nullptr != comp, FK_FAIL);
     comp->value += proto->value;
-//    FkLogI(FK_DEF_TAG, "(%d, %d), (%d, %d)", comp->value.x, comp->value.y, proto->value.x, proto->value.y);
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onSetTranslate(std::shared_ptr<FkProtocol> p) {
+    auto proto = Fk_POINTER_CAST(FkLayerSetTransProto, p);
+    auto itr = layers.find(proto->layer);
+    FkAssert(layers.end() != itr, FK_FAIL);
+
+    auto comp = itr->second->findComponent<FkTransComponent>();
+    FkAssert(nullptr != comp, FK_FAIL);
+    comp->value = proto->value;
     return FK_OK;
 }
 

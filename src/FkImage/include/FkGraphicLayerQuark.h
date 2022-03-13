@@ -47,6 +47,8 @@ protected:
 
     virtual FkResult _onPostTranslate(std::shared_ptr<FkProtocol> p);
 
+    virtual FkResult _onSetTranslate(std::shared_ptr<FkProtocol> p);
+
     virtual FkResult _onPostScale(std::shared_ptr<FkProtocol> p);
 
     virtual FkResult _onPostRotate(std::shared_ptr<FkProtocol> p);
@@ -60,9 +62,11 @@ private:
 
     bool _isExistLayer(FkID id);
 
+    FkID _generateId(FkID expectId);
+
 protected:
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
-    std::mutex mtx;
+    FkID lastId = FK_ID_NONE;
 };
 
 
