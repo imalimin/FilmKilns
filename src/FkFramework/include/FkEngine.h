@@ -16,28 +16,30 @@
 #include <map>
 #include <mutex>
 
-#define FK_REG_MSG(id, func) \
-registerMessage(id, reinterpret_cast<FkMessageHandler>(&func)) \
-
-
 class FkEngine;
 
-typedef FkResult (FkEngine::*FkMessageHandler)(std::shared_ptr<FkMessage>);
-
-FK_CLASS FkMessageHandlerPair FK_EXTEND FkObject {
+FK_CLASS FkMsgHandle FK_EXTEND FkObject {
 public:
-    FkMessageHandlerPair(FkID what, FkMessageHandler handler);
+    typedef FkResult (FkEngine::*Func)(std::shared_ptr<FkMessage>);
 
-    FkMessageHandlerPair(const FkMessageHandlerPair &o);
+public:
+    FkMsgHandle(FkMsgHandle::Func func);
 
-    virtual ~FkMessageHandlerPair();
+    FkMsgHandle(const FkMsgHandle &o);
 
-    bool handle(FkEngine *target, std::shared_ptr<FkMessage> msg);
+    virtual ~FkMsgHandle();
 
-protected:
-    FkID what = 0;
-    FkMessageHandler handler;
+    virtual FkResult operator()(FkEngine *ptr, std::shared_ptr<FkMessage> &msg);
+
+private:
+    FkMsgHandle::Func func;
 };
+
+#define FK_REG_MSG(id, func) \
+registerMessage(id, reinterpret_cast<FkMsgHandle::Func>(&func))
+                             \
+#define FK_WRAP_FUNC(func) \
+FkMsgHandle(reinterpret_cast<FkMsgHandle::Func>(&func))
 
 FK_ABS_CLASS FkEngine FK_EXTEND FkObject {
 public:
@@ -74,7 +76,7 @@ protected:
 
     FkResult sendMessage(std::shared_ptr<FkMessage> &msg, bool ignoreState = false);
 
-    FkResult registerMessage(FkID what, FkMessageHandler handler);
+    FkResult registerMessage(FkID what, FkMsgHandle::Func func);
 
 private:
     virtual FkResult _onCreate(std::shared_ptr<FkMessage> msg);
@@ -90,14 +92,10 @@ private:
     void _dispatch(std::shared_ptr<FkMessage> &msg);
 
 private:
-    static const FkID FK_MSG_CREATE;
-    static const FkID FK_MSG_DESTROY;
-    static const FkID FK_MSG_START;
-    static const FkID FK_MSG_STOP;
     std::string name;
     std::shared_ptr<FkHandlerThread> mThread = nullptr;
     FkHandler *mHandler = nullptr;
-    std::map<FkID, FkMessageHandlerPair> mMsgMap;
+    std::map<FkID, FkMsgHandle> mMsgMap;
     std::recursive_mutex mtx;
     std::mutex msgMtx;
     kState outsideState = kState::IDL;

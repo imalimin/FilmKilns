@@ -8,38 +8,27 @@
 #include "FkEngine.h"
 #include "AlRunnable.h"
 
-FkMessageHandlerPair::FkMessageHandlerPair(FkID what, FkMessageHandler handler)
-        : FkObject(), what(what), handler(handler) {
+FkMsgHandle::FkMsgHandle(FkMsgHandle::Func func)
+        : FkObject(), func(func) {
     FK_MARK_SUPER
 }
 
-FkMessageHandlerPair::FkMessageHandlerPair(const FkMessageHandlerPair &o)
-        : FkObject(), what(o.what), handler(o.handler) {
+FkMsgHandle::FkMsgHandle(const FkMsgHandle &o) : FkObject(o), func(o.func) {
+    FK_MARK_SUPER
+}
+
+FkMsgHandle::~FkMsgHandle() {
 
 }
 
-FkMessageHandlerPair::~FkMessageHandlerPair() {
-    what = 0;
-    handler = nullptr;
+FkResult FkMsgHandle::operator()(FkEngine *ptr, shared_ptr<FkMessage> &msg) {
+    return (ptr->*func)(msg);
 }
-
-bool FkMessageHandlerPair::handle(FkEngine *target, std::shared_ptr<FkMessage> msg) {
-    return (target->*handler)(msg);
-}
-
-const FkID FkEngine::FK_MSG_CREATE = FK_KID('F', 'K', 'E', 0x01);
-const FkID FkEngine::FK_MSG_DESTROY = FK_KID('F', 'K', 'E', 0x02);
-const FkID FkEngine::FK_MSG_START = FK_KID('F', 'K', 'E', 0x03);
-const FkID FkEngine::FK_MSG_STOP = FK_KID('F', 'K', 'E', 0x04);
 
 FkEngine::FkEngine(std::string name) : FkObject(), name(name),
                                        internalState(kState::IDL),
                                        outsideState(kState::IDL) {
     FK_MARK_SUPER
-    FK_REG_MSG(FK_MSG_CREATE, FkEngine::_onCreate);
-    FK_REG_MSG(FK_MSG_DESTROY, FkEngine::_onDestroy);
-    FK_REG_MSG(FK_MSG_START, FkEngine::_onStart);
-    FK_REG_MSG(FK_MSG_STOP, FkEngine::_onStop);
 }
 
 FkEngine::~FkEngine() {
@@ -56,7 +45,7 @@ FkResult FkEngine::create() {
     mHandler = new FkHandler(mThread->getLooper(), [this](std::shared_ptr<FkMessage> msg) {
         this->_dispatch(msg);
     });
-    auto msg = FkMessage::obtain(FK_MSG_CREATE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onCreate));
     sendMessage(msg, true);
     return FK_OK;
 }
@@ -69,7 +58,7 @@ FkResult FkEngine::destroy() {
     if (nullptr == mThread) {
         return FK_INVALID_STATE;
     }
-    auto msg = FkMessage::obtain(FK_MSG_DESTROY);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onDestroy));
     sendMessage(msg, true);
     mThread->quitSafely();
     mThread = nullptr;
@@ -84,7 +73,7 @@ FkResult FkEngine::start() {
     if (FK_OK != ret) {
         return ret;
     }
-    auto msg = FkMessage::obtain(FK_MSG_START);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onStart));
     sendMessage(msg, true);
     return FK_OK;
 }
@@ -94,7 +83,7 @@ FkResult FkEngine::stop() {
     if (FK_OK != ret) {
         return ret;
     }
-    auto msg = FkMessage::obtain(FK_MSG_STOP);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onStop));
     sendMessage(msg, true);
     return FK_OK;
 }
@@ -190,9 +179,9 @@ FkResult FkEngine::_changeState(kState &_state, uint32_t src, kState dst) {
     return FK_INVALID_STATE;
 }
 
-FkResult FkEngine::registerMessage(FkID what, FkMessageHandler handler) {
+FkResult FkEngine::registerMessage(FkID what, FkMsgHandle::Func func) {
     std::lock_guard<std::mutex> guard(msgMtx);
-    mMsgMap.emplace(std::make_pair(what, FkMessageHandlerPair(what, handler)));
+    mMsgMap.emplace(std::make_pair(what, FkMsgHandle(func)));
     return FK_OK;
 }
 
@@ -206,9 +195,15 @@ void FkEngine::_dispatch(std::shared_ptr<FkMessage> &msg) {
         }
     }
     std::lock_guard<std::mutex> guard(msgMtx);
-    auto itr = mMsgMap.find(msg->what);
-    if (mMsgMap.end() != itr) {
-        itr->second.handle(this, msg);
+    if (msg->any.has_value()) {
+        auto func = std::any_cast<FkMsgHandle>(msg->any);
+        func(this, msg);
+    } else {
+        auto itr = mMsgMap.find(msg->what);
+        if (mMsgMap.end() != itr) {
+            auto func = itr->second;
+            func(this, msg);
+        }
     }
 }
 
