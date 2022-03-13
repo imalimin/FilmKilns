@@ -24,6 +24,7 @@ public:
     int64_t arg2 = 0;
     std::string arg3;
     std::shared_ptr<FkObject> sp;
+    std::any any;
     int32_t flags = FLAG_NORMAL;
 private:
     friend FkLooper;
@@ -48,6 +49,8 @@ public:
 
     virtual size_t size() override;
 
+    void reset();
+
     void withPromise();
 
     bool hasPromise();
@@ -57,9 +60,9 @@ public:
     template<typename T>
     FkResult getPromiseResult(T &o) {
         if (hasPromise()) {
-            auto any = promise->get_future().get();
-            if (any.has_value()) {
-                o = std::any_cast<T>(any);
+            auto _any = promise->get_future().get();
+            if (_any.has_value()) {
+                o = std::any_cast<T>(_any);
                 return FK_OK;
             }
         }
@@ -77,6 +80,8 @@ public:
     const static int32_t FLAG_CLEAR;
 
 public:
+    static std::shared_ptr<FkMessage> obtain(std::any any, int32_t what = 0);
+
     static std::shared_ptr<FkMessage> obtain(int32_t what);
 
     static std::shared_ptr<FkMessage> obtain(int32_t what, std::shared_ptr<FkObject> sp);

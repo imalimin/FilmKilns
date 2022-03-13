@@ -17,6 +17,12 @@ const int32_t FkMessage::FLAG_UNIQUE = 0x02;
 const int32_t FkMessage::FLAG_FIRST_ALWAYS = 0x04;
 const int32_t FkMessage::FLAG_CLEAR = 0x08;
 
+std::shared_ptr<FkMessage> FkMessage::obtain(std::any any, int32_t what) {
+    auto msg = obtain(what);
+    msg->any = any;
+    return msg;
+}
+
 std::shared_ptr<FkMessage> FkMessage::obtain(FkID what) {
     return obtain(what, nullptr, FLAG_NORMAL);
 }
@@ -35,7 +41,7 @@ std::shared_ptr<FkMessage> FkMessage::obtain(FkID what,
     int32_t desc = 0;
     auto msg = FkMessageAllocator::getInstance()->alloc(desc);
     if (msg) {
-        msg->destroy();
+        msg->reset();
         msg->what = what;
         msg->sp = sp;
         msg->flags = flags;
@@ -58,10 +64,12 @@ FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp)
         : FkMessage(what, sp, FLAG_NORMAL) {
 }
 
-FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp, int32_t flags)
-        : FkSource(), what(what), arg1(0), arg2(0), arg3(""), sp(sp),
-          flags(flags), promise(nullptr), target(nullptr) {
+FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp, int32_t flags): FkSource() {
     FK_MARK_SUPER
+    reset();
+    this->what = what;
+    this->sp = std::move(sp);
+    this->flags = flags;
 }
 
 FkMessage::~FkMessage() {
@@ -72,18 +80,23 @@ FkResult FkMessage::create() {
 }
 
 void FkMessage::destroy() {
+    reset();
+}
+
+size_t FkMessage::size() {
+    return 1;
+}
+
+void FkMessage::reset() {
     what = FK_ID_NONE;
     arg1 = 0;
     arg2 = 0;
     arg3 = "";
     sp = nullptr;
+    any.reset();
     flags = FkMessage::FLAG_NORMAL;
     promise = nullptr;
     target = nullptr;
-}
-
-size_t FkMessage::size() {
-    return 1;
 }
 
 void FkMessage::withPromise() {
@@ -94,9 +107,9 @@ bool FkMessage::hasPromise() {
     return promise != nullptr;
 }
 
-void FkMessage::setPromiseResult(std::any any) {
+void FkMessage::setPromiseResult(std::any _any) {
     if (hasPromise()) {
-        promise->set_value(any);
+        promise->set_value(_any);
     }
 }
 
@@ -128,6 +141,7 @@ bool FkMessageAllocator::delegateEquals(int32_t &desc, FkMessage *value) {
 }
 
 void FkMessageAllocator::recycle(FkMessage *o) {
+    o->reset();
     FkSourceAllocator::recycle(o);
 //    FkLogI(TAG, "Drop cache finish: %d, %d", size(), capacity());
 }
