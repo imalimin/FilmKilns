@@ -37,12 +37,12 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
-#------------------STATIC START----------------------
-add_library(proto_buf STATIC IMPORTED)
+#------------------SHARED START----------------------
+add_library(proto_buf SHARED IMPORTED)
 set_target_properties(proto_buf PROPERTIES IMPORTED_LOCATION
-        "${THIRD_PARTY_DIR}/protobuf/static/${ANDROID_ABI}/libprotobuf.a")
+        "${THIRD_PARTY_DIR}/protobuf/shared/${ANDROID_ABI}/libprotobuf.so")
 
-#------------------STATIC END----------------------
+#------------------SHARED END----------------------
 
 #aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/core/program SOURCES_CORE_PROGRAM)

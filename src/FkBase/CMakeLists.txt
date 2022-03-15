@@ -33,9 +33,9 @@ endif ()
 message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #------------------STATIC START----------------------
-add_library(cJSON STATIC IMPORTED)
-set_target_properties(cJSON PROPERTIES IMPORTED_LOCATION
-        "${THIRD_PARTY_DIR}/cjson/static/${ANDROID_ABI}/libcjson.a")
+#add_library(cJSON STATIC IMPORTED)
+#set_target_properties(cJSON PROPERTIES IMPORTED_LOCATION
+#        "${THIRD_PARTY_DIR}/cjson/static/${ANDROID_ABI}/libcjson.a")
 
 #------------------STATIC END----------------------
 
@@ -66,5 +66,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common cJSON ${log-lib})
+set(MODULES ${MODULE_NAME} al_common ${log-lib})
 target_link_libraries(${MODULES})
