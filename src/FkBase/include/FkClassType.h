@@ -21,11 +21,7 @@ public:
         if (type == nullptr) {
             type = new FkClassType();
         }
-#ifdef __FK_OPTIMIZE_CLASS_TYPE__
-        type->super(typeid(T).hash_code());
-#else
-        type->super(typeid(T).name());
-#endif
+        put(type->hierarchy, typeid(T));
         return *type;
     };
 public:
@@ -53,11 +49,24 @@ public:
 
     std::string getName() const;
 
-private:
+protected:
+    static void put(std::list<size_t> &hierarchy, const type_info &info) {
 #ifdef __FK_OPTIMIZE_CLASS_TYPE__
-    std::list<size_t> extends;
+        hierarchy.emplace_back(info.hash_code());
 #else
-    std::list<std::string> extends;
+        hierarchy.emplace_back(info.name());
+#endif
+    }
+
+    void put(const type_info &info) {
+        put(hierarchy, info);
+    }
+
+public:
+#ifdef __FK_OPTIMIZE_CLASS_TYPE__
+    std::list<size_t> hierarchy;
+#else
+    std::list<std::string> hierarchy;
     std::hash<std::string> hashValue;
 #endif
 };

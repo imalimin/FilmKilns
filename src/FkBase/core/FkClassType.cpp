@@ -15,8 +15,8 @@ FkClassType::FkClassType() {
 }
 
 FkClassType::FkClassType(const FkClassType &o) {
-    for (auto &it : o.extends) {
-        extends.emplace_back(it);
+    for (auto &it : o.hierarchy) {
+        hierarchy.emplace_back(it);
     }
 }
 
@@ -27,22 +27,23 @@ FkClassType::~FkClassType() {
 #ifdef __FK_OPTIMIZE_CLASS_TYPE__
 
 void FkClassType::super(const size_t hashCode) {
-    extends.emplace_back(hashCode);
+    hierarchy.emplace_back(hashCode);
 }
 
 #else
 
 void FkClassType::super(const char *name) {
     std::string key(name);
-    extends.emplace_back(key);
+    hierarchy.emplace_back(key);
 }
 
 #endif
 
 bool operator==(const FkClassType &o0, const FkClassType &o1) {
-    auto target = o1.extends.back();
-    auto itr = std::find(o0.extends.begin(), o0.extends.end(), target);
-    return o0.extends.end() != itr;
+    auto target = o1.hierarchy.back();
+    auto itr = std::find(o0.hierarchy.begin(), o0.hierarchy.end(), target);
+    auto ret = o0.hierarchy.end() != itr;
+    return ret;
 }
 
 bool operator!=(const FkClassType &o0, const FkClassType &o1) {
@@ -51,13 +52,13 @@ bool operator!=(const FkClassType &o0, const FkClassType &o1) {
 
 std::string FkClassType::toString() const {
     std::string str;
-    for (auto itr = extends.begin(); itr != extends.end(); ++itr) {
+    for (auto itr = hierarchy.begin(); itr != hierarchy.end(); ++itr) {
 #ifdef __FK_OPTIMIZE_CLASS_TYPE__
         str.append(FkString::valueOf<size_t>(*itr));
 #else
         str.append(*itr);
 #endif
-        if ((--extends.end()) != itr) {
+        if ((--hierarchy.end()) != itr) {
             str.append(FK_POINTER);
         }
     }
@@ -65,20 +66,20 @@ std::string FkClassType::toString() const {
 }
 
 size_t FkClassType::hashCode() const {
-    if (extends.empty()) {
+    if (hierarchy.empty()) {
         return 0;
     }
 #ifdef __FK_OPTIMIZE_CLASS_TYPE__
-    return extends.back();
+    return hierarchy.back();
 #else
-    return hashValue(extends.back());
+    return hashValue(hierarchy.back());
 #endif
 }
 
 std::string FkClassType::getName() const {
 #ifdef __FK_OPTIMIZE_CLASS_TYPE__
-    return FkString::valueOf<size_t>(*(--extends.end()));
+    return FkString::valueOf<size_t>(*(--hierarchy.end()));
 #else
-    return *(--extends.end());
+    return *(--hierarchy.end());
 #endif
 }
