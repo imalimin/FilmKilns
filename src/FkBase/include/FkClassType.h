@@ -11,7 +11,7 @@
 #include <list>
 #include <string>
 #include <functional>
-#include "FkDefinition.h"
+#include <typeinfo>
 
 class FkClassType {
 public:
@@ -49,17 +49,17 @@ public:
 
     std::string getName() const;
 
+    void put(const std::type_info &info) {
+        put(hierarchy, info);
+    }
+
 protected:
-    static void put(std::list<size_t> &hierarchy, const type_info &info) {
+    static void put(std::list<size_t> &hierarchy, const std::type_info &info) {
 #ifdef __FK_OPTIMIZE_CLASS_TYPE__
         hierarchy.emplace_back(info.hash_code());
 #else
         hierarchy.emplace_back(info.name());
 #endif
-    }
-
-    void put(const type_info &info) {
-        put(hierarchy, info);
     }
 
 public:
@@ -69,6 +69,16 @@ public:
     std::list<std::string> hierarchy;
     std::hash<std::string> hashValue;
 #endif
+};
+
+template<typename T>
+class FkClassTypeGuard {
+public:
+    FkClassTypeGuard(FkClassType &type) {
+        type.put(typeid(T));
+    }
+
+    ~FkClassTypeGuard() {}
 };
 
 

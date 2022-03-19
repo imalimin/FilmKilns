@@ -9,7 +9,7 @@
 #include <string>
 #include "gtest/gtest.h"
 #include "FkCalculatePrt.h"
-#include "FkClassType2.h"
+#include "FkClassType.h"
 
 TEST(FkClassTypeTests, Equals) {
     FkCalculatePrt prot;
@@ -37,42 +37,33 @@ TEST(FkClassTypeTests, Instance) {
 
 class FkObjectA : public FkObject {
 public:
-    const static FkClassType2<FkObjectA> classType;
+    FkObjectA() {
+        FK_MARK_SUPER
+    };
 };
-const FkClassType2<FkObjectA> FkObjectA::classType = FkClassType2<FkObjectA>();
 
-class FkObjectB : FkObjectA {
+class FkObjectB : public FkObjectA {
 public:
-    const static FkClassType2<FkObjectB> classType;
+    FkObjectB() : classGuard(clsType) {
+    };
+    const FkClassTypeGuard<FkObjectB> classGuard;
 };
-const FkClassType2<FkObjectB> FkObjectB::classType = FkClassType2<FkObjectB>(FkObjectA::classType.hierarchy);
-
 class FkObjectC : public FkObject {
 public:
-    const static FkClassType2<FkObjectC> classType;
+    FkObjectC() : classGuard(clsType) {
+    };
+    const FkClassTypeGuard<FkObjectC> classGuard;
 };
-const FkClassType2<FkObjectC> FkObjectC::classType = FkClassType2<FkObjectC>();
-
-TEST(FkClassHierarchyTest, hierarchy) {
-    EXPECT_TRUE(FkObjectB::classType == FkObjectA::classType);
-    EXPECT_FALSE(FkObjectB::classType == FkObjectC::classType);
-}
 
 TEST(FkClassHierarchyTest, hierarchy2) {
     auto a = std::make_shared<FkObjectA>();
     auto b = std::make_shared<FkObjectB>();
     auto c = std::make_shared<FkObjectC>();
-    EXPECT_TRUE(b->classType == a->classType);
-    EXPECT_FALSE(a->classType == b->classType);
-    EXPECT_FALSE(b->classType == c->classType);
-
-    EXPECT_TRUE(a->classType == FkObjectA::classType);
-    EXPECT_TRUE(b->classType == FkObjectB::classType);
-    EXPECT_TRUE(c->classType == FkObjectC::classType);
-
-    EXPECT_FALSE(a->classType == FkObjectB::classType);
-    EXPECT_TRUE(b->classType == FkObjectA::classType);
-    EXPECT_FALSE(c->classType == FkObjectB::classType);
+    std::shared_ptr<FkObjectA> d = b;
+    EXPECT_TRUE(FK_CLASS_TYPE_EQUALS2(b, a));
+    EXPECT_FALSE(FK_CLASS_TYPE_EQUALS2(a, b));
+    EXPECT_FALSE(FK_CLASS_TYPE_EQUALS2(b, c));
+    EXPECT_TRUE(FK_CLASS_TYPE_EQUALS2(d, b));
 }
 
 //TEST(FkClassTypeTests, SuperTrack) {
