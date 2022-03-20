@@ -39,6 +39,8 @@ private:
     std::shared_ptr<FkMaterialEntity> _makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer);
 
     FkResult _drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas);
+
+    FkResult _drawPoints(std::shared_ptr<FkGraphicLayer> &layer);
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDERATOM_H

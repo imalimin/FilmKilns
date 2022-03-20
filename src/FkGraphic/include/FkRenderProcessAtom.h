@@ -29,8 +29,6 @@ protected:
 
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
 
-private:
-    FkResult _onRender(std::shared_ptr<FkProtocol> p);
 };
 
 #endif //FK_GRAPHIC_FKRENDERPROCESSATOM_H

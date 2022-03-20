@@ -7,7 +7,7 @@
 
 #include "FkRenderProcessAtom.h"
 #include "FkRenderDefine.h"
-#include "FkEmptyQuark.h"
+#include "FkPointProcessQuark.h"
 
 FkRenderProcessAtom::FkRenderProcessAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -18,11 +18,11 @@ FkRenderProcessAtom::~FkRenderProcessAtom() {
 }
 
 void FkRenderProcessAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderProcessAtom::_onRender);
+    FK_PORT_DELIVERY(desc, FkRenderProto, FkRenderProcessAtom);
 }
 
 void FkRenderProcessAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkEmptyQuark>();
+    chain->next<FkPointProcessQuark>();
 }
 
 FkResult FkRenderProcessAtom::onCreate() {
@@ -55,8 +55,4 @@ FkResult FkRenderProcessAtom::onStop() {
         return ret;
     }
     return ret;
-}
-
-FkResult FkRenderProcessAtom::_onRender(std::shared_ptr<FkProtocol> p) {
-    return FK_OK;
 }

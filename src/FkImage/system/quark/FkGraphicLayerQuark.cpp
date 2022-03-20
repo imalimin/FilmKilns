@@ -20,7 +20,7 @@
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
 #include "FkDrawPointProto.h"
-#include "FkPointComponent.h"
+#include "FkPointFCompo.h"
 #include "FkVertexCompo.h"
 #include "FkCoordinateCompo.h"
 #include "FkRenderContext.h"
@@ -295,8 +295,14 @@ FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawPointProto, p);
     auto itr = layers.find(proto->layer);
     if (layers.end() != itr) {
-        auto comp = std::make_shared<FkPointComponent>();
-        comp->value = proto->value;
+        auto sizeCompo = itr->second->findComponent<FkSizeCompo>();
+        auto comp = std::make_shared<FkPointFCompo>();
+//        comp->value.x = proto->value.x * 1.0f / sizeCompo->size.getWidth();
+//        comp->value.y = proto->value.y * 1.0f / sizeCompo->size.getHeight();
+        comp->value.x = 0.5f;
+        comp->value.y = 0.5f;
+        comp->value.z = 0.0f;
+        comp->size = proto->size;
         comp->color = proto->color;
         itr->second->addComponent(comp);
     }

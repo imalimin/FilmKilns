@@ -1,5 +1,6 @@
 package com.alimin.fk.engine
 
+import android.graphics.Point
 import android.view.Choreographer
 import android.view.Surface
 
@@ -123,13 +124,13 @@ class FkImage(val workspace: String) : FkEngine() {
 
     /**
      * @param layer Layer ID, ID 0 is Canvas.
-     * @param x X position of view
-     * @param y Y position of view
+     * @param size  Size of point
+     * @param point Point of view
      * @return Result code.
      */
-    fun drawPoint(layer: Int, color: Int, x: Int, y: Int): Int {
+    fun drawPoint(layer: Int, color: Long, size: Int, point: Point): Int {
         if (!isNull()) {
-            return nativeDrawPoint(getHandle(), layer, color, x, y)
+            return nativeDrawPoint(getHandle(), layer, color, size, point.x, point.y)
         }
         return -1
     }
@@ -156,5 +157,5 @@ class FkImage(val workspace: String) : FkEngine() {
     private external fun nativePostTranslate(handle: Long, layer: Int, dx: Int, dy: Int): Int
     private external fun nativePostScale(handle: Long, layer: Int, dx: Float, dy: Float): Int
     private external fun nativePostRotation(handle: Long, layer: Int, num: Int, den: Int): Int
-    private external fun nativeDrawPoint(handle: Long, layer: Int, color: Int, x: Int, y: Int): Int
+    private external fun nativeDrawPoint(handle: Long, layer: Int, color: Long, size: Int, x: Int, y: Int): Int
 }

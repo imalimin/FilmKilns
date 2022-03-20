@@ -56,6 +56,6 @@ bool FkSize::isZero() {
 int64_t FkSize::toInt64() {
     int64_t size = width;
     size = (size << 32);
-    size |= height;
+    size |= (height & 0x00000000FFFFFFFF);
     return size;
 }

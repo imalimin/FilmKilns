@@ -127,9 +127,9 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostRotation
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPoint
-        (JNIEnv *env, jobject that, jlong handle, jint layer, jint color, jint x, jint y) {
+        (JNIEnv *env, jobject that, jlong handle, jint layer, jlong color, jint size, jint x, jint y) {
     auto engine = castHandle(handle);
-    return engine->drawPoint(layer, FkColor::from(color), x, y);
+    return engine->drawPoint(layer, FkColor::from(color), size, x, y);
 }
 
 #ifdef __cplusplus

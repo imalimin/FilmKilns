@@ -76,6 +76,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     auto programCompo = proto->materials->findComponent<FkRenderProgramCompo>();
     auto vboCompo = proto->materials->findComponent<FkVboCompo>();
     auto matCompo = proto->materials->findComponent<FkMatCompo>();
+    FkAssert(vboCompo != nullptr, FK_FAIL);
 
     int32_t offset = 0;
     FkVertexDesc desc;

@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.ContentUris
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Canvas
+import android.graphics.Point
 import android.graphics.PointF
 import android.net.Uri
 import android.provider.DocumentsContract
@@ -67,6 +69,11 @@ class ImageActivity : BaseActivity(),
             EasyPermissions.requestPermissions(
                 this, "Request write sdcard permission", REQ_PERMISSION, *perms
             )
+        }
+        testBtn.setOnClickListener {
+            engine.drawPoint(layer, 0xFFFF0000, 30, Point(200, 100))
+            val canvas = Canvas()
+            engine.notifyRender()
         }
     }
 

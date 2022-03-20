@@ -24,6 +24,7 @@ public:
     FkID layer;
     FkIntVec2 value;
     FkColor color;
+    int32_t size = 0;
 };
 
 #endif //FK_GRAPHIC_FKDRAWPOINTPROTO_H

@@ -10,6 +10,10 @@
 
 #include "FkMaterialEntity.h"
 
+std::shared_ptr<FkMaterialEntity> FkMaterialEntity::genEmpty() {
+    return std::make_shared<FkMaterialEntity>(std::make_shared<FkMaterialCompo>(FK_ID_NONE));
+}
+
 FkMaterialEntity::FkMaterialEntity(std::shared_ptr<FkMaterialCompo> material) : FkEntity() {
     FK_MARK_SUPER
     addComponent(material);

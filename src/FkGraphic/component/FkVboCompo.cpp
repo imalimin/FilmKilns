@@ -34,6 +34,19 @@ void FkVboCompo::unbind() {
 }
 
 FkResult FkVboCompo::setup(std::shared_ptr<FkVertexObject> _vbo,
+                           float *position, FkVertexDesc &posDesc) {
+    FkAssert(nullptr != _vbo, FK_FAIL);
+    this->vbo = _vbo;
+    int32_t offset = 0;
+    bind();
+    auto size = posDesc.countVertex * posDesc.countPerVertex * posDesc.format;
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size, position);
+    loc.insert(std::make_pair(kValueLoc::VERTEX, std::make_pair(0, posDesc)));
+    unbind();
+    return FK_OK;
+}
+
+FkResult FkVboCompo::setup(std::shared_ptr<FkVertexObject> _vbo,
                                         float *position, FkVertexDesc &posDesc,
                                         float *coord, FkVertexDesc &coordDesc) {
     FkAssert(nullptr != _vbo, FK_FAIL);

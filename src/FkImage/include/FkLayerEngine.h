@@ -54,7 +54,7 @@ public:
 
     FkResult setRotation(FkID layer, FkRational &rational);
 
-    FkResult drawPoint(FkID layer, FkColor color, int32_t x, int32_t y);
+    FkResult drawPoint(FkID layer, FkColor color, int32_t size, int32_t x, int32_t y);
 
     FkResult queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>> &vec);
 

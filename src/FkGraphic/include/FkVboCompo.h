@@ -32,6 +32,9 @@ public:
     void unbind();
 
     FkResult setup(std::shared_ptr<FkVertexObject> _vbo,
+                   float *position, FkVertexDesc &posDesc);
+
+    FkResult setup(std::shared_ptr<FkVertexObject> _vbo,
                    float *position, FkVertexDesc &posDesc,
                    float *coord, FkVertexDesc &coordDesc);
 

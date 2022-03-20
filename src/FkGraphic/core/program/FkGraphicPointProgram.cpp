@@ -69,6 +69,7 @@ FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkComponent> value) {
         auto pValue = Fk_POINTER_CAST(FkSizeCompo, value);
         FK_GL_CHECK(setUniform1f(uSizeLoc, pValue->size.getWidth()));
     }
+    setUniform1i(uModeLoc, 1);
 //    else if (FK_INSTANCE_OF(value, FkShapeComponent)) {
 //        auto pValue = Fk_POINTER_CAST(FkShapeComponent, value);
 //        FK_GL_CHECK(setUniform1i(uModeLoc, (int) pValue->type));

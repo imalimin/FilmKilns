@@ -270,12 +270,13 @@ FkResult FkLayerEngine::_setRotation(std::shared_ptr<FkMessage> msg) {
     return client->quickSend(proto, molecule);
 }
 
-FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t y) {
+FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t size, int32_t x, int32_t y) {
     auto proto = std::make_shared<FkDrawPointProto>();
     proto->layer = layer;
     proto->color = color;
     proto->value.x = x;
     proto->value.y = y;
+    proto->size = size;
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPoint));
     msg->sp = proto;
     return sendMessage(msg);
@@ -283,7 +284,7 @@ FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t x, int32_t 
 
 FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
     auto proto = Fk_POINTER_CAST(FkDrawPointProto, msg->sp);
-    return client->quickSend(proto, molecule);
+    return client->with(molecule)->send(proto);
 }
 
 FkResult FkLayerEngine::queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>> &vec) {

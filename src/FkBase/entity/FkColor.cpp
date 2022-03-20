@@ -76,10 +76,11 @@ float *FkColor::fArray() {
     if (nullptr == _fArray) {
         _fArray = new float[4];
     }
+    auto _alpha = fAlpha();
     _fArray[0] = fRed();
     _fArray[1] = fGreen();
     _fArray[2] = fBlue();
-    _fArray[3] = fAlpha();
+    _fArray[3] = _alpha;
     return _fArray;
 }
 

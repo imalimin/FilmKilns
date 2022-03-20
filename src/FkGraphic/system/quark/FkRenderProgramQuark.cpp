@@ -11,6 +11,7 @@
 #include "FkRenderProgramQuark.h"
 #include "FkRenderProto.h"
 #include "FkRenderProgramCompo.h"
+#include "FkPointVertexCompo.h"
 
 FkRenderProgramQuark::FkRenderProgramQuark() : FkQuark() {
     FK_MARK_SUPER
@@ -52,12 +53,23 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     if (FK_INSTANCE_OF(proto->device, FkBufDeviceEntity)) {
         return FK_SKIP;
     }
-    auto compo = std::make_shared<FkRenderProgramCompo>();
-    FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
-    compo->program = allocator->alloc(desc);
-    if (compo->program == nullptr) {
-        return FK_SOURCE_NOT_FOUND;
+
+    auto pointCompo = proto->materials->findComponent<FkPointVertexCompo>();
+    if (pointCompo != nullptr) {
+        auto compo = std::make_shared<FkRenderProgramCompo>();
+        FkProgramDescription desc(FkProgramDescription::kType::POINT);
+        compo->program = allocator->alloc(desc);
+        if (compo->program != nullptr) {
+            proto->materials->addComponent(compo);
+        }
+    } else {
+        auto compo = std::make_shared<FkRenderProgramCompo>();
+        FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
+        compo->program = allocator->alloc(desc);
+        if (compo->program == nullptr) {
+            return FK_SOURCE_NOT_FOUND;
+        }
+        proto->materials->addComponent(compo);
     }
-    proto->materials->addComponent(compo);
     return FK_OK;
 }

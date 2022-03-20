@@ -13,7 +13,7 @@ FkDrawPointProto::FkDrawPointProto()
 }
 
 FkDrawPointProto::FkDrawPointProto(const FkDrawPointProto &o)
-        : FkProtocol(o), layer(o.layer), value(o.value), color(o.color) {
+        : FkProtocol(o), layer(o.layer), value(o.value), color(o.color), size(o.size) {
     FK_MARK_SUPER
 }
 
