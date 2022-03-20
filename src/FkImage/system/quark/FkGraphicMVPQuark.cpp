@@ -83,62 +83,55 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     proto->value.y = vec.y;
     return FK_OK;
 }
+
 FkResult FkGraphicMVPQuark::_onMeasurePoint(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasurePointProto, p);
     auto winSize = proto->winSize;
     auto layerSize = proto->layer->getSize();
-    auto canvasSize = proto->canvas->getSize();
-
-    auto matrix = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
-    matrix->setViewSize(canvasSize.getWidth(), canvasSize.getHeight());
-    matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
-                   FkFloatVec3(0.0f, 0.0f, 0.0f),
-                   FkFloatVec3(0.0f, 1.0f, 0.0f));
-    auto trans = proto->canvas->getTrans();
-    auto rotate = proto->canvas->getRotate();
-    auto scale = proto->canvas->getScale();
-//    matrix->setTranslate(FkFloatVec3(-trans.x, -trans.y, 0.0f));
-    matrix->setRotation(FkRational(-rotate.num, rotate.den));
-    matrix->setScale(FkFloatVec3(1.0f / scale.x, 1.0f / scale.y, 1.0f));
-    matrix->calc();
-    glm::vec4 vec0(proto->value.x - winSize.getWidth() / 2.0f - trans.x,
-                  proto->value.y - winSize.getHeight() / 2.0f - trans.y, 0, 1.0f);
-    vec0 = vec0 * matrix->mat4;
-    FkLogI("aliminabcd", "%f, %f", vec0.x, vec0.y);
-    auto *data = (float *) matrix->get();
-    for (int i = 0; i < 4; ++i) {
-        FkLogI("aliminabcd", "[%f, %f, %f, %f]", data[i * 4 + 0], data[i * 4 + 1], data[i * 4 + 2], data[i * 4 + 3]);
-    }
-    FkIntVec2 pos(vec0.x * canvasSize.getWidth() / 2.0f, vec0.y * canvasSize.getHeight() / 2.0f);
-
-    auto layerMat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
-    layerMat->setViewSize(layerSize.getWidth(), layerSize.getHeight());
-    layerMat->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
-                   FkFloatVec3(0.0f, 0.0f, 0.0f),
-                   FkFloatVec3(0.0f, 1.0f, 0.0f));
-    trans = proto->layer->getTrans();
-    rotate = proto->layer->getRotate();
-    scale = proto->layer->getScale();
-//    layerMat->setTranslate(FkFloatVec3(-trans.x, trans.y, 0.0f));
-    layerMat->setRotation(FkRational(-rotate.num, rotate.den));
-    layerMat->setScale(FkFloatVec3(1.0f / scale.x, 1.0f / scale.y, 1.0f));
-    layerMat->calc();
-    glm::vec4 vec1(pos.x - trans.x, pos.y - trans.y, 0, 1.0f);
-    vec1 = vec1 * layerMat->mat4;
-    FkLogI("aliminabcd", "%f, %f", vec1.x, vec1.y);
-    auto *data1 = (float *) layerMat->get();
-    for (int i = 0; i < 4; ++i) {
-        FkLogI("aliminabcd", "[%f, %f, %f, %f]", data1[i * 4 + 0], data1[i * 4 + 1], data1[i * 4 + 2], data1[i * 4 + 3]);
-    }
-    proto->value = FkIntVec2((vec1.x + 1.0f) * layerSize.getWidth() / 2.0f, (vec1.y + 1.0f) * layerSize.getHeight() / 2.0f);
-    FkLogI("aliminabcd", "%d, %d", proto->value.x, proto->value.y);
-
+    proto->value = FkIntVec2(proto->value.x - winSize.getWidth() / 2.0f,
+                             proto->value.y - winSize.getHeight() / 2.0f);
+    proto->value = _calcPoint2OtherCoordination(proto->value, proto->canvas);
+    proto->value = _calcPoint2OtherCoordination(proto->value, proto->layer);
     return FK_OK;
+}
+
+FkIntVec2 FkGraphicMVPQuark::_calcPoint2OtherCoordination(FkIntVec2 &point,
+                                                          std::shared_ptr<FkGraphicLayer> &layer) {
+    auto trans = layer->getTrans();
+    auto rotate = layer->getRotate();
+    auto scale = layer->getScale();
+    auto size = layer->getSize();
+
+    auto mat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
+    mat->setViewSize(size.getWidth(), size.getHeight());
+    mat->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
+                FkFloatVec3(0.0f, 0.0f, 0.0f),
+                FkFloatVec3(0.0f, 1.0f, 0.0f));
+    mat->setScale(FkFloatVec3(1.0f / scale.x, 1.0f / scale.y, 1.0f));
+    mat->calc();
+
+    glm::mat4 fixMat = glm::mat4(1.0f);
+    fixMat = glm::rotate(fixMat, -rotate.num * 1.0f / rotate.den,
+                         glm::vec3(0.0f, 0.0f, 1.0f));
+    glm::vec4 vec(point.x, point.y, 0, 1.0f);
+    vec = vec * fixMat;
+    vec = vec * mat->mat4;
+    return FkIntVec2(vec.x * size.getWidth() / 2.0f - trans.x,
+                     vec.y * size.getHeight() / 2.0f - trans.y);
 }
 
 FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,
                                   FkSize &targetSize,
                                   bool reverseY) {
+    auto compo = std::make_shared<FkMatCompo>();
+    compo->value = _calcMat(layer, targetSize, reverseY);
+    layer->addComponent(compo);
+    return FK_OK;
+}
+
+std::shared_ptr<FkMVPMatrix> FkGraphicMVPQuark::_calcMat(std::shared_ptr<FkGraphicLayer> layer,
+                                                         FkSize &targetSize,
+                                                         bool reverseY) {
     auto matrix = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
     matrix->setViewSize(targetSize.getWidth(), targetSize.getHeight());
     matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
@@ -148,11 +141,7 @@ FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,
     _setRotation(matrix, layer);
     _setScale(matrix, layer, targetSize, reverseY);
     matrix->calc();
-
-    auto mat = std::make_shared<FkMatCompo>();
-    mat->value = matrix;
-    layer->addComponent(mat);
-    return FK_OK;
+    return matrix;
 }
 
 FkResult FkGraphicMVPQuark::_setRotation(std::shared_ptr<FkMVPMatrix> matrix,

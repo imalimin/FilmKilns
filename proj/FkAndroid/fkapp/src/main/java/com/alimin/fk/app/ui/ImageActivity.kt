@@ -185,7 +185,7 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float, status: Int) {
-//        engine.postTranslate(layer, (dx * v.measuredWidth / 2).toInt(), (-dy * v.measuredHeight / 2).toInt())
+        engine.postTranslate(layer, (dx * v.measuredWidth / 2).toInt(), (-dy * v.measuredHeight / 2).toInt())
     }
 
     override fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF) {
@@ -193,7 +193,7 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onScale(v: SurfaceView, ds: FkRational, anchor: PointF) {
-//        engine.postScale(layer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
+        engine.postScale(layer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
     }
 
     override fun onRender(v: SurfaceView) {

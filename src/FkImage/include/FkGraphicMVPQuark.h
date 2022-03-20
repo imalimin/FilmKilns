@@ -54,6 +54,10 @@ private:
 
     FkResult _calc(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize, bool reverseY);
 
+    std::shared_ptr<FkMVPMatrix> _calcMat(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize, bool reverseY);
+
+    FkIntVec2 _calcPoint2OtherCoordination(FkIntVec2 &point, std::shared_ptr<FkGraphicLayer> &layer);
+
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICMVPQUARK_H

@@ -289,8 +289,9 @@ FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
     measureProto->layerId = proto->layer;
     measureProto->value = proto->value;
     auto ret = client->with(molecule)->send(measureProto);
-    //0------>
-    //| +,+
+    //  -,- |
+    //------0------->
+    //      | +,+
     proto->value = measureProto->value;
     return client->with(molecule)->send(proto);
 }
