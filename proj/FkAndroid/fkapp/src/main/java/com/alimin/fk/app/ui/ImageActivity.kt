@@ -4,9 +4,7 @@ import android.Manifest
 import android.content.ContentUris
 import android.content.Intent
 import android.database.Cursor
-import android.graphics.Canvas
-import android.graphics.Point
-import android.graphics.PointF
+import android.graphics.*
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.provider.MediaStore
@@ -34,6 +32,7 @@ class ImageActivity : BaseActivity(),
     FkActSurfaceView.OnScaleListener,
     FkActSurfaceView.OnActionListener {
     override val layoutResID: Int = R.layout.activity_image
+    private val surfaceSize = Point(0, 0)
     private var surfaceView: FkActSurfaceView? = null
     private lateinit var cacheFile: File
     private lateinit var engine: FkImage
@@ -71,8 +70,10 @@ class ImageActivity : BaseActivity(),
             )
         }
         testBtn.setOnClickListener {
-            engine.drawPoint(layer, 0xFFFF0000, 30, Point(200, 100))
-            val canvas = Canvas()
+            val point = Point(800, 1500)
+            engine.drawPoint(layer, 0xFFFF0000, 30, point)
+//            engine.drawPoint(layer, 0xFFFF0000, 30, Point(0, 0))
+            coverView.showPoint(point)
             engine.notifyRender()
         }
     }
@@ -145,6 +146,8 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+        surfaceSize.x = width
+        surfaceSize.y = height
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
@@ -182,7 +185,7 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float, status: Int) {
-        engine.postTranslate(layer, (dx * v.measuredWidth / 2).toInt(), (-dy * v.measuredHeight / 2).toInt())
+//        engine.postTranslate(layer, (dx * v.measuredWidth / 2).toInt(), (-dy * v.measuredHeight / 2).toInt())
     }
 
     override fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF) {
@@ -190,7 +193,7 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onScale(v: SurfaceView, ds: FkRational, anchor: PointF) {
-        engine.postScale(layer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
+//        engine.postScale(layer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
     }
 
     override fun onRender(v: SurfaceView) {

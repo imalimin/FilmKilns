@@ -36,7 +36,7 @@ protected:
 private:
     FkResult _onNewLayer(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
+    FkResult _onWithLayer(std::shared_ptr<FkProtocol> p);
 
 protected:
     std::shared_ptr<FkGraphicLayer> newLayerEntity();

@@ -19,6 +19,7 @@
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
 #include "FkMeasureTransProto.h"
+#include "FkMeasurePointProto.h"
 #include "FkDrawPointProto.h"
 #include "FkQueryLayersProto.h"
 #include "FkRenderEngineCompo.h"
@@ -284,6 +285,13 @@ FkResult FkLayerEngine::drawPoint(FkID layer, FkColor color, int32_t size, int32
 
 FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
     auto proto = Fk_POINTER_CAST(FkDrawPointProto, msg->sp);
+    auto measureProto = std::make_shared<FkMeasurePointProto>();
+    measureProto->layerId = proto->layer;
+    measureProto->value = proto->value;
+    auto ret = client->with(molecule)->send(measureProto);
+    //0------>
+    //| +,+
+    proto->value = measureProto->value;
     return client->with(molecule)->send(proto);
 }
 

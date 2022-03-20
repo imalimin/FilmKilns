@@ -43,7 +43,7 @@ void FkMVPMatrix::setScale(FkFloatVec3 value) {
     this->scale = value;
 }
 
-void FkMVPMatrix::setRotation(FkRational &_radian) {
+void FkMVPMatrix::setRotation(FkRational _radian) {
     this->radian = _radian;
 }
 

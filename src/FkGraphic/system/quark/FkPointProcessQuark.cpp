@@ -46,7 +46,7 @@ FkResult FkPointProcessQuark::_onRender(std::shared_ptr<FkProtocol> p) {
 }
 
 //  -,- |
-//------+------->
+//------0------->
 //      | +,+
 FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &vertexCompo,
                                           std::shared_ptr<FkTexEntity> &materials,

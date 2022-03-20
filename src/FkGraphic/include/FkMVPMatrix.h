@@ -31,7 +31,7 @@ public:
 
     void setScale(FkFloatVec3 value);
 
-    void setRotation(FkRational &_radian);
+    void setRotation(FkRational _radian);
 
     void setTranslate(FkFloatVec3 value);
 

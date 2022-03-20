@@ -48,7 +48,7 @@ protected:
 private:
     FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
 
-    FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
+    FkResult _onWithCanvas(std::shared_ptr<FkProtocol> p);
 
     FkResult _onDelivery(std::shared_ptr<FkProtocol> p);
 

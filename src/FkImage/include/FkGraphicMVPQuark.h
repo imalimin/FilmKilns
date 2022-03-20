@@ -38,6 +38,8 @@ private:
 
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onMeasurePoint(std::shared_ptr<FkProtocol> p);
+
 private:
     FkResult _setRotation(std::shared_ptr<FkMVPMatrix> matrix,
                           std::shared_ptr<FkGraphicLayer> layer);

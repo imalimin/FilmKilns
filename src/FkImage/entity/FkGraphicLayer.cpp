@@ -7,6 +7,9 @@
 
 #include "FkGraphicLayer.h"
 #include "FkSizeCompo.h"
+#include "FkScaleComponent.h"
+#include "FkTransComponent.h"
+#include "FkRotateComponent.h"
 
 float FkGraphicLayer::calcScaleWithScaleType(std::shared_ptr<FkGraphicLayer> layer,
                                              kScaleType scaleType,
@@ -47,4 +50,40 @@ FkGraphicLayer::~FkGraphicLayer() {
 
 bool FkGraphicLayer::operator==(const FkGraphicLayer &obj) {
     return this->id == obj.id;
+}
+
+FkSize FkGraphicLayer::getSize() {
+    FkSize value(0, 0);
+    auto compo = findComponent<FkSizeCompo>();
+    if (compo) {
+        value = compo->size;
+    }
+    return value;
+}
+
+FkFloatVec3 FkGraphicLayer::getScale() {
+    FkFloatVec3 value(1.0f, 1.0f, 1.0f);
+    auto compo = findComponent<FkScaleComponent>();
+    if (compo) {
+        value = compo->value;
+    }
+    return value;
+}
+
+FkIntVec2 FkGraphicLayer::getTrans() {
+    FkIntVec2 value(0, 0);
+    auto compo = findComponent<FkTransComponent>();
+    if (compo) {
+        value = compo->value;
+    }
+    return value;
+}
+
+FkRational FkGraphicLayer::getRotate() {
+    FkRational value(0, 1);
+    auto compo = findComponent<FkRotateComponent>();
+    if (compo) {
+        value = compo->value;
+    }
+    return value;
 }

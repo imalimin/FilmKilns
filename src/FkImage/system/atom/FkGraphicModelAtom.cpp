@@ -20,6 +20,7 @@
 #include "FkDrawPointProto.h"
 #include "FkSetSurfacePrt.h"
 #include "FkMeasureTransProto.h"
+#include "FkMeasurePointProto.h"
 #include "FkQueryLayersProto.h"
 #include "FkLayerSetTransProto.h"
 #include "FkLayerSetRotateProto.h"
@@ -42,6 +43,7 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkLayerPostScaleProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkLayerPostRotateProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkMeasureTransProto, FkGraphicModelAtom);
+    FK_PORT_DELIVERY(desc, FkMeasurePointProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkDrawPointProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkSetSurfacePrt, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkQueryLayersProto, FkGraphicModelAtom);

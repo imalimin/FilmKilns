@@ -8,6 +8,7 @@
 #include "FkWinModelQuark.h"
 #include "FkRenderRequestPrt.h"
 #include "FkMeasureTransProto.h"
+#include "FkMeasurePointProto.h"
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkSetSurfacePrt.h"
 
@@ -23,6 +24,7 @@ void FkWinModelQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkSetSurfacePrt, FkWinModelQuark::_onSetViewSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkWinModelQuark::_onWithWinSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkWinModelQuark::_onWithWinSize);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkWinModelQuark::_onWithWinSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkWinModelQuark::_onWithWinSize);
 }
 

@@ -9,6 +9,7 @@
 #include "FkSizeCompo.h"
 #include "FkQuerySizeProto.h"
 #include "FkMeasureTransProto.h"
+#include "FkMeasurePointProto.h"
 #include "FkLayerPostTransProto.h"
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
@@ -35,7 +36,8 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetScaleProto, FkGraphicCanvasQuark::_onSetScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicCanvasQuark::_onPostRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetRotateProto, FkGraphicCanvasQuark::_onSetRotate);
-    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicCanvasQuark::_onMeasureTrans);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicCanvasQuark::_onWithCanvas);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkGraphicCanvasQuark::_onWithCanvas);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
 
@@ -124,7 +126,7 @@ FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p)
     return FK_OK;
 }
 
-FkResult FkGraphicCanvasQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicCanvasQuark::_onWithCanvas(std::shared_ptr<FkProtocol> p) {
     auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
     proto->canvas = std::make_shared<FkGraphicLayer>(*_getCanvas());
     return FK_OK;

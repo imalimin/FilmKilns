@@ -18,6 +18,7 @@
 #include "FkLayerPostScaleProto.h"
 #include "FkLayerPostRotateProto.h"
 #include "FkMeasureTransProto.h"
+#include "FkMeasurePointProto.h"
 #include "FkDrawPointProto.h"
 #include "FkQueryLayersProto.h"
 #include "FkRenderEngineCompo.h"
@@ -43,6 +44,7 @@ void FkGraphicMolecule::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkLayerPostScaleProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkLayerPostRotateProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkMeasureTransProto, FkGraphicMolecule);
+    FK_PORT_DELIVERY(desc, FkMeasurePointProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkDrawPointProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkQueryLayersProto, FkGraphicMolecule);
     FK_PORT_DELIVERY(desc, FkLayerSetTransProto, FkGraphicMolecule);

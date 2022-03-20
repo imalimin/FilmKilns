@@ -19,6 +19,7 @@
 #include "FkLayerPostRotateProto.h"
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
+#include "FkMeasurePointProto.h"
 #include "FkDrawPointProto.h"
 #include "FkPointFCompo.h"
 #include "FkVertexCompo.h"
@@ -56,7 +57,8 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetScaleProto, FkGraphicLayerQuark::_onSetScale);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostRotateProto, FkGraphicLayerQuark::_onPostRotate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetRotateProto, FkGraphicLayerQuark::_onSetRotate);
-    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onMeasureTrans);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicLayerQuark::_onWithLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicLayerQuark::_onDrawPoint);
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
 }
@@ -283,7 +285,7 @@ FkResult FkGraphicLayerQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }
 
-FkResult FkGraphicLayerQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicLayerQuark::_onWithLayer(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
     auto itr = layers.find(proto->layerId);
     FkAssert(layers.end() != itr, FK_FAIL);
@@ -297,10 +299,8 @@ FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
     if (layers.end() != itr) {
         auto sizeCompo = itr->second->findComponent<FkSizeCompo>();
         auto comp = std::make_shared<FkPointFCompo>();
-//        comp->value.x = proto->value.x * 1.0f / sizeCompo->size.getWidth();
-//        comp->value.y = proto->value.y * 1.0f / sizeCompo->size.getHeight();
-        comp->value.x = 0.5f;
-        comp->value.y = 0.5f;
+        comp->value.x = proto->value.x * 1.0f / (sizeCompo->size.getWidth() / 2.0f) - 1.0f;
+        comp->value.y = proto->value.y * 1.0f / (sizeCompo->size.getHeight() / 2.0f) - 1.0f;
         comp->value.z = 0.0f;
         comp->size = proto->size;
         comp->color = proto->color;

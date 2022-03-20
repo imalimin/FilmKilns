@@ -12,6 +12,9 @@
 #include "FkBufferComponent.h"
 #include "FkSize.h"
 #include "FkMaterialCompo.h"
+#include "FkFloatVec3.h"
+#include "FkIntVec2.h"
+#include "FkRational.h"
 
 FK_CLASS FkGraphicLayer FK_EXTEND FkGraphicEntity {
 public:
@@ -27,6 +30,14 @@ public:
     virtual ~FkGraphicLayer();
 
     bool operator==(const FkGraphicLayer &obj);
+
+    FkSize getSize();
+
+    FkFloatVec3 getScale();
+
+    FkIntVec2 getTrans();
+
+    FkRational getRotate();
 
 public:
     FkID id = FK_ID_NONE;
