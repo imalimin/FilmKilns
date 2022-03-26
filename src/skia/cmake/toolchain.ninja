@@ -1,0 +1,214 @@
+rule objc
+  command =  /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android21-clang -MD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_objc} -c ${in} -o ${out}
+  description = compile ${in}
+  depfile = ${out}.d
+  deps = gcc
+rule objcxx
+  command =  /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android21-clang++ -MD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_cc} ${cflags_objcc} -c ${in} -o ${out}
+  description = compile ${in}
+  depfile = ${out}.d
+  deps = gcc
+rule alink
+  command = /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-ar rcs ${out} @${out}.rsp
+  description = link ${out}
+  rspfile = ${out}.rsp
+  rspfile_content = ${in}
+rule solink
+  command = /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android21-clang++ -shared ${ldflags} -Wl,--start-group @${out}.rsp ${solibs} -Wl,--end-group ${libs} -Wl,-soname,${target_output_name}${output_extension} -o ${out}
+  description = link ${out}
+  rspfile = ${out}.rsp
+  rspfile_content = ${in}
+rule link
+  command = /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android21-clang++ ${ldflags} -Wl,--start-group @${root_out_dir}/${target_output_name}${output_extension}.rsp ${solibs} -Wl,--end-group ${libs} -o ${root_out_dir}/${target_output_name}${output_extension}
+  description = link ${out}
+  rspfile = ${root_out_dir}/${target_output_name}${output_extension}.rsp
+  rspfile_content = ${in}
+rule stamp
+  command = touch ${out}
+  description = stamp ${out}
+rule copy_bundle_data
+  command = python "/Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/gn/cp.py" ${in} ${out}
+  description = copy_bundle_data ${in} ${out}
+rule compile_xcassets
+  command = true
+  description = compile_xcassets ${out}
+rule asm
+  command =  /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android21-clang -MD -MF ${out}.d ${defines} ${include_dirs} ${asmflags} -c ${in} -o ${out}
+  description = assemble ${in}
+  depfile = ${out}.d
+  deps = gcc
+rule cc
+  command =  /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android21-clang -MD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_c} -c ${in} -o ${out}
+  description = compile ${in}
+  depfile = ${out}.d
+  deps = gcc
+rule cxx
+  command =  /Users/lmy/Library/Android/android-ndk-r17c/toolchains/llvm/prebuilt/darwin-x86_64/bin/aarch64-linux-android21-clang++ -MD -MF ${out}.d ${defines} ${include_dirs} ${cflags} ${cflags_cc} -c ${in} -o ${out}
+  description = compile ${in}
+  depfile = ${out}.d
+  deps = gcc
+rule copy
+  command = python "/Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/gn/cp.py" ${in} ${out}
+  description = copy ${in} ${out}
+
+subninja obj/android_utils.ninja
+subninja obj/arm64.ninja
+subninja obj/armv7.ninja
+subninja obj/avx.ninja
+subninja obj/bench.ninja
+subninja obj/blob_cache_sim.ninja
+subninja obj/common_flags_aa.ninja
+subninja obj/common_flags_config.ninja
+subninja obj/common_flags_gpu.ninja
+subninja obj/common_flags_images.ninja
+build obj/compile_processors.stamp: stamp
+subninja obj/cpu_modules.ninja
+subninja obj/crc32.ninja
+subninja obj/create_test_font.ninja
+subninja obj/create_test_font_color.ninja
+subninja obj/dm.ninja
+subninja obj/dump_record.ninja
+subninja obj/etc1.ninja
+subninja obj/experimental_svg_model.ninja
+subninja obj/experimental_xform.ninja
+subninja obj/flags.ninja
+subninja obj/fm.ninja
+subninja obj/fontmgr_android.ninja
+subninja obj/fontmgr_custom.ninja
+subninja obj/fontmgr_custom_empty.ninja
+subninja obj/fontmgr_empty.ninja
+subninja obj/fontmgr_fontconfig.ninja
+subninja obj/fontmgr_fuchsia.ninja
+subninja obj/fontmgr_wasm.ninja
+subninja obj/fontmgr_win.ninja
+subninja obj/fontmgr_win_gdi.ninja
+subninja obj/fuzz.ninja
+build gdbserver: copy /Users/lmy/Library/Android/android-ndk-r17c/prebuilt/android-arm64/gdbserver/gdbserver
+
+build obj/gdbserver.stamp: stamp gdbserver
+subninja obj/get_images_from_skps.ninja
+subninja obj/gif.ninja
+subninja obj/gm.ninja
+subninja obj/gpu.ninja
+subninja obj/gpu_tool_utils.ninja
+subninja obj/hash_and_encode.ninja
+subninja obj/heif.ninja
+subninja obj/hsw.ninja
+subninja obj/image_diff_metric.ninja
+subninja obj/imgcvt.ninja
+subninja obj/jitter_gms.ninja
+subninja obj/jpeg_decode.ninja
+subninja obj/jpeg_encode.ninja
+subninja obj/libeditor.ninja
+subninja obj/libskottie_android.ninja
+subninja obj/libskqp_app.ninja
+subninja obj/libviewer.ninja
+subninja obj/list_gms.ninja
+subninja obj/list_gpu_unit_tests.ninja
+subninja obj/lua.ninja
+subninja obj/lua_app.ninja
+subninja obj/lua_pictures.ninja
+subninja obj/make_skqp_model.ninja
+build obj/modules.stamp: stamp ./libparticles.a ./libskottie.a ./libskshaper.a
+build obj/modules_testonly.stamp: stamp
+subninja obj/nanobench.ninja
+subninja obj/none.ninja
+subninja obj/pathkit.ninja
+subninja obj/pathops_unittest.ninja
+subninja obj/pdf.ninja
+subninja obj/png_decode.ninja
+subninja obj/png_encode.ninja
+subninja obj/public.ninja
+subninja obj/public_headers_warnings_check.ninja
+subninja obj/raw.ninja
+subninja obj/remote_demo.ninja
+build obj/run_sksllex.stamp: stamp
+subninja obj/samples.ninja
+subninja obj/sk_app.ninja
+subninja obj/skcms.ninja
+subninja obj/skdiff.ninja
+subninja obj/skia.ninja
+rule ___skia.h___gn_toolchain_gcc_like__rule
+  command = python ../gn/find_headers.py /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/bin/gn /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/ gen/skia.h /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/client_utils/android /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/android /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/atlastext /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/c /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/codec /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/config /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/core /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/docs /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/effects /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/encode /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/gpu /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/pathops /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/ports /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/svg /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/utils /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/include/utils/mac /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/modules/skshaper/include /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/modules/skottie/include
+  description = ACTION //:skia.h(//gn/toolchain:gcc_like)
+  restat = 1
+
+build gen/skia.h: ___skia.h___gn_toolchain_gcc_like__rule | ../gn/find_headers.py
+  depfile = gen/skia.h.deps
+
+build obj/skia.h.stamp: stamp gen/skia.h
+subninja obj/skiaserve.ninja
+subninja obj/skp_parser.ninja
+subninja obj/skpbench.ninja
+subninja obj/skpinfo.ninja
+subninja obj/skqp.ninja
+subninja obj/skqp_lib.ninja
+subninja obj/sksl_interpreter.ninja
+subninja obj/sktexttopdf.ninja
+subninja obj/skvm_builders.ninja
+subninja obj/skvm_jit.ninja
+subninja obj/sse2.ninja
+subninja obj/sse41.ninja
+subninja obj/sse42.ninja
+subninja obj/ssse3.ninja
+subninja obj/tests.ninja
+subninja obj/tool_utils.ninja
+subninja obj/trace.ninja
+subninja obj/typeface_freetype.ninja
+subninja obj/webp_decode.ninja
+subninja obj/webp_encode.ninja
+subninja obj/wuffs.ninja
+subninja obj/xml.ninja
+subninja obj/xps.ninja
+build obj/experimental/ffmpeg/video_decoder.stamp: stamp
+build obj/experimental/ffmpeg/video_encoder.stamp: stamp
+subninja obj/modules/particles/particles.ninja
+subninja obj/modules/skottie/fuzz.ninja
+subninja obj/modules/skottie/gm.ninja
+subninja obj/modules/skottie/skottie.ninja
+subninja obj/modules/skottie/tests.ninja
+subninja obj/modules/skottie/tool.ninja
+subninja obj/modules/skottie/utils.ninja
+subninja obj/modules/skparagraph/bench.ninja
+subninja obj/modules/skparagraph/samples.ninja
+subninja obj/modules/skparagraph/skparagraph.ninja
+subninja obj/modules/skparagraph/tests.ninja
+subninja obj/modules/skparagraph/utils.ninja
+subninja obj/modules/skplaintexteditor/editor_app.ninja
+subninja obj/modules/skplaintexteditor/editor_lib.ninja
+subninja obj/modules/skplaintexteditor/shape.ninja
+subninja obj/modules/skplaintexteditor/word_boundaries.ninja
+subninja obj/modules/skresources/skresources.ninja
+subninja obj/modules/sksg/samples.ninja
+subninja obj/modules/sksg/sksg.ninja
+subninja obj/modules/sksg/tests.ninja
+subninja obj/modules/skshaper/skshaper.ninja
+subninja obj/third_party/cpu-features/cpu-features.ninja
+subninja obj/third_party/dng_sdk/dng_sdk.ninja
+subninja obj/third_party/expat/expat.ninja
+subninja obj/third_party/freetype2/freetype2.ninja
+subninja obj/third_party/harfbuzz/harfbuzz.ninja
+subninja obj/third_party/icu/icu.ninja
+build icudtl.dat: copy ../third_party/externals/icu/common/icudtl.dat
+
+build obj/third_party/icu/icudata.stamp: stamp icudtl.dat
+rule __third_party_icu_make_data_assembly___gn_toolchain_gcc_like__rule
+  command = python ../third_party/externals/icu/scripts/make_data_assembly.py ../third_party/externals/icu/android/icudtl.dat gen/third_party/icu/icudtl_dat.S
+  description = ACTION //third_party/icu:make_data_assembly(//gn/toolchain:gcc_like)
+  restat = 1
+
+build gen/third_party/icu/icudtl_dat.S: __third_party_icu_make_data_assembly___gn_toolchain_gcc_like__rule | ../third_party/externals/icu/scripts/make_data_assembly.py ../third_party/externals/icu/android/icudtl.dat
+
+build obj/third_party/icu/make_data_assembly.stamp: stamp gen/third_party/icu/icudtl_dat.S
+subninja obj/third_party/imgui/imgui.ninja
+subninja obj/third_party/libjpeg-turbo/libjpeg.ninja
+subninja obj/third_party/libmicrohttpd/libmicrohttpd.ninja
+subninja obj/third_party/libpng/libpng.ninja
+subninja obj/third_party/libwebp/libwebp.ninja
+subninja obj/third_party/libwebp/libwebp_sse41.ninja
+subninja obj/third_party/lua/lua.ninja
+subninja obj/third_party/native_app_glue/native_app_glue.ninja
+subninja obj/third_party/piex/piex.ninja
+subninja obj/third_party/sfntly/sfntly.ninja
+subninja obj/third_party/zlib/zlib.ninja
+subninja obj/third_party/zlib/zlib_x86.ninja

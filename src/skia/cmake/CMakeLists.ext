@@ -247,6 +247,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 
 
 #//modules/skparagraph:samples
+if(ENABLE_SAMPLES)
 set("target" "modules__skparagraph_samples")
 set("${target}__cxx_srcs" "${SRC_SKIA}/samplecode/SampleParagraph.cpp")
 add_library("${target}" OBJECT ${${target}__cxx_srcs})
@@ -266,6 +267,7 @@ add_dependencies("${target}"
   "third_party__icu"
   "modules__skshaper"
   "modules__skparagraph")
+endif(ENABLE_SAMPLES)
 
 
 #//:lua_app
@@ -738,6 +740,7 @@ add_dependencies("${target}"
 
 
 #//modules/skparagraph:utils
+if(ENABLE_ICU)
 set("target" "modules__skparagraph_utils")
 set("${target}__other_srcs" "${SRC_SKIA}/modules/skparagraph/utils/TestFontCollection.h")
 set("${target}__cxx_srcs" "${SRC_SKIA}/modules/skparagraph/utils/TestFontCollection.cpp")
@@ -756,6 +759,7 @@ add_dependencies("${target}"
   "skia"
   "third_party__icu"
   "modules__skshaper")
+endif(ENABLE_ICU)
 
 
 #//:android_utils
@@ -825,6 +829,7 @@ endif(ENABLE_EXECUTABLE)
 
 
 #//modules/skparagraph:skparagraph
+if(ENABLE_ICU)
 set("target" "modules__skparagraph")
 list(APPEND "${target}__other_srcs"
   "${SRC_SKIA}/modules/skparagraph/src/Decorations.h"
@@ -874,6 +879,7 @@ target_link_libraries("${target}"
   "${library__EGL}"
   "${library__GLESv2}"
   "${library__log}")
+endif(ENABLE_ICU)
 
 
 #//:run_sksllex
@@ -1010,7 +1016,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 
 
 #//:nanobench
-if(ENABLE_EXECUTABLE)
+if(ENABLE_BENCH)
 set("target" "nanobench")
 set("${target}__cxx_srcs" "${SRC_SKIA}/bench/nanobench.cpp")
 list(APPEND "${target}__obj_target_srcs"
@@ -1056,7 +1062,7 @@ target_link_libraries("${target}"
   "${library__EGL}"
   "${library__GLESv2}"
   "${library__log}")
-endif(ENABLE_EXECUTABLE)
+endif(ENABLE_BENCH)
 
 
 #//:A skia sample. The Skia Viewer displays a series of slides that exhibit specific features of Skia,
@@ -1142,6 +1148,7 @@ endif(ENABLE_VIEWER)
 
 
 #//modules/skplaintexteditor:word_boundaries
+if(ENABLE_ICU)
 set("target" "modules__skplaintexteditor_word_boundaries")
 set("${target}__cxx_srcs" "${SRC_SKIA}/modules/skplaintexteditor/src/word_boundaries.cpp")
 add_library("${target}" OBJECT ${${target}__cxx_srcs})
@@ -1152,6 +1159,7 @@ set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-Wno-attributes -fst
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
 add_dependencies("${target}"
   "third_party__icu")
+endif(ENABLE_ICU)
 
 
 #//:png_encode
@@ -1585,6 +1593,7 @@ add_dependencies("${target}"
 
 
 #//:bench
+if(ENABLE_BENCH)
 set("target" "bench")
 list(APPEND "${target}__cxx_srcs"
   "${SRC_SKIA}/bench/AAClipBench.cpp"
@@ -1722,6 +1731,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 add_dependencies("${target}"
   "skia"
   "modules__skshaper")
+endif(ENABLE_BENCH)
 
 
 #//third_party/libjpeg-turbo:libjpeg
@@ -1781,7 +1791,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 
 
 #//:skpbench
-if(ENABLE_EXECUTABLE)
+if(ENABLE_BENCH)
 set("target" "skpbench")
 set("${target}__cxx_srcs" "${SRC_SKIA}/tools/skpbench/skpbench.cpp")
 list(APPEND "${target}__obj_target_srcs"
@@ -1812,7 +1822,7 @@ target_link_libraries("${target}"
   "${library__dl}"
   "${library__GLESv2}"
   "${library__log}")
-endif(ENABLE_EXECUTABLE)
+endif(ENABLE_BENCH)
 
 
 #//:dump_record
@@ -1862,6 +1872,7 @@ add_dependencies("${target}"
 
 
 #//third_party/icu:icu
+if(ENABLE_ICU)
 set("target" "third_party__icu")
 list(APPEND "${target}__other_srcs"
   "${SRC_SKIA}/third_party/externals/icu/source/common/bmpset.h"
@@ -2737,9 +2748,11 @@ set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-w -Wno-attributes -
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
 add_dependencies("${target}"
   "third_party__icu_make_data_assembly")
+endif(ENABLE_ICU)
 
 
 #//:samples
+if(ENABLE_SAMPLES)
 set("target" "samples")
 set("${target}__other_srcs" "${SRC_SKIA}/samplecode/Sample.h")
 list(APPEND "${target}__cxx_srcs"
@@ -2844,6 +2857,7 @@ add_dependencies("${target}"
   "skia"
   "modules__skshaper"
   "third_party__lua")
+endif(ENABLE_SAMPLES)
 
 
 #//:public
@@ -3909,6 +3923,7 @@ add_dependencies("${target}"
 
 
 #//third_party/imgui:imgui
+if(ENABLE_VIEWER)
 set("target" "third_party__imgui")
 list(APPEND "${target}__cxx_srcs"
   "${SRC_SKIA}/third_party/externals/imgui/imgui.cpp"
@@ -3920,6 +3935,7 @@ add_library("${target}" STATIC ${${target}__cxx_srcs})
 set_target_properties("${target}" PROPERTIES COMPILE_DEFINITIONS "NDEBUG;")
 set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-w -Wno-attributes -fstrict-aliasing -fPIC -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I ${SRC_SKIA}/third_party/externals/imgui -std=c++17 -fno-exceptions -fno-rtti ")
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
+endif(ENABLE_VIEWER)
 
 
 #//:Skia core library
@@ -4615,17 +4631,22 @@ find_library("library__log" "log")
 list(APPEND "${target}__third_party"
   "third_party__expat"
   "third_party__zlib"
-  "third_party__sfntly"
   "third_party__cpu-features"
   "third_party__libpng"
   "third_party__libjpeg-turbo_libjpeg"
-  "third_party__piex"
   "third_party__freetype2"
   "third_party__libwebp")
+
 if(ENABLE_RAW)
   list(APPEND "${target}__third_party"
+    "third_party__piex"
     "third_party__dng_sdk")
 endif(ENABLE_RAW)
+if(ENABLE_SFNTLY)
+  list(APPEND "${target}__third_party"
+    "third_party__sfntly")
+endif(ENABLE_SFNTLY)
+
 list(APPEND "${target}__third_party"
   "${library__dl}"
   "${library__EGL}"
@@ -4836,6 +4857,7 @@ add_dependencies("${target}"
 
 
 #//third_party/piex:piex
+if(ENABLE_RAW)
 set("target" "third_party__piex")
 list(APPEND "${target}__cxx_srcs"
   "${SRC_SKIA}/third_party/externals/piex/src/binary_parse/cached_paged_byte_array.cc"
@@ -4848,16 +4870,18 @@ add_library("${target}" STATIC ${${target}__cxx_srcs})
 set_target_properties("${target}" PROPERTIES COMPILE_DEFINITIONS "BREAK_IF_DEBUGGING_AND_OUT_OF_RANGE;NDEBUG;")
 set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-w -Wno-attributes -fstrict-aliasing -fPIC -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I ${SRC_SKIA}/third_party/externals/piex -std=c++17 -fno-exceptions -fno-rtti ")
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
+endif(ENABLE_RAW)
 
 
 #//modules/skparagraph:bench
+if(ENABLE_BENCH)
 set("target" "modules__skparagraph_bench")
 set("${target}__cxx_srcs" "${SRC_SKIA}/cmake/empty.cpp")
 add_library("${target}" OBJECT ${${target}__cxx_srcs})
 set_target_properties("${target}" PROPERTIES COMPILE_DEFINITIONS "NDEBUG;")
 set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-Wno-attributes -fstrict-aliasing -fPIC -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wall -Wextra -Winit-self -Wpointer-arith -Wsign-compare -Wvla -Wno-deprecated-declarations -Wno-maybe-uninitialized -fcolor-diagnostics -Weverything -Wno-unknown-warning-option -Wno-nonportable-include-path -Wno-nonportable-system-include-path -Wno-cast-align -Wno-cast-qual -Wno-conversion -Wno-disabled-macro-expansion -Wno-documentation -Wno-documentation-unknown-command -Wno-double-promotion -Wno-exit-time-destructors -Wno-float-equal -Wno-format-nonliteral -Wno-global-constructors -Wno-missing-prototypes -Wno-missing-variable-declarations -Wno-pedantic -Wno-reserved-id-macro -Wno-shadow -Wno-shift-sign-overflow -Wno-signed-enum-bitfield -Wno-switch-enum -Wno-undef -Wno-unreachable-code -Wno-unreachable-code-break -Wno-unreachable-code-return -Wno-unused-macros -Wno-unused-member-function -Wno-unused-template -Wno-zero-as-null-pointer-constant -Wno-thread-safety-negative -Wno-covered-switch-default -Wno-deprecated -Wno-missing-noreturn -Wno-old-style-cast -Wno-padded -Wno-newline-eof -Wdeprecated-anon-enum-enum-conversion -Wdeprecated-array-compare -Wdeprecated-attributes -Wdeprecated-comma-subscript -Wdeprecated-copy -Wdeprecated-dynamic-exception-spec -Wdeprecated-enum-compare -Wdeprecated-enum-compare-conditional -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wdeprecated-increment-bool -Wdeprecated-register -Wdeprecated-this-capture -Wdeprecated-volatile -Wdeprecated-writable-str -Wno-implicit-fallthrough -Wno-unused-parameter -std=c++17 -fno-exceptions -fno-rtti -Wnon-virtual-dtor -Wno-noexcept-type -Wno-redundant-move -Wno-abstract-vbase-init -Wno-weak-vtables -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-undefined-func-template ")
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
-
+endif(ENABLE_BENCH)
 
 #//:fontmgr_custom_empty
 set("target" "fontmgr_custom_empty")
@@ -5327,6 +5351,7 @@ add_dependencies("${target}"
 
 
 #//modules/sksg:samples
+if(ENABLE_SAMPLES)
 set("target" "modules__sksg_samples")
 set("${target}__cxx_srcs" "${SRC_SKIA}/modules/sksg/samples/SampleSVGPong.cpp")
 add_library("${target}" OBJECT ${${target}__cxx_srcs})
@@ -5342,6 +5367,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 add_dependencies("${target}"
   "skia"
   "modules__sksg")
+endif(ENABLE_SAMPLES)
 
 
 #//modules/skottie:gm
@@ -5766,6 +5792,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 
 
 #//third_party/harfbuzz:harfbuzz
+if(ENABLE_ICU)
 set("target" "third_party__harfbuzz")
 list(APPEND "${target}__other_srcs"
   "${SRC_SKIA}/third_party/externals/harfbuzz/src/hb-aat-fdsc-table.hh"
@@ -5967,6 +5994,7 @@ set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-w -Wno-attributes -
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
 target_link_libraries("${target}"
   "third_party__icu")
+endif(ENABLE_ICU)
 
 
 #//experimental/ffmpeg:video_decoder
@@ -5987,6 +6015,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 
 
 #//modules/skshaper:skshaper
+if(ENABLE_ICU)
 set("target" "modules__skshaper")
 list(APPEND "${target}__cxx_srcs"
   "${SRC_SKIA}/modules/skshaper/src/SkShaper.cpp"
@@ -6014,6 +6043,7 @@ target_link_libraries("${target}"
   "${library__EGL}"
   "${library__GLESv2}"
   "${library__log}")
+endif(ENABLE_ICU)
 
 
 #//:fontmgr_custom
@@ -6206,6 +6236,7 @@ target_link_libraries("${target}"
 
 
 #//modules/skparagraph:tests
+if(ENABLE_TEST)
 set("target" "modules__skparagraph_tests")
 set("${target}__cxx_srcs" "${SRC_SKIA}/tests/SkParagraphTest.cpp")
 add_library("${target}" OBJECT ${${target}__cxx_srcs})
@@ -6225,6 +6256,7 @@ add_dependencies("${target}"
   "third_party__icu"
   "modules__skshaper"
   "modules__skparagraph")
+endif(ENABLE_TEST)
 
 
 #//:png_decode
@@ -6613,6 +6645,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 
 
 #//modules/skottie:tests
+if(ENABLE_TEST)
 set("target" "modules__skottie_tests")
 list(APPEND "${target}__cxx_srcs"
   "${SRC_SKIA}/modules/skottie/src/SkottieTest.cpp"
@@ -6632,9 +6665,11 @@ add_dependencies("${target}"
   "modules__skottie"
   "skia"
   "modules__skshaper")
+endif(ENABLE_TEST)
 
 
 #//third_party/icu:icudata
+if(ENABLE_ICU)
 set("target" "third_party__icu_icudata")
 set("${target}__other_srcs" "${SRC_SKIA}/third_party/externals/icu/common/icudtl.dat")
 set("${target}__output" "${SRC_SKIA}/cmake/icudtl.dat")
@@ -6645,6 +6680,7 @@ add_custom_command(OUTPUT ${${target}__output}
   COMMENT "Copy ${target}"
   VERBATIM)
 add_custom_target("${target}" SOURCES ${${target}__other_srcs} DEPENDS ${${target}__output})
+endif(ENABLE_ICU)
 
 
 #//:create_test_font
@@ -6673,6 +6709,7 @@ endif(ENABLE_EXECUTABLE)
 
 
 #//third_party/sfntly:sfntly
+if(ENABLE_SFNTLY)
 set("target" "third_party__sfntly")
 list(APPEND "${target}__cxx_srcs"
   "${SRC_SKIA}/third_party/externals/sfntly/cpp/src/sample/chromium/font_subsetter.cc"
@@ -6735,6 +6772,7 @@ set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-w -Wno-attributes -
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
 target_link_libraries("${target}"
   "third_party__icu")
+endif(ENABLE_SFNTLY)
 
 
 #//:About test. About android native app.
@@ -6804,6 +6842,7 @@ set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,-
 
 
 #//third_party/icu:make_data_assembly
+if(ENABLE_ICU)
 set("target" "third_party__icu_make_data_assembly")
 set("${target}__input_srcs" "${SRC_SKIA}/third_party/externals/icu/android/icudtl.dat")
 set("${target}__cxx_srcs" "${SRC_SKIA}/cmake/empty.cpp")
@@ -6818,6 +6857,7 @@ add_custom_command(OUTPUT ${${target}__output}
   COMMENT "Action: ${target}"
   VERBATIM)
 add_custom_target("${target}" SOURCES ${${target}__cxx_srcs} ${${target}__input_srcs} DEPENDS ${${target}__output})
+endif(ENABLE_ICU)
 
 
 #//:skvm_builders
@@ -6934,6 +6974,7 @@ target_link_libraries("${target}"
 
 
 #//third_party/libmicrohttpd:libmicrohttpd
+if(ENABLE_EXECUTABLE)
 set("target" "third_party__libmicrohttpd")
 list(APPEND "${target}__c_srcs"
   "${SRC_SKIA}/third_party/externals/microhttpd/src/microhttpd/base64.c"
@@ -6951,6 +6992,7 @@ set_property(TARGET "${target}" APPEND PROPERTY INCLUDE_DIRECTORIES
 set_target_properties("${target}" PROPERTIES COMPILE_DEFINITIONS "DAUTH_SUPPORT=1;HAVE_NETINET_IN_H=1;HAVE_PTHREAD_H=1;HAVE_SYS_SOCKET_H=1;MHD_USE_POSIX_THREADS=1;NDEBUG;")
 set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "-w -Wno-attributes -fstrict-aliasing -fPIC -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I ${SRC_SKIA}/third_party/externals/microhttpd/src/include ")
 set_target_properties("${target}" PROPERTIES LINK_FLAGS "-static-libstdc++ -Wl,--gc-sections ")
+endif(ENABLE_EXECUTABLE)
 
 
 #//:dm

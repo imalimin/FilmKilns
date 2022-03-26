@@ -1,0 +1,7 @@
+defines = -DNDEBUG
+include_dirs =
+root_out_dir = .
+target_output_name = sse42
+
+
+build obj/sse42.stamp: stamp

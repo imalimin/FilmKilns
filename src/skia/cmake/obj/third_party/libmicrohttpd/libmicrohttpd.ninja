@@ -1,0 +1,21 @@
+defines = -DDAUTH_SUPPORT=1 -DHAVE_NETINET_IN_H=1 -DHAVE_PTHREAD_H=1 -DHAVE_SYS_SOCKET_H=1 -DMHD_USE_POSIX_THREADS=1 -DNDEBUG
+include_dirs = -I../third_party/libmicrohttpd
+cflags = -w -Wno-attributes -fstrict-aliasing -fPIC --sysroot=/Users/lmy/Library/Android/android-ndk-r17c/sysroot -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/microhttpd/src/include
+cflags_c =
+root_out_dir = .
+target_output_name = libmicrohttpd
+
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.base64.o: cc ../third_party/externals/microhttpd/src/microhttpd/base64.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.connection.o: cc ../third_party/externals/microhttpd/src/microhttpd/connection.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.daemon.o: cc ../third_party/externals/microhttpd/src/microhttpd/daemon.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.internal.o: cc ../third_party/externals/microhttpd/src/microhttpd/internal.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.memorypool.o: cc ../third_party/externals/microhttpd/src/microhttpd/memorypool.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.postprocessor.o: cc ../third_party/externals/microhttpd/src/microhttpd/postprocessor.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.reason_phrase.o: cc ../third_party/externals/microhttpd/src/microhttpd/reason_phrase.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.response.o: cc ../third_party/externals/microhttpd/src/microhttpd/response.c
+build obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.tsearch.o: cc ../third_party/externals/microhttpd/src/microhttpd/tsearch.c
+
+build ./libmicrohttpd.a: alink obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.base64.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.connection.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.daemon.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.internal.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.memorypool.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.postprocessor.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.reason_phrase.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.response.o obj/third_party/externals/microhttpd/src/microhttpd/libmicrohttpd.tsearch.o
+  arflags =
+  output_extension = .a
+  output_dir = 

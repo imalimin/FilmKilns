@@ -1,0 +1,39 @@
+defines = -DFT2_BUILD_LIBRARY -DFT_CONFIG_MODULES_H=\<include/freetype-android/ftmodule.h\> -DFT_CONFIG_OPTIONS_H=\<include/freetype-android/ftoption.h\> -DNDEBUG -DSK_FREETYPE_MINIMUM_RUNTIME_VERSION=\(\(\(FREETYPE_MAJOR\)\$ \<\<\$ 24\)\$ \|\$ \(\(FREETYPE_MINOR\)\$ \<\<\$ 16\)\$ \|\$ \(\(FREETYPE_PATCH\)\$ \<\<\$ 8\)\)
+include_dirs = -I../third_party/freetype2
+cflags = -w -Wno-attributes -fstrict-aliasing -fPIC --sysroot=/Users/lmy/Library/Android/android-ndk-r17c/sysroot -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/freetype/include -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/libpng -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/libpng
+cflags_c =
+root_out_dir = .
+target_output_name = libfreetype2
+
+build obj/third_party/externals/freetype/src/autofit/libfreetype2.autofit.o: cc ../third_party/externals/freetype/src/autofit/autofit.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftbase.o: cc ../third_party/externals/freetype/src/base/ftbase.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftbbox.o: cc ../third_party/externals/freetype/src/base/ftbbox.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftbitmap.o: cc ../third_party/externals/freetype/src/base/ftbitmap.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftdebug.o: cc ../third_party/externals/freetype/src/base/ftdebug.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftfstype.o: cc ../third_party/externals/freetype/src/base/ftfstype.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftgasp.o: cc ../third_party/externals/freetype/src/base/ftgasp.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftglyph.o: cc ../third_party/externals/freetype/src/base/ftglyph.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftinit.o: cc ../third_party/externals/freetype/src/base/ftinit.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftmm.o: cc ../third_party/externals/freetype/src/base/ftmm.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftpatent.o: cc ../third_party/externals/freetype/src/base/ftpatent.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftstroke.o: cc ../third_party/externals/freetype/src/base/ftstroke.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftsynth.o: cc ../third_party/externals/freetype/src/base/ftsynth.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftsystem.o: cc ../third_party/externals/freetype/src/base/ftsystem.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.fttype1.o: cc ../third_party/externals/freetype/src/base/fttype1.c
+build obj/third_party/externals/freetype/src/base/libfreetype2.ftwinfnt.o: cc ../third_party/externals/freetype/src/base/ftwinfnt.c
+build obj/third_party/externals/freetype/src/cff/libfreetype2.cff.o: cc ../third_party/externals/freetype/src/cff/cff.c
+build obj/third_party/externals/freetype/src/cid/libfreetype2.type1cid.o: cc ../third_party/externals/freetype/src/cid/type1cid.c
+build obj/third_party/externals/freetype/src/gzip/libfreetype2.ftgzip.o: cc ../third_party/externals/freetype/src/gzip/ftgzip.c
+build obj/third_party/externals/freetype/src/psaux/libfreetype2.psaux.o: cc ../third_party/externals/freetype/src/psaux/psaux.c
+build obj/third_party/externals/freetype/src/pshinter/libfreetype2.pshinter.o: cc ../third_party/externals/freetype/src/pshinter/pshinter.c
+build obj/third_party/externals/freetype/src/psnames/libfreetype2.psnames.o: cc ../third_party/externals/freetype/src/psnames/psnames.c
+build obj/third_party/externals/freetype/src/raster/libfreetype2.raster.o: cc ../third_party/externals/freetype/src/raster/raster.c
+build obj/third_party/externals/freetype/src/sfnt/libfreetype2.sfnt.o: cc ../third_party/externals/freetype/src/sfnt/sfnt.c
+build obj/third_party/externals/freetype/src/smooth/libfreetype2.smooth.o: cc ../third_party/externals/freetype/src/smooth/smooth.c
+build obj/third_party/externals/freetype/src/truetype/libfreetype2.truetype.o: cc ../third_party/externals/freetype/src/truetype/truetype.c
+build obj/third_party/externals/freetype/src/type1/libfreetype2.type1.o: cc ../third_party/externals/freetype/src/type1/type1.c
+
+build ./libfreetype2.a: alink obj/third_party/externals/freetype/src/autofit/libfreetype2.autofit.o obj/third_party/externals/freetype/src/base/libfreetype2.ftbase.o obj/third_party/externals/freetype/src/base/libfreetype2.ftbbox.o obj/third_party/externals/freetype/src/base/libfreetype2.ftbitmap.o obj/third_party/externals/freetype/src/base/libfreetype2.ftdebug.o obj/third_party/externals/freetype/src/base/libfreetype2.ftfstype.o obj/third_party/externals/freetype/src/base/libfreetype2.ftgasp.o obj/third_party/externals/freetype/src/base/libfreetype2.ftglyph.o obj/third_party/externals/freetype/src/base/libfreetype2.ftinit.o obj/third_party/externals/freetype/src/base/libfreetype2.ftmm.o obj/third_party/externals/freetype/src/base/libfreetype2.ftpatent.o obj/third_party/externals/freetype/src/base/libfreetype2.ftstroke.o obj/third_party/externals/freetype/src/base/libfreetype2.ftsynth.o obj/third_party/externals/freetype/src/base/libfreetype2.ftsystem.o obj/third_party/externals/freetype/src/base/libfreetype2.fttype1.o obj/third_party/externals/freetype/src/base/libfreetype2.ftwinfnt.o obj/third_party/externals/freetype/src/cff/libfreetype2.cff.o obj/third_party/externals/freetype/src/cid/libfreetype2.type1cid.o obj/third_party/externals/freetype/src/gzip/libfreetype2.ftgzip.o obj/third_party/externals/freetype/src/psaux/libfreetype2.psaux.o obj/third_party/externals/freetype/src/pshinter/libfreetype2.pshinter.o obj/third_party/externals/freetype/src/psnames/libfreetype2.psnames.o obj/third_party/externals/freetype/src/raster/libfreetype2.raster.o obj/third_party/externals/freetype/src/sfnt/libfreetype2.sfnt.o obj/third_party/externals/freetype/src/smooth/libfreetype2.smooth.o obj/third_party/externals/freetype/src/truetype/libfreetype2.truetype.o obj/third_party/externals/freetype/src/type1/libfreetype2.type1.o || ./libpng.a ./libzlib.a ./libzlib_x86.a
+  arflags =
+  output_extension = .a
+  output_dir = 

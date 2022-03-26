@@ -1,0 +1,7 @@
+defines = -DNDEBUG -DSK_SUPPORT_ATLAS_TEXT=1 -DSK_GAMMA_APPLY_TO_A8 -DSK_GAMMA_EXPONENT=1.4 -DSK_GAMMA_CONTRAST=0.0 -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=1 -DGR_TEST_UTILS=1 -DSKIA_IMPLEMENTATION=1
+include_dirs = -I..
+root_out_dir = .
+target_output_name = fontmgr_custom_empty
+
+
+build obj/fontmgr_custom_empty.stamp: stamp

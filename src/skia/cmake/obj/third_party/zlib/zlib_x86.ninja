@@ -1,0 +1,13 @@
+defines = -DNDEBUG
+include_dirs =
+cflags = -w -Wno-attributes -fstrict-aliasing -fPIC --sysroot=/Users/lmy/Library/Android/android-ndk-r17c/sysroot -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter
+cflags_c =
+root_out_dir = .
+target_output_name = libzlib_x86
+
+build obj/third_party/externals/zlib/libzlib_x86.simd_stub.o: cc ../third_party/externals/zlib/simd_stub.c
+
+build ./libzlib_x86.a: alink obj/third_party/externals/zlib/libzlib_x86.simd_stub.o
+  arflags =
+  output_extension = .a
+  output_dir = 

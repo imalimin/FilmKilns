@@ -1,0 +1,30 @@
+defines = -DPNG_SET_OPTION_SUPPORTED -DNDEBUG
+include_dirs =
+cflags = -w -Wno-attributes -fstrict-aliasing -fPIC --sysroot=/Users/lmy/Library/Android/android-ndk-r17c/sysroot -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/libpng -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/libpng -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/zlib
+cflags_c =
+root_out_dir = .
+target_output_name = libpng
+
+build obj/third_party/externals/libpng/libpng.png.o: cc ../third_party/externals/libpng/png.c
+build obj/third_party/externals/libpng/libpng.pngerror.o: cc ../third_party/externals/libpng/pngerror.c
+build obj/third_party/externals/libpng/libpng.pngget.o: cc ../third_party/externals/libpng/pngget.c
+build obj/third_party/externals/libpng/libpng.pngmem.o: cc ../third_party/externals/libpng/pngmem.c
+build obj/third_party/externals/libpng/libpng.pngpread.o: cc ../third_party/externals/libpng/pngpread.c
+build obj/third_party/externals/libpng/libpng.pngread.o: cc ../third_party/externals/libpng/pngread.c
+build obj/third_party/externals/libpng/libpng.pngrio.o: cc ../third_party/externals/libpng/pngrio.c
+build obj/third_party/externals/libpng/libpng.pngrtran.o: cc ../third_party/externals/libpng/pngrtran.c
+build obj/third_party/externals/libpng/libpng.pngrutil.o: cc ../third_party/externals/libpng/pngrutil.c
+build obj/third_party/externals/libpng/libpng.pngset.o: cc ../third_party/externals/libpng/pngset.c
+build obj/third_party/externals/libpng/libpng.pngtrans.o: cc ../third_party/externals/libpng/pngtrans.c
+build obj/third_party/externals/libpng/libpng.pngwio.o: cc ../third_party/externals/libpng/pngwio.c
+build obj/third_party/externals/libpng/libpng.pngwrite.o: cc ../third_party/externals/libpng/pngwrite.c
+build obj/third_party/externals/libpng/libpng.pngwtran.o: cc ../third_party/externals/libpng/pngwtran.c
+build obj/third_party/externals/libpng/libpng.pngwutil.o: cc ../third_party/externals/libpng/pngwutil.c
+build obj/third_party/externals/libpng/arm/libpng.arm_init.o: cc ../third_party/externals/libpng/arm/arm_init.c
+build obj/third_party/externals/libpng/arm/libpng.filter_neon_intrinsics.o: cc ../third_party/externals/libpng/arm/filter_neon_intrinsics.c
+build obj/third_party/externals/libpng/arm/libpng.palette_neon_intrinsics.o: cc ../third_party/externals/libpng/arm/palette_neon_intrinsics.c
+
+build ./libpng.a: alink obj/third_party/externals/libpng/libpng.png.o obj/third_party/externals/libpng/libpng.pngerror.o obj/third_party/externals/libpng/libpng.pngget.o obj/third_party/externals/libpng/libpng.pngmem.o obj/third_party/externals/libpng/libpng.pngpread.o obj/third_party/externals/libpng/libpng.pngread.o obj/third_party/externals/libpng/libpng.pngrio.o obj/third_party/externals/libpng/libpng.pngrtran.o obj/third_party/externals/libpng/libpng.pngrutil.o obj/third_party/externals/libpng/libpng.pngset.o obj/third_party/externals/libpng/libpng.pngtrans.o obj/third_party/externals/libpng/libpng.pngwio.o obj/third_party/externals/libpng/libpng.pngwrite.o obj/third_party/externals/libpng/libpng.pngwtran.o obj/third_party/externals/libpng/libpng.pngwutil.o obj/third_party/externals/libpng/arm/libpng.arm_init.o obj/third_party/externals/libpng/arm/libpng.filter_neon_intrinsics.o obj/third_party/externals/libpng/arm/libpng.palette_neon_intrinsics.o || ./libzlib.a ./libzlib_x86.a
+  arflags =
+  output_extension = .a
+  output_dir = 

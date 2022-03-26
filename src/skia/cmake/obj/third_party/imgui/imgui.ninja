@@ -1,0 +1,17 @@
+defines = -DNDEBUG
+include_dirs =
+cflags = -w -Wno-attributes -fstrict-aliasing -fPIC --sysroot=/Users/lmy/Library/Android/android-ndk-r17c/sysroot -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/imgui
+cflags_cc = -std=c++17 -isystem/Users/lmy/Library/Android/android-ndk-r17c/sources/cxx-stl/llvm-libc++/include -fno-exceptions -fno-rtti
+root_out_dir = .
+target_output_name = libimgui
+
+build obj/third_party/externals/imgui/libimgui.imgui.o: cxx ../third_party/externals/imgui/imgui.cpp
+build obj/third_party/externals/imgui/libimgui.imgui_demo.o: cxx ../third_party/externals/imgui/imgui_demo.cpp
+build obj/third_party/externals/imgui/libimgui.imgui_draw.o: cxx ../third_party/externals/imgui/imgui_draw.cpp
+build obj/third_party/externals/imgui/libimgui.imgui_widgets.o: cxx ../third_party/externals/imgui/imgui_widgets.cpp
+build obj/third_party/externals/imgui/misc/cpp/libimgui.imgui_stdlib.o: cxx ../third_party/externals/imgui/misc/cpp/imgui_stdlib.cpp
+
+build ./libimgui.a: alink obj/third_party/externals/imgui/libimgui.imgui.o obj/third_party/externals/imgui/libimgui.imgui_demo.o obj/third_party/externals/imgui/libimgui.imgui_draw.o obj/third_party/externals/imgui/libimgui.imgui_widgets.o obj/third_party/externals/imgui/misc/cpp/libimgui.imgui_stdlib.o
+  arflags =
+  output_extension = .a
+  output_dir = 

@@ -12,6 +12,11 @@ option(ENABLE_EXECUTABLE "Enable executable." OFF)
 #//:gpu_tool_utils
 option(ENABLE_PDF "Enable pdf." OFF)
 option(ENABLE_RAW "Enable raw." OFF)
+option(ENABLE_SFNTLY "Enable sfntly." OFF)
+option(ENABLE_BENCH "Enable bench." OFF)
+option(ENABLE_ICU "Enable icu." OFF)
+option(ENABLE_SAMPLES "Enable samples." OFF)
+option(ENABLE_TEST "Enable test." OFF)
 
 set(SRC_SKIA ${CMAKE_CURRENT_SOURCE_DIR}/../)
 

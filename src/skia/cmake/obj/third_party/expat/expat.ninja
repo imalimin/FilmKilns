@@ -1,0 +1,15 @@
+defines = -DHAVE_MEMMOVE -DXML_DEV_URANDOM -DNDEBUG -DXML_STATIC
+include_dirs =
+cflags = -w -Wno-attributes -fstrict-aliasing -fPIC --sysroot=/Users/lmy/Library/Android/android-ndk-r17c/sysroot -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/expat/expat/lib
+cflags_c =
+root_out_dir = .
+target_output_name = libexpat
+
+build obj/third_party/externals/expat/expat/lib/libexpat.xmlparse.o: cc ../third_party/externals/expat/expat/lib/xmlparse.c
+build obj/third_party/externals/expat/expat/lib/libexpat.xmlrole.o: cc ../third_party/externals/expat/expat/lib/xmlrole.c
+build obj/third_party/externals/expat/expat/lib/libexpat.xmltok.o: cc ../third_party/externals/expat/expat/lib/xmltok.c
+
+build ./libexpat.a: alink obj/third_party/externals/expat/expat/lib/libexpat.xmlparse.o obj/third_party/externals/expat/expat/lib/libexpat.xmlrole.o obj/third_party/externals/expat/expat/lib/libexpat.xmltok.o
+  arflags =
+  output_extension = .a
+  output_dir = 

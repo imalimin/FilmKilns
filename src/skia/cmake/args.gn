@@ -1,0 +1,4 @@
+is_official_build = false
+is_component_build = false
+is_debug = false
+ndk = "/Users/lmy/Library/Android/android-ndk-r17c"
