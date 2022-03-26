@@ -11,6 +11,7 @@
 #include "FkPort.h"
 #include <unordered_map>
 #include <list>
+#include <mutex>
 
 #define FK_PORT_DESC_ADD(desc, port, PRT, method) \
     desc->add(port, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \

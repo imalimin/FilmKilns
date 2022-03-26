@@ -11,7 +11,6 @@
 #include "FkSource.h"
 #include "FkDefinition.h"
 #include "FkSize.h"
-#include "AlBuffer.h"
 #include "FkColor.h"
 
 FK_CLASS FkTexDescription FK_EXTEND FkObject {

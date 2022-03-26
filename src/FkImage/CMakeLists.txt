@@ -9,7 +9,6 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}/pb
         ${PROJECT_SOURCE_DIR}/../skia
         ${PROJECT_SOURCE_DIR}/../glm
-        ${PROJECT_SOURCE_DIR}/../al_common/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
         ${PROJECT_SOURCE_DIR}/../FkFramework/include
         ${PROJECT_SOURCE_DIR}/../FkBitmap/include
@@ -93,7 +92,6 @@ set(MODULES ${MODULE_NAME}
         EGL
         android
         proto_buf
-        al_common
         FkBase
         FkFramework
         FkBitmap

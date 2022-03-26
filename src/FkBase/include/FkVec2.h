@@ -9,7 +9,6 @@
 #define FK_BASE_FKVEC2_H
 
 #include "FkObject.h"
-#include "AlMath.h"
 
 /**
  * position or scale params

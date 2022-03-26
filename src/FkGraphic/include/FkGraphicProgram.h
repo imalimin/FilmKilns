@@ -63,9 +63,9 @@ public:
     virtual FkResult addValue(std::shared_ptr<FkComponent> value);
 
 protected:
-    int32_t getAttribLocation(string name);
+    int32_t getAttribLocation(std::string name);
 
-    int32_t getUniformLocation(string name);
+    int32_t getUniformLocation(std::string name);
 
     void setUniform1f(int32_t location, float value);
 

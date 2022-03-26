@@ -6,7 +6,6 @@
 */
 
 #include "FkEngine.h"
-#include "AlRunnable.h"
 
 FkMsgHandle::FkMsgHandle(FkMsgHandle::Func func)
         : FkObject(), func(func) {
@@ -21,7 +20,7 @@ FkMsgHandle::~FkMsgHandle() {
 
 }
 
-FkResult FkMsgHandle::operator()(FkEngine *ptr, shared_ptr<FkMessage> &msg) {
+FkResult FkMsgHandle::operator()(FkEngine *ptr, std::shared_ptr<FkMessage> &msg) {
     return (ptr->*func)(msg);
 }
 

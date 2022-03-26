@@ -7,14 +7,14 @@
 
 #include "FkLooper.h"
 #include "FkHandler.h"
-#include "Thread.h"
+#include "FkThread.h"
 #include "FkDefinition.h"
-#include "TimeUtils.h"
+#include "FkTimeUtils.h"
 
 #define TAG "FkLooper"
 
 void FkLooper::prepare() {
-    FkLooper *looper = FkLooperManager::getInstance()->create(Thread::currentThreadId());
+    FkLooper *looper = FkLooperManager::getInstance()->create(FkThread::currentThreadId());
     if (nullptr == looper) {
         FkLogE(TAG, "has been called.");
     }
@@ -22,7 +22,7 @@ void FkLooper::prepare() {
 }
 
 FkLooper *FkLooper::myLooper() {
-    FkLooper *looper = FkLooperManager::getInstance()->get(Thread::currentThreadId());
+    FkLooper *looper = FkLooperManager::getInstance()->get(FkThread::currentThreadId());
     if (nullptr == looper) {
         FkLogE(TAG, "Call first pls.");
     }
@@ -39,7 +39,7 @@ void FkLooper::loop() {
 }
 
 void FkLooper::exit() {
-    FkLooperManager::getInstance()->remove(Thread::currentThreadId());
+    FkLooperManager::getInstance()->remove(FkThread::currentThreadId());
 }
 
 FkLooper::FkLooper() : FkObject() {
@@ -108,12 +108,12 @@ void FkLooper::_loop() {
             }
         }
     }
-    int64_t time = TimeUtils::getCurrentTimeUS();
+    int64_t time = FkTimeUtils::getCurrentTimeUS();
     while (0 != queue.size()) {
         auto msg = queue.take();
     }
     queue.clear();
-    FkLogI(TAG, "clear message cost %lld us.", TimeUtils::getCurrentTimeUS() - time);
+    FkLogI(TAG, "clear message cost %lld us.", FkTimeUtils::getCurrentTimeUS() - time);
     exiting = false;
     exited = true;
     looping = false;

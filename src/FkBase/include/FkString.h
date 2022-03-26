@@ -9,6 +9,7 @@
 #define FK_BASE_FKSTRING_H
 
 #include "FkObject.h"
+#include <sstream>
 
 FK_CLASS FkString FK_EXTEND FkObject {
 public:

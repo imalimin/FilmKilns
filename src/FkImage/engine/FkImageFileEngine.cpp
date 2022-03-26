@@ -95,8 +95,8 @@ FkResult FkImageFileEngine::_load(std::shared_ptr<FkMessage> &msg) {
     dir.append(".dir");
     auto file = dir;
     file.append("/model.pb");
-    fstream stream;
-    stream.open(file.c_str(), ios::in | ios::binary);
+    std::fstream stream;
+    stream.open(file.c_str(), std::ios::in | std::ios::binary);
     auto model = std::make_shared<fk_pb::FkPictureModel>();
     model->ParseFromIstream(&stream);
     for (auto &layer : model->layers()) {
@@ -164,8 +164,8 @@ std::string FkImageFileEngine::_createTempDir(std::string &file) {
 FkResult FkImageFileEngine::_writeModel2File(std::string &dir, std::any model) {
     auto modelFile = dir;
     modelFile.append("/model.pb");
-    fstream stream;
-    stream.open(modelFile.c_str(), ios::out | ios::binary);
+    std::fstream stream;
+    stream.open(modelFile.c_str(), std::ios::out | std::ios::binary);
     return std::any_cast<std::shared_ptr<fk_pb::FkPictureModel>>(model)
                    ->SerializeToOstream(&stream) ? FK_OK : FK_IO_FAIL;
 }

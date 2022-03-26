@@ -6,7 +6,6 @@
 */
 
 #include "FkRational.h"
-#include "AlMath.h"
 
 FkRational::FkRational() : FkObject(), num(0), den(1) {
 
@@ -23,17 +22,6 @@ FkRational::FkRational(const FkRational &o) : FkObject(), num(o.num), den(o.den)
 FkRational::~FkRational() {
     num = 0;
     den = 1;
-}
-
-FkRational &FkRational::operator+(FkRational r) {
-    static FkRational *r1;
-    if (r1 == nullptr) {
-        r1 = new FkRational();
-    }
-    int32_t gcd = AlMath::gcd(this->den, r.den);
-    r1->num = this->num * r.den / gcd + r.num * this->den / gcd;
-    r1->den = this->den * r.den / gcd;
-    return *r1;
 }
 
 FkRational &FkRational::operator=(const FkRational &o) {
@@ -54,11 +42,4 @@ double FkRational::toDouble() {
         return 0.0;
     }
     return num / (double) den;
-}
-
-FkRational &FkRational::operator+=(const FkRational &value) {
-    int32_t gcd = AlMath::gcd(this->den, value.den);
-    num = this->num * value.den / gcd + value.num * this->den / gcd;
-    den = this->den * value.den / gcd;
-    return *this;
 }

@@ -11,7 +11,6 @@ class FilmKilns {
             }
             System.loadLibrary("skia")
             System.loadLibrary("protobuf")
-            System.loadLibrary("al_common")
             System.loadLibrary("FkBase")
             System.loadLibrary("FkFramework")
             System.loadLibrary("FkGraphic")

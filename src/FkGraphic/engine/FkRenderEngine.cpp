@@ -67,7 +67,7 @@ FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialEntity> &materia
 
 FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
     auto sp = std::move(msg->sp);
-    auto proto = dynamic_pointer_cast<FkRenderProto>(sp);
+    auto proto = std::dynamic_pointer_cast<FkRenderProto>(sp);
     if (proto->env == nullptr) {
         proto->env = std::make_shared<FkEnvEntity>();
     }
@@ -114,7 +114,7 @@ FkResult FkRenderEngine::_onRemoveMaterial(std::shared_ptr<FkMessage> msg) {
     return ret;
 }
 
-FkResult FkRenderEngine::updateMaterial(shared_ptr<FkMaterialCompo> &material,
+FkResult FkRenderEngine::updateMaterial(std::shared_ptr<FkMaterialCompo> &material,
                                         FkSize size, FkColor color) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onUpdateMaterial));
     msg->sp = material;
@@ -156,7 +156,7 @@ FkResult FkRenderEngine::updateWindow(std::shared_ptr<FkGraphicWindow> win) {
     return sendMessage(msg);
 }
 
-FkResult FkRenderEngine::_onUpdateWindow(shared_ptr<FkMessage> &msg) {
+FkResult FkRenderEngine::_onUpdateWindow(std::shared_ptr<FkMessage> &msg) {
     auto proto = std::make_shared<FkWindowProto>();
     proto->win = std::dynamic_pointer_cast<FkGraphicWindow>(msg->sp);
     return client->with(molecule)->send(proto);

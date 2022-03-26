@@ -8,8 +8,9 @@
 #ifndef FK_BASE_FKDEFINITION_H
 #define FK_BASE_FKDEFINITION_H
 
-#include "AlLogcat.h"
+#include "FkLogcat.h"
 #include "FkClassType.h"
+#include <functional>
 
 // +-------- Define --------+
 #define FK_CLASS class
@@ -33,11 +34,11 @@
 
 // +-------- Log --------+
 #define FK_DEF_TAG "FilmKilns"
-#define FkLogV(tag, fmt, args...) AlLogV(tag, fmt, ##args)
-#define FkLogD(tag, fmt, args...) AlLogD(tag, fmt, ##args)
-#define FkLogI(tag, fmt, args...) AlLogI(tag, fmt, ##args)
-#define FkLogE(tag, fmt, args...) AlLogE(tag, fmt, ##args)
-#define FkLogW(tag, fmt, args...) AlLogW(tag, fmt, ##args)
+#define FkLogV(tag, fmt, args...) FkLogcat::v(tag, fmt, ##args)
+#define FkLogD(tag, fmt, args...) FkLogcat::d(tag, fmt, ##args)
+#define FkLogI(tag, fmt, args...) FkLogcat::i(tag, fmt, ##args)
+#define FkLogE(tag, fmt, args...) FkLogcat::e(tag, fmt, ##args)
+#define FkLogW(tag, fmt, args...) FkLogcat::w(tag, fmt, ##args)
 
 // +-------- Assert --------+
 #ifdef __FK_DEBUG__

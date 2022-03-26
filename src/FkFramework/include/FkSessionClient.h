@@ -81,7 +81,7 @@ public:
     template<typename... Args>
     FkResult quickSend(std::shared_ptr<FkProtocol> proto, Args... quarks) {
         std::list<std::shared_ptr<FkQuark>> chain;
-        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        auto ll = std::initializer_list<std::shared_ptr<FkQuark>>{quarks...};
         for (auto &it : ll) {
             chain.emplace_back(it);
         }
@@ -92,7 +92,7 @@ public:
     template<class T, typename... Args>
     FkResult quickSend(std::shared_ptr<T> proto, Args... quarks) {
         std::list<std::shared_ptr<FkQuark>> chain;
-        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        auto ll = std::initializer_list<std::shared_ptr<FkQuark>>{quarks...};
         for (auto &it : ll) {
             chain.emplace_back(it);
         }
@@ -103,7 +103,7 @@ public:
     template<class T, typename... Args>
     FkResult quickSend(Args... quarks) {
         std::list<std::shared_ptr<FkQuark>> chain;
-        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        auto ll = std::initializer_list<std::shared_ptr<FkQuark>>{quarks...};
         for (auto &it : ll) {
             chain.emplace_back(it);
         }
@@ -115,7 +115,7 @@ public:
     template<typename... Args>
     std::shared_ptr<FkSessionBuilder> with(Args... quarks) {
         std::list<std::shared_ptr<FkQuark>> chain;
-        auto ll = initializer_list<std::shared_ptr<FkQuark>>{quarks...};
+        auto ll = std::initializer_list<std::shared_ptr<FkQuark>>{quarks...};
         for (auto &it : ll) {
             chain.emplace_back(it);
         }

@@ -60,7 +60,7 @@ FkResult FkRenderFboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     return FK_OK;
 }
 
-FkResult FkRenderFboQuark::_onWithFbo(shared_ptr<FkProtocol> &p) {
+FkResult FkRenderFboQuark::_onWithFbo(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkNewTexProto, p);
     int32_t desc = 0;
     auto fbo = fboAllocator->alloc(desc);

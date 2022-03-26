@@ -17,7 +17,7 @@
     desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
         reinterpret_cast<FkPort::PortFunc>(&FkSimpleAtom::dispatchNext)) \
 
-FK_ABS_CLASS FkConnectChain FK_EXTEND FkObject, public enable_shared_from_this<FkConnectChain> {
+FK_ABS_CLASS FkConnectChain FK_EXTEND FkObject, public std::enable_shared_from_this<FkConnectChain> {
 public:
     FkConnectChain();
 

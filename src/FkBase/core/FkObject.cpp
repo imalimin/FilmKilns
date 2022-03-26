@@ -8,7 +8,7 @@
 #include "FkObject.h"
 #include <typeinfo>
 
-FkObject::FkObject() : Object() {
+FkObject::FkObject() {
     FK_MARK_SUPER
 }
 
@@ -18,4 +18,8 @@ FkObject::~FkObject() {
 
 const FkClassType &FkObject::getClassType() const {
     return clsType;
+}
+
+std::string FkObject::toString() {
+    return "";
 }

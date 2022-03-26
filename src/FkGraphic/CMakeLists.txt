@@ -7,7 +7,6 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../glm
-        ${PROJECT_SOURCE_DIR}/../al_common/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
         ${PROJECT_SOURCE_DIR}/../FkBitmap/include
         ${PROJECT_SOURCE_DIR}/../FkFramework/include
@@ -79,7 +78,6 @@ set(MODULES ${MODULE_NAME}
         GLESv2
         EGL
         android
-        al_common
         FkBase
         FkBitmap
         FkFramework

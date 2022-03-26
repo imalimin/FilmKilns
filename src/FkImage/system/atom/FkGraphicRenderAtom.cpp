@@ -90,7 +90,7 @@ FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer>
     return ret;
 }
 
-FkResult FkGraphicRenderAtom::_drawPoints(shared_ptr<FkGraphicLayer> &layer) {
+FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer) {
     std::vector<std::shared_ptr<FkComponent>> vec;
     if (FK_OK != layer->findComponents(vec, FkClassType::type<FkPointFCompo>())) {
         return FK_FAIL;

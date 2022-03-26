@@ -7,7 +7,6 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../glm
-        ${PROJECT_SOURCE_DIR}/../al_common/include
         ${THIRD_PARTY_DIR}/cjson/include
         )
 include_directories(${INCLUDES})
@@ -66,5 +65,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common ${log-lib})
+set(MODULES ${MODULE_NAME} ${log-lib})
 target_link_libraries(${MODULES})

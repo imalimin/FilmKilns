@@ -121,7 +121,7 @@ FkResult FkGLEnvAtom::_changeWithoutWindow() {
     return FK_INVALID_STATE;
 }
 
-FkResult FkGLEnvAtom::_initializeWithWindow(shared_ptr<FkGraphicWindow> &win) {
+FkResult FkGLEnvAtom::_initializeWithWindow(std::shared_ptr<FkGraphicWindow> &win) {
     if (context == nullptr) {
         context = std::make_shared<FkContextCompo>("EGLAttach");
         return context->create(nullptr, win);

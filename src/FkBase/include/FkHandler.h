@@ -11,10 +11,11 @@
 #include "FkObject.h"
 #include "FkMessage.h"
 #include "FkLooper.h"
+#include "FkDefinition.h"
 
 FK_CLASS FkHandler FK_EXTEND FkObject {
 public:
-    typedef function<void(std::shared_ptr<FkMessage> msg)> Callback;
+    typedef std::function<void(std::shared_ptr<FkMessage> msg)> Callback;
 public:
     FkHandler(Callback callback);
 

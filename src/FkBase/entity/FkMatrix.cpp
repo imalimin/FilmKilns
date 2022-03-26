@@ -32,5 +32,5 @@ const void *FkMatrix::get() {
 }
 
 std::string FkMatrix::toString() {
-    return Object::toString();
+    return FkObject::toString();
 }

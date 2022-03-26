@@ -5,7 +5,6 @@ project(${MODULE_NAME} LANGUAGES C CXX)
 set(PROJECT_SOURCE_FK_DIR ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_FK_DIR}/al_common/include
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
         ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
@@ -51,5 +50,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} al_common FkBase FkFramework FkGraphic FkImage ${log-lib})
+set(MODULES ${MODULE_NAME} FkBase FkFramework FkGraphic FkImage ${log-lib})
 target_link_libraries(${MODULES})
