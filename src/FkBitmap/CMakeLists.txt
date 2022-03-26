@@ -7,7 +7,7 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../al_common/include
-        ${PROJECT_SOURCE_DIR}/../al_bitmap/include
+        ${PROJECT_SOURCE_DIR}/../skia
         ${PROJECT_SOURCE_DIR}/../FkBase/include
         )
 include_directories(${INCLUDES})
@@ -55,8 +55,8 @@ find_library(
 
 set(MODULES ${MODULE_NAME}
         android
+        skia
         al_common
-        al_bitmap
         FkBase
         ${log-lib})
 target_link_libraries(${MODULES})

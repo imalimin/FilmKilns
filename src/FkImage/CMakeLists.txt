@@ -7,6 +7,7 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/pb
+        ${PROJECT_SOURCE_DIR}/../skia
         ${PROJECT_SOURCE_DIR}/../glm
         ${PROJECT_SOURCE_DIR}/../al_common/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
@@ -93,7 +94,6 @@ set(MODULES ${MODULE_NAME}
         android
         proto_buf
         al_common
-        al_bitmap
         FkBase
         FkFramework
         FkBitmap
