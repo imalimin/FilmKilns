@@ -64,7 +64,7 @@ endif (ENABLE_MEDIA_CODEC)
 
 if (ENABLE_FK)
     message(STATUS "Compile film kilns.")
-    add_subdirectory(${SRC_PATH_ROOT}/skia/cmake)
+    add_subdirectory(${SRC_PATH_ROOT}/skia)
     add_subdirectory(${SRC_PATH_ROOT}/al_common)
     add_subdirectory(${SRC_PATH_ROOT}/FkBase)
     add_subdirectory(${SRC_PATH_ROOT}/FkFramework)
