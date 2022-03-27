@@ -58,6 +58,8 @@ public:
 
     FkResult queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>> &vec);
 
+    FkResult crop(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -91,6 +93,8 @@ private:
     FkResult _drawPoint(std::shared_ptr<FkMessage> msg);
 
     FkResult _queryLayers(std::shared_ptr<FkMessage> msg);
+
+    FkResult _crop(std::shared_ptr<FkMessage> msg);
 
 private:
     std::shared_ptr<FkSessionClient> client;

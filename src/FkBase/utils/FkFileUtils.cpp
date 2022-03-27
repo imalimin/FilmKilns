@@ -9,6 +9,7 @@
 */
 
 #include "FkFileUtils.h"
+#include <cerrno>
 #include <sys/stat.h>
 #include <zconf.h>
 

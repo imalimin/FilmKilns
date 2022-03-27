@@ -40,6 +40,12 @@ public:
         z = vec.z;
     }
 
+    virtual void set(const T value) {
+        x = value;
+        y = value;
+        z = value;
+    }
+
     virtual FkVec3<T> operator+(const T value) {
         return FkVec3<T>(x + value, y + value, z + value);
     };

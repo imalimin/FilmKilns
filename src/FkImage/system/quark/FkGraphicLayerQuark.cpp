@@ -31,6 +31,7 @@
 #include "FkLayerSetTransProto.h"
 #include "FkLayerSetRotateProto.h"
 #include "FkLayerSetScaleProto.h"
+#include "FkCropProto.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -61,6 +62,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicLayerQuark::_onDrawPoint);
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
+    FK_PORT_DESC_QUICK_ADD(desc, FkCropProto, FkGraphicLayerQuark::_onCrop);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -315,4 +317,22 @@ FkResult FkGraphicLayerQuark::_onQueryLayers(std::shared_ptr<FkProtocol> p) {
         proto->layers.emplace_back(std::make_shared<FkGraphicLayer>(*(itr.second)));
     }
     return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkCropProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (layers.end() != itr) {
+        auto layer = itr->second;
+        auto src = layer->findComponent<FkScaleComponent>();
+        auto dst = proto->canvas->findComponent<FkScaleComponent>();
+        if (src && dst) {
+            dst->value.x *= src->value.x;
+            dst->value.y *= src->value.y;
+            dst->value.z *= src->value.z;
+            src->value.set(1.0f);
+        }
+        return FK_OK;
+    }
+    return FK_FAIL;
 }

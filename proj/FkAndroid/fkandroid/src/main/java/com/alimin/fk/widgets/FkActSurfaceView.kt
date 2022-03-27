@@ -283,13 +283,9 @@ class FkActSurfaceView : SurfaceView {
 //        mCurrentPosition.y = scroller.currY.toFloat()
             mCurrentPosition.x -= distanceX
             mCurrentPosition.y -= distanceY
-            val xy = PointF(
-                e2.x * 2 / measuredWidth.toFloat() - 1f,
-                -(e2.y * 2 / measuredHeight.toFloat() - 1f)
-            )
             onScrollListener?.onScroll(
-                this@FkActSurfaceView, xy.x, xy.y,
-                -distanceX / width.toFloat() * 2f, distanceY / height.toFloat() * 2f, 1
+                this@FkActSurfaceView, mCurrentPosition.x, mCurrentPosition.y,
+                -distanceX, -distanceY, 1
             )
             renderDetect()
             return true

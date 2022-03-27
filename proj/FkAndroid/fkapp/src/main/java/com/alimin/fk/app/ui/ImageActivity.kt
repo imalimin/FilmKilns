@@ -70,10 +70,15 @@ class ImageActivity : BaseActivity(),
             )
         }
         testBtn.setOnClickListener {
-            val point = Point(800, 1500)
-            engine.drawPoint(layer, 0xFFFF0000, 30, point)
+//            val point = Point(800, 1500)
+//            engine.drawPoint(layer, 0xFFFF0000, 30, point)
 //            engine.drawPoint(layer, 0xFFFF0000, 30, Point(0, 0))
-            coverView.showPoint(point)
+//            coverView.showPoint(point)
+            val lt = Point(surfaceSize.x / 2 - 100, surfaceSize.y / 2 - 150)
+            val rb = Point(surfaceSize.x / 2 + 150, surfaceSize.y / 2 + 200)
+            engine.drawPoint(layer, 0xFFFF0000, 30, lt)
+            engine.drawPoint(layer, 0xFFFF0000, 30, rb)
+            engine.crop(layer, lt, rb)
             engine.notifyRender()
         }
     }
@@ -185,7 +190,7 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float, status: Int) {
-        engine.postTranslate(layer, (dx * v.measuredWidth / 2).toInt(), (-dy * v.measuredHeight / 2).toInt())
+        engine.postTranslate(layer, dx.toInt(), dy.toInt())
     }
 
     override fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF) {

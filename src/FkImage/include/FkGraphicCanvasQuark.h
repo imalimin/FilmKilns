@@ -45,6 +45,8 @@ protected:
 
     FkResult _onSetRotate(std::shared_ptr<FkProtocol> p) override;
 
+    FkResult _onCrop(std::shared_ptr<FkProtocol> &p) override;
+
 private:
     FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
 

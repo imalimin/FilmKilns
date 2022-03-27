@@ -18,6 +18,7 @@
 #include "FkLayerSetTransProto.h"
 #include "FkLayerSetRotateProto.h"
 #include "FkLayerSetScaleProto.h"
+#include "FkCropProto.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkGraphicLayerQuark() {
     FK_MARK_SUPER
@@ -147,6 +148,12 @@ FkResult FkGraphicCanvasQuark::_initializeCanvas() {
         return ret ? FK_OK : FK_FAIL;
     }
     return FK_FAIL;
+}
+
+FkResult FkGraphicCanvasQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkCropProto, p);
+    proto->canvas = _getCanvas();
+    return FK_OK;
 }
 
 FkResult FkGraphicCanvasQuark::_onDelivery(std::shared_ptr<FkProtocol> p) {

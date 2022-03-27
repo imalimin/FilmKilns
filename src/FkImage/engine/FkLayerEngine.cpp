@@ -26,6 +26,9 @@
 #include "FkLayerSetTransProto.h"
 #include "FkLayerSetRotateProto.h"
 #include "FkLayerSetScaleProto.h"
+#include "FkCropProto.h"
+#include "FkMath.h"
+#include "FkQueryWinSizeProto.h"
 
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {
@@ -311,4 +314,47 @@ FkResult FkLayerEngine::_queryLayers(std::shared_ptr<FkMessage> msg) {
     auto ret = client->with(molecule)->send(proto);
     msg->setPromiseResult(proto->layers);
     return ret;
+}
+
+FkResult FkLayerEngine::crop(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom) {
+    auto proto = std::make_shared<FkCropProto>();
+    proto->layerId = layer;
+    proto->leftTop = leftTop;
+    proto->rightBottom = rightBottom;
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_crop));
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::dynamic_pointer_cast<FkCropProto>(msg->sp);
+    auto queryProto = std::make_shared<FkQueryWinSizeProto>();
+    auto ret = client->with(molecule)->send(queryProto);
+    auto deltaX = (queryProto->winSize.getWidth() / 2 - (proto->rightBottom.x + proto->leftTop.x) / 2);
+    auto deltaY = (queryProto->winSize.getHeight() / 2 - (proto->rightBottom.y + proto->leftTop.y) / 2);
+    auto msg0 = FkMessage::obtain(0);
+    msg0->arg1 = proto->layerId;
+    msg0->sp = std::make_shared<FkIntVec2>(deltaX, deltaY);
+    _postTranslate(msg0);
+
+    std::vector<FkIntVec2> vec;
+    vec.emplace_back(proto->leftTop);
+    vec.emplace_back(FkIntVec2(proto->rightBottom.x, proto->leftTop.y));
+    vec.emplace_back(proto->rightBottom);
+    vec.emplace_back(FkIntVec2(proto->leftTop.x, proto->rightBottom.y));
+    for (auto &it : vec) {
+        auto measureProto = std::make_shared<FkMeasurePointProto>();
+        measureProto->layerId = proto->layerId;
+        measureProto->value = it;
+        ret = client->with(molecule)->send(measureProto);
+        it = measureProto->value;
+    }
+    proto->leftTop = vec[0];
+    proto->rightTop = vec[1];
+    proto->rightBottom = vec[2];
+    proto->leftBottom = vec[3];
+    FkSize size(FkMath::distance(proto->leftTop, proto->rightTop),
+                FkMath::distance(proto->leftTop, proto->leftBottom));
+    setCanvasSizeInternal(size, false);
+    return client->with(molecule)->send(proto);
 }
