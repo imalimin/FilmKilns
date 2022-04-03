@@ -1,4 +1,4 @@
-include ':fkapp', ':hwcommon', ':alfile', ':fkandroid'
+include ':fkapp', ':hwcommon', ':alfile', ':fkandroid', "hwmvp"
 project(":hwcommon").projectDir = new File("../hwvc_android/hwcommon")
 project(":alfile").projectDir = new File("../hwvc_android/alfile")
 
