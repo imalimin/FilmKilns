@@ -42,6 +42,7 @@ class ImageActivity : BaseActivity(),
 
     @AfterPermissionGranted(REQ_PERMISSION)
     override fun initView() {
+        pickImagePath = intent.getStringExtra("path")
         val workspace = File(externalCacheDir, "workspace")
         if (!workspace.exists()) {
             workspace.mkdirs()
@@ -63,7 +64,6 @@ class ImageActivity : BaseActivity(),
             surfaceView?.setOnActionListener(this)
             val lp = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             surfaceHolder.addView(surfaceView, lp)
-            pickPicture()
         } else {
             EasyPermissions.requestPermissions(
                 this, "Request write sdcard permission", REQ_PERMISSION, *perms
@@ -81,48 +81,6 @@ class ImageActivity : BaseActivity(),
             engine.crop(layer, lt, rb)
             engine.notifyRender()
         }
-    }
-
-    private fun pickPicture() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQ_PICK_PICTURE)
-    }
-
-    private fun pickPictureAction(uri: Uri) {
-        if (DocumentsContract.isDocumentUri(this, uri)) {
-            val docId = DocumentsContract.getDocumentId(uri)
-            if ("com.android.providers.media.documents" == uri.authority) {
-                val id = docId.split(":").toTypedArray()[1]
-                val selection = MediaStore.Images.Media._ID + "=" + id
-                pickImagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
-            } else if ("com.android.providers.downloads.documents" == uri.getAuthority()) {
-                val contentUri: Uri = ContentUris.withAppendedId(
-                    Uri.parse("content://downloads/public_downloads"),
-                    java.lang.Long.valueOf(docId)
-                )
-                pickImagePath = getImagePath(contentUri, null)
-            }
-        } else if ("content".equals(uri.scheme, ignoreCase = true)) {
-            pickImagePath = getImagePath(uri, null)
-        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
-            pickImagePath = uri.path
-        }
-
-        if (pickImagePath?.isEmpty() == true) {
-            Toast.makeText(this, "File Not Found!", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun getImagePath(uri: Uri, selection: String?): String? {
-        var path: String? = null
-        val cursor: Cursor? = contentResolver.query(uri, null, selection, null, null)
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-            }
-            cursor.close()
-        }
-        return path
     }
 
     override fun onStart() {
@@ -166,13 +124,6 @@ class ImageActivity : BaseActivity(),
 //        layer = engine.newLayerWithColor(512,512, 0,255,255, 255)
 //        Log.i("FilmKilns", "newLayer: $layer")
 //        engine.drawPoint(0, 0xff0000, 300, 300)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REQ_PICK_PICTURE -> if (data != null) pickPictureAction(data.data!!)
-        }
     }
 
     override fun onRequestPermissionsResult(
