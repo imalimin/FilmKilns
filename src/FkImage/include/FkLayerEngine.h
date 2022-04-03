@@ -60,6 +60,8 @@ public:
 
     FkResult crop(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom);
 
+    FkResult cropLayer(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -94,7 +96,9 @@ private:
 
     FkResult _queryLayers(std::shared_ptr<FkMessage> msg);
 
-    FkResult _crop(std::shared_ptr<FkMessage> msg);
+    FkResult _crop(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _cropLayer(std::shared_ptr<FkMessage> &msg);
 
 private:
     std::shared_ptr<FkSessionClient> client;

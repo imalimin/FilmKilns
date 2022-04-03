@@ -142,6 +142,13 @@ class FkImage(val workspace: String) : FkEngine() {
         return -1
     }
 
+    fun cropLayer(layer: Int, leftTop: Point, rightBottom: Point): Int {
+        if (!isNull()) {
+            return nativeCrop(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y)
+        }
+        return -1
+    }
+
     private external fun nativeCreateInstance(workspace: String): Long
     private external fun nativeCreate(handle: Long)
     private external fun nativeDestroy(handle: Long)
@@ -166,4 +173,5 @@ class FkImage(val workspace: String) : FkEngine() {
     private external fun nativePostRotation(handle: Long, layer: Int, num: Int, den: Int): Int
     private external fun nativeDrawPoint(handle: Long, layer: Int, color: Long, size: Int, x: Int, y: Int): Int
     private external fun nativeCrop(handle: Long, layer: Int, left: Int, top: Int, right: Int, bottom: Int): Int
+    private external fun nativeCropLayer(handle: Long, layer: Int, left: Int, top: Int, right: Int, bottom: Int): Int
 }

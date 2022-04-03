@@ -326,7 +326,7 @@ FkResult FkLayerEngine::crop(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBotto
     return sendMessage(msg);
 }
 
-FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> msg) {
+FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
     auto proto = std::dynamic_pointer_cast<FkCropProto>(msg->sp);
     auto queryProto = std::make_shared<FkQueryWinSizeProto>();
     auto ret = client->with(molecule)->send(queryProto);
@@ -357,4 +357,18 @@ FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> msg) {
                 FkMath::distance(proto->leftTop, proto->leftBottom));
     setCanvasSizeInternal(size, false);
     return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::cropLayer(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom) {
+    auto proto = std::make_shared<FkCropProto>();
+    proto->layerId = layer;
+    proto->leftTop = leftTop;
+    proto->rightBottom = rightBottom;
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_cropLayer));
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_cropLayer(std::shared_ptr<FkMessage> &msg) {
+    return 0;
 }
