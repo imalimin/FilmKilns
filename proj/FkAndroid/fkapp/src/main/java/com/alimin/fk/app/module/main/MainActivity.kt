@@ -8,7 +8,7 @@ import com.lmy.common.ui.BaseActivity
 import com.lmy.common.ui.fragment.BaseLazyFragment
 import com.lmy.mvp.util.replaceFragmentInActivity
 
-class HotActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionListener {
+class MainActivity : BaseActivity(), BaseLazyFragment.OnFragmentInteractionListener {
     override val layoutResID: Int = R.layout.activity_fragment_container
 
     override fun initView() {

@@ -17,11 +17,13 @@ buildscript {
         mavenCentral()
         google()
         jcenter()
+        maven {
+            url "https://pkgs.dev.azure.com/MicrosoftDeviceSDK/DuoSDK-Public/_packaging/Duo-SDK-Feed/maven/v1"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.novoda:bintray-release:0.8.1'
         classpath 'org.apache.velocity:velocity-engine-core:2.3'
 //        classpath 'org.yaml:snakeyaml:1.26'
         // NOTE: Do not place your application dependencies here; they belong
@@ -31,8 +33,12 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenCentral()
         google()
         jcenter()
+        maven {
+            url "https://pkgs.dev.azure.com/MicrosoftDeviceSDK/DuoSDK-Public/_packaging/Duo-SDK-Feed/maven/v1"
+        }
     }
 }
 

@@ -14,6 +14,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions "version"
+        ndk {
+            stl "libstdc++"
+            abiFilters "arm64-v8a"
+//            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
     }
 
     if (rootProject.keyAlias != '' && rootProject.keyAlias != '' && rootProject.keyAlias != '') {
@@ -83,7 +88,7 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:latest.release'
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation 'pub.devrel:easypermissions:3.0.0'
-    implementation 'com.microsoft.fluentui:FluentUIAndroid:latest.release'
+    implementation 'com.microsoft.fluentui:FluentUIAndroid:0.0.29'
     implementation project(path: ':fkandroid')
     implementation project(path: ':hwcommon')
     implementation project(path: ':hwmvp')

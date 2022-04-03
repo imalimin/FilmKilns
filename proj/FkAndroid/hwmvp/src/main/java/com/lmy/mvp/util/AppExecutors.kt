@@ -18,7 +18,6 @@ package com.lmy.mvp.util
 
 import android.os.Handler
 import android.os.Looper
-import android.support.annotation.VisibleForTesting
 
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
