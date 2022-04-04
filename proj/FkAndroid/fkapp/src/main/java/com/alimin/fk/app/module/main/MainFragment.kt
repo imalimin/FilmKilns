@@ -1,6 +1,9 @@
 package com.alimin.fk.app.module.main
 
 import android.content.Intent
+import android.graphics.LinearGradient
+import android.graphics.Shader
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import com.alimin.fk.app.R
 import com.alimin.fk.app.model.GalleryItem
@@ -32,6 +35,28 @@ class MainFragment : BaseFragment(), MainContract.View {
                 putExtra("path", mAdapter?.getItem(position)?.absolutePath)
             })
         }
+
+        titleView.paint.shader = LinearGradient(
+            0f,
+            0f,
+            0f,
+            titleView.paint.textSize,
+            resources.getColor(R.color.colorPrimaryDark),
+            resources.getColor(R.color.colorAccent),
+            Shader.TileMode.CLAMP
+        )
+        titleView.invalidate()
+
+        subTitleView.paint.shader = LinearGradient(
+            0f,
+            0f,
+            0f,
+            subTitleView.paint.textSize,
+            resources.getColor(R.color.colorPrimaryDark),
+            resources.getColor(R.color.colorAccent),
+            Shader.TileMode.CLAMP
+        )
+        subTitleView.invalidate()
     }
 
     override fun onStart() {
@@ -46,10 +71,12 @@ class MainFragment : BaseFragment(), MainContract.View {
     }
 
     override fun onShowAll(items: List<GalleryItem>) {
+        progressBar.visibility = View.GONE
         mAdapter?.bindData(items.mapTo(ArrayList()) { File(it.path) })
     }
 
     override fun showError(error: Int, msg: String) {
+        progressBar.visibility = View.GONE
         view?.showSnackBar(msg, Snackbar.LENGTH_LONG)
     }
 

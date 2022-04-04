@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">FkApp</string>
+    <string name="app_name">影像炉</string>
+    <string name="main_slogan_title">开始编辑</string>
+    <string name="main_slogan_sub_title">选择影像</string>
 </resources>
