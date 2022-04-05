@@ -2,6 +2,7 @@ package com.alimin.fk.app.ui
 
 import android.content.Intent
 import com.alimin.fk.app.R
+import com.alimin.fk.app.module.image.ImageActivity
 import com.lmy.common.adapter.SimpleTextAdapter
 import com.lmy.common.ext.setOnItemClickListener
 import com.lmy.common.ui.BaseActivity

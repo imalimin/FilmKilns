@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/bottom_nav_img">
+        <item
+            android:id="@+id/action_layer"
+            android:icon="@drawable/ic_image_library_28_regular"
+            android:title="@string/menu_img_layer" />
+        <item
+            android:id="@+id/action_crop"
+            android:icon="@mipmap/ic_launcher_no_border"
+            android:title="@string/menu_img_crop" />
+        <item
+            android:id="@+id/action_paint"
+            android:icon="@mipmap/ic_launcher_no_border"
+            android:title="@string/menu_img_paint" />
+        <item
+            android:id="@+id/action_filter"
+            android:icon="@mipmap/ic_launcher_no_border"
+            android:title="@string/menu_img_filter" />
+        <item
+            android:id="@+id/action_save"
+            android:icon="@drawable/ic_save_24_filled"
+            android:title="@string/menu_img_save" />
+    </group>
+
+</menu>

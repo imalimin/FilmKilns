@@ -7,7 +7,7 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import com.alimin.fk.app.R
 import com.alimin.fk.app.model.GalleryItem
-import com.alimin.fk.app.ui.ImageActivity
+import com.alimin.fk.app.module.image.ImageActivity
 import com.google.android.material.snackbar.Snackbar
 import com.lmy.common.adapter.GalleryAdapter
 import com.lmy.common.ext.setOnItemClickListener

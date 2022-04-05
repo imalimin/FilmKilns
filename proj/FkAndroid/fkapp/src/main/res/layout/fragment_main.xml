@@ -16,28 +16,35 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/main_slogan_height"
-            android:paddingBottom="32dp"
-            android:gravity="center|right"
-            android:orientation="vertical"
-            android:padding="16dp"
             android:layout_marginTop="32dp"
+            android:gravity="bottom|right"
+            android:orientation="vertical"
+            android:padding="24dp"
             app:layout_scrollFlags="scroll">
+
+
+            <ImageView
+                android:layout_width="@dimen/avatar_size_xxxlarge"
+                android:layout_height="@dimen/avatar_size_xxxlarge"
+                android:src="@mipmap/ic_launcher_no_border" />
 
             <TextView
                 android:id="@+id/titleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="48sp"
                 android:text="@string/main_slogan_title"
-                android:textColor="@color/colorAccent" />
+                android:textAppearance="@style/TextAppearance.FluentUI.Title1"
+                android:textColor="@color/colorAccent"
+                android:textSize="48sp" />
 
             <TextView
                 android:id="@+id/subTitleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="42sp"
                 android:text="@string/main_slogan_sub_title"
-                android:textColor="@color/colorAccent" />
+                android:textAppearance="@style/TextAppearance.FluentUI.Headline"
+                android:textColor="@color/colorAccent"
+                android:textSize="38sp" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -45,8 +52,8 @@
         android:id="@+id/progressBar"
         style="@style/Widget.FluentUI.LinearProgress.Indeterminate"
         android:layout_width="160dp"
-        android:layout_gravity="center"
         android:layout_height="5dp"
+        android:layout_gravity="center"
         android:layout_margin="20dp"
         android:layout_weight="2" />
 

@@ -86,8 +86,8 @@ class GalleryModelImpl : GalleryModel {
     ): Loader<Cursor> where T : FragmentActivity = CursorLoader(
         owner,
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-        IMAGE_PROJECTION[4] + ">0 AND " + IMAGE_PROJECTION[3] + "=? OR " + IMAGE_PROJECTION[3] + "=? ",
-        arrayOf("image/jpeg", "image/png"), IMAGE_PROJECTION[2] + " DESC"
+         "${IMAGE_PROJECTION[4]}>0 AND ${IMAGE_PROJECTION[3]}=? OR ${IMAGE_PROJECTION[3]}=? ",
+        arrayOf("image/jpeg", "image/png"),  "${IMAGE_PROJECTION[2]} DESC"
     )
 
     private fun <T> newCategoryLoader(
@@ -111,6 +111,7 @@ class GalleryModelImpl : GalleryModel {
             MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.MIME_TYPE,
             MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.RELATIVE_PATH,
             MediaStore.Images.Media._ID
         )
     }

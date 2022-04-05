@@ -2,4 +2,14 @@
     <string name="app_name">影像炉</string>
     <string name="main_slogan_title">开始编辑</string>
     <string name="main_slogan_sub_title">选择影像</string>
+    <string name="crop">裁剪</string>
+    <string name="paint">画笔</string>
+    <string name="filter">滤镜</string>
+    <string name="layer">图层</string>
+    <string name="save">保存</string>
+    <string name="menu_img_crop">@string/crop</string>
+    <string name="menu_img_paint">@string/paint</string>
+    <string name="menu_img_filter">@string/filter</string>
+    <string name="menu_img_layer">@string/layer</string>
+    <string name="menu_img_save">@string/save</string>
 </resources>

@@ -1,31 +1,49 @@
-package com.alimin.fk.app.ui
+package com.alimin.fk.app.module.image
 
 import android.Manifest
-import android.content.ContentUris
-import android.content.Intent
-import android.database.Cursor
 import android.graphics.*
-import android.net.Uri
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.view.SurfaceHolder
-import android.view.SurfaceView
-import android.view.ViewGroup
+import android.os.Bundle
+import android.view.*
 import android.widget.FrameLayout
-import android.widget.Toast
+import androidx.core.view.forEachIndexed
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.alimin.fk.app.R
 import com.alimin.fk.engine.FkImage
 import com.alimin.fk.engine.FkImageFile
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.widgets.FkActSurfaceView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.lmy.common.adapter.BaseViewPagerAdapter
+import com.lmy.common.ext.disableStatusBarPadding
+import com.lmy.common.ext.setLightMode
 import com.lmy.common.ui.BaseActivity
+import com.lmy.common.ui.fragment.BaseLazyFragment
 import kotlinx.android.synthetic.main.activity_image.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 
+class OpPagerAdapter(engine: FkImage, val menu:Menu, fm: FragmentManager) : BaseViewPagerAdapter(fm) {
+    override fun getCount(): Int = menu.size()
+
+    override fun getItem(position: Int): Fragment {
+        return getFragment(position)
+            ?: return when (menu.getItem(position).itemId) {
+                R.id.action_layer -> OpLayerFragment()
+                R.id.action_crop -> OpCropFragment()
+                R.id.action_paint -> OpLayerFragment()
+                R.id.action_filter -> OpCropFragment()
+                R.id.action_save -> OpLayerFragment()
+                else -> OpCropFragment()
+            }
+    }
+
+}
 
 class ImageActivity : BaseActivity(),
+    BaseLazyFragment.OnFragmentInteractionListener,
+    BottomNavigationView.OnNavigationItemSelectedListener,
     SurfaceHolder.Callback,
     FkActSurfaceView.OnScrollListener,
     FkActSurfaceView.OnRotateListener,
@@ -39,9 +57,12 @@ class ImageActivity : BaseActivity(),
     private lateinit var fileEngine: FkImageFile
     private var layer = -1
     private var pickImagePath: String? = null
+    private var mPagerAdapter: OpPagerAdapter? = null
 
     @AfterPermissionGranted(REQ_PERMISSION)
     override fun initView() {
+        setLightMode(false)
+        disableStatusBarPadding()
         pickImagePath = intent.getStringExtra("path")
         val workspace = File(externalCacheDir, "workspace")
         if (!workspace.exists()) {
@@ -69,18 +90,21 @@ class ImageActivity : BaseActivity(),
                 this, "Request write sdcard permission", REQ_PERMISSION, *perms
             )
         }
-        testBtn.setOnClickListener {
-//            val point = Point(800, 1500)
-//            engine.drawPoint(layer, 0xFFFF0000, 30, point)
-//            engine.drawPoint(layer, 0xFFFF0000, 30, Point(0, 0))
-//            coverView.showPoint(point)
-            val lt = Point(surfaceSize.x / 2 - 100, surfaceSize.y / 2 - 150)
-            val rb = Point(surfaceSize.x / 2 + 150, surfaceSize.y / 2 + 200)
-            engine.drawPoint(layer, 0xFFFF0000, 30, lt)
-            engine.drawPoint(layer, 0xFFFF0000, 30, rb)
-            engine.crop(layer, lt, rb)
-            engine.notifyRender()
-        }
+        navBar.setOnNavigationItemSelectedListener(this)
+        mPagerAdapter = OpPagerAdapter(engine, navBar.menu, supportFragmentManager)
+        mPagerAdapter?.attach(viewPager)
+//        testBtn.setOnClickListener {
+////            val point = Point(800, 1500)
+////            engine.drawPoint(layer, 0xFFFF0000, 30, point)
+////            engine.drawPoint(layer, 0xFFFF0000, 30, Point(0, 0))
+////            coverView.showPoint(point)
+//            val lt = Point(surfaceSize.x / 2 - 100, surfaceSize.y / 2 - 150)
+//            val rb = Point(surfaceSize.x / 2 + 150, surfaceSize.y / 2 + 200)
+//            engine.drawPoint(layer, 0xFFFF0000, 30, lt)
+//            engine.drawPoint(layer, 0xFFFF0000, 30, rb)
+//            engine.crop(layer, lt, rb)
+//            engine.notifyRender()
+//        }
     }
 
     override fun onStart() {
@@ -154,5 +178,17 @@ class ImageActivity : BaseActivity(),
 
     override fun onRender(v: SurfaceView) {
         engine.notifyRender()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        navBar.menu.forEachIndexed { index, it ->
+            if (it.itemId == item.itemId) {
+                viewPager.setCurrentItem(index, false)
+            }
+        }
+        return true
+    }
+
+    override fun onFragmentInteraction(what: Int, data: Bundle) {
     }
 }
