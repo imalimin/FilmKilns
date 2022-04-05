@@ -2,7 +2,9 @@ package com.alimin.fk.app.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
+import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 
 class FkViewPager : ViewPager {
@@ -20,7 +22,7 @@ class FkViewPager : ViewPager {
 
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        return false
+    override fun onTouchEvent(ev: MotionEvent?): Boolean {
+        return if (isEnabled) super.onTouchEvent(ev) else false
     }
 }

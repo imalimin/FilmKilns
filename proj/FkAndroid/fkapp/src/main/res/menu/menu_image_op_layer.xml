@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/image_op_layer">
+        <item
+            android:id="@+id/action_layer_add"
+            android:icon="@drawable/ic_fluent_add_24_regular"
+            android:title="@string/add_layer" />
+    </group>
+
+</menu>

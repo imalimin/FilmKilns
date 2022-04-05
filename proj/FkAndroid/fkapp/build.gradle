@@ -89,6 +89,7 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:latest.release'
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.microsoft.fluentui:FluentUIAndroid:0.0.29'
+    implementation 'com.microsoft.design:fluent-system-icons:1.1.164@aar'
     implementation project(path: ':fkandroid')
     implementation project(path: ':hwcommon')
     implementation project(path: ':hwmvp')

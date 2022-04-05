@@ -24,18 +24,18 @@ import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 
-class OpPagerAdapter(engine: FkImage, val menu:Menu, fm: FragmentManager) : BaseViewPagerAdapter(fm) {
+class OpPagerAdapter(private val engine: FkImage, val menu:Menu, fm: FragmentManager) : BaseViewPagerAdapter(fm) {
     override fun getCount(): Int = menu.size()
 
     override fun getItem(position: Int): Fragment {
         return getFragment(position)
             ?: return when (menu.getItem(position).itemId) {
-                R.id.action_layer -> OpLayerFragment()
-                R.id.action_crop -> OpCropFragment()
-                R.id.action_paint -> OpLayerFragment()
-                R.id.action_filter -> OpCropFragment()
-                R.id.action_save -> OpLayerFragment()
-                else -> OpCropFragment()
+                R.id.action_layer -> OpLayerFragment(engine)
+                R.id.action_crop -> OpCropFragment(engine)
+                R.id.action_paint -> OpLayerFragment(engine)
+                R.id.action_filter -> OpCropFragment(engine)
+                R.id.action_save -> OpLayerFragment(engine)
+                else -> OpCropFragment(engine)
             }
     }
 
@@ -90,6 +90,7 @@ class ImageActivity : BaseActivity(),
                 this, "Request write sdcard permission", REQ_PERMISSION, *perms
             )
         }
+        viewPager.isEnabled = false
         navBar.setOnNavigationItemSelectedListener(this)
         mPagerAdapter = OpPagerAdapter(engine, navBar.menu, supportFragmentManager)
         mPagerAdapter?.attach(viewPager)

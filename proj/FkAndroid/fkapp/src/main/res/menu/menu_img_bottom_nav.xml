@@ -4,23 +4,23 @@
     <group android:id="@+id/bottom_nav_img">
         <item
             android:id="@+id/action_layer"
-            android:icon="@drawable/ic_image_library_28_regular"
+            android:icon="@drawable/ic_fluent_layer_24_regular"
             android:title="@string/menu_img_layer" />
         <item
             android:id="@+id/action_crop"
-            android:icon="@mipmap/ic_launcher_no_border"
+            android:icon="@drawable/ic_fluent_crop_24_regular"
             android:title="@string/menu_img_crop" />
         <item
             android:id="@+id/action_paint"
-            android:icon="@mipmap/ic_launcher_no_border"
+            android:icon="@drawable/ic_fluent_paint_brush_24_regular"
             android:title="@string/menu_img_paint" />
         <item
             android:id="@+id/action_filter"
-            android:icon="@mipmap/ic_launcher_no_border"
+            android:icon="@drawable/ic_fluent_filter_24_regular"
             android:title="@string/menu_img_filter" />
         <item
             android:id="@+id/action_save"
-            android:icon="@drawable/ic_save_24_filled"
+            android:icon="@drawable/ic_fluent_save_24_regular"
             android:title="@string/menu_img_save" />
     </group>
 
