@@ -3,6 +3,7 @@ package com.alimin.fk.engine
 import android.graphics.Point
 import android.view.Choreographer
 import android.view.Surface
+import com.alimin.fk.define.kScaleType
 
 class FkImage(val workspace: String) : FkEngine() {
     private var mSyncLock = Object()
@@ -38,9 +39,9 @@ class FkImage(val workspace: String) : FkEngine() {
         }
     }
 
-    fun attachToSurface(surface: Surface?): Int {
+    fun attachToSurface(surface: Surface?, scaleType: kScaleType): Int {
         if (!isNull()) {
-            return nativeSetSurface(getHandle(), surface)
+            return nativeSetSurface(getHandle(), surface, scaleType.ordinal)
         }
         return -1
     }
@@ -154,7 +155,7 @@ class FkImage(val workspace: String) : FkEngine() {
     private external fun nativeDestroy(handle: Long)
     private external fun nativeStart(handle: Long)
     private external fun nativeStop(handle: Long)
-    private external fun nativeSetSurface(handle: Long, surface: Surface?): Int
+    private external fun nativeSetSurface(handle: Long, surface: Surface?, scaleType: Int): Int
     private external fun nativeNewLayerWithFile(handle: Long, path: String): Int
     private external fun nativeNewLayerWithColor(
         handle: Long,

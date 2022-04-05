@@ -60,16 +60,16 @@ JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImage_nativeStop
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSetSurface
-        (JNIEnv *env, jobject that, jlong handle, jobject surface) {
+        (JNIEnv *env, jobject that, jlong handle, jobject surface, jint scaleType) {
     auto engine = castHandle(handle);
     if (surface) {
         auto nativeHandle = ANativeWindow_fromSurface(env, surface);
         auto win = std::make_shared<FkGraphicWindow>(nativeHandle,
                                                      ANativeWindow_getWidth(nativeHandle),
                                                      ANativeWindow_getHeight(nativeHandle));
-        return engine->setSurface(win);
+        return engine->setSurface(win, scaleType);
     } else {
-        return engine->setSurface(nullptr);
+        return engine->setSurface(nullptr, scaleType);
     }
 }
 

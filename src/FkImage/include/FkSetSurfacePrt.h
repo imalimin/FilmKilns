@@ -21,7 +21,7 @@ public:
 
 public:
     std::shared_ptr<FkGraphicWindow> win;
-
+    kScaleType canvasScaleType = kScaleType::CENTER_INSIDE;
 };
 
 

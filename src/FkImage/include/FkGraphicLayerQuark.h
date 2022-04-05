@@ -10,7 +10,9 @@
 
 #include "FkQuark.h"
 #include "FkGraphicLayer.h"
+#include "FkGraphicUpdateLayerPrt.h"
 #include "FkSize.h"
+#include "FkColor.h"
 #include <list>
 #include <map>
 
@@ -69,6 +71,14 @@ private:
     bool _isExistLayer(FkID id);
 
     FkID _generateId(FkID expectId);
+
+    FkFloatVec3 _calcScaleType(std::shared_ptr<FkGraphicLayer> &layer, FkSize &winSize, kScaleType scaleType);
+
+    FkColor &_updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto, std::shared_ptr<FkGraphicLayer> &layer);
+
+    FkSize &_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto, std::shared_ptr<FkGraphicLayer> &layer);
+
+    void _withCanvasSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto);
 
 protected:
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;

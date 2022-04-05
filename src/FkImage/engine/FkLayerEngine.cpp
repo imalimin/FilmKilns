@@ -76,9 +76,10 @@ FkResult FkLayerEngine::onStop() {
     return renderEngine->stop();
 }
 
-FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win) {
+FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win, int32_t scaleType) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setSurface));
     msg->sp = win;
+    msg->arg1 = scaleType;
     return sendMessage(msg);
 }
 
@@ -86,7 +87,15 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
     FkAssert(nullptr != msg->sp, FK_NPE);
     auto proto = std::make_shared<FkSetSurfacePrt>();
     proto->win = std::dynamic_pointer_cast<FkGraphicWindow>(msg->sp);
-    return client->with(molecule)->send(proto);
+    auto ret = client->with(molecule)->send(proto);
+
+    auto layer = std::make_shared<FkGraphicLayer>();
+    layer->id = Fk_CANVAS_ID;
+    auto updateProto = std::make_shared<FkGraphicUpdateLayerPrt>();
+    updateProto->layer = layer;
+    updateProto->scaleType = static_cast<kScaleType>(msg->arg1);
+    client->with(molecule)->send(updateProto);
+    return ret;
 }
 
 FkResult FkLayerEngine::notifyRender() {

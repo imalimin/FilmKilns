@@ -32,7 +32,7 @@ public:
 
     virtual FkResult onStop() override;
 
-    FkResult setSurface(std::shared_ptr<FkGraphicWindow> win);
+    FkResult setSurface(std::shared_ptr<FkGraphicWindow> win, int32_t scaleType);
 
     FkResult notifyRender();
 

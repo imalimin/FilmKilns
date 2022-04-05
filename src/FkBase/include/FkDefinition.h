@@ -93,7 +93,8 @@ FK_ENUM kState : uint32_t {
 };
 
 FK_ENUM kScaleType : int {
-    CENTER_MATRIX = 0,
+    DEFAULT = 0,
+    CENTER_MATRIX,
     CENTER_INSIDE,
     CENTER_CROP,
 };

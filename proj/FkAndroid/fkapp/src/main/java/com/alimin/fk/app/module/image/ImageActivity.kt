@@ -9,6 +9,7 @@ import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.alimin.fk.app.R
+import com.alimin.fk.define.kScaleType
 import com.alimin.fk.engine.FkImage
 import com.alimin.fk.engine.FkImageFile
 import com.alimin.fk.entity.FkRational
@@ -94,18 +95,6 @@ class ImageActivity : BaseActivity(),
         navBar.setOnNavigationItemSelectedListener(this)
         mPagerAdapter = OpPagerAdapter(engine, navBar.menu, supportFragmentManager)
         mPagerAdapter?.attach(viewPager)
-//        testBtn.setOnClickListener {
-////            val point = Point(800, 1500)
-////            engine.drawPoint(layer, 0xFFFF0000, 30, point)
-////            engine.drawPoint(layer, 0xFFFF0000, 30, Point(0, 0))
-////            coverView.showPoint(point)
-//            val lt = Point(surfaceSize.x / 2 - 100, surfaceSize.y / 2 - 150)
-//            val rb = Point(surfaceSize.x / 2 + 150, surfaceSize.y / 2 + 200)
-//            engine.drawPoint(layer, 0xFFFF0000, 30, lt)
-//            engine.drawPoint(layer, 0xFFFF0000, 30, rb)
-//            engine.crop(layer, lt, rb)
-//            engine.notifyRender()
-//        }
     }
 
     override fun onStart() {
@@ -143,12 +132,8 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        engine.attachToSurface(holder.surface)
+        engine.attachToSurface(holder.surface, kScaleType.CENTER_INSIDE)
         engine.notifyRender()
-//        engine.setCanvasSize(512, 512)
-//        layer = engine.newLayerWithColor(512,512, 0,255,255, 255)
-//        Log.i("FilmKilns", "newLayer: $layer")
-//        engine.drawPoint(0, 0xff0000, 300, 300)
     }
 
     override fun onRequestPermissionsResult(

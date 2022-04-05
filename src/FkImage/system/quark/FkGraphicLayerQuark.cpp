@@ -153,40 +153,15 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkGraphicUpdateLayerPrt, p);
     auto itr = layers.find(proto->layer->id);
     if (layers.end() == itr) {
-        itr = layers.find(Fk_CANVAS_ID);
-        if (layers.end() != itr) {
-            auto canvas = itr->second;
-            auto canvasSizeCompo = canvas->findComponent<FkSizeCompo>();
-            if (nullptr != canvasSizeCompo) {
-                proto->winSize = canvasSizeCompo->size;
-            }
-        }
+        _withCanvasSize(proto);
         return FK_SKIP;
     }
     FkResult ret = FK_OK;
     auto layer = itr->second;
-    auto colorComp = proto->layer->findComponent<FkColorCompo>();
-    if (nullptr != colorComp) {
-        layer->addComponent(colorComp);
-    } else {
-        colorComp = std::make_shared<FkColorCompo>(FkColor::black());
-    }
-    auto sizeComp = proto->layer->findComponent<FkSizeCompo>();
-    if (nullptr != sizeComp) {
-        auto layerSizeComp = layer->findComponent<FkSizeCompo>();
-        if (layerSizeComp == nullptr) {
-            layerSizeComp = std::make_shared<FkSizeCompo>(sizeComp->size);
-            layer->addComponent(layerSizeComp);
-            auto scaleComp = layer->findComponent<FkScaleComponent>();
-            if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
-                scaleComp->value.x = FkGraphicLayer::calcScaleWithScaleType(layer,
-                                                                            proto->scaleType,
-                                                                            proto->winSize);
-                scaleComp->value.y = scaleComp->value.x;
-                scaleComp->value.z = 1.0f;
-            }
-        }
-        layerSizeComp->size = sizeComp->size;
+    auto layerColor = _updateLayerColor(proto, layer);
+    auto layerSize = _updateLayerSize(proto, layer);
+
+    if (!layerSize.isZero()) {
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
         FkAssert(renderEngine != nullptr, nullptr);
         auto bmpCompo = proto->layer->findComponent<FkBitmapCompo>();
@@ -194,18 +169,18 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             auto buf = FkBuffer::alloc(bmpCompo->bmp->getByteSize());
             memcpy(buf->data(), bmpCompo->bmp->getPixels(), buf->capacity());
             ret = renderEngine->updateMaterialWithBitmap(layer->material,
-                                                         layerSizeComp->size,
+                                                         layerSize,
                                                          buf);
             FkAssert(FK_OK == ret, ret);
             layer->copyComponentFrom<FkFilePathCompo>(proto->layer);
         } else {
             ret = renderEngine->updateMaterial(layer->material,
-                                               layerSizeComp->size,
-                                               colorComp->color);
+                                               layerSize,
+                                               layerColor);
             FkAssert(FK_OK == ret, ret);
         }
     }
-    _setupVertex(itr->second);
+    _setupVertex(layer);
     return ret;
 }
 
@@ -335,4 +310,48 @@ FkResult FkGraphicLayerQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
         return FK_OK;
     }
     return FK_FAIL;
+}
+
+FkFloatVec3 FkGraphicLayerQuark::_calcScaleType(std::shared_ptr<FkGraphicLayer> &layer,
+                                                FkSize &winSize,
+                                                kScaleType scaleType) {
+    auto scale = FkGraphicLayer::calcScaleWithScaleType(layer, scaleType, winSize);
+    return FkFloatVec3(scale, scale, 1.0f);
+}
+
+FkColor &FkGraphicLayerQuark::_updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+                                                std::shared_ptr<FkGraphicLayer> &layer) {
+    auto colorComp = proto->layer->findComponent<FkColorCompo>();
+    if (nullptr != colorComp) {
+        layer->addComponent(colorComp);
+    } else {
+        colorComp = std::make_shared<FkColorCompo>(FkColor::black());
+    }
+    return colorComp->color;
+}
+
+FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+                                              std::shared_ptr<FkGraphicLayer> &layer) {
+    auto reqSizeCompo = proto->layer->findComponent<FkSizeCompo>();
+    auto layerSizeComp = layer->findComponent<FkSizeCompo>();
+    if (layerSizeComp == nullptr && reqSizeCompo != nullptr) {
+        layerSizeComp = std::make_shared<FkSizeCompo>(reqSizeCompo->size);
+        layer->addComponent(layerSizeComp);
+    }
+    auto scaleComp = layer->findComponent<FkScaleComponent>();
+    if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
+        scaleComp->value = _calcScaleType(layer, proto->winSize, proto->scaleType);
+    }
+    return layerSizeComp ? layerSizeComp->size : reqSizeCompo->size;
+}
+
+void FkGraphicLayerQuark::_withCanvasSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto) {
+    auto itr = layers.find(Fk_CANVAS_ID);
+    if (layers.end() != itr) {
+        auto canvas = itr->second;
+        auto canvasSizeCompo = canvas->findComponent<FkSizeCompo>();
+        if (nullptr != canvasSizeCompo) {
+            proto->winSize = canvasSizeCompo->size;
+        }
+    }
 }
