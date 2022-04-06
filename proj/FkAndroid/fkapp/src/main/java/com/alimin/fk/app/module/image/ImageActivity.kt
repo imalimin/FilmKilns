@@ -1,7 +1,8 @@
 package com.alimin.fk.app.module.image
 
 import android.Manifest
-import android.graphics.*
+import android.graphics.Point
+import android.graphics.PointF
 import android.os.Bundle
 import android.view.*
 import android.widget.FrameLayout
@@ -10,8 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.alimin.fk.app.R
 import com.alimin.fk.define.kScaleType
-import com.alimin.fk.engine.FkImage
-import com.alimin.fk.engine.FkImageFile
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.widgets.FkActSurfaceView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,24 +24,25 @@ import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
 
-class OpPagerAdapter(private val engine: FkImage, val menu:Menu, fm: FragmentManager) : BaseViewPagerAdapter(fm) {
+class OpPagerAdapter(private val presenter: ImageContract.Presenter, val menu:Menu, fm: FragmentManager) : BaseViewPagerAdapter(fm) {
     override fun getCount(): Int = menu.size()
 
     override fun getItem(position: Int): Fragment {
         return getFragment(position)
             ?: return when (menu.getItem(position).itemId) {
-                R.id.action_layer -> OpLayerFragment(engine)
-                R.id.action_crop -> OpCropFragment(engine)
-                R.id.action_paint -> OpLayerFragment(engine)
-                R.id.action_filter -> OpCropFragment(engine)
-                R.id.action_save -> OpLayerFragment(engine)
-                else -> OpCropFragment(engine)
+                R.id.action_layer -> OpLayerFragment(presenter)
+                R.id.action_crop -> OpCropFragment(presenter)
+                R.id.action_paint -> OpLayerFragment(presenter)
+                R.id.action_filter -> OpCropFragment(presenter)
+                R.id.action_save -> OpLayerFragment(presenter)
+                else -> OpCropFragment(presenter)
             }
     }
 
 }
 
 class ImageActivity : BaseActivity(),
+    ImageContract.View,
     BaseLazyFragment.OnFragmentInteractionListener,
     BottomNavigationView.OnNavigationItemSelectedListener,
     SurfaceHolder.Callback,
@@ -51,11 +51,11 @@ class ImageActivity : BaseActivity(),
     FkActSurfaceView.OnScaleListener,
     FkActSurfaceView.OnActionListener {
     override val layoutResID: Int = R.layout.activity_image
+    override val isActive: Boolean
+        get() = true
+    override lateinit var presenter: ImageContract.Presenter
     private val surfaceSize = Point(0, 0)
     private var surfaceView: FkActSurfaceView? = null
-    private lateinit var cacheFile: File
-    private lateinit var engine: FkImage
-    private lateinit var fileEngine: FkImageFile
     private var layer = -1
     private var pickImagePath: String? = null
     private var mPagerAdapter: OpPagerAdapter? = null
@@ -69,15 +69,12 @@ class ImageActivity : BaseActivity(),
         if (!workspace.exists()) {
             workspace.mkdirs()
         }
-        cacheFile = File(externalCacheDir, "/${System.currentTimeMillis()}.fkp")
-        engine = FkImage(workspace.absolutePath)
-        fileEngine = FkImageFile(engine)
+        ImagePresenter(this, workspace.absolutePath)
         val perms = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         if (EasyPermissions.hasPermissions(this, *perms)) {
-            engine.create()
-            fileEngine.create()
+            presenter.create()
             surfaceView = FkActSurfaceView(this)
             surfaceView?.holder?.addCallback(this)
             surfaceView?.setOnScrollListener(this)
@@ -93,33 +90,27 @@ class ImageActivity : BaseActivity(),
         }
         viewPager.isEnabled = false
         navBar.setOnNavigationItemSelectedListener(this)
-        mPagerAdapter = OpPagerAdapter(engine, navBar.menu, supportFragmentManager)
+        mPagerAdapter = OpPagerAdapter(presenter, navBar.menu, supportFragmentManager)
         mPagerAdapter?.attach(viewPager)
     }
 
     override fun onStart() {
         super.onStart()
-        engine.start()
-        fileEngine.start()
-        fileEngine.load(cacheFile.absolutePath)
+        presenter.start()
         if (pickImagePath?.isNotEmpty() == true) {
-            layer = engine.newLayerWithFile(pickImagePath!!)
-            engine.notifyRender()
+            presenter.newLayerWithFile(pickImagePath!!)
             pickImagePath = null
         }
     }
 
     override fun onStop() {
         super.onStop()
-        fileEngine.save(cacheFile.absolutePath)
-        fileEngine.stop()
-        engine.stop()
+        presenter.stop()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        fileEngine.destroy()
-        engine.destroy()
+        presenter.destroy()
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
@@ -176,5 +167,8 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onFragmentInteraction(what: Int, data: Bundle) {
+    }
+
+    override fun showError(error: Int, msg: String) {
     }
 }
