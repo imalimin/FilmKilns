@@ -1,6 +1,6 @@
 package com.alimin.fk.engine
 
-class FkImageFile(val engine: FkImage) : FkEngine() {
+class FkImageModel(val engine: FkImage) : FkEngine() {
     private var mSyncLock = Object()
     override fun onCreateInstance(): Long = nativeCreateInstance(engine.getHandle())
     override fun create() {
@@ -46,6 +46,18 @@ class FkImageFile(val engine: FkImage) : FkEngine() {
             return nativeLoad(getHandle(), file)
         }
         return -1
+    }
+
+    fun countOfLayer(): Int {
+        return 0
+    }
+
+    fun getLayers() {
+
+    }
+
+    fun getLayer(layer: Int) {
+
     }
 
     private external fun nativeCreateInstance(imageEngineHandle: Long): Long

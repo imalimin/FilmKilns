@@ -10,7 +10,6 @@ import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.alimin.fk.app.R
-import com.alimin.fk.define.kScaleType
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.widgets.FkActSurfaceView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -56,7 +55,6 @@ class ImageActivity : BaseActivity(),
     override lateinit var presenter: ImageContract.Presenter
     private val surfaceSize = Point(0, 0)
     private var surfaceView: FkActSurfaceView? = null
-    private var layer = -1
     private var pickImagePath: String? = null
     private var mPagerAdapter: OpPagerAdapter? = null
 
@@ -119,12 +117,12 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
-        engine.detachFromSurface(holder.surface)
+        presenter.detachFromSurface(holder.surface)
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        engine.attachToSurface(holder.surface, kScaleType.CENTER_INSIDE)
-        engine.notifyRender()
+        presenter.attachToSurface(holder.surface)
+        presenter.notifyRender()
     }
 
     override fun onRequestPermissionsResult(
@@ -142,19 +140,19 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onScroll(v: SurfaceView, x: Float, y: Float, dx: Float, dy: Float, status: Int) {
-        engine.postTranslate(layer, dx.toInt(), dy.toInt())
+        presenter.postTranslate(dx.toInt(), dy.toInt())
     }
 
     override fun onRotate(v: SurfaceView, dr: FkRational, anchor: PointF) {
-        engine.postRotation(layer, dr.num, dr.den)
+        presenter.postRotate(dr)
     }
 
     override fun onScale(v: SurfaceView, ds: FkRational, anchor: PointF) {
-        engine.postScale(layer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
+        presenter.postScale(ds)
     }
 
     override fun onRender(v: SurfaceView) {
-        engine.notifyRender()
+        presenter.notifyRender()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

@@ -1,9 +1,12 @@
 package com.alimin.fk.app.module.image
 
+import android.view.Surface
 import com.alimin.fk.app.model.ImageEngineModel
 import com.alimin.fk.app.model.impl.ImageEngineModelImpl
+import com.alimin.fk.define.kScaleType
 import com.alimin.fk.engine.FkImage
-import com.alimin.fk.engine.FkImageFile
+import com.alimin.fk.engine.FkImageModel
+import com.alimin.fk.entity.FkRational
 import java.io.File
 
 class ImagePresenter(
@@ -13,33 +16,34 @@ class ImagePresenter(
 ) : ImageContract.Presenter() {
     private val cacheFile: File
     private val engine: FkImage
-    private val fileEngine: FkImageFile
+    private val modelEngine: FkImageModel
+    private var curLayer = -1
     init {
         view.presenter = this
         cacheFile = File(File(workspace), "/${System.currentTimeMillis()}.fkp")
         engine = FkImage(workspace)
-        fileEngine = FkImageFile(engine)
+        modelEngine = FkImageModel(engine)
     }
 
     override fun create() {
         engine.create()
-        fileEngine.create()
+        modelEngine.create()
     }
 
     override fun start() {
         engine.start()
-        fileEngine.start()
-        fileEngine.load(cacheFile.absolutePath)
+        modelEngine.start()
+        modelEngine.load(cacheFile.absolutePath)
     }
 
     override fun stop() {
-        fileEngine.save(cacheFile.absolutePath)
-        fileEngine.stop()
+        modelEngine.save(cacheFile.absolutePath)
+        modelEngine.stop()
         engine.stop()
     }
 
     override fun destroy() {
-        fileEngine.destroy()
+        modelEngine.destroy()
         engine.destroy()
     }
 
@@ -49,6 +53,29 @@ class ImagePresenter(
 
     override fun newLayerWithFile(path: String) {
         val layer = engine.newLayerWithFile(path)
+        if (curLayer < 0) {
+            curLayer = layer
+        }
         engine.notifyRender()
+    }
+
+    override fun detachFromSurface(surface: Surface) {
+        engine.detachFromSurface(surface)
+    }
+
+    override fun attachToSurface(surface: Surface) {
+        engine.attachToSurface(surface, kScaleType.CENTER_INSIDE)
+    }
+
+    override fun postTranslate(dx: Int, dy: Int) {
+        engine.postTranslate(curLayer, dx, dy)
+    }
+
+    override fun postRotate(dr: FkRational) {
+        engine.postRotation(curLayer, dr.num, dr.den)
+    }
+
+    override fun postScale(ds: FkRational) {
+        engine.postScale(curLayer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
     }
 }

@@ -15,13 +15,13 @@
 #include "FkGraphicLayer.h"
 #include <any>
 
-FK_CLASS FkImageFileEngine FK_EXTEND FkEngine {
+FK_CLASS FkImageModelEngine FK_EXTEND FkEngine {
 public:
-    FkImageFileEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name);
+    FkImageModelEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name);
 
-    FkImageFileEngine(const FkImageFileEngine &o) = delete;
+    FkImageModelEngine(const FkImageModelEngine &o) = delete;
 
-    virtual ~FkImageFileEngine();
+    virtual ~FkImageModelEngine();
 
     virtual FkResult onCreate() override;
 

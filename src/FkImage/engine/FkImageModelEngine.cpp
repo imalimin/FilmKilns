@@ -8,7 +8,7 @@
 * CREATE TIME: 2022-3-8 12:58:51
 */
 
-#include "FkImageFileEngine.h"
+#include "FkImageModelEngine.h"
 #include "FkImageEngine.h"
 #include "FkFilePathCompo.h"
 #include "FkScaleComponent.h"
@@ -23,45 +23,45 @@ static std::shared_ptr<FkImageEngine> _cast2ImageEngine(std::shared_ptr<FkEngine
     return std::dynamic_pointer_cast<FkImageEngine>(imageEngine);
 }
 
-FkImageFileEngine::FkImageFileEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name)
+FkImageModelEngine::FkImageModelEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name)
         : FkEngine(name), imageEngine(imageEngine) {
     FK_MARK_SUPER
 }
 
-FkImageFileEngine::~FkImageFileEngine() {
+FkImageModelEngine::~FkImageModelEngine() {
 
 }
 
-FkResult FkImageFileEngine::onCreate() {
+FkResult FkImageModelEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     return ret;
 }
 
-FkResult FkImageFileEngine::onDestroy() {
+FkResult FkImageModelEngine::onDestroy() {
     auto ret = FkEngine::onDestroy();
     return ret;
 }
 
-FkResult FkImageFileEngine::onStart() {
+FkResult FkImageModelEngine::onStart() {
     auto ret = FkEngine::onStart();
     return ret;
 }
 
-FkResult FkImageFileEngine::onStop() {
+FkResult FkImageModelEngine::onStop() {
     auto ret = FkEngine::onStop();
     return ret;
 }
 
-FkResult FkImageFileEngine::save(std::string &file) {
+FkResult FkImageModelEngine::save(std::string &file) {
     layers.clear();
     auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
 
-    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageFileEngine::_save));
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_save));
     msg->arg3 = file;
     return sendMessage(msg);
 }
 
-FkResult FkImageFileEngine::_save(std::shared_ptr<FkMessage> &msg) {
+FkResult FkImageModelEngine::_save(std::shared_ptr<FkMessage> &msg) {
     auto file = msg->arg3;
     auto dir = _createTempDir(file);
     auto model = std::make_shared<fk_pb::FkPictureModel>();
@@ -83,13 +83,13 @@ FkResult FkImageFileEngine::_save(std::shared_ptr<FkMessage> &msg) {
     return _writeModel2File(dir, model);
 }
 
-FkResult FkImageFileEngine::load(std::string &file) {
-    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageFileEngine::_load));
+FkResult FkImageModelEngine::load(std::string &file) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_load));
     msg->arg3 = file;
     return sendMessage(msg);
 }
 
-FkResult FkImageFileEngine::_load(std::shared_ptr<FkMessage> &msg) {
+FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
     auto engine = _cast2ImageEngine(imageEngine);
     auto dir = msg->arg3;
     dir.append(".dir");
@@ -115,8 +115,8 @@ FkResult FkImageFileEngine::_load(std::shared_ptr<FkMessage> &msg) {
     return FK_OK;
 }
 
-FkResult FkImageFileEngine::_fillLayer(void* dst,
-                                      std::shared_ptr<FkGraphicLayer> &src) {
+FkResult FkImageModelEngine::_fillLayer(void* dst,
+                                        std::shared_ptr<FkGraphicLayer> &src) {
     auto *pbLayer = static_cast<fk_pb::FkImageLayer *>(dst);
     auto fileCompo = src->findComponent<FkFilePathCompo>();
     auto scaleCompo = src->findComponent<FkScaleComponent>();
@@ -154,14 +154,14 @@ FkResult FkImageFileEngine::_fillLayer(void* dst,
     return FK_OK;
 }
 
-std::string FkImageFileEngine::_createTempDir(std::string &file) {
+std::string FkImageModelEngine::_createTempDir(std::string &file) {
     auto dir = file;
     dir.append(".dir");
     FkFileUtils::mkdirs(dir);
     return dir;
 }
 
-FkResult FkImageFileEngine::_writeModel2File(std::string &dir, std::any model) {
+FkResult FkImageModelEngine::_writeModel2File(std::string &dir, std::any model) {
     auto modelFile = dir;
     modelFile.append("/model.pb");
     std::fstream stream;
@@ -170,7 +170,7 @@ FkResult FkImageFileEngine::_writeModel2File(std::string &dir, std::any model) {
                    ->SerializeToOstream(&stream) ? FK_OK : FK_IO_FAIL;
 }
 
-FkResult FkImageFileEngine::_copyLayerFile(std::string &dir, std::string &src) {
+FkResult FkImageModelEngine::_copyLayerFile(std::string &dir, std::string &src) {
     std::string dst = dir;
     dst.append("/");
     dst.append(FkFileUtils::name(src));
