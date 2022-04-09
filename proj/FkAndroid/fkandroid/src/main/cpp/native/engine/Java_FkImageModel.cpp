@@ -9,8 +9,12 @@
 #include "FkImageEngine.h"
 #include "FkImageModelEngine.h"
 #include "FkInstanceHolder.h"
+#include "FkJniDefinition.h"
+#include "FkJavaFunc.h"
 
 #define FILE_ENGINE_ALIAS "FileEngine"
+
+#define FK_CLASS Java_com_alimin_fk_engine_FkImageModel
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,40 +24,42 @@ static std::shared_ptr<FkImageModelEngine> castHandle(jlong handle) {
     return FkInstanceHolder::getInstance().find<std::shared_ptr<FkImageModelEngine>>(handle);
 }
 
-JNIEXPORT jlong JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeCreateInstance
+JNIEXPORT jlong JNICALL FK_JNI_DEFINE(nativeCreateInstance)
         (JNIEnv *env, jobject that, jlong imageEngineHandle) {
-    auto imageEngine = FkInstanceHolder::getInstance().find<std::shared_ptr<FkImageEngine>>(imageEngineHandle);
+    auto imageEngine = FkInstanceHolder::getInstance().find<std::shared_ptr<FkImageEngine>>(
+            imageEngineHandle);
     auto engine = std::dynamic_pointer_cast<FkEngine>(imageEngine);
     auto fileEngine = std::make_shared<FkImageModelEngine>(engine, FILE_ENGINE_ALIAS);
     return FkInstanceHolder::getInstance().put(fileEngine);
 }
 
-JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeCreate
+JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeCreate)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
+    FkJavaFunc func(env, that, "onNativeMsgReceived", "(ILjava/nio/ByteBuffer;)B");
     engine->create();
 }
 
-JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeDestroy
+JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeDestroy)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
     engine->destroy();
     FkInstanceHolder::getInstance().release(handle);
 }
 
-JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeStart
+JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeStart)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
     engine->start();
 }
 
-JNIEXPORT void JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeStop
+JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeStop)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
     engine->stop();
 }
 
-JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeSave
+JNIEXPORT jint JNICALL FK_JNI_DEFINE(nativeSave)
         (JNIEnv *env, jobject that, jlong handle, jstring file) {
     auto pFile = env->GetStringUTFChars(file, nullptr);
     std::string fileStr(pFile);
@@ -63,7 +69,7 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeSave
     return engine->save(fileStr);
 }
 
-JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImageModel_nativeLoad
+JNIEXPORT jint JNICALL FK_JNI_DEFINE(nativeLoad)
         (JNIEnv *env, jobject that, jlong handle, jstring file) {
     auto pFile = env->GetStringUTFChars(file, nullptr);
     std::string fileStr(pFile);

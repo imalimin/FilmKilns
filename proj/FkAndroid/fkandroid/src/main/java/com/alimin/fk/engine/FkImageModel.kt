@@ -1,5 +1,7 @@
 package com.alimin.fk.engine
 
+import java.nio.ByteBuffer
+
 class FkImageModel(val engine: FkImage) : FkEngine() {
     private var mSyncLock = Object()
     override fun onCreateInstance(): Long = nativeCreateInstance(engine.getHandle())
@@ -58,6 +60,10 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
 
     fun getLayer(layer: Int) {
 
+    }
+
+    fun onNativeMsgReceived(what: Int, pbObject: ByteBuffer?): Boolean {
+        return true
     }
 
     private external fun nativeCreateInstance(imageEngineHandle: Long): Long

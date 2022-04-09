@@ -1,0 +1,12 @@
+//
+// Created by mingyi.li on 4/8/22.
+//
+
+#ifndef FKANDROID_FKJNIDEFINITION_H
+#define FKANDROID_FKJNIDEFINITION_H
+
+// #define FK_CLASS
+#define FK_JNI_DEFINE(NAME) \
+FK_CLASS_##NAME \
+
+#endif //FKANDROID_FKJNIDEFINITION_H
