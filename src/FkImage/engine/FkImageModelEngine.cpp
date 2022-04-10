@@ -53,18 +53,18 @@ FkResult FkImageModelEngine::onStop() {
 }
 
 FkResult FkImageModelEngine::save(std::string &file) {
-    layers.clear();
-    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
-
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_save));
     msg->arg3 = file;
     return sendMessage(msg);
 }
 
 FkResult FkImageModelEngine::_save(std::shared_ptr<FkMessage> &msg) {
+    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
+    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
+
     auto file = msg->arg3;
     auto dir = _createTempDir(file);
-    auto model = convert2PictureModel(dir);
+    auto model = convert2PictureModel(dir, layers);
     return _writeModel2File(dir, model);
 }
 
@@ -101,9 +101,6 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
 }
 
 FkResult FkImageModelEngine::getLayers(FkImageModelEngine::FkModelCallback callback) {
-    layers.clear();
-    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
-
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_getLayers));
     msg->sp = std::make_shared<FkAnyCompo>(callback);
     return sendMessage(msg);
@@ -111,9 +108,11 @@ FkResult FkImageModelEngine::getLayers(FkImageModelEngine::FkModelCallback callb
 
 FkResult FkImageModelEngine::_getLayers(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(compo, FkAnyCompo, msg->sp);
+    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
+    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
 
     std::string dir("");
-    auto model = convert2PictureModel(dir);
+    auto model = convert2PictureModel(dir, layers);
     if (compo->any.has_value()) {
         std::any_cast<FkImageModelEngine::FkModelCallback>(compo->any)(model);
         return FK_OK;
@@ -132,7 +131,8 @@ FkResult FkImageModelEngine::_getLayer(std::shared_ptr<FkMessage> &msg) {
     return 0;
 }
 
-std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std::string &dir) {
+std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std::string &dir,
+                                                                             std::vector<std::shared_ptr<FkGraphicLayer>> &layers) {
     auto model = std::make_shared<pb::FkPictureModel>();
     for (auto &layer : layers) {
         if (layer->id == Fk_CANVAS_ID) {

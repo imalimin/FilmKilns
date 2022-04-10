@@ -31,8 +31,13 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
 
     override fun onLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>) {
         layers.forEach {
-            val label = "Layer: ${it}"
-            getCommandBar()?.addItemGroup(CommandItemGroup().addItem(DefaultCommandItem(label = label)))
+            val label = "Layer ${it.id}: ${it.size.width}x${it.size.height}"
+            val group = CommandItemGroup().addItem(DefaultCommandItem(label = label))
+            requireActivity().runOnUiThread(object : Runnable {
+                override fun run() {
+                    getCommandBar()?.addItemGroup(group)
+                }
+            })
         }
     }
 

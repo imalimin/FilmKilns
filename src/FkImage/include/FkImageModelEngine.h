@@ -55,7 +55,8 @@ private:
 
     FkResult _getLayer(std::shared_ptr<FkMessage> &msg);
 
-    std::shared_ptr<pb::FkPictureModel> convert2PictureModel(std::string &dir);
+    std::shared_ptr<pb::FkPictureModel> convert2PictureModel(std::string &dir,
+                                                             std::vector<std::shared_ptr<FkGraphicLayer>> &layers);
 
     FkResult _fillLayer(void* dst, std::shared_ptr<FkGraphicLayer> &src);
 
@@ -67,7 +68,6 @@ private:
 
 private:
     std::shared_ptr<FkEngine> imageEngine = nullptr;
-    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
 };
 
 #endif //FK_IMAGE_FKIMAGEFILEENGINE_H
