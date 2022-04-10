@@ -82,7 +82,7 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
     file.append("/model.pb");
     std::fstream stream;
     stream.open(file.c_str(), std::ios::in | std::ios::binary);
-    auto model = std::make_shared<fk_pb::FkPictureModel>();
+    auto model = std::make_shared<pb::FkPictureModel>();
     model->ParseFromIstream(&stream);
     for (auto &layer : model->layers()) {
         if (!layer.file().empty()) {
@@ -132,11 +132,11 @@ FkResult FkImageModelEngine::_getLayer(std::shared_ptr<FkMessage> &msg) {
     return 0;
 }
 
-std::shared_ptr<fk_pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std::string &dir) {
-    auto model = std::make_shared<fk_pb::FkPictureModel>();
+std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std::string &dir) {
+    auto model = std::make_shared<pb::FkPictureModel>();
     for (auto &layer : layers) {
         if (layer->id == Fk_CANVAS_ID) {
-            auto canvas = new fk_pb::FkImageLayer();
+            auto canvas = new pb::FkImageLayer();
             model->set_allocated_canvas(canvas);
             _fillLayer(canvas, layer);
         } else {
@@ -153,7 +153,7 @@ std::shared_ptr<fk_pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(
 
 FkResult FkImageModelEngine::_fillLayer(void* dst,
                                         std::shared_ptr<FkGraphicLayer> &src) {
-    auto *pbLayer = static_cast<fk_pb::FkImageLayer *>(dst);
+    auto *pbLayer = static_cast<pb::FkImageLayer *>(dst);
     auto fileCompo = src->findComponent<FkFilePathCompo>();
     auto scaleCompo = src->findComponent<FkScaleComponent>();
     auto rotateCompo = src->findComponent<FkRotateComponent>();
@@ -162,27 +162,27 @@ FkResult FkImageModelEngine::_fillLayer(void* dst,
     pbLayer->set_id(src->id);
     pbLayer->set_file(fileCompo ? FkFileUtils::name(fileCompo->str) : "");
     if (scaleCompo) {
-        auto value = new fk_pb::FkFloatVec3();
+        auto value = new pb::FkFloatVec3();
         value->set_x(scaleCompo->value.x);
         value->set_y(scaleCompo->value.y);
         value->set_z(scaleCompo->value.z);
         pbLayer->set_allocated_scale(value);
     }
     if (rotateCompo) {
-        auto value = new fk_pb::FkRational();
+        auto value = new pb::FkRational();
         value->set_num(rotateCompo->value.num);
         value->set_den(rotateCompo->value.den);
         pbLayer->set_allocated_rotation(value);
     }
     if (transCompo) {
-        auto value = new fk_pb::FkIntVec3();
+        auto value = new pb::FkIntVec3();
         value->set_x(transCompo->value.x);
         value->set_y(transCompo->value.y);
         value->set_z(0);
         pbLayer->set_allocated_trans(value);
     }
     if (sizeCompo) {
-        auto value = new fk_pb::FkSize();
+        auto value = new pb::FkSize();
         value->set_width(sizeCompo->size.getWidth());
         value->set_height(sizeCompo->size.getHeight());
         pbLayer->set_allocated_size(value);
@@ -202,7 +202,7 @@ FkResult FkImageModelEngine::_writeModel2File(std::string &dir, std::any model) 
     modelFile.append("/model.pb");
     std::fstream stream;
     stream.open(modelFile.c_str(), std::ios::out | std::ios::binary);
-    return std::any_cast<std::shared_ptr<fk_pb::FkPictureModel>>(model)
+    return std::any_cast<std::shared_ptr<pb::FkPictureModel>>(model)
                    ->SerializeToOstream(&stream) ? FK_OK : FK_IO_FAIL;
 }
 

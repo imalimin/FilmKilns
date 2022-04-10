@@ -1,9 +1,15 @@
 package com.alimin.fk.engine
 
-import fk_pb.FkPictureModelKt
+import com.alimin.fk.pb.FkImageLayerOuterClass
+import com.alimin.fk.pb.FkPictureModelOuterClass
+import java.nio.ByteBuffer
 
 interface FkNativeMsgListener {
-    fun onNativeMsgReceived(what: Int, pbObject: ByteArray?): Boolean
+    fun onNativeMsgReceived(what: Int, pbObject: ByteBuffer?): Boolean
+}
+
+interface FkGetLayersListener {
+    fun onGetLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>)
 }
 
 class FkImageModel(val engine: FkImage) : FkEngine() {
@@ -58,19 +64,16 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
         return 0
     }
 
-    fun getLayers(): Int {
+    fun getLayers(listener: FkGetLayersListener): Int {
         if (!isNull()) {
-            return nativeGetLayers(getHandle(), object :FkNativeMsgListener{
-                override fun onNativeMsgReceived(what: Int, pbObject: ByteArray?): Boolean {
-                    when(what) {
-                        0 -> {
-                            if (null != pbObject) {
-                                val model = FkPictureModelKt
-                            }
-                            return pbObject != null
-                        }
+            return nativeGetLayers(getHandle(), object : FkNativeMsgListener {
+                override fun onNativeMsgReceived(what: Int, pbObject: ByteBuffer?): Boolean {
+                    if (null != pbObject) {
+                        val model =
+                            FkPictureModelOuterClass.FkPictureModel.parseFrom(pbObject)
+                        listener.onGetLayers(model.layersList)
                     }
-                    return false
+                    return pbObject != null
                 }
             })
         }
@@ -87,7 +90,7 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
     private external fun nativeStart(handle: Long)
     private external fun nativeStop(handle: Long)
 
-    private external fun nativeSave(handle: Long, file: String):Int
-    private external fun nativeLoad(handle: Long, file: String):Int
-    private external fun nativeGetLayers(handle: Long, listener: FkNativeMsgListener):Int
+    private external fun nativeSave(handle: Long, file: String): Int
+    private external fun nativeLoad(handle: Long, file: String): Int
+    private external fun nativeGetLayers(handle: Long, listener: FkNativeMsgListener): Int
 }

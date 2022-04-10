@@ -76,16 +76,15 @@ class FkImage(val workspace: String) : FkEngine() {
         if (isNull()) {
             return -1
         }
-        Choreographer.getInstance().postFrameCallback {
-            synchronized(mSyncLock) {
-                if (!isNull()) {
-//                    val time = System.currentTimeMillis()
-//                    Log.i("alimin1", "${time - lastTime}")
-//                    lastTime = time
-                    nativeNotifyRender(getHandle())
+        Choreographer.getInstance().postFrameCallback(object : Choreographer.FrameCallback{
+            override fun doFrame(frameTimeNanos: Long) {
+                synchronized(mSyncLock) {
+                    if (!isNull()) {
+                        nativeNotifyRender(getHandle())
+                    }
                 }
             }
-        }
+        })
         return 0
     }
 

@@ -4,9 +4,11 @@ import android.view.Surface
 import com.alimin.fk.app.model.ImageEngineModel
 import com.alimin.fk.app.model.impl.ImageEngineModelImpl
 import com.alimin.fk.define.kScaleType
+import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.engine.FkImage
 import com.alimin.fk.engine.FkImageModel
 import com.alimin.fk.entity.FkRational
+import com.alimin.fk.pb.FkImageLayerOuterClass
 import java.io.File
 
 class ImagePresenter(
@@ -18,11 +20,23 @@ class ImagePresenter(
     private val engine: FkImage
     private val modelEngine: FkImageModel
     private var curLayer = -1
+    private var layerUpdateListeners = ArrayList<OnLayerUpdateListener>()
+
     init {
         view.presenter = this
         cacheFile = File(File(workspace), "/${System.currentTimeMillis()}.fkp")
         engine = FkImage(workspace)
         modelEngine = FkImageModel(engine)
+    }
+
+    private fun notifyLayers() {
+        getLayers(object : FkGetLayersListener {
+            override fun onGetLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>) {
+                synchronized(this) {
+                    layerUpdateListeners.forEach { it.onLayers(layers) }
+                }
+            }
+        })
     }
 
     override fun create() {
@@ -45,6 +59,9 @@ class ImagePresenter(
     override fun destroy() {
         modelEngine.destroy()
         engine.destroy()
+        synchronized(this) {
+            layerUpdateListeners.clear()
+        }
     }
 
     override fun notifyRender() {
@@ -57,7 +74,9 @@ class ImagePresenter(
             curLayer = layer
         }
         engine.notifyRender()
-        modelEngine.getLayers()
+        if (layer > 0) {
+            notifyLayers()
+        }
     }
 
     override fun detachFromSurface(surface: Surface) {
@@ -78,5 +97,19 @@ class ImagePresenter(
 
     override fun postScale(ds: FkRational) {
         engine.postScale(curLayer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
+    }
+
+    override fun getLayers(listener: FkGetLayersListener): Int {
+        return modelEngine.getLayers(listener)
+    }
+
+    @Synchronized
+    override fun addLayerUpdateListener(l: OnLayerUpdateListener) {
+        layerUpdateListeners.add(l)
+    }
+
+    @Synchronized
+    override fun removeLayerUpdateListener(l: OnLayerUpdateListener) {
+        layerUpdateListeners.remove(l)
     }
 }

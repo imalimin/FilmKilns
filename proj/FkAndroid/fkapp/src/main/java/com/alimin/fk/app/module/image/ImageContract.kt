@@ -1,9 +1,16 @@
 package com.alimin.fk.app.module.image
 
 import android.view.Surface
+import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.entity.FkRational
+import com.alimin.fk.pb.FkImageLayerOuterClass
 import com.lmy.mvp.BaseView
 import com.lmy.mvp.ClosablePresenter
+
+interface OnLayerUpdateListener {
+    fun onLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>)
+    fun onLayer(layer: FkImageLayerOuterClass.FkImageLayer)
+}
 
 class ImageContract {
     interface View : BaseView<Presenter> {
@@ -19,5 +26,8 @@ class ImageContract {
         abstract fun postTranslate(dx: Int, dy: Int)
         abstract fun postRotate(dr: FkRational)
         abstract fun postScale(ds: FkRational)
+        abstract fun getLayers(listener: FkGetLayersListener): Int
+        abstract fun addLayerUpdateListener(l: OnLayerUpdateListener)
+        abstract fun removeLayerUpdateListener(l: OnLayerUpdateListener)
     }
 }

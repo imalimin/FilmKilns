@@ -81,7 +81,11 @@ class GalleryAdapter : RecyclerAdapter<File, GalleryAdapter.ViewHolder>() {
 
         override fun onBind(item: File, position: Int) {
             checkBox.isChecked = adapter.isSelected(position)
-            imageView.post { show(imageView, Uri.fromFile(item), imageView.context, true) }
+            imageView.post(object : Runnable {
+                override fun run() {
+                    show(imageView, Uri.fromFile(item), imageView.context, true)
+                }
+            })
         }
 
         fun select(select: Boolean) {

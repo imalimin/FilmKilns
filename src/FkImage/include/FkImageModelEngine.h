@@ -17,9 +17,11 @@
 #include <functional>
 #include <vector>
 
+using namespace com::alimin::fk;
+
 FK_CLASS FkImageModelEngine FK_EXTEND FkEngine {
 public:
-    typedef std::function<void(std::shared_ptr<fk_pb::FkPictureModel> &)> FkModelCallback;
+    typedef std::function<void(std::shared_ptr<pb::FkPictureModel> &)> FkModelCallback;
 
 public:
     FkImageModelEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name);
@@ -53,7 +55,7 @@ private:
 
     FkResult _getLayer(std::shared_ptr<FkMessage> &msg);
 
-    std::shared_ptr<fk_pb::FkPictureModel> convert2PictureModel(std::string &dir);
+    std::shared_ptr<pb::FkPictureModel> convert2PictureModel(std::string &dir);
 
     FkResult _fillLayer(void* dst, std::shared_ptr<FkGraphicLayer> &src);
 

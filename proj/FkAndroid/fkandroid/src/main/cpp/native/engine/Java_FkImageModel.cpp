@@ -16,6 +16,8 @@
 
 #define FILE_ENGINE_ALIAS "FileEngine"
 
+using namespace com::alimin::fk;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -82,16 +84,18 @@ JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeGe
         (JNIEnv *env, jobject that, jlong handle, jobject listener) {
     auto engine = castHandle(handle);
     auto lRef = std::make_shared<FkJniGlobalRef>(listener);
-    auto callback = [lRef](std::shared_ptr<fk_pb::FkPictureModel> &model) {
+    auto callback = [lRef](std::shared_ptr<pb::FkPictureModel> &model) {
         FkJavaRuntime::getInstance().attachThread();
         JNIEnv *env = nullptr;
         if (FkJavaRuntime::getInstance().findEnv(&env)) {
             auto size = model->ByteSizeLong();
-            auto array = env->NewByteArray(size);
-            model->SerializeToArray(env->GetByteArrayElements(array, JNI_FALSE), size);
-            FkJavaFunc func(env, lRef->obj(), "onNativeMsgReceived", "(I[B)Z");
-            func.call(env, lRef->obj(), 0, array);
-            env->DeleteLocalRef(array);
+            std::vector<uint8_t> vec(size);
+            memset(vec.data(), 0, size);
+            auto buf = env->NewDirectByteBuffer(vec.data(), size);
+            auto ret = model->SerializeToArray(vec.data(), vec.size());
+            FkJavaFunc func(env, lRef->obj(), "onNativeMsgReceived", "(ILjava/nio/ByteBuffer;)Z");
+            func.call(env, lRef->obj(), 0, buf);
+            env->DeleteLocalRef(buf);
         }
         FkJavaRuntime::getInstance().detachThread();
     };
