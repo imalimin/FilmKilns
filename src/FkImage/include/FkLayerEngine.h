@@ -101,6 +101,7 @@ private:
     FkResult _cropLayer(std::shared_ptr<FkMessage> &msg);
 
 private:
+    static const FkID MSG_NOTIFY_RENDER;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
     std::shared_ptr<FkEngine> renderEngine = nullptr;

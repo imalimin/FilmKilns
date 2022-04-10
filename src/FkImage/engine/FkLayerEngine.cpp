@@ -30,6 +30,8 @@
 #include "FkMath.h"
 #include "FkQueryWinSizeProto.h"
 
+const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
+
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {
     FK_MARK_SUPER
@@ -100,6 +102,7 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
 
 FkResult FkLayerEngine::notifyRender() {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_notifyRender));
+    msg->what = MSG_NOTIFY_RENDER;
     msg->flags = FkMessage::FLAG_UNIQUE;
     return sendMessage(msg);
 }

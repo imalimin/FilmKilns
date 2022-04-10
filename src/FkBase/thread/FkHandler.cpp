@@ -33,13 +33,14 @@ void FkHandler::dispatchMessage(std::shared_ptr<FkMessage> msg) {
     }
 }
 
-void FkHandler::sendMessage(std::shared_ptr<FkMessage> msg) {
-    _enqueueMessage(msg);
+FkResult FkHandler::sendMessage(std::shared_ptr<FkMessage> &msg) {
+    return _enqueueMessage(msg);
 }
 
-void FkHandler::_enqueueMessage(std::shared_ptr<FkMessage> msg) {
+FkResult FkHandler::_enqueueMessage(std::shared_ptr<FkMessage> &msg) {
     if (this->looper) {
         msg->target = this;
-        this->looper->sendMessage(msg);
+        return this->looper->sendMessage(msg);
     }
+    return FK_FAIL;
 }

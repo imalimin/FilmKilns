@@ -53,21 +53,21 @@ FkLooper::~FkLooper() {
     quit(false);
 }
 
-void FkLooper::sendMessage(std::shared_ptr<FkMessage> msg) {
+FkResult FkLooper::sendMessage(std::shared_ptr<FkMessage> &msg) {
     if (exiting || exited)
-        return;
+        return FK_FAIL;
     _enqueueMessage(msg);
+    return FK_OK;
 }
 
-void FkLooper::_enqueueMessage(std::shared_ptr<FkMessage> msg) {
-//    if (msg->queueMode & AlMessage::QUEUE_MODE_CLEAR_ALL) {
-//        queue.clear();
-//    }
+void FkLooper::_enqueueMessage(std::shared_ptr<FkMessage> &msg) {
     if (msg->flags & FkMessage::FLAG_UNIQUE) {
+        FkAssert(msg->what != 0, "Argument what is invalid for unique message.");
         queue.removeAllMessage(msg->what);
         queueLevel0.removeAllMessage(msg->what);
     }
     if (msg->flags & FkMessage::FLAG_CLEAR) {
+        FkAssert(msg->what != 0, "Argument what is invalid for clear message.");
         queue.removeAllMessage(msg->what);
         queueLevel0.removeAllMessage(msg->what);
     } else {
@@ -92,12 +92,13 @@ void FkLooper::_loop() {
     looping = true;
     for (;;) {
         queue.dump();
-        auto msg = _take();
-        if (msg) {
-            if (msg->target) {
-                msg->target->dispatchMessage(msg);
+        curMsg = _take();
+        if (curMsg) {
+            if (curMsg->target) {
+                curMsg->target->dispatchMessage(curMsg);
             }
         }
+        curMsg = nullptr;
         if (exitSafely) {
             if (exiting && 0 == queue.size()) {
                 break;

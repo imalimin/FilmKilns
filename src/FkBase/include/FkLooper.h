@@ -37,7 +37,7 @@ public:
 
     static void exit();
 
-    void sendMessage(std::shared_ptr<FkMessage> msg);
+    FkResult sendMessage(std::shared_ptr<FkMessage> &msg);
 
     void quit(bool safely);
 
@@ -54,7 +54,7 @@ private:
 
     void _loop();
 
-    void _enqueueMessage(std::shared_ptr<FkMessage> msg);
+    void _enqueueMessage(std::shared_ptr<FkMessage> &msg);
 
     std::shared_ptr<FkMessage> _take();
 
@@ -63,6 +63,7 @@ private:
     std::atomic_bool looping;
     FkMessageQueue queue;
     FkMessageQueue queueLevel0;
+    std::shared_ptr<FkMessage> curMsg = nullptr;
 };
 
 FK_CLASS FkLooperManager FK_EXTEND FkObject {

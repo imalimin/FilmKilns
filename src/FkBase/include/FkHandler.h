@@ -23,12 +23,12 @@ public:
 
     ~FkHandler();
 
-    void sendMessage(std::shared_ptr<FkMessage> msg);
+    FkResult sendMessage(std::shared_ptr<FkMessage> &msg);
 
     void dispatchMessage(std::shared_ptr<FkMessage> msg);
 
 private:
-    void _enqueueMessage(std::shared_ptr<FkMessage> msg);
+    FkResult _enqueueMessage(std::shared_ptr<FkMessage> &msg);
 
 private:
     FkLooper *looper = nullptr;

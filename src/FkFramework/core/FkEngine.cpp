@@ -201,6 +201,5 @@ FkResult FkEngine::sendMessage(std::shared_ptr<FkMessage> &msg, bool ignoreState
             return FK_INVALID_STATE;
         }
     }
-    mHandler->sendMessage(msg);
-    return FK_OK;
+    return mHandler->sendMessage(msg);
 }
