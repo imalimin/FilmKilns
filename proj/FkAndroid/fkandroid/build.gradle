@@ -94,6 +94,8 @@ dependencies {
     //Kotlin协程
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.27.0-eap13"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
+//    implementation 'com.google.protobuf:protobuf-kotlin-lite:3.20.1-rc-1'
+    implementation 'com.google.protobuf:protobuf-java:3.20.1-rc-1'
 }
 
 /**
