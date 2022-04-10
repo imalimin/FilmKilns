@@ -5,16 +5,18 @@
 #include "FkJavaFunc.h"
 
 FkJavaFunc::FkJavaFunc(JNIEnv *env, jobject obj, std::string name, std::string sig) {
+    JavaVM *vm = nullptr;
+    auto ret = env->GetJavaVM(&vm);
     auto cls = env->GetObjectClass(obj);
     mid = env->GetMethodID(cls, name.c_str(), sig.c_str());
 }
 
 FkJavaFunc::~FkJavaFunc() {
-    mid = 0;
+    mid = NULL;
 }
 
 bool FkJavaFunc::call(JNIEnv *env, jobject obj, ...) {
-    if (mid == 0) {
+    if (mid == NULL) {
         return false;
     }
     va_list args;

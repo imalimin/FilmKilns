@@ -4,11 +4,13 @@ project(${MODULE_NAME} LANGUAGES C CXX)
 
 set(PROJECT_SOURCE_FK_DIR ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
+        ${PROJECT_SOURCE_FK_DIR}/third_party/protobuf/include
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
         ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
         ${PROJECT_SOURCE_FK_DIR}/FkImage/include
+        ${PROJECT_SOURCE_FK_DIR}/FkImage/pb
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
@@ -40,9 +42,11 @@ message(STATUS "al_native CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/engine SOURCES_ENGINE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
 
 list(APPEND SOURCES_ROOT ${SOURCES_CORE})
 list(APPEND SOURCES_ROOT ${SOURCES_ENGINE})
+list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
 
 add_library(${MODULE_NAME} SHARED ${SOURCES_ROOT})
 

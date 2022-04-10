@@ -1,6 +1,10 @@
 package com.alimin.fk.engine
 
-import java.nio.ByteBuffer
+import fk_pb.FkPictureModelKt
+
+interface FkNativeMsgListener {
+    fun onNativeMsgReceived(what: Int, pbObject: ByteArray?): Boolean
+}
 
 class FkImageModel(val engine: FkImage) : FkEngine() {
     private var mSyncLock = Object()
@@ -54,16 +58,27 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
         return 0
     }
 
-    fun getLayers() {
-
+    fun getLayers(): Int {
+        if (!isNull()) {
+            return nativeGetLayers(getHandle(), object :FkNativeMsgListener{
+                override fun onNativeMsgReceived(what: Int, pbObject: ByteArray?): Boolean {
+                    when(what) {
+                        0 -> {
+                            if (null != pbObject) {
+                                val model = FkPictureModelKt
+                            }
+                            return pbObject != null
+                        }
+                    }
+                    return false
+                }
+            })
+        }
+        return -1
     }
 
     fun getLayer(layer: Int) {
 
-    }
-
-    fun onNativeMsgReceived(what: Int, pbObject: ByteBuffer?): Boolean {
-        return true
     }
 
     private external fun nativeCreateInstance(imageEngineHandle: Long): Long
@@ -74,4 +89,5 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
 
     private external fun nativeSave(handle: Long, file: String):Int
     private external fun nativeLoad(handle: Long, file: String):Int
+    private external fun nativeGetLayers(handle: Long, listener: FkNativeMsgListener):Int
 }

@@ -19,7 +19,7 @@ public:
     bool call(JNIEnv *env, jobject obj, ...);
 
 private:
-    jmethodID mid = 0;
+    jmethodID mid = NULL;
 };
 
 

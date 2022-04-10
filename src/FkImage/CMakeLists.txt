@@ -4,6 +4,7 @@ project(${MODULE_NAME} LANGUAGES C CXX)
 
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
+        ${THIRD_PARTY_DIR}/protobuf/include
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/pb
@@ -13,7 +14,6 @@ set(INCLUDES
         ${PROJECT_SOURCE_DIR}/../FkFramework/include
         ${PROJECT_SOURCE_DIR}/../FkBitmap/include
         ${PROJECT_SOURCE_DIR}/../FkGraphic/include
-        ${THIRD_PARTY_DIR}/protobuf/include
         )
 include_directories(${INCLUDES})
 

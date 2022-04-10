@@ -6,15 +6,15 @@
 */
 
 #include "jni.h"
+#include "FkJniDefinition.h"
 #include "FkImageEngine.h"
 #include "FkImageModelEngine.h"
 #include "FkInstanceHolder.h"
-#include "FkJniDefinition.h"
 #include "FkJavaFunc.h"
+#include "FkJavaRuntime.h"
+#include "FkJniGlobalRef.h"
 
 #define FILE_ENGINE_ALIAS "FileEngine"
-
-#define FK_CLASS Java_com_alimin_fk_engine_FkImageModel
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +24,7 @@ static std::shared_ptr<FkImageModelEngine> castHandle(jlong handle) {
     return FkInstanceHolder::getInstance().find<std::shared_ptr<FkImageModelEngine>>(handle);
 }
 
-JNIEXPORT jlong JNICALL FK_JNI_DEFINE(nativeCreateInstance)
+JNIEXPORT jlong FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeCreateInstance)
         (JNIEnv *env, jobject that, jlong imageEngineHandle) {
     auto imageEngine = FkInstanceHolder::getInstance().find<std::shared_ptr<FkImageEngine>>(
             imageEngineHandle);
@@ -33,33 +33,32 @@ JNIEXPORT jlong JNICALL FK_JNI_DEFINE(nativeCreateInstance)
     return FkInstanceHolder::getInstance().put(fileEngine);
 }
 
-JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeCreate)
+JNIEXPORT void FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeCreate)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
-    FkJavaFunc func(env, that, "onNativeMsgReceived", "(ILjava/nio/ByteBuffer;)B");
     engine->create();
 }
 
-JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeDestroy)
+JNIEXPORT void FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeDestroy)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
     engine->destroy();
     FkInstanceHolder::getInstance().release(handle);
 }
 
-JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeStart)
+JNIEXPORT void FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeStart)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
     engine->start();
 }
 
-JNIEXPORT void JNICALL FK_JNI_DEFINE(nativeStop)
+JNIEXPORT void FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeStop)
         (JNIEnv *env, jobject that, jlong handle) {
     auto engine = castHandle(handle);
     engine->stop();
 }
 
-JNIEXPORT jint JNICALL FK_JNI_DEFINE(nativeSave)
+JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeSave)
         (JNIEnv *env, jobject that, jlong handle, jstring file) {
     auto pFile = env->GetStringUTFChars(file, nullptr);
     std::string fileStr(pFile);
@@ -69,7 +68,7 @@ JNIEXPORT jint JNICALL FK_JNI_DEFINE(nativeSave)
     return engine->save(fileStr);
 }
 
-JNIEXPORT jint JNICALL FK_JNI_DEFINE(nativeLoad)
+JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeLoad)
         (JNIEnv *env, jobject that, jlong handle, jstring file) {
     auto pFile = env->GetStringUTFChars(file, nullptr);
     std::string fileStr(pFile);
@@ -77,6 +76,27 @@ JNIEXPORT jint JNICALL FK_JNI_DEFINE(nativeLoad)
 
     auto engine = castHandle(handle);
     return engine->load(fileStr);
+}
+
+JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeGetLayers)
+        (JNIEnv *env, jobject that, jlong handle, jobject listener) {
+    auto engine = castHandle(handle);
+    auto lRef = std::make_shared<FkJniGlobalRef>(listener);
+    auto callback = [lRef](std::shared_ptr<fk_pb::FkPictureModel> &model) {
+        FkJavaRuntime::getInstance().attachThread();
+        JNIEnv *env = nullptr;
+        if (FkJavaRuntime::getInstance().findEnv(&env)) {
+            auto size = model->ByteSizeLong();
+            auto array = env->NewByteArray(size);
+            model->SerializeToArray(env->GetByteArrayElements(array, JNI_FALSE), size);
+            FkJavaFunc func(env, lRef->obj(), "onNativeMsgReceived", "(I[B)Z");
+            func.call(env, lRef->obj(), 0, array);
+            env->DeleteLocalRef(array);
+        }
+        FkJavaRuntime::getInstance().detachThread();
+    };
+    engine->getLayers(callback);
+    return FK_OK;
 }
 
 #ifdef __cplusplus

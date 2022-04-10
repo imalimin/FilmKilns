@@ -12,19 +12,19 @@
 #define TAG "FkTest"
 
 void MyPrinter::OnTestSuiteStart(const ::testing::TestSuite &test_suite) {
-    AlLogcat::i(TAG, "[ START  ] Total test count %d", test_suite.total_test_count());
-    AlLogcat::i(TAG, "[ ====== ]");
+    FkLogI(TAG, "[ START  ] Total test count %d", test_suite.total_test_count());
+    FkLogI(TAG, "[ ====== ]");
 }
 
 void MyPrinter::OnTestSuiteEnd(const ::testing::TestSuite &test_suite) {
-    AlLogcat::i(TAG, "[ ====== ]");
-    AlLogcat::i(TAG, "[ FINISH ] Passed test count %d/%d", test_suite.successful_test_count(),
+    FkLogI(TAG, "[ ====== ]");
+    FkLogI(TAG, "[ FINISH ] Passed test count %d/%d", test_suite.successful_test_count(),
                 test_suite.total_test_count());
 
 }
 
 void MyPrinter::OnTestStart(const ::testing::TestInfo &test_info) {
-    AlLogcat::i(TAG, "[  RUN   ] %s: %s", test_info.test_case_name(), test_info.name());
+    FkLogI(TAG, "[  RUN   ] %s: %s", test_info.test_case_name(), test_info.name());
 }
 
 void MyPrinter::OnTestEnd(const ::testing::TestInfo &test_info) {

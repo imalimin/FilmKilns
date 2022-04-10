@@ -6,13 +6,15 @@ set(PROJECT_SOURCE_FK_DIR ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/prebuild/shared/gtest/include
+        ${PROJECT_SOURCE_FK_DIR}/third_party/protobuf/include
+        ${PROJECT_SOURCE_FK_DIR}/skia
         ${PROJECT_SOURCE_FK_DIR}/glm
-        ${PROJECT_SOURCE_FK_DIR}/al_common/include
         ${PROJECT_SOURCE_FK_DIR}/FkBase/include
         ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
         ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
         ${PROJECT_SOURCE_FK_DIR}/FkBitmap/include
         ${PROJECT_SOURCE_FK_DIR}/FkImage/include
+        ${PROJECT_SOURCE_FK_DIR}/FkImage/pb
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
@@ -71,5 +73,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} gtest_main gtest al_common FkBase FkFramework FkGraphic FkBitmap FkImage ${log-lib})
+set(MODULES ${MODULE_NAME} gtest_main gtest FkBase FkFramework FkGraphic FkBitmap FkImage ${log-lib})
 target_link_libraries(${MODULES})

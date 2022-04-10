@@ -57,6 +57,7 @@ class ImagePresenter(
             curLayer = layer
         }
         engine.notifyRender()
+        modelEngine.getLayers()
     }
 
     override fun detachFromSurface(surface: Surface) {

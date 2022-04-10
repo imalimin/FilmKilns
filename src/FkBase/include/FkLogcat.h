@@ -11,7 +11,6 @@
 #ifndef FK_BASE_FKLOGCAT_H
 #define FK_BASE_FKLOGCAT_H
 
-#include "FkObject.h"
 #include <string>
 
 class FkLogcat {

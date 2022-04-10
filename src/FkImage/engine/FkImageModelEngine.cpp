@@ -15,8 +15,8 @@
 #include "FkRotateComponent.h"
 #include "FkTransComponent.h"
 #include "FkSizeCompo.h"
-#include "FkPictureModel.pb.h"
 #include "FkFileUtils.h"
+#include "FkAnyCompo.h"
 #include <fstream>
 
 static std::shared_ptr<FkImageEngine> _cast2ImageEngine(std::shared_ptr<FkEngine> &imageEngine) {
@@ -64,22 +64,7 @@ FkResult FkImageModelEngine::save(std::string &file) {
 FkResult FkImageModelEngine::_save(std::shared_ptr<FkMessage> &msg) {
     auto file = msg->arg3;
     auto dir = _createTempDir(file);
-    auto model = std::make_shared<fk_pb::FkPictureModel>();
-    for (auto &layer : layers) {
-        if (layer->id == Fk_CANVAS_ID) {
-            auto canvas = new fk_pb::FkImageLayer();
-            model->set_allocated_canvas(canvas);
-            _fillLayer(canvas, layer);
-        } else {
-            auto fileCompo = layer->findComponent<FkFilePathCompo>();
-            if (fileCompo) {
-                _copyLayerFile(dir, fileCompo->str);
-            }
-            auto pbLayer = model->add_layers();
-            _fillLayer(pbLayer, layer);
-        }
-    }
-
+    auto model = convert2PictureModel(dir);
     return _writeModel2File(dir, model);
 }
 
@@ -113,6 +98,57 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
     auto canvasSize = model->canvas().size();
     engine->setCanvasSize(FkSize(canvasSize.width(), canvasSize.height()));
     return FK_OK;
+}
+
+FkResult FkImageModelEngine::getLayers(FkImageModelEngine::FkModelCallback callback) {
+    layers.clear();
+    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
+
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_getLayers));
+    msg->sp = std::make_shared<FkAnyCompo>(callback);
+    return sendMessage(msg);
+}
+
+FkResult FkImageModelEngine::_getLayers(std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(compo, FkAnyCompo, msg->sp);
+
+    std::string dir("");
+    auto model = convert2PictureModel(dir);
+    if (compo->any.has_value()) {
+        std::any_cast<FkImageModelEngine::FkModelCallback>(compo->any)(model);
+        return FK_OK;
+    }
+    return FK_FAIL;
+}
+
+FkResult FkImageModelEngine::getLayer(FkID layer, FkImageModelEngine::FkModelCallback callback) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_getLayer));
+    msg->arg1 = layer;
+    msg->any = callback;
+    return sendMessage(msg);
+}
+
+FkResult FkImageModelEngine::_getLayer(std::shared_ptr<FkMessage> &msg) {
+    return 0;
+}
+
+std::shared_ptr<fk_pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std::string &dir) {
+    auto model = std::make_shared<fk_pb::FkPictureModel>();
+    for (auto &layer : layers) {
+        if (layer->id == Fk_CANVAS_ID) {
+            auto canvas = new fk_pb::FkImageLayer();
+            model->set_allocated_canvas(canvas);
+            _fillLayer(canvas, layer);
+        } else {
+            auto fileCompo = layer->findComponent<FkFilePathCompo>();
+            if (fileCompo && !dir.empty()) {
+                _copyLayerFile(dir, fileCompo->str);
+            }
+            auto pbLayer = model->add_layers();
+            _fillLayer(pbLayer, layer);
+        }
+    }
+    return model;
 }
 
 FkResult FkImageModelEngine::_fillLayer(void* dst,

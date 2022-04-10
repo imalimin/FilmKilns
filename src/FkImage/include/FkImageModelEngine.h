@@ -13,9 +13,14 @@
 
 #include "FkEngine.h"
 #include "FkGraphicLayer.h"
-#include <any>
+#include "FkPictureModel.pb.h"
+#include <functional>
+#include <vector>
 
 FK_CLASS FkImageModelEngine FK_EXTEND FkEngine {
+public:
+    typedef std::function<void(std::shared_ptr<fk_pb::FkPictureModel> &)> FkModelCallback;
+
 public:
     FkImageModelEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name);
 
@@ -35,10 +40,20 @@ public:
 
     FkResult load(std::string &file);
 
+    FkResult getLayers(FkModelCallback callback);
+
+    FkResult getLayer(FkID layer, FkModelCallback callback);
+
 private:
     FkResult _save(std::shared_ptr<FkMessage> &msg);
 
     FkResult _load(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _getLayers(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _getLayer(std::shared_ptr<FkMessage> &msg);
+
+    std::shared_ptr<fk_pb::FkPictureModel> convert2PictureModel(std::string &dir);
 
     FkResult _fillLayer(void* dst, std::shared_ptr<FkGraphicLayer> &src);
 

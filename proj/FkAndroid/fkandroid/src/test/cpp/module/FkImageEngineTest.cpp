@@ -10,7 +10,7 @@
 #include "FkImageEngine.h"
 #include "FkString.h"
 #include "FkFileUtils.h"
-#include "FkImageFileEngine.h"
+#include "FkImageModelEngine.h"
 
 #define FK_ANDROID_TEST_CACHE_DIR "/storage/emulated/0/Android/data/com.alimin.fk.test/cache"
 #define FK_ANDROID_TEST_CACHE_IMAGE_0 "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/images/image_0.jpg"
@@ -63,7 +63,7 @@ protected:
     virtual void SetUp() override {
         FkImageEngineTest::SetUp();
         std::shared_ptr<FkEngine> imageEngine = engine;
-        fileEngine = std::make_shared<FkImageFileEngine>(imageEngine, "FileEngine");
+        fileEngine = std::make_shared<FkImageModelEngine>(imageEngine, "FileEngine");
         EXPECT_EQ(fileEngine->create(), FK_OK);
         EXPECT_EQ(fileEngine->start(), FK_OK);
     }
@@ -76,7 +76,7 @@ protected:
     }
 
 protected:
-    std::shared_ptr<FkImageFileEngine> fileEngine = nullptr;
+    std::shared_ptr<FkImageModelEngine> fileEngine = nullptr;
 };
 
 TEST_F(FkImageFileEngineTest, saveFkp) {
@@ -85,4 +85,14 @@ TEST_F(FkImageFileEngineTest, saveFkp) {
     EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
     EXPECT_EQ(fileEngine->save(fkpFile), FK_OK);
     EXPECT_EQ(fileEngine->load(fkpFile), FK_OK);
+}
+
+TEST_F(FkImageFileEngineTest, getLayers) {
+    std::string path = FK_ANDROID_TEST_CACHE_IMAGE_0;
+    EXPECT_GT(engine->newLayerWithFile(path), 0);
+    EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
+    auto callback = [](std::shared_ptr<fk_pb::FkPictureModel> &model) {
+
+    };
+    EXPECT_EQ(fileEngine->getLayers(callback), FK_OK);
 }
