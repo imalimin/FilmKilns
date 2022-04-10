@@ -16,7 +16,10 @@
 #include <google/protobuf/port_def.inc>
 
 PROTOBUF_PRAGMA_INIT_SEG
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 constexpr FkPictureModel::FkPictureModel(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : layers_()
@@ -30,41 +33,45 @@ struct FkPictureModelDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FkPictureModelDefaultTypeInternal _FkPictureModel_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_FkPictureModel_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_FkPictureModel_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_FkPictureModel_2eproto = nullptr;
 
 const uint32_t TableStruct_FkPictureModel_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkPictureModel, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkPictureModel, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkPictureModel, canvas_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkPictureModel, layers_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkPictureModel, canvas_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkPictureModel, layers_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::fk_pb::FkPictureModel)},
+  { 0, -1, -1, sizeof(::com::alimin::fk::pb::FkPictureModel)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::fk_pb::_FkPictureModel_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::com::alimin::fk::pb::_FkPictureModel_default_instance_),
 };
 
 const char descriptor_table_protodef_FkPictureModel_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\024FkPictureModel.proto\022\005fk_pb\032\022FkImageLa"
-  "yer.proto\"Z\n\016FkPictureModel\022#\n\006canvas\030\001 "
-  "\001(\0132\023.fk_pb.FkImageLayer\022#\n\006layers\030\002 \003(\013"
-  "2\023.fk_pb.FkImageLayerb\006proto3"
+  "\n\024FkPictureModel.proto\022\020com.alimin.fk.pb"
+  "\032\022FkImageLayer.proto\"p\n\016FkPictureModel\022."
+  "\n\006canvas\030\001 \001(\0132\036.com.alimin.fk.pb.FkImag"
+  "eLayer\022.\n\006layers\030\002 \003(\0132\036.com.alimin.fk.p"
+  "b.FkImageLayerb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_FkPictureModel_2eproto_deps[1] = {
   &::descriptor_table_FkImageLayer_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkPictureModel_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkPictureModel_2eproto = {
-  false, false, 149, descriptor_table_protodef_FkPictureModel_2eproto, "FkPictureModel.proto", 
+  false, false, 182, descriptor_table_protodef_FkPictureModel_2eproto, "FkPictureModel.proto", 
   &descriptor_table_FkPictureModel_2eproto_once, descriptor_table_FkPictureModel_2eproto_deps, 1, 1,
   schemas, file_default_instances, TableStruct_FkPictureModel_2eproto::offsets,
   file_level_metadata_FkPictureModel_2eproto, file_level_enum_descriptors_FkPictureModel_2eproto, file_level_service_descriptors_FkPictureModel_2eproto,
@@ -75,16 +82,19 @@ PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable
 
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_FkPictureModel_2eproto(&descriptor_table_FkPictureModel_2eproto);
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkPictureModel::_Internal {
  public:
-  static const ::fk_pb::FkImageLayer& canvas(const FkPictureModel* msg);
+  static const ::com::alimin::fk::pb::FkImageLayer& canvas(const FkPictureModel* msg);
 };
 
-const ::fk_pb::FkImageLayer&
+const ::com::alimin::fk::pb::FkImageLayer&
 FkPictureModel::_Internal::canvas(const FkPictureModel* msg) {
   return *msg->canvas_;
 }
@@ -105,18 +115,18 @@ FkPictureModel::FkPictureModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:fk_pb.FkPictureModel)
+  // @@protoc_insertion_point(arena_constructor:com.alimin.fk.pb.FkPictureModel)
 }
 FkPictureModel::FkPictureModel(const FkPictureModel& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       layers_(from.layers_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_canvas()) {
-    canvas_ = new ::fk_pb::FkImageLayer(*from.canvas_);
+    canvas_ = new ::com::alimin::fk::pb::FkImageLayer(*from.canvas_);
   } else {
     canvas_ = nullptr;
   }
-  // @@protoc_insertion_point(copy_constructor:fk_pb.FkPictureModel)
+  // @@protoc_insertion_point(copy_constructor:com.alimin.fk.pb.FkPictureModel)
 }
 
 inline void FkPictureModel::SharedCtor() {
@@ -124,7 +134,7 @@ canvas_ = nullptr;
 }
 
 FkPictureModel::~FkPictureModel() {
-  // @@protoc_insertion_point(destructor:fk_pb.FkPictureModel)
+  // @@protoc_insertion_point(destructor:com.alimin.fk.pb.FkPictureModel)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -146,7 +156,7 @@ void FkPictureModel::SetCachedSize(int size) const {
 }
 
 void FkPictureModel::Clear() {
-// @@protoc_insertion_point(message_clear_start:fk_pb.FkPictureModel)
+// @@protoc_insertion_point(message_clear_start:com.alimin.fk.pb.FkPictureModel)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -165,7 +175,7 @@ const char* FkPictureModel::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
     uint32_t tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .fk_pb.FkImageLayer canvas = 1;
+      // .com.alimin.fk.pb.FkImageLayer canvas = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_canvas(), ptr);
@@ -173,7 +183,7 @@ const char* FkPictureModel::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
         } else
           goto handle_unusual;
         continue;
-      // repeated .fk_pb.FkImageLayer layers = 2;
+      // repeated .com.alimin.fk.pb.FkImageLayer layers = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr -= 1;
@@ -211,11 +221,11 @@ failure:
 
 uint8_t* FkPictureModel::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:fk_pb.FkPictureModel)
+  // @@protoc_insertion_point(serialize_to_array_start:com.alimin.fk.pb.FkPictureModel)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .fk_pb.FkImageLayer canvas = 1;
+  // .com.alimin.fk.pb.FkImageLayer canvas = 1;
   if (this->_internal_has_canvas()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -223,7 +233,7 @@ uint8_t* FkPictureModel::_InternalSerialize(
         1, _Internal::canvas(this), target, stream);
   }
 
-  // repeated .fk_pb.FkImageLayer layers = 2;
+  // repeated .com.alimin.fk.pb.FkImageLayer layers = 2;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->_internal_layers_size()); i < n; i++) {
     target = stream->EnsureSpace(target);
@@ -235,26 +245,26 @@ uint8_t* FkPictureModel::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:fk_pb.FkPictureModel)
+  // @@protoc_insertion_point(serialize_to_array_end:com.alimin.fk.pb.FkPictureModel)
   return target;
 }
 
 size_t FkPictureModel::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:fk_pb.FkPictureModel)
+// @@protoc_insertion_point(message_byte_size_start:com.alimin.fk.pb.FkPictureModel)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .fk_pb.FkImageLayer layers = 2;
+  // repeated .com.alimin.fk.pb.FkImageLayer layers = 2;
   total_size += 1UL * this->_internal_layers_size();
   for (const auto& msg : this->layers_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // .fk_pb.FkImageLayer canvas = 1;
+  // .com.alimin.fk.pb.FkImageLayer canvas = 1;
   if (this->_internal_has_canvas()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -278,20 +288,20 @@ void FkPictureModel::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
 
 
 void FkPictureModel::MergeFrom(const FkPictureModel& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:fk_pb.FkPictureModel)
+// @@protoc_insertion_point(class_specific_merge_from_start:com.alimin.fk.pb.FkPictureModel)
   GOOGLE_DCHECK_NE(&from, this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   layers_.MergeFrom(from.layers_);
   if (from._internal_has_canvas()) {
-    _internal_mutable_canvas()->::fk_pb::FkImageLayer::MergeFrom(from._internal_canvas());
+    _internal_mutable_canvas()->::com::alimin::fk::pb::FkImageLayer::MergeFrom(from._internal_canvas());
   }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void FkPictureModel::CopyFrom(const FkPictureModel& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:fk_pb.FkPictureModel)
+// @@protoc_insertion_point(class_specific_copy_from_start:com.alimin.fk.pb.FkPictureModel)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -315,10 +325,13 @@ void FkPictureModel::InternalSwap(FkPictureModel* other) {
 }
 
 // @@protoc_insertion_point(namespace_scope)
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::fk_pb::FkPictureModel* Arena::CreateMaybeMessage< ::fk_pb::FkPictureModel >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::fk_pb::FkPictureModel >(arena);
+template<> PROTOBUF_NOINLINE ::com::alimin::fk::pb::FkPictureModel* Arena::CreateMaybeMessage< ::com::alimin::fk::pb::FkPictureModel >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::com::alimin::fk::pb::FkPictureModel >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

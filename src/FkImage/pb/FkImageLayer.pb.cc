@@ -16,7 +16,10 @@
 #include <google/protobuf/port_def.inc>
 
 PROTOBUF_PRAGMA_INIT_SEG
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 constexpr FkImageLayer::FkImageLayer(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : file_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
@@ -34,41 +37,46 @@ struct FkImageLayerDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FkImageLayerDefaultTypeInternal _FkImageLayer_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_FkImageLayer_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_FkImageLayer_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_FkImageLayer_2eproto = nullptr;
 
 const uint32_t TableStruct_FkImageLayer_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, size_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, rotation_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, scale_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, trans_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, file_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkImageLayer, id_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, size_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, rotation_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, scale_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, trans_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, file_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, id_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::fk_pb::FkImageLayer)},
+  { 0, -1, -1, sizeof(::com::alimin::fk::pb::FkImageLayer)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::fk_pb::_FkImageLayer_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::com::alimin::fk::pb::_FkImageLayer_default_instance_),
 };
 
 const char descriptor_table_protodef_FkImageLayer_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\022FkImageLayer.proto\022\005fk_pb\032\014FkSize.prot"
-  "o\032\020FkRational.proto\032\017FkIntVec3.proto\032\021Fk"
-  "FloatVec3.proto\"\256\001\n\014FkImageLayer\022\033\n\004size"
-  "\030\001 \001(\0132\r.fk_pb.FkSize\022#\n\010rotation\030\002 \001(\0132"
-  "\021.fk_pb.FkRational\022!\n\005scale\030\003 \001(\0132\022.fk_p"
-  "b.FkFloatVec3\022\037\n\005trans\030\004 \001(\0132\020.fk_pb.FkI"
-  "ntVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005b\006proto3"
+  "\n\022FkImageLayer.proto\022\020com.alimin.fk.pb\032\014"
+  "FkSize.proto\032\020FkRational.proto\032\017FkIntVec"
+  "3.proto\032\021FkFloatVec3.proto\"\332\001\n\014FkImageLa"
+  "yer\022&\n\004size\030\001 \001(\0132\030.com.alimin.fk.pb.FkS"
+  "ize\022.\n\010rotation\030\002 \001(\0132\034.com.alimin.fk.pb"
+  ".FkRational\022,\n\005scale\030\003 \001(\0132\035.com.alimin."
+  "fk.pb.FkFloatVec3\022*\n\005trans\030\004 \001(\0132\033.com.a"
+  "limin.fk.pb.FkIntVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002i"
+  "d\030\006 \001(\005b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_FkImageLayer_2eproto_deps[4] = {
   &::descriptor_table_FkFloatVec3_2eproto,
@@ -78,7 +86,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkImageLayer_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkImageLayer_2eproto = {
-  false, false, 280, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
+  false, false, 335, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
   &descriptor_table_FkImageLayer_2eproto_once, descriptor_table_FkImageLayer_2eproto_deps, 4, 1,
   schemas, file_default_instances, TableStruct_FkImageLayer_2eproto::offsets,
   file_level_metadata_FkImageLayer_2eproto, file_level_enum_descriptors_FkImageLayer_2eproto, file_level_service_descriptors_FkImageLayer_2eproto,
@@ -89,31 +97,34 @@ PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable
 
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_FkImageLayer_2eproto(&descriptor_table_FkImageLayer_2eproto);
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkImageLayer::_Internal {
  public:
-  static const ::fk_pb::FkSize& size(const FkImageLayer* msg);
-  static const ::fk_pb::FkRational& rotation(const FkImageLayer* msg);
-  static const ::fk_pb::FkFloatVec3& scale(const FkImageLayer* msg);
-  static const ::fk_pb::FkIntVec3& trans(const FkImageLayer* msg);
+  static const ::com::alimin::fk::pb::FkSize& size(const FkImageLayer* msg);
+  static const ::com::alimin::fk::pb::FkRational& rotation(const FkImageLayer* msg);
+  static const ::com::alimin::fk::pb::FkFloatVec3& scale(const FkImageLayer* msg);
+  static const ::com::alimin::fk::pb::FkIntVec3& trans(const FkImageLayer* msg);
 };
 
-const ::fk_pb::FkSize&
+const ::com::alimin::fk::pb::FkSize&
 FkImageLayer::_Internal::size(const FkImageLayer* msg) {
   return *msg->size_;
 }
-const ::fk_pb::FkRational&
+const ::com::alimin::fk::pb::FkRational&
 FkImageLayer::_Internal::rotation(const FkImageLayer* msg) {
   return *msg->rotation_;
 }
-const ::fk_pb::FkFloatVec3&
+const ::com::alimin::fk::pb::FkFloatVec3&
 FkImageLayer::_Internal::scale(const FkImageLayer* msg) {
   return *msg->scale_;
 }
-const ::fk_pb::FkIntVec3&
+const ::com::alimin::fk::pb::FkIntVec3&
 FkImageLayer::_Internal::trans(const FkImageLayer* msg) {
   return *msg->trans_;
 }
@@ -148,7 +159,7 @@ FkImageLayer::FkImageLayer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:fk_pb.FkImageLayer)
+  // @@protoc_insertion_point(arena_constructor:com.alimin.fk.pb.FkImageLayer)
 }
 FkImageLayer::FkImageLayer(const FkImageLayer& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
@@ -162,27 +173,27 @@ FkImageLayer::FkImageLayer(const FkImageLayer& from)
       GetArenaForAllocation());
   }
   if (from._internal_has_size()) {
-    size_ = new ::fk_pb::FkSize(*from.size_);
+    size_ = new ::com::alimin::fk::pb::FkSize(*from.size_);
   } else {
     size_ = nullptr;
   }
   if (from._internal_has_rotation()) {
-    rotation_ = new ::fk_pb::FkRational(*from.rotation_);
+    rotation_ = new ::com::alimin::fk::pb::FkRational(*from.rotation_);
   } else {
     rotation_ = nullptr;
   }
   if (from._internal_has_scale()) {
-    scale_ = new ::fk_pb::FkFloatVec3(*from.scale_);
+    scale_ = new ::com::alimin::fk::pb::FkFloatVec3(*from.scale_);
   } else {
     scale_ = nullptr;
   }
   if (from._internal_has_trans()) {
-    trans_ = new ::fk_pb::FkIntVec3(*from.trans_);
+    trans_ = new ::com::alimin::fk::pb::FkIntVec3(*from.trans_);
   } else {
     trans_ = nullptr;
   }
   id_ = from.id_;
-  // @@protoc_insertion_point(copy_constructor:fk_pb.FkImageLayer)
+  // @@protoc_insertion_point(copy_constructor:com.alimin.fk.pb.FkImageLayer)
 }
 
 inline void FkImageLayer::SharedCtor() {
@@ -197,7 +208,7 @@ file_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlready
 }
 
 FkImageLayer::~FkImageLayer() {
-  // @@protoc_insertion_point(destructor:fk_pb.FkImageLayer)
+  // @@protoc_insertion_point(destructor:com.alimin.fk.pb.FkImageLayer)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -223,7 +234,7 @@ void FkImageLayer::SetCachedSize(int size) const {
 }
 
 void FkImageLayer::Clear() {
-// @@protoc_insertion_point(message_clear_start:fk_pb.FkImageLayer)
+// @@protoc_insertion_point(message_clear_start:com.alimin.fk.pb.FkImageLayer)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -255,7 +266,7 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
     uint32_t tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .fk_pb.FkSize size = 1;
+      // .com.alimin.fk.pb.FkSize size = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
           ptr = ctx->ParseMessage(_internal_mutable_size(), ptr);
@@ -263,7 +274,7 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
         } else
           goto handle_unusual;
         continue;
-      // .fk_pb.FkRational rotation = 2;
+      // .com.alimin.fk.pb.FkRational rotation = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_rotation(), ptr);
@@ -271,7 +282,7 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
         } else
           goto handle_unusual;
         continue;
-      // .fk_pb.FkFloatVec3 scale = 3;
+      // .com.alimin.fk.pb.FkFloatVec3 scale = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ctx->ParseMessage(_internal_mutable_scale(), ptr);
@@ -279,7 +290,7 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
         } else
           goto handle_unusual;
         continue;
-      // .fk_pb.FkIntVec3 trans = 4;
+      // .com.alimin.fk.pb.FkIntVec3 trans = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_trans(), ptr);
@@ -292,7 +303,7 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           auto str = _internal_mutable_file();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "fk_pb.FkImageLayer.file"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "com.alimin.fk.pb.FkImageLayer.file"));
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -330,11 +341,11 @@ failure:
 
 uint8_t* FkImageLayer::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:fk_pb.FkImageLayer)
+  // @@protoc_insertion_point(serialize_to_array_start:com.alimin.fk.pb.FkImageLayer)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .fk_pb.FkSize size = 1;
+  // .com.alimin.fk.pb.FkSize size = 1;
   if (this->_internal_has_size()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -342,7 +353,7 @@ uint8_t* FkImageLayer::_InternalSerialize(
         1, _Internal::size(this), target, stream);
   }
 
-  // .fk_pb.FkRational rotation = 2;
+  // .com.alimin.fk.pb.FkRational rotation = 2;
   if (this->_internal_has_rotation()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -350,7 +361,7 @@ uint8_t* FkImageLayer::_InternalSerialize(
         2, _Internal::rotation(this), target, stream);
   }
 
-  // .fk_pb.FkFloatVec3 scale = 3;
+  // .com.alimin.fk.pb.FkFloatVec3 scale = 3;
   if (this->_internal_has_scale()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -358,7 +369,7 @@ uint8_t* FkImageLayer::_InternalSerialize(
         3, _Internal::scale(this), target, stream);
   }
 
-  // .fk_pb.FkIntVec3 trans = 4;
+  // .com.alimin.fk.pb.FkIntVec3 trans = 4;
   if (this->_internal_has_trans()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -371,7 +382,7 @@ uint8_t* FkImageLayer::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_file().data(), static_cast<int>(this->_internal_file().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "fk_pb.FkImageLayer.file");
+      "com.alimin.fk.pb.FkImageLayer.file");
     target = stream->WriteStringMaybeAliased(
         5, this->_internal_file(), target);
   }
@@ -386,12 +397,12 @@ uint8_t* FkImageLayer::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:fk_pb.FkImageLayer)
+  // @@protoc_insertion_point(serialize_to_array_end:com.alimin.fk.pb.FkImageLayer)
   return target;
 }
 
 size_t FkImageLayer::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:fk_pb.FkImageLayer)
+// @@protoc_insertion_point(message_byte_size_start:com.alimin.fk.pb.FkImageLayer)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -405,28 +416,28 @@ size_t FkImageLayer::ByteSizeLong() const {
         this->_internal_file());
   }
 
-  // .fk_pb.FkSize size = 1;
+  // .com.alimin.fk.pb.FkSize size = 1;
   if (this->_internal_has_size()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *size_);
   }
 
-  // .fk_pb.FkRational rotation = 2;
+  // .com.alimin.fk.pb.FkRational rotation = 2;
   if (this->_internal_has_rotation()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *rotation_);
   }
 
-  // .fk_pb.FkFloatVec3 scale = 3;
+  // .com.alimin.fk.pb.FkFloatVec3 scale = 3;
   if (this->_internal_has_scale()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *scale_);
   }
 
-  // .fk_pb.FkIntVec3 trans = 4;
+  // .com.alimin.fk.pb.FkIntVec3 trans = 4;
   if (this->_internal_has_trans()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -455,7 +466,7 @@ void FkImageLayer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
 
 
 void FkImageLayer::MergeFrom(const FkImageLayer& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:fk_pb.FkImageLayer)
+// @@protoc_insertion_point(class_specific_merge_from_start:com.alimin.fk.pb.FkImageLayer)
   GOOGLE_DCHECK_NE(&from, this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -464,16 +475,16 @@ void FkImageLayer::MergeFrom(const FkImageLayer& from) {
     _internal_set_file(from._internal_file());
   }
   if (from._internal_has_size()) {
-    _internal_mutable_size()->::fk_pb::FkSize::MergeFrom(from._internal_size());
+    _internal_mutable_size()->::com::alimin::fk::pb::FkSize::MergeFrom(from._internal_size());
   }
   if (from._internal_has_rotation()) {
-    _internal_mutable_rotation()->::fk_pb::FkRational::MergeFrom(from._internal_rotation());
+    _internal_mutable_rotation()->::com::alimin::fk::pb::FkRational::MergeFrom(from._internal_rotation());
   }
   if (from._internal_has_scale()) {
-    _internal_mutable_scale()->::fk_pb::FkFloatVec3::MergeFrom(from._internal_scale());
+    _internal_mutable_scale()->::com::alimin::fk::pb::FkFloatVec3::MergeFrom(from._internal_scale());
   }
   if (from._internal_has_trans()) {
-    _internal_mutable_trans()->::fk_pb::FkIntVec3::MergeFrom(from._internal_trans());
+    _internal_mutable_trans()->::com::alimin::fk::pb::FkIntVec3::MergeFrom(from._internal_trans());
   }
   if (from._internal_id() != 0) {
     _internal_set_id(from._internal_id());
@@ -482,7 +493,7 @@ void FkImageLayer::MergeFrom(const FkImageLayer& from) {
 }
 
 void FkImageLayer::CopyFrom(const FkImageLayer& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:fk_pb.FkImageLayer)
+// @@protoc_insertion_point(class_specific_copy_from_start:com.alimin.fk.pb.FkImageLayer)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -517,10 +528,13 @@ void FkImageLayer::InternalSwap(FkImageLayer* other) {
 }
 
 // @@protoc_insertion_point(namespace_scope)
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::fk_pb::FkImageLayer* Arena::CreateMaybeMessage< ::fk_pb::FkImageLayer >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::fk_pb::FkImageLayer >(arena);
+template<> PROTOBUF_NOINLINE ::com::alimin::fk::pb::FkImageLayer* Arena::CreateMaybeMessage< ::com::alimin::fk::pb::FkImageLayer >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::com::alimin::fk::pb::FkImageLayer >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

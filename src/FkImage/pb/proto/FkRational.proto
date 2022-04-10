@@ -1,5 +1,5 @@
 syntax = "proto3";
-package fk_pb;
+package com.alimin.fk.pb;
 
 message FkRational {
     int32 num = 1;

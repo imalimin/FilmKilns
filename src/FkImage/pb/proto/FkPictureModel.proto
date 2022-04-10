@@ -1,5 +1,6 @@
+// protoc  --proto_path=../../src/FkImage/pb/proto --java_out=fkandroid/src/main/java FkFloatVec3.proto FkIntVec3.proto FkRational.proto FkSize.proto FkImageLayer.proto FkPictureModel.proto
 syntax = "proto3";
-package fk_pb;
+package com.alimin.fk.pb;
 
 import "FkImageLayer.proto";
 

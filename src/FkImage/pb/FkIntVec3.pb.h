@@ -53,20 +53,29 @@ struct TableStruct_FkIntVec3_2eproto {
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkIntVec3_2eproto;
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 class FkIntVec3;
 struct FkIntVec3DefaultTypeInternal;
 extern FkIntVec3DefaultTypeInternal _FkIntVec3_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> ::fk_pb::FkIntVec3* Arena::CreateMaybeMessage<::fk_pb::FkIntVec3>(Arena*);
+template<> ::com::alimin::fk::pb::FkIntVec3* Arena::CreateMaybeMessage<::com::alimin::fk::pb::FkIntVec3>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkIntVec3 final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:fk_pb.FkIntVec3) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:com.alimin.fk.pb.FkIntVec3) */ {
  public:
   inline FkIntVec3() : FkIntVec3(nullptr) {}
   ~FkIntVec3() override;
@@ -167,7 +176,7 @@ class FkIntVec3 final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "fk_pb.FkIntVec3";
+    return "com.alimin.fk.pb.FkIntVec3";
   }
   protected:
   explicit FkIntVec3(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -218,7 +227,7 @@ class FkIntVec3 final :
   void _internal_set_z(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:fk_pb.FkIntVec3)
+  // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkIntVec3)
  private:
   class _Internal;
 
@@ -250,7 +259,7 @@ inline int32_t FkIntVec3::_internal_x() const {
   return x_;
 }
 inline int32_t FkIntVec3::x() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkIntVec3.x)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkIntVec3.x)
   return _internal_x();
 }
 inline void FkIntVec3::_internal_set_x(int32_t value) {
@@ -259,7 +268,7 @@ inline void FkIntVec3::_internal_set_x(int32_t value) {
 }
 inline void FkIntVec3::set_x(int32_t value) {
   _internal_set_x(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkIntVec3.x)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkIntVec3.x)
 }
 
 // int32 y = 2;
@@ -270,7 +279,7 @@ inline int32_t FkIntVec3::_internal_y() const {
   return y_;
 }
 inline int32_t FkIntVec3::y() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkIntVec3.y)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkIntVec3.y)
   return _internal_y();
 }
 inline void FkIntVec3::_internal_set_y(int32_t value) {
@@ -279,7 +288,7 @@ inline void FkIntVec3::_internal_set_y(int32_t value) {
 }
 inline void FkIntVec3::set_y(int32_t value) {
   _internal_set_y(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkIntVec3.y)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkIntVec3.y)
 }
 
 // int32 z = 3;
@@ -290,7 +299,7 @@ inline int32_t FkIntVec3::_internal_z() const {
   return z_;
 }
 inline int32_t FkIntVec3::z() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkIntVec3.z)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkIntVec3.z)
   return _internal_z();
 }
 inline void FkIntVec3::_internal_set_z(int32_t value) {
@@ -299,7 +308,7 @@ inline void FkIntVec3::_internal_set_z(int32_t value) {
 }
 inline void FkIntVec3::set_z(int32_t value) {
   _internal_set_z(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkIntVec3.z)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkIntVec3.z)
 }
 
 #ifdef __GNUC__
@@ -308,7 +317,10 @@ inline void FkIntVec3::set_z(int32_t value) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 
 // @@protoc_insertion_point(global_scope)
 

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package fk_pb;
+package com.alimin.fk.pb;
 
 message FkFloatVec3 {
     float x = 1;

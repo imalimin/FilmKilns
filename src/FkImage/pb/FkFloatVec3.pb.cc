@@ -16,7 +16,10 @@
 #include <google/protobuf/port_def.inc>
 
 PROTOBUF_PRAGMA_INIT_SEG
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 constexpr FkFloatVec3::FkFloatVec3(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : x_(0)
@@ -31,38 +34,41 @@ struct FkFloatVec3DefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT FkFloatVec3DefaultTypeInternal _FkFloatVec3_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_FkFloatVec3_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_FkFloatVec3_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_FkFloatVec3_2eproto = nullptr;
 
 const uint32_t TableStruct_FkFloatVec3_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkFloatVec3, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkFloatVec3, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkFloatVec3, x_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkFloatVec3, y_),
-  PROTOBUF_FIELD_OFFSET(::fk_pb::FkFloatVec3, z_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkFloatVec3, x_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkFloatVec3, y_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkFloatVec3, z_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::fk_pb::FkFloatVec3)},
+  { 0, -1, -1, sizeof(::com::alimin::fk::pb::FkFloatVec3)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::fk_pb::_FkFloatVec3_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::com::alimin::fk::pb::_FkFloatVec3_default_instance_),
 };
 
 const char descriptor_table_protodef_FkFloatVec3_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\021FkFloatVec3.proto\022\005fk_pb\".\n\013FkFloatVec"
-  "3\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030\003 \001(\002b\006prot"
-  "o3"
+  "\n\021FkFloatVec3.proto\022\020com.alimin.fk.pb\".\n"
+  "\013FkFloatVec3\022\t\n\001x\030\001 \001(\002\022\t\n\001y\030\002 \001(\002\022\t\n\001z\030"
+  "\003 \001(\002b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkFloatVec3_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkFloatVec3_2eproto = {
-  false, false, 82, descriptor_table_protodef_FkFloatVec3_2eproto, "FkFloatVec3.proto", 
+  false, false, 93, descriptor_table_protodef_FkFloatVec3_2eproto, "FkFloatVec3.proto", 
   &descriptor_table_FkFloatVec3_2eproto_once, nullptr, 0, 1,
   schemas, file_default_instances, TableStruct_FkFloatVec3_2eproto::offsets,
   file_level_metadata_FkFloatVec3_2eproto, file_level_enum_descriptors_FkFloatVec3_2eproto, file_level_service_descriptors_FkFloatVec3_2eproto,
@@ -73,7 +79,10 @@ PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable
 
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_FkFloatVec3_2eproto(&descriptor_table_FkFloatVec3_2eproto);
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
@@ -88,7 +97,7 @@ FkFloatVec3::FkFloatVec3(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
   }
-  // @@protoc_insertion_point(arena_constructor:fk_pb.FkFloatVec3)
+  // @@protoc_insertion_point(arena_constructor:com.alimin.fk.pb.FkFloatVec3)
 }
 FkFloatVec3::FkFloatVec3(const FkFloatVec3& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
@@ -96,7 +105,7 @@ FkFloatVec3::FkFloatVec3(const FkFloatVec3& from)
   ::memcpy(&x_, &from.x_,
     static_cast<size_t>(reinterpret_cast<char*>(&z_) -
     reinterpret_cast<char*>(&x_)) + sizeof(z_));
-  // @@protoc_insertion_point(copy_constructor:fk_pb.FkFloatVec3)
+  // @@protoc_insertion_point(copy_constructor:com.alimin.fk.pb.FkFloatVec3)
 }
 
 inline void FkFloatVec3::SharedCtor() {
@@ -107,7 +116,7 @@ inline void FkFloatVec3::SharedCtor() {
 }
 
 FkFloatVec3::~FkFloatVec3() {
-  // @@protoc_insertion_point(destructor:fk_pb.FkFloatVec3)
+  // @@protoc_insertion_point(destructor:com.alimin.fk.pb.FkFloatVec3)
   if (GetArenaForAllocation() != nullptr) return;
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -128,7 +137,7 @@ void FkFloatVec3::SetCachedSize(int size) const {
 }
 
 void FkFloatVec3::Clear() {
-// @@protoc_insertion_point(message_clear_start:fk_pb.FkFloatVec3)
+// @@protoc_insertion_point(message_clear_start:com.alimin.fk.pb.FkFloatVec3)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -194,7 +203,7 @@ failure:
 
 uint8_t* FkFloatVec3::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:fk_pb.FkFloatVec3)
+  // @@protoc_insertion_point(serialize_to_array_start:com.alimin.fk.pb.FkFloatVec3)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -232,12 +241,12 @@ uint8_t* FkFloatVec3::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:fk_pb.FkFloatVec3)
+  // @@protoc_insertion_point(serialize_to_array_end:com.alimin.fk.pb.FkFloatVec3)
   return target;
 }
 
 size_t FkFloatVec3::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:fk_pb.FkFloatVec3)
+// @@protoc_insertion_point(message_byte_size_start:com.alimin.fk.pb.FkFloatVec3)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -288,7 +297,7 @@ void FkFloatVec3::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message* to,
 
 
 void FkFloatVec3::MergeFrom(const FkFloatVec3& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:fk_pb.FkFloatVec3)
+// @@protoc_insertion_point(class_specific_merge_from_start:com.alimin.fk.pb.FkFloatVec3)
   GOOGLE_DCHECK_NE(&from, this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -318,7 +327,7 @@ void FkFloatVec3::MergeFrom(const FkFloatVec3& from) {
 }
 
 void FkFloatVec3::CopyFrom(const FkFloatVec3& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:fk_pb.FkFloatVec3)
+// @@protoc_insertion_point(class_specific_copy_from_start:com.alimin.fk.pb.FkFloatVec3)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -346,10 +355,13 @@ void FkFloatVec3::InternalSwap(FkFloatVec3* other) {
 }
 
 // @@protoc_insertion_point(namespace_scope)
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::fk_pb::FkFloatVec3* Arena::CreateMaybeMessage< ::fk_pb::FkFloatVec3 >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::fk_pb::FkFloatVec3 >(arena);
+template<> PROTOBUF_NOINLINE ::com::alimin::fk::pb::FkFloatVec3* Arena::CreateMaybeMessage< ::com::alimin::fk::pb::FkFloatVec3 >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::com::alimin::fk::pb::FkFloatVec3 >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

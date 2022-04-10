@@ -54,20 +54,29 @@ struct TableStruct_FkPictureModel_2eproto {
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkPictureModel_2eproto;
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 class FkPictureModel;
 struct FkPictureModelDefaultTypeInternal;
 extern FkPictureModelDefaultTypeInternal _FkPictureModel_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> ::fk_pb::FkPictureModel* Arena::CreateMaybeMessage<::fk_pb::FkPictureModel>(Arena*);
+template<> ::com::alimin::fk::pb::FkPictureModel* Arena::CreateMaybeMessage<::com::alimin::fk::pb::FkPictureModel>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkPictureModel final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:fk_pb.FkPictureModel) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:com.alimin.fk.pb.FkPictureModel) */ {
  public:
   inline FkPictureModel() : FkPictureModel(nullptr) {}
   ~FkPictureModel() override;
@@ -168,7 +177,7 @@ class FkPictureModel final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "fk_pb.FkPictureModel";
+    return "com.alimin.fk.pb.FkPictureModel";
   }
   protected:
   explicit FkPictureModel(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -191,51 +200,51 @@ class FkPictureModel final :
     kLayersFieldNumber = 2,
     kCanvasFieldNumber = 1,
   };
-  // repeated .fk_pb.FkImageLayer layers = 2;
+  // repeated .com.alimin.fk.pb.FkImageLayer layers = 2;
   int layers_size() const;
   private:
   int _internal_layers_size() const;
   public:
   void clear_layers();
-  ::fk_pb::FkImageLayer* mutable_layers(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::fk_pb::FkImageLayer >*
+  ::com::alimin::fk::pb::FkImageLayer* mutable_layers(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkImageLayer >*
       mutable_layers();
   private:
-  const ::fk_pb::FkImageLayer& _internal_layers(int index) const;
-  ::fk_pb::FkImageLayer* _internal_add_layers();
+  const ::com::alimin::fk::pb::FkImageLayer& _internal_layers(int index) const;
+  ::com::alimin::fk::pb::FkImageLayer* _internal_add_layers();
   public:
-  const ::fk_pb::FkImageLayer& layers(int index) const;
-  ::fk_pb::FkImageLayer* add_layers();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::fk_pb::FkImageLayer >&
+  const ::com::alimin::fk::pb::FkImageLayer& layers(int index) const;
+  ::com::alimin::fk::pb::FkImageLayer* add_layers();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkImageLayer >&
       layers() const;
 
-  // .fk_pb.FkImageLayer canvas = 1;
+  // .com.alimin.fk.pb.FkImageLayer canvas = 1;
   bool has_canvas() const;
   private:
   bool _internal_has_canvas() const;
   public:
   void clear_canvas();
-  const ::fk_pb::FkImageLayer& canvas() const;
-  PROTOBUF_NODISCARD ::fk_pb::FkImageLayer* release_canvas();
-  ::fk_pb::FkImageLayer* mutable_canvas();
-  void set_allocated_canvas(::fk_pb::FkImageLayer* canvas);
+  const ::com::alimin::fk::pb::FkImageLayer& canvas() const;
+  PROTOBUF_NODISCARD ::com::alimin::fk::pb::FkImageLayer* release_canvas();
+  ::com::alimin::fk::pb::FkImageLayer* mutable_canvas();
+  void set_allocated_canvas(::com::alimin::fk::pb::FkImageLayer* canvas);
   private:
-  const ::fk_pb::FkImageLayer& _internal_canvas() const;
-  ::fk_pb::FkImageLayer* _internal_mutable_canvas();
+  const ::com::alimin::fk::pb::FkImageLayer& _internal_canvas() const;
+  ::com::alimin::fk::pb::FkImageLayer* _internal_mutable_canvas();
   public:
   void unsafe_arena_set_allocated_canvas(
-      ::fk_pb::FkImageLayer* canvas);
-  ::fk_pb::FkImageLayer* unsafe_arena_release_canvas();
+      ::com::alimin::fk::pb::FkImageLayer* canvas);
+  ::com::alimin::fk::pb::FkImageLayer* unsafe_arena_release_canvas();
 
-  // @@protoc_insertion_point(class_scope:fk_pb.FkPictureModel)
+  // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkPictureModel)
  private:
   class _Internal;
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::fk_pb::FkImageLayer > layers_;
-  ::fk_pb::FkImageLayer* canvas_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkImageLayer > layers_;
+  ::com::alimin::fk::pb::FkImageLayer* canvas_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_FkPictureModel_2eproto;
 };
@@ -250,24 +259,24 @@ class FkPictureModel final :
 #endif  // __GNUC__
 // FkPictureModel
 
-// .fk_pb.FkImageLayer canvas = 1;
+// .com.alimin.fk.pb.FkImageLayer canvas = 1;
 inline bool FkPictureModel::_internal_has_canvas() const {
   return this != internal_default_instance() && canvas_ != nullptr;
 }
 inline bool FkPictureModel::has_canvas() const {
   return _internal_has_canvas();
 }
-inline const ::fk_pb::FkImageLayer& FkPictureModel::_internal_canvas() const {
-  const ::fk_pb::FkImageLayer* p = canvas_;
-  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkImageLayer&>(
-      ::fk_pb::_FkImageLayer_default_instance_);
+inline const ::com::alimin::fk::pb::FkImageLayer& FkPictureModel::_internal_canvas() const {
+  const ::com::alimin::fk::pb::FkImageLayer* p = canvas_;
+  return p != nullptr ? *p : reinterpret_cast<const ::com::alimin::fk::pb::FkImageLayer&>(
+      ::com::alimin::fk::pb::_FkImageLayer_default_instance_);
 }
-inline const ::fk_pb::FkImageLayer& FkPictureModel::canvas() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkPictureModel.canvas)
+inline const ::com::alimin::fk::pb::FkImageLayer& FkPictureModel::canvas() const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkPictureModel.canvas)
   return _internal_canvas();
 }
 inline void FkPictureModel::unsafe_arena_set_allocated_canvas(
-    ::fk_pb::FkImageLayer* canvas) {
+    ::com::alimin::fk::pb::FkImageLayer* canvas) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(canvas_);
   }
@@ -277,11 +286,11 @@ inline void FkPictureModel::unsafe_arena_set_allocated_canvas(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkPictureModel.canvas)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:com.alimin.fk.pb.FkPictureModel.canvas)
 }
-inline ::fk_pb::FkImageLayer* FkPictureModel::release_canvas() {
+inline ::com::alimin::fk::pb::FkImageLayer* FkPictureModel::release_canvas() {
   
-  ::fk_pb::FkImageLayer* temp = canvas_;
+  ::com::alimin::fk::pb::FkImageLayer* temp = canvas_;
   canvas_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -294,27 +303,27 @@ inline ::fk_pb::FkImageLayer* FkPictureModel::release_canvas() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::fk_pb::FkImageLayer* FkPictureModel::unsafe_arena_release_canvas() {
-  // @@protoc_insertion_point(field_release:fk_pb.FkPictureModel.canvas)
+inline ::com::alimin::fk::pb::FkImageLayer* FkPictureModel::unsafe_arena_release_canvas() {
+  // @@protoc_insertion_point(field_release:com.alimin.fk.pb.FkPictureModel.canvas)
   
-  ::fk_pb::FkImageLayer* temp = canvas_;
+  ::com::alimin::fk::pb::FkImageLayer* temp = canvas_;
   canvas_ = nullptr;
   return temp;
 }
-inline ::fk_pb::FkImageLayer* FkPictureModel::_internal_mutable_canvas() {
+inline ::com::alimin::fk::pb::FkImageLayer* FkPictureModel::_internal_mutable_canvas() {
   
   if (canvas_ == nullptr) {
-    auto* p = CreateMaybeMessage<::fk_pb::FkImageLayer>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::com::alimin::fk::pb::FkImageLayer>(GetArenaForAllocation());
     canvas_ = p;
   }
   return canvas_;
 }
-inline ::fk_pb::FkImageLayer* FkPictureModel::mutable_canvas() {
-  ::fk_pb::FkImageLayer* _msg = _internal_mutable_canvas();
-  // @@protoc_insertion_point(field_mutable:fk_pb.FkPictureModel.canvas)
+inline ::com::alimin::fk::pb::FkImageLayer* FkPictureModel::mutable_canvas() {
+  ::com::alimin::fk::pb::FkImageLayer* _msg = _internal_mutable_canvas();
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkPictureModel.canvas)
   return _msg;
 }
-inline void FkPictureModel::set_allocated_canvas(::fk_pb::FkImageLayer* canvas) {
+inline void FkPictureModel::set_allocated_canvas(::com::alimin::fk::pb::FkImageLayer* canvas) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(canvas_);
@@ -333,43 +342,43 @@ inline void FkPictureModel::set_allocated_canvas(::fk_pb::FkImageLayer* canvas) 
     
   }
   canvas_ = canvas;
-  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkPictureModel.canvas)
+  // @@protoc_insertion_point(field_set_allocated:com.alimin.fk.pb.FkPictureModel.canvas)
 }
 
-// repeated .fk_pb.FkImageLayer layers = 2;
+// repeated .com.alimin.fk.pb.FkImageLayer layers = 2;
 inline int FkPictureModel::_internal_layers_size() const {
   return layers_.size();
 }
 inline int FkPictureModel::layers_size() const {
   return _internal_layers_size();
 }
-inline ::fk_pb::FkImageLayer* FkPictureModel::mutable_layers(int index) {
-  // @@protoc_insertion_point(field_mutable:fk_pb.FkPictureModel.layers)
+inline ::com::alimin::fk::pb::FkImageLayer* FkPictureModel::mutable_layers(int index) {
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkPictureModel.layers)
   return layers_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::fk_pb::FkImageLayer >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkImageLayer >*
 FkPictureModel::mutable_layers() {
-  // @@protoc_insertion_point(field_mutable_list:fk_pb.FkPictureModel.layers)
+  // @@protoc_insertion_point(field_mutable_list:com.alimin.fk.pb.FkPictureModel.layers)
   return &layers_;
 }
-inline const ::fk_pb::FkImageLayer& FkPictureModel::_internal_layers(int index) const {
+inline const ::com::alimin::fk::pb::FkImageLayer& FkPictureModel::_internal_layers(int index) const {
   return layers_.Get(index);
 }
-inline const ::fk_pb::FkImageLayer& FkPictureModel::layers(int index) const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkPictureModel.layers)
+inline const ::com::alimin::fk::pb::FkImageLayer& FkPictureModel::layers(int index) const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkPictureModel.layers)
   return _internal_layers(index);
 }
-inline ::fk_pb::FkImageLayer* FkPictureModel::_internal_add_layers() {
+inline ::com::alimin::fk::pb::FkImageLayer* FkPictureModel::_internal_add_layers() {
   return layers_.Add();
 }
-inline ::fk_pb::FkImageLayer* FkPictureModel::add_layers() {
-  ::fk_pb::FkImageLayer* _add = _internal_add_layers();
-  // @@protoc_insertion_point(field_add:fk_pb.FkPictureModel.layers)
+inline ::com::alimin::fk::pb::FkImageLayer* FkPictureModel::add_layers() {
+  ::com::alimin::fk::pb::FkImageLayer* _add = _internal_add_layers();
+  // @@protoc_insertion_point(field_add:com.alimin.fk.pb.FkPictureModel.layers)
   return _add;
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::fk_pb::FkImageLayer >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkImageLayer >&
 FkPictureModel::layers() const {
-  // @@protoc_insertion_point(field_list:fk_pb.FkPictureModel.layers)
+  // @@protoc_insertion_point(field_list:com.alimin.fk.pb.FkPictureModel.layers)
   return layers_;
 }
 
@@ -379,7 +388,10 @@ FkPictureModel::layers() const {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 
 // @@protoc_insertion_point(global_scope)
 

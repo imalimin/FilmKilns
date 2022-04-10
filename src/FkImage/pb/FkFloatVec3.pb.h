@@ -53,20 +53,29 @@ struct TableStruct_FkFloatVec3_2eproto {
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkFloatVec3_2eproto;
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 class FkFloatVec3;
 struct FkFloatVec3DefaultTypeInternal;
 extern FkFloatVec3DefaultTypeInternal _FkFloatVec3_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> ::fk_pb::FkFloatVec3* Arena::CreateMaybeMessage<::fk_pb::FkFloatVec3>(Arena*);
+template<> ::com::alimin::fk::pb::FkFloatVec3* Arena::CreateMaybeMessage<::com::alimin::fk::pb::FkFloatVec3>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkFloatVec3 final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:fk_pb.FkFloatVec3) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:com.alimin.fk.pb.FkFloatVec3) */ {
  public:
   inline FkFloatVec3() : FkFloatVec3(nullptr) {}
   ~FkFloatVec3() override;
@@ -167,7 +176,7 @@ class FkFloatVec3 final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "fk_pb.FkFloatVec3";
+    return "com.alimin.fk.pb.FkFloatVec3";
   }
   protected:
   explicit FkFloatVec3(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -218,7 +227,7 @@ class FkFloatVec3 final :
   void _internal_set_z(float value);
   public:
 
-  // @@protoc_insertion_point(class_scope:fk_pb.FkFloatVec3)
+  // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkFloatVec3)
  private:
   class _Internal;
 
@@ -250,7 +259,7 @@ inline float FkFloatVec3::_internal_x() const {
   return x_;
 }
 inline float FkFloatVec3::x() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkFloatVec3.x)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkFloatVec3.x)
   return _internal_x();
 }
 inline void FkFloatVec3::_internal_set_x(float value) {
@@ -259,7 +268,7 @@ inline void FkFloatVec3::_internal_set_x(float value) {
 }
 inline void FkFloatVec3::set_x(float value) {
   _internal_set_x(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkFloatVec3.x)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkFloatVec3.x)
 }
 
 // float y = 2;
@@ -270,7 +279,7 @@ inline float FkFloatVec3::_internal_y() const {
   return y_;
 }
 inline float FkFloatVec3::y() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkFloatVec3.y)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkFloatVec3.y)
   return _internal_y();
 }
 inline void FkFloatVec3::_internal_set_y(float value) {
@@ -279,7 +288,7 @@ inline void FkFloatVec3::_internal_set_y(float value) {
 }
 inline void FkFloatVec3::set_y(float value) {
   _internal_set_y(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkFloatVec3.y)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkFloatVec3.y)
 }
 
 // float z = 3;
@@ -290,7 +299,7 @@ inline float FkFloatVec3::_internal_z() const {
   return z_;
 }
 inline float FkFloatVec3::z() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkFloatVec3.z)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkFloatVec3.z)
   return _internal_z();
 }
 inline void FkFloatVec3::_internal_set_z(float value) {
@@ -299,7 +308,7 @@ inline void FkFloatVec3::_internal_set_z(float value) {
 }
 inline void FkFloatVec3::set_z(float value) {
   _internal_set_z(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkFloatVec3.z)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkFloatVec3.z)
 }
 
 #ifdef __GNUC__
@@ -308,7 +317,10 @@ inline void FkFloatVec3::set_z(float value) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 
 // @@protoc_insertion_point(global_scope)
 

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package fk_pb;
+package com.alimin.fk.pb;
 
 import "FkSize.proto";
 import "FkRational.proto";

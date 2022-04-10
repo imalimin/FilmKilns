@@ -57,20 +57,29 @@ struct TableStruct_FkImageLayer_2eproto {
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkImageLayer_2eproto;
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 class FkImageLayer;
 struct FkImageLayerDefaultTypeInternal;
 extern FkImageLayerDefaultTypeInternal _FkImageLayer_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> ::fk_pb::FkImageLayer* Arena::CreateMaybeMessage<::fk_pb::FkImageLayer>(Arena*);
+template<> ::com::alimin::fk::pb::FkImageLayer* Arena::CreateMaybeMessage<::com::alimin::fk::pb::FkImageLayer>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkImageLayer final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:fk_pb.FkImageLayer) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:com.alimin.fk.pb.FkImageLayer) */ {
  public:
   inline FkImageLayer() : FkImageLayer(nullptr) {}
   ~FkImageLayer() override;
@@ -171,7 +180,7 @@ class FkImageLayer final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "fk_pb.FkImageLayer";
+    return "com.alimin.fk.pb.FkImageLayer";
   }
   protected:
   explicit FkImageLayer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -212,77 +221,77 @@ class FkImageLayer final :
   std::string* _internal_mutable_file();
   public:
 
-  // .fk_pb.FkSize size = 1;
+  // .com.alimin.fk.pb.FkSize size = 1;
   bool has_size() const;
   private:
   bool _internal_has_size() const;
   public:
   void clear_size();
-  const ::fk_pb::FkSize& size() const;
-  PROTOBUF_NODISCARD ::fk_pb::FkSize* release_size();
-  ::fk_pb::FkSize* mutable_size();
-  void set_allocated_size(::fk_pb::FkSize* size);
+  const ::com::alimin::fk::pb::FkSize& size() const;
+  PROTOBUF_NODISCARD ::com::alimin::fk::pb::FkSize* release_size();
+  ::com::alimin::fk::pb::FkSize* mutable_size();
+  void set_allocated_size(::com::alimin::fk::pb::FkSize* size);
   private:
-  const ::fk_pb::FkSize& _internal_size() const;
-  ::fk_pb::FkSize* _internal_mutable_size();
+  const ::com::alimin::fk::pb::FkSize& _internal_size() const;
+  ::com::alimin::fk::pb::FkSize* _internal_mutable_size();
   public:
   void unsafe_arena_set_allocated_size(
-      ::fk_pb::FkSize* size);
-  ::fk_pb::FkSize* unsafe_arena_release_size();
+      ::com::alimin::fk::pb::FkSize* size);
+  ::com::alimin::fk::pb::FkSize* unsafe_arena_release_size();
 
-  // .fk_pb.FkRational rotation = 2;
+  // .com.alimin.fk.pb.FkRational rotation = 2;
   bool has_rotation() const;
   private:
   bool _internal_has_rotation() const;
   public:
   void clear_rotation();
-  const ::fk_pb::FkRational& rotation() const;
-  PROTOBUF_NODISCARD ::fk_pb::FkRational* release_rotation();
-  ::fk_pb::FkRational* mutable_rotation();
-  void set_allocated_rotation(::fk_pb::FkRational* rotation);
+  const ::com::alimin::fk::pb::FkRational& rotation() const;
+  PROTOBUF_NODISCARD ::com::alimin::fk::pb::FkRational* release_rotation();
+  ::com::alimin::fk::pb::FkRational* mutable_rotation();
+  void set_allocated_rotation(::com::alimin::fk::pb::FkRational* rotation);
   private:
-  const ::fk_pb::FkRational& _internal_rotation() const;
-  ::fk_pb::FkRational* _internal_mutable_rotation();
+  const ::com::alimin::fk::pb::FkRational& _internal_rotation() const;
+  ::com::alimin::fk::pb::FkRational* _internal_mutable_rotation();
   public:
   void unsafe_arena_set_allocated_rotation(
-      ::fk_pb::FkRational* rotation);
-  ::fk_pb::FkRational* unsafe_arena_release_rotation();
+      ::com::alimin::fk::pb::FkRational* rotation);
+  ::com::alimin::fk::pb::FkRational* unsafe_arena_release_rotation();
 
-  // .fk_pb.FkFloatVec3 scale = 3;
+  // .com.alimin.fk.pb.FkFloatVec3 scale = 3;
   bool has_scale() const;
   private:
   bool _internal_has_scale() const;
   public:
   void clear_scale();
-  const ::fk_pb::FkFloatVec3& scale() const;
-  PROTOBUF_NODISCARD ::fk_pb::FkFloatVec3* release_scale();
-  ::fk_pb::FkFloatVec3* mutable_scale();
-  void set_allocated_scale(::fk_pb::FkFloatVec3* scale);
+  const ::com::alimin::fk::pb::FkFloatVec3& scale() const;
+  PROTOBUF_NODISCARD ::com::alimin::fk::pb::FkFloatVec3* release_scale();
+  ::com::alimin::fk::pb::FkFloatVec3* mutable_scale();
+  void set_allocated_scale(::com::alimin::fk::pb::FkFloatVec3* scale);
   private:
-  const ::fk_pb::FkFloatVec3& _internal_scale() const;
-  ::fk_pb::FkFloatVec3* _internal_mutable_scale();
+  const ::com::alimin::fk::pb::FkFloatVec3& _internal_scale() const;
+  ::com::alimin::fk::pb::FkFloatVec3* _internal_mutable_scale();
   public:
   void unsafe_arena_set_allocated_scale(
-      ::fk_pb::FkFloatVec3* scale);
-  ::fk_pb::FkFloatVec3* unsafe_arena_release_scale();
+      ::com::alimin::fk::pb::FkFloatVec3* scale);
+  ::com::alimin::fk::pb::FkFloatVec3* unsafe_arena_release_scale();
 
-  // .fk_pb.FkIntVec3 trans = 4;
+  // .com.alimin.fk.pb.FkIntVec3 trans = 4;
   bool has_trans() const;
   private:
   bool _internal_has_trans() const;
   public:
   void clear_trans();
-  const ::fk_pb::FkIntVec3& trans() const;
-  PROTOBUF_NODISCARD ::fk_pb::FkIntVec3* release_trans();
-  ::fk_pb::FkIntVec3* mutable_trans();
-  void set_allocated_trans(::fk_pb::FkIntVec3* trans);
+  const ::com::alimin::fk::pb::FkIntVec3& trans() const;
+  PROTOBUF_NODISCARD ::com::alimin::fk::pb::FkIntVec3* release_trans();
+  ::com::alimin::fk::pb::FkIntVec3* mutable_trans();
+  void set_allocated_trans(::com::alimin::fk::pb::FkIntVec3* trans);
   private:
-  const ::fk_pb::FkIntVec3& _internal_trans() const;
-  ::fk_pb::FkIntVec3* _internal_mutable_trans();
+  const ::com::alimin::fk::pb::FkIntVec3& _internal_trans() const;
+  ::com::alimin::fk::pb::FkIntVec3* _internal_mutable_trans();
   public:
   void unsafe_arena_set_allocated_trans(
-      ::fk_pb::FkIntVec3* trans);
-  ::fk_pb::FkIntVec3* unsafe_arena_release_trans();
+      ::com::alimin::fk::pb::FkIntVec3* trans);
+  ::com::alimin::fk::pb::FkIntVec3* unsafe_arena_release_trans();
 
   // int32 id = 6;
   void clear_id();
@@ -293,7 +302,7 @@ class FkImageLayer final :
   void _internal_set_id(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:fk_pb.FkImageLayer)
+  // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkImageLayer)
  private:
   class _Internal;
 
@@ -301,10 +310,10 @@ class FkImageLayer final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_;
-  ::fk_pb::FkSize* size_;
-  ::fk_pb::FkRational* rotation_;
-  ::fk_pb::FkFloatVec3* scale_;
-  ::fk_pb::FkIntVec3* trans_;
+  ::com::alimin::fk::pb::FkSize* size_;
+  ::com::alimin::fk::pb::FkRational* rotation_;
+  ::com::alimin::fk::pb::FkFloatVec3* scale_;
+  ::com::alimin::fk::pb::FkIntVec3* trans_;
   int32_t id_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_FkImageLayer_2eproto;
@@ -320,24 +329,24 @@ class FkImageLayer final :
 #endif  // __GNUC__
 // FkImageLayer
 
-// .fk_pb.FkSize size = 1;
+// .com.alimin.fk.pb.FkSize size = 1;
 inline bool FkImageLayer::_internal_has_size() const {
   return this != internal_default_instance() && size_ != nullptr;
 }
 inline bool FkImageLayer::has_size() const {
   return _internal_has_size();
 }
-inline const ::fk_pb::FkSize& FkImageLayer::_internal_size() const {
-  const ::fk_pb::FkSize* p = size_;
-  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkSize&>(
-      ::fk_pb::_FkSize_default_instance_);
+inline const ::com::alimin::fk::pb::FkSize& FkImageLayer::_internal_size() const {
+  const ::com::alimin::fk::pb::FkSize* p = size_;
+  return p != nullptr ? *p : reinterpret_cast<const ::com::alimin::fk::pb::FkSize&>(
+      ::com::alimin::fk::pb::_FkSize_default_instance_);
 }
-inline const ::fk_pb::FkSize& FkImageLayer::size() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.size)
+inline const ::com::alimin::fk::pb::FkSize& FkImageLayer::size() const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.size)
   return _internal_size();
 }
 inline void FkImageLayer::unsafe_arena_set_allocated_size(
-    ::fk_pb::FkSize* size) {
+    ::com::alimin::fk::pb::FkSize* size) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(size_);
   }
@@ -347,11 +356,11 @@ inline void FkImageLayer::unsafe_arena_set_allocated_size(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkImageLayer.size)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:com.alimin.fk.pb.FkImageLayer.size)
 }
-inline ::fk_pb::FkSize* FkImageLayer::release_size() {
+inline ::com::alimin::fk::pb::FkSize* FkImageLayer::release_size() {
   
-  ::fk_pb::FkSize* temp = size_;
+  ::com::alimin::fk::pb::FkSize* temp = size_;
   size_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -364,27 +373,27 @@ inline ::fk_pb::FkSize* FkImageLayer::release_size() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::fk_pb::FkSize* FkImageLayer::unsafe_arena_release_size() {
-  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.size)
+inline ::com::alimin::fk::pb::FkSize* FkImageLayer::unsafe_arena_release_size() {
+  // @@protoc_insertion_point(field_release:com.alimin.fk.pb.FkImageLayer.size)
   
-  ::fk_pb::FkSize* temp = size_;
+  ::com::alimin::fk::pb::FkSize* temp = size_;
   size_ = nullptr;
   return temp;
 }
-inline ::fk_pb::FkSize* FkImageLayer::_internal_mutable_size() {
+inline ::com::alimin::fk::pb::FkSize* FkImageLayer::_internal_mutable_size() {
   
   if (size_ == nullptr) {
-    auto* p = CreateMaybeMessage<::fk_pb::FkSize>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::com::alimin::fk::pb::FkSize>(GetArenaForAllocation());
     size_ = p;
   }
   return size_;
 }
-inline ::fk_pb::FkSize* FkImageLayer::mutable_size() {
-  ::fk_pb::FkSize* _msg = _internal_mutable_size();
-  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.size)
+inline ::com::alimin::fk::pb::FkSize* FkImageLayer::mutable_size() {
+  ::com::alimin::fk::pb::FkSize* _msg = _internal_mutable_size();
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkImageLayer.size)
   return _msg;
 }
-inline void FkImageLayer::set_allocated_size(::fk_pb::FkSize* size) {
+inline void FkImageLayer::set_allocated_size(::com::alimin::fk::pb::FkSize* size) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(size_);
@@ -403,27 +412,27 @@ inline void FkImageLayer::set_allocated_size(::fk_pb::FkSize* size) {
     
   }
   size_ = size;
-  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.size)
+  // @@protoc_insertion_point(field_set_allocated:com.alimin.fk.pb.FkImageLayer.size)
 }
 
-// .fk_pb.FkRational rotation = 2;
+// .com.alimin.fk.pb.FkRational rotation = 2;
 inline bool FkImageLayer::_internal_has_rotation() const {
   return this != internal_default_instance() && rotation_ != nullptr;
 }
 inline bool FkImageLayer::has_rotation() const {
   return _internal_has_rotation();
 }
-inline const ::fk_pb::FkRational& FkImageLayer::_internal_rotation() const {
-  const ::fk_pb::FkRational* p = rotation_;
-  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkRational&>(
-      ::fk_pb::_FkRational_default_instance_);
+inline const ::com::alimin::fk::pb::FkRational& FkImageLayer::_internal_rotation() const {
+  const ::com::alimin::fk::pb::FkRational* p = rotation_;
+  return p != nullptr ? *p : reinterpret_cast<const ::com::alimin::fk::pb::FkRational&>(
+      ::com::alimin::fk::pb::_FkRational_default_instance_);
 }
-inline const ::fk_pb::FkRational& FkImageLayer::rotation() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.rotation)
+inline const ::com::alimin::fk::pb::FkRational& FkImageLayer::rotation() const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.rotation)
   return _internal_rotation();
 }
 inline void FkImageLayer::unsafe_arena_set_allocated_rotation(
-    ::fk_pb::FkRational* rotation) {
+    ::com::alimin::fk::pb::FkRational* rotation) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(rotation_);
   }
@@ -433,11 +442,11 @@ inline void FkImageLayer::unsafe_arena_set_allocated_rotation(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkImageLayer.rotation)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:com.alimin.fk.pb.FkImageLayer.rotation)
 }
-inline ::fk_pb::FkRational* FkImageLayer::release_rotation() {
+inline ::com::alimin::fk::pb::FkRational* FkImageLayer::release_rotation() {
   
-  ::fk_pb::FkRational* temp = rotation_;
+  ::com::alimin::fk::pb::FkRational* temp = rotation_;
   rotation_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -450,27 +459,27 @@ inline ::fk_pb::FkRational* FkImageLayer::release_rotation() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::fk_pb::FkRational* FkImageLayer::unsafe_arena_release_rotation() {
-  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.rotation)
+inline ::com::alimin::fk::pb::FkRational* FkImageLayer::unsafe_arena_release_rotation() {
+  // @@protoc_insertion_point(field_release:com.alimin.fk.pb.FkImageLayer.rotation)
   
-  ::fk_pb::FkRational* temp = rotation_;
+  ::com::alimin::fk::pb::FkRational* temp = rotation_;
   rotation_ = nullptr;
   return temp;
 }
-inline ::fk_pb::FkRational* FkImageLayer::_internal_mutable_rotation() {
+inline ::com::alimin::fk::pb::FkRational* FkImageLayer::_internal_mutable_rotation() {
   
   if (rotation_ == nullptr) {
-    auto* p = CreateMaybeMessage<::fk_pb::FkRational>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::com::alimin::fk::pb::FkRational>(GetArenaForAllocation());
     rotation_ = p;
   }
   return rotation_;
 }
-inline ::fk_pb::FkRational* FkImageLayer::mutable_rotation() {
-  ::fk_pb::FkRational* _msg = _internal_mutable_rotation();
-  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.rotation)
+inline ::com::alimin::fk::pb::FkRational* FkImageLayer::mutable_rotation() {
+  ::com::alimin::fk::pb::FkRational* _msg = _internal_mutable_rotation();
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkImageLayer.rotation)
   return _msg;
 }
-inline void FkImageLayer::set_allocated_rotation(::fk_pb::FkRational* rotation) {
+inline void FkImageLayer::set_allocated_rotation(::com::alimin::fk::pb::FkRational* rotation) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(rotation_);
@@ -489,27 +498,27 @@ inline void FkImageLayer::set_allocated_rotation(::fk_pb::FkRational* rotation) 
     
   }
   rotation_ = rotation;
-  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.rotation)
+  // @@protoc_insertion_point(field_set_allocated:com.alimin.fk.pb.FkImageLayer.rotation)
 }
 
-// .fk_pb.FkFloatVec3 scale = 3;
+// .com.alimin.fk.pb.FkFloatVec3 scale = 3;
 inline bool FkImageLayer::_internal_has_scale() const {
   return this != internal_default_instance() && scale_ != nullptr;
 }
 inline bool FkImageLayer::has_scale() const {
   return _internal_has_scale();
 }
-inline const ::fk_pb::FkFloatVec3& FkImageLayer::_internal_scale() const {
-  const ::fk_pb::FkFloatVec3* p = scale_;
-  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkFloatVec3&>(
-      ::fk_pb::_FkFloatVec3_default_instance_);
+inline const ::com::alimin::fk::pb::FkFloatVec3& FkImageLayer::_internal_scale() const {
+  const ::com::alimin::fk::pb::FkFloatVec3* p = scale_;
+  return p != nullptr ? *p : reinterpret_cast<const ::com::alimin::fk::pb::FkFloatVec3&>(
+      ::com::alimin::fk::pb::_FkFloatVec3_default_instance_);
 }
-inline const ::fk_pb::FkFloatVec3& FkImageLayer::scale() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.scale)
+inline const ::com::alimin::fk::pb::FkFloatVec3& FkImageLayer::scale() const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.scale)
   return _internal_scale();
 }
 inline void FkImageLayer::unsafe_arena_set_allocated_scale(
-    ::fk_pb::FkFloatVec3* scale) {
+    ::com::alimin::fk::pb::FkFloatVec3* scale) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(scale_);
   }
@@ -519,11 +528,11 @@ inline void FkImageLayer::unsafe_arena_set_allocated_scale(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkImageLayer.scale)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:com.alimin.fk.pb.FkImageLayer.scale)
 }
-inline ::fk_pb::FkFloatVec3* FkImageLayer::release_scale() {
+inline ::com::alimin::fk::pb::FkFloatVec3* FkImageLayer::release_scale() {
   
-  ::fk_pb::FkFloatVec3* temp = scale_;
+  ::com::alimin::fk::pb::FkFloatVec3* temp = scale_;
   scale_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -536,27 +545,27 @@ inline ::fk_pb::FkFloatVec3* FkImageLayer::release_scale() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::fk_pb::FkFloatVec3* FkImageLayer::unsafe_arena_release_scale() {
-  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.scale)
+inline ::com::alimin::fk::pb::FkFloatVec3* FkImageLayer::unsafe_arena_release_scale() {
+  // @@protoc_insertion_point(field_release:com.alimin.fk.pb.FkImageLayer.scale)
   
-  ::fk_pb::FkFloatVec3* temp = scale_;
+  ::com::alimin::fk::pb::FkFloatVec3* temp = scale_;
   scale_ = nullptr;
   return temp;
 }
-inline ::fk_pb::FkFloatVec3* FkImageLayer::_internal_mutable_scale() {
+inline ::com::alimin::fk::pb::FkFloatVec3* FkImageLayer::_internal_mutable_scale() {
   
   if (scale_ == nullptr) {
-    auto* p = CreateMaybeMessage<::fk_pb::FkFloatVec3>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::com::alimin::fk::pb::FkFloatVec3>(GetArenaForAllocation());
     scale_ = p;
   }
   return scale_;
 }
-inline ::fk_pb::FkFloatVec3* FkImageLayer::mutable_scale() {
-  ::fk_pb::FkFloatVec3* _msg = _internal_mutable_scale();
-  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.scale)
+inline ::com::alimin::fk::pb::FkFloatVec3* FkImageLayer::mutable_scale() {
+  ::com::alimin::fk::pb::FkFloatVec3* _msg = _internal_mutable_scale();
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkImageLayer.scale)
   return _msg;
 }
-inline void FkImageLayer::set_allocated_scale(::fk_pb::FkFloatVec3* scale) {
+inline void FkImageLayer::set_allocated_scale(::com::alimin::fk::pb::FkFloatVec3* scale) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(scale_);
@@ -575,27 +584,27 @@ inline void FkImageLayer::set_allocated_scale(::fk_pb::FkFloatVec3* scale) {
     
   }
   scale_ = scale;
-  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.scale)
+  // @@protoc_insertion_point(field_set_allocated:com.alimin.fk.pb.FkImageLayer.scale)
 }
 
-// .fk_pb.FkIntVec3 trans = 4;
+// .com.alimin.fk.pb.FkIntVec3 trans = 4;
 inline bool FkImageLayer::_internal_has_trans() const {
   return this != internal_default_instance() && trans_ != nullptr;
 }
 inline bool FkImageLayer::has_trans() const {
   return _internal_has_trans();
 }
-inline const ::fk_pb::FkIntVec3& FkImageLayer::_internal_trans() const {
-  const ::fk_pb::FkIntVec3* p = trans_;
-  return p != nullptr ? *p : reinterpret_cast<const ::fk_pb::FkIntVec3&>(
-      ::fk_pb::_FkIntVec3_default_instance_);
+inline const ::com::alimin::fk::pb::FkIntVec3& FkImageLayer::_internal_trans() const {
+  const ::com::alimin::fk::pb::FkIntVec3* p = trans_;
+  return p != nullptr ? *p : reinterpret_cast<const ::com::alimin::fk::pb::FkIntVec3&>(
+      ::com::alimin::fk::pb::_FkIntVec3_default_instance_);
 }
-inline const ::fk_pb::FkIntVec3& FkImageLayer::trans() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.trans)
+inline const ::com::alimin::fk::pb::FkIntVec3& FkImageLayer::trans() const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.trans)
   return _internal_trans();
 }
 inline void FkImageLayer::unsafe_arena_set_allocated_trans(
-    ::fk_pb::FkIntVec3* trans) {
+    ::com::alimin::fk::pb::FkIntVec3* trans) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans_);
   }
@@ -605,11 +614,11 @@ inline void FkImageLayer::unsafe_arena_set_allocated_trans(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:fk_pb.FkImageLayer.trans)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:com.alimin.fk.pb.FkImageLayer.trans)
 }
-inline ::fk_pb::FkIntVec3* FkImageLayer::release_trans() {
+inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::release_trans() {
   
-  ::fk_pb::FkIntVec3* temp = trans_;
+  ::com::alimin::fk::pb::FkIntVec3* temp = trans_;
   trans_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -622,27 +631,27 @@ inline ::fk_pb::FkIntVec3* FkImageLayer::release_trans() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::fk_pb::FkIntVec3* FkImageLayer::unsafe_arena_release_trans() {
-  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.trans)
+inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::unsafe_arena_release_trans() {
+  // @@protoc_insertion_point(field_release:com.alimin.fk.pb.FkImageLayer.trans)
   
-  ::fk_pb::FkIntVec3* temp = trans_;
+  ::com::alimin::fk::pb::FkIntVec3* temp = trans_;
   trans_ = nullptr;
   return temp;
 }
-inline ::fk_pb::FkIntVec3* FkImageLayer::_internal_mutable_trans() {
+inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::_internal_mutable_trans() {
   
   if (trans_ == nullptr) {
-    auto* p = CreateMaybeMessage<::fk_pb::FkIntVec3>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::com::alimin::fk::pb::FkIntVec3>(GetArenaForAllocation());
     trans_ = p;
   }
   return trans_;
 }
-inline ::fk_pb::FkIntVec3* FkImageLayer::mutable_trans() {
-  ::fk_pb::FkIntVec3* _msg = _internal_mutable_trans();
-  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.trans)
+inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::mutable_trans() {
+  ::com::alimin::fk::pb::FkIntVec3* _msg = _internal_mutable_trans();
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkImageLayer.trans)
   return _msg;
 }
-inline void FkImageLayer::set_allocated_trans(::fk_pb::FkIntVec3* trans) {
+inline void FkImageLayer::set_allocated_trans(::com::alimin::fk::pb::FkIntVec3* trans) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans_);
@@ -661,7 +670,7 @@ inline void FkImageLayer::set_allocated_trans(::fk_pb::FkIntVec3* trans) {
     
   }
   trans_ = trans;
-  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.trans)
+  // @@protoc_insertion_point(field_set_allocated:com.alimin.fk.pb.FkImageLayer.trans)
 }
 
 // string file = 5;
@@ -669,7 +678,7 @@ inline void FkImageLayer::clear_file() {
   file_.ClearToEmpty();
 }
 inline const std::string& FkImageLayer::file() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.file)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.file)
   return _internal_file();
 }
 template <typename ArgT0, typename... ArgT>
@@ -677,11 +686,11 @@ inline PROTOBUF_ALWAYS_INLINE
 void FkImageLayer::set_file(ArgT0&& arg0, ArgT... args) {
  
  file_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:fk_pb.FkImageLayer.file)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkImageLayer.file)
 }
 inline std::string* FkImageLayer::mutable_file() {
   std::string* _s = _internal_mutable_file();
-  // @@protoc_insertion_point(field_mutable:fk_pb.FkImageLayer.file)
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkImageLayer.file)
   return _s;
 }
 inline const std::string& FkImageLayer::_internal_file() const {
@@ -696,7 +705,7 @@ inline std::string* FkImageLayer::_internal_mutable_file() {
   return file_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
 }
 inline std::string* FkImageLayer::release_file() {
-  // @@protoc_insertion_point(field_release:fk_pb.FkImageLayer.file)
+  // @@protoc_insertion_point(field_release:com.alimin.fk.pb.FkImageLayer.file)
   return file_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
 }
 inline void FkImageLayer::set_allocated_file(std::string* file) {
@@ -712,7 +721,7 @@ inline void FkImageLayer::set_allocated_file(std::string* file) {
     file_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), "", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:fk_pb.FkImageLayer.file)
+  // @@protoc_insertion_point(field_set_allocated:com.alimin.fk.pb.FkImageLayer.file)
 }
 
 // int32 id = 6;
@@ -723,7 +732,7 @@ inline int32_t FkImageLayer::_internal_id() const {
   return id_;
 }
 inline int32_t FkImageLayer::id() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkImageLayer.id)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.id)
   return _internal_id();
 }
 inline void FkImageLayer::_internal_set_id(int32_t value) {
@@ -732,7 +741,7 @@ inline void FkImageLayer::_internal_set_id(int32_t value) {
 }
 inline void FkImageLayer::set_id(int32_t value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkImageLayer.id)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkImageLayer.id)
 }
 
 #ifdef __GNUC__
@@ -741,7 +750,10 @@ inline void FkImageLayer::set_id(int32_t value) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 
 // @@protoc_insertion_point(global_scope)
 

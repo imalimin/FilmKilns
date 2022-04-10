@@ -53,20 +53,29 @@ struct TableStruct_FkSize_2eproto {
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkSize_2eproto;
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 class FkSize;
 struct FkSizeDefaultTypeInternal;
 extern FkSizeDefaultTypeInternal _FkSize_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> ::fk_pb::FkSize* Arena::CreateMaybeMessage<::fk_pb::FkSize>(Arena*);
+template<> ::com::alimin::fk::pb::FkSize* Arena::CreateMaybeMessage<::com::alimin::fk::pb::FkSize>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkSize final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:fk_pb.FkSize) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:com.alimin.fk.pb.FkSize) */ {
  public:
   inline FkSize() : FkSize(nullptr) {}
   ~FkSize() override;
@@ -167,7 +176,7 @@ class FkSize final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "fk_pb.FkSize";
+    return "com.alimin.fk.pb.FkSize";
   }
   protected:
   explicit FkSize(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -208,7 +217,7 @@ class FkSize final :
   void _internal_set_height(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:fk_pb.FkSize)
+  // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkSize)
  private:
   class _Internal;
 
@@ -239,7 +248,7 @@ inline int32_t FkSize::_internal_width() const {
   return width_;
 }
 inline int32_t FkSize::width() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkSize.width)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkSize.width)
   return _internal_width();
 }
 inline void FkSize::_internal_set_width(int32_t value) {
@@ -248,7 +257,7 @@ inline void FkSize::_internal_set_width(int32_t value) {
 }
 inline void FkSize::set_width(int32_t value) {
   _internal_set_width(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkSize.width)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkSize.width)
 }
 
 // int32 height = 2;
@@ -259,7 +268,7 @@ inline int32_t FkSize::_internal_height() const {
   return height_;
 }
 inline int32_t FkSize::height() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkSize.height)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkSize.height)
   return _internal_height();
 }
 inline void FkSize::_internal_set_height(int32_t value) {
@@ -268,7 +277,7 @@ inline void FkSize::_internal_set_height(int32_t value) {
 }
 inline void FkSize::set_height(int32_t value) {
   _internal_set_height(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkSize.height)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkSize.height)
 }
 
 #ifdef __GNUC__
@@ -277,7 +286,10 @@ inline void FkSize::set_height(int32_t value) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 
 // @@protoc_insertion_point(global_scope)
 

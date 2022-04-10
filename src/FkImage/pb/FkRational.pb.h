@@ -53,20 +53,29 @@ struct TableStruct_FkRational_2eproto {
   static const uint32_t offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkRational_2eproto;
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 class FkRational;
 struct FkRationalDefaultTypeInternal;
 extern FkRationalDefaultTypeInternal _FkRational_default_instance_;
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 PROTOBUF_NAMESPACE_OPEN
-template<> ::fk_pb::FkRational* Arena::CreateMaybeMessage<::fk_pb::FkRational>(Arena*);
+template<> ::com::alimin::fk::pb::FkRational* Arena::CreateMaybeMessage<::com::alimin::fk::pb::FkRational>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace fk_pb {
+namespace com {
+namespace alimin {
+namespace fk {
+namespace pb {
 
 // ===================================================================
 
 class FkRational final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:fk_pb.FkRational) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:com.alimin.fk.pb.FkRational) */ {
  public:
   inline FkRational() : FkRational(nullptr) {}
   ~FkRational() override;
@@ -167,7 +176,7 @@ class FkRational final :
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "fk_pb.FkRational";
+    return "com.alimin.fk.pb.FkRational";
   }
   protected:
   explicit FkRational(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -208,7 +217,7 @@ class FkRational final :
   void _internal_set_den(int32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:fk_pb.FkRational)
+  // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkRational)
  private:
   class _Internal;
 
@@ -239,7 +248,7 @@ inline int32_t FkRational::_internal_num() const {
   return num_;
 }
 inline int32_t FkRational::num() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkRational.num)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkRational.num)
   return _internal_num();
 }
 inline void FkRational::_internal_set_num(int32_t value) {
@@ -248,7 +257,7 @@ inline void FkRational::_internal_set_num(int32_t value) {
 }
 inline void FkRational::set_num(int32_t value) {
   _internal_set_num(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkRational.num)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkRational.num)
 }
 
 // int32 den = 2;
@@ -259,7 +268,7 @@ inline int32_t FkRational::_internal_den() const {
   return den_;
 }
 inline int32_t FkRational::den() const {
-  // @@protoc_insertion_point(field_get:fk_pb.FkRational.den)
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkRational.den)
   return _internal_den();
 }
 inline void FkRational::_internal_set_den(int32_t value) {
@@ -268,7 +277,7 @@ inline void FkRational::_internal_set_den(int32_t value) {
 }
 inline void FkRational::set_den(int32_t value) {
   _internal_set_den(value);
-  // @@protoc_insertion_point(field_set:fk_pb.FkRational.den)
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkRational.den)
 }
 
 #ifdef __GNUC__
@@ -277,7 +286,10 @@ inline void FkRational::set_den(int32_t value) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace fk_pb
+}  // namespace pb
+}  // namespace fk
+}  // namespace alimin
+}  // namespace com
 
 // @@protoc_insertion_point(global_scope)
 
