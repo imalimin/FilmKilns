@@ -126,6 +126,7 @@ open class FkContextualCommandBar @JvmOverloads constructor(
             }
         }
         commandItemAdapter.commandItemGroups.removeAll(items)
+        commandItemAdapter.notifyDataSetChanged()
     }
 
     fun setItemSelected(filter: (it: DefaultCommandItem) -> Boolean) {

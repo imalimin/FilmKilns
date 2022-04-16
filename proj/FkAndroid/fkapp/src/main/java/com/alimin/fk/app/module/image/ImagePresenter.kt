@@ -122,19 +122,29 @@ class ImagePresenter(
     }
 
     override fun postTranslate(dx: Int, dy: Int) {
-        engine.postTranslate(curLayer, dx, dy)
+        if (checkCurLayer()) {
+            engine.postTranslate(curLayer, dx, dy)
+        }
     }
 
     override fun postRotate(dr: FkRational) {
-        engine.postRotation(curLayer, dr.num, dr.den)
+        if (checkCurLayer()) {
+            engine.postRotation(curLayer, dr.num, dr.den)
+        }
     }
 
     override fun postScale(ds: FkRational) {
-        engine.postScale(curLayer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
+        if (checkCurLayer()) {
+            engine.postScale(curLayer, ds.num.toFloat() / ds.den, ds.num.toFloat() / ds.den)
+        }
     }
 
     override fun getLayers(listener: FkGetLayersListener): Int {
         return modelEngine.getLayers(listener)
+    }
+
+    private fun checkCurLayer(): Boolean {
+        return curLayer > 0
     }
 
     @Synchronized

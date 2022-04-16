@@ -10,6 +10,8 @@ import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.pb.FkImageLayerOuterClass
 import com.microsoft.fluentui.contextualcommandbar.CommandItem
 import com.microsoft.fluentui.contextualcommandbar.CommandItemGroup
+import com.microsoft.fluentui.popupmenu.PopupMenu
+import com.microsoft.fluentui.popupmenu.PopupMenuItem
 import kotlinx.android.synthetic.main.fragment_op.*
 
 class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter),
@@ -66,15 +68,34 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
 
     override fun onItemLongClick(item: CommandItem, view: View) {
         if (item is LayerCommandItem && item.layerId > 0) {
-            presenter.removeLayer(item.layerId)
+            val items = arrayListOf(
+                PopupMenuItem(item.layerId, getString(R.string.layer_del), R.drawable.ic_fluent_delete_24_regular),
+                PopupMenuItem(item.layerId, getString(R.string.layer_info), R.drawable.ic_fluent_info_24_regular),
+            )
+            val popupMenu =
+                PopupMenu(requireContext(), view, items, PopupMenu.ItemCheckableBehavior.NONE)
+            popupMenu.onItemClickListener = object : PopupMenuItem.OnClickListener {
+                override fun onPopupMenuItemClicked(popupMenuItem: PopupMenuItem) {
+                    when (popupMenuItem.iconResourceId) {
+                        R.drawable.ic_fluent_delete_24_regular -> {
+                            presenter.removeLayer(popupMenuItem.id)
+                        }
+                    }
+                }
+            }
+            popupMenu.show()
         }
     }
 
     override fun onLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>) {
         requireActivity().runOnUiThread(object : Runnable {
             override fun run() {
-                getCommandBar()?.removeItemGroup() {
-                    return@removeItemGroup "layer" == it.id
+                if (layers.isEmpty()) {
+                    getCommandBar()?.setMenu(menuResID)
+                } else {
+                    getCommandBar()?.removeItemGroup() {
+                        return@removeItemGroup "layer" == it.id
+                    }
                 }
             }
         })

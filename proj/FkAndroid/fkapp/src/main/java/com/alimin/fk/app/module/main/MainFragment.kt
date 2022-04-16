@@ -46,28 +46,18 @@ class MainFragment : BaseFragment(), MainContract.View {
             Shader.TileMode.CLAMP
         )
         titleView.invalidate()
-
-        subTitleView.paint.shader = LinearGradient(
-            0f,
-            0f,
-            0f,
-            subTitleView.paint.textSize,
-            resources.getColor(R.color.colorPrimaryDark),
-            resources.getColor(R.color.colorAccent),
-            Shader.TileMode.CLAMP
-        )
-        subTitleView.invalidate()
     }
 
     override fun onStart() {
         super.onStart()
-        presenter.start()
+        progressBar.visibility = View.VISIBLE
         presenter.queryAll(requireActivity())
     }
 
     override fun onStop() {
         super.onStop()
         presenter.stop()
+        mAdapter?.bindData(ArrayList<File>())
     }
 
     override fun onShowAll(items: List<GalleryItem>) {
