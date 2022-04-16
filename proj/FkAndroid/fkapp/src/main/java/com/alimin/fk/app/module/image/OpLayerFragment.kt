@@ -1,12 +1,15 @@
 package com.alimin.fk.app.module.image
 
 import android.view.View
+import android.widget.LinearLayout
 import com.alimin.fk.app.R
+import com.alimin.fk.app.widget.LayerCommandItem
 import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.pb.FkImageLayerOuterClass
 import com.microsoft.fluentui.contextualcommandbar.CommandItem
 import com.microsoft.fluentui.contextualcommandbar.CommandItemGroup
-import com.microsoft.fluentui.contextualcommandbar.DefaultCommandItem
+import com.microsoft.fluentui.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_op.*
 
 class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter),
     OnLayerUpdateListener {
@@ -14,7 +17,7 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
 
     override fun initView() {
         super.initView()
-        presenter
+        baseCommandBar.orientation = LinearLayout.VERTICAL
     }
 
     override fun onStart() {
@@ -27,12 +30,21 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
     }
 
     override fun onItemClick(item: CommandItem, view: View) {
+        if (item is LayerCommandItem) {
+            Snackbar.make(view, "Layer ${item.layerId}").show()
+        } else {
+            when (item.getId()) {
+                R.id.action_layer_add -> {
+                    Snackbar.make(view, "Layer add").show()
+                }
+            }
+        }
     }
 
     override fun onLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>) {
         layers.forEach {
             val label = "Layer ${it.id}: ${it.size.width}x${it.size.height}"
-            val group = CommandItemGroup().addItem(DefaultCommandItem(label = label))
+            val group = CommandItemGroup().addItem(LayerCommandItem(layerId = it.id, label = label))
             requireActivity().runOnUiThread(object : Runnable {
                 override fun run() {
                     getCommandBar()?.addItemGroup(group)

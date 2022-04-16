@@ -2,11 +2,10 @@ package com.alimin.fk.app.module.image
 
 import android.view.View
 import com.alimin.fk.app.R
-import com.alimin.fk.app.widget.setMenu
+import com.alimin.fk.app.widget.FkContextualCommandBar
 import com.lmy.common.ui.fragment.BaseFragment
 import com.microsoft.fluentui.contextualcommandbar.CommandItem
-import com.microsoft.fluentui.contextualcommandbar.ContextualCommandBar
-import kotlinx.android.synthetic.main.fragment_op_crop.*
+import kotlinx.android.synthetic.main.fragment_op.*
 
 abstract class OpFragment(val presenter: ImageContract.Presenter) : BaseFragment(), CommandItem.OnItemClickListener {
     protected abstract val menuResID: Int
@@ -23,6 +22,6 @@ abstract class OpFragment(val presenter: ImageContract.Presenter) : BaseFragment
         }
     }
 
-    fun getCommandBar(): ContextualCommandBar? = baseCommandBar
+    fun getCommandBar(): FkContextualCommandBar? = baseCommandBar
 
 }

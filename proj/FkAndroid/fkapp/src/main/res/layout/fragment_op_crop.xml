@@ -9,7 +9,7 @@
     android:paddingRight="16dp"
     android:paddingBottom="8dp">
 
-    <com.microsoft.fluentui.contextualcommandbar.ContextualCommandBar
+    <com.alimin.fk.app.widget.FkContextualCommandBar
         android:id="@+id/baseCommandBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
