@@ -7,6 +7,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="fluentuiProgressPrimaryColor">@color/colorAccent</item>
         <item name="fluentuiProgressBackgroundColor">@color/colorPrimaryDark</item>
+        <item name="fluentuiContextualCommandBarBackgroundColorSelected">@color/white</item>
+        <item name="fluentuiContextualCommandBarIconTintSelected">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme" />

@@ -1,5 +1,6 @@
 package com.alimin.fk.app.module.image
 
+import android.util.Size
 import android.view.Surface
 import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.entity.FkRational
@@ -20,7 +21,11 @@ class ImageContract {
         abstract fun create()
         abstract fun destroy()
         abstract fun notifyRender()
+        abstract fun selectLayer(layerId: Int)
+        abstract fun isSelectedLayer(layerId: Int) : Boolean
         abstract fun newLayerWithFile(path: String)
+        abstract fun newLayerWithColor(size: Size, red: Int, green: Int, blue: Int, alpha: Int)
+        abstract fun removeLayer(layerId: Int)
         abstract fun detachFromSurface(surface: Surface)
         abstract fun attachToSurface(surface: Surface)
         abstract fun postTranslate(dx: Int, dy: Int)

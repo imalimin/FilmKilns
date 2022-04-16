@@ -24,11 +24,15 @@ import com.microsoft.fluentui.contextualcommandbar.DefaultCommandItem
 import com.microsoft.fluentui.theming.FluentUIContextThemeWrapper
 import com.microsoft.fluentui.util.isVisible
 
-class FkContextualCommandBar @JvmOverloads constructor(
+open class FkContextualCommandBar @JvmOverloads constructor(
     appContext: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(FluentUIContextThemeWrapper(appContext,R.style.Theme_FluentUI_ContextualCommandBar), attrs, defStyleAttr) {
+
+    interface OnItemLongClickListener {
+        fun onItemLongClick(item: CommandItem, view: View)
+    }
 
     private var dismissButtonContainer: ViewGroup? = null
     private var commandItemAdapter: CommandItemAdapter
@@ -100,6 +104,10 @@ class FkContextualCommandBar @JvmOverloads constructor(
         commandItemAdapter.itemClickListener = listener
     }
 
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
+        commandItemAdapter.itemLongClickListener = listener
+    }
+
     fun setItemGroups(itemGroups: ArrayList<CommandItemGroup>) {
         commandItemAdapter.commandItemGroups = itemGroups
         commandItemAdapter.notifyDataSetChanged()
@@ -107,6 +115,28 @@ class FkContextualCommandBar @JvmOverloads constructor(
 
     fun addItemGroup(itemGroup: CommandItemGroup) {
         commandItemAdapter.addItemGroup(itemGroup)
+        commandItemAdapter.notifyDataSetChanged()
+    }
+
+    fun removeItemGroup(filter: (it: CommandItemGroup) -> Boolean) {
+        val items = arrayListOf<CommandItemGroup>()
+        commandItemAdapter.commandItemGroups.forEach {
+            if (filter(it)) {
+                items.add(it)
+            }
+        }
+        commandItemAdapter.commandItemGroups.removeAll(items)
+    }
+
+    fun setItemSelected(filter: (it: DefaultCommandItem) -> Boolean) {
+        commandItemAdapter.commandItemGroups.forEach { group ->
+            group.items.forEach {
+                if (it is DefaultCommandItem) {
+                    val select = filter(it)
+                    it.setSelected(select)
+                }
+            }
+        }
         commandItemAdapter.notifyDataSetChanged()
     }
 
@@ -240,6 +270,7 @@ class FkContextualCommandBar @JvmOverloads constructor(
         setItemGroups(menu.asCommandItemGroups())
     }
 }
+
 internal class CommandItemAdapter(
     private var options: CommandListOptions
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -253,6 +284,7 @@ internal class CommandItemAdapter(
         }
 
     var itemClickListener: CommandItem.OnItemClickListener? = null
+    var itemLongClickListener: FkContextualCommandBar.OnItemLongClickListener? = null
 
     var orientation: Int = LinearLayout.HORIZONTAL
         set(value) {
@@ -390,6 +422,12 @@ internal class CommandItemAdapter(
                     itemClickListener?.onItemClick(commandItem, viewHolder.itemView)
                 }
             })
+            setOnLongClickListener(object : View.OnLongClickListener {
+                override fun onLongClick(v: View?): Boolean {
+                    itemLongClickListener?.onItemLongClick(commandItem, viewHolder.itemView)
+                    return true
+                }
+            })
         }
     }
 
@@ -457,6 +495,8 @@ internal class CommandItemAdapter(
 
 open class LayerCommandItem(
     var layerId: Int = -1,
+    var id: Int = 0,
+    var gId: Int = 0,
     @DrawableRes icon: Int = 0,
     label: String? = null,
     contentDescription: String? = null,
@@ -464,7 +504,13 @@ open class LayerCommandItem(
     selected: Boolean = false,
     bitmap: Bitmap? = null,
 ) : DefaultCommandItem(icon, label, contentDescription, enabled, selected, bitmap) {
+    override fun getId(): Int? {
+        return id
+    }
 
+    fun getGroupId(): Int {
+        return gId
+    }
 }
 
 internal class FkCommandMenu(val resources: Resources) : Menu {
@@ -475,6 +521,7 @@ internal class FkCommandMenu(val resources: Resources) : Menu {
         items.forEach {
             if (!map.containsKey(it.groupId)) {
                 map[it.groupId] = CommandItemGroup()
+                map[it.groupId]?.id = it.groupId.toString()
             }
             map[it.groupId]?.addItem(it.asCommandItem())
         }
@@ -612,8 +659,11 @@ internal class FkCommandMenuItem(
     private var iconDrawable: Drawable? = null
     private var iconRes: Int = 0
 
-    fun asCommandItem(): DefaultCommandItem {
-        return DefaultCommandItem(
+    fun asCommandItem(): LayerCommandItem {
+        return LayerCommandItem(
+            layerId = 0,
+            id = id,
+            gId = gId,
             iconRes,
             label = title,
             contentDescription = contentDescription

@@ -29,6 +29,7 @@
 #include "FkCropProto.h"
 #include "FkMath.h"
 #include "FkQueryWinSizeProto.h"
+#include "FkRemoveLayerProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -161,6 +162,17 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
     return client->with(molecule)->send(prt);
 }
 
+FkResult FkLayerEngine::removeLayer(FkID layer) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_removeLayer));
+    msg->arg1 = layer;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_removeLayer(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkRemoveLayerProto>(msg->arg1);
+    return client->with(molecule)->send(proto);
+}
+
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setCanvasSize));
     msg->sp = std::make_shared<FkSize>(size);
@@ -206,7 +218,8 @@ FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {
     auto measure = std::make_shared<FkMeasureTransProto>();
     measure->layerId = msg->arg1;
     measure->value = *std::dynamic_pointer_cast<FkIntVec2>(msg->sp);
-    FkAssert(FK_OK == client->quickSend(measure, molecule), FK_FAIL);
+    auto ret = client->quickSend(measure, molecule);
+    FkAssert(FK_OK == ret, FK_FAIL);
     auto proto = std::make_shared<FkLayerPostTransProto>();
     proto->layer = measure->layerId;
     proto->value = measure->value;
@@ -304,6 +317,7 @@ FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
     measureProto->layerId = proto->layer;
     measureProto->value = proto->value;
     auto ret = client->with(molecule)->send(measureProto);
+    FkAssert(FK_OK == ret, FK_FAIL);
     //  -,- |
     //------0------->
     //      | +,+
@@ -359,6 +373,7 @@ FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
         measureProto->layerId = proto->layerId;
         measureProto->value = it;
         ret = client->with(molecule)->send(measureProto);
+        FkAssert(FK_OK == ret, FK_FAIL);
         it = measureProto->value;
     }
     proto->leftTop = vec[0];

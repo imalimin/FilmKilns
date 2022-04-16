@@ -19,6 +19,7 @@
 #include "FkLayerSetRotateProto.h"
 #include "FkLayerSetScaleProto.h"
 #include "FkCropProto.h"
+#include "FkRemoveLayerProto.h"
 
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkGraphicLayerQuark() {
     FK_MARK_SUPER
@@ -31,6 +32,7 @@ FkGraphicCanvasQuark::~FkGraphicCanvasQuark() {
 void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FkGraphicLayerQuark::describeProtocols(desc);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicCanvasQuark::_onDelivery);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRemoveLayerProto, FkGraphicCanvasQuark::_onDelivery);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicCanvasQuark::_onPostTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetTransProto, FkGraphicCanvasQuark::_onSetTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicCanvasQuark::_onPostScale);

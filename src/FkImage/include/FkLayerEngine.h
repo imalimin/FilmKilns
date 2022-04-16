@@ -40,6 +40,8 @@ public:
 
     FkID newLayerWithColor(FkSize size, FkColor color);
 
+    FkResult removeLayer(FkID layer);
+
     FkResult setCanvasSize(FkSize size);
 
     FkResult postTranslate(FkID layer, int32_t dx, int32_t dy);
@@ -77,6 +79,8 @@ private:
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 
     FkResult _updateLayerWithColor(std::shared_ptr<FkMessage> msg);
+
+    FkResult _removeLayer(std::shared_ptr<FkMessage> msg);
 
     FkResult _setCanvasSize(std::shared_ptr<FkMessage> msg);
 

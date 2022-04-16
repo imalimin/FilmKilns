@@ -1,5 +1,6 @@
 package com.alimin.fk.app.module.image
 
+import android.util.Size
 import android.view.Surface
 import com.alimin.fk.app.model.ImageEngineModel
 import com.alimin.fk.app.model.impl.ImageEngineModelImpl
@@ -8,6 +9,7 @@ import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.engine.FkImage
 import com.alimin.fk.engine.FkImageModel
 import com.alimin.fk.entity.FkRational
+import com.alimin.fk.entity.FkResult
 import com.alimin.fk.pb.FkImageLayerOuterClass
 import java.io.File
 
@@ -68,6 +70,14 @@ class ImagePresenter(
         engine.notifyRender()
     }
 
+    override fun selectLayer(layerId: Int) {
+        if (layerId > 0) {
+            curLayer = layerId
+        }
+    }
+
+    override fun isSelectedLayer(layerId: Int) : Boolean = curLayer == layerId
+
     override fun newLayerWithFile(path: String) {
         val layer = engine.newLayerWithFile(path)
         if (curLayer < 0) {
@@ -76,6 +86,30 @@ class ImagePresenter(
         engine.notifyRender()
         if (layer > 0) {
             notifyLayers()
+        }
+    }
+
+    override fun newLayerWithColor(size: Size, red: Int, green: Int, blue: Int, alpha: Int) {
+        val layer = engine.newLayerWithColor(size, red, green, blue, alpha)
+        if (curLayer < 0) {
+            selectLayer(layer)
+        }
+        engine.notifyRender()
+        if (layer > 0) {
+            notifyLayers()
+        }
+    }
+
+    override fun removeLayer(layerId: Int) {
+        val ret = engine.removeLayer(layerId)
+        if (FkResult.FK_OK == ret) {
+            if (curLayer == layerId) {
+                curLayer = -1
+            }
+            engine.notifyRender()
+            if (layerId > 0) {
+                notifyLayers()
+            }
         }
     }
 

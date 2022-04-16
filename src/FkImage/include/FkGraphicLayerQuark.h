@@ -45,6 +45,8 @@ protected:
 
     FkResult _onUpdateLayer(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onRemoveLayer(std::shared_ptr<FkProtocol> &p);
+
     virtual FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
     virtual FkResult _onPostTranslate(std::shared_ptr<FkProtocol> p);

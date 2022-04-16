@@ -32,6 +32,7 @@
 #include "FkLayerSetRotateProto.h"
 #include "FkLayerSetScaleProto.h"
 #include "FkCropProto.h"
+#include "FkRemoveLayerProto.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -51,6 +52,7 @@ FkGraphicLayerQuark::~FkGraphicLayerQuark() {
 void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicLayerQuark::_onNewLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicUpdateLayerPrt, FkGraphicLayerQuark::_onUpdateLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRemoveLayerProto, FkGraphicLayerQuark::_onRemoveLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicLayerQuark::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicLayerQuark::_onPostTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetTransProto, FkGraphicLayerQuark::_onSetTranslate);
@@ -182,6 +184,19 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     }
     _setupVertex(layer);
     return ret;
+}
+
+FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRemoveLayerProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (itr != layers.end()) {
+        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        FkAssert(renderEngine != nullptr, nullptr);
+        renderEngine->removeMaterial(itr->second->material);
+        layers.erase(itr);
+        return FK_OK;
+    }
+    return FK_FAIL;
 }
 
 FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {

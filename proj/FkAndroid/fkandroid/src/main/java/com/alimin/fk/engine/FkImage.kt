@@ -1,9 +1,11 @@
 package com.alimin.fk.engine
 
 import android.graphics.Point
+import android.util.Size
 import android.view.Choreographer
 import android.view.Surface
 import com.alimin.fk.define.kScaleType
+import com.alimin.fk.entity.FkResult
 
 class FkImage(val workspace: String) : FkEngine() {
     private var mSyncLock = Object()
@@ -39,17 +41,21 @@ class FkImage(val workspace: String) : FkEngine() {
         }
     }
 
-    fun attachToSurface(surface: Surface?, scaleType: kScaleType): Int {
+    fun attachToSurface(surface: Surface?, scaleType: kScaleType): FkResult {
         if (!isNull()) {
-            return nativeSetSurface(getHandle(), surface, scaleType.ordinal)
+            return FkResult(nativeSetSurface(getHandle(), surface, scaleType.ordinal))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
     fun detachFromSurface(surface: Surface?) {
 
     }
 
+    /**
+     * @param path Picture file path
+     * @return Layer id.
+     */
     fun newLayerWithFile(path: String): Int {
         if (!isNull()) {
             return nativeNewLayerWithFile(getHandle(), path)
@@ -57,24 +63,30 @@ class FkImage(val workspace: String) : FkEngine() {
         return -1
     }
 
-    fun newLayerWithColor(
-        width: Int,
-        height: Int,
-        red: Int,
-        green: Int,
-        blue: Int,
-        alpha: Int
-    ): Int {
+    /**
+     * @return Layer id.
+     */
+    fun newLayerWithColor(size: Size, red: Int, green: Int, blue: Int, alpha: Int): Int {
         if (!isNull()) {
-            return nativeNewLayerWithColor(getHandle(), width, height, red, green, blue, alpha)
+            return nativeNewLayerWithColor(getHandle(), size.width, size.height, red, green, blue, alpha)
         }
         return -1
     }
 
+    /**
+     * @return Result code.
+     */
+    fun removeLayer(layerId: Int): FkResult {
+        if (!isNull()) {
+            return FkResult(nativeRemoveLayer(getHandle(), layerId))
+        }
+        return FkResult.FK_FAIL
+    }
+
 //    private var lastTime = 0L
-    fun notifyRender(): Int {
+    fun notifyRender(): FkResult {
         if (isNull()) {
-            return -1
+            return FkResult.FK_FAIL
         }
         Choreographer.getInstance().postFrameCallback(object : Choreographer.FrameCallback{
             override fun doFrame(frameTimeNanos: Long) {
@@ -85,14 +97,14 @@ class FkImage(val workspace: String) : FkEngine() {
                 }
             }
         })
-        return 0
+    return FkResult.FK_OK
     }
 
-    fun setCanvasSize(width: Int, height: Int): Int {
+    fun setCanvasSize(width: Int, height: Int): FkResult {
         if (!isNull()) {
-            return nativeSetCanvasSize(getHandle(), width, height)
+            return FkResult(nativeSetCanvasSize(getHandle(), width, height))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
     /**
@@ -101,25 +113,25 @@ class FkImage(val workspace: String) : FkEngine() {
      * @param dy Delta y position of view
      * @return Result code.
      */
-    fun postTranslate(layer: Int, dx: Int, dy: Int): Int {
+    fun postTranslate(layer: Int, dx: Int, dy: Int): FkResult {
         if (!isNull()) {
-            return nativePostTranslate(getHandle(), layer, dx, dy)
+            return FkResult(nativePostTranslate(getHandle(), layer, dx, dy))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
-    fun postScale(layer: Int, dx: Float, dy: Float): Int {
+    fun postScale(layer: Int, dx: Float, dy: Float): FkResult {
         if (!isNull()) {
-            return nativePostScale(getHandle(), layer, dx, dy)
+            return FkResult(nativePostScale(getHandle(), layer, dx, dy))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
-    fun postRotation(layer: Int, num: Int, den: Int): Int {
+    fun postRotation(layer: Int, num: Int, den: Int): FkResult {
         if (!isNull()) {
-            return nativePostRotation(getHandle(), layer, num, den)
+            return FkResult(nativePostRotation(getHandle(), layer, num, den))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
     /**
@@ -128,25 +140,25 @@ class FkImage(val workspace: String) : FkEngine() {
      * @param point Point of view
      * @return Result code.
      */
-    fun drawPoint(layer: Int, color: Long, size: Int, point: Point): Int {
+    fun drawPoint(layer: Int, color: Long, size: Int, point: Point): FkResult {
         if (!isNull()) {
-            return nativeDrawPoint(getHandle(), layer, color, size, point.x, point.y)
+            return FkResult(nativeDrawPoint(getHandle(), layer, color, size, point.x, point.y))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
-    fun crop(layer: Int, leftTop: Point, rightBottom: Point): Int {
+    fun crop(layer: Int, leftTop: Point, rightBottom: Point): FkResult {
         if (!isNull()) {
-            return nativeCrop(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y)
+            return FkResult(nativeCrop(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
-    fun cropLayer(layer: Int, leftTop: Point, rightBottom: Point): Int {
+    fun cropLayer(layer: Int, leftTop: Point, rightBottom: Point): FkResult {
         if (!isNull()) {
-            return nativeCrop(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y)
+            return FkResult(nativeCrop(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y))
         }
-        return -1
+        return FkResult.FK_FAIL
     }
 
     private external fun nativeCreateInstance(workspace: String): Long
@@ -165,6 +177,7 @@ class FkImage(val workspace: String) : FkEngine() {
         blue: Int,
         alpha: Int
     ): Int
+    private external fun nativeRemoveLayer(handle: Long, layerId: Int): Int
     private external fun nativeSetCanvasSize(handle: Long, width: Int, height: Int): Int
 
     private external fun nativeNotifyRender(handle: Long): Int

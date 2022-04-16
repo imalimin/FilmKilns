@@ -1,6 +1,6 @@
 package com.alimin.fk.entity
 
-class FkResult private constructor(private val value: Int) {
+class FkResult constructor(private val value: Int) {
     companion object {
         val FK_OK = FkResult(0)
         val FK_FAIL = FkResult(-1)
@@ -13,7 +13,7 @@ class FkResult private constructor(private val value: Int) {
         val FK_FILE_NOT_FOUND = FkResult(-8)
     }
 
-    operator fun compareTo(other: FkResult): Int {
-        return value.compareTo(other.value)
+    override fun equals(other: Any?): Boolean {
+        return if (other != null && other is FkResult) other.value == value else false
     }
 }
