@@ -7,9 +7,9 @@
             android:icon="@drawable/ic_fluent_crop_24_regular"
             android:title="@string/crop" />
         <item
-            android:id="@+id/action_crop_layer"
-            android:icon="@drawable/ic_fluent_crop_layer_24_regular"
-            android:title="@string/crop_layer" />
+            android:id="@+id/action_layer_rotate"
+            android:icon="@drawable/ic_fluent_arrow_rotate_clockwise_24_regular"
+            android:title="@string/layer_rotate" />
     </group>
 
 </menu>

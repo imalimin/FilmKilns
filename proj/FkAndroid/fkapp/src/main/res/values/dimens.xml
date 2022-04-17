@@ -2,4 +2,5 @@
 <resources>
     <dimen name="main_slogan_height">320dp</dimen>
     <dimen name="avatar_size_xxxlarge">96dp</dimen>
+    <dimen name="fluentui_contextual_command_bar_default_corner_radius">45dp</dimen>
 </resources>

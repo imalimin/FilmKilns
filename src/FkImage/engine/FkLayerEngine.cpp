@@ -382,7 +382,7 @@ FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
     proto->leftBottom = vec[3];
     FkSize size(FkMath::distance(proto->leftTop, proto->rightTop),
                 FkMath::distance(proto->leftTop, proto->leftBottom));
-    setCanvasSizeInternal(size, false);
+    ret = setCanvasSizeInternal(size, false);
     return client->with(molecule)->send(proto);
 }
 

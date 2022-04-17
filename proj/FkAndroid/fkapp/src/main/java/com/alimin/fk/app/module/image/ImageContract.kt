@@ -1,5 +1,6 @@
 package com.alimin.fk.app.module.image
 
+import android.graphics.Rect
 import android.util.Size
 import android.view.Surface
 import com.alimin.fk.engine.FkGetLayersListener
@@ -32,6 +33,7 @@ class ImageContract {
         abstract fun postRotate(dr: FkRational)
         abstract fun postScale(ds: FkRational)
         abstract fun getLayers(listener: FkGetLayersListener): Int
+        abstract fun crop(rect: Rect)
         abstract fun addLayerUpdateListener(l: OnLayerUpdateListener)
         abstract fun removeLayerUpdateListener(l: OnLayerUpdateListener)
     }

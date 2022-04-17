@@ -1,6 +1,7 @@
 package com.alimin.fk.engine
 
 import android.graphics.Point
+import android.graphics.Rect
 import android.util.Size
 import android.view.Choreographer
 import android.view.Surface
@@ -147,9 +148,9 @@ class FkImage(val workspace: String) : FkEngine() {
         return FkResult.FK_FAIL
     }
 
-    fun crop(layer: Int, leftTop: Point, rightBottom: Point): FkResult {
+    fun crop(layer: Int, rect: Rect): FkResult {
         if (!isNull()) {
-            return FkResult(nativeCrop(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y))
+            return FkResult(nativeCrop(getHandle(), layer, rect.left, rect.top, rect.right, rect.bottom))
         }
         return FkResult.FK_FAIL
     }

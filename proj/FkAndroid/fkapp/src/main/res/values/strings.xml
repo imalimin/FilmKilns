@@ -3,7 +3,7 @@
     <string name="main_slogan_title">开始编辑</string>
     <string name="main_slogan_sub_title">选择影像</string>
     <string name="crop">裁剪</string>
-    <string name="crop_layer">裁剪图层</string>
+    <string name="layer_rotate">裁剪图层</string>
     <string name="paint">画笔</string>
     <string name="filter">滤镜</string>
     <string name="layer">图层</string>

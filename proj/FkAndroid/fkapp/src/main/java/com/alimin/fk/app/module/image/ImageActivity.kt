@@ -92,6 +92,16 @@ class ImageActivity : BaseActivity(),
         mPagerAdapter?.attach(viewPager)
     }
 
+    fun showYesNoAction(listener: (yes: Boolean) -> Unit) {
+        navBar.visibility = View.INVISIBLE
+        yesNoView.visibility = View.VISIBLE
+        yesNoView.setActionListener {
+            listener(it)
+            navBar.visibility = View.VISIBLE
+            yesNoView.visibility = View.GONE
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         presenter.start()

@@ -1,5 +1,7 @@
 package com.alimin.fk.app.module.image
 
+import android.graphics.Point
+import android.graphics.Rect
 import android.util.Size
 import android.view.Surface
 import com.alimin.fk.app.model.ImageEngineModel
@@ -141,6 +143,12 @@ class ImagePresenter(
 
     override fun getLayers(listener: FkGetLayersListener): Int {
         return modelEngine.getLayers(listener)
+    }
+
+    override fun crop(rect: Rect) {
+        if (checkCurLayer()) {
+            engine.crop(curLayer, rect)
+        }
     }
 
     private fun checkCurLayer(): Boolean {
