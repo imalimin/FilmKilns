@@ -349,15 +349,18 @@ FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLay
                                               std::shared_ptr<FkGraphicLayer> &layer) {
     auto reqSizeCompo = proto->layer->findComponent<FkSizeCompo>();
     auto layerSizeComp = layer->findComponent<FkSizeCompo>();
-    if (layerSizeComp == nullptr && reqSizeCompo != nullptr) {
-        layerSizeComp = std::make_shared<FkSizeCompo>(reqSizeCompo->size);
+    if (layerSizeComp == nullptr) {
+        layerSizeComp = std::make_shared<FkSizeCompo>(FkSize(0, 0));
         layer->addComponent(layerSizeComp);
+    }
+    if (reqSizeCompo != nullptr) {
+        layerSizeComp->size = reqSizeCompo->size;
     }
     auto scaleComp = layer->findComponent<FkScaleComponent>();
     if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
         scaleComp->value = _calcScaleType(layer, proto->winSize, proto->scaleType);
     }
-    return layerSizeComp ? layerSizeComp->size : reqSizeCompo->size;
+    return layerSizeComp->size;
 }
 
 void FkGraphicLayerQuark::_withCanvasSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto) {
