@@ -15,6 +15,7 @@
 #include "FkGraphicWindow.h"
 #include "FkRational.h"
 #include "FkGraphicLayer.h"
+#include "FkRect.h"
 
 FK_CLASS FkLayerEngine FK_EXTEND FkEngine {
 public:
@@ -60,9 +61,9 @@ public:
 
     FkResult queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>> &vec);
 
-    FkResult crop(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom);
+    FkResult crop(FkIntRect &rect);
 
-    FkResult cropLayer(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom);
+    FkResult cropLayer(FkID layer, FkIntRect &rect);
 
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
@@ -70,6 +71,8 @@ protected:
     std::shared_ptr<FkGraphicMolecule> getMolecule() { return molecule; };
 
     FkResult setCanvasSizeInternal(FkSize &size, bool isInitialize);
+
+    std::vector<std::shared_ptr<FkGraphicLayer>> queryLayers();
 
 private:
     FkResult _setSurface(std::shared_ptr<FkMessage> msg);

@@ -148,16 +148,16 @@ class FkImage(val workspace: String) : FkEngine() {
         return FkResult.FK_FAIL
     }
 
-    fun crop(layer: Int, rect: Rect): FkResult {
+    fun crop(rect: Rect): FkResult {
         if (!isNull()) {
-            return FkResult(nativeCrop(getHandle(), layer, rect.left, rect.top, rect.right, rect.bottom))
+            return FkResult(nativeCrop(getHandle(), rect.left, rect.top, rect.right, rect.bottom))
         }
         return FkResult.FK_FAIL
     }
 
     fun cropLayer(layer: Int, leftTop: Point, rightBottom: Point): FkResult {
         if (!isNull()) {
-            return FkResult(nativeCrop(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y))
+            return FkResult(nativeCropLayer(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y))
         }
         return FkResult.FK_FAIL
     }
@@ -186,6 +186,6 @@ class FkImage(val workspace: String) : FkEngine() {
     private external fun nativePostScale(handle: Long, layer: Int, dx: Float, dy: Float): Int
     private external fun nativePostRotation(handle: Long, layer: Int, num: Int, den: Int): Int
     private external fun nativeDrawPoint(handle: Long, layer: Int, color: Long, size: Int, x: Int, y: Int): Int
-    private external fun nativeCrop(handle: Long, layer: Int, left: Int, top: Int, right: Int, bottom: Int): Int
+    private external fun nativeCrop(handle: Long, left: Int, top: Int, right: Int, bottom: Int): Int
     private external fun nativeCropLayer(handle: Long, layer: Int, left: Int, top: Int, right: Int, bottom: Int): Int
 }

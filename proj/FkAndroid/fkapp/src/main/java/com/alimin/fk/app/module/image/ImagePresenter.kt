@@ -147,7 +147,7 @@ class ImagePresenter(
 
     override fun crop(rect: Rect) {
         if (checkCurLayer()) {
-            engine.crop(curLayer, rect)
+            engine.crop(rect)
         }
     }
 

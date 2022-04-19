@@ -139,15 +139,17 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPoint
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeCrop
-        (JNIEnv *env, jobject that, jlong handle, jint layer, jint left, jint top, jint right, jint bottom) {
+        (JNIEnv *env, jobject that, jlong handle, jint left, jint top, jint right, jint bottom) {
     auto engine = castHandle(handle);
-    return engine->crop(layer, FkIntVec2(left, top), FkIntVec2(right, bottom));
+    FkIntRect rect(left, top, right, bottom);
+    return engine->crop(rect);
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeCropLayer
         (JNIEnv *env, jobject that, jlong handle, jint layer, jint left, jint top, jint right, jint bottom) {
     auto engine = castHandle(handle);
-    return engine->crop(layer, FkIntVec2(left, top), FkIntVec2(right, bottom));
+    FkIntRect rect(left, top, right, bottom);
+    return engine->cropLayer(layer, rect);
 }
 
 #ifdef __cplusplus

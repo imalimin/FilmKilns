@@ -279,9 +279,11 @@ FkResult FkGraphicLayerQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicLayerQuark::_onWithLayer(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
-    auto itr = layers.find(proto->layerId);
-    FkAssert(layers.end() != itr, FK_FAIL);
-    proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
+    if (proto->layerId != Fk_CANVAS_ID) {
+        auto itr = layers.find(proto->layerId);
+        FkAssert(layers.end() != itr, FK_FAIL);
+        proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
+    }
     return FK_OK;
 }
 

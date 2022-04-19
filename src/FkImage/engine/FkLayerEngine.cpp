@@ -336,63 +336,66 @@ FkResult FkLayerEngine::queryLayers(std::vector<std::shared_ptr<FkGraphicLayer>>
 }
 
 FkResult FkLayerEngine::_queryLayers(std::shared_ptr<FkMessage> msg) {
-    auto proto = std::make_shared<FkQueryLayersProto>();
-    auto ret = client->with(molecule)->send(proto);
-    msg->setPromiseResult(proto->layers);
-    return ret;
+    msg->setPromiseResult(queryLayers());
+    return FK_OK;
 }
 
-FkResult FkLayerEngine::crop(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom) {
-    auto proto = std::make_shared<FkCropProto>();
-    proto->layerId = layer;
-    proto->leftTop = leftTop;
-    proto->rightBottom = rightBottom;
+std::vector<std::shared_ptr<FkGraphicLayer>> FkLayerEngine::queryLayers() {
+    auto proto = std::make_shared<FkQueryLayersProto>();
+    auto ret = client->with(molecule)->send(proto);
+//    FkAssert(FK_OK != ret, proto->layers);
+    return proto->layers;
+}
+
+FkResult FkLayerEngine::crop(FkIntRect &rect) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_crop));
-    msg->sp = proto;
+    msg->sp = std::make_shared<FkIntRect>(rect);
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
-    auto proto = std::dynamic_pointer_cast<FkCropProto>(msg->sp);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(rect, FkIntRect, msg->sp);
     auto queryProto = std::make_shared<FkQueryWinSizeProto>();
     auto ret = client->with(molecule)->send(queryProto);
-    auto deltaX = (queryProto->winSize.getWidth() / 2 - (proto->rightBottom.x + proto->leftTop.x) / 2);
-    auto deltaY = (queryProto->winSize.getHeight() / 2 - (proto->rightBottom.y + proto->leftTop.y) / 2);
-    auto msg0 = FkMessage::obtain(0);
-    msg0->arg1 = proto->layerId;
-    msg0->sp = std::make_shared<FkIntVec2>(deltaX, deltaY);
-    _postTranslate(msg0);
+    auto deltaX = (queryProto->winSize.getWidth() / 2 - (rect->right() + rect->left()) / 2);
+    auto deltaY = (queryProto->winSize.getHeight() / 2 - (rect->bottom() + rect->top()) / 2);
+
+    auto layers = queryLayers();
+    for (auto &it : layers) {
+        if (it->id != Fk_CANVAS_ID) {
+            auto msg0 = FkMessage::obtain(0);
+            msg0->arg1 = it->id;
+            msg0->sp = std::make_shared<FkIntVec2>(deltaX, deltaY);
+            _postTranslate(msg0);
+        }
+    }
 
     std::vector<FkIntVec2> vec;
-    vec.emplace_back(proto->leftTop);
-    vec.emplace_back(FkIntVec2(proto->rightBottom.x, proto->leftTop.y));
-    vec.emplace_back(proto->rightBottom);
-    vec.emplace_back(FkIntVec2(proto->leftTop.x, proto->rightBottom.y));
+    vec.emplace_back(FkIntVec2(rect->left(), rect->top()));
+    vec.emplace_back(FkIntVec2(rect->right(), rect->top()));
+    vec.emplace_back(FkIntVec2(rect->right(), rect->bottom()));
+    vec.emplace_back(FkIntVec2(rect->left(), rect->bottom()));
     for (auto &it : vec) {
         auto measureProto = std::make_shared<FkMeasurePointProto>();
-        measureProto->layerId = proto->layerId;
+        measureProto->layerId = Fk_CANVAS_ID;
         measureProto->value = it;
         ret = client->with(molecule)->send(measureProto);
         FkAssert(FK_OK == ret, FK_FAIL);
         it = measureProto->value;
     }
-    proto->leftTop = vec[0];
-    proto->rightTop = vec[1];
-    proto->rightBottom = vec[2];
-    proto->leftBottom = vec[3];
-    FkSize size(FkMath::distance(proto->leftTop, proto->rightTop),
-                FkMath::distance(proto->leftTop, proto->leftBottom));
-    ret = setCanvasSizeInternal(size, false);
-    return client->with(molecule)->send(proto);
+    auto leftTop = vec[0];
+    auto rightTop = vec[1];
+    auto rightBottom = vec[2];
+    auto leftBottom = vec[3];
+    FkSize size(FkMath::distance(leftTop, rightTop),
+                FkMath::distance(leftTop, leftBottom));
+    return setCanvasSizeInternal(size, false);
 }
 
-FkResult FkLayerEngine::cropLayer(FkID layer, FkIntVec2 leftTop, FkIntVec2 rightBottom) {
-    auto proto = std::make_shared<FkCropProto>();
-    proto->layerId = layer;
-    proto->leftTop = leftTop;
-    proto->rightBottom = rightBottom;
+FkResult FkLayerEngine::cropLayer(FkID layer, FkIntRect &rect) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_cropLayer));
-    msg->sp = proto;
+    msg->arg1 = layer;
+    msg->sp = std::make_shared<FkIntRect>(rect);
     return sendMessage(msg);
 }
 

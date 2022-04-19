@@ -87,11 +87,12 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
 FkResult FkGraphicMVPQuark::_onMeasurePoint(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasurePointProto, p);
     auto winSize = proto->winSize;
-    auto layerSize = proto->layer->getSize();
     proto->value = FkIntVec2(proto->value.x - winSize.getWidth() / 2.0f,
                              proto->value.y - winSize.getHeight() / 2.0f);
     proto->value = _calcPoint2OtherCoordination(proto->value, proto->canvas);
-    proto->value = _calcPoint2OtherCoordination(proto->value, proto->layer);
+    if (proto->layer) {
+        proto->value = _calcPoint2OtherCoordination(proto->value, proto->layer);
+    }
     return FK_OK;
 }
 
