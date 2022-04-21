@@ -9,16 +9,54 @@
 #include "include/core/SkData.h"
 #include "include/core/SkRefCnt.h"
 #include "include/codec/SkCodec.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkImageEncoder.h"
+#include "include/core/SkPixelRef.h"
 
 std::shared_ptr<FkBitmap> FkBitmap::from(std::string &file) {
     return std::shared_ptr<FkBitmap>(new FkBitmap(file));
 }
 
-FkResult FkBitmap::write(std::string file, uint8_t *data, size_t size, int width, int height) {
-//    AlBuffer *buf = AlBuffer::wrap(data, size);
-//    auto ret = AlBitmapFactory::save(width, height, buf, file);
-//    delete buf;
-//    return Hw::SUCCESS == ret ? FK_OK : FK_FAIL;
+FkResult FkBitmap::write(std::string file, FkImage::Format fmt, std::shared_ptr<FkBuffer> buf,
+                         FkSize size, int quality) {
+    sk_sp<SkPixelRef> pixelRef = sk_make_sp<SkPixelRef>(size.getWidth(),
+                                                        size.getHeight(),
+                                                        buf->data(),
+                                                        size.getWidth() * 4);
+    auto bmp = std::make_shared<SkBitmap>();
+    bmp->setInfo(SkImageInfo::Make(pixelRef->width(), pixelRef->height(),kRGBA_8888_SkColorType,kOpaque_SkAlphaType), pixelRef->rowBytes());
+    bmp->setPixelRef(pixelRef, 0, 0);
+    SkEncodedImageFormat skFmt;
+    switch (fmt) {
+        case FkImage::Format::kBMP: {
+            skFmt = SkEncodedImageFormat::kBMP;
+            break;
+        }
+        case FkImage::Format::kJPEG: {
+            skFmt = SkEncodedImageFormat::kJPEG;
+            break;
+        }
+        case FkImage::Format::kPNG: {
+            skFmt = SkEncodedImageFormat::kPNG;
+            break;
+        }
+        case FkImage::Format::kWEBP: {
+            skFmt = SkEncodedImageFormat::kWEBP;
+            break;
+        }
+        default:
+            skFmt = SkEncodedImageFormat::kJPEG;
+    }
+    auto encodedData = SkEncodeBitmap(*bmp, skFmt, quality);
+    if (encodedData != nullptr) {
+        FILE *f = fopen(file.c_str(), "wb");
+        if (f) {
+            fwrite(encodedData->data(), 1, encodedData->size(), f);
+            fclose(f);
+            return FK_OK;
+        }
+        return FK_IO_FAIL;
+    }
     return FK_FAIL;
 }
 

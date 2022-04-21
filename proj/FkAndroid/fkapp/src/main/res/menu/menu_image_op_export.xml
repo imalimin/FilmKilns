@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/image_op_crop">
+        <item
+            android:id="@+id/action_save_jpeg"
+            android:icon="@drawable/ic_fluent_save_24_regular"
+            android:title="@string/save" />
+    </group>
+
+</menu>

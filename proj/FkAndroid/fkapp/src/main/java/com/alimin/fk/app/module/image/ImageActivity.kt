@@ -33,7 +33,7 @@ class OpPagerAdapter(private val presenter: ImageContract.Presenter, val menu:Me
                 R.id.action_crop -> OpCropFragment(presenter)
                 R.id.action_paint -> OpLayerFragment(presenter)
                 R.id.action_filter -> OpCropFragment(presenter)
-                R.id.action_save -> OpLayerFragment(presenter)
+                R.id.action_save -> OpExportFragment(presenter)
                 else -> OpCropFragment(presenter)
             }
     }

@@ -33,6 +33,7 @@
 #include "FkLayerSetScaleProto.h"
 #include "FkCropProto.h"
 #include "FkRemoveLayerProto.h"
+#include "FkReadPixelsProto.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -65,6 +66,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicLayerQuark::_onDrawPoint);
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
     FK_PORT_DESC_QUICK_ADD(desc, FkCropProto, FkGraphicLayerQuark::_onCrop);
+    FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicLayerQuark::_onWithLayer);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -278,11 +280,19 @@ FkResult FkGraphicLayerQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
 }
 
 FkResult FkGraphicLayerQuark::_onWithLayer(std::shared_ptr<FkProtocol> p) {
-    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
-    if (proto->layerId != Fk_CANVAS_ID) {
+    if (FK_INSTANCE_OF(p, FkReadPixelsProto)) {
+        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkReadPixelsProto, p);
         auto itr = layers.find(proto->layerId);
-        FkAssert(layers.end() != itr, FK_FAIL);
-        proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
+        if (itr != layers.end()) {
+            proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
+        }
+    } else {
+        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
+        if (proto->layerId != Fk_CANVAS_ID) {
+            auto itr = layers.find(proto->layerId);
+            FkAssert(layers.end() != itr, FK_FAIL);
+            proto->layer = std::make_shared<FkGraphicLayer>(*itr->second);
+        }
     }
     return FK_OK;
 }

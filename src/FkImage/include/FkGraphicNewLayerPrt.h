@@ -8,10 +8,9 @@
 #ifndef FK_GRAPHIC_FKGRAPHICNEWLAYERPRT_H
 #define FK_GRAPHIC_FKGRAPHICNEWLAYERPRT_H
 
-#include "FkProtocol.h"
-#include "FkGraphicLayer.h"
+#include "FkLayerProto.h"
 
-FK_CLASS FkGraphicNewLayerPrt FK_EXTEND FkProtocol {
+FK_CLASS FkGraphicNewLayerPrt FK_EXTEND FkLayerProto {
 public:
     FkGraphicNewLayerPrt();
 
@@ -21,7 +20,6 @@ public:
 
 public:
     FkID expectId = FK_ID_NONE;
-    std::shared_ptr<FkGraphicLayer> layer = nullptr;
 
 };
 

@@ -1,6 +1,5 @@
 package com.alimin.fk.app.module.image
 
-import android.graphics.Point
 import android.graphics.Rect
 import android.util.Size
 import android.view.Surface
@@ -149,6 +148,10 @@ class ImagePresenter(
         if (checkCurLayer()) {
             engine.crop(rect)
         }
+    }
+
+    override fun save(file: String) {
+        engine.save(file)
     }
 
     private fun checkCurLayer(): Boolean {

@@ -28,6 +28,7 @@
 #include "FkCropProto.h"
 #include "FkQueryWinSizeProto.h"
 #include "FkRemoveLayerProto.h"
+#include "FkReadPixelsProto.h"
 
 FkGraphicModelAtom::FkGraphicModelAtom() : FkSimpleAtom() {
     FK_MARK_SUPER
@@ -56,6 +57,7 @@ void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DELIVERY(desc, FkCropProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkQueryWinSizeProto, FkGraphicModelAtom);
     FK_PORT_DELIVERY(desc, FkRemoveLayerProto, FkGraphicModelAtom);
+    FK_PORT_DELIVERY(desc, FkReadPixelsProto, FkGraphicModelAtom);
 }
 
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

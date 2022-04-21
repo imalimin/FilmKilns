@@ -7,16 +7,13 @@
 
 #include "FkGraphicNewLayerPrt.h"
 
-FkGraphicNewLayerPrt::FkGraphicNewLayerPrt() : FkProtocol() {
+FkGraphicNewLayerPrt::FkGraphicNewLayerPrt() : FkLayerProto() {
     FK_MARK_SUPER
 }
 
 FkGraphicNewLayerPrt::FkGraphicNewLayerPrt(const FkGraphicNewLayerPrt &o)
-        : FkProtocol(o), layer(o.layer), expectId(o.expectId) {
+        : FkLayerProto(o), expectId(o.expectId) {
     FK_MARK_SUPER
-    if (o.layer) {
-        this->layer = std::make_shared<FkGraphicLayer>(*o.layer);
-    }
 }
 
 FkGraphicNewLayerPrt::~FkGraphicNewLayerPrt() {

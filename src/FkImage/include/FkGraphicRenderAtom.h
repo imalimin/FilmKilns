@@ -36,6 +36,8 @@ protected:
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onReadPixels(std::shared_ptr<FkProtocol> &p);
+
     std::shared_ptr<FkMaterialEntity> _makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer);
 
     FkResult _drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas);

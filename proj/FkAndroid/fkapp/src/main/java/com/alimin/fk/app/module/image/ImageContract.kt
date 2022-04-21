@@ -34,6 +34,7 @@ class ImageContract {
         abstract fun postScale(ds: FkRational)
         abstract fun getLayers(listener: FkGetLayersListener): Int
         abstract fun crop(rect: Rect)
+        abstract fun save(file: String)
         abstract fun addLayerUpdateListener(l: OnLayerUpdateListener)
         abstract fun removeLayerUpdateListener(l: OnLayerUpdateListener)
     }

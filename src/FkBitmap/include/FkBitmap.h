@@ -11,13 +11,15 @@
 #include "FkObject.h"
 #include "FkColor.h"
 #include "FkSize.h"
+#include "FkBuffer.h"
+#include "FkImage.h"
 #include "include/core/SkBitmap.h"
 
 FK_CLASS FkBitmap FK_EXTEND FkObject {
 public:
     static std::shared_ptr<FkBitmap> from(std::string &file);
 
-    static FkResult write(std::string file, uint8_t *data, size_t size, int width, int height);
+    static FkResult write(std::string file, FkImage::Format fmt, std::shared_ptr<FkBuffer> buf, FkSize size, int quality);
 
 private:
     FkBitmap(const FkBitmap &o);

@@ -162,6 +162,13 @@ class FkImage(val workspace: String) : FkEngine() {
         return FkResult.FK_FAIL
     }
 
+    fun save(file: String): FkResult {
+        if (!isNull()) {
+            return FkResult(nativeSave(getHandle(), file))
+        }
+        return FkResult.FK_FAIL
+    }
+
     private external fun nativeCreateInstance(workspace: String): Long
     private external fun nativeCreate(handle: Long)
     private external fun nativeDestroy(handle: Long)
@@ -188,4 +195,5 @@ class FkImage(val workspace: String) : FkEngine() {
     private external fun nativeDrawPoint(handle: Long, layer: Int, color: Long, size: Int, x: Int, y: Int): Int
     private external fun nativeCrop(handle: Long, left: Int, top: Int, right: Int, bottom: Int): Int
     private external fun nativeCropLayer(handle: Long, layer: Int, left: Int, top: Int, right: Int, bottom: Int): Int
+    private external fun nativeSave(handle: Long, file: String): Int
 }

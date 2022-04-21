@@ -15,6 +15,7 @@
 #include "FkBitmapCompo.h"
 #include "FkFileUtils.h"
 #include "FkString.h"
+#include "FkReadPixelsProto.h"
 
 FkImageEngine::FkImageEngine(std::shared_ptr<FkEngine> &renderEngine,
                              std::string &workspace,
@@ -85,4 +86,38 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     proto->layer->addComponent(std::make_shared<FkSizeCompo>(size));
     proto->layer->addComponent(std::make_shared<FkFilePathCompo>(dst));
     return getClient()->with(getMolecule())->send(proto);
+}
+
+FkID FkImageEngine::save(std::string file) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageEngine::_save));
+    msg->arg3 = file;
+    return sendMessage(msg);
+}
+
+FkResult FkImageEngine::_save(std::shared_ptr<FkMessage> msg) {
+    auto proto = std::make_shared<FkReadPixelsProto>();
+    proto->layerId = Fk_CANVAS_ID;
+    auto ret = getClient()->with(getMolecule())->send(proto);
+    if (FK_OK != ret) {
+        return ret;
+    }
+    if (proto->buf == nullptr) {
+        return FK_EMPTY_DATA;
+    } else {
+        FkImage::Format fmt;
+        std::string suffix = FkFileUtils::suffix(msg->arg3);
+        if (suffix == ".jpeg" || suffix == ".jpg") {
+            fmt = FkImage::Format::kJPEG;
+        } else if (suffix == ".png") {
+            fmt = FkImage::Format::kPNG;
+        } else if (suffix == ".bmp") {
+            fmt = FkImage::Format::kBMP;
+        } else if (suffix == ".webp") {
+            fmt = FkImage::Format::kWEBP;
+        } else {
+            fmt = FkImage::Format::kJPEG;
+        }
+        ret = FkBitmap::write(msg->arg3, fmt, proto->buf, proto->size, 80);
+    }
+    return ret;
 }

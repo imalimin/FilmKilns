@@ -152,6 +152,15 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeCropLayer
     return engine->cropLayer(layer, rect);
 }
 
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSave
+        (JNIEnv *env, jobject that, jlong handle, jstring file) {
+    auto engine = castHandle(handle);
+    auto *p = env->GetStringUTFChars(file, nullptr);
+    auto ret = engine->save(std::string(p));
+    env->ReleaseStringUTFChars(file, p);
+    return ret;
+}
+
 #ifdef __cplusplus
 }
 #endif
