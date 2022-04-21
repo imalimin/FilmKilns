@@ -53,7 +53,7 @@ void FkMVPMatrix::setTranslate(FkFloatVec3 value) {
 
 void FkMVPMatrix::calc() {
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, radian.num *1.0f / radian.den, glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, -radian.num *1.0f / radian.den, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
     model = glm::translate(model, glm::vec3(translate.x, translate.y, translate.z));
     mat4 = proj * view * model;

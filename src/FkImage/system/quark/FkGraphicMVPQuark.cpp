@@ -53,12 +53,12 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FkAssert(nullptr != canvas, FK_FAIL);
     auto sizeComp = canvas->findComponent<FkSizeCompo>();
     FkAssert(nullptr != sizeComp, FK_FAIL);
-    _calc(canvas, proto->winSize, false);
+    _calc(canvas, proto->winSize, true);
     for (auto &layer : proto->req->layers) {
         if (Fk_CANVAS_ID == layer->id) {
             continue;
         }
-        _calc(layer, sizeComp->size, true);
+        _calc(layer, sizeComp->size, false);
     }
     return FK_OK;
 }
