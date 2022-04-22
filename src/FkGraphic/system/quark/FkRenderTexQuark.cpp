@@ -85,7 +85,11 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
                     proto->texEntity->size().getWidth(),
                     proto->texEntity->size().getHeight());
     }
-    return _drawColor(tex, proto->texEntity);
+    auto ret = _drawColor(tex, proto->texEntity);
+    if (FK_OK != ret) {
+        FkLogD(FK_DEF_TAG, "Draw color failed. No color component.");
+    }
+    return FK_OK;
 }
 
 FkResult FkRenderTexQuark::_onAllocTexWithBmp(std::shared_ptr<FkProtocol> p) {

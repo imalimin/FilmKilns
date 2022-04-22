@@ -80,7 +80,7 @@ FkLooper *FkHandlerThread::getLooper() {
     //TODO 这里mLooper可能为空
     std::unique_lock<std::mutex> lck(mtx_l);
     if (nullptr == mLooper) {
-        FkLogI(TAG, "Thread(%s) waiting looper.", name.c_str());
+        FkLogI(TAG, "Waiting. Thread(%s) looper preparing.", name.c_str());
         cond.wait(lck);
     }
     return mLooper;

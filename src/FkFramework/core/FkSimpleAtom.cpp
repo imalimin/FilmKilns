@@ -21,16 +21,16 @@ void FkConnectChain::_next(std::shared_ptr<FkQuark> quark) {
     rChain.emplace_front(quark);
 }
 
-std::shared_ptr<FkSession> FkConnectChain::connectSession(std::shared_ptr<FkProtocol> p, bool reverse) {
+std::shared_ptr<FkSession> FkConnectChain::connectSession(std::shared_ptr<FkProtocol> &p, bool reverse) {
     auto session = FkSession::with(p);
+    int count = 0;
     for (auto &it : reverse ? rChain : chain) {
         FkResult ret = session->connectTo(it);
-        if (FK_OK != ret) {
-            FkLogW(FK_DEF_TAG, "Skip session(%s) connect(%s), ret=%d",
-                   p->getClassType().getName().c_str(), it->getClassType().getName().c_str(), ret);
+        if (FK_OK == ret) {
+            ++count;
         }
     }
-    return session;
+    return count > 0 ? session : nullptr;
 }
 
 bool FkConnectChain::empty() {
@@ -126,17 +126,23 @@ void FkSimpleAtom::_connectBaseSession() {
 void FkSimpleAtom::_connectSession() {
     std::list<std::shared_ptr<FkProtocol>> protocols;
     if (FK_OK == queryProtocols(protocols)) {
-        for (auto &it : protocols) {
-            if (mSessionMap.end() != mSessionMap.find(it->getType())) {
+        for (auto &proto : protocols) {
+            if (mSessionMap.end() != mSessionMap.find(proto->getType())) {
                 continue;
             }
-            auto session = chain->connectSession(it);
+            auto session = chain->connectSession(proto);
+            if (session == nullptr) {
+                FkLogD(FK_DEF_TAG, "Skip %s session on %s. No quark can accept this protocol",
+                       typeid(*proto).name(),
+                       typeid(*this).name());
+                continue;
+            }
             FkResult ret = session->open();
             if (FK_OK == ret) {
-                mSessionMap.emplace(std::make_pair(it->getType(), session));
+                mSessionMap.emplace(std::make_pair(proto->getType(), session));
             } else {
-                FkLogW(FK_DEF_TAG, "Session(%s, Atom(%s)) open failed, ret=%d",
-                       it->getClassType().getName().c_str(), getClassType().getName().c_str(), ret);
+                FkLogW(FK_DEF_TAG, "%s session on %s open failed, ret=%d",
+                       typeid(*proto).name(), typeid(*this).name(), ret);
             }
         }
     }
@@ -156,6 +162,6 @@ FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     if (mSessionMap.end() != itr) {
         return client->send(itr->second, p);
     }
-    FkLogW(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty.", getClassType().getName().c_str());
+    FkLogW(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty.", typeid(*this).name());
     return FK_SKIP;
 }

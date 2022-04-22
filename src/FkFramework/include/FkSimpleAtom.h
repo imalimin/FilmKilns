@@ -31,7 +31,7 @@ public:
         return shared_from_this();
     }
 
-    std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> p, bool reverse = false);
+    std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> &p, bool reverse = false);
 
     bool empty();
 

@@ -36,8 +36,10 @@ FkEngine::~FkEngine() {
 }
 
 FkResult FkEngine::create() {
+    FkLogI(FK_DEF_TAG, "Engine(%s) create call.", typeid(*this).name());
     auto ret = _changeState(outsideState, (uint32_t) kState::IDL, kState::CREATED);
     if (FK_OK != ret) {
+        FkLogE(FK_DEF_TAG, "Engine(%s) create failed. ret=%d", typeid(*this).name(), ret);
         return ret;
     }
     mThread = FkHandlerThread::create(name);
@@ -46,15 +48,19 @@ FkResult FkEngine::create() {
     });
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onCreate));
     sendMessage(msg, true);
+    FkLogI(FK_DEF_TAG, "Engine(%s) create done.", typeid(*this).name());
     return FK_OK;
 }
 
 FkResult FkEngine::destroy() {
+    FkLogI(FK_DEF_TAG, "Engine(%s) destroy call.", typeid(*this).name());
     auto ret = _changeState(outsideState, (uint32_t) kState::STOPPED, kState::IDL);
     if (FK_OK != ret) {
+        FkLogE(FK_DEF_TAG, "Engine(%s) destroy failed. ret=%d", typeid(*this).name(), ret);
         return ret;
     }
     if (nullptr == mThread) {
+        FkLogE(FK_DEF_TAG, "Engine(%s) destroy failed. Thread is null", typeid(*this).name());
         return FK_INVALID_STATE;
     }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onDestroy));
@@ -63,27 +69,34 @@ FkResult FkEngine::destroy() {
     mThread = nullptr;
     delete mHandler;
     mHandler = nullptr;
+    FkLogI(FK_DEF_TAG, "Engine(%s) destroy done.", typeid(*this).name());
     return FK_OK;
 }
 
 FkResult FkEngine::start() {
+    FkLogI(FK_DEF_TAG, "Engine(%s) start call.", typeid(*this).name());
     auto from = (uint32_t) kState::CREATED | (uint32_t) kState::STOPPED;
     auto ret = _changeState(outsideState, from, kState::RUNNING);
     if (FK_OK != ret) {
+        FkLogE(FK_DEF_TAG, "Engine(%s) start failed. ret=%d", typeid(*this).name(), ret);
         return ret;
     }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onStart));
     sendMessage(msg, true);
+    FkLogI(FK_DEF_TAG, "Engine(%s) start done.", typeid(*this).name());
     return FK_OK;
 }
 
 FkResult FkEngine::stop() {
+    FkLogI(FK_DEF_TAG, "Engine(%s) stop call.", typeid(*this).name());
     auto ret = _changeState(outsideState, (uint32_t) kState::RUNNING, kState::STOPPED);
     if (FK_OK != ret) {
+        FkLogE(FK_DEF_TAG, "Engine(%s) stop failed. ret=%d", typeid(*this).name(), ret);
         return ret;
     }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkEngine::_onStop));
     sendMessage(msg, true);
+    FkLogI(FK_DEF_TAG, "Engine(%s) stop done.", typeid(*this).name());
     return FK_OK;
 }
 

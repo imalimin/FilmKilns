@@ -38,8 +38,8 @@ FkResult FkSession::connectTo(const std::shared_ptr<FkQuark> quark) {
         link.emplace_back(quark);
         return FK_OK;
     }
-    FkLogE(FK_DEF_TAG, "FkSession connect failed.");
-    return FK_FAIL;
+    FkLogD(FK_DEF_TAG, "Connect to %s failed. Can not accept this protocol.", typeid(*quark).name());
+    return FK_PROTOCOL_NOT_ACCEPT;
 }
 
 FkResult FkSession::disconnect(const std::shared_ptr<FkQuark> quark) {
@@ -70,7 +70,7 @@ FkResult FkSession::open() {
         return FK_INVALID_STATE;
     }
     if (link.empty()) {
-        FkLogE(FK_DEF_TAG, "Session(%s): Connect quark first.", classType->getName().c_str());
+        FkLogE(FK_DEF_TAG, "Session(%s): Connect quark first.", typeid(*this).name());
         return FK_EMPTY_DATA;
     }
     state = FkSession::kState::OPENED;
@@ -106,14 +106,14 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
         return FK_FAIL;
     }
     FkResult ret = FK_FAIL;
-    for (auto &it : link) {
-        ret = it->dispatch(protocol);
+    for (auto &quark : link) {
+        ret = quark->dispatch(protocol);
         if (FK_SKIP == ret) {
-            FkLogW(FK_DEF_TAG, "Session(%s Quark(%s)) skip.", protocol->getClassType().getName().c_str(), it->getClassType().getName().c_str());
+            FkLogD(FK_DEF_TAG, "%s`s session on %s is skipped.", typeid(*protocol).name(), typeid(*quark).name());
             continue;
         }
         if (FK_OK != ret) {
-            FkLogE(FK_DEF_TAG, "Session(%s Quark(%s)) send fail.", protocol->getClassType().getName().c_str(), it->getClassType().getName().c_str());
+            FkLogE(FK_DEF_TAG, "%s`s session on %s process failed.", typeid(*protocol).name(), typeid(*quark).name());
             return ret;
         }
     }

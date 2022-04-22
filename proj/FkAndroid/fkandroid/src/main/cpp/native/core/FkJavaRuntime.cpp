@@ -33,14 +33,14 @@ void FkJavaRuntime::detach() {
     jvm->GetEnv(reinterpret_cast<void **>(&env), VERSION);
     this->jvm = nullptr;
     if (nullptr == env) {
-        FkLogE(TAG, "failed.");
+        FkLogE(TAG, "detach failed.");
         return;
     }
 }
 
 bool FkJavaRuntime::attachThread() {
     if (!jvm) {
-        FkLogE(TAG, "failed. Please call attach before.");
+        FkLogE(TAG, "attachThread failed. Please call attach before.");
         return false;
     }
     int64_t id = FkThread::currentThreadId();
@@ -48,25 +48,25 @@ bool FkJavaRuntime::attachThread() {
     std::lock_guard<std::mutex> guard(atxMtx);
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
-        FkLogE(TAG, "%p failed. Do not attach repeat.", id);
+        FkLogE(TAG, "attachThread failed. Do not attach repeat. currentThreadId=%d", id);
         return false;
     }
     jvm->GetEnv(reinterpret_cast<void **>(&pEnv), VERSION);
     if (nullptr == pEnv) {
         int status = jvm->AttachCurrentThread(&pEnv, NULL);
         if (status < 0) {
-            FkLogE(TAG, "failed.");
+            FkLogE(TAG, "attachThreadfailed.");
             return false;
         }
     }
-    FkLogI(TAG, "%p, %p", id, pEnv);
+    FkLogI(TAG, "attachThread currentThreadId=%p, env=%p", id, pEnv);
     mEnvMap.insert(std::pair<int64_t, JNIEnv *>(id, pEnv));
     return true;
 }
 
 void FkJavaRuntime::detachThread() {
     if (!jvm) {
-        FkLogE(TAG, "failed. Please call attach before.");
+        FkLogE(TAG, "detachThread failed. Please call attach before.");
         return;
     }
     std::lock_guard<std::mutex> guard(atxMtx);
@@ -74,15 +74,14 @@ void FkJavaRuntime::detachThread() {
     if (findEnv(&pEnv)) {
         int64_t id = FkThread::currentThreadId();
         FkAssert(0 != id, );
-        FkLogI(TAG, "%p", id);
+        FkLogD(TAG, "currentThreadId=%p", id);
         int status = jvm->DetachCurrentThread();
         if (status < 0) {
-            FkLogI(TAG, "failed. Looper is %p", id);
+            FkLogI(TAG, "detachThread failed. currentThreadId=%p. status=%d", id, status);
         }
         mEnvMap.erase(mEnvMap.find(id));
     } else {
-        int64_t id = FkThread::currentThreadId();
-        FkLogI(TAG, "failed. Looper is %p", id);
+        FkLogI(TAG, "detachThread failed. Env not found. currentThreadId=%p", FkThread::currentThreadId());
     }
 
 }
@@ -98,7 +97,6 @@ bool FkJavaRuntime::findEnv(JNIEnv **env) {
             *env = pEnv;
             return true;
         }
-        FkLogI(TAG, "failed. Looper is %p", id);
         return false;
     }
     *env = itr->second;

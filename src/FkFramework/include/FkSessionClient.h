@@ -67,11 +67,11 @@ public:
             return ret;
         }
         ret = this->send(session, proto);
-        if (FK_OK != ret) {
-            FkLogW(FK_DEF_TAG, "quickSend failed with ret=%d", ret);
+        if (FK_OK != ret && FK_SKIP != ret) {
+            FkLogW(FK_DEF_TAG, "Process protocol failed with ret=%d", ret);
             auto ret1 = session->close();
             if (FK_OK != ret1) {
-                FkLogW(FK_DEF_TAG, "quickSend failed & close session with ret=%d", ret1);
+                FkLogW(FK_DEF_TAG, "Process protocol failed & close session with ret=%d", ret1);
             }
             return ret;
         }
