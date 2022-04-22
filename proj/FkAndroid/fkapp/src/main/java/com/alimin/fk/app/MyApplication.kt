@@ -8,6 +8,7 @@ package com.alimin.fk.app
 
 import com.alimin.fk.FilmKilns
 import com.lmy.common.BaseApplication
+import com.tencent.bugly.crashreport.CrashReport
 
 /**
  * Created by aliminabc@gmail.com on 2018/5/29.
@@ -15,7 +16,9 @@ import com.lmy.common.BaseApplication
 class MyApplication : BaseApplication() {
     override fun onCreate() {
         super.onCreate()
-//        CrashReport.initCrashReport(applicationContext, "d7f93990a9", false)
+        val strategy = CrashReport.UserStrategy(applicationContext)
+        strategy.isEnableUserInfo = true
+        CrashReport.initCrashReport(applicationContext, "5ed60e68ab", BuildConfig.DEBUG, strategy)
         FilmKilns.init(applicationContext)
     }
 }
