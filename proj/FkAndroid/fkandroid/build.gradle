@@ -13,8 +13,8 @@ android {
     defaultConfig {
         minSdkVersion Integer.parseInt(min_version)
         targetSdkVersion Integer.parseInt(target_version)
-        versionCode versionCode
-        versionName versionName
+        versionCode Integer.parseInt(version_code)
+        versionName version_name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions "version"
         externalNativeBuild {

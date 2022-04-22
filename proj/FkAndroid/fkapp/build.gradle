@@ -9,8 +9,8 @@ android {
         applicationId "com.alimin.fk.app"
         minSdkVersion Integer.parseInt(min_version)
         targetSdkVersion Integer.parseInt(target_version)
-        versionCode versionCode
-        versionName versionName
+        versionCode Integer.parseInt(version_code)
+        versionName version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         flavorDimensions "version"
@@ -85,8 +85,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.tencent.bugly:crashreport:latest.release'
-    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    implementation 'com.tencent.bugly:crashreport:4.0.4'
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.microsoft.fluentui:FluentUIAndroid:0.0.29'
     implementation 'com.microsoft.design:fluent-system-icons:1.1.164@aar'
