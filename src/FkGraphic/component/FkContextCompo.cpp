@@ -53,6 +53,7 @@ FkContextCompo::~FkContextCompo() {
 
 FkResult FkContextCompo::create(std::shared_ptr<FkContextCompo> context,
                                   std::shared_ptr<FkGraphicWindow> win) {
+    _win = win;
     eglDisplay = _createDisplay(EGL_DEFAULT_DISPLAY);
     if (EGL_NO_DISPLAY == eglDisplay) {
         FkLogE(FK_DEF_TAG, "[%s] Create display failed", alias.c_str());
@@ -68,7 +69,7 @@ FkResult FkContextCompo::create(std::shared_ptr<FkContextCompo> context,
         return FK_FAIL;
     }
     if (nullptr != win) {
-        size = win->getSize();
+        size = win->size();
         eglSurface = _createWindowSurface(eglDisplay, eglConfig, win);
     } else {
         size = FkSize(0, 0);
@@ -187,7 +188,7 @@ EGLSurface FkContextCompo::_createWindowSurface(EGLDisplay display,
     int attrib_list[] = {EGL_NONE};
     auto surface = eglCreateWindowSurface(display,
                                           config, // 选好的可用EGLConfig
-                                          win->getNativeWindow(), // 指定原生窗口
+                                          (EGLNativeWindowType) win->getWindow(), // 指定原生窗口
                                           attrib_list); // 指定窗口属性列表，可以为null，一般指定渲染所用的缓冲区使用但缓冲或者后台缓冲，默认为后者。
     if (nullptr == surface || EGL_NO_SURFACE == surface || !_checkError()) {
         FkLogE(FK_DEF_TAG, "[%s] eglCreateWindowSurface failed", alias.c_str());
@@ -223,8 +224,9 @@ FkResult FkContextCompo::update(std::shared_ptr<FkGraphicWindow> win) {
             eglSurface = EGL_NO_SURFACE;
         }
         eglSurface = _createWindowSurface(eglDisplay, eglConfig, win);
+        _win = win;
         makeCurrent();
-        FkLogE(FK_DEF_TAG, "Update window");
+        FkLogI(FK_DEF_TAG, "Update window");
         return FK_OK;
     }
     return FK_FAIL;

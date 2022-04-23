@@ -48,7 +48,7 @@ FkResult FkWinModelQuark::onStop() {
 
 FkResult FkWinModelQuark::_onSetViewSize(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkSetSurfacePrt, p);
-    winSize = proto->win->getSize();
+    winSize = proto->win->size();
     return FK_OK;
 }
 

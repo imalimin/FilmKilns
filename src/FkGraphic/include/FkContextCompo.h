@@ -62,6 +62,7 @@ private:
 #endif
     std::string alias;
     FkSize size;
+    std::shared_ptr<FkGraphicWindow> _win = nullptr;
     EGLDisplay eglDisplay = EGL_NO_DISPLAY;
     EGLConfig eglConfig = nullptr;
     EGLContext eglContext = EGL_NO_CONTEXT;

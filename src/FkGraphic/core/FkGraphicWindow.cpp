@@ -7,8 +7,8 @@
 
 #include "FkGraphicWindow.h"
 
-FkGraphicWindow::FkGraphicWindow(NativeWindowType win, int width, int height)
-        : FkObject(), win(win), size(width, height) {
+FkGraphicWindow::FkGraphicWindow(int width, int height)
+        : FkObject(), _size(width, height) {
     FK_MARK_SUPER
 }
 
@@ -16,10 +16,6 @@ FkGraphicWindow::~FkGraphicWindow() {
 
 }
 
-NativeWindowType FkGraphicWindow::getNativeWindow() {
-    return win;
-}
-
-FkSize &FkGraphicWindow::getSize() {
-    return size;
+FkSize FkGraphicWindow::size() {
+    return _size;
 }

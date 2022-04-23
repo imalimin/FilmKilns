@@ -11,27 +11,20 @@
 #include "FkObject.h"
 #include "FkSize.h"
 
-#ifdef __ANDROID__
-
-#include <EGL/egl.h>
-
-#endif
-
 FK_CLASS FkGraphicWindow FK_EXTEND FkObject {
 public:
-    FkGraphicWindow(NativeWindowType win, int width, int height);
+    FkGraphicWindow(int width, int height);
 
     FkGraphicWindow(const FkGraphicWindow &o) = delete;
 
     virtual ~FkGraphicWindow();
 
-    virtual NativeWindowType getNativeWindow();
+    virtual FkSize size();
 
-    FkSize &getSize();
+    virtual void *getWindow() = 0;
 
-private:
-    NativeWindowType win = nullptr;
-    FkSize size;
+protected:
+    FkSize _size;
 };
 
 
