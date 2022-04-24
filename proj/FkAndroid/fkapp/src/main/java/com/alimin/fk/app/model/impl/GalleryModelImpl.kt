@@ -3,6 +3,7 @@ package com.alimin.fk.app.model.impl
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
@@ -13,10 +14,11 @@ import com.alimin.fk.app.model.entity.Error
 import java.io.File
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.collections.LinkedHashSet
 
 class GalleryModelImpl : GalleryModel {
     private var loader: LoaderManager? = null
-    private val galleryItems = HashSet<GalleryItem>()
+    private val galleryItems = LinkedHashSet<GalleryItem>()
     private val queryLock = ReentrantLock()
     override fun <T> queryAll(
         owner: T,
@@ -24,11 +26,13 @@ class GalleryModelImpl : GalleryModel {
     ) where T : FragmentActivity {
         if (queryLock.tryLock()) {
             if (galleryItems.isEmpty()) {
+                queryLock.unlock()
                 queryAllFromDatabase(owner, result)
             } else {
-                result(galleryItems.toList(), Error.success())
+                val list = galleryItems.toList()
+                queryLock.unlock()
+                result(list, Error.success())
             }
-            queryLock.unlock()
         } else {
             queryAllFromDatabase(owner, result)
         }
@@ -63,6 +67,7 @@ class GalleryModelImpl : GalleryModel {
                 if (data != null && data.count > 0) {
                     data.moveToFirst()
                     queryLock.lock()
+                    galleryItems.clear()
                     do {
                         val path = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]))
                         val image = File(path)
