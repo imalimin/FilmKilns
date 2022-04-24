@@ -44,7 +44,7 @@ bool FkJavaRuntime::attachThread() {
         return false;
     }
     int64_t id = FkThread::currentThreadId();
-    assert(0 != id);
+    FkAssert(0 != id, false);
     std::lock_guard<std::mutex> guard(atxMtx);
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
@@ -73,7 +73,7 @@ void FkJavaRuntime::detachThread() {
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
         int64_t id = FkThread::currentThreadId();
-        assert(0 != id);
+        FkAssert(0 != id, );
         FkLogI(TAG, "%p", id);
         int status = jvm->DetachCurrentThread();
         if (status < 0) {
@@ -89,7 +89,7 @@ void FkJavaRuntime::detachThread() {
 
 bool FkJavaRuntime::findEnv(JNIEnv **env) {
     int64_t id = FkThread::currentThreadId();
-    assert(0 != id);
+    FkAssert(0 != id, false);
     auto itr = mEnvMap.find(id);
     if (mEnvMap.end() == itr) {
         JNIEnv *pEnv = nullptr;
