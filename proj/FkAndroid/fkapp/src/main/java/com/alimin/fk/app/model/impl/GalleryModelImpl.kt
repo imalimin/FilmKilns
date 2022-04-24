@@ -11,11 +11,30 @@ import com.alimin.fk.app.model.GalleryItem
 import com.alimin.fk.app.model.GalleryModel
 import com.alimin.fk.app.model.entity.Error
 import java.io.File
+import java.util.*
+import java.util.concurrent.locks.ReentrantLock
 
 class GalleryModelImpl : GalleryModel {
     private var loader: LoaderManager? = null
-    private var folders = HashMap<String, File>()
+    private val galleryItems = HashSet<GalleryItem>()
+    private val queryLock = ReentrantLock()
     override fun <T> queryAll(
+        owner: T,
+        result: (data: List<GalleryItem>, error: Error) -> Unit
+    ) where T : FragmentActivity {
+        if (queryLock.tryLock()) {
+            if (galleryItems.isEmpty()) {
+                queryAllFromDatabase(owner, result)
+            } else {
+                result(galleryItems.toList(), Error.success())
+            }
+            queryLock.unlock()
+        } else {
+            queryAllFromDatabase(owner, result)
+        }
+    }
+
+    private fun <T> queryAllFromDatabase(
         owner: T,
         result: (data: List<GalleryItem>, error: Error) -> Unit
     ) where T : FragmentActivity {
@@ -23,7 +42,11 @@ class GalleryModelImpl : GalleryModel {
             loader = LoaderManager.getInstance(owner)
             loader?.initLoader(LOADER_ALL, Bundle.EMPTY, newCallback(owner, result))
         } else {
-            loader?.restartLoader<Cursor>(LOADER_ALL, Bundle.EMPTY, newCallback(owner, result))
+            loader?.restartLoader<Cursor>(
+                LOADER_ALL,
+                Bundle.EMPTY,
+                newCallback(owner, result)
+            )
         }
     }
 
@@ -39,25 +62,18 @@ class GalleryModelImpl : GalleryModel {
             override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
                 if (data != null && data.count > 0) {
                     data.moveToFirst()
-                    val items = ArrayList<GalleryItem>()
+                    queryLock.lock()
                     do {
                         val path = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[0]))
                         val image = File(path)
                         val name = data.getString(data.getColumnIndexOrThrow(IMAGE_PROJECTION[1]))
 //                        val dateTime = data.getLong(data.getColumnIndexOrThrow(IMAGE_PROJECTION[2]))
                         if (image.exists()) {
-                            items.add(GalleryItem(false, name, path))
-                        }
-                        if (folders.isEmpty()) {
-                            // 获取文件夹名称
-                            val folderFile = File(path).parentFile
-                            if (folderFile != null && folderFile.exists()) {
-                                val fp = folderFile.absolutePath
-                                folders[fp] = folderFile
-                            }
+                            galleryItems.add(GalleryItem(false, name, path, image.parentFile.name))
                         }
                     } while (data.moveToNext())
-                    result(items, Error.success())
+                    queryLock.unlock()
+                    result(galleryItems.toList(), Error.success())
                 } else {
                     result(ArrayList<GalleryItem>(), Error(-1, "Gallery is empty"))
                 }
@@ -86,8 +102,8 @@ class GalleryModelImpl : GalleryModel {
     ): Loader<Cursor> where T : FragmentActivity = CursorLoader(
         owner,
         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_PROJECTION,
-         "${IMAGE_PROJECTION[4]}>0 AND ${IMAGE_PROJECTION[3]}=? OR ${IMAGE_PROJECTION[3]}=? ",
-        arrayOf("image/jpeg", "image/png"),  "${IMAGE_PROJECTION[2]} DESC"
+        "${IMAGE_PROJECTION[4]}>0 AND ${IMAGE_PROJECTION[3]}=? OR ${IMAGE_PROJECTION[3]}=? ",
+        arrayOf("image/jpeg", "image/png"), "${IMAGE_PROJECTION[2]} DESC"
     )
 
     private fun <T> newCategoryLoader(
