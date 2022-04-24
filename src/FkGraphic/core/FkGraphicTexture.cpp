@@ -144,6 +144,10 @@ FkResult FkGraphicTexture::update(FkColor::kFormat fmt, int32_t width, int32_t h
     }
     desc.fmt = fmt;
     desc.size.set(width, height);
+    return update(pixels);
+}
+
+FkResult FkGraphicTexture::update(uint8_t *pixels) {
     auto glFmt = convertGLFormat(desc.fmt);
     bind();
     if (applied) {

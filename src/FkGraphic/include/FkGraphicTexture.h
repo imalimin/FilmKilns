@@ -63,6 +63,8 @@ public:
 
     virtual FkResult update(FkColor::kFormat fmt, int32_t width, int32_t height, uint8_t *pixels = nullptr);
 
+    virtual FkResult update(uint8_t *pixels);
+
 public:
     std::atomic_bool applied;
     FkTexDescription desc;

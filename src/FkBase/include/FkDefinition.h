@@ -47,7 +47,7 @@
 #else
 #define FkAssert(condition, value)            \
     if(!(condition)) {                        \
-        FkLogW("FkAssert", "assert(%s) failed.", #condition); \
+        FkLogE("FkAssert", "assert(%s) failed.", #condition); \
         return value;                         \
     }
 #endif
