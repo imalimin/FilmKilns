@@ -59,7 +59,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto canvas = proto->req->getCanvas();
     auto canvasSizeCompo = canvas->findComponent<FkSizeCompo>();
     if (canvasSizeCompo) {
-        renderEngine->updateMaterial(canvas->material, canvasSizeCompo->size, FkColor::black());
+        renderEngine->updateMaterial(canvas->material, canvasSizeCompo->size, FkColor::transparent());
     }
     for (auto &layer : proto->req->layers) {
         if (Fk_CANVAS_ID == layer->id) {

@@ -27,6 +27,8 @@ public:
 
     static FkColor &black();
 
+    static FkColor &transparent();
+
 public:
     FkColor();
 

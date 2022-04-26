@@ -43,6 +43,18 @@ FkColor &FkColor::black() {
     return *color;
 }
 
+FkColor &FkColor::transparent() {
+    static FkColor *color;
+    if (color == nullptr) {
+        color = new FkColor();
+    }
+    color->red = 0;
+    color->green = 0;
+    color->blue = 0;
+    color->alpha = 0;
+    return *color;
+}
+
 FkColor::FkColor() {
     FK_MARK_SUPER
 }
