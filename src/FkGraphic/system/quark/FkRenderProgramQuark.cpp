@@ -65,6 +65,9 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     } else {
         auto compo = std::make_shared<FkRenderProgramCompo>();
         FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
+        if (FK_INSTANCE_OF(proto->device, FkScreenEntity)) {
+            desc.type = FkProgramDescription::kType::MATRIX_WITH_CANVAS_BACKGROUND;
+        }
         compo->program = allocator->alloc(desc);
         if (compo->program == nullptr) {
             return FK_SOURCE_NOT_FOUND;

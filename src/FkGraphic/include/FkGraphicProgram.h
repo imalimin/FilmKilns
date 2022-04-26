@@ -19,6 +19,7 @@ public:
     FK_ENUM kType : int32_t {
         NONE = 0,
         MATRIX,
+        MATRIX_WITH_CANVAS_BACKGROUND,
         CANVAS_MOSAIC,
         POINT,
         LINE,
@@ -68,6 +69,8 @@ protected:
     int32_t getUniformLocation(std::string name);
 
     void setUniform1f(int32_t location, float value);
+
+    void setUniform4f(int32_t location, float v0, float v1, float v2, float v3);
 
     void setUniform2fv(int32_t location, FkFloatVec2 &vec2);
 

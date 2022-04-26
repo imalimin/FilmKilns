@@ -9,6 +9,7 @@
 #include "FkGraphicMatProgram.h"
 #include "FkCanvasMosaicProgram.h"
 #include "FkGraphicPointProgram.h"
+#include "FkCanvasMatProgram.h"
 #include "FkTexCompo.h"
 #include "FkVboCompo.h"
 #include "FkGLDefinition.h"
@@ -86,6 +87,10 @@ void FkGraphicProgram::unbind() {
 
 void FkGraphicProgram::setUniform1f(int32_t location, float value) {
     glUniform1f(location, value);
+}
+
+void FkGraphicProgram::setUniform4f(int32_t location, float v0, float v1, float v2, float v3) {
+    glUniform4f(location, v0, v1, v2, v3);
 }
 
 void FkGraphicProgram::setUniform2fv(int32_t location, FkFloatVec2 &vec2) {
@@ -190,6 +195,10 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
     switch (desc.type) {
         case FkProgramDescription::kType::MATRIX: {
             o = new FkGraphicMatProgram(desc);
+            break;
+        }
+        case FkProgramDescription::kType::MATRIX_WITH_CANVAS_BACKGROUND: {
+            o = new FkCanvasMatProgram(desc);
             break;
         }
         case FkProgramDescription::kType::CANVAS_MOSAIC: {

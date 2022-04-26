@@ -102,6 +102,5 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     programCompo->program->unbind();
     vboCompo->unbind();
     glDisable(GL_BLEND);
-    glFlush();
     return FK_OK;
 }

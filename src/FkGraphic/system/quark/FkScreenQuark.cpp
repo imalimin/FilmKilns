@@ -93,7 +93,6 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     glViewport(0, 0, size.getWidth(), size.getHeight());
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    _drawBackground(p);
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
 
@@ -115,28 +114,5 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     if (context) {
         FK_GL_CHECK(context->swapBuffers());
     }
-    glFlush();
     return FK_OK;
-}
-
-FkResult FkScreenQuark::_drawBackground(std::shared_ptr<FkProtocol> &p) {
-    if (program) {
-        FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-        FK_GL_CHECK(program->bind());
-        auto vboCompo = proto->materials->findComponent<FkVboCompo>();
-        vboCompo->bind();
-        int32_t offset = 0;
-        FkVertexDesc desc;
-        if (FK_OK != vboCompo->getValueLoc(FkVboCompo::kValueLoc::VERTEX, offset, desc)) {
-            FkLogW(FK_DEF_TAG, "Get vertex count error.");
-        }
-        program->addValue(vboCompo);
-        FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
-
-        FK_GL_CHECK(program->clear());
-        program->unbind();
-        vboCompo->unbind();
-        return FK_OK;
-    }
-    return FK_NPE;
 }
