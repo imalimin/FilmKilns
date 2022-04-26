@@ -49,11 +49,7 @@ FkResult FkBufDeviceQuark::onStart() {
 }
 
 FkResult FkBufDeviceQuark::onStop() {
-    auto ret = FkQuark::onStop();
-    if (FK_OK != ret) {
-        return ret;
-    }
-    return ret;
+    return FkQuark::onStop();
 }
 
 FkResult FkBufDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {

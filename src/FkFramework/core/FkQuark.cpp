@@ -52,7 +52,7 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
         && !FK_INSTANCE_OF(p, FkOnDestroyPrt)
         && !FK_INSTANCE_OF(p, FkOnStartPrt)
         && !FK_INSTANCE_OF(p, FkOnStopPrt)) {
-        FkLogE(FK_DEF_TAG, "Quark(%s) dispatch protocol(%s) on invalid state(%d)", getClassType().getName().c_str(), p->getClassType().getName().c_str(), this->state);
+        FkLogE(FK_DEF_TAG, "Quark(%s) dispatch protocol(%s) on invalid state(%d)", typeid(*this).name(), typeid(*p).name(), this->state);
         return FK_INVALID_STATE;
     }
     auto port = desc->find(p->getType());

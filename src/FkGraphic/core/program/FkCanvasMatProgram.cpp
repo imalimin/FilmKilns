@@ -9,6 +9,7 @@
 */
 
 #include "FkCanvasMatProgram.h"
+#include "FkGridSizeCompo.h"
 
 FkCanvasMatProgram::FkCanvasMatProgram(const FkProgramDescription &desc) : FkGraphicMatProgram(desc) {
     FK_MARK_SUPER
@@ -18,18 +19,48 @@ FkCanvasMatProgram::~FkCanvasMatProgram() {
 
 }
 
+FkResult FkCanvasMatProgram::create() {
+    auto ret = FkGraphicMatProgram::create();
+    if (FK_OK == ret) {
+        uGridSizeXLoc = getUniformLocation("gridSizeX");
+        FkAssert(uGridSizeXLoc >= 0, FK_FAIL);
+        uGridSizeYLoc = getUniformLocation("gridSizeY");
+        FkAssert(uGridSizeYLoc >= 0, FK_FAIL);
+    }
+    return ret;
+}
+
+FkResult FkCanvasMatProgram::addValue(std::shared_ptr<FkComponent> value) {
+    if (nullptr == value) {
+        return FK_FAIL;
+    }
+    if (FK_INSTANCE_OF(value, FkGridSizeCompo)) {
+        auto pValue = Fk_POINTER_CAST(FkGridSizeCompo, value);
+        setUniform1f(uGridSizeXLoc, pValue->vec.x);
+        setUniform1f(uGridSizeYLoc, pValue->vec.y);
+    }
+    return FkGraphicMatProgram::addValue(value);
+}
+
 std::string FkCanvasMatProgram::getFragment() {
     std::string shader(R"(
         precision mediump float;
         varying mediump vec2 vTextureCoord;
         uniform sampler2D uTexture;
+        uniform float gridSizeX;
+        uniform float gridSizeY;
         void main(){
             vec4 back = vec4(1.0, 1.0, 1.0, 1.0);
-            float ix = vTextureCoord.x / 0.1;
-            float iy = vTextureCoord.y / 0.1;
-            if (iy / 2.0 - floor(iy / 2.0) >= 0.0 && iy / 2.0 - floor(iy / 2.0) < 1.0) {
+            float ix = vTextureCoord.x / gridSizeX;
+            float iy = vTextureCoord.y / gridSizeY;
+            if (iy / 2.0 - floor(iy / 2.0) >= 0.0 && iy / 2.0 - floor(iy / 2.0) < 0.5) {
+                if (ix / 2.0 - floor(ix / 2.0) >= 0.0 && ix / 2.0 - floor(ix / 2.0) < 0.5) {
                     back = vec4(0.796, 0.796, 0.796, 1.0);
+                }
             } else {
+                if (ix / 2.0 - floor(ix / 2.0) >= 0.5 && ix / 2.0 - floor(ix / 2.0) < 1.0) {
+                    back = vec4(0.796, 0.796, 0.796, 1.0);
+                }
             }
             vec4 front = texture2D(uTexture, vTextureCoord);
             vec4 color = mix(front, back, 1.0 - front.a);

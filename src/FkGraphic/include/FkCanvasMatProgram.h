@@ -21,7 +21,15 @@ public:
 
     virtual ~FkCanvasMatProgram();
 
+    virtual FkResult create() override;
+
+    virtual FkResult addValue(std::shared_ptr<FkComponent> value) override;
+
     virtual std::string getFragment() override;
+
+private:
+    int32_t uGridSizeXLoc = -1;
+    int32_t uGridSizeYLoc = -1;
 };
 
 #endif //FK_GRAPHIC_FKCANVASMATPROGRAM_H

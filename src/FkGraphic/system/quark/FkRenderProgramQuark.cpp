@@ -39,7 +39,7 @@ FkResult FkRenderProgramQuark::onStart() {
         return ret;
     }
     allocator = std::make_shared<FkGraphicProgramAllocator>(10);
-    return FkQuark::onStart();
+    return ret;
 }
 
 FkResult FkRenderProgramQuark::onStop() {

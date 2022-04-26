@@ -30,14 +30,6 @@ protected:
 
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> &p);
-
-    FkResult _drawBackground(std::shared_ptr<FkProtocol> &p);
-
-private:
-    std::shared_ptr<FkGraphicProgramAllocator> allocator = nullptr;
-    std::shared_ptr<FkGraphicAllocator> texAllocator = nullptr;
-    std::shared_ptr<FkGraphicProgram> program = nullptr;
-    std::shared_ptr<FkGraphicTexture> tex = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKSCREENQUARK_H
