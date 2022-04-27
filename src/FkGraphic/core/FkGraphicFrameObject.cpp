@@ -6,6 +6,7 @@
 */
 
 #include "FkGraphicFrameObject.h"
+#include "FkGLDefinition.h"
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
@@ -20,7 +21,7 @@ FkGraphicFrameObject::~FkGraphicFrameObject() {
 
 FkResult FkGraphicFrameObject::create() {
     glGenFramebuffers(1, &fbo);
-    return GL_NO_ERROR != glGetError();
+    return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
 void FkGraphicFrameObject::destroy() {
@@ -45,19 +46,19 @@ void FkGraphicFrameObject::unbind() {
 FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> o, bool stayBind) {
     bind();
     o->bind();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, o->desc.target, o->tex, 0);
+    FK_GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, o->desc.target, o->tex, 0));
     o->unbind();
     if (!stayBind) {
         unbind();
     }
-    return GL_NO_ERROR != glGetError();
+    return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
 FkResult FkGraphicFrameObject::detach(uint32_t target) {
     bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, GL_NONE, 0);
     unbind();
-    return GL_NO_ERROR != glGetError();
+    return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
 FkGraphicFBOAllocator::FkGraphicFBOAllocator(int capacity)
