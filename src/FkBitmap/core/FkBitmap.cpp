@@ -62,7 +62,6 @@ FkResult FkBitmap::write(std::string file, FkImage::Format fmt, std::shared_ptr<
 
 FkBitmap::FkBitmap(std::string &file) : FkObject() {
     FK_MARK_SUPER
-    SkColorType colorType = kN32_SkColorType;
     bmp = std::make_shared<SkBitmap>();
     sk_sp<SkData> data = SkData::MakeFromFileName(file.c_str());
     std::unique_ptr<SkCodec> codec = SkCodec::MakeFromData(data);
@@ -70,7 +69,8 @@ FkBitmap::FkBitmap(std::string &file) : FkObject() {
         FkLogI(FK_DEF_TAG, "Can not find codec for %s", file.c_str());
         return;
     }
-    SkImageInfo info = codec->getInfo().makeColorType(colorType);
+    SkImageInfo info = codec->getInfo().makeColorType(kN32_SkColorType)
+            .makeAlphaType(SkAlphaType::kPremul_SkAlphaType);
     if (!bmp->tryAllocPixels(info)) {
         FkLogI(FK_DEF_TAG, "Can not alloc pixels mem.");
         return;
