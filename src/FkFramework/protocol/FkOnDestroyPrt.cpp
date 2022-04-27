@@ -12,7 +12,7 @@ FkOnDestroyPrt::FkOnDestroyPrt() : FkProtocol() {
 }
 
 FkOnDestroyPrt::FkOnDestroyPrt(const FkOnDestroyPrt &o) : FkProtocol(o) {
-
+    FK_MARK_SUPER
 }
 
 FkOnDestroyPrt::~FkOnDestroyPrt() {

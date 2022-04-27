@@ -12,7 +12,7 @@ FkOnCreatePrt::FkOnCreatePrt() : FkProtocol() {
 }
 
 FkOnCreatePrt::FkOnCreatePrt(const FkOnCreatePrt &o) : FkProtocol(o) {
-
+    FK_MARK_SUPER
 }
 
 FkOnCreatePrt::~FkOnCreatePrt() {

@@ -59,7 +59,7 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
     if (nullptr != port) {
         return port->chat(this, p);
     }
-    FkLogE(FK_DEF_TAG, "Quark(%s) protocol(%s) not found", getClassType().getName().c_str(), p->getClassType().getName().c_str());
+    FkLogE(FK_DEF_TAG, "Quark(%s) protocol(%s) not found", typeid(*this).name(), typeid(*p).name());
     return FK_PORT_NOT_FOUND;
 }
 

@@ -12,7 +12,7 @@ FkOnStopPrt::FkOnStopPrt() : FkProtocol() {
 }
 
 FkOnStopPrt::FkOnStopPrt(const FkOnStopPrt &o) : FkProtocol(o) {
-
+    FK_MARK_SUPER
 }
 
 FkOnStopPrt::~FkOnStopPrt() {
