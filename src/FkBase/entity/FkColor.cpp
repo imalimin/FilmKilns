@@ -55,12 +55,13 @@ FkColor &FkColor::transparent() {
     return *color;
 }
 
-FkColor::FkColor() {
+FkColor::FkColor() : FkObject(), alphaType(AlphaType::kUnPreMultiple) {
     FK_MARK_SUPER
 }
 
 FkColor::FkColor(const FkColor &o)
-        : FkObject(), format(o.format), red(o.red), green(o.green), blue(o.blue), alpha(o.alpha) {
+        : FkObject(), format(o.format), alphaType(o.alphaType),
+          red(o.red), green(o.green), blue(o.blue), alpha(o.alpha) {
     FK_MARK_SUPER
 }
 
@@ -69,15 +70,15 @@ FkColor::~FkColor() {
 }
 
 float FkColor::fRed() {
-    return red / 255.0f;
+    return red * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
 float FkColor::fGreen() {
-    return green / 255.0f;
+    return green * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
 float FkColor::fBlue() {
-    return blue / 255.0f;
+    return blue * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
 float FkColor::fAlpha() {
@@ -100,10 +101,14 @@ int32_t FkColor::toInt() {
     int32_t color = 0;
     color |= ((uint8_t) alpha);
     color = color << 8;
-    color |= ((uint8_t) red);
+    color |= ((uint8_t) (red * fAlpha()));
     color = color << 8;
-    color |= ((uint8_t) green);
+    color |= ((uint8_t) (green * fAlpha()));
     color = color << 8;
-    color |= ((uint8_t) blue);
+    color |= ((uint8_t) (blue * fAlpha()));
     return color;
+}
+
+void FkColor::setAlphaType(AlphaType type) {
+    this->alphaType = type;
 }

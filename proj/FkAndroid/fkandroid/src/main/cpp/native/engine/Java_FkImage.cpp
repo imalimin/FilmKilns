@@ -83,6 +83,7 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithColor
          jint blue, jint alpha) {
     FkColor color;
     color.format = FkColor::kFormat::RGBA;
+    color.setAlphaType(FkColor::AlphaType::kPreMultiple);
     color.red = red;
     color.green = green;
     color.blue = blue;

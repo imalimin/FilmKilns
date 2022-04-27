@@ -20,6 +20,10 @@ public:
         RGBA,
         RGB565,
     };
+    FK_ENUM AlphaType : uint32_t {
+        kUnPreMultiple = 0,
+        kPreMultiple,
+    };
 public:
     static FkColor &from(int32_t color);
 
@@ -48,8 +52,11 @@ public:
 
     int32_t toInt();
 
+    void setAlphaType(AlphaType type);
+
 public:
     kFormat format;
+    AlphaType alphaType;
     uint16_t red;
     uint16_t green;
     uint16_t blue;

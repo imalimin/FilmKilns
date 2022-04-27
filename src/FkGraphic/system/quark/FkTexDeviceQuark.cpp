@@ -81,7 +81,19 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     }
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    /**
+     * Texture must be premultiplied
+     * sfactor: texture
+     * dfactor: frame buffer
+     * blendColor = srcColor * sfactor + dstColor * dfactor
+     * exsample:
+     * glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+     * > blendColor.r = srcColor.a * srcColor.r + (1-srcColor.a) * dstColor.r
+     * > blendColor.g = srcColor.a * srcColor.g + (1-srcColor.a) * dstColor.g
+     * > blendColor.b = srcColor.a * srcColor.b + (1-srcColor.a) * dstColor.b
+     * > blendColor.a = srcColor.a * srcColor.a + (1-srcColor.a) * dstColor.a
+     */
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
     glViewport(0, 0, size.getWidth(), size.getHeight());
     fboCompo->fbo->attach(dstTexCompo->tex, true);
