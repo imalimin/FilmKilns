@@ -25,7 +25,9 @@ public:
         kPreMultiple,
     };
 public:
-    static FkColor &from(int32_t color);
+    static FkColor &makeFrom(int32_t color);
+
+    static FkColor &makeFromRGBA8(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 
     static FkColor &white();
 
@@ -54,7 +56,9 @@ public:
 
     void setAlphaType(AlphaType type);
 
-public:
+    kFormat getFormat();
+
+private:
     kFormat format;
     AlphaType alphaType;
     uint16_t red;

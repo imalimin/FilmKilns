@@ -7,7 +7,7 @@
 
 #include "FkColor.h"
 
-FkColor &FkColor::from(int32_t color) {
+FkColor &FkColor::makeFrom(int32_t color) {
     static FkColor *c;
     if (c == nullptr) {
         c = new FkColor();
@@ -16,6 +16,18 @@ FkColor &FkColor::from(int32_t color) {
     c->red = (color >> 16) & 0x000000FF;
     c->green = (color >> 8) & 0x000000FF;
     c->blue = (color >> 0) & 0x000000FF;
+    return *c;
+}
+
+FkColor &FkColor::makeFromRGBA8(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+    static FkColor *c;
+    if (c == nullptr) {
+        c = new FkColor();
+    }
+    c->alpha = alpha;
+    c->red = red;
+    c->green = green;
+    c->blue = blue;
     return *c;
 }
 
@@ -111,4 +123,8 @@ int32_t FkColor::toInt() {
 
 void FkColor::setAlphaType(AlphaType type) {
     this->alphaType = type;
+}
+
+FkColor::kFormat FkColor::getFormat() {
+    return format;
 }

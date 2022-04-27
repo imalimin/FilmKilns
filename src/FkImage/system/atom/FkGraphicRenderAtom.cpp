@@ -113,7 +113,7 @@ FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer
         auto key = itr.first;
         auto pointCompo = std::make_shared<FkPointFCompo>();
         pointCompo->size = key >> 32;
-        pointCompo->color = FkColor::from((int32_t) (key & 0x00000000FFFFFFFF));
+        pointCompo->color = FkColor::makeFrom((int32_t) (key & 0x00000000FFFFFFFF));
         auto vertex = std::make_shared<FkPointVertexCompo>();
         vertex->setup(itr.second.size() / 2, 2,
                       sizeof(float), itr.second.data());

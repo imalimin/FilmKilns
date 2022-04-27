@@ -127,7 +127,7 @@ FkResult FkRenderEngine::_onUpdateMaterial(std::shared_ptr<FkMessage> &msg) {
     auto proto = std::make_shared<FkNewTexProto>();
     auto material = std::dynamic_pointer_cast<FkMaterialCompo>(msg->sp);
     proto->texEntity = std::make_shared<FkTexEntity>(material);
-    proto->texEntity->addComponent(std::make_shared<FkColorCompo>(FkColor::from(msg->arg1)));
+    proto->texEntity->addComponent(std::make_shared<FkColorCompo>(FkColor::makeFrom(msg->arg1)));
     proto->texEntity->addComponent(std::make_shared<FkSizeCompo>(FkSize(msg->arg2)));
     proto->texEntity->addComponent(std::make_shared<FkFormatCompo>(FkColor::kFormat::RGBA));
     return client->with(molecule)->send(proto);

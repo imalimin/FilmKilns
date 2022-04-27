@@ -81,13 +81,8 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithFile
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithColor
         (JNIEnv *env, jobject that, jlong handle, jint widht, jint height, jint red, jint green,
          jint blue, jint alpha) {
-    FkColor color;
-    color.format = FkColor::kFormat::RGBA;
+    FkColor color = FkColor::makeFromRGBA8(red, green, blue, alpha);
     color.setAlphaType(FkColor::AlphaType::kPreMultiple);
-    color.red = red;
-    color.green = green;
-    color.blue = blue;
-    color.alpha = alpha;
     auto engine = castHandle(handle);
     return engine->newLayerWithColor(FkSize(widht, height), color);
 }
@@ -132,7 +127,7 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativePostRotation
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPoint
         (JNIEnv *env, jobject that, jlong handle, jint layer, jlong color, jint size, jint x, jint y) {
     auto engine = castHandle(handle);
-    return engine->drawPoint(layer, FkColor::from(color), size, x, y);
+    return engine->drawPoint(layer, FkColor::makeFrom(color), size, x, y);
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeCrop
