@@ -21,6 +21,10 @@ FkGraphicPointProgram::~FkGraphicPointProgram() {
 
 }
 
+FkProgramDescription::kType FkGraphicPointProgram::type() {
+    return FkProgramDescription::kType::POINT;
+}
+
 FkResult FkGraphicPointProgram::create() {
     auto ret = FkGraphicProgram::create();
     if (FK_OK == ret) {

@@ -13,11 +13,14 @@
 FkGraphicMatProgram::FkGraphicMatProgram(const FkProgramDescription &desc)
         : FkGraphicProgram(desc) {
     FK_MARK_SUPER
-    this->desc.type = FkProgramDescription::kType::MATRIX;
 }
 
 FkGraphicMatProgram::~FkGraphicMatProgram() {
 
+}
+
+FkProgramDescription::kType FkGraphicMatProgram::type() {
+    return FkProgramDescription::kType::MATRIX;
 }
 
 FkResult FkGraphicMatProgram::create() {
@@ -108,8 +111,7 @@ std::string FkGraphicMatProgram::getFragment() {
         varying mediump vec2 vTextureCoord;
         uniform sampler2D uTexture;
         void main(){
-            vec4 color = vec4(texture2D(uTexture, vTextureCoord).rgb, 1.0);
-            gl_FragColor = color;
+            gl_FragColor = texture2D(uTexture, vTextureCoord);
         })");
     return shader;
 }

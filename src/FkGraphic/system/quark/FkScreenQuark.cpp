@@ -64,7 +64,7 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     }
 
     glViewport(0, 0, size.getWidth(), size.getHeight());
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();

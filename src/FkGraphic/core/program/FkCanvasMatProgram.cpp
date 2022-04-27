@@ -19,6 +19,10 @@ FkCanvasMatProgram::~FkCanvasMatProgram() {
 
 }
 
+FkProgramDescription::kType FkCanvasMatProgram::type() {
+    return FkProgramDescription::kType::MATRIX_WITH_CANVAS_BACKGROUND;
+}
+
 FkResult FkCanvasMatProgram::create() {
     auto ret = FkGraphicMatProgram::create();
     if (FK_OK == ret) {
@@ -63,8 +67,7 @@ std::string FkCanvasMatProgram::getFragment() {
                 }
             }
             vec4 front = texture2D(uTexture, vTextureCoord);
-            vec4 color = mix(front, back, 1.0 - front.a);
-            gl_FragColor = color;
+            gl_FragColor = mix(front, back, 1.0 - front.a);
         })");
     return shader;
 }

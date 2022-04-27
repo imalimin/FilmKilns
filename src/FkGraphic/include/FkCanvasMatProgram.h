@@ -21,6 +21,8 @@ public:
 
     virtual ~FkCanvasMatProgram();
 
+    virtual FkProgramDescription::kType type() override;
+
     virtual FkResult create() override;
 
     virtual FkResult addValue(std::shared_ptr<FkComponent> value) override;

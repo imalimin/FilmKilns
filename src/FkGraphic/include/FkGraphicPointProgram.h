@@ -18,6 +18,8 @@ public:
 
     virtual ~FkGraphicPointProgram();
 
+    virtual FkProgramDescription::kType type() override;
+
     virtual FkResult create() override;
 
     virtual void clear() override;

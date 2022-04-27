@@ -45,6 +45,8 @@ public:
 
     virtual ~FkGraphicProgram();
 
+    virtual FkProgramDescription::kType type() = 0;
+
     virtual std::string getVertex() = 0;
 
     virtual std::string getFragment() = 0;
@@ -105,7 +107,7 @@ public:
 
     virtual FkGraphicProgram *delegateAlloc(FkProgramDescription &desc) override;
 
-    virtual bool delegateEquals(FkProgramDescription &desc, FkGraphicProgram *tex) override;
+    virtual bool delegateEquals(FkProgramDescription &desc, FkGraphicProgram *program) override;
 
 };
 

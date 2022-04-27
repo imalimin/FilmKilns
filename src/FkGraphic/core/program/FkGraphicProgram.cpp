@@ -52,6 +52,7 @@ FkGraphicProgram::~FkGraphicProgram() {
 }
 
 FkResult FkGraphicProgram::create() {
+    desc.type = type();
     program = glCreateProgram();
     FkAssert(GL_NONE != program, GL_NONE);
     std::string vertex = getVertex();
@@ -215,6 +216,6 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
     return o;
 }
 
-bool FkGraphicProgramAllocator::delegateEquals(FkProgramDescription &desc, FkGraphicProgram *tex) {
-    return desc.type == tex->desc.type;
+bool FkGraphicProgramAllocator::delegateEquals(FkProgramDescription &desc, FkGraphicProgram *program) {
+    return desc.type == program->desc.type;
 }

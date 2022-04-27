@@ -16,6 +16,10 @@ FkCanvasMosaicProgram::~FkCanvasMosaicProgram() {
 
 }
 
+FkProgramDescription::kType FkCanvasMosaicProgram::type() {
+    return FkProgramDescription::kType::CANVAS_MOSAIC;
+}
+
 FkResult FkCanvasMosaicProgram::create() {
     auto ret = FkGraphicProgram::create();
     if (FK_OK == ret) {

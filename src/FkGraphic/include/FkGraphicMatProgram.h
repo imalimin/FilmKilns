@@ -19,6 +19,8 @@ public:
 
     virtual ~FkGraphicMatProgram();
 
+    virtual FkProgramDescription::kType type() override;
+
     virtual FkResult create() override;
 
     virtual std::string getVertex() override;
