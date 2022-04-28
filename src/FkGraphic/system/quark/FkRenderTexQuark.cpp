@@ -87,7 +87,7 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
     }
     auto ret = _drawColor(tex, proto->texEntity);
     if (FK_OK != ret) {
-        FkLogD(FK_DEF_TAG, "Draw color failed. No color component.");
+        FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
     }
     return FK_OK;
 }
@@ -137,12 +137,14 @@ FkResult FkRenderTexQuark::_drawColor(std::shared_ptr<FkGraphicTexture> &tex,
     auto fboCompo = texEntity->fbo();
     if (colorCompo && fboCompo) {
         auto size = tex->desc.size;
-        fboCompo->fbo->attach(tex, true);
+        fboCompo->fbo->bind();
+        fboCompo->fbo->attach(tex);
         glViewport(0, 0, size.getWidth(), size.getHeight());
         glClearColor(colorCompo->color.fRed(), colorCompo->color.fGreen(),
                      colorCompo->color.fBlue(), colorCompo->color.fAlpha());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         fboCompo->fbo->detach(tex->desc.target);
+        fboCompo->fbo->unbind();
         return FK_OK;
     }
     return FK_FAIL;

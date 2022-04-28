@@ -30,7 +30,7 @@ public:
 
     virtual void unbind();
 
-    virtual FkResult attach(std::shared_ptr<FkGraphicTexture> o, bool stayBind = false);
+    virtual FkResult attach(std::shared_ptr<FkGraphicTexture> o);
 
     virtual FkResult detach(uint32_t target);
 

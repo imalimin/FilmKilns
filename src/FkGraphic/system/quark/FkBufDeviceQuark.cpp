@@ -65,9 +65,11 @@ FkResult FkBufDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     }
     auto size = material->size();
     glFinish();
-    fboCompo->fbo->attach(material->tex()->tex, true);
+    fboCompo->fbo->bind();
+    fboCompo->fbo->attach(material->tex()->tex);
     glViewport(0, 0, size.getWidth(), size.getHeight());
     glReadPixels(0, 0, size.getWidth(), size.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, device->buffer()->data());
     fboCompo->fbo->detach(material->tex()->tex->desc.target);
+    fboCompo->fbo->unbind();
     return FK_OK;
 }

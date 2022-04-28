@@ -96,7 +96,12 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
     glViewport(0, 0, size.getWidth(), size.getHeight());
-    fboCompo->fbo->attach(dstTexCompo->tex, true);
+    fboCompo->fbo->bind();
+    fboCompo->fbo->attach(dstTexCompo->tex);
+#if defined(__FK_DEBUG__)
+    auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    FkAssert(GL_FRAMEBUFFER_COMPLETE == status,);
+#endif
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
 
@@ -106,6 +111,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
 
     fboCompo->fbo->detach(dstTexCompo->tex->desc.target);
+    fboCompo->fbo->unbind();
     FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();
     vboCompo->unbind();

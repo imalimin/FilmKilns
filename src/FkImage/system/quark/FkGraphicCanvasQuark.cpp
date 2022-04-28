@@ -65,7 +65,7 @@ FkResult FkGraphicCanvasQuark::onStop() {
 
 FkResult FkGraphicCanvasQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto sizeCompo = _getCanvas()->findComponent<FkSizeCompo>();
-    if (sizeCompo == nullptr) {
+    if (sizeCompo == nullptr || sizeCompo->size.isZero()) {
         FkLogE(FK_DEF_TAG, "Empty canvas.");
         return FK_EMPTY_CANVAS;
     }

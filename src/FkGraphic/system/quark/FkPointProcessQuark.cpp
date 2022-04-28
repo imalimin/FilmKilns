@@ -69,7 +69,8 @@ FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &v
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
     glViewport(0, 0, size.getWidth(), size.getHeight());
-    fboCompo->fbo->attach(dstTexCompo->tex, true);
+    fboCompo->fbo->bind();
+    fboCompo->fbo->attach(dstTexCompo->tex);
     vboCompo->bind();
     FK_GL_CHECK(programCompo->program->bind());
 
@@ -81,6 +82,7 @@ FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &v
     FK_GL_CHECK(glDrawArrays(GL_POINTS, 0, desc.countVertex));
 
     fboCompo->fbo->detach(dstTexCompo->tex->desc.target);
+    fboCompo->fbo->unbind();
     FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();
     vboCompo->unbind();

@@ -43,21 +43,13 @@ void FkGraphicFrameObject::unbind() {
     glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
-FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> o, bool stayBind) {
-    bind();
-    o->bind();
-    FK_GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, o->desc.target, o->tex, 0));
-    o->unbind();
-    if (!stayBind) {
-        unbind();
-    }
+FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> o) {
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, o->desc.target, o->tex, 0);
     return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
 FkResult FkGraphicFrameObject::detach(uint32_t target) {
-    bind();
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, GL_NONE, 0);
-    unbind();
     return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
