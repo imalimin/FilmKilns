@@ -83,7 +83,10 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
     std::fstream stream;
     stream.open(file.c_str(), std::ios::in | std::ios::binary);
     auto model = std::make_shared<pb::FkPictureModel>();
-    model->ParseFromIstream(&stream);
+    if (!model->ParseFromIstream(&stream)) {
+        FkLogE(FK_DEF_TAG, "Parse proto buffer fail.");
+        return FK_IO_FAIL;
+    }
     for (auto &layer : model->layers()) {
         if (!layer.file().empty()) {
             auto layerFile = dir;

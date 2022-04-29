@@ -172,6 +172,7 @@ FkResult FkLayerEngine::_removeLayer(std::shared_ptr<FkMessage> msg) {
 }
 
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {
+    FkAssert(!size.isZero(), FK_FAIL);
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setCanvasSize));
     msg->sp = std::make_shared<FkSize>(size);
     return sendMessage(msg);
