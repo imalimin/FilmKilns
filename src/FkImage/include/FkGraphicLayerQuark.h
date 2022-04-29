@@ -40,6 +40,8 @@ private:
 
     FkResult _onWithLayer(std::shared_ptr<FkProtocol> p);
 
+    virtual FkResult _onUpdateScaleType(std::shared_ptr<FkProtocol> &p);
+
 protected:
     std::shared_ptr<FkGraphicLayer> newLayerEntity();
 

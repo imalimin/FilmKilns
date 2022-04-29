@@ -34,6 +34,7 @@
 #include "FkCropProto.h"
 #include "FkRemoveLayerProto.h"
 #include "FkReadPixelsProto.h"
+#include "FkScaleTypeProto.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -67,6 +68,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
     FK_PORT_DESC_QUICK_ADD(desc, FkCropProto, FkGraphicLayerQuark::_onCrop);
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicLayerQuark::_onWithLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -384,4 +386,19 @@ void FkGraphicLayerQuark::_withCanvasSize(std::shared_ptr<FkGraphicUpdateLayerPr
             proto->winSize = canvasSizeCompo->size;
         }
     }
+}
+
+FkResult FkGraphicLayerQuark::_onUpdateScaleType(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkScaleTypeProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (itr == layers.end()) {
+        return FK_SOURCE_NOT_FOUND;
+    }
+    auto layer = itr->second;
+    auto scaleComp = layer->findComponent<FkScaleComponent>();
+    if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
+        scaleComp->value = _calcScaleType(layer, proto->winSize, proto->scaleType);
+        return FK_OK;
+    }
+    return FK_FAIL;
 }

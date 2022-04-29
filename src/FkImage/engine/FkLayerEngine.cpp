@@ -30,6 +30,7 @@
 #include "FkMath.h"
 #include "FkQueryWinSizeProto.h"
 #include "FkRemoveLayerProto.h"
+#include "FkScaleTypeProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -92,12 +93,9 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
     proto->win = std::dynamic_pointer_cast<FkGraphicWindow>(msg->sp);
     auto ret = client->with(molecule)->send(proto);
 
-    auto layer = std::make_shared<FkGraphicLayer>();
-    layer->id = Fk_CANVAS_ID;
-    auto updateProto = std::make_shared<FkGraphicUpdateLayerPrt>();
-    updateProto->layer = layer;
-    updateProto->scaleType = static_cast<kScaleType>(msg->arg1);
-    client->with(molecule)->send(updateProto);
+    auto type = static_cast<kScaleType>(msg->arg1);
+    auto scaleProto = std::make_shared<FkScaleTypeProto>(Fk_CANVAS_ID, type);
+    client->with(molecule)->send(scaleProto);
     return ret;
 }
 
