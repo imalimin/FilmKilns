@@ -97,6 +97,22 @@ float FkColor::fAlpha() {
     return alpha / 255.0f;
 }
 
+uint16_t FkColor::uRed() {
+    return red;
+}
+
+uint16_t FkColor::uGreen() {
+    return green;
+}
+
+uint16_t FkColor::uBlue() {
+    return blue;
+}
+
+uint16_t FkColor::uAlpha() {
+    return alpha;
+}
+
 float *FkColor::fArray() {
     if (nullptr == _fArray) {
         _fArray = new float[4];

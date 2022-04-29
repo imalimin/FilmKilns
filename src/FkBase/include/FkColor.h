@@ -50,6 +50,14 @@ public:
 
     float fAlpha();
 
+    uint16_t uRed();
+
+    uint16_t uGreen();
+
+    uint16_t uBlue();
+
+    uint16_t uAlpha();
+
     float *fArray();
 
     int32_t toInt();

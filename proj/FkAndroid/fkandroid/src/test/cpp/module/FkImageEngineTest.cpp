@@ -91,7 +91,7 @@ TEST_F(FkImageFileEngineTest, getLayers) {
     std::string path = FK_ANDROID_TEST_CACHE_IMAGE_0;
     EXPECT_GT(engine->newLayerWithFile(path), 0);
     EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
-    auto callback = [](std::shared_ptr<fk_pb::FkPictureModel> &model) {
+    auto callback = [](std::shared_ptr<pb::FkPictureModel> &model) {
 
     };
     EXPECT_EQ(fileEngine->getLayers(callback), FK_OK);

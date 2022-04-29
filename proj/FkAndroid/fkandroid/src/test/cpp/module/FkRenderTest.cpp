@@ -110,7 +110,7 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkBufDeviceEntity>(buf);
     device->addComponent(std::make_shared<FkFuncCompo>([promise, buf, &size]() {
         std::string path = "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/000000.bmp";
-        FkBitmap::write(path, buf->data(), buf->capacity(), size.getWidth(), size.getHeight());
+        FkBitmap::write(path, FkImage::Format::kJPEG, buf, size.getWidth(), size.getHeight());
         promise->set_value(FK_OK);
     }));
     auto materials = makeMaterials(src, size, FkIntVec2(0, 0));
@@ -122,10 +122,10 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
     auto green = buf->data()[index + 1];
     auto blue = buf->data()[index + 2];
     auto alpha = buf->data()[index + 3];
-    EXPECT_EQ(red, color.red);
-    EXPECT_EQ(green, color.green);
-    EXPECT_EQ(blue, color.blue);
-    EXPECT_EQ(alpha, color.alpha);
+    EXPECT_EQ(red, color.uRed());
+    EXPECT_EQ(green, color.uGreen());
+    EXPECT_EQ(blue, color.uBlue());
+    EXPECT_EQ(alpha, color.uAlpha());
 }
 
 TEST_F(FkRenderEngineTest, Render2Buffer) {
