@@ -35,6 +35,8 @@
 #include "FkRemoveLayerProto.h"
 #include "FkReadPixelsProto.h"
 #include "FkScaleTypeProto.h"
+#include "FkBitmapDefinition.h"
+#include "math.h"
 
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
@@ -163,14 +165,15 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
         return FK_SKIP;
     }
     FkResult ret = FK_OK;
+    auto bmpCompo = proto->layer->findComponent<FkBitmapCompo>();
     auto layer = itr->second;
     auto layerColor = _updateLayerColor(proto, layer);
-    auto layerSize = _updateLayerSize(proto, layer);
+    bool isSwappedWH = bmpCompo != nullptr && bmpCompo->bmp != nullptr && bmpCompo->bmp->isSwappedWH();
+    auto layerSize = _updateLayerSize(proto, layer, isSwappedWH);
 
     if (!layerSize.isZero()) {
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
         FkAssert(renderEngine != nullptr, nullptr);
-        auto bmpCompo = proto->layer->findComponent<FkBitmapCompo>();
         if (bmpCompo) {
             auto buf = FkBuffer::alloc(bmpCompo->bmp->getByteSize());
             memcpy(buf->data(), bmpCompo->bmp->getPixels(), buf->capacity());
@@ -178,6 +181,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
                                                          layerSize,
                                                          buf);
             FkAssert(FK_OK == ret, ret);
+            _updateLayerByEncodeOrigin(layer, (int32_t) bmpCompo->bmp->getEncodedOrigin());
             layer->copyComponentFrom<FkFilePathCompo>(proto->layer);
         } else {
             ret = renderEngine->updateMaterial(layer->material,
@@ -341,10 +345,10 @@ FkResult FkGraphicLayerQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
     return FK_FAIL;
 }
 
-FkFloatVec3 FkGraphicLayerQuark::_calcScaleType(std::shared_ptr<FkGraphicLayer> &layer,
-                                                FkSize &winSize,
+FkFloatVec3 FkGraphicLayerQuark::_calcScaleType(FkSize &src,
+                                                FkSize &dst,
                                                 kScaleType scaleType) {
-    auto scale = FkGraphicLayer::calcScaleWithScaleType(layer, scaleType, winSize);
+    auto scale = FkGraphicLayer::calcScaleWithScaleType(src, dst, scaleType);
     return FkFloatVec3(scale, scale, 1.0f);
 }
 
@@ -360,7 +364,8 @@ FkColor &FkGraphicLayerQuark::_updateLayerColor(std::shared_ptr<FkGraphicUpdateL
 }
 
 FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
-                                              std::shared_ptr<FkGraphicLayer> &layer) {
+                                              std::shared_ptr<FkGraphicLayer> &layer,
+                                              bool isSwappedWH) {
     auto reqSizeCompo = proto->layer->findComponent<FkSizeCompo>();
     auto layerSizeComp = layer->findComponent<FkSizeCompo>();
     if (layerSizeComp == nullptr) {
@@ -372,7 +377,11 @@ FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLay
     }
     auto scaleComp = layer->findComponent<FkScaleComponent>();
     if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
-        scaleComp->value = _calcScaleType(layer, proto->winSize, proto->scaleType);
+        auto src = layerSizeComp->size;
+        if (isSwappedWH) {
+            src.swap();
+        }
+        scaleComp->value = _calcScaleType(src, proto->winSize, proto->scaleType);
     }
     return layerSizeComp->size;
 }
@@ -396,9 +405,49 @@ FkResult FkGraphicLayerQuark::_onUpdateScaleType(std::shared_ptr<FkProtocol> &p)
     }
     auto layer = itr->second;
     auto scaleComp = layer->findComponent<FkScaleComponent>();
+    auto sizeCompo = layer->findComponent<FkSizeCompo>();
     if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
-        scaleComp->value = _calcScaleType(layer, proto->winSize, proto->scaleType);
+        scaleComp->value = _calcScaleType(sizeCompo->size, proto->winSize, proto->scaleType);
         return FK_OK;
     }
     return FK_FAIL;
+}
+
+void FkGraphicLayerQuark::_updateLayerByEncodeOrigin(std::shared_ptr<FkGraphicLayer> &layer,
+                                                     int32_t decodedOrigin) {
+    auto scaleCompo = layer->findComponent<FkScaleComponent>();
+    auto rotateCompo = layer->findComponent<FkRotateComponent>();
+    switch ((FkEncodedOrigin) decodedOrigin) {
+        case FkEncodedOrigin::kTopRight: { // Reflected across y-axis
+            scaleCompo->value.y = -scaleCompo->value.y;
+            break;
+        }
+        case FkEncodedOrigin::kBottomRight: { // Rotated 180
+            rotateCompo->value = FkRational(-M_PI * 100000000 , 100000000);
+            break;
+        }
+        case FkEncodedOrigin::kBottomLeft: { // Reflected across x-axis
+            scaleCompo->value.x = -scaleCompo->value.x;
+            break;
+        }
+        case FkEncodedOrigin::kLeftTop: { // Reflected across x-axis, Rotated 90 CCW. Swapped width height
+            scaleCompo->value.x = -scaleCompo->value.x;
+            rotateCompo->value = FkRational(M_PI * 50000000 , 100000000);
+            break;
+        }
+        case FkEncodedOrigin::kRightTop: { // Rotated 90 CW. Swapped width height
+            rotateCompo->value = FkRational(-M_PI * 50000000 , 100000000);
+            break;
+        }
+        case FkEncodedOrigin::kRightBottom: { // Reflected across x-axis, Rotated 90 CW. Swapped width height
+            scaleCompo->value.x = -scaleCompo->value.x;
+            rotateCompo->value = FkRational(-M_PI * 50000000 , 100000000);
+            break;
+        }
+        case FkEncodedOrigin::kLeftBottom: { // Rotated 90 CCW. Swapped width height
+            rotateCompo->value = FkRational(M_PI * 50000000 , 100000000);
+            break;
+        }
+
+    }
 }

@@ -62,7 +62,6 @@ FkResult FkBitmap::write(std::string file, FkImage::Format fmt, std::shared_ptr<
 
 FkBitmap::FkBitmap(std::string &file) : FkObject() {
     FK_MARK_SUPER
-    bmp = std::make_shared<SkBitmap>();
     sk_sp<SkData> data = SkData::MakeFromFileName(file.c_str());
     std::unique_ptr<SkCodec> codec = SkCodec::MakeFromData(data);
     if (!codec) {
@@ -71,6 +70,7 @@ FkBitmap::FkBitmap(std::string &file) : FkObject() {
     }
     SkImageInfo info = codec->getInfo().makeColorType(kN32_SkColorType)
             .makeAlphaType(SkAlphaType::kPremul_SkAlphaType);
+    bmp = std::make_shared<SkBitmap>();
     if (!bmp->tryAllocPixels(info)) {
         FkLogI(FK_DEF_TAG, "Can not alloc pixels mem.");
         return;
@@ -78,10 +78,16 @@ FkBitmap::FkBitmap(std::string &file) : FkObject() {
     if (SkCodec::kSuccess != codec->getPixels(info, bmp->getPixels(), bmp->rowBytes())) {
         FkLogI(FK_DEF_TAG, "Can not read pixels.");
     }
+    _setEncodedOrigin(codec->getOrigin());
 }
 
 FkBitmap::FkBitmap(const FkBitmap &o) : FkObject(o) {
     FK_MARK_SUPER
+}
+
+void FkBitmap::_setEncodedOrigin(int32_t skEncodedOrigin) {
+    encodedOrigin = static_cast<FkEncodedOrigin>(skEncodedOrigin);
+    FkLogI(FK_DEF_TAG, "orientation: %d", encodedOrigin);
 }
 
 FkBitmap::~FkBitmap() {
@@ -107,4 +113,12 @@ uint8_t *FkBitmap::getPixels() {
 
 uint64_t FkBitmap::getByteSize() {
     return bmp->computeByteSize();
+}
+
+FkEncodedOrigin FkBitmap::getEncodedOrigin() {
+    return encodedOrigin;
+}
+
+bool FkBitmap::isSwappedWH() {
+    return encodedOrigin >= FkEncodedOrigin::kLeftTop && encodedOrigin <= FkEncodedOrigin::kLeftBottom;
 }

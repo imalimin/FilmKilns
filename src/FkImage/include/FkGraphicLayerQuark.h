@@ -76,13 +76,17 @@ private:
 
     FkID _generateId(FkID expectId);
 
-    FkFloatVec3 _calcScaleType(std::shared_ptr<FkGraphicLayer> &layer, FkSize &winSize, kScaleType scaleType);
+    FkFloatVec3 _calcScaleType(FkSize &src, FkSize &dst, kScaleType scaleType);
 
     FkColor &_updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto, std::shared_ptr<FkGraphicLayer> &layer);
 
-    FkSize &_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto, std::shared_ptr<FkGraphicLayer> &layer);
+    FkSize &_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+                             std::shared_ptr<FkGraphicLayer> &layer,
+                             bool isSwappedWH);
 
     void _withCanvasSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto);
+
+    void _updateLayerByEncodeOrigin(std::shared_ptr<FkGraphicLayer> &layer, int32_t decodedOrigin);
 
 protected:
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;

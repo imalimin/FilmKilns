@@ -59,3 +59,7 @@ int64_t FkSize::toInt64() {
     size |= (height & 0x00000000FFFFFFFF);
     return size;
 }
+
+void FkSize::swap() {
+    std::swap(width, height);
+}

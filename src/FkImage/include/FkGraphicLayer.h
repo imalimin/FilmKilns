@@ -18,9 +18,9 @@
 
 FK_CLASS FkGraphicLayer FK_EXTEND FkGraphicEntity {
 public:
-    static float calcScaleWithScaleType(std::shared_ptr<FkGraphicLayer> layer,
-                                        kScaleType scaleType,
-                                        FkSize &targetSize);
+    static float calcScaleWithScaleType(FkSize &src,
+                                        FkSize &dst,
+                                        kScaleType scaleType);
 
 public:
     FkGraphicLayer();

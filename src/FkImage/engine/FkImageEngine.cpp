@@ -76,14 +76,18 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
     }
     auto bmp = FkBitmap::from(dst);
     FkAssert(nullptr != bmp, FK_EMPTY_DATA);
-    FkSize size(bmp->getWidth(), bmp->getHeight());
-    setCanvasSizeInternal(size, true);
+    FkSize layerSize(bmp->getWidth(), bmp->getHeight());
+    FkSize canvasSize(layerSize);
+    if (bmp->isSwappedWH()) {
+        canvasSize.swap();
+    }
+    setCanvasSizeInternal(canvasSize, true);
 
     layer->addComponent(std::make_shared<FkBitmapCompo>(bmp));
 
     auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
     proto->layer = layer;
-    proto->layer->addComponent(std::make_shared<FkSizeCompo>(size));
+    proto->layer->addComponent(std::make_shared<FkSizeCompo>(layerSize));
     proto->layer->addComponent(std::make_shared<FkFilePathCompo>(dst));
     return getClient()->with(getMolecule())->send(proto);
 }

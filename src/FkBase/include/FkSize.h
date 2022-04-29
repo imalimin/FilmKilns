@@ -36,6 +36,8 @@ public:
 
     int64_t toInt64();
 
+    void swap();
+
 private:
     int32_t width = 0;
     int32_t height = 0;

@@ -13,6 +13,7 @@
 #include "FkSize.h"
 #include "FkBuffer.h"
 #include "FkImage.h"
+#include "FkBitmapDefinition.h"
 #include "include/core/SkBitmap.h"
 
 FK_CLASS FkBitmap FK_EXTEND FkObject {
@@ -25,6 +26,8 @@ private:
     FkBitmap(const FkBitmap &o);
 
     FkBitmap(std::string &file);
+
+    void _setEncodedOrigin(int32_t skEncodedOrigin);
 
 public:
     virtual ~FkBitmap();
@@ -48,12 +51,21 @@ public:
      */
     uint64_t getByteSize();
 
+    /**
+     * 获取图像编码角度，即图片相对于原方向的旋转角度，正数表示顺时针
+     * @return FkEncodedOrigin
+     */
+    FkEncodedOrigin getEncodedOrigin();
+
+    bool isSwappedWH();
+
 //    AlRational getRotation();
 
 //    void dump();
 
 private:
     std::shared_ptr<SkBitmap> bmp = nullptr;
+    FkEncodedOrigin encodedOrigin = FkEncodedOrigin::kDefault;
 };
 
 #endif //FK_IMAGE_FKBITMAP_H

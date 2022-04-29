@@ -11,24 +11,21 @@
 #include "FkTransComponent.h"
 #include "FkRotateComponent.h"
 
-float FkGraphicLayer::calcScaleWithScaleType(std::shared_ptr<FkGraphicLayer> layer,
-                                             kScaleType scaleType,
-                                             FkSize &targetSize) {
+float FkGraphicLayer::calcScaleWithScaleType(FkSize &src,
+                                             FkSize &dst,
+                                             kScaleType scaleType) {
     float scale = 1.0f;
-    auto size = layer->findComponent<FkSizeCompo>();
-    FkAssert(nullptr != size, scale);
-    auto &layerSize = size->size;
     switch (scaleType) {
         case kScaleType::CENTER_MATRIX:
             scale = 1.0f;
             break;
         case kScaleType::CENTER_INSIDE:
-            scale = std::min(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            scale = std::min(dst.getWidth() * 1.0f / src.getWidth(),
+                             dst.getHeight() * 1.0f / src.getHeight());
             break;
         case kScaleType::CENTER_CROP:
-            scale = std::max(targetSize.getWidth() * 1.0f / layerSize.getWidth(),
-                             targetSize.getHeight() * 1.0f / layerSize.getHeight());
+            scale = std::max(dst.getWidth() * 1.0f / src.getWidth(),
+                             dst.getHeight() * 1.0f / src.getHeight());
             break;
     }
     return scale;
