@@ -1,6 +1,7 @@
 package com.alimin.fk.widgets
 
 import android.content.Context
+import android.graphics.Point
 import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.*
@@ -32,6 +33,7 @@ class FkActSurfaceView : SurfaceView {
     private var isDoublePointer = false
     private var previousRotate = Double.MAX_VALUE
     private var action: ACTION = ACTION.IDL
+    val lastFlingPoint = Point(0, 0)
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -53,7 +55,9 @@ class FkActSurfaceView : SurfaceView {
     }
 
     private fun initialize() {
-        scroller = OverScroller(context)
+        scroller = OverScroller(context).apply {
+            setFriction(1f)
+        }
         mGestureDetector = GestureDetectorCompat(context, mGestureListener)
         mScaleDetector = ScaleGestureDetector(context, mScaleListener)
 
@@ -228,6 +232,20 @@ class FkActSurfaceView : SurfaceView {
         fun onRender(v: SurfaceView)
     }
 
+    override fun computeScroll() {
+        super.computeScroll()
+        if (scroller.computeScrollOffset()) {
+            onScrollListener?.onScroll(
+                this@FkActSurfaceView, mCurrentPosition.x, mCurrentPosition.y,
+                (scroller.currX - lastFlingPoint.x).toFloat(),
+                (scroller.currY - lastFlingPoint.y).toFloat(), 1
+            )
+            renderDetect()
+            lastFlingPoint.set(scroller.currX, scroller.currY)
+            postInvalidate()
+        }
+    }
+
     /**
      * +--------------------------------+
      * |  Tap or move gesture listener  |
@@ -245,8 +263,8 @@ class FkActSurfaceView : SurfaceView {
         }
 
         override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent?,
+            e1: MotionEvent,
+            e2: MotionEvent,
             velocityX: Float,
             velocityY: Float
         ): Boolean {
@@ -254,12 +272,14 @@ class FkActSurfaceView : SurfaceView {
                 return true
             }
             scroller.forceFinished(true)
+            lastFlingPoint.set(scroller.currX, scroller.currY)
             scroller.fling(
-                mCurrentPosition.x.toInt(), mCurrentPosition.y.toInt(),
-                velocityX.toInt(), velocityY.toInt(), Integer.MAX_VALUE,
-                Integer.MAX_VALUE, 0, 0
+                lastFlingPoint.x, lastFlingPoint.y,
+                velocityX.toInt(), velocityY.toInt(), -1000,
+                1000, -1000, 1000
             )
-            return true
+            postInvalidate()
+            return super.onFling(e1, e2, velocityX, velocityY)
         }
 
         override fun onScroll(
@@ -279,8 +299,6 @@ class FkActSurfaceView : SurfaceView {
                 distanceX.toInt(),
                 distanceY.toInt()
             )
-//        mCurrentPosition.x = scroller.currX.toFloat()
-//        mCurrentPosition.y = scroller.currY.toFloat()
             mCurrentPosition.x -= distanceX
             mCurrentPosition.y -= distanceY
             onScrollListener?.onScroll(
