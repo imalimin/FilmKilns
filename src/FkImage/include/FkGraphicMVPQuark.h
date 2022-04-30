@@ -14,7 +14,9 @@
 #include "FkGraphicLayer.h"
 #include "FkSize.h"
 
-FK_CLASS FkGraphicMVPQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkGraphicMVPQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicMVPQuark)
+
 public:
     FkGraphicMVPQuark();
 

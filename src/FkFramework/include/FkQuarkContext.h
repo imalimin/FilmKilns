@@ -13,7 +13,9 @@
 
 #include "FkEntity.h"
 
-FK_CLASS FkQuarkContext FK_EXTEND FkEntity {
+FK_SUPER_CLASS(FkQuarkContext, FkEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkQuarkContext)
+
 public:
     FkQuarkContext();
 

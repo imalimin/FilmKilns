@@ -10,12 +10,14 @@
 
 #include "FkCoordinateCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkCoordinateCompo, FkComponent)
+
 FkCoordinateCompo::FkCoordinateCompo() : FkVertexCompo() {
-    FK_MARK_SUPER
+
 }
 
 FkCoordinateCompo::FkCoordinateCompo(const FkCoordinateCompo &o) : FkVertexCompo(o) {
-    FK_MARK_SUPER
+
 }
 
 FkCoordinateCompo::~FkCoordinateCompo() {

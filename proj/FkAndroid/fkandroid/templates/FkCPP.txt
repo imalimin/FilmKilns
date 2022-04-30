@@ -11,11 +11,11 @@
 \#include "${className}.h"
 
 ${className}::${className}() : FkObject() {
-    FK_MARK_SUPER
+
 }
 
 ${className}::${className}(const ${className} &o) : FkObject(o) {
-    FK_MARK_SUPER
+
 }
 
 ${className}::~${className}() {

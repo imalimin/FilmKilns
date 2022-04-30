@@ -11,7 +11,9 @@
 #include "FkObject.h"
 #include "FkLayerEngine.h"
 
-FK_CLASS FkImageEngine FK_EXTEND FkLayerEngine {
+FK_SUPER_CLASS(FkImageEngine, FkLayerEngine) {
+FK_DEF_CLASS_TYPE_FUNC(FkImageEngine)
+
 public:
     FkImageEngine(std::shared_ptr<FkEngine> &renderEngine, std::string &workspace, std::string name);
 

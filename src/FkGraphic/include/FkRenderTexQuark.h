@@ -15,7 +15,9 @@
 #include "FkGraphicTexture.h"
 #include "FkTexEntity.h"
 
-FK_CLASS FkRenderTexQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkRenderTexQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderTexQuark)
+
 public:
     FkRenderTexQuark();
 

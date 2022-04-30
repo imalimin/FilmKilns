@@ -12,7 +12,9 @@
 #include "FkDefinition.h"
 #include "FkGraphicTexture.h"
 
-FK_CLASS FkGraphicFrameObject FK_EXTEND FkSource {
+FK_SUPER_CLASS(FkGraphicFrameObject, FkSource) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicFrameObject)
+
 public:
     FkGraphicFrameObject();
 
@@ -38,7 +40,9 @@ private:
     uint32_t fbo = 0;
 };
 
-FK_CLASS FkGraphicFBOAllocator FK_EXTEND FkSourceAllocator<FkGraphicFrameObject, int32_t> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkGraphicFBOAllocator, FkSourceAllocator)<FkGraphicFrameObject, int32_t> {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicFBOAllocator)
+
 public:
     FkGraphicFBOAllocator(int capacity);
 

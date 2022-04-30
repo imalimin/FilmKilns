@@ -17,7 +17,9 @@ class FkLooper;
 
 class FkHandler;
 
-FK_CLASS FkMessage FK_EXTEND FkSource {
+FK_SUPER_CLASS(FkMessage, FkSource) {
+FK_DEF_CLASS_TYPE_FUNC(FkMessage)
+
 public:
     FkID what = 0;
     int32_t arg1 = 0;
@@ -94,7 +96,9 @@ public:
 
 };
 
-FK_CLASS FkMessageAllocator FK_EXTEND FkSourceAllocator<FkMessage, int32_t> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkMessageAllocator, FkSourceAllocator)<FkMessage, int32_t> {
+FK_DEF_CLASS_TYPE_FUNC(FkMessageAllocator)
+
 public:
     static FkMessageAllocator *getInstance();
 

@@ -11,7 +11,9 @@
 #include "FkWinSizeProto.h"
 #include "FkRenderRequest.h"
 
-FK_CLASS FkRenderRequestPrt FK_EXTEND FkWinSizeProto {
+FK_SUPER_CLASS(FkRenderRequestPrt, FkWinSizeProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderRequestPrt)
+
 public:
     FkRenderRequestPrt();
 

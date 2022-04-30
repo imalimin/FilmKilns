@@ -6,3 +6,5 @@
 */
 
 #include "FkMessageQueue.h"
+
+FK_IMPL_CLASS_TYPE(FkMessageQueue, FkObject)

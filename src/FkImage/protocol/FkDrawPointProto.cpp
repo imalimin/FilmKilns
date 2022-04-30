@@ -7,14 +7,16 @@
 
 #include "FkDrawPointProto.h"
 
+FK_IMPL_CLASS_TYPE(FkDrawPointProto, FkProtocol)
+
 FkDrawPointProto::FkDrawPointProto()
         : FkProtocol(), layer(FK_ID_NONE), value(0, 0), color(FkColor::black()) {
-    FK_MARK_SUPER
+
 }
 
 FkDrawPointProto::FkDrawPointProto(const FkDrawPointProto &o)
         : FkProtocol(o), layer(o.layer), value(o.value), color(o.color), size(o.size) {
-    FK_MARK_SUPER
+
 }
 
 FkDrawPointProto::~FkDrawPointProto() {

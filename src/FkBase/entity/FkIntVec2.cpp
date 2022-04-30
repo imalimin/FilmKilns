@@ -7,12 +7,14 @@
 
 #include "FkIntVec2.h"
 
+FK_IMPL_CLASS_TYPE(FkIntVec2, FkVec2)
+
 FkIntVec2::FkIntVec2(int32_t x, int32_t y) : FkVec2<int32_t>(x, y) {
-    FK_MARK_SUPER
+
 }
 
 FkIntVec2::FkIntVec2(const FkIntVec2 &o) : FkVec2<int32_t>(o) {
-    FK_MARK_SUPER
+
 }
 
 FkIntVec2::~FkIntVec2() {

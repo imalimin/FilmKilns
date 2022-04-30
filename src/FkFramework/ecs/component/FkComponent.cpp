@@ -10,12 +10,14 @@
 
 #include "FkComponent.h"
 
+FK_IMPL_CLASS_TYPE(FkComponent, FkObject)
+
 FkComponent::FkComponent() : FkObject() {
-    FK_MARK_SUPER
+
 }
 
 FkComponent::FkComponent(const FkComponent &o) : FkObject(o) {
-    FK_MARK_SUPER
+
 }
 
 FkComponent::~FkComponent() {

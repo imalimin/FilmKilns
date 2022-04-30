@@ -12,7 +12,9 @@
 #include "FkIntVec2.h"
 #include "FkColor.h"
 
-FK_CLASS FkDrawPointProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkDrawPointProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkDrawPointProto)
+
 public:
     FkDrawPointProto();
 

@@ -7,8 +7,10 @@
 
 #include "FkAtom.h"
 
+FK_IMPL_CLASS_TYPE(FkAtom, FkQuark)
+
 FkAtom::FkAtom() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkAtom::~FkAtom() {

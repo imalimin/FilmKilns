@@ -8,17 +8,22 @@
 #include "FkVertexObject.h"
 #include "FkGLDefinition.h"
 
+FK_IMPL_CLASS_TYPE(FkVertexDesc, FkObject)
+FK_IMPL_CLASS_TYPE(FkVBODescription, FkObject)
+FK_IMPL_CLASS_TYPE(FkVertexObject, FkSource)
+FK_IMPL_CLASS_TYPE(FkVertexObjectAllocator, FkSourceAllocator)
+
 #define TAG "FkVBODescription"
 
 FkVertexDesc::FkVertexDesc() : FkObject() {
-    FK_MARK_SUPER
+
 }
 
 FkVertexDesc::FkVertexDesc(const FkVertexDesc &o) : FkObject(),
                                                     countVertex(o.countVertex),
                                                     countPerVertex(o.countPerVertex),
                                                     format(o.format) {
-    FK_MARK_SUPER
+
 }
 
 FkVertexDesc::~FkVertexDesc() {
@@ -26,11 +31,11 @@ FkVertexDesc::~FkVertexDesc() {
 }
 
 FkVBODescription::FkVBODescription(size_t size) : FkObject(), size(size) {
-    FK_MARK_SUPER
+
 }
 
 FkVBODescription::FkVBODescription(const FkVBODescription &o) : FkObject(), size(o.size) {
-    FK_MARK_SUPER
+
 }
 
 FkVBODescription::~FkVBODescription() {
@@ -38,7 +43,7 @@ FkVBODescription::~FkVBODescription() {
 }
 
 FkVertexObject::FkVertexObject(FkVBODescription &desc) : FkSource(), desc(desc) {
-    FK_MARK_SUPER
+
 }
 
 FkVertexObject::~FkVertexObject() {

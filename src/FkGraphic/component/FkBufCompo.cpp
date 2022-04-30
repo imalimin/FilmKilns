@@ -10,12 +10,14 @@
 
 #include "FkBufCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkBufCompo, FkComponent)
+
 FkBufCompo::FkBufCompo(std::shared_ptr<FkBuffer> &buf) : FkComponent(), buf(buf) {
-    FK_MARK_SUPER
+
 }
 
 FkBufCompo::FkBufCompo(const FkBufCompo &o) : FkComponent(o) {
-    FK_MARK_SUPER
+
 }
 
 FkBufCompo::~FkBufCompo() {

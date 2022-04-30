@@ -10,8 +10,9 @@
 
 #include "FkObject.h"
 
-template<typename T>
-FK_CLASS FkVec3 FK_EXTEND FkObject {
+FK_SUPER_TEMPLATE_CLASS(FkVec3, FkObject, typename T) {
+FK_DEF_CLASS_TYPE_FUNC(FkVec3)
+
 public:
     static void swap(FkVec3<T> *vec1, FkVec3<T> *vec2) {
         float tmp = vec1->x;
@@ -25,11 +26,11 @@ public:
 
 public:
     FkVec3(T x, T y, T z) : FkObject(), x(x), y(y), z(z) {
-        FK_MARK_SUPER
+
     };
 
     FkVec3(const FkVec3<T> &o) : FkObject(), x(o.x), y(o.y), z(o.z) {
-        FK_MARK_SUPER
+
     };
 
     virtual ~FkVec3() {};

@@ -5,6 +5,8 @@
 #include "FkJniGlobalRef.h"
 #include "FkJavaRuntime.h"
 
+FK_IMPL_CLASS_TYPE(FkJniGlobalRef, FkObject)
+
 FkJniGlobalRef::FkJniGlobalRef(jobject obj) : FkObject() {
     JNIEnv *env = nullptr;
     if (FkJavaRuntime::getInstance().findEnv(&env)) {

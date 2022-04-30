@@ -32,11 +32,13 @@
 #include "FkRemoveLayerProto.h"
 #include "FkScaleTypeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
+
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {
-    FK_MARK_SUPER
+
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
@@ -153,7 +155,7 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
     auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
     prt->layer = layer;
     prt->scaleType = kScaleType::CENTER_INSIDE;
-    auto sizeCom = prt->layer->findComponent<FkSizeCompo>();
+    auto sizeCom = FK_FIND_COMPO(prt->layer, FkSizeCompo);
     if (sizeCom) {
         setCanvasSizeInternal(sizeCom->size, true);
     }

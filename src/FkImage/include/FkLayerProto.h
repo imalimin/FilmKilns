@@ -14,7 +14,9 @@
 #include "FkProtocol.h"
 #include "FkGraphicLayer.h"
 
-FK_CLASS FkLayerProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkLayerProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkLayerProto)
+
 public:
     FkLayerProto();
 

@@ -7,12 +7,14 @@
 
 #include "FkOnCreatePrt.h"
 
+FK_IMPL_CLASS_TYPE(FkOnCreatePrt, FkProtocol)
+
 FkOnCreatePrt::FkOnCreatePrt() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkOnCreatePrt::FkOnCreatePrt(const FkOnCreatePrt &o) : FkProtocol(o) {
-    FK_MARK_SUPER
+
 }
 
 FkOnCreatePrt::~FkOnCreatePrt() {

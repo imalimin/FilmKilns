@@ -7,8 +7,11 @@
 
 #include "FkSimpleAtom.h"
 
+FK_IMPL_CLASS_TYPE(FkConnectChain, FkObject)
+FK_IMPL_CLASS_TYPE(FkSimpleAtom, FkAtom)
+
 FkConnectChain::FkConnectChain() : FkObject() {
-    FK_MARK_SUPER
+
 
 }
 
@@ -43,7 +46,7 @@ void FkConnectChain::clear() {
 }
 
 FkSimpleAtom::FkSimpleAtom() : FkAtom() {
-    FK_MARK_SUPER
+
     chain = std::make_shared<FkConnectChain>();
 }
 
@@ -118,7 +121,7 @@ void FkSimpleAtom::_connectBaseSession() {
             mSessionMap.emplace(std::make_pair(it->getType(), session));
         } else {
             FkLogW(FK_DEF_TAG, "Session(%s, Atom(%s)) open failed, ret=%d",
-                   it->getClassType().getName().c_str(), getClassType().getName().c_str(), ret);
+                   it->getClassType().getName(), getClassType().getName(), ret);
         }
     }
 }

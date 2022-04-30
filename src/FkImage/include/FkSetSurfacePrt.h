@@ -11,7 +11,9 @@
 #include "FkProtocol.h"
 #include "FkGraphicWindow.h"
 
-FK_CLASS FkSetSurfacePrt FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkSetSurfacePrt, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkSetSurfacePrt)
+
 public:
     FkSetSurfacePrt();
 

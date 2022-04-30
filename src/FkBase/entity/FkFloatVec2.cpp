@@ -7,12 +7,14 @@
 
 #include "FkFloatVec2.h"
 
+FK_IMPL_CLASS_TYPE(FkFloatVec2, FkVec2)
+
 FkFloatVec2::FkFloatVec2(float x, float y) : FkVec2<float>(x, y) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatVec2::FkFloatVec2(const FkFloatVec2 &o) : FkVec2<float>(o) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatVec2::~FkFloatVec2() {

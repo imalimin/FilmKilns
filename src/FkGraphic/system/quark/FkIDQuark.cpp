@@ -12,8 +12,10 @@
 #include "FkGenIDProto.h"
 #include "FkFrameworkDefine.h"
 
+FK_IMPL_CLASS_TYPE(FkIDQuark, FkQuark)
+
 FkIDQuark::FkIDQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkIDQuark::~FkIDQuark() {

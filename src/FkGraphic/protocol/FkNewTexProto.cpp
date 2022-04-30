@@ -10,12 +10,14 @@
 
 #include "FkNewTexProto.h"
 
+FK_IMPL_CLASS_TYPE(FkNewTexProto, FkProtocol)
+
 FkNewTexProto::FkNewTexProto() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkNewTexProto::FkNewTexProto(const FkNewTexProto &o) : FkProtocol(o), texEntity(o.texEntity) {
-    FK_MARK_SUPER
+
 }
 
 FkNewTexProto::~FkNewTexProto() {

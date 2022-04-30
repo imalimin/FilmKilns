@@ -10,16 +10,18 @@
 
 #include "FkRemoveLayerProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRemoveLayerProto, FkLayerIdProto)
+
 FkRemoveLayerProto::FkRemoveLayerProto() : FkLayerIdProto(FK_ID_NONE) {
-    FK_MARK_SUPER
+
 }
 
 FkRemoveLayerProto::FkRemoveLayerProto(FkID layerId) : FkLayerIdProto(layerId) {
-    FK_MARK_SUPER
+
 }
 
 FkRemoveLayerProto::FkRemoveLayerProto(const FkRemoveLayerProto &o) : FkLayerIdProto(o) {
-    FK_MARK_SUPER
+
 }
 
 FkRemoveLayerProto::~FkRemoveLayerProto() {

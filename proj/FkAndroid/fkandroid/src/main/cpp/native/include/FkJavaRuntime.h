@@ -41,7 +41,9 @@
 ///         D: double
 /// Lpackage;: Objetc
 ///         V: void
-FK_CLASS FkJavaRuntime FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkJavaRuntime, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkJavaRuntime)
+
 public:
     static const int VERSION;
 

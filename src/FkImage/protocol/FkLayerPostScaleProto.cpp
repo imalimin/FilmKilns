@@ -7,14 +7,16 @@
 
 #include "FkLayerPostScaleProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerPostScaleProto, FkFloatVec3Proto)
+
 FkLayerPostScaleProto::FkLayerPostScaleProto()
         : FkFloatVec3Proto(), layer(FK_ID_NONE) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerPostScaleProto::FkLayerPostScaleProto(const FkLayerPostScaleProto &o)
         : FkFloatVec3Proto(o), layer(o.layer) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerPostScaleProto::~FkLayerPostScaleProto() {

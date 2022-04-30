@@ -13,7 +13,9 @@
 
 #include "FkQuark.h"
 
-FK_CLASS FkBufDeviceQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkBufDeviceQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkBufDeviceQuark)
+
 public:
     FkBufDeviceQuark();
 

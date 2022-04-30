@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkVertexObject.h"
 
-FK_CLASS FkVboCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkVboCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkVboCompo)
+
 public:
     FK_ENUM kValueLoc : int {
         VERTEX = 0,

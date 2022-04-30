@@ -20,7 +20,8 @@ class FkSessionClient;
 class FkLocalClient;
 class FkRemoteClient;
 
-FK_CLASS FkSession FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkSession, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkSession)
     friend FkSessionClient;
     friend FkLocalClient;
     friend FkRemoteClient;
@@ -53,7 +54,7 @@ private:
     FkResult send(std::shared_ptr<FkProtocol> protocol);
 
 private:
-    std::shared_ptr<FkClassType> classType = nullptr;
+    const FkClassType *classType = nullptr;
     size_t protoType = 0;
     std::vector<std::shared_ptr<FkQuark>> link;
     std::mutex mtx;

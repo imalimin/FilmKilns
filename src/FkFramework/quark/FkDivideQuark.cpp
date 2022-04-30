@@ -5,6 +5,8 @@
 #include "FkDivideQuark.h"
 #include "FkCalculatePrt.h"
 
+FK_IMPL_CLASS_TYPE(FkDivideQuark, FkQuark)
+
 FkDivideQuark::FkDivideQuark() : FkQuark() {
 
 }

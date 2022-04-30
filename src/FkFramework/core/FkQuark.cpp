@@ -13,8 +13,10 @@
 
 #define TAG "FkQuark"
 
+FK_IMPL_CLASS_TYPE(FkQuark, FkObject)
+
 FkQuark::FkQuark() : FkObject(), state(kState::IDL) {
-    FK_MARK_SUPER
+
     desc = std::make_shared<FkPortDesc>();
     FK_PORT_DESC_QUICK_ADD(desc, FkOnCreatePrt, FkQuark::_onCreate);
     FK_PORT_DESC_QUICK_ADD(desc, FkOnDestroyPrt, FkQuark::_onDestroy);
@@ -66,7 +68,7 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
 FkResult FkQuark::_onCreate(std::shared_ptr<FkProtocol> p) {
     auto ret = _changeState((uint32_t) kState::IDL, kState::CREATED);
     if (FK_OK != ret) {
-        FkLogE(FK_DEF_TAG, "Quark(%s) create failed with %d", getClassType().getName().c_str(), ret);
+        FkLogE(FK_DEF_TAG, "Quark(%s) create failed with %d", getClassType().getName(), ret);
         return ret;
     }
     auto proto = std::dynamic_pointer_cast<FkOnCreatePrt>(p);

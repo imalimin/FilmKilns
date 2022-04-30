@@ -10,7 +10,9 @@
 
 #include "FkVec3.h"
 
-FK_CLASS FkFloatVec3 FK_EXTEND FkVec3<float> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkFloatVec3, FkVec3)<float> {
+FK_DEF_CLASS_TYPE_FUNC(FkFloatVec3)
+
 public:
     FkFloatVec3(float x, float y, float z);
 

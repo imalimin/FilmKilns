@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkGraphicFrameObject.h"
 
-FK_CLASS FkFboCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkFboCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkFboCompo)
+
 public:
     FkFboCompo(std::shared_ptr<FkGraphicFrameObject> &fbo);
 

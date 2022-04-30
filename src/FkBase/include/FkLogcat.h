@@ -30,7 +30,7 @@ public:
 private:
     FkLogcat() {};
 
-    FkLogcat(const FkLogcat &o) {};
+    FkLogcat(const FkLogcat &o) = delete;
 
 };
 

@@ -7,13 +7,15 @@
 
 #include "FkRenderProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderProto, FkProtocol)
+
 FkRenderProto::FkRenderProto() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderProto::FkRenderProto(const FkRenderProto &o) : FkProtocol(o), env(o.env),
                                                        materials(o.materials), device(o.device) {
-    FK_MARK_SUPER
+
 }
 
 FkRenderProto::~FkRenderProto() {

@@ -13,7 +13,9 @@
 
 #include "FkIntVec2Proto.h"
 
-FK_CLASS FkLayerSetTransProto FK_EXTEND FkIntVec2Proto {
+FK_SUPER_CLASS(FkLayerSetTransProto, FkIntVec2Proto) {
+FK_DEF_CLASS_TYPE_FUNC(FkLayerSetTransProto)
+
 public:
     FkLayerSetTransProto();
 

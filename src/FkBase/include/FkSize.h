@@ -10,7 +10,9 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkSize FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkSize, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkSize)
+
 public:
     FkSize();
 

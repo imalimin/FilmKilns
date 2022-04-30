@@ -10,7 +10,9 @@
 
 #include "FkSimpleMolecule.h"
 
-FK_CLASS FkRenderDeviceAtom FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkRenderDeviceAtom, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderDeviceAtom)
+
 public:
     FkRenderDeviceAtom();
 

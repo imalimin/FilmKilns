@@ -10,6 +10,8 @@
 
 #define TAG "FkHandlerThread"
 
+FK_IMPL_CLASS_TYPE(FkHandlerThread, FkObject)
+
 std::shared_ptr<FkHandlerThread> FkHandlerThread::create(std::string name) {
     return std::make_shared<FkHandlerThread>(name);
 }

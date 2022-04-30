@@ -15,7 +15,9 @@
 #include "FkGraphicProgram.h"
 #include "FkGraphicTexture.h"
 
-FK_CLASS FkScreenQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkScreenQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkScreenQuark)
+
 public:
     FkScreenQuark();
 

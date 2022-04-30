@@ -14,7 +14,9 @@
 #include "FkProtocol.h"
 #include "FkGraphicWindow.h"
 
-FK_CLASS FkWindowProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkWindowProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkWindowProto)
+
 public:
     FkWindowProto();
 

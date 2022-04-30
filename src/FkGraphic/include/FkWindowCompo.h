@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkGraphicWindow.h"
 
-FK_CLASS FkWindowCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkWindowCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkWindowCompo)
+
 public:
     FkWindowCompo(std::shared_ptr<FkGraphicWindow> &_win);
 

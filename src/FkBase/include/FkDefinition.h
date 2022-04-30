@@ -13,8 +13,37 @@
 #include <functional>
 
 // +-------- Define --------+
-#define FK_CLASS class
-#define FK_ABS_CLASS class
+#define FK_DEF_CLASS_TYPE(NAME, SUPER)                                   \
+namespace NAME ## _Class {                                               \
+class Type {};                                                           \
+extern const char *name;                                                 \
+extern const FkClassType type;                                           \
+}                                                                        \
+
+#define FK_IMPL_CLASS_TYPE(NAME, SUPER)                                  \
+const char *NAME ## _Class::name = #NAME;                                \
+const FkClassType NAME ## _Class::type(name, typeid(NAME ## _Class::Type).hash_code(), SUPER ## _Class::type); \
+
+#define FK_SUPER_TEMPLATE_CLASS(NAME, SUPER, ...)                        \
+FK_DEF_CLASS_TYPE(NAME, SUPER)                                           \
+template<__VA_ARGS__>                                                    \
+class NAME : public SUPER                                                \
+
+#define FK_SUPER_TEMPLATE_CLASS_IMPL(NAME, SUPER)                        \
+FK_DEF_CLASS_TYPE(NAME, SUPER)                                           \
+class NAME : public SUPER                                                \
+
+
+#define FK_SUPER_CLASS(NAME, SUPER)                                      \
+FK_DEF_CLASS_TYPE(NAME, SUPER)                                           \
+class NAME : public SUPER                                                \
+
+#define FK_DEF_CLASS_TYPE_FUNC(NAME)        \
+public:                                     \
+virtual const FkClassType &getClassType() override { \
+    return NAME ## _Class::type;            \
+}                                           \
+
 #define FK_INTERFACE class
 #define FK_ENUM enum class
 #define FK_EXTEND : public
@@ -22,15 +51,7 @@
 #define FK_NULLABLE
 #define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 
-#ifdef __FK_OPTIMIZE_CLASS_TYPE__
-#define FK_MARK_SUPER clsType.super(typeid(*this).hash_code());
-#else
-#define FK_MARK_SUPER clsType.super(typeid(*this).name());
-#endif
-
-#define FK_CLASS_TYPE_EQUALS(src, target) ((src).getClassType() == (target).getClassType())
-#define FK_CLASS_TYPE_EQUALS2(src, target) ((src)->getClassType() == (target)->getClassType())
-#define FK_INSTANCE_OF(src, CLASS) ((src)->getClassType() == FkClassType::type<CLASS>())
+#define FK_INSTANCE_OF(obj, CLASS) (obj->getClassType().is(CLASS ## _Class::type))
 
 // +-------- Log --------+
 #define FK_DEF_TAG "FilmKilns"

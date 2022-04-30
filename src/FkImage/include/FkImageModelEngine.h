@@ -19,7 +19,9 @@
 
 using namespace com::alimin::fk;
 
-FK_CLASS FkImageModelEngine FK_EXTEND FkEngine {
+FK_SUPER_CLASS(FkImageModelEngine, FkEngine) {
+FK_DEF_CLASS_TYPE_FUNC(FkImageModelEngine)
+
 public:
     typedef std::function<void(std::shared_ptr<pb::FkPictureModel> &)> FkModelCallback;
 

@@ -11,6 +11,8 @@
 #include "FkThread.h"
 #include "FkDefinition.h"
 
+FK_IMPL_CLASS_TYPE(FkThread, FkObject)
+
 bool FkThread::sleep(int64_t us) {
     std::this_thread::sleep_for(std::chrono::nanoseconds(us * 1000));
     return true;

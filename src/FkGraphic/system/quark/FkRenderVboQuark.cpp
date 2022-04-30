@@ -16,8 +16,10 @@
 #include "FkVboCompo.h"
 #include "FkPointFCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderVboQuark, FkQuark)
+
 FkRenderVboQuark::FkRenderVboQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderVboQuark::~FkRenderVboQuark() {
@@ -53,8 +55,8 @@ FkResult FkRenderVboQuark::onStop() {
 
 FkResult FkRenderVboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    auto vertexCompo =  proto->materials->findComponent<FkVertexCompo>();
-    auto coordCompo =  proto->materials->findComponent<FkCoordinateCompo>();
+    auto vertexCompo =  FK_FIND_COMPO(proto->materials, FkVertexCompo);
+    auto coordCompo =  FK_FIND_COMPO(proto->materials, FkCoordinateCompo);
     if (vertexCompo && coordCompo) {
         FkVBODescription desc(vertexCompo->size() + coordCompo->size());
         auto comp = std::make_shared<FkVboCompo>();

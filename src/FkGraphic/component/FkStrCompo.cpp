@@ -10,12 +10,14 @@
 
 #include "FkStrCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkStrCompo, FkComponent)
+
 FkStrCompo::FkStrCompo(std::string &str) : FkComponent(), str(str) {
-    FK_MARK_SUPER
+
 }
 
 FkStrCompo::FkStrCompo(const FkStrCompo &o) : FkComponent(o), str(o.str) {
-    FK_MARK_SUPER
+
 }
 
 FkStrCompo::~FkStrCompo() {

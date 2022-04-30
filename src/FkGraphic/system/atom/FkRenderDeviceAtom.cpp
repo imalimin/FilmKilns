@@ -11,8 +11,10 @@
 #include "FkTexDeviceQuark.h"
 #include "FkScreenQuark.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderDeviceAtom, FkSimpleAtom)
+
 FkRenderDeviceAtom::FkRenderDeviceAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderDeviceAtom::~FkRenderDeviceAtom() {

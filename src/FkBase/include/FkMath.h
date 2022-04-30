@@ -14,17 +14,16 @@
 #include "FkObject.h"
 #include "FkIntVec2.h"
 
-FK_CLASS FkMath FK_EXTEND FkObject {
+class FkMath {
 public:
+    virtual ~FkMath();
+
     static float distance(FkIntVec2 &p0, FkIntVec2 &p1);
 
 private:
-    FkMath();
+    FkMath() = delete;
 
-    FkMath(const FkMath &o);
-
-public:
-    virtual ~FkMath();
+    FkMath(const FkMath &o) = delete;
 };
 
 #endif //FK_BASE_FKMATH_H

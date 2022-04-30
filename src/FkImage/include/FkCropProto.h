@@ -15,7 +15,9 @@
 #include "FkIntVec2.h"
 #include "FkGraphicLayer.h"
 
-FK_CLASS FkCropProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkCropProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkCropProto)
+
 public:
     FkCropProto();
 

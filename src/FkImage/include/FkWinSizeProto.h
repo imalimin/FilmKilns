@@ -11,7 +11,9 @@
 #include "FkProtocol.h"
 #include "FkSize.h"
 
-FK_CLASS FkWinSizeProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkWinSizeProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkWinSizeProto)
+
 public:
     FkWinSizeProto();
 

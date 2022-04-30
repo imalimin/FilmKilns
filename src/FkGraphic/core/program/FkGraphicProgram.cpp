@@ -17,6 +17,10 @@
 
 #define TAG "FkGraphicProgram"
 
+FK_IMPL_CLASS_TYPE(FkProgramDescription, FkObject)
+FK_IMPL_CLASS_TYPE(FkGraphicProgram, FkSource)
+FK_IMPL_CLASS_TYPE(FkGraphicProgramAllocator, FkSourceAllocator)
+
 ///+-----------------------------------------------------------+
 ///|                 FkProgramDescription                      |
 ///+-----------------------------------------------------------+
@@ -44,7 +48,7 @@ FkProgramDescription::~FkProgramDescription() {
 ///+-----------------------------------------------------------+
 
 FkGraphicProgram::FkGraphicProgram(const FkProgramDescription &desc) : FkSource(), desc(desc) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicProgram::~FkGraphicProgram() {
@@ -184,7 +188,7 @@ void FkGraphicProgram::clear() {
 
 FkGraphicProgramAllocator::FkGraphicProgramAllocator(int capacity)
         : FkSourceAllocator<FkGraphicProgram, FkProgramDescription>(capacity) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicProgramAllocator::~FkGraphicProgramAllocator() {

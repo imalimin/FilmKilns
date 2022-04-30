@@ -10,6 +10,8 @@
 
 #include "FkContextCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkContextCompo, FkComponent)
+
 const int FkContextCompo::FK_CONFIG_WIN[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                              EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
                              EGL_RED_SIZE, 8,
@@ -44,7 +46,7 @@ const int FkContextCompo::FK_CONFIG_ANDROID[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL
 #endif
 
 FkContextCompo::FkContextCompo(const std::string alias) : FkComponent(), alias(alias) {
-    FK_MARK_SUPER
+
 }
 
 FkContextCompo::~FkContextCompo() {

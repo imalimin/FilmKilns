@@ -11,8 +11,10 @@
 #include "FkSizeCompo.h"
 #include "FkNewBmpTexProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderModelAtom, FkSimpleAtom)
+
 FkRenderModelAtom::FkRenderModelAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderModelAtom::~FkRenderModelAtom() {

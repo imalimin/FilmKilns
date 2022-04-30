@@ -14,7 +14,9 @@
 #include "FkProtocol.h"
 #include "FkFloatVec3.h"
 
-FK_CLASS FkFloatVec3Proto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkFloatVec3Proto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkFloatVec3Proto)
+
 public:
     FkFloatVec3Proto();
 

@@ -10,14 +10,16 @@
 
 #include "FkLayerSetScaleProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerSetScaleProto, FkFloatVec3Proto)
+
 FkLayerSetScaleProto::FkLayerSetScaleProto()
         : FkFloatVec3Proto(), layer(FK_ID_NONE) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerSetScaleProto::FkLayerSetScaleProto(const FkLayerSetScaleProto &o)
         : FkFloatVec3Proto(o), layer(o.layer) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerSetScaleProto::~FkLayerSetScaleProto() {

@@ -16,7 +16,9 @@
 #include "FkIntVec2.h"
 #include "FkRational.h"
 
-FK_CLASS FkGraphicLayer FK_EXTEND FkGraphicEntity {
+FK_SUPER_CLASS(FkGraphicLayer, FkGraphicEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicLayer)
+
 public:
     static float calcScaleWithScaleType(FkSize &src,
                                         FkSize &dst,

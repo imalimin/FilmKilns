@@ -7,6 +7,8 @@
 
 #include "FkInstanceHolder.h"
 
+FK_IMPL_CLASS_TYPE(FkInstanceHolder, FkObject)
+
 std::unique_ptr<FkInstanceHolder>
         FkInstanceHolder::instance = std::unique_ptr<FkInstanceHolder>(new FkInstanceHolder());
 

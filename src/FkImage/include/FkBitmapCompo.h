@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkBitmap.h"
 
-FK_CLASS FkBitmapCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkBitmapCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkBitmapCompo)
+
 public:
     FkBitmapCompo(std::shared_ptr<FkBitmap> bmp);
 

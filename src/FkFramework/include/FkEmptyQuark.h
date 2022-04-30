@@ -13,7 +13,9 @@
 
 #include "FkQuark.h"
 
-FK_CLASS FkEmptyQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkEmptyQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkEmptyQuark)
+
 public:
     FkEmptyQuark();
 

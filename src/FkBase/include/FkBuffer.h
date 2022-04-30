@@ -10,7 +10,9 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkBuffer FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkBuffer, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkBuffer)
+
 public:
     static std::shared_ptr<FkBuffer> wrap(uint8_t *data, size_t size);
 

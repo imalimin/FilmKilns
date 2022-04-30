@@ -11,7 +11,9 @@
 #include "FkGraphicEntity.h"
 #include "FkGraphicLayer.h"
 
-FK_CLASS FkRenderRequest FK_EXTEND FkGraphicEntity {
+FK_SUPER_CLASS(FkRenderRequest, FkGraphicEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderRequest)
+
 public:
     FkRenderRequest();
 

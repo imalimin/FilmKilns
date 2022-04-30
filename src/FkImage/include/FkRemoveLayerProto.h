@@ -13,7 +13,9 @@
 
 #include "FkLayerIdProto.h"
 
-FK_CLASS FkRemoveLayerProto FK_EXTEND FkLayerIdProto {
+FK_SUPER_CLASS(FkRemoveLayerProto, FkLayerIdProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkRemoveLayerProto)
+
 public:
     FkRemoveLayerProto();
 

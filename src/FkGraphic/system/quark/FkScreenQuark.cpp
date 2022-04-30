@@ -18,8 +18,10 @@
 #include "FkMatCompo.h"
 #include "FkGridSizeCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkScreenQuark, FkQuark)
+
 FkScreenQuark::FkScreenQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkScreenQuark::~FkScreenQuark() {
@@ -51,9 +53,9 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     auto size = device->size();
     auto texSize = srcTexCompo->tex->desc.size;
 
-    auto programCompo = proto->materials->findComponent<FkRenderProgramCompo>();
-    auto vboCompo = proto->materials->findComponent<FkVboCompo>();
-    auto matCompo = proto->materials->findComponent<FkMatCompo>();
+    auto programCompo = FK_FIND_COMPO(proto->materials, FkRenderProgramCompo);
+    auto vboCompo = FK_FIND_COMPO(proto->materials, FkVboCompo);
+    auto matCompo = FK_FIND_COMPO(proto->materials, FkMatCompo);
     auto gridCompo = std::make_shared<FkGridSizeCompo>(48.0f / texSize.getWidth(),
                                                        48.0f / texSize.getHeight());
 

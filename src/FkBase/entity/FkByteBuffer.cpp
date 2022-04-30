@@ -7,12 +7,14 @@
 
 #include "FkByteBuffer.h"
 
+FK_IMPL_CLASS_TYPE(FkByteBuffer, FkObject)
+
 FkByteBuffer::FkByteBuffer() : FkObject() {
-    FK_MARK_SUPER
+
 }
 
 FkByteBuffer::FkByteBuffer(const FkByteBuffer &o) : FkObject(o) {
-    FK_MARK_SUPER
+
 }
 
 FkByteBuffer::~FkByteBuffer() {

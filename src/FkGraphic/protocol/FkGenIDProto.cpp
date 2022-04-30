@@ -10,12 +10,14 @@
 
 #include "FkGenIDProto.h"
 
+FK_IMPL_CLASS_TYPE(FkGenIDProto, FkProtocol)
+
 FkGenIDProto::FkGenIDProto() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkGenIDProto::FkGenIDProto(const FkGenIDProto &o) : FkProtocol(o) {
-    FK_MARK_SUPER
+
 }
 
 FkGenIDProto::~FkGenIDProto() {

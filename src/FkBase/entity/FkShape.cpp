@@ -7,12 +7,14 @@
 
 #include "FkShape.h"
 
+FK_IMPL_CLASS_TYPE(FkShape, FkObject)
+
 FkShape::FkShape() : FkObject() {
-    FK_MARK_SUPER
+
 }
 
 FkShape::FkShape(const FkShape &o) : FkObject(o), type(o.type) {
-    FK_MARK_SUPER
+
 }
 
 FkShape::~FkShape() {

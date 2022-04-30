@@ -10,9 +10,11 @@
 #include "FkVboCompo.h"
 #include "FkMatCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicMatProgram, FkGraphicProgram)
+
 FkGraphicMatProgram::FkGraphicMatProgram(const FkProgramDescription &desc)
         : FkGraphicProgram(desc) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicMatProgram::~FkGraphicMatProgram() {

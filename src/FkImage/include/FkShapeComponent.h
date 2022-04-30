@@ -11,7 +11,9 @@
 #include "FkGraphicComponent.h"
 #include "FkShape.h"
 
-FK_CLASS FkShapeComponent FK_EXTEND FkGraphicComponent {
+FK_SUPER_CLASS(FkShapeComponent, FkGraphicComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkShapeComponent)
+
 public:
     FkShapeComponent();
 

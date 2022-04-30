@@ -15,7 +15,9 @@
 #include "FkJavaRuntime.h"
 #include <EGL/egl.h>
 
-FK_CLASS FkAndroidWindow FK_EXTEND FkGraphicWindow {
+FK_SUPER_CLASS(FkAndroidWindow, FkGraphicWindow) {
+FK_DEF_CLASS_TYPE_FUNC(FkAndroidWindow)
+
 public:
     FkAndroidWindow(jobject surface);
 

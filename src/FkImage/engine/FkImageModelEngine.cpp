@@ -19,13 +19,15 @@
 #include "FkAnyCompo.h"
 #include <fstream>
 
+FK_IMPL_CLASS_TYPE(FkImageModelEngine, FkEngine)
+
 static std::shared_ptr<FkImageEngine> _cast2ImageEngine(std::shared_ptr<FkEngine> &imageEngine) {
     return std::dynamic_pointer_cast<FkImageEngine>(imageEngine);
 }
 
 FkImageModelEngine::FkImageModelEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name)
         : FkEngine(name), imageEngine(imageEngine) {
-    FK_MARK_SUPER
+
 }
 
 FkImageModelEngine::~FkImageModelEngine() {
@@ -143,7 +145,7 @@ std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std
             model->set_allocated_canvas(canvas);
             _fillLayer(canvas, layer);
         } else {
-            auto fileCompo = layer->findComponent<FkFilePathCompo>();
+            auto fileCompo = FK_FIND_COMPO(layer, FkFilePathCompo);
             if (fileCompo && !dir.empty()) {
                 _copyLayerFile(dir, fileCompo->str);
             }
@@ -157,11 +159,11 @@ std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std
 FkResult FkImageModelEngine::_fillLayer(void* dst,
                                         std::shared_ptr<FkGraphicLayer> &src) {
     auto *pbLayer = static_cast<pb::FkImageLayer *>(dst);
-    auto fileCompo = src->findComponent<FkFilePathCompo>();
-    auto scaleCompo = src->findComponent<FkScaleComponent>();
-    auto rotateCompo = src->findComponent<FkRotateComponent>();
-    auto transCompo = src->findComponent<FkTransComponent>();
-    auto sizeCompo = src->findComponent<FkSizeCompo>();
+    auto fileCompo = FK_FIND_COMPO(src, FkFilePathCompo);
+    auto scaleCompo = FK_FIND_COMPO(src, FkScaleComponent);
+    auto rotateCompo = FK_FIND_COMPO(src, FkRotateComponent);
+    auto transCompo = FK_FIND_COMPO(src, FkTransComponent);
+    auto sizeCompo = FK_FIND_COMPO(src, FkSizeCompo);
     pbLayer->set_id(src->id);
     pbLayer->set_file(fileCompo ? FkFileUtils::name(fileCompo->str) : "");
     if (scaleCompo) {

@@ -11,7 +11,9 @@
 #include "FkProtocol.h"
 #include "FkQuarkContext.h"
 
-FK_CLASS FkOnCreatePrt FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkOnCreatePrt, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkOnCreatePrt)
+
 public:
     FkOnCreatePrt();
 

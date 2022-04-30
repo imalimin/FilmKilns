@@ -31,8 +31,10 @@
 #include "FkReadPixelsProto.h"
 #include "FkScaleTypeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicMolecule, FkSimpleMolecule)
+
 FkGraphicMolecule::FkGraphicMolecule() : FkSimpleMolecule() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicMolecule::~FkGraphicMolecule() {

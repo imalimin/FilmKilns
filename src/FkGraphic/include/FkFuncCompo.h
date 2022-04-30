@@ -13,7 +13,9 @@
 
 #include "FkComponent.h"
 
-FK_CLASS FkFuncCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkFuncCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkFuncCompo)
+
 public:
     FkFuncCompo(std::function<void()> func);
 

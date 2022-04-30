@@ -16,9 +16,12 @@
 
 class FkSession;
 
-FK_ABS_CLASS FkQuark FK_EXTEND FkObject {
-    friend FkSession;
+FK_SUPER_CLASS(FkQuark, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkQuark)
+
 public:
+    friend FkSession;
+
     typedef int (FkQuark::*ProtHandler)(std::shared_ptr<FkProtocol>);
 
 public:

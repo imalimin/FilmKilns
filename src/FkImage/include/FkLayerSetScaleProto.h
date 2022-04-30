@@ -13,7 +13,9 @@
 
 #include "FkFloatVec3Proto.h"
 
-FK_CLASS FkLayerSetScaleProto FK_EXTEND FkFloatVec3Proto {
+FK_SUPER_CLASS(FkLayerSetScaleProto, FkFloatVec3Proto) {
+FK_DEF_CLASS_TYPE_FUNC(FkLayerSetScaleProto)
+
 public:
     FkLayerSetScaleProto();
 

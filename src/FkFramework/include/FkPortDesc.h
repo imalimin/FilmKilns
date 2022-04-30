@@ -25,7 +25,9 @@
     desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
         reinterpret_cast<FkPort::PortFunc>(&CLASS::dispatchNext)) \
 
-FK_CLASS FkPortDesc FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkPortDesc, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkPortDesc)
+
 public:
     FkPortDesc();
 

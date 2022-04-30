@@ -10,18 +10,20 @@
 
 #include "FkRmMaterialProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRmMaterialProto, FkMaterialProto)
+
 FkRmMaterialProto::FkRmMaterialProto() : FkMaterialProto(nullptr) {
-    FK_MARK_SUPER
+
 }
 
 FkRmMaterialProto::FkRmMaterialProto(std::shared_ptr<FkMaterialCompo> &material)
         : FkMaterialProto(material) {
-    FK_MARK_SUPER
+
 }
 
 FkRmMaterialProto::FkRmMaterialProto(const FkRmMaterialProto &o)
         : FkMaterialProto(o) {
-    FK_MARK_SUPER
+
 }
 
 FkRmMaterialProto::~FkRmMaterialProto() {

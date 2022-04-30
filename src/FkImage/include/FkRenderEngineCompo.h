@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkEngine.h"
 
-FK_CLASS FkRenderEngineCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkRenderEngineCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderEngineCompo)
+
 public:
     FkRenderEngineCompo(std::shared_ptr<FkEngine> &_engine);
 

@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkGraphicTexture.h"
 
-FK_CLASS FkTexCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkTexCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkTexCompo)
+
 public:
     FkTexCompo(std::shared_ptr<FkGraphicTexture> &tex);
 

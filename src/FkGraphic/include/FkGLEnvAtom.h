@@ -14,7 +14,9 @@
 #include "FkSimpleAtom.h"
 #include "FkContextCompo.h"
 
-FK_CLASS FkGLEnvAtom FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkGLEnvAtom, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkGLEnvAtom)
+
 public:
     FkGLEnvAtom();
 

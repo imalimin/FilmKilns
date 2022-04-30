@@ -14,7 +14,9 @@
 #include "FkProtocol.h"
 #include "FkRational.h"
 
-FK_CLASS FkRationalProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkRationalProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkRationalProto)
+
 public:
     FkRationalProto();
 

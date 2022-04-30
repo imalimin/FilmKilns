@@ -14,7 +14,9 @@
 #include "FkEntity.h"
 #include "FkContextCompo.h"
 
-FK_CLASS FkEnvEntity FK_EXTEND FkEntity {
+FK_SUPER_CLASS(FkEnvEntity, FkEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkEnvEntity)
+
 public:
     FkEnvEntity();
 

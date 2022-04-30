@@ -7,12 +7,14 @@
 
 #include "FkQuerySizeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkQuerySizeProto, FkSetSizeProto)
+
 FkQuerySizeProto::FkQuerySizeProto() : FkSetSizeProto() {
-    FK_MARK_SUPER
+
 }
 
 FkQuerySizeProto::FkQuerySizeProto(const FkQuerySizeProto &o) : FkSetSizeProto(o) {
-    FK_MARK_SUPER
+
 }
 
 FkQuerySizeProto::~FkQuerySizeProto() {

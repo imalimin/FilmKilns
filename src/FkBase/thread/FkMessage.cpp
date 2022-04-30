@@ -12,6 +12,9 @@
 #endif
 #define TAG "FkMessage"
 
+FK_IMPL_CLASS_TYPE(FkMessage, FkObject)
+FK_IMPL_CLASS_TYPE(FkMessageAllocator, FkSourceAllocator)
+
 const int32_t FkMessage::FLAG_NORMAL = 0x01;
 const int32_t FkMessage::FLAG_UNIQUE = 0x02;
 const int32_t FkMessage::FLAG_FIRST_ALWAYS = 0x04;
@@ -65,7 +68,7 @@ FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp)
 }
 
 FkMessage::FkMessage(FkID what, std::shared_ptr<FkObject> sp, int32_t flags): FkSource() {
-    FK_MARK_SUPER
+
     reset();
     this->what = what;
     this->sp = std::move(sp);
@@ -120,7 +123,7 @@ FkMessageAllocator *FkMessageAllocator::getInstance() {
 }
 
 FkMessageAllocator::FkMessageAllocator() : FkSourceAllocator<FkMessage, int32_t>(50) {
-    FK_MARK_SUPER
+
 }
 
 FkMessageAllocator::~FkMessageAllocator() {

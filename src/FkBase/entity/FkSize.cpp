@@ -7,6 +7,8 @@
 
 #include "FkSize.h"
 
+FK_IMPL_CLASS_TYPE(FkSize, FkObject)
+
 FkSize::FkSize() : FkObject(), width(0), height(0) {
 
 }

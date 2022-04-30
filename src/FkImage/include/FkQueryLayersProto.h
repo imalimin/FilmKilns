@@ -15,7 +15,9 @@
 #include "FkGraphicLayer.h"
 #include <vector>
 
-FK_CLASS FkQueryLayersProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkQueryLayersProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkQueryLayersProto)
+
 public:
     FkQueryLayersProto();
 

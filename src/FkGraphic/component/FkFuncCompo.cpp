@@ -10,12 +10,14 @@
 
 #include "FkFuncCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkFuncCompo, FkComponent)
+
 FkFuncCompo::FkFuncCompo(std::function<void()> func) : FkComponent(), func(func) {
-    FK_MARK_SUPER
+
 }
 
 FkFuncCompo::FkFuncCompo(const FkFuncCompo &o) : FkComponent(o), func(o.func) {
-    FK_MARK_SUPER
+
 }
 
 FkFuncCompo::~FkFuncCompo() {

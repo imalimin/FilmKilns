@@ -10,14 +10,16 @@
 
 #include "FkMaterialProto.h"
 
+FK_IMPL_CLASS_TYPE(FkMaterialProto, FkProtocol)
+
 FkMaterialProto::FkMaterialProto(std::shared_ptr<FkMaterialCompo> material)
         : FkProtocol(), material(material) {
-    FK_MARK_SUPER
+
 }
 
 FkMaterialProto::FkMaterialProto(const FkMaterialProto &o)
         : FkProtocol(o), material(o.material) {
-    FK_MARK_SUPER
+
 }
 
 FkMaterialProto::~FkMaterialProto() {

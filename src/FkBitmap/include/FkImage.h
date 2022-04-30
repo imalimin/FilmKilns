@@ -13,7 +13,9 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkImage FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkImage, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkImage)
+
 public:
     FK_ENUM Format {
         kBMP = 1,

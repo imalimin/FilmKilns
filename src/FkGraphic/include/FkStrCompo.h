@@ -13,7 +13,9 @@
 
 #include "FkComponent.h"
 
-FK_CLASS FkStrCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkStrCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkStrCompo)
+
 public:
     FkStrCompo(std::string &str);
 

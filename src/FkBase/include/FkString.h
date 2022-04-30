@@ -11,7 +11,9 @@
 #include "FkObject.h"
 #include <sstream>
 
-FK_CLASS FkString FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkString, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkString)
+
 public:
     static std::string valueOf(int32_t value);
 

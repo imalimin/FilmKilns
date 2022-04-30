@@ -11,7 +11,9 @@
 #include "FkObject.h"
 #include "FkMessage.h"
 
-FK_CLASS FkMessageQueue FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkMessageQueue, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkMessageQueue)
+
 public:
     FkMessageQueue() {
         pthread_mutex_init(&mutex, nullptr);

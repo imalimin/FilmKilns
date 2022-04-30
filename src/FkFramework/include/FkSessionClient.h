@@ -12,37 +12,29 @@
 #include "FkSession.h"
 #include "FkProtocol.h"
 
+class FkSessionClient;
 
-FK_ABS_CLASS FkSessionClient FK_EXTEND FkObject, public std::enable_shared_from_this<FkSessionClient> {
+FK_SUPER_CLASS(FkSessionBuilder, FkObject), public std::enable_shared_from_this<FkSessionBuilder> {
+FK_DEF_CLASS_TYPE_FUNC(FkSessionBuilder)
+public:
+    FkSessionBuilder(std::shared_ptr<FkSessionClient> _client) : FkObject(), client(_client) {
+    }
+
+    FkSessionBuilder(const FkSessionBuilder &o) = delete;
+
+    virtual ~FkSessionBuilder() {}
+
+    std::shared_ptr<FkSessionBuilder> with(std::list<std::shared_ptr<FkQuark>> &quarks);
+
+    FkResult send(std::shared_ptr<FkProtocol> proto);
+
 private:
-    FK_ABS_CLASS FkSessionBuilder FK_EXTEND FkObject, public std::enable_shared_from_this<FkSessionBuilder> {
-    public:
-        FkSessionBuilder(std::shared_ptr<FkSessionClient> client) : FkObject() {
-            this->client = client;
-        }
+    std::shared_ptr<FkSessionClient> client;
+    std::list<std::shared_ptr<FkQuark>> chain;
+};
 
-        FkSessionBuilder(const FkSessionBuilder &o) = delete;
-
-        virtual ~FkSessionBuilder() {
-
-        }
-
-        std::shared_ptr<FkSessionBuilder> with(std::list<std::shared_ptr<FkQuark>> quarks) {
-            for (auto &it : quarks) {
-                chain.emplace_back(it);
-            }
-            return shared_from_this();
-        }
-
-        FkResult send(std::shared_ptr<FkProtocol> proto) {
-            auto session = FkSession::with(proto);
-            return client->send(session, proto, chain);
-        }
-
-    private:
-        std::shared_ptr<FkSessionClient> client;
-        std::list<std::shared_ptr<FkQuark>> chain;
-    };
+FK_SUPER_CLASS(FkSessionClient, FkObject), public std::enable_shared_from_this<FkSessionClient> {
+FK_DEF_CLASS_TYPE_FUNC(FkSessionClient)
 
 public:
     FkSessionClient(const FkSessionClient &o) = delete;

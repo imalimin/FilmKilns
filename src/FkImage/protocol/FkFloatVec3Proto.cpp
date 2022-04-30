@@ -10,14 +10,16 @@
 
 #include "FkFloatVec3Proto.h"
 
+FK_IMPL_CLASS_TYPE(FkFloatVec3Proto, FkProtocol)
+
 FkFloatVec3Proto::FkFloatVec3Proto()
         : FkProtocol(), value(0.0f, 0.0f, 0.0f) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatVec3Proto::FkFloatVec3Proto(const FkFloatVec3Proto &o)
         : FkProtocol(o), value(o.value) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatVec3Proto::~FkFloatVec3Proto() {

@@ -16,7 +16,9 @@
 #include "FkBitmapDefinition.h"
 #include "include/core/SkBitmap.h"
 
-FK_CLASS FkBitmap FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkBitmap, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkBitmap)
+
 public:
     static std::shared_ptr<FkBitmap> from(std::string &file);
 

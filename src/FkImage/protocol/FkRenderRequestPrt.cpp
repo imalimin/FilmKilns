@@ -7,12 +7,14 @@
 
 #include "FkRenderRequestPrt.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderRequestPrt, FkWinSizeProto)
+
 FkRenderRequestPrt::FkRenderRequestPrt() : FkWinSizeProto() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderRequestPrt::FkRenderRequestPrt(const FkRenderRequestPrt &o) : FkWinSizeProto(o), req(o.req) {
-    FK_MARK_SUPER
+
 }
 
 FkRenderRequestPrt::~FkRenderRequestPrt() {

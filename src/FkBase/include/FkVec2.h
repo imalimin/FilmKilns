@@ -14,8 +14,9 @@
  * position or scale params
  */
 /// [x,y]
-template<typename T>
-FK_CLASS FkVec2 FK_EXTEND FkObject {
+FK_SUPER_TEMPLATE_CLASS(FkVec2, FkObject, typename T) {
+FK_DEF_CLASS_TYPE_FUNC(FkVec2)
+
 public:
     static void swap(FkVec2<T> *vec1, FkVec2<T> *vec2) {
         float tmp = vec1->x;
@@ -29,11 +30,11 @@ public:
 
 public:
     FkVec2(T x, T y) : FkObject(), x(x), y(y) {
-        FK_MARK_SUPER
+
     };
 
     FkVec2(const FkVec2<T> &o) : FkObject(), x(o.x), y(o.y) {
-        FK_MARK_SUPER
+
     };
 
     virtual ~FkVec2() {};

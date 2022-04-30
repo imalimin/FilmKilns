@@ -7,13 +7,15 @@
 
 #include "FkGraphicEntity.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicEntity, FkEntity)
+
 FkGraphicEntity::FkGraphicEntity() : FkEntity() {
-    FK_MARK_SUPER
+
 
 }
 
 FkGraphicEntity::FkGraphicEntity(const FkGraphicEntity &o) : FkEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicEntity::~FkGraphicEntity() {

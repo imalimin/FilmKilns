@@ -7,6 +7,8 @@
 
 #include "FkRational.h"
 
+FK_IMPL_CLASS_TYPE(FkRational, FkObject)
+
 FkRational::FkRational() : FkObject(), num(0), den(1) {
 
 }

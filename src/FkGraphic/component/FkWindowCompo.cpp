@@ -10,12 +10,14 @@
 
 #include "FkWindowCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkWindowCompo, FkComponent)
+
 FkWindowCompo::FkWindowCompo(std::shared_ptr<FkGraphicWindow> &_win) : FkComponent(), win(_win) {
-    FK_MARK_SUPER
+
 }
 
 FkWindowCompo::FkWindowCompo(const FkWindowCompo &o) : FkComponent(o), win(o.win) {
-    FK_MARK_SUPER
+
 }
 
 FkWindowCompo::~FkWindowCompo() {

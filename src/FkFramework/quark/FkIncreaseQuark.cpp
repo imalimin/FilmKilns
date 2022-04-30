@@ -8,6 +8,8 @@
 #include "FkIncreaseQuark.h"
 #include "FkCalculatePrt.h"
 
+FK_IMPL_CLASS_TYPE(FkIncreaseQuark, FkQuark)
+
 FkIncreaseQuark::FkIncreaseQuark() : FkQuark() {
 
 }

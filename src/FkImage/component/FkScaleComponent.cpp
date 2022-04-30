@@ -5,19 +5,21 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/FkScaleComponent.h"
+#include "FkScaleComponent.h"
+
+FK_IMPL_CLASS_TYPE(FkScaleComponent, FkGraphicComponent)
 
 FkScaleComponent::FkScaleComponent() : FkGraphicComponent(), value(1.0f, 1.0f, 1.0f) {
-    FK_MARK_SUPER
+
 }
 
 FkScaleComponent::FkScaleComponent(FkFloatVec3 value) : FkGraphicComponent(), value(value) {
-    FK_MARK_SUPER
+
 }
 
 FkScaleComponent::FkScaleComponent(const FkScaleComponent &o)
         : FkGraphicComponent(o), value(o.value) {
-    FK_MARK_SUPER
+
 }
 
 FkScaleComponent::~FkScaleComponent() {

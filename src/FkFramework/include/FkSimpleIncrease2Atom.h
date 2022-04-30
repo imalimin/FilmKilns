@@ -10,7 +10,9 @@
 
 #include "FkSimpleAtom.h"
 
-FK_CLASS FkSimpleIncrease2Atom FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkSimpleIncrease2Atom, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkSimpleIncrease2Atom)
+
 public:
     FkSimpleIncrease2Atom();
 

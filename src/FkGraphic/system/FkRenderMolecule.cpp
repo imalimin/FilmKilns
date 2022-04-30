@@ -16,8 +16,10 @@
 #include "FkNewBmpTexProto.h"
 #include "FkRmMaterialProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderMolecule, FkSimpleMolecule)
+
 FkRenderMolecule::FkRenderMolecule() : FkSimpleMolecule() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderMolecule::~FkRenderMolecule() {

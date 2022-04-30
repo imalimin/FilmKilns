@@ -11,13 +11,15 @@
 #include "FkRenderContext.h"
 #include "FkRenderEngineCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderContext, FkEntity)
+
 std::shared_ptr<FkRenderContext> FkRenderContext::wrap(std::shared_ptr<FkQuarkContext> context) {
     return std::shared_ptr<FkRenderContext>(new FkRenderContext(context));
 }
 
 FkRenderContext::FkRenderContext(std::shared_ptr<FkQuarkContext> &_context)
         : FkEntity(), context(_context) {
-    FK_MARK_SUPER
+
 }
 
 FkRenderContext::~FkRenderContext() {
@@ -26,7 +28,7 @@ FkRenderContext::~FkRenderContext() {
 
 std::shared_ptr<FkRenderEngine> FkRenderContext::getRenderEngine() {
     if (context) {
-        auto proto = context->findComponent<FkRenderEngineCompo>();
+        auto proto = FK_FIND_COMPO(context, FkRenderEngineCompo);
         if (proto) {
             return std::dynamic_pointer_cast<FkRenderEngine>(proto->engine);
         }

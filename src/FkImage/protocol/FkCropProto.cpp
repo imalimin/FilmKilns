@@ -10,18 +10,20 @@
 
 #include "FkCropProto.h"
 
+FK_IMPL_CLASS_TYPE(FkCropProto, FkProtocol)
+
 FkCropProto::FkCropProto()
         : FkProtocol(), layerId(FK_ID_NONE),
           leftTop(0, 0), leftBottom(0, 0),
           rightTop(0, 0), rightBottom(0, 0) {
-    FK_MARK_SUPER
+
 }
 
 FkCropProto::FkCropProto(const FkCropProto &o)
         : FkProtocol(o), layerId(o.layerId), canvas(o.canvas),
           leftTop(o.leftTop), leftBottom(o.leftBottom),
           rightTop(o.rightTop), rightBottom(o.rightBottom) {
-    FK_MARK_SUPER
+
 }
 
 FkCropProto::~FkCropProto() {

@@ -8,7 +8,9 @@
 #include "FkQuark.h"
 #include "FkProtocol.h"
 
-FK_CLASS FkDivideQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkDivideQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkDivideQuark)
+
 public:
     FkDivideQuark();
 

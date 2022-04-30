@@ -13,8 +13,10 @@
 #include "FkNewTexProto.h"
 #include "FkFboCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderFboQuark, FkQuark)
+
 FkRenderFboQuark::FkRenderFboQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderFboQuark::~FkRenderFboQuark() {

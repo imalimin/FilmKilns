@@ -14,7 +14,9 @@
 #include "FkVertexCompo.h"
 #include "FkColor.h"
 
-FK_CLASS FkPointVertexCompo FK_EXTEND FkVertexCompo {
+FK_SUPER_CLASS(FkPointVertexCompo, FkVertexCompo) {
+FK_DEF_CLASS_TYPE_FUNC(FkPointVertexCompo)
+
 public:
     FkPointVertexCompo();
 

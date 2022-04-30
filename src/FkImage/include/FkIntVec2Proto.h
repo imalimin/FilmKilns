@@ -14,7 +14,9 @@
 #include "FkProtocol.h"
 #include "FkIntVec2.h"
 
-FK_CLASS FkIntVec2Proto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkIntVec2Proto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkIntVec2Proto)
+
 public:
     FkIntVec2Proto();
 

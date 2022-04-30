@@ -12,9 +12,11 @@
 #include "android/native_window.h"
 #include "android/native_window_jni.h"
 
+FK_IMPL_CLASS_TYPE(FkAndroidWindow, FkGraphicWindow)
+
 FkAndroidWindow::FkAndroidWindow(jobject surface)
         : FkGraphicWindow(0, 0) {
-    FK_MARK_SUPER
+
     JNIEnv *env = nullptr;
     FkAssert(FkJavaRuntime::getInstance().findEnv(&env) == true,)
     auto win = ANativeWindow_fromSurface(env, surface);

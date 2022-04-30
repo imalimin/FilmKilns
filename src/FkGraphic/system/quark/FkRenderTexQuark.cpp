@@ -18,8 +18,10 @@
 #include "FkBufCompo.h"
 #include "FkRmMaterialProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderTexQuark, FkQuark)
+
 FkRenderTexQuark::FkRenderTexQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderTexQuark::~FkRenderTexQuark() {
@@ -74,7 +76,7 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
         }
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), tex));
     }
-    auto bufCompo = proto->texEntity->findComponent<FkBufCompo>();
+    auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
     if (bufCompo) {
         tex->update(tex->desc.fmt,
                     proto->texEntity->size().getWidth(),
@@ -104,7 +106,7 @@ FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         return FK_SOURCE_NOT_FOUND;
     }
     proto->materials->addComponent(std::make_shared<FkTexCompo>(tex));
-    auto sizeCompo = proto->materials->findComponent<FkSizeCompo>();
+    auto sizeCompo = FK_FIND_COMPO(proto->materials, FkSizeCompo);
     if (sizeCompo == nullptr) {
         sizeCompo = std::make_shared<FkSizeCompo>(tex->desc.size);
         proto->materials->addComponent(sizeCompo);
@@ -113,7 +115,7 @@ FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     if (!proto->device->getMaterial()->isUseless()) {
         tex = _findTex(proto->device->getMaterial()->id());
         proto->device->addComponent(std::make_shared<FkTexCompo>(tex));
-        sizeCompo = proto->device->findComponent<FkSizeCompo>();
+        sizeCompo = FK_FIND_COMPO(proto->device, FkSizeCompo);
         if (sizeCompo == nullptr) {
             sizeCompo = std::make_shared<FkSizeCompo>(tex->desc.size);
             proto->device->addComponent(sizeCompo);
@@ -133,7 +135,7 @@ std::shared_ptr<FkGraphicTexture> FkRenderTexQuark::_findTex(FkID id) {
 
 FkResult FkRenderTexQuark::_drawColor(std::shared_ptr<FkGraphicTexture> &tex,
                                       std::shared_ptr<FkTexEntity> &texEntity) {
-    auto colorCompo = texEntity->findComponent<FkColorCompo>();
+    auto colorCompo = FK_FIND_COMPO(texEntity, FkColorCompo);
     auto fboCompo = texEntity->fbo();
     if (colorCompo && fboCompo) {
         auto size = tex->desc.size;

@@ -7,13 +7,14 @@
 
 #include "FkSetSurfacePrt.h"
 
+FK_IMPL_CLASS_TYPE(FkSetSurfacePrt, FkProtocol)
 
 FkSetSurfacePrt::FkSetSurfacePrt() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkSetSurfacePrt::FkSetSurfacePrt(const FkSetSurfacePrt &o) : FkProtocol(o), win(o.win) {
-    FK_MARK_SUPER
+
 
 }
 

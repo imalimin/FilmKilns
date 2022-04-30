@@ -10,13 +10,15 @@
 
 #include "FkLayerProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerProto, FkProtocol)
+
 FkLayerProto::FkLayerProto() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkLayerProto::FkLayerProto(const FkLayerProto &o)
         : FkProtocol(o), layerId(o.layerId) {
-    FK_MARK_SUPER
+
     if (o.layer) {
         this->layer = std::make_shared<FkGraphicLayer>(*o.layer);
     }

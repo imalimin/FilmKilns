@@ -17,8 +17,10 @@
 #include "FkBufCompo.h"
 #include "FkRmMaterialProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
+
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
-    FK_MARK_SUPER
+
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
 }

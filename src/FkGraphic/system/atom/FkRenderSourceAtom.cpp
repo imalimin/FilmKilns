@@ -15,8 +15,10 @@
 #include "FkRenderProgramQuark.h"
 #include "FkRmMaterialProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderSourceAtom, FkProtocol)
+
 FkRenderSourceAtom::FkRenderSourceAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderSourceAtom::~FkRenderSourceAtom() {

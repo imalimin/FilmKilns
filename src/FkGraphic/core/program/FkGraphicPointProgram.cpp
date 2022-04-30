@@ -12,9 +12,11 @@
 #include "FkSizeCompo.h"
 //#include "FkShapeComponent.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicPointProgram, FkGraphicProgram)
+
 FkGraphicPointProgram::FkGraphicPointProgram(const FkProgramDescription &desc) : FkGraphicProgram(
         desc) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicPointProgram::~FkGraphicPointProgram() {

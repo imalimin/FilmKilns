@@ -13,7 +13,9 @@
 #include "FkSize.h"
 #include "FkColor.h"
 
-FK_CLASS FkTexDescription FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkTexDescription, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkTexDescription)
+
 public:
     FK_ENUM kWrapMode : int32_t {
         REPEAT = 0,
@@ -40,7 +42,9 @@ public:
     FkColor::kFormat fmt = FkColor::kFormat::NONE;
 };
 
-FK_CLASS FkGraphicTexture FK_EXTEND FkSource {
+FK_SUPER_CLASS(FkGraphicTexture, FkSource) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicTexture)
+
 public:
     static uint32_t convertGLFormat(FkColor::kFormat fmt);
 
@@ -71,7 +75,9 @@ public:
     uint32_t tex;
 };
 
-FK_CLASS FkGraphicAllocator FK_EXTEND FkSourceAllocator<FkGraphicTexture, FkTexDescription> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkGraphicAllocator, FkSourceAllocator)<FkGraphicTexture, FkTexDescription> {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicAllocator)
+
 public:
     FkGraphicAllocator(int capacity);
 

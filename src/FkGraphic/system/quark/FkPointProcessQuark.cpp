@@ -18,8 +18,10 @@
 #include "FkSizeCompo.h"
 #include "FkColorCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkPointProcessQuark, FkQuark)
+
 FkPointProcessQuark::FkPointProcessQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkPointProcessQuark::~FkPointProcessQuark() {
@@ -37,7 +39,7 @@ FkResult FkPointProcessQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     }
     FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkTexDeviceEntity, proto->device);
     FK_CAST_NULLABLE_PTR_RETURN_INT(materials, FkTexEntity, proto->materials);
-    auto vertexCompo = materials->findComponent<FkPointVertexCompo>();
+    auto vertexCompo = FK_FIND_COMPO(materials, FkPointVertexCompo);
     if (vertexCompo == nullptr) {
         return FK_SKIP;
     }
@@ -54,9 +56,9 @@ FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &v
     auto fboCompo = materials->fbo();
     auto dstTexCompo = device->tex();
     auto size = device->size();
-    auto programCompo = materials->findComponent<FkRenderProgramCompo>();
-    auto vboCompo = materials->findComponent<FkVboCompo>();
-    auto pointCompo = materials->findComponent<FkPointFCompo>();
+    auto programCompo = FK_FIND_COMPO(materials, FkRenderProgramCompo);
+    auto vboCompo = FK_FIND_COMPO(materials, FkVboCompo);
+    auto pointCompo = FK_FIND_COMPO(materials, FkPointFCompo);
     FkAssert(pointCompo != nullptr, FK_FAIL);
 
     int32_t offset = 0;

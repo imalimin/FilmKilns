@@ -17,8 +17,10 @@
 #include "FkMeasurePointProto.h"
 #include "ext.hpp"
 
+FK_IMPL_CLASS_TYPE(FkGraphicMVPQuark, FkQuark)
+
 FkGraphicMVPQuark::FkGraphicMVPQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicMVPQuark::~FkGraphicMVPQuark() {
@@ -51,7 +53,7 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     auto canvas = proto->req->getCanvas();
     FkAssert(nullptr != canvas, FK_FAIL);
-    auto sizeComp = canvas->findComponent<FkSizeCompo>();
+    auto sizeComp = FK_FIND_COMPO(canvas, FkSizeCompo);
     FkAssert(nullptr != sizeComp, FK_FAIL);
     _calc(canvas, proto->winSize, true);
     for (auto &layer : proto->req->layers) {
@@ -65,11 +67,11 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
-    auto canvasScale = proto->canvas->findComponent<FkScaleComponent>();
+    auto canvasScale = FK_FIND_COMPO(proto->canvas, FkScaleComponent);
     FkAssert(nullptr != canvasScale, FK_FAIL);
-    auto layerScale = proto->layer->findComponent<FkScaleComponent>();
+    auto layerScale = FK_FIND_COMPO(proto->layer, FkScaleComponent);
     FkAssert(nullptr != layerScale, FK_FAIL);
-    auto layerRotate = proto->layer->findComponent<FkRotateComponent>();
+    auto layerRotate = FK_FIND_COMPO(proto->layer, FkRotateComponent);
     FkAssert(nullptr != layerScale, FK_FAIL);
 
     glm::mat4 mat = glm::mat4(1.0f);
@@ -147,7 +149,7 @@ std::shared_ptr<FkMVPMatrix> FkGraphicMVPQuark::_calcMat(std::shared_ptr<FkGraph
 
 FkResult FkGraphicMVPQuark::_setRotation(std::shared_ptr<FkMVPMatrix> matrix,
                                          std::shared_ptr<FkGraphicLayer> layer) {
-    auto comp = layer->findComponent<FkRotateComponent>();
+    auto comp = FK_FIND_COMPO(layer, FkRotateComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     matrix->setRotation(comp->value);
     return FK_OK;
@@ -157,7 +159,7 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
                                       std::shared_ptr<FkGraphicLayer> layer,
                                       FkSize &targetSize,
                                       bool reverseY) {
-    auto comp = layer->findComponent<FkScaleComponent>();
+    auto comp = FK_FIND_COMPO(layer, FkScaleComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     FkFloatVec3 scale(comp->value.x,
                       comp->value.y * (reverseY ? -1.0f : 1.0f), comp->value.z);
@@ -167,7 +169,7 @@ FkResult FkGraphicMVPQuark::_setScale(std::shared_ptr<FkMVPMatrix> matrix,
 
 FkResult FkGraphicMVPQuark::_setTranslate(std::shared_ptr<FkMVPMatrix> matrix,
                                           std::shared_ptr<FkGraphicLayer> layer) {
-    auto comp = layer->findComponent<FkTransComponent>();
+    auto comp = FK_FIND_COMPO(layer, FkTransComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     FkFloatVec3 trans(comp->value.x, comp->value.y, 0.0f);
     matrix->setTranslate(trans);

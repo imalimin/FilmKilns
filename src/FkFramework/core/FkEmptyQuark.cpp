@@ -10,8 +10,10 @@
 
 #include "FkEmptyQuark.h"
 
+FK_IMPL_CLASS_TYPE(FkEmptyQuark, FkQuark)
+
 FkEmptyQuark::FkEmptyQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkEmptyQuark::~FkEmptyQuark() {

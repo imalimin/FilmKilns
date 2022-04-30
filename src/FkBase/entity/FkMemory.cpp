@@ -7,12 +7,14 @@
 
 #include "FkMemory.h"
 
+FK_IMPL_CLASS_TYPE(FkMemory, FkObject)
+
 FkMemory::FkMemory() : FkObject() {
-    FK_MARK_SUPER
+
 }
 
 FkMemory::FkMemory(const FkMemory &o) : FkObject(o) {
-    FK_MARK_SUPER
+
 }
 
 FkMemory::~FkMemory() {

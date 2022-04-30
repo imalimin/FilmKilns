@@ -14,7 +14,9 @@
 class FkQuark;
 class FkPortDesc;
 
-FK_CLASS FkPort FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkPort, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkPort)
+
 public:
     friend FkPortDesc;
     typedef int (FkQuark::*PortFunc)(std::shared_ptr<FkProtocol>);

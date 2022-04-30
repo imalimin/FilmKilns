@@ -10,7 +10,9 @@
 
 #include "FkSessionClient.h"
 
-FK_ABS_CLASS FkLocalClient FK_EXTEND FkSessionClient {
+FK_SUPER_CLASS(FkLocalClient, FkSessionClient) {
+FK_DEF_CLASS_TYPE_FUNC(FkLocalClient)
+
 public:
     FkLocalClient(const FkLocalClient &o) = delete;
 

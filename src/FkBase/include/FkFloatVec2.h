@@ -10,7 +10,9 @@
 
 #include "FkVec2.h"
 
-FK_CLASS FkFloatVec2 FK_EXTEND FkVec2<float> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkFloatVec2, FkVec2)<float> {
+FK_DEF_CLASS_TYPE_FUNC(FkFloatVec2)
+
 public:
     FkFloatVec2(float x, float y);
 

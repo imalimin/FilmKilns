@@ -16,7 +16,12 @@
 #include <vector>
 #include <list>
 
-FK_CLASS FkEntity FK_EXTEND FkObject {
+#define FK_FIND_COMPO(ENTITY, NAME) \
+ENTITY->findComponent<NAME>(NAME ## _Class::type)                            \
+
+FK_SUPER_CLASS(FkEntity, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkEntity)
+
 public:
     FkEntity();
 
@@ -31,21 +36,18 @@ public:
 
 
     template<class T>
-    std::shared_ptr<T> findComponent() {
+    std::shared_ptr<T> findComponent(const FkClassType &classType) {
         std::vector<std::shared_ptr<FkComponent>> vec;
-        vec.clear();
-
-        if (FK_OK != findComponents(vec, FkClassType::type<T>())) {
+        if (FK_OK != findComponents(vec, classType)) {
             return nullptr;
         }
         return std::dynamic_pointer_cast<T>(vec[0]);
     }
 
-    template<class T>
-    FkResult copyComponentFrom(std::shared_ptr<FkEntity> src) {
-        auto compo = src->findComponent<T>();
-        if (compo) {
-            return addComponent(compo);
+    FkResult copyComponentFrom(std::shared_ptr<FkEntity> src, const FkClassType &classType) {
+        std::vector<std::shared_ptr<FkComponent>> vec;
+        if (FK_OK == findComponents(vec, classType)) {
+            return addComponent(vec[0]);
         }
         return FK_SOURCE_NOT_FOUND;
     }

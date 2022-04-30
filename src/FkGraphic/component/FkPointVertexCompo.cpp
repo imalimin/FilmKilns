@@ -10,13 +10,15 @@
 
 #include "FkPointVertexCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkPointVertexCompo, FkComponent)
+
 FkPointVertexCompo::FkPointVertexCompo() : FkVertexCompo() {
-    FK_MARK_SUPER
+
 }
 
 FkPointVertexCompo::FkPointVertexCompo(const FkPointVertexCompo &o)
         : FkVertexCompo(o) {
-    FK_MARK_SUPER
+
 }
 
 FkPointVertexCompo::~FkPointVertexCompo() {

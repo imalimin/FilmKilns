@@ -7,6 +7,8 @@
 
 #include "FkString.h"
 
+FK_IMPL_CLASS_TYPE(FkString, FkObject)
+
 std::string FkString::valueOf(int32_t value) {
     return valueOf<int32_t>(value);
 }
@@ -24,22 +26,22 @@ std::string FkString::valueOf(double value) {
 }
 
 FkString::FkString() : FkString("") {
-    FK_MARK_SUPER
+
 }
 
 FkString::FkString(const char *str)
         : FkObject(), _str(str) {
-    FK_MARK_SUPER
+
 }
 
 FkString::FkString(const std::string &str)
         : FkObject(), _str(str) {
-    FK_MARK_SUPER
+
 }
 
 FkString::FkString(const FkString &o)
         : FkObject(), _str(o._str) {
-    FK_MARK_SUPER
+
 }
 
 FkString::~FkString() {

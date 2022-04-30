@@ -7,14 +7,16 @@
 
 #include "FkLayerPostTransProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerPostTransProto, FkIntVec2Proto)
+
 FkLayerPostTransProto::FkLayerPostTransProto() : FkIntVec2Proto(),
                                                  layer(FK_ID_NONE) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerPostTransProto::FkLayerPostTransProto(const FkLayerPostTransProto &o) : FkIntVec2Proto(o),
                                                                                layer(o.layer) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerPostTransProto::~FkLayerPostTransProto() {

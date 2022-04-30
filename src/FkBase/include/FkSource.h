@@ -13,9 +13,12 @@
 #include "FkTimeUtils.h"
 #include <unordered_map>
 #include <map>
+#include <list>
 #include <mutex>
 
-FK_ABS_CLASS FkSource FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkSource, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkSource)
+
 public:
     FkSource();
 
@@ -36,11 +39,12 @@ public:
     int useCnt = 0;
 };
 
-template<class T, class D>
-FK_ABS_CLASS FkSourceAllocator FK_EXTEND FkObject {
+FK_SUPER_TEMPLATE_CLASS(FkSourceAllocator, FkObject, class T, class D) {
+FK_DEF_CLASS_TYPE_FUNC(FkSourceAllocator)
+
 public:
     FkSourceAllocator(int capacity) : FkObject(), _capacity(capacity) {
-        FK_MARK_SUPER
+
     }
 
     FkSourceAllocator(const FkSourceAllocator &o) = delete;

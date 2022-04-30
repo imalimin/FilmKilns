@@ -11,6 +11,9 @@
 #include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
 
+FK_IMPL_CLASS_TYPE(FkGraphicFrameObject, FkSource)
+FK_IMPL_CLASS_TYPE(FkGraphicFBOAllocator, FkSourceAllocator)
+
 FkGraphicFrameObject::FkGraphicFrameObject() : FkSource() {
 
 }

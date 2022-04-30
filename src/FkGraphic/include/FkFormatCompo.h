@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkColor.h"
 
-FK_CLASS FkFormatCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkFormatCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkFormatCompo)
+
 public:
     FkFormatCompo(FkColor::kFormat fmt);
 

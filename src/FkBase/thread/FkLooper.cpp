@@ -13,6 +13,9 @@
 
 #define TAG "FkLooper"
 
+FK_IMPL_CLASS_TYPE(FkLooper, FkObject)
+FK_IMPL_CLASS_TYPE(FkLooperManager, FkObject)
+
 void FkLooper::prepare() {
     FkLooper *looper = FkLooperManager::getInstance()->create(FkThread::currentThreadId());
     if (nullptr == looper) {

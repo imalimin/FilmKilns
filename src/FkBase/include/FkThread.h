@@ -17,7 +17,9 @@
 #include <string>
 #include <functional>
 
-FK_CLASS FkThread FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkThread, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkThread)
+
 public:
     static bool sleep(int64_t us);
 

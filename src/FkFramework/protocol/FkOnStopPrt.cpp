@@ -7,12 +7,14 @@
 
 #include "FkOnStopPrt.h"
 
+FK_IMPL_CLASS_TYPE(FkOnStopPrt, FkProtocol)
+
 FkOnStopPrt::FkOnStopPrt() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkOnStopPrt::FkOnStopPrt(const FkOnStopPrt &o) : FkProtocol(o) {
-    FK_MARK_SUPER
+
 }
 
 FkOnStopPrt::~FkOnStopPrt() {

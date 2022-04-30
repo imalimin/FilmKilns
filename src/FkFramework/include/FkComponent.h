@@ -13,7 +13,9 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkComponent FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkComponent, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkComponent)
+
 public:
     FkComponent();
 

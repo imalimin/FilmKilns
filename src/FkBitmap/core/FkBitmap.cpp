@@ -13,6 +13,8 @@
 #include "include/core/SkImageEncoder.h"
 #include "include/core/SkPixelRef.h"
 
+FK_IMPL_CLASS_TYPE(FkBitmap, FkObject)
+
 std::shared_ptr<FkBitmap> FkBitmap::from(std::string &file) {
     return std::shared_ptr<FkBitmap>(new FkBitmap(file));
 }
@@ -61,7 +63,7 @@ FkResult FkBitmap::write(std::string file, FkImage::Format fmt, std::shared_ptr<
 }
 
 FkBitmap::FkBitmap(std::string &file) : FkObject() {
-    FK_MARK_SUPER
+
     sk_sp<SkData> data = SkData::MakeFromFileName(file.c_str());
     std::unique_ptr<SkCodec> codec = SkCodec::MakeFromData(data);
     if (!codec) {
@@ -82,7 +84,7 @@ FkBitmap::FkBitmap(std::string &file) : FkObject() {
 }
 
 FkBitmap::FkBitmap(const FkBitmap &o) : FkObject(o) {
-    FK_MARK_SUPER
+
 }
 
 void FkBitmap::_setEncodedOrigin(int32_t skEncodedOrigin) {

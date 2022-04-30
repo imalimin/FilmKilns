@@ -10,12 +10,14 @@
 
 #include "FkFboCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkFboCompo, FkComponent)
+
 FkFboCompo::FkFboCompo(std::shared_ptr<FkGraphicFrameObject> &fbo) : FkComponent(), fbo(fbo) {
-    FK_MARK_SUPER
+
 }
 
 FkFboCompo::FkFboCompo(const FkFboCompo &o) : FkComponent(o), fbo(o.fbo) {
-    FK_MARK_SUPER
+
 }
 
 FkFboCompo::~FkFboCompo() {

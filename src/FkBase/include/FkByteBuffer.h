@@ -10,7 +10,9 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkByteBuffer FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkByteBuffer, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkByteBuffer)
+
 public:
     FkByteBuffer();
 

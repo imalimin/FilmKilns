@@ -15,7 +15,9 @@
 
 class FkLooperManager;
 
-FK_CLASS FkLooper FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkLooper, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkLooper)
+
 public:
     /**
      * 为线程准备一个Looper，如果线程已经存在Looper，则报错
@@ -66,7 +68,9 @@ private:
     std::shared_ptr<FkMessage> curMsg = nullptr;
 };
 
-FK_CLASS FkLooperManager FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkLooperManager, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkLooperManager)
+
 private:
     friend FkLooper;
 

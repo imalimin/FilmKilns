@@ -10,16 +10,16 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkTimeUtils FK_EXTEND FkObject {
+class FkTimeUtils {
 public:
     static int64_t getCurrentTimeUS();
 
-public:
+    ~FkTimeUtils() {};
+
+private:
     FkTimeUtils() = delete;
 
     FkTimeUtils(const FkTimeUtils &o) = delete;
-
-    ~FkTimeUtils() {};
 };
 
 

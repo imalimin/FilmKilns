@@ -10,13 +10,15 @@
 
 #include "FkReadPixelsProto.h"
 
+FK_IMPL_CLASS_TYPE(FkReadPixelsProto, FkLayerProto)
+
 FkReadPixelsProto::FkReadPixelsProto() : FkLayerProto(), size(0) {
-    FK_MARK_SUPER
+
 }
 
 FkReadPixelsProto::FkReadPixelsProto(const FkReadPixelsProto &o)
         : FkLayerProto(o), buf(o.buf), size(o.size) {
-    FK_MARK_SUPER
+
 }
 
 FkReadPixelsProto::~FkReadPixelsProto() {

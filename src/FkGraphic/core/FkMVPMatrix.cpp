@@ -8,17 +8,19 @@
 #include "FkMVPMatrix.h"
 #include "ext.hpp"
 
+FK_IMPL_CLASS_TYPE(FkMVPMatrix, FkObject)
+
 FkMVPMatrix::FkMVPMatrix(kProjType type)
         : FkMatrix(), type(type), proj(glm::mat4(1.0f)), view(glm::mat4(1.0f)),
           radian(0, 1), scale(1.0f, 1.0f, 1.0f),
           translate(0.0f, 0.0f, 00.0f) {
-    FK_MARK_SUPER
+
 }
 
 FkMVPMatrix::FkMVPMatrix(const FkMVPMatrix &o) : FkMatrix(o), type(o.type), proj(o.proj),
                                                  view(o.view), radian(o.radian),
                                                  scale(o.scale), translate(o.translate) {
-    FK_MARK_SUPER
+
 }
 
 FkMVPMatrix::~FkMVPMatrix() {

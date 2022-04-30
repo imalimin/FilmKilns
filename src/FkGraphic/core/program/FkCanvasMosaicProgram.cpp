@@ -8,8 +8,10 @@
 #include "FkCanvasMosaicProgram.h"
 #include "FkVboCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkCanvasMosaicProgram, FkGraphicProgram)
+
 FkCanvasMosaicProgram::FkCanvasMosaicProgram(const FkProgramDescription &desc) : FkGraphicProgram(desc) {
-    FK_MARK_SUPER
+
 }
 
 FkCanvasMosaicProgram::~FkCanvasMosaicProgram() {

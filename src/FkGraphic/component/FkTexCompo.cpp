@@ -10,12 +10,14 @@
 
 #include "FkTexCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkTexCompo, FkComponent)
+
 FkTexCompo::FkTexCompo(std::shared_ptr<FkGraphicTexture> &tex) : FkComponent(), tex(tex) {
-    FK_MARK_SUPER
+
 }
 
 FkTexCompo::FkTexCompo(const FkTexCompo &o) : FkComponent(o) {
-    FK_MARK_SUPER
+
 }
 
 FkTexCompo::~FkTexCompo() {

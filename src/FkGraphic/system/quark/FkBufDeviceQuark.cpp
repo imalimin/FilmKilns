@@ -13,8 +13,10 @@
 #include "FkTexEntity.h"
 #include "FkGLDefinition.h"
 
+FK_IMPL_CLASS_TYPE(FkBufDeviceQuark, FkQuark)
+
 FkBufDeviceQuark::FkBufDeviceQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkBufDeviceQuark::~FkBufDeviceQuark() {

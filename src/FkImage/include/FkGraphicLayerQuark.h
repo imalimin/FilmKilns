@@ -16,7 +16,9 @@
 #include <list>
 #include <map>
 
-FK_CLASS FkGraphicLayerQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkGraphicLayerQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicLayerQuark)
+
 public:
     FkGraphicLayerQuark();
 

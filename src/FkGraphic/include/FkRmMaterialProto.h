@@ -13,7 +13,9 @@
 
 #include "FkMaterialProto.h"
 
-FK_CLASS FkRmMaterialProto FK_EXTEND FkMaterialProto {
+FK_SUPER_CLASS(FkRmMaterialProto, FkMaterialProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkRmMaterialProto)
+
 public:
     FkRmMaterialProto();
 

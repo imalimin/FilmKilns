@@ -15,7 +15,9 @@
 #include "FkQuarkContext.h"
 #include "FkRenderEngine.h"
 
-FK_CLASS FkRenderContext FK_EXTEND FkEntity {
+FK_SUPER_CLASS(FkRenderContext, FkEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderContext)
+
 public:
     static std::shared_ptr<FkRenderContext> wrap(std::shared_ptr<FkQuarkContext> context);
 

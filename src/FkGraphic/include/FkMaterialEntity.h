@@ -14,7 +14,9 @@
 #include "FkEntity.h"
 #include "FkMaterialCompo.h"
 
-FK_CLASS FkMaterialEntity FK_EXTEND FkEntity {
+FK_SUPER_CLASS(FkMaterialEntity, FkEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkMaterialEntity)
+
 public:
     static std::shared_ptr<FkMaterialEntity> genEmpty();
 

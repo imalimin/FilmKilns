@@ -10,7 +10,9 @@
 
 #include "FkSimpleAtom.h"
 
-FK_ABS_CLASS FkSimpleMolecule FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkSimpleMolecule, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkSimpleMolecule)
+
 public:
     FkSimpleMolecule();
 

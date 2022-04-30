@@ -13,7 +13,9 @@
 
 #include "FkWinSizeProto.h"
 
-FK_CLASS FkScaleTypeProto FK_EXTEND FkWinSizeProto {
+FK_SUPER_CLASS(FkScaleTypeProto, FkWinSizeProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkScaleTypeProto)
+
 public:
     FkScaleTypeProto();
 

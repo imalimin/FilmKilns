@@ -13,7 +13,9 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkGenIDProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkGenIDProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkGenIDProto)
+
 public:
     FkGenIDProto();
 

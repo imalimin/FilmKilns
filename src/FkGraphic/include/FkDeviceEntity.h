@@ -16,7 +16,9 @@
 #include "FkTexCompo.h"
 #include "FkSize.h"
 
-FK_CLASS FkDeviceEntity FK_EXTEND FkMaterialEntity {
+FK_SUPER_CLASS(FkDeviceEntity, FkMaterialEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkDeviceEntity)
+
 public:
     FkDeviceEntity(std::shared_ptr<FkMaterialCompo> material);
 
@@ -25,7 +27,9 @@ public:
     virtual ~FkDeviceEntity();
 };
 
-FK_CLASS FkBufDeviceEntity FK_EXTEND FkDeviceEntity {
+FK_SUPER_CLASS(FkBufDeviceEntity, FkDeviceEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkBufDeviceEntity)
+
 public:
     FkBufDeviceEntity(std::shared_ptr<FkBuffer> &buf);
 
@@ -38,7 +42,9 @@ public:
     void finish();
 };
 
-FK_CLASS FkTexDeviceEntity FK_EXTEND FkDeviceEntity {
+FK_SUPER_CLASS(FkTexDeviceEntity, FkDeviceEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkTexDeviceEntity)
+
 public:
     FkTexDeviceEntity(std::shared_ptr<FkMaterialCompo> material);
 
@@ -59,7 +65,9 @@ public:
     FkColor::kFormat format();
 };
 
-FK_CLASS FkScreenEntity FK_EXTEND FkDeviceEntity {
+FK_SUPER_CLASS(FkScreenEntity, FkDeviceEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkScreenEntity)
+
 public:
     FkScreenEntity();
 

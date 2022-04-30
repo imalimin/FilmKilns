@@ -11,7 +11,9 @@
 #include "FkGraphicComponent.h"
 #include "FkDefinition.h"
 
-FK_CLASS FkScaleTypeComponent FK_EXTEND FkGraphicComponent {
+FK_SUPER_CLASS(FkScaleTypeComponent, FkGraphicComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkScaleTypeComponent)
+
 public:
     FkScaleTypeComponent();
 

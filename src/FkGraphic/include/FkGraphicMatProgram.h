@@ -11,7 +11,9 @@
 #include "FkGraphicProgram.h"
 #include "FkGLDefinition.h"
 
-FK_CLASS FkGraphicMatProgram FK_EXTEND FkGraphicProgram {
+FK_SUPER_CLASS(FkGraphicMatProgram, FkGraphicProgram) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicMatProgram)
+
 public:
     FkGraphicMatProgram(const FkProgramDescription &desc);
 

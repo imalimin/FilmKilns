@@ -14,8 +14,10 @@
 #include "FkQueryWinSizeProto.h"
 #include "FkScaleTypeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkWinModelQuark, FkQuark)
+
 FkWinModelQuark::FkWinModelQuark() : FkQuark(), winSize(0, 0) {
-    FK_MARK_SUPER
+
 }
 
 FkWinModelQuark::~FkWinModelQuark() {

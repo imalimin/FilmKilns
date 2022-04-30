@@ -12,7 +12,9 @@
 #include "FkIntVec2.h"
 #include "FkColor.h"
 
-FK_CLASS FkPointComponent FK_EXTEND FkGraphicComponent {
+FK_SUPER_CLASS(FkPointComponent, FkGraphicComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkPointComponent)
+
 public:
     FkPointComponent();
 

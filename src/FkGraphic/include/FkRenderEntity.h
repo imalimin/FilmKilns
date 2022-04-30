@@ -13,7 +13,9 @@
 
 #include "FkEntity.h"
 
-FK_CLASS FkRenderEntity FK_EXTEND FkEntity {
+FK_SUPER_CLASS(FkRenderEntity, FkEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderEntity)
+
 public:
     FkRenderEntity();
 

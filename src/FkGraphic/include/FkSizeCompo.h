@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkSize.h"
 
-FK_CLASS FkSizeCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkSizeCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkSizeCompo)
+
 public:
     FkSizeCompo(FkSize size);
 

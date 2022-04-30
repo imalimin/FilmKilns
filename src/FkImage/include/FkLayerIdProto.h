@@ -13,7 +13,9 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkLayerIdProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkLayerIdProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkLayerIdProto)
+
 public:
     FkLayerIdProto(FkID layerId);
 

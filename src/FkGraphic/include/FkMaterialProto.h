@@ -14,7 +14,9 @@
 #include "FkProtocol.h"
 #include "FkMaterialCompo.h"
 
-FK_CLASS FkMaterialProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkMaterialProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkMaterialProto)
+
 public:
     FkMaterialProto(std::shared_ptr<FkMaterialCompo> material);
 

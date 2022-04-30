@@ -13,7 +13,9 @@
 #include "FkLooper.h"
 #include "FkDefinition.h"
 
-FK_CLASS FkHandler FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkHandler, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkHandler)
+
 public:
     typedef std::function<void(std::shared_ptr<FkMessage> msg)> Callback;
 public:

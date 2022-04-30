@@ -6,3 +6,5 @@
 */
 
 #include "FkVec3.h"
+
+FK_IMPL_CLASS_TYPE(FkVec3, FkObject)

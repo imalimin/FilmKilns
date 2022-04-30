@@ -10,12 +10,14 @@
 
 #include "FkRenderEntity.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderEntity, FkEntity)
+
 FkRenderEntity::FkRenderEntity() : FkEntity() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderEntity::FkRenderEntity(const FkRenderEntity &o) : FkEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkRenderEntity::~FkRenderEntity() {

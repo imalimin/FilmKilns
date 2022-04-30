@@ -10,12 +10,14 @@
 
 #include "FkMatCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkMatCompo, FkComponent)
+
 FkMatCompo::FkMatCompo() : FkComponent() {
-    FK_MARK_SUPER
+
 }
 
 FkMatCompo::FkMatCompo(const FkMatCompo &o) : FkComponent(o), value(o.value) {
-    FK_MARK_SUPER
+
 }
 
 FkMatCompo::~FkMatCompo() {

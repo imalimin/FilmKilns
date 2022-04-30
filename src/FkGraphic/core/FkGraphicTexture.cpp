@@ -10,6 +10,10 @@
 
 #define TAG "FkGraphicAllocator"
 
+FK_IMPL_CLASS_TYPE(FkTexDescription, FkObject)
+FK_IMPL_CLASS_TYPE(FkGraphicTexture, FkSource)
+FK_IMPL_CLASS_TYPE(FkGraphicAllocator, FkSourceAllocator)
+
 FkTexDescription::FkTexDescription() : FkObject() {
 
 }
@@ -49,7 +53,7 @@ uint32_t FkGraphicTexture::convertGLFormat(FkColor::kFormat fmt) {
 
 FkGraphicTexture::FkGraphicTexture(const FkTexDescription &desc)
         : FkSource(), desc(desc), applied(false) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicTexture::~FkGraphicTexture() {
@@ -166,7 +170,7 @@ FkResult FkGraphicTexture::update(uint8_t *pixels) {
 }
 
 FkGraphicAllocator::FkGraphicAllocator(int capacity) : FkSourceAllocator<FkGraphicTexture, FkTexDescription>(capacity) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicAllocator::~FkGraphicAllocator() {

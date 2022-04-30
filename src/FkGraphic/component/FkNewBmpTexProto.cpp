@@ -10,12 +10,14 @@
 
 #include "FkNewBmpTexProto.h"
 
+FK_IMPL_CLASS_TYPE(FkNewBmpTexProto, FkComponent)
+
 FkNewBmpTexProto::FkNewBmpTexProto() : FkNewTexProto() {
-    FK_MARK_SUPER
+
 }
 
 FkNewBmpTexProto::FkNewBmpTexProto(const FkNewBmpTexProto &o) : FkNewTexProto(o) {
-    FK_MARK_SUPER
+
 }
 
 FkNewBmpTexProto::~FkNewBmpTexProto() {

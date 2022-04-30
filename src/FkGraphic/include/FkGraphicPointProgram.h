@@ -10,7 +10,9 @@
 
 #include "FkGraphicProgram.h"
 
-FK_CLASS FkGraphicPointProgram FK_EXTEND FkGraphicProgram {
+FK_SUPER_CLASS(FkGraphicPointProgram, FkGraphicProgram) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicPointProgram)
+
 public:
     FkGraphicPointProgram(const FkProgramDescription &desc);
 

@@ -10,12 +10,14 @@
 
 #include "FkGridSizeCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkGridSizeCompo, FkComponent)
+
 FkGridSizeCompo::FkGridSizeCompo(float x, float y) : FkFloatVec2Compo(x, y) {
-    FK_MARK_SUPER
+
 }
 
 FkGridSizeCompo::FkGridSizeCompo(const FkGridSizeCompo &o) : FkFloatVec2Compo(o) {
-    FK_MARK_SUPER
+
 }
 
 FkGridSizeCompo::~FkGridSizeCompo() {

@@ -17,11 +17,13 @@
 #include "FkString.h"
 #include "FkReadPixelsProto.h"
 
+FK_IMPL_CLASS_TYPE(FkImageEngine, FkLayerEngine)
+
 FkImageEngine::FkImageEngine(std::shared_ptr<FkEngine> &renderEngine,
                              std::string &workspace,
                              std::string name)
         : FkLayerEngine(renderEngine, name), workspace(workspace) {
-    FK_MARK_SUPER
+
 }
 
 FkImageEngine::~FkImageEngine() {

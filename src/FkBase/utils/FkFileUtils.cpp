@@ -15,14 +15,6 @@
 
 #define FK_FILE_READ_BUF_SIZE 1024 * 8
 
-FkFileUtils::FkFileUtils() : FkObject() {
-    FK_MARK_SUPER
-}
-
-FkFileUtils::~FkFileUtils() {
-
-}
-
 FkResult FkFileUtils::copy(std::string src, std::string &dst) {
     FILE *srcFile = fopen(src.c_str(), "rb");
     if (srcFile == nullptr) {

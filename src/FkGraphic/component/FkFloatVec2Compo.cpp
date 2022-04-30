@@ -10,12 +10,14 @@
 
 #include "FkFloatVec2Compo.h"
 
+FK_IMPL_CLASS_TYPE(FkFloatVec2Compo, FkComponent)
+
 FkFloatVec2Compo::FkFloatVec2Compo(float x, float y) : FkComponent(), vec(x, y) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatVec2Compo::FkFloatVec2Compo(const FkFloatVec2Compo &o) : FkComponent(o), vec(o.vec) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatVec2Compo::~FkFloatVec2Compo() {

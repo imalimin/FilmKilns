@@ -8,7 +8,9 @@
 #include "FkObject.h"
 #include <jni.h>
 
-FK_CLASS FkJniGlobalRef FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkJniGlobalRef, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkJniGlobalRef)
+
 public:
     FkJniGlobalRef(jobject obj);
 

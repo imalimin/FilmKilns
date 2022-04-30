@@ -11,7 +11,9 @@
 #include "FkObject.h"
 #include "FkDefinition.h"
 
-FK_CLASS FkShape FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkShape, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkShape)
+
 public:
     FK_ENUM kType : int {
         RECT = 0,

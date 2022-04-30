@@ -14,7 +14,9 @@
 #include "FkGraphicComponent.h"
 #include <vector>
 
-FK_CLASS FkProgramDescription FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkProgramDescription, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkProgramDescription)
+
 public:
     FK_ENUM kType : int32_t {
         NONE = 0,
@@ -37,7 +39,9 @@ public:
     kType type = kType::NONE;
 };
 
-FK_ABS_CLASS FkGraphicProgram FK_EXTEND FkSource {
+FK_SUPER_CLASS(FkGraphicProgram, FkSource) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicProgram)
+
 public:
     FkGraphicProgram(const FkProgramDescription &desc);
 
@@ -95,9 +99,9 @@ public:
     std::vector<std::shared_ptr<FkComponent>> values;
 };
 
-FK_CLASS FkGraphicProgramAllocator FK_EXTEND FkSourceAllocator<
-        FkGraphicProgram,
-        FkProgramDescription> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkGraphicProgramAllocator, FkSourceAllocator)<FkGraphicProgram, FkProgramDescription> {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicProgramAllocator)
+
 public:
     FkGraphicProgramAllocator(int capacity);
 

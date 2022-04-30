@@ -7,12 +7,14 @@
 
 #include "FkWinSizeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkWinSizeProto, FkProtocol)
+
 FkWinSizeProto::FkWinSizeProto() : FkProtocol(), winSize(0, 0) {
-    FK_MARK_SUPER
+
 }
 
 FkWinSizeProto::FkWinSizeProto(const FkWinSizeProto &o) : FkProtocol(o), winSize(o.winSize) {
-    FK_MARK_SUPER
+
 }
 
 FkWinSizeProto::~FkWinSizeProto() {

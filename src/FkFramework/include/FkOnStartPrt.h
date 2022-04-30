@@ -10,7 +10,9 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkOnStartPrt FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkOnStartPrt, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkOnStartPrt)
+
 public:
     FkOnStartPrt();
 

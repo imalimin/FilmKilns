@@ -5,16 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/FkRotateComponent.h"
+#include "FkRotateComponent.h"
+
+FK_IMPL_CLASS_TYPE(FkRotateComponent, FkGraphicComponent)
 
 FkRotateComponent::FkRotateComponent() : FkGraphicComponent() {
-    FK_MARK_SUPER
+
 
 }
 
 FkRotateComponent::FkRotateComponent(const FkRotateComponent &o)
         : FkGraphicComponent(o), value(o.value) {
-    FK_MARK_SUPER
+
 
 }
 

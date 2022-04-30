@@ -11,7 +11,9 @@
 #include "FkWinSizeProto.h"
 #include "FkGraphicLayer.h"
 
-FK_CLASS FkGraphicUpdateLayerPrt FK_EXTEND FkWinSizeProto {
+FK_SUPER_CLASS(FkGraphicUpdateLayerPrt, FkWinSizeProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicUpdateLayerPrt)
+
 public:
     FkGraphicUpdateLayerPrt();
 

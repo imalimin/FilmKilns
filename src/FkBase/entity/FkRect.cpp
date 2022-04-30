@@ -10,13 +10,17 @@
 
 #include "FkRect.h"
 
+FK_IMPL_CLASS_TYPE(FkRect, FkObject)
+FK_IMPL_CLASS_TYPE(FkIntRect, FkRect)
+FK_IMPL_CLASS_TYPE(FkFloatRect, FkRect)
+
 FkIntRect::FkIntRect(int32_t left, int32_t top, int32_t right, int32_t bottom)
         : FkRect<int32_t>(left, top, right, bottom) {
-    FK_MARK_SUPER
+
 }
 
 FkIntRect::FkIntRect(const FkIntRect &o) : FkRect<int32_t>(o) {
-    FK_MARK_SUPER
+
 }
 
 FkIntRect::~FkIntRect() {
@@ -25,11 +29,11 @@ FkIntRect::~FkIntRect() {
 
 FkFloatRect::FkFloatRect(float left, float top, float right, float bottom)
         : FkRect<float>(left, top, right, bottom) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatRect::FkFloatRect(const FkFloatRect &o) : FkRect<float>(o) {
-    FK_MARK_SUPER
+
 }
 
 FkFloatRect::~FkFloatRect() {

@@ -10,12 +10,14 @@
 
 #include "FkMeasurePointProto.h"
 
+FK_IMPL_CLASS_TYPE(FkMeasurePointProto, FkMeasureTransProto)
+
 FkMeasurePointProto::FkMeasurePointProto() : FkMeasureTransProto() {
-    FK_MARK_SUPER
+
 }
 
 FkMeasurePointProto::FkMeasurePointProto(const FkMeasurePointProto &o) : FkMeasureTransProto(o) {
-    FK_MARK_SUPER
+
 }
 
 FkMeasurePointProto::~FkMeasurePointProto() {

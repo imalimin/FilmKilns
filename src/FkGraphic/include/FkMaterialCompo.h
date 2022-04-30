@@ -13,7 +13,9 @@
 
 #include "FkComponent.h"
 
-FK_CLASS FkMaterialCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkMaterialCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkMaterialCompo)
+
 public:
     FkMaterialCompo(FkID id);
 

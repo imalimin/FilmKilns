@@ -13,7 +13,9 @@
 
 #include "FkMeasureTransProto.h"
 
-FK_CLASS FkMeasurePointProto FK_EXTEND FkMeasureTransProto {
+FK_SUPER_CLASS(FkMeasurePointProto, FkMeasureTransProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkMeasurePointProto)
+
 public:
     FkMeasurePointProto();
 

@@ -11,7 +11,9 @@
 #include "FkQuark.h"
 #include "FkSize.h"
 
-FK_CLASS FkWinModelQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkWinModelQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkWinModelQuark)
+
 public:
     FkWinModelQuark();
 

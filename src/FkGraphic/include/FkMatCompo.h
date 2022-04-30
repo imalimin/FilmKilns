@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkMatrix.h"
 
-FK_CLASS FkMatCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkMatCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkMatCompo)
+
 public:
     FkMatCompo();
 

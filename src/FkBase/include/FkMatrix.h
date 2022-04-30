@@ -12,7 +12,9 @@
 #include "glm.hpp"
 #include "ext/matrix_clip_space.hpp"
 
-FK_CLASS FkMatrix FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkMatrix, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkMatrix)
+
 public:
     FkMatrix();
 
@@ -22,7 +24,7 @@ public:
 
     const void *get();
 
-    virtual std::string toString();
+    virtual std::string toString() override;
 
 public:
     glm::mat4 mat4;

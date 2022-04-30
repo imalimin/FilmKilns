@@ -16,7 +16,9 @@
 #include "FkOnStartPrt.h"
 #include "FkOnStopPrt.h"
 
-FK_ABS_CLASS FkAtom FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkAtom, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkAtom)
+
 public:
     FkAtom();
 

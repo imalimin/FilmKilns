@@ -15,7 +15,9 @@
 #include "FkGraphicWindow.h"
 #include <EGL/egl.h>
 
-FK_CLASS FkContextCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkContextCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkContextCompo)
+
 public:
     FkContextCompo(const std::string alias);
 

@@ -11,6 +11,8 @@
 #include "FkTransComponent.h"
 #include "FkRotateComponent.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicLayer, FkGraphicEntity)
+
 float FkGraphicLayer::calcScaleWithScaleType(FkSize &src,
                                              FkSize &dst,
                                              kScaleType scaleType) {
@@ -32,12 +34,12 @@ float FkGraphicLayer::calcScaleWithScaleType(FkSize &src,
 }
 
 FkGraphicLayer::FkGraphicLayer() : FkGraphicEntity() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicLayer::FkGraphicLayer(const FkGraphicLayer &o)
         : FkGraphicEntity(o), id(o.id), material(o.material) {
-    FK_MARK_SUPER
+
 
 }
 
@@ -51,7 +53,7 @@ bool FkGraphicLayer::operator==(const FkGraphicLayer &obj) {
 
 FkSize FkGraphicLayer::getSize() {
     FkSize value(0, 0);
-    auto compo = findComponent<FkSizeCompo>();
+    auto compo = FK_FIND_COMPO(this, FkSizeCompo);
     if (compo) {
         value = compo->size;
     }
@@ -60,7 +62,7 @@ FkSize FkGraphicLayer::getSize() {
 
 FkFloatVec3 FkGraphicLayer::getScale() {
     FkFloatVec3 value(1.0f, 1.0f, 1.0f);
-    auto compo = findComponent<FkScaleComponent>();
+    auto compo = FK_FIND_COMPO(this, FkScaleComponent);
     if (compo) {
         value = compo->value;
     }
@@ -69,7 +71,7 @@ FkFloatVec3 FkGraphicLayer::getScale() {
 
 FkIntVec2 FkGraphicLayer::getTrans() {
     FkIntVec2 value(0, 0);
-    auto compo = findComponent<FkTransComponent>();
+    auto compo = FK_FIND_COMPO(this, FkTransComponent);
     if (compo) {
         value = compo->value;
     }
@@ -78,7 +80,7 @@ FkIntVec2 FkGraphicLayer::getTrans() {
 
 FkRational FkGraphicLayer::getRotate() {
     FkRational value(0, 1);
-    auto compo = findComponent<FkRotateComponent>();
+    auto compo = FK_FIND_COMPO(this, FkRotateComponent);
     if (compo) {
         value = compo->value;
     }

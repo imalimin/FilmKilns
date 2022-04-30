@@ -10,8 +10,10 @@
 
 #include "FkQuarkContext.h"
 
+FK_IMPL_CLASS_TYPE(FkQuarkContext, FkEntity)
+
 FkQuarkContext::FkQuarkContext() : FkEntity() {
-    FK_MARK_SUPER
+
 }
 
 FkQuarkContext::~FkQuarkContext() {

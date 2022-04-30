@@ -10,8 +10,10 @@
 #include "FkRenderContext.h"
 #include "FkEmptyQuark.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicSourceAtom, FkSimpleAtom)
+
 FkGraphicSourceAtom::FkGraphicSourceAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicSourceAtom::~FkGraphicSourceAtom() {

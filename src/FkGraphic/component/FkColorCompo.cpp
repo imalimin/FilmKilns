@@ -10,12 +10,14 @@
 
 #include "FkColorCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkColorCompo, FkComponent)
+
 FkColorCompo::FkColorCompo(FkColor color) : FkComponent(), color(color) {
-    FK_MARK_SUPER
+
 }
 
 FkColorCompo::FkColorCompo(const FkColorCompo &o) : FkComponent(o), color(o.color) {
-    FK_MARK_SUPER
+
 }
 
 FkColorCompo::~FkColorCompo() {

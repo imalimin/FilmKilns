@@ -13,7 +13,9 @@
 
 #include "FkStrCompo.h"
 
-FK_CLASS FkFilePathCompo FK_EXTEND FkStrCompo {
+FK_SUPER_CLASS(FkFilePathCompo, FkStrCompo) {
+FK_DEF_CLASS_TYPE_FUNC(FkFilePathCompo)
+
 public:
     FkFilePathCompo(std::string &str);
 

@@ -38,6 +38,8 @@
 #include "FkBitmapDefinition.h"
 #include "math.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
+
 //每个点占多少字节
 #define SIZE_OF_VERTEX  sizeof(float)
 //多少个坐标
@@ -46,7 +48,7 @@
 #define COUNT_PER_VERTEX  2
 
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), lastId(FK_ID_NONE + 1) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicLayerQuark::~FkGraphicLayerQuark() {
@@ -91,14 +93,14 @@ FkResult FkGraphicLayerQuark::onStop() {
 }
 
 void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
-    auto sizeComp = layer->findComponent<FkSizeCompo>();
+    auto sizeComp = FK_FIND_COMPO(layer, FkSizeCompo);
     FkAssert(nullptr != sizeComp, );
-    auto vertex = layer->findComponent<FkVertexCompo>();
+    auto vertex = FK_FIND_COMPO(layer, FkVertexCompo);
     if (nullptr == vertex) {
         vertex = std::make_shared<FkVertexCompo>();
         layer->addComponent(vertex);
     }
-    auto coord = layer->findComponent<FkCoordinateCompo>();
+    auto coord = FK_FIND_COMPO(layer, FkCoordinateCompo);
     if (nullptr == coord) {
         coord = std::make_shared<FkCoordinateCompo>();
         layer->addComponent(coord);
@@ -165,7 +167,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
         return FK_SKIP;
     }
     FkResult ret = FK_OK;
-    auto bmpCompo = proto->layer->findComponent<FkBitmapCompo>();
+    auto bmpCompo = FK_FIND_COMPO(proto->layer, FkBitmapCompo);
     auto layer = itr->second;
     auto layerColor = _updateLayerColor(proto, layer);
     bool isSwappedWH = bmpCompo != nullptr && bmpCompo->bmp != nullptr && bmpCompo->bmp->isSwappedWH();
@@ -182,7 +184,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
                                                          buf);
             FkAssert(FK_OK == ret, ret);
             _updateLayerByEncodeOrigin(layer, (int32_t) bmpCompo->bmp->getEncodedOrigin());
-            layer->copyComponentFrom<FkFilePathCompo>(proto->layer);
+            layer->copyComponentFrom(proto->layer, FkFilePathCompo_Class::type);
         } else {
             ret = renderEngine->updateMaterial(layer->material,
                                                layerSize,
@@ -220,7 +222,7 @@ FkResult FkGraphicLayerQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
-    auto comp = itr->second->findComponent<FkTransComponent>();
+    auto comp = FK_FIND_COMPO(itr->second, FkTransComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     comp->value += proto->value;
     return FK_OK;
@@ -231,7 +233,7 @@ FkResult FkGraphicLayerQuark::_onSetTranslate(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
-    auto comp = itr->second->findComponent<FkTransComponent>();
+    auto comp = FK_FIND_COMPO(itr->second, FkTransComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     comp->value = proto->value;
     return FK_OK;
@@ -242,7 +244,7 @@ FkResult FkGraphicLayerQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
-    auto comp = itr->second->findComponent<FkScaleComponent>();
+    auto comp = FK_FIND_COMPO(itr->second, FkScaleComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     comp->value.x *= proto->value.x;
     comp->value.y *= proto->value.y;
@@ -255,7 +257,7 @@ FkResult FkGraphicLayerQuark::_onSetScale(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
-    auto comp = itr->second->findComponent<FkScaleComponent>();
+    auto comp = FK_FIND_COMPO(itr->second, FkScaleComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     comp->value = proto->value;
     return FK_OK;
@@ -266,7 +268,7 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
-    auto comp = itr->second->findComponent<FkRotateComponent>();
+    auto comp = FK_FIND_COMPO(itr->second, FkRotateComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     auto result = comp->value.toDouble() + proto->value.toDouble();
     comp->value.num = result * 100000000;
@@ -279,7 +281,7 @@ FkResult FkGraphicLayerQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
     auto itr = layers.find(proto->layer);
     FkAssert(layers.end() != itr, FK_FAIL);
 
-    auto comp = itr->second->findComponent<FkRotateComponent>();
+    auto comp = FK_FIND_COMPO(itr->second, FkRotateComponent);
     FkAssert(nullptr != comp, FK_FAIL);
     comp->value = proto->value;
     return FK_OK;
@@ -307,7 +309,7 @@ FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawPointProto, p);
     auto itr = layers.find(proto->layer);
     if (layers.end() != itr) {
-        auto sizeCompo = itr->second->findComponent<FkSizeCompo>();
+        auto sizeCompo = FK_FIND_COMPO(itr->second, FkSizeCompo);
         auto comp = std::make_shared<FkPointFCompo>();
         comp->value.x = proto->value.x * 1.0f / (sizeCompo->size.getWidth() / 2.0f);
         comp->value.y = proto->value.y * 1.0f / (sizeCompo->size.getHeight() / 2.0f);
@@ -332,8 +334,8 @@ FkResult FkGraphicLayerQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
     auto itr = layers.find(proto->layerId);
     if (layers.end() != itr) {
         auto layer = itr->second;
-        auto src = layer->findComponent<FkScaleComponent>();
-        auto dst = proto->canvas->findComponent<FkScaleComponent>();
+        auto src = FK_FIND_COMPO(layer, FkScaleComponent);
+        auto dst = FK_FIND_COMPO(proto->canvas, FkScaleComponent);
         if (src && dst) {
             dst->value.x *= src->value.x;
             dst->value.y *= src->value.y;
@@ -354,7 +356,7 @@ FkFloatVec3 FkGraphicLayerQuark::_calcScaleType(FkSize &src,
 
 FkColor &FkGraphicLayerQuark::_updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
                                                 std::shared_ptr<FkGraphicLayer> &layer) {
-    auto colorComp = proto->layer->findComponent<FkColorCompo>();
+    auto colorComp = FK_FIND_COMPO(proto->layer, FkColorCompo);
     if (nullptr != colorComp) {
         layer->addComponent(colorComp);
     } else {
@@ -366,8 +368,8 @@ FkColor &FkGraphicLayerQuark::_updateLayerColor(std::shared_ptr<FkGraphicUpdateL
 FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
                                               std::shared_ptr<FkGraphicLayer> &layer,
                                               bool isSwappedWH) {
-    auto reqSizeCompo = proto->layer->findComponent<FkSizeCompo>();
-    auto layerSizeComp = layer->findComponent<FkSizeCompo>();
+    auto reqSizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);
+    auto layerSizeComp = FK_FIND_COMPO(layer, FkSizeCompo);
     if (layerSizeComp == nullptr) {
         layerSizeComp = std::make_shared<FkSizeCompo>(FkSize(0, 0));
         layer->addComponent(layerSizeComp);
@@ -375,7 +377,7 @@ FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLay
     if (reqSizeCompo != nullptr) {
         layerSizeComp->size = reqSizeCompo->size;
     }
-    auto scaleComp = layer->findComponent<FkScaleComponent>();
+    auto scaleComp = FK_FIND_COMPO(layer, FkScaleComponent);
     if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
         auto src = layerSizeComp->size;
         if (isSwappedWH) {
@@ -390,7 +392,7 @@ void FkGraphicLayerQuark::_withCanvasSize(std::shared_ptr<FkGraphicUpdateLayerPr
     auto itr = layers.find(Fk_CANVAS_ID);
     if (layers.end() != itr) {
         auto canvas = itr->second;
-        auto canvasSizeCompo = canvas->findComponent<FkSizeCompo>();
+        auto canvasSizeCompo = FK_FIND_COMPO(canvas, FkSizeCompo);
         if (nullptr != canvasSizeCompo) {
             proto->winSize = canvasSizeCompo->size;
         }
@@ -404,8 +406,8 @@ FkResult FkGraphicLayerQuark::_onUpdateScaleType(std::shared_ptr<FkProtocol> &p)
         return FK_SOURCE_NOT_FOUND;
     }
     auto layer = itr->second;
-    auto scaleComp = layer->findComponent<FkScaleComponent>();
-    auto sizeCompo = layer->findComponent<FkSizeCompo>();
+    auto scaleComp = FK_FIND_COMPO(layer, FkScaleComponent);
+    auto sizeCompo = FK_FIND_COMPO(layer, FkSizeCompo);
     if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
         scaleComp->value = _calcScaleType(sizeCompo->size, proto->winSize, proto->scaleType);
         return FK_OK;
@@ -415,8 +417,8 @@ FkResult FkGraphicLayerQuark::_onUpdateScaleType(std::shared_ptr<FkProtocol> &p)
 
 void FkGraphicLayerQuark::_updateLayerByEncodeOrigin(std::shared_ptr<FkGraphicLayer> &layer,
                                                      int32_t decodedOrigin) {
-    auto scaleCompo = layer->findComponent<FkScaleComponent>();
-    auto rotateCompo = layer->findComponent<FkRotateComponent>();
+    auto scaleCompo = FK_FIND_COMPO(layer, FkScaleComponent);
+    auto rotateCompo = FK_FIND_COMPO(layer, FkRotateComponent);
     switch ((FkEncodedOrigin) decodedOrigin) {
         case FkEncodedOrigin::kTopRight: { // Reflected across y-axis
             scaleCompo->value.y = -scaleCompo->value.y;

@@ -10,8 +10,10 @@
 #include <utility>
 #include "FkDefinition.h"
 
+FK_IMPL_CLASS_TYPE(FkHandler, FkObject)
+
 FkHandler::FkHandler(FkHandler::Callback callback) : FkObject(), callback(callback) {
-    FK_MARK_SUPER
+
     this->looper = FkLooper::myLooper();
     FkAssert(nullptr != looper, );
 }

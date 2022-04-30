@@ -7,6 +7,8 @@
 
 #include "FkMolecule.h"
 
+FK_IMPL_CLASS_TYPE(FkMolecule, FkAtom)
+
 FkMolecule::FkMolecule() : FkAtom() {
 
 }

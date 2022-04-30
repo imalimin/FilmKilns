@@ -11,12 +11,14 @@
 #include "FkVboCompo.h"
 #include "FkGLDefinition.h"
 
+FK_IMPL_CLASS_TYPE(FkVboCompo, FkComponent)
+
 FkVboCompo::FkVboCompo() : FkComponent() {
-    FK_MARK_SUPER
+
 }
 
 FkVboCompo::FkVboCompo(const FkVboCompo &o) : FkComponent(o), vbo(o.vbo) {
-    FK_MARK_SUPER
+
 }
 
 FkVboCompo::~FkVboCompo() {

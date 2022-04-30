@@ -7,12 +7,14 @@
 
 #include "FkSetSizeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkSetSizeProto, FkProtocol)
+
 FkSetSizeProto::FkSetSizeProto() : FkProtocol(), value(0, 0) {
-    FK_MARK_SUPER
+
 }
 
 FkSetSizeProto::FkSetSizeProto(const FkSetSizeProto &o) : FkProtocol(o), value(o.value) {
-    FK_MARK_SUPER
+
 }
 
 FkSetSizeProto::~FkSetSizeProto() {

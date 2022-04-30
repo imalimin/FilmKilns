@@ -10,7 +10,9 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkOnDestroyPrt FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkOnDestroyPrt, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkOnDestroyPrt)
+
 public:
     FkOnDestroyPrt();
 

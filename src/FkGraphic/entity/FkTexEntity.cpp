@@ -12,22 +12,24 @@
 #include "FkSizeCompo.h"
 #include "FkFormatCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkTexEntity, FkMaterialEntity)
+
 FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material) : FkMaterialEntity(material) {
-    FK_MARK_SUPER
+
 }
 
 FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material,
                          std::shared_ptr<FkTexCompo> &tex) : FkMaterialEntity(material) {
-    FK_MARK_SUPER
+
     addComponent(tex);
 }
 
 FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkTexEntity::FkTexEntity(const FkMaterialEntity &o) : FkMaterialEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkTexEntity::~FkTexEntity() {
@@ -35,15 +37,15 @@ FkTexEntity::~FkTexEntity() {
 }
 
 std::shared_ptr<FkTexCompo> FkTexEntity::tex() {
-    return findComponent<FkTexCompo>();
+    return FK_FIND_COMPO(this, FkTexCompo);
 }
 
 std::shared_ptr<FkFboCompo> FkTexEntity::fbo() {
-    return findComponent<FkFboCompo>();
+    return FK_FIND_COMPO(this, FkFboCompo);
 }
 
 FkSize FkTexEntity::size() {
-    auto compo = findComponent<FkSizeCompo>();
+    auto compo = FK_FIND_COMPO(this, FkSizeCompo);
     if (compo) {
         return compo->size;
     }
@@ -51,7 +53,7 @@ FkSize FkTexEntity::size() {
 }
 
 FkColor::kFormat FkTexEntity::format() {
-    auto compo = findComponent<FkFormatCompo>();
+    auto compo = FK_FIND_COMPO(this, FkFormatCompo);
     if (compo) {
         return compo->fmt;
     }

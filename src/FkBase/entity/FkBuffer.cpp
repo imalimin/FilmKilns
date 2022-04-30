@@ -7,6 +7,8 @@
 
 #include "FkBuffer.h"
 
+FK_IMPL_CLASS_TYPE(FkBuffer, FkObject)
+
 std::shared_ptr<FkBuffer> FkBuffer::wrap(uint8_t *data, size_t size) {
     auto buf = new FkBuffer(data, size);
     return std::shared_ptr<FkBuffer>(buf);
@@ -19,11 +21,11 @@ std::shared_ptr<FkBuffer> FkBuffer::alloc(size_t size) {
 
 FkBuffer::FkBuffer(uint8_t *data, size_t size)
         : FkObject(), _capacity(size), _data(data), isRef(true) {
-    FK_MARK_SUPER
+
 }
 
 FkBuffer::FkBuffer(size_t size) : FkObject(), _capacity(size), isRef(false) {
-    FK_MARK_SUPER
+
     _data = static_cast<uint8_t *>(malloc(_capacity));
 }
 

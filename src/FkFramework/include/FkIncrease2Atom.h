@@ -14,7 +14,9 @@
 #include "FkIncreaseQuark.h"
 #include "FkDivideQuark.h"
 
-FK_CLASS FkIncrease2Atom FK_EXTEND FkAtom {
+FK_SUPER_CLASS(FkIncrease2Atom, FkAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkIncrease2Atom)
+
 public:
     FkIncrease2Atom();
 

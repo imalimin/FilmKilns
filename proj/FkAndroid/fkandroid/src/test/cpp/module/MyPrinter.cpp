@@ -42,7 +42,7 @@ void MyPrinter::OnTestEnd(const ::testing::TestInfo &test_info) {
             oss << "[ PASSED ] " << caseNameOss.str();
         } else {
             oss << "[ FAILED ] " << caseNameOss.str() << " ";
-            oss << ret.file_name() << ": " << ret.line_number() << "\n";
+            oss << (ret.file_name() ? ret.file_name() : "Unknown file") << ": " << ret.line_number() << "\n";
             oss << ret.message();
         }
         FkTestResultHolder::getInstance()->push(oss.str(), ret.passed());

@@ -10,12 +10,14 @@
 
 #include "FkQueryLayersProto.h"
 
+FK_IMPL_CLASS_TYPE(FkQueryLayersProto, FkProtocol)
+
 FkQueryLayersProto::FkQueryLayersProto() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkQueryLayersProto::FkQueryLayersProto(const FkQueryLayersProto &o) : FkProtocol(o), layers(o.layers) {
-    FK_MARK_SUPER
+
 }
 
 FkQueryLayersProto::~FkQueryLayersProto() {

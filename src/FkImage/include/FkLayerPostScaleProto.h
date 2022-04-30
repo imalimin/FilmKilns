@@ -10,7 +10,9 @@
 
 #include "FkFloatVec3Proto.h"
 
-FK_CLASS FkLayerPostScaleProto FK_EXTEND FkFloatVec3Proto {
+FK_SUPER_CLASS(FkLayerPostScaleProto, FkFloatVec3Proto) {
+FK_DEF_CLASS_TYPE_FUNC(FkLayerPostScaleProto)
+
 public:
     FkLayerPostScaleProto();
 

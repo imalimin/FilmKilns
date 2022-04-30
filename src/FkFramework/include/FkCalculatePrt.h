@@ -10,7 +10,9 @@
 
 #include "FkProtocol.h"
 
-FK_CLASS FkCalculatePrt FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkCalculatePrt, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkCalculatePrt)
+
 public:
     FkCalculatePrt();
 

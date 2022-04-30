@@ -10,7 +10,9 @@
 
 #include "FkObject.h"
 
-FK_ABS_CLASS FkProtocol FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkProtocol, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkProtocol)
+
 public:
     typedef size_t Type;
 public:

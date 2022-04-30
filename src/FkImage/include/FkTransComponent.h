@@ -11,7 +11,9 @@
 #include "FkGraphicComponent.h"
 #include "FkIntVec2.h"
 
-FK_CLASS FkTransComponent FK_EXTEND FkGraphicComponent {
+FK_SUPER_CLASS(FkTransComponent, FkGraphicComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkTransComponent)
+
 public:
     FkTransComponent();
 

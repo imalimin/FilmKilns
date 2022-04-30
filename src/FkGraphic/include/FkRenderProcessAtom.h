@@ -10,7 +10,9 @@
 
 #include "FkSimpleAtom.h"
 
-FK_CLASS FkRenderProcessAtom FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkRenderProcessAtom, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderProcessAtom)
+
 public:
     FkRenderProcessAtom();
 

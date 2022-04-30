@@ -11,7 +11,9 @@
 #include "FkQuark.h"
 #include "FkProtocol.h"
 
-FK_CLASS FkDecreaseQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkDecreaseQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkDecreaseQuark)
+
 public:
     FkDecreaseQuark();
 

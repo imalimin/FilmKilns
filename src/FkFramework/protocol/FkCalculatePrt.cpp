@@ -7,8 +7,10 @@
 
 #include "FkCalculatePrt.h"
 
+FK_IMPL_CLASS_TYPE(FkCalculatePrt, FkProtocol)
+
 FkCalculatePrt::FkCalculatePrt() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkCalculatePrt::FkCalculatePrt(const FkCalculatePrt &o) : FkProtocol(o), number(o.number) {

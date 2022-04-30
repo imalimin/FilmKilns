@@ -11,7 +11,9 @@
 #include "FkGraphicComponent.h"
 #include "FkFloatVec3.h"
 
-FK_CLASS FkScaleComponent FK_EXTEND FkGraphicComponent {
+FK_SUPER_CLASS(FkScaleComponent, FkGraphicComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkScaleComponent)
+
 public:
     FkScaleComponent();
 

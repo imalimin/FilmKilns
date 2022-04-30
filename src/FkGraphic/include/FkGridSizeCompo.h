@@ -13,7 +13,9 @@
 
 #include "FkFloatVec2Compo.h"
 
-FK_CLASS FkGridSizeCompo FK_EXTEND FkFloatVec2Compo {
+FK_SUPER_CLASS(FkGridSizeCompo, FkFloatVec2Compo) {
+FK_DEF_CLASS_TYPE_FUNC(FkGridSizeCompo)
+
 public:
     FkGridSizeCompo(float x, float y);
 

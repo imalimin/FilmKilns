@@ -7,13 +7,15 @@
 
 #include "FkBufferComponent.h"
 
+FK_IMPL_CLASS_TYPE(FkBufferComponent, FkGraphicComponent)
+
 FkBufferComponent::FkBufferComponent() : FkGraphicComponent() {
-    FK_MARK_SUPER
+
 
 }
 
 FkBufferComponent::FkBufferComponent(const FkBufferComponent &o) : FkGraphicComponent(o) {
-    FK_MARK_SUPER
+
 
 }
 

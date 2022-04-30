@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkFloatVec2.h"
 
-FK_CLASS FkFloatVec2Compo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkFloatVec2Compo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkFloatVec2Compo)
+
 public:
     FkFloatVec2Compo(float x, float y);
 

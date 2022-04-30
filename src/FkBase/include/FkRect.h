@@ -13,17 +13,18 @@
 
 #include "FkObject.h"
 
-template<typename T>
-FK_CLASS FkRect FK_EXTEND FkObject {
+FK_SUPER_TEMPLATE_CLASS(FkRect, FkObject, typename T) {
+FK_DEF_CLASS_TYPE_FUNC(FkRect)
+
 public:
     FkRect(T left, T top, T right, T bottom)
             : FkObject(), _left(left), _top(top), _right(right), _bottom(bottom) {
-        FK_MARK_SUPER
+
     }
 
     FkRect(const FkRect &o)
             : FkObject(o), _left(o._left), _top(o._top), _right(o._right), _bottom(o._bottom) {
-        FK_MARK_SUPER
+
     }
 
     virtual ~FkRect() {
@@ -53,7 +54,9 @@ private:
     T _bottom = 0;
 };
 
-FK_CLASS FkIntRect FK_EXTEND FkRect<int32_t> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkIntRect, FkRect)<int32_t> {
+FK_DEF_CLASS_TYPE_FUNC(FkIntRect)
+
 public:
     FkIntRect(int32_t left, int32_t top, int32_t right, int32_t bottom);
 
@@ -62,7 +65,9 @@ public:
     virtual ~FkIntRect();
 };
 
-FK_CLASS FkFloatRect FK_EXTEND FkRect<float> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkFloatRect, FkRect)<float> {
+FK_DEF_CLASS_TYPE_FUNC(FkFloatRect)
+
 public:
     FkFloatRect(float left, float top, float right, float bottom);
 

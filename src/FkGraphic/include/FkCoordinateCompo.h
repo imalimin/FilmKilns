@@ -13,7 +13,9 @@
 
 #include "FkVertexCompo.h"
 
-FK_CLASS FkCoordinateCompo FK_EXTEND FkVertexCompo {
+FK_SUPER_CLASS(FkCoordinateCompo, FkVertexCompo) {
+FK_DEF_CLASS_TYPE_FUNC(FkCoordinateCompo)
+
 public:
     FkCoordinateCompo();
 

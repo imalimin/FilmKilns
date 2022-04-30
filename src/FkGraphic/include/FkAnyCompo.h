@@ -14,7 +14,9 @@
 #include "FkObject.h"
 #include <any>
 
-FK_CLASS FkAnyCompo FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkAnyCompo, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkAnyCompo)
+
 public:
     FkAnyCompo(std::any any);
 

@@ -11,7 +11,9 @@
 #include "FkSimpleAtom.h"
 #include "FkLocalClient.h"
 
-FK_CLASS FkGraphicModelAtom FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkGraphicModelAtom, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicModelAtom)
+
 public:
     FkGraphicModelAtom();
 

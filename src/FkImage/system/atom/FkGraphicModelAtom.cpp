@@ -31,8 +31,10 @@
 #include "FkReadPixelsProto.h"
 #include "FkScaleTypeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicModelAtom, FkSimpleAtom)
+
 FkGraphicModelAtom::FkGraphicModelAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicModelAtom::~FkGraphicModelAtom() {

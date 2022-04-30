@@ -11,7 +11,9 @@
 #include "FkGraphicProgram.h"
 #include "FkGLDefinition.h"
 
-FK_CLASS FkCanvasMosaicProgram FK_EXTEND FkGraphicProgram {
+FK_SUPER_CLASS(FkCanvasMosaicProgram, FkGraphicProgram) {
+FK_DEF_CLASS_TYPE_FUNC(FkCanvasMosaicProgram)
+
 public:
     FkCanvasMosaicProgram(const FkProgramDescription &desc);
 

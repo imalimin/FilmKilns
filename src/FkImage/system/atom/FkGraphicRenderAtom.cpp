@@ -19,8 +19,10 @@
 #include "FkReadPixelsProto.h"
 #include "FkFuncCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicRenderAtom, FkSimpleAtom)
+
 FkGraphicRenderAtom::FkGraphicRenderAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicRenderAtom::~FkGraphicRenderAtom() {
@@ -57,7 +59,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
     auto canvas = proto->req->getCanvas();
-    auto canvasSizeCompo = canvas->findComponent<FkSizeCompo>();
+    auto canvasSizeCompo = FK_FIND_COMPO(canvas, FkSizeCompo);
     if (canvasSizeCompo) {
         renderEngine->updateMaterial(canvas->material, canvasSizeCompo->size, FkColor::transparent());
     }
@@ -77,9 +79,9 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 std::shared_ptr<FkMaterialEntity>
 FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer) {
     auto materials = std::make_shared<FkMaterialEntity>(layer->material);
-    materials->addComponent(layer->findComponent<FkVertexCompo>());
-    materials->addComponent(layer->findComponent<FkCoordinateCompo>());
-    materials->addComponent(layer->findComponent<FkMatCompo>());
+    materials->addComponent(FK_FIND_COMPO(layer, FkVertexCompo));
+    materials->addComponent(FK_FIND_COMPO(layer, FkCoordinateCompo));
+    materials->addComponent(FK_FIND_COMPO(layer, FkMatCompo));
     return materials;
 }
 
@@ -95,7 +97,7 @@ FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer>
 
 FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer) {
     std::vector<std::shared_ptr<FkComponent>> vec;
-    if (FK_OK != layer->findComponents(vec, FkClassType::type<FkPointFCompo>())) {
+    if (FK_OK != layer->findComponents(vec, FkPointFCompo_Class::type)) {
         return FK_FAIL;
     }
     std::unordered_map<int64_t, std::vector<float>> map;
@@ -135,7 +137,7 @@ FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     auto materials = std::make_shared<FkMaterialEntity>(proto->layer->material);
-    auto sizeCompo = proto->layer->findComponent<FkSizeCompo>();
+    auto sizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);
     proto->size = sizeCompo->size;
     proto->buf = FkBuffer::alloc(sizeCompo->size.getWidth() * sizeCompo->size.getHeight() * 4);
 

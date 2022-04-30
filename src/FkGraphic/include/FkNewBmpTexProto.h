@@ -13,7 +13,9 @@
 
 #include "FkNewTexProto.h"
 
-FK_CLASS FkNewBmpTexProto FK_EXTEND FkNewTexProto {
+FK_SUPER_CLASS(FkNewBmpTexProto, FkNewTexProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkNewBmpTexProto)
+
 public:
     FkNewBmpTexProto();
 

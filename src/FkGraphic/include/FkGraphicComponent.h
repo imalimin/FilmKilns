@@ -10,7 +10,9 @@
 
 #include "FkComponent.h"
 
-FK_CLASS FkGraphicComponent FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkGraphicComponent, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicComponent)
+
 public:
     FkGraphicComponent();
 

@@ -11,7 +11,9 @@
 #include "FkGraphicComponent.h"
 #include "FkRational.h"
 
-FK_CLASS FkRotateComponent FK_EXTEND FkGraphicComponent {
+FK_SUPER_CLASS(FkRotateComponent, FkGraphicComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkRotateComponent)
+
 public:
     FkRotateComponent();
 

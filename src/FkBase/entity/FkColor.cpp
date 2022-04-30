@@ -7,6 +7,8 @@
 
 #include "FkColor.h"
 
+FK_IMPL_CLASS_TYPE(FkColor, FkObject)
+
 FkColor &FkColor::makeFrom(int32_t color) {
     static FkColor *c;
     if (c == nullptr) {
@@ -68,13 +70,13 @@ FkColor &FkColor::transparent() {
 }
 
 FkColor::FkColor() : FkObject(), alphaType(AlphaType::kUnPreMultiple) {
-    FK_MARK_SUPER
+
 }
 
 FkColor::FkColor(const FkColor &o)
         : FkObject(), format(o.format), alphaType(o.alphaType),
           red(o.red), green(o.green), blue(o.blue), alpha(o.alpha) {
-    FK_MARK_SUPER
+
 }
 
 FkColor::~FkColor() {

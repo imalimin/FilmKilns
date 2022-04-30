@@ -6,8 +6,9 @@
 */
 
 #include "FkPort.h"
-
 #include <utility>
+
+FK_IMPL_CLASS_TYPE(FkPort, FkObject)
 
 const uint32_t FkPort::NONE = 0;
 

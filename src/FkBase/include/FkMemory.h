@@ -10,7 +10,9 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkMemory FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkMemory, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkMemory)
+
 public:
     FkMemory();
 

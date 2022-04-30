@@ -15,7 +15,9 @@
 #include <mutex>
 #include <condition_variable>
 
-FK_CLASS FkHandlerThread FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkHandlerThread, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkHandlerThread)
+
 public:
     static std::shared_ptr<FkHandlerThread> create(std::string name);
 

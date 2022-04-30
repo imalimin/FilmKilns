@@ -9,8 +9,10 @@
 #include "FkRenderDefine.h"
 #include "FkPointProcessQuark.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderProcessAtom, FkSimpleAtom)
+
 FkRenderProcessAtom::FkRenderProcessAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderProcessAtom::~FkRenderProcessAtom() {

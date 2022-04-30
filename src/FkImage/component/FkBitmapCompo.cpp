@@ -10,12 +10,14 @@
 
 #include "FkBitmapCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkBitmapCompo, FkComponent)
+
 FkBitmapCompo::FkBitmapCompo(std::shared_ptr<FkBitmap> bmp) : FkComponent(), bmp(bmp) {
-    FK_MARK_SUPER
+
 }
 
 FkBitmapCompo::FkBitmapCompo(const FkBitmapCompo &o) : FkComponent(o), bmp(o.bmp) {
-    FK_MARK_SUPER
+
 }
 
 FkBitmapCompo::~FkBitmapCompo() {

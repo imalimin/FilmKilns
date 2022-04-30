@@ -7,12 +7,14 @@
 
 #include "FkRenderRequest.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderRequest, FkGraphicEntity)
+
 FkRenderRequest::FkRenderRequest() : FkGraphicEntity() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderRequest::FkRenderRequest(const FkRenderRequest &o) : FkGraphicEntity(o) {
-    FK_MARK_SUPER
+
     for (const auto & layer : o.layers) {
         layers.emplace_back(layer);
     }

@@ -16,7 +16,9 @@
 #include "FkGraphicWindow.h"
 #include "FkBuffer.h"
 
-FK_CLASS FkRenderEngine FK_EXTEND FkEngine {
+FK_SUPER_CLASS(FkRenderEngine, FkEngine) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderEngine)
+
 public:
     FkRenderEngine(std::string name);
 

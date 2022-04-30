@@ -12,7 +12,9 @@
 #include "FkGraphicLayer.h"
 #include "FkSize.h"
 
-FK_CLASS FkGraphicCanvasQuark FK_EXTEND FkGraphicLayerQuark {
+FK_SUPER_CLASS(FkGraphicCanvasQuark, FkGraphicLayerQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicCanvasQuark)
+
 public:
     FkGraphicCanvasQuark();
 

@@ -11,18 +11,24 @@
 #include "FkDefinition.h"
 #include "FkClassType.h"
 
-FK_CLASS FkObject {
+namespace FkObject_Class {
+    class Type {};
+    extern const char *name;
+    extern const FkClassType type;
+}
+
+class FkObject {
+public:
+    virtual const FkClassType &getClassType() {
+        return FkObject_Class::type;
+    }
+
 public:
     FkObject();
 
     virtual ~FkObject();
 
-    virtual const FkClassType &getClassType() const;
-
     virtual std::string toString();
-
-protected:
-    FkClassType clsType;
 };
 
 

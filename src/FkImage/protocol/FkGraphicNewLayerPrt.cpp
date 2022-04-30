@@ -7,13 +7,15 @@
 
 #include "FkGraphicNewLayerPrt.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicNewLayerPrt, FkLayerProto)
+
 FkGraphicNewLayerPrt::FkGraphicNewLayerPrt() : FkLayerProto() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicNewLayerPrt::FkGraphicNewLayerPrt(const FkGraphicNewLayerPrt &o)
         : FkLayerProto(o), expectId(o.expectId) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicNewLayerPrt::~FkGraphicNewLayerPrt() {

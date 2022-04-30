@@ -7,13 +7,15 @@
 
 #include "FkMeasureTransProto.h"
 
+FK_IMPL_CLASS_TYPE(FkMeasureTransProto, FkWinSizeProto)
+
 FkMeasureTransProto::FkMeasureTransProto() : FkWinSizeProto(), value(0, 0) {
-    FK_MARK_SUPER
+
 }
 
 FkMeasureTransProto::FkMeasureTransProto(const FkMeasureTransProto &o)
         : FkWinSizeProto(o), layerId(o.layerId), value(o.value), layer(o.layer) , canvas(o.canvas) {
-    FK_MARK_SUPER
+
 }
 
 FkMeasureTransProto::~FkMeasureTransProto() {

@@ -15,7 +15,9 @@
 #include "FkFloatVec3.h"
 #include "FkColor.h"
 
-FK_CLASS FkPointFCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkPointFCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkPointFCompo)
+
 public:
     FkPointFCompo();
 

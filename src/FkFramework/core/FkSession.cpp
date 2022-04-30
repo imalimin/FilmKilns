@@ -7,9 +7,11 @@
 
 #include "FkSession.h"
 
+FK_IMPL_CLASS_TYPE(FkSession, FkObject)
+
 std::shared_ptr<FkSession> FkSession::with(std::shared_ptr<FkProtocol> p) {
     auto session = std::make_shared<FkSession>();
-    session->classType = std::make_shared<FkClassType>(p->getClassType());
+    session->classType = &p->getClassType();
     session->protoType = p->getType();
     return session;
 }
@@ -20,7 +22,7 @@ FkSession::FkSession() : FkObject() {
 
 FkSession::~FkSession() {
     if (FkSession::kState::IDL != state) {
-        FkLogE(FK_DEF_TAG, "Session(%s): Close before delete please.", classType->getName().c_str());
+        FkLogE(FK_DEF_TAG, "Session(%s): Close before delete please.", classType->getName());
     }
 }
 
@@ -80,7 +82,7 @@ FkResult FkSession::open() {
 FkResult FkSession::close() {
     std::lock_guard<std::mutex> guard(mtx);
     if (FkSession::kState::OPENED != state) {
-        FkLogE(FK_DEF_TAG, "Session(%s) close failed. Invalid state", classType->getName().c_str());
+        FkLogE(FK_DEF_TAG, "Session(%s) close failed. Invalid state", classType->getName());
         return FK_INVALID_STATE;
     }
     link.clear();
@@ -121,5 +123,5 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
 }
 
 std::string FkSession::toString() {
-    return classType->toString();
+    return std::string(classType->getName());
 }

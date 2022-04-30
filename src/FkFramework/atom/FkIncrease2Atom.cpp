@@ -9,6 +9,8 @@
 #include "FkCalculatePrt.h"
 #include "FkLocalClient.h"
 
+FK_IMPL_CLASS_TYPE(FkIncrease2Atom, FkAtom)
+
 FkIncrease2Atom::FkIncrease2Atom() : FkAtom() {
     client = std::make_shared<FkLocalClient>();
     mIncreaseQuark = std::make_shared<FkIncreaseQuark>();

@@ -11,7 +11,9 @@
 #include "FkProtocol.h"
 #include "FkSize.h"
 
-FK_CLASS FkSetSizeProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkSetSizeProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkSetSizeProto)
+
 public:
     FkSetSizeProto();
 

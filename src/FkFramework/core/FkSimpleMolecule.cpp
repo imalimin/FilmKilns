@@ -7,8 +7,10 @@
 
 #include "FkSimpleMolecule.h"
 
+FK_IMPL_CLASS_TYPE(FkSimpleMolecule, FkSimpleAtom)
+
 FkSimpleMolecule::FkSimpleMolecule() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 
 }
 

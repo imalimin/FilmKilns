@@ -12,7 +12,9 @@
 #include "FkFloatVec3.h"
 #include "FkRational.h"
 
-FK_CLASS FkMVPMatrix FK_EXTEND FkMatrix {
+FK_SUPER_CLASS(FkMVPMatrix, FkMatrix) {
+FK_DEF_CLASS_TYPE_FUNC(FkMVPMatrix)
+
 public:
     FK_ENUM kProjType : uint32_t {
         ORTHO = 0,

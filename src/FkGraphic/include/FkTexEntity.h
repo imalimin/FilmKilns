@@ -17,7 +17,9 @@
 #include "FkSize.h"
 #include "FkColor.h"
 
-FK_CLASS FkTexEntity FK_EXTEND FkMaterialEntity {
+FK_SUPER_CLASS(FkTexEntity, FkMaterialEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkTexEntity)
+
 public:
     FkTexEntity(std::shared_ptr<FkMaterialCompo> &material);
 

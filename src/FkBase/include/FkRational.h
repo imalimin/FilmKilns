@@ -11,7 +11,9 @@
 #include "FkObject.h"
 #include "FkRational.h"
 
-FK_CLASS FkRational FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkRational, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkRational)
+
 public:
     FkRational();
 

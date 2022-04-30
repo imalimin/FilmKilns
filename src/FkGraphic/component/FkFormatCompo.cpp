@@ -10,12 +10,14 @@
 
 #include "FkFormatCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkFormatCompo, FkComponent)
+
 FkFormatCompo::FkFormatCompo(FkColor::kFormat fmt) : FkComponent(), fmt(fmt) {
-    FK_MARK_SUPER
+
 }
 
 FkFormatCompo::FkFormatCompo(const FkFormatCompo &o) : FkComponent(o), fmt(o.fmt) {
-    FK_MARK_SUPER
+
 }
 
 FkFormatCompo::~FkFormatCompo() {

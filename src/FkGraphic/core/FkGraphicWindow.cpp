@@ -7,9 +7,11 @@
 
 #include "FkGraphicWindow.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicWindow, FkObject)
+
 FkGraphicWindow::FkGraphicWindow(int width, int height)
         : FkObject(), _size(width, height) {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicWindow::~FkGraphicWindow() {

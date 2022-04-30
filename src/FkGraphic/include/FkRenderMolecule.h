@@ -10,7 +10,9 @@
 
 #include "FkSimpleMolecule.h"
 
-FK_CLASS FkRenderMolecule FK_EXTEND FkSimpleMolecule {
+FK_SUPER_CLASS(FkRenderMolecule, FkSimpleMolecule) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderMolecule)
+
 public:
     FkRenderMolecule();
 

@@ -10,6 +10,8 @@
 #include "FkIncreaseQuark.h"
 #include "FkDivideQuark.h"
 
+FK_IMPL_CLASS_TYPE(FkSimpleIncrease2Atom, FkSimpleAtom)
+
 FkSimpleIncrease2Atom::FkSimpleIncrease2Atom() : FkSimpleAtom() {
 
 }

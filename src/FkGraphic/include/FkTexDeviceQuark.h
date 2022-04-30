@@ -13,7 +13,9 @@
 
 #include "FkQuark.h"
 
-FK_CLASS FkTexDeviceQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkTexDeviceQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkTexDeviceQuark)
+
 public:
     FkTexDeviceQuark();
 

@@ -10,15 +10,17 @@
 
 #include "FkVertexCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkVertexCompo, FkComponent)
+
 FkVertexCompo::FkVertexCompo() : FkVertexCompo(nullptr) {
 }
 
 FkVertexCompo::FkVertexCompo(std::shared_ptr<FkBuffer> buf) : FkBufCompo(buf), desc() {
-    FK_MARK_SUPER
+
 }
 
 FkVertexCompo::FkVertexCompo(const FkVertexCompo &o) : FkBufCompo(o), desc(o.desc) {
-    FK_MARK_SUPER
+
     if (nullptr != o.data()) {
         auto size = o.desc.countVertex * o.desc.countPerVertex * o.desc.format;
         memcpy(data(), o.data(), size);

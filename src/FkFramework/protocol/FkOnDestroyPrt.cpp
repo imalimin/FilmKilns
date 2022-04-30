@@ -7,12 +7,14 @@
 
 #include "FkOnDestroyPrt.h"
 
+FK_IMPL_CLASS_TYPE(FkOnDestroyPrt, FkProtocol)
+
 FkOnDestroyPrt::FkOnDestroyPrt() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkOnDestroyPrt::FkOnDestroyPrt(const FkOnDestroyPrt &o) : FkProtocol(o) {
-    FK_MARK_SUPER
+
 }
 
 FkOnDestroyPrt::~FkOnDestroyPrt() {

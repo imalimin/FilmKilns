@@ -7,13 +7,16 @@
 
 #include "FkEngine.h"
 
+FK_IMPL_CLASS_TYPE(FkMsgHandle, FkObject)
+FK_IMPL_CLASS_TYPE(FkEngine, FkObject)
+
 FkMsgHandle::FkMsgHandle(FkMsgHandle::Func func)
         : FkObject(), func(func) {
-    FK_MARK_SUPER
+
 }
 
 FkMsgHandle::FkMsgHandle(const FkMsgHandle &o) : FkObject(o), func(o.func) {
-    FK_MARK_SUPER
+
 }
 
 FkMsgHandle::~FkMsgHandle() {
@@ -27,7 +30,7 @@ FkResult FkMsgHandle::operator()(FkEngine *ptr, std::shared_ptr<FkMessage> &msg)
 FkEngine::FkEngine(std::string name) : FkObject(), name(name),
                                        internalState(kState::IDL),
                                        outsideState(kState::IDL) {
-    FK_MARK_SUPER
+
 }
 
 FkEngine::~FkEngine() {

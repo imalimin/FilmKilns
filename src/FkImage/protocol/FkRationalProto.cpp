@@ -10,12 +10,14 @@
 
 #include "FkRationalProto.h"
 
+FK_IMPL_CLASS_TYPE(FkRationalProto, FkProtocol)
+
 FkRationalProto::FkRationalProto() : FkProtocol(), value(0, 1) {
-    FK_MARK_SUPER
+
 }
 
 FkRationalProto::FkRationalProto(const FkRationalProto &o) : FkProtocol(o), value(o.value) {
-    FK_MARK_SUPER
+
 }
 
 FkRationalProto::~FkRationalProto() {

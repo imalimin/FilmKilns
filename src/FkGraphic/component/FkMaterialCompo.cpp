@@ -10,12 +10,14 @@
 
 #include "FkMaterialCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkMaterialCompo, FkComponent)
+
 FkMaterialCompo::FkMaterialCompo(FkID id) : FkComponent(), _id(id) {
-    FK_MARK_SUPER
+
 }
 
 FkMaterialCompo::FkMaterialCompo(const FkMaterialCompo &o) : FkComponent(o), _id(o._id) {
-    FK_MARK_SUPER
+
 }
 
 FkMaterialCompo::~FkMaterialCompo() {

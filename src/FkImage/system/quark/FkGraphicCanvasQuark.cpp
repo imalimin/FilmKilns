@@ -21,8 +21,10 @@
 #include "FkCropProto.h"
 #include "FkRemoveLayerProto.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicCanvasQuark, FkGraphicLayerQuark)
+
 FkGraphicCanvasQuark::FkGraphicCanvasQuark() : FkGraphicLayerQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkGraphicCanvasQuark::~FkGraphicCanvasQuark() {
@@ -64,7 +66,7 @@ FkResult FkGraphicCanvasQuark::onStop() {
 }
 
 FkResult FkGraphicCanvasQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
-    auto sizeCompo = _getCanvas()->findComponent<FkSizeCompo>();
+    auto sizeCompo = FK_FIND_COMPO(_getCanvas(), FkSizeCompo);
     if (sizeCompo == nullptr || sizeCompo->size.isZero()) {
         FkLogE(FK_DEF_TAG, "Empty canvas.");
         return FK_EMPTY_CANVAS;
@@ -122,7 +124,7 @@ FkResult FkGraphicCanvasQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQuerySizeProto, p);
-    auto compo = _getCanvas()->findComponent<FkSizeCompo>();
+    auto compo = FK_FIND_COMPO(_getCanvas(), FkSizeCompo);
     if (compo) {
         proto->value = compo->size;
     }

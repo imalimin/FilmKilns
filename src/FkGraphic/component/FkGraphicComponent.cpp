@@ -7,13 +7,15 @@
 
 #include "FkGraphicComponent.h"
 
+FK_IMPL_CLASS_TYPE(FkGraphicComponent, FkComponent)
+
 FkGraphicComponent::FkGraphicComponent() : FkComponent() {
-    FK_MARK_SUPER
+
 
 }
 
 FkGraphicComponent::FkGraphicComponent(const FkGraphicComponent &o) : FkComponent() {
-    FK_MARK_SUPER
+
 
 }
 

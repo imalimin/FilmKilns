@@ -14,8 +14,10 @@
 #include "FkEmptyQuark.h"
 #include "FkSizeCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkGLEnvAtom, FkSimpleAtom)
+
 FkGLEnvAtom::FkGLEnvAtom() : FkSimpleAtom() {
-    FK_MARK_SUPER
+
 }
 
 FkGLEnvAtom::~FkGLEnvAtom() {

@@ -13,7 +13,9 @@
 
 #include "FkWinSizeProto.h"
 
-FK_CLASS FkQueryWinSizeProto FK_EXTEND FkWinSizeProto {
+FK_SUPER_CLASS(FkQueryWinSizeProto, FkWinSizeProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkQueryWinSizeProto)
+
 public:
     FkQueryWinSizeProto();
 

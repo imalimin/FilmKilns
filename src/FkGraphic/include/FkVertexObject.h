@@ -10,7 +10,9 @@
 
 #include "FkSource.h"
 
-FK_CLASS FkVertexDesc FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkVertexDesc, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkVertexDesc)
+
 public:
     FkVertexDesc();
 
@@ -24,7 +26,9 @@ public:
     size_t format = 0;
 };
 
-FK_CLASS FkVBODescription FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkVBODescription, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkVBODescription)
+
 public:
     FkVBODescription(size_t size);
 
@@ -36,7 +40,9 @@ public:
     size_t size = 0;
 };
 
-FK_CLASS FkVertexObject FK_EXTEND FkSource {
+FK_SUPER_CLASS(FkVertexObject, FkSource) {
+FK_DEF_CLASS_TYPE_FUNC(FkVertexObject)
+
 public:
     FkVertexObject(FkVBODescription &desc);
 
@@ -61,7 +67,9 @@ private:
     uint32_t vbo = 0;
 };
 
-FK_CLASS FkVertexObjectAllocator FK_EXTEND FkSourceAllocator<FkVertexObject, FkVBODescription> {
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkVertexObjectAllocator, FkSourceAllocator)<FkVertexObject, FkVBODescription> {
+FK_DEF_CLASS_TYPE_FUNC(FkVertexObjectAllocator)
+
 public:
     FkVertexObjectAllocator(int capacity);
 

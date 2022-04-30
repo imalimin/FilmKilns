@@ -10,7 +10,9 @@
 
 #include "FkSessionClient.h"
 
-FK_ABS_CLASS FkRemoteClient FK_EXTEND FkSessionClient {
+FK_SUPER_CLASS(FkRemoteClient, FkSessionClient) {
+FK_DEF_CLASS_TYPE_FUNC(FkRemoteClient)
+
 public:
     FkRemoteClient(const FkRemoteClient &o) = delete;
 

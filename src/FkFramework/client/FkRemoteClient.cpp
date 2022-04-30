@@ -7,6 +7,8 @@
 
 #include "FkRemoteClient.h"
 
+FK_IMPL_CLASS_TYPE(FkRemoteClient, FkSessionClient)
+
 FkRemoteClient::FkRemoteClient() : FkSessionClient() {
 
 }

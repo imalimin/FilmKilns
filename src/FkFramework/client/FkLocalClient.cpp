@@ -7,6 +7,8 @@
 
 #include "FkLocalClient.h"
 
+FK_IMPL_CLASS_TYPE(FkLocalClient, FkSessionClient)
+
 FkLocalClient::FkLocalClient() : FkSessionClient() {
 
 }

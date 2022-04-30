@@ -10,14 +10,16 @@
 
 #include "FkRenderEngineCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderEngineCompo, FkComponent)
+
 FkRenderEngineCompo::FkRenderEngineCompo(std::shared_ptr<FkEngine> &_engine)
         : FkComponent(), engine(_engine) {
-    FK_MARK_SUPER
+
 }
 
 FkRenderEngineCompo::FkRenderEngineCompo(const FkRenderEngineCompo &o)
         : FkComponent(o), engine(o.engine) {
-    FK_MARK_SUPER
+
 }
 
 FkRenderEngineCompo::~FkRenderEngineCompo() {

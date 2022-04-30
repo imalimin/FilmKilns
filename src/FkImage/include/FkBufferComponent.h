@@ -10,7 +10,9 @@
 
 #include "FkGraphicComponent.h"
 
-FK_CLASS FkBufferComponent FK_EXTEND FkGraphicComponent {
+FK_SUPER_CLASS(FkBufferComponent, FkGraphicComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkBufferComponent)
+
 public:
     FkBufferComponent();
 

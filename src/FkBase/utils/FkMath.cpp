@@ -10,14 +10,6 @@
 
 #include "FkMath.h"
 
-FkMath::FkMath() : FkObject() {
-    FK_MARK_SUPER
-}
-
-FkMath::FkMath(const FkMath &o) : FkObject(o) {
-    FK_MARK_SUPER
-}
-
 FkMath::~FkMath() {
 
 }

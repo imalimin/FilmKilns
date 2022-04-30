@@ -18,7 +18,9 @@
 
 class FkEngine;
 
-FK_CLASS FkMsgHandle FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkMsgHandle, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkMsgHandle)
+
 public:
     typedef FkResult (FkEngine::*Func)(std::shared_ptr<FkMessage>);
 
@@ -41,7 +43,9 @@ registerMessage(id, reinterpret_cast<FkMsgHandle::Func>(&func))
 #define FK_WRAP_FUNC(func) \
 FkMsgHandle(reinterpret_cast<FkMsgHandle::Func>(&func))
 
-FK_ABS_CLASS FkEngine FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkEngine, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkEngine)
+
 public:
     FkEngine(std::string name);
 

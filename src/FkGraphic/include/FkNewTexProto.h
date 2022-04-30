@@ -14,7 +14,9 @@
 #include "FkProtocol.h"
 #include "FkTexEntity.h"
 
-FK_CLASS FkNewTexProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkNewTexProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkNewTexProto)
+
 public:
     FkNewTexProto();
 

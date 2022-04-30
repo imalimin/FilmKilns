@@ -14,7 +14,9 @@
 #include "FkQuark.h"
 #include "FkGraphicProgram.h"
 
-FK_CLASS FkRenderProgramQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkRenderProgramQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderProgramQuark)
+
 public:
     FkRenderProgramQuark();
 

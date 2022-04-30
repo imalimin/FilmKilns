@@ -10,13 +10,15 @@
 
 #include "FkEntity.h"
 
+FK_IMPL_CLASS_TYPE(FkEntity, FkObject)
+
 FkEntity::FkEntity() : FkObject() {
-    FK_MARK_SUPER
+
 
 }
 
 FkEntity::FkEntity(const FkEntity &o) : FkObject() {
-    FK_MARK_SUPER
+
     for (auto &it : o.components) {
         components.emplace_back(it);
     }
@@ -34,7 +36,7 @@ FkResult FkEntity::addComponent(std::shared_ptr<FkComponent> comp) {
 FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                                         const FkClassType &classType) {
     for (auto & component : components) {
-        if (component->getClassType() == classType) {
+        if (component->getClassType().is(classType)) {
             vec.emplace_back(component);
         }
     }

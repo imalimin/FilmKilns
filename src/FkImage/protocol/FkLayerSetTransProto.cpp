@@ -10,13 +10,15 @@
 
 #include "FkLayerSetTransProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerSetTransProto, FkIntVec2Proto)
+
 FkLayerSetTransProto::FkLayerSetTransProto() : FkIntVec2Proto() {
-    FK_MARK_SUPER
+
 }
 
 FkLayerSetTransProto::FkLayerSetTransProto(const FkLayerSetTransProto &o)
         : FkIntVec2Proto(o), layer(o.layer) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerSetTransProto::~FkLayerSetTransProto() {

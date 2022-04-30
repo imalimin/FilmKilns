@@ -17,7 +17,9 @@
     desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
         reinterpret_cast<FkPort::PortFunc>(&FkSimpleAtom::dispatchNext)) \
 
-FK_ABS_CLASS FkConnectChain FK_EXTEND FkObject, public std::enable_shared_from_this<FkConnectChain> {
+FK_SUPER_CLASS(FkConnectChain, FkObject), public std::enable_shared_from_this<FkConnectChain> {
+FK_DEF_CLASS_TYPE_FUNC(FkConnectChain)
+
 public:
     FkConnectChain();
 
@@ -45,7 +47,9 @@ private:
     std::list<std::shared_ptr<FkQuark>> rChain;
 };
 
-FK_ABS_CLASS FkSimpleAtom FK_EXTEND FkAtom {
+FK_SUPER_CLASS(FkSimpleAtom, FkAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkSimpleAtom)
+
 public:
     FkSimpleAtom();
 

@@ -10,12 +10,14 @@
 
 #include "FkImage.h"
 
+FK_IMPL_CLASS_TYPE(FkImage, FkObject)
+
 FkImage::FkImage() : FkObject() {
-    FK_MARK_SUPER
+
 }
 
 FkImage::FkImage(const FkImage &o) : FkObject(o) {
-    FK_MARK_SUPER
+
 }
 
 FkImage::~FkImage() {

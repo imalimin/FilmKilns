@@ -15,7 +15,9 @@
 #include "FkVertexObject.h"
 #include "FkBuffer.h"
 
-FK_CLASS FkVertexCompo FK_EXTEND FkBufCompo {
+FK_SUPER_CLASS(FkVertexCompo, FkBufCompo) {
+FK_DEF_CLASS_TYPE_FUNC(FkVertexCompo)
+
 public:
     FkVertexCompo();
 

@@ -8,12 +8,14 @@
 #include "FkMatrix.h"
 #include "ext.hpp"
 
+FK_IMPL_CLASS_TYPE(FkMatrix, FkObject)
+
 FkMatrix::FkMatrix() : FkObject(), mat4(glm::mat4(1.0f)) {
-    FK_MARK_SUPER
+
 }
 
 FkMatrix::FkMatrix(const FkMatrix &o) : FkObject(o), mat4(o.mat4) {
-    FK_MARK_SUPER
+
 }
 
 FkMatrix::~FkMatrix() {

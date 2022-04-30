@@ -12,7 +12,9 @@
 #include "FkIntVec2.h"
 #include "FkGraphicLayer.h"
 
-FK_CLASS FkMeasureTransProto FK_EXTEND FkWinSizeProto {
+FK_SUPER_CLASS(FkMeasureTransProto, FkWinSizeProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkMeasureTransProto)
+
 public:
     FkMeasureTransProto();
 

@@ -13,12 +13,13 @@
 
 #include "FkObject.h"
 
-template<typename T>
-FK_ABS_CLASS FkNumber FK_EXTEND FkObject {
-public:
-    FkNumber(T value) : FkObject(), value(value) { FK_MARK_SUPER }
+FK_SUPER_TEMPLATE_CLASS(FkNumber, FkObject, typename T) {
+FK_DEF_CLASS_TYPE_FUNC(FkNumber)
 
-    FkNumber(const FkNumber &o) : FkObject(), value(o.value) { FK_MARK_SUPER }
+public:
+    FkNumber(T value) : FkObject(), value(value) {  }
+
+    FkNumber(const FkNumber &o) : FkObject(), value(o.value) {  }
 
     virtual ~FkNumber() {}
 
@@ -30,11 +31,13 @@ private:
     T value;
 };
 
-FK_ABS_CLASS FkInt FK_EXTEND FkNumber<int32_t> {
-public:
-    FkInt(int32_t value) : FkNumber<int32_t>(value) { FK_MARK_SUPER }
+FK_SUPER_TEMPLATE_CLASS_IMPL(FkInt, FkNumber)<int32_t> {
+FK_DEF_CLASS_TYPE_FUNC(FkInt)
 
-    FkInt(const FkInt &o) : FkNumber<int32_t>(o) { FK_MARK_SUPER }
+public:
+    FkInt(int32_t value) : FkNumber<int32_t>(value) {  }
+
+    FkInt(const FkInt &o) : FkNumber<int32_t>(o) {  }
 
     virtual ~FkInt() {}
 };

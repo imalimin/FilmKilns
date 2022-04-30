@@ -12,7 +12,9 @@
 #include "FkGraphicLayer.h"
 #include "FkMaterialEntity.h"
 
-FK_CLASS FkGraphicRenderAtom FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkGraphicRenderAtom, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicRenderAtom)
+
 public:
     FkGraphicRenderAtom();
 

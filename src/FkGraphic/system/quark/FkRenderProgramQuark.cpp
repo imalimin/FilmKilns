@@ -13,8 +13,10 @@
 #include "FkRenderProgramCompo.h"
 #include "FkPointVertexCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderProgramQuark, FkQuark)
+
 FkRenderProgramQuark::FkRenderProgramQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderProgramQuark::~FkRenderProgramQuark() {
@@ -54,7 +56,7 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         return FK_SKIP;
     }
 
-    auto pointCompo = proto->materials->findComponent<FkPointVertexCompo>();
+    auto pointCompo = FK_FIND_COMPO(proto->materials, FkPointVertexCompo);
     if (pointCompo != nullptr) {
         auto compo = std::make_shared<FkRenderProgramCompo>();
         FkProgramDescription desc(FkProgramDescription::kType::POINT);

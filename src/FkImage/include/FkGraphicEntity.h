@@ -13,7 +13,9 @@
 #include <vector>
 #include <list>
 
-FK_CLASS FkGraphicEntity FK_EXTEND FkEntity {
+FK_SUPER_CLASS(FkGraphicEntity, FkEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicEntity)
+
 public:
     FkGraphicEntity();
 

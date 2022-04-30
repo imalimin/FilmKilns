@@ -11,6 +11,8 @@
 #include "FkOnStartPrt.h"
 #include "FkOnStopPrt.h"
 
+FK_IMPL_CLASS_TYPE(FkPortDesc, FkObject)
+
 FkPortDesc::FkPortDesc() : FkObject() {
 
 }
@@ -65,10 +67,10 @@ void FkPortDesc::clear() {
     std::lock_guard<std::mutex> guard(mtx);
     auto itr = ports.begin();
     while (itr != ports.end()) {
-        if (itr->first != FkClassType::type<FkOnCreatePrt>().hashCode()
-            && itr->first != FkClassType::type<FkOnDestroyPrt>().hashCode()
-            && itr->first != FkClassType::type<FkOnStartPrt>().hashCode()
-            && itr->first != FkClassType::type<FkOnStopPrt>().hashCode()) {
+        if (itr->first != FK_GET_CLASS_TYPE(FkOnCreatePrt).getId()
+            && itr->first != FK_GET_CLASS_TYPE(FkOnDestroyPrt).getId()
+            && itr->first != FK_GET_CLASS_TYPE(FkOnStartPrt).getId()
+            && itr->first != FK_GET_CLASS_TYPE(FkOnStopPrt).getId()) {
             itr = ports.erase(itr);
         } else {
             ++itr;

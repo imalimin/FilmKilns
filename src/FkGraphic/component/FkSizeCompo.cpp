@@ -10,12 +10,14 @@
 
 #include "FkSizeCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkSizeCompo, FkComponent)
+
 FkSizeCompo::FkSizeCompo(FkSize size) : FkComponent(), size(size) {
-    FK_MARK_SUPER
+
 }
 
 FkSizeCompo::FkSizeCompo(const FkSizeCompo &o) : FkComponent(o), size(o.size) {
-    FK_MARK_SUPER
+
 }
 
 FkSizeCompo::~FkSizeCompo() {

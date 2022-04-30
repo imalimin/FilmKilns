@@ -14,7 +14,9 @@
 #include "FkQuark.h"
 #include "FkVertexObject.h"
 
-FK_CLASS FkRenderVboQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkRenderVboQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderVboQuark)
+
 public:
     FkRenderVboQuark();
 

@@ -14,7 +14,9 @@
 #include "FkQuark.h"
 #include "FkGraphicFrameObject.h"
 
-FK_CLASS FkRenderFboQuark FK_EXTEND FkQuark {
+FK_SUPER_CLASS(FkRenderFboQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderFboQuark)
+
 public:
     FkRenderFboQuark();
 

@@ -5,16 +5,18 @@
 * LICENSE file in the root directory of this source tree.
 */
 
-#include "../include/FkTransComponent.h"
+#include "FkTransComponent.h"
+
+FK_IMPL_CLASS_TYPE(FkTransComponent, FkGraphicComponent)
 
 FkTransComponent::FkTransComponent() : FkGraphicComponent(), value(0, 0) {
-    FK_MARK_SUPER
+
 
 }
 
 FkTransComponent::FkTransComponent(const FkTransComponent &o)
         : FkGraphicComponent(o), value(o.value) {
-    FK_MARK_SUPER
+
 
 }
 

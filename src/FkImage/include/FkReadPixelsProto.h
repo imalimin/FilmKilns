@@ -14,7 +14,9 @@
 #include "FkLayerProto.h"
 #include "FkBuffer.h"
 
-FK_CLASS FkReadPixelsProto FK_EXTEND FkLayerProto {
+FK_SUPER_CLASS(FkReadPixelsProto, FkLayerProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkReadPixelsProto)
+
 public:
     FkReadPixelsProto();
 

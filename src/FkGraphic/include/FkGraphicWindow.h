@@ -11,7 +11,9 @@
 #include "FkObject.h"
 #include "FkSize.h"
 
-FK_CLASS FkGraphicWindow FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkGraphicWindow, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicWindow)
+
 public:
     FkGraphicWindow(int width, int height);
 

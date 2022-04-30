@@ -7,16 +7,19 @@
 
 #include "FkSource.h"
 
+FK_IMPL_CLASS_TYPE(FkSource, FkObject)
+FK_IMPL_CLASS_TYPE(FkSourceAllocator, FkObject)
+
 FkSource::FkSource()
         : FkObject(), cTime(FkTimeUtils::getCurrentTimeUS()),
           eTime(FkTimeUtils::getCurrentTimeUS()) {
-    FK_MARK_SUPER
+
 }
 
 FkSource::FkSource(const FkSource &o) : FkObject(o), id(o.id),
                                         cTime(FkTimeUtils::getCurrentTimeUS()),
                                         eTime(FkTimeUtils::getCurrentTimeUS()) {
-    FK_MARK_SUPER
+
 }
 
 FkSource::~FkSource() {

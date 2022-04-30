@@ -10,14 +10,16 @@
 
 #include "FkLayerSetRotateProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerSetRotateProto, FkRationalProto)
+
 FkLayerSetRotateProto::FkLayerSetRotateProto()
         : FkRationalProto(), layer(FK_ID_NONE) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerSetRotateProto::FkLayerSetRotateProto(const FkLayerSetRotateProto &o)
         : FkRationalProto(o), layer(o.layer) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerSetRotateProto::~FkLayerSetRotateProto() {

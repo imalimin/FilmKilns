@@ -10,12 +10,14 @@
 
 #include "FkEnvEntity.h"
 
+FK_IMPL_CLASS_TYPE(FkEnvEntity, FkEntity)
+
 FkEnvEntity::FkEnvEntity() : FkEntity() {
-    FK_MARK_SUPER
+
 }
 
 FkEnvEntity::FkEnvEntity(const FkEnvEntity &o) : FkEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkEnvEntity::~FkEnvEntity() {
@@ -23,5 +25,5 @@ FkEnvEntity::~FkEnvEntity() {
 }
 
 std::shared_ptr<FkContextCompo> FkEnvEntity::getContext() {
-    return findComponent<FkContextCompo>();
+    return FK_FIND_COMPO(this, FkContextCompo);
 }

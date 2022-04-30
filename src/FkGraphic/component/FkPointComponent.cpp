@@ -7,14 +7,16 @@
 
 #include "FkPointComponent.h"
 
+FK_IMPL_CLASS_TYPE(FkPointComponent, FkComponent)
+
 FkPointComponent::FkPointComponent()
         : FkGraphicComponent(), value(0, 0), color(FkColor::black()) {
-    FK_MARK_SUPER
+
 }
 
 FkPointComponent::FkPointComponent(const FkPointComponent &o)
         : FkGraphicComponent(o), value(o.value), color(o.color) {
-    FK_MARK_SUPER
+
 }
 
 FkPointComponent::~FkPointComponent() {

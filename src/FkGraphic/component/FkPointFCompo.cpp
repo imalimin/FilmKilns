@@ -10,14 +10,16 @@
 
 #include "FkPointFCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkPointFCompo, FkComponent)
+
 FkPointFCompo::FkPointFCompo()
         : FkComponent(), value(0.0f, 0.0f, 0.0f), color(FkColor::white()) {
-    FK_MARK_SUPER
+
 }
 
 FkPointFCompo::FkPointFCompo(const FkPointFCompo &o)
         : FkComponent(o), value(o.value), color(o.color), size(o.size) {
-    FK_MARK_SUPER
+
 }
 
 FkPointFCompo::~FkPointFCompo() {

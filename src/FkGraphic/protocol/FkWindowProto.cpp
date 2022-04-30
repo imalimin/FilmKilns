@@ -10,12 +10,14 @@
 
 #include "FkWindowProto.h"
 
+FK_IMPL_CLASS_TYPE(FkWindowProto, FkProtocol)
+
 FkWindowProto::FkWindowProto() : FkProtocol() {
-    FK_MARK_SUPER
+
 }
 
 FkWindowProto::FkWindowProto(const FkWindowProto &o) : FkProtocol(o), win(o.win) {
-    FK_MARK_SUPER
+
 }
 
 FkWindowProto::~FkWindowProto() {

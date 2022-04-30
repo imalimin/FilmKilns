@@ -14,7 +14,9 @@
 #include "FkComponent.h"
 #include "FkGraphicProgram.h"
 
-FK_CLASS FkRenderProgramCompo FK_EXTEND FkComponent {
+FK_SUPER_CLASS(FkRenderProgramCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderProgramCompo)
+
 public:
     FkRenderProgramCompo();
 

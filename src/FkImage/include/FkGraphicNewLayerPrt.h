@@ -10,7 +10,9 @@
 
 #include "FkLayerProto.h"
 
-FK_CLASS FkGraphicNewLayerPrt FK_EXTEND FkLayerProto {
+FK_SUPER_CLASS(FkGraphicNewLayerPrt, FkLayerProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicNewLayerPrt)
+
 public:
     FkGraphicNewLayerPrt();
 

@@ -10,12 +10,14 @@
 
 #include "FkRenderProgramCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkRenderProgramCompo, FkComponent)
+
 FkRenderProgramCompo::FkRenderProgramCompo() : FkComponent() {
-    FK_MARK_SUPER
+
 }
 
 FkRenderProgramCompo::FkRenderProgramCompo(const FkRenderProgramCompo &o) : FkComponent(o), program(o.program) {
-    FK_MARK_SUPER
+
 }
 
 FkRenderProgramCompo::~FkRenderProgramCompo() {

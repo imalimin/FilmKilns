@@ -10,7 +10,9 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkColor FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkColor, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkColor)
+
 public:
     FK_ENUM kFormat : uint32_t {
         NONE = 0,

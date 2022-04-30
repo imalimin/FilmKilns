@@ -14,13 +14,18 @@
 #include "FkSizeCompo.h"
 #include "FkFormatCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkDeviceEntity, FkMaterialEntity)
+FK_IMPL_CLASS_TYPE(FkBufDeviceEntity, FkDeviceEntity)
+FK_IMPL_CLASS_TYPE(FkTexDeviceEntity, FkDeviceEntity)
+FK_IMPL_CLASS_TYPE(FkScreenEntity, FkDeviceEntity)
+
 FkDeviceEntity::FkDeviceEntity(std::shared_ptr<FkMaterialCompo> material)
         : FkMaterialEntity(material) {
-    FK_MARK_SUPER
+
 }
 
 FkDeviceEntity::FkDeviceEntity(const FkDeviceEntity &o) : FkMaterialEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkDeviceEntity::~FkDeviceEntity() {
@@ -29,12 +34,12 @@ FkDeviceEntity::~FkDeviceEntity() {
 
 FkBufDeviceEntity::FkBufDeviceEntity(std::shared_ptr<FkBuffer> &buf)
         : FkDeviceEntity(std::make_shared<FkMaterialCompo>(FK_ID_NONE)) {
-    FK_MARK_SUPER
+
     addComponent(std::make_shared<FkBufCompo>(buf));
 }
 
 FkBufDeviceEntity::FkBufDeviceEntity(const FkBufDeviceEntity &o) : FkDeviceEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkBufDeviceEntity::~FkBufDeviceEntity() {
@@ -42,7 +47,7 @@ FkBufDeviceEntity::~FkBufDeviceEntity() {
 }
 
 std::shared_ptr<FkBuffer> FkBufDeviceEntity::buffer() {
-    auto compo = findComponent<FkBufCompo>();
+    auto compo = FK_FIND_COMPO(this, FkBufCompo);
     if (compo) {
         return compo->buf;
     }
@@ -50,7 +55,7 @@ std::shared_ptr<FkBuffer> FkBufDeviceEntity::buffer() {
 }
 
 void FkBufDeviceEntity::finish() {
-    auto compo = findComponent<FkFuncCompo>();
+    auto compo = FK_FIND_COMPO(this, FkFuncCompo);
     if (compo) {
         return compo->func();
     }
@@ -58,11 +63,11 @@ void FkBufDeviceEntity::finish() {
 
 FkTexDeviceEntity::FkTexDeviceEntity(std::shared_ptr<FkMaterialCompo> material)
         : FkDeviceEntity(material) {
-    FK_MARK_SUPER
+
 }
 
 FkTexDeviceEntity::FkTexDeviceEntity(const FkTexDeviceEntity &o) : FkDeviceEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkTexDeviceEntity::~FkTexDeviceEntity() {
@@ -70,18 +75,18 @@ FkTexDeviceEntity::~FkTexDeviceEntity() {
 }
 
 void FkTexDeviceEntity::finish() {
-    auto compo = findComponent<FkFuncCompo>();
+    auto compo = FK_FIND_COMPO(this, FkFuncCompo);
     if (compo) {
         return compo->func();
     }
 }
 
 std::shared_ptr<FkTexCompo> FkTexDeviceEntity::tex() {
-    return findComponent<FkTexCompo>();
+    return FK_FIND_COMPO(this, FkTexCompo);
 }
 
 FkSize FkTexDeviceEntity::size() {
-    auto compo = findComponent<FkSizeCompo>();
+    auto compo = FK_FIND_COMPO(this, FkSizeCompo);
     if (compo) {
         return compo->size;
     }
@@ -89,7 +94,7 @@ FkSize FkTexDeviceEntity::size() {
 }
 
 FkColor::kFormat FkTexDeviceEntity::format() {
-    auto compo = findComponent<FkFormatCompo>();
+    auto compo = FK_FIND_COMPO(this, FkFormatCompo);
     if (compo) {
         return compo->fmt;
     }
@@ -98,11 +103,11 @@ FkColor::kFormat FkTexDeviceEntity::format() {
 
 FkScreenEntity::FkScreenEntity()
         : FkDeviceEntity(std::make_shared<FkMaterialCompo>(FK_ID_NONE)) {
-    FK_MARK_SUPER
+
 }
 
 FkScreenEntity::FkScreenEntity(const FkTexDeviceEntity &o) : FkDeviceEntity(o) {
-    FK_MARK_SUPER
+
 }
 
 FkScreenEntity::~FkScreenEntity() {
@@ -110,7 +115,7 @@ FkScreenEntity::~FkScreenEntity() {
 }
 
 FkSize FkScreenEntity::size() {
-    auto compo = findComponent<FkSizeCompo>();
+    auto compo = FK_FIND_COMPO(this, FkSizeCompo);
     if (compo) {
         return compo->size;
     }

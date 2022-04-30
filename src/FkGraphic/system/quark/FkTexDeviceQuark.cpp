@@ -17,8 +17,10 @@
 #include "FkGLDefinition.h"
 #include "FkMatCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkTexDeviceQuark, FkQuark)
+
 FkTexDeviceQuark::FkTexDeviceQuark() : FkQuark() {
-    FK_MARK_SUPER
+
 }
 
 FkTexDeviceQuark::~FkTexDeviceQuark() {
@@ -69,9 +71,9 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     auto dstTexCompo = device->tex();
     auto size = device->size();
 
-    auto programCompo = proto->materials->findComponent<FkRenderProgramCompo>();
-    auto vboCompo = proto->materials->findComponent<FkVboCompo>();
-    auto matCompo = proto->materials->findComponent<FkMatCompo>();
+    auto programCompo = FK_FIND_COMPO(proto->materials, FkRenderProgramCompo);
+    auto vboCompo = FK_FIND_COMPO(proto->materials, FkVboCompo);
+    auto matCompo = FK_FIND_COMPO(proto->materials, FkMatCompo);
     FkAssert(vboCompo != nullptr, FK_FAIL);
 
     int32_t offset = 0;

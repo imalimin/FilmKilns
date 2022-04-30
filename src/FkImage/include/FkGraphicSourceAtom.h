@@ -10,7 +10,9 @@
 
 #include "FkSimpleAtom.h"
 
-FK_CLASS FkGraphicSourceAtom FK_EXTEND FkSimpleAtom {
+FK_SUPER_CLASS(FkGraphicSourceAtom, FkSimpleAtom) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicSourceAtom)
+
 public:
     FkGraphicSourceAtom();
 

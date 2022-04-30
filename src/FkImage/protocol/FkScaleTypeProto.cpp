@@ -10,19 +10,21 @@
 
 #include "FkScaleTypeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkScaleTypeProto, FkWinSizeProto)
+
 FkScaleTypeProto::FkScaleTypeProto()
         : FkWinSizeProto(), layerId(FK_ID_NONE), scaleType(kScaleType::CENTER_MATRIX) {
-    FK_MARK_SUPER
+
 }
 
 FkScaleTypeProto::FkScaleTypeProto(FkID layerId, kScaleType scaleType)
         : FkWinSizeProto(), layerId(layerId), scaleType(scaleType) {
-    FK_MARK_SUPER
+
 }
 
 FkScaleTypeProto::FkScaleTypeProto(const FkScaleTypeProto &o)
         : FkWinSizeProto(o), layerId(o.layerId), scaleType(o.scaleType) {
-    FK_MARK_SUPER
+
 }
 
 FkScaleTypeProto::~FkScaleTypeProto() {

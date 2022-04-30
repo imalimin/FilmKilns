@@ -13,13 +13,13 @@
 
 #include "FkObject.h"
 
-FK_CLASS FkFileUtils FK_EXTEND FkObject {
+class FkFileUtils {
 public:
-    FkFileUtils();
+    FkFileUtils() = delete;
 
     FkFileUtils(const FkFileUtils &o) = delete;
 
-    virtual ~FkFileUtils();
+    virtual ~FkFileUtils() {};
 
 public:
     static FkResult copy(std::string src, std::string &dst);

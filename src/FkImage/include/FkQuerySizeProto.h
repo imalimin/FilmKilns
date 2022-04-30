@@ -10,7 +10,9 @@
 
 #include "FkSetSizeProto.h"
 
-FK_CLASS FkQuerySizeProto FK_EXTEND FkSetSizeProto {
+FK_SUPER_CLASS(FkQuerySizeProto, FkSetSizeProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkQuerySizeProto)
+
 public:
     FkQuerySizeProto();
 

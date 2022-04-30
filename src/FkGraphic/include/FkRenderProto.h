@@ -13,7 +13,9 @@
 #include "FkMaterialEntity.h"
 #include "FkDeviceEntity.h"
 
-FK_CLASS FkRenderProto FK_EXTEND FkProtocol {
+FK_SUPER_CLASS(FkRenderProto, FkProtocol) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderProto)
+
 public:
     FkRenderProto();
 

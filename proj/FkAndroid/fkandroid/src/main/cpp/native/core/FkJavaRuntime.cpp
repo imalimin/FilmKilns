@@ -11,6 +11,8 @@
 
 #define TAG "FkJavaRuntime"
 
+FK_IMPL_CLASS_TYPE(FkJavaRuntime, FkObject)
+
 FkJavaRuntime *FkJavaRuntime::instance = new FkJavaRuntime();
 const int FkJavaRuntime::VERSION = JNI_VERSION_1_6;
 

@@ -13,7 +13,9 @@
 #include <vector>
 #include <any>
 
-FK_CLASS FkInstanceHolder FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkInstanceHolder, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkInstanceHolder)
+
 public:
     static FkInstanceHolder &getInstance();
 

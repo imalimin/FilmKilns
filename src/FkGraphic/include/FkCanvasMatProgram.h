@@ -13,7 +13,9 @@
 
 #include "FkGraphicMatProgram.h"
 
-FK_CLASS FkCanvasMatProgram FK_EXTEND FkGraphicMatProgram {
+FK_SUPER_CLASS(FkCanvasMatProgram, FkGraphicMatProgram) {
+FK_DEF_CLASS_TYPE_FUNC(FkCanvasMatProgram)
+
 public:
     FkCanvasMatProgram(const FkProgramDescription &desc);
 

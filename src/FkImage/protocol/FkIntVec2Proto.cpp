@@ -10,15 +10,17 @@
 
 #include "FkIntVec2Proto.h"
 
+FK_IMPL_CLASS_TYPE(FkIntVec2Proto, FkProtocol)
+
 FkIntVec2Proto::FkIntVec2Proto() : FkProtocol(),
                                    value(0, 0) {
-    FK_MARK_SUPER
+
 }
 
 FkIntVec2Proto::FkIntVec2Proto(const FkIntVec2Proto &o)
         : FkProtocol(o),
           value(o.value) {
-    FK_MARK_SUPER
+
 }
 
 FkIntVec2Proto::~FkIntVec2Proto() {

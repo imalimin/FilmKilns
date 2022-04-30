@@ -10,12 +10,14 @@
 
 #include "FkFilePathCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkFilePathCompo, FkComponent)
+
 FkFilePathCompo::FkFilePathCompo(std::string &str) : FkStrCompo(str) {
-    FK_MARK_SUPER
+
 }
 
 FkFilePathCompo::FkFilePathCompo(const FkFilePathCompo &o) : FkStrCompo(o) {
-    FK_MARK_SUPER
+
 }
 
 FkFilePathCompo::~FkFilePathCompo() {

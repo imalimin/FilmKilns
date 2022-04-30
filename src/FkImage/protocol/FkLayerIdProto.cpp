@@ -10,12 +10,14 @@
 
 #include "FkLayerIdProto.h"
 
+FK_IMPL_CLASS_TYPE(FkLayerIdProto, FkProtocol)
+
 FkLayerIdProto::FkLayerIdProto(FkID layerId) : FkProtocol(), layerId(layerId) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerIdProto::FkLayerIdProto(const FkLayerIdProto &o) : FkProtocol(o), layerId(o.layerId) {
-    FK_MARK_SUPER
+
 }
 
 FkLayerIdProto::~FkLayerIdProto() {

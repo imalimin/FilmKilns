@@ -10,12 +10,14 @@
 
 #include "FkQueryWinSizeProto.h"
 
+FK_IMPL_CLASS_TYPE(FkQueryWinSizeProto, FkWinSizeProto)
+
 FkQueryWinSizeProto::FkQueryWinSizeProto() : FkWinSizeProto() {
-    FK_MARK_SUPER
+
 }
 
 FkQueryWinSizeProto::FkQueryWinSizeProto(const FkQueryWinSizeProto &o) : FkWinSizeProto(o) {
-    FK_MARK_SUPER
+
 }
 
 FkQueryWinSizeProto::~FkQueryWinSizeProto() {

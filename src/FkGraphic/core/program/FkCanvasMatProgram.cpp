@@ -11,8 +11,10 @@
 #include "FkCanvasMatProgram.h"
 #include "FkGridSizeCompo.h"
 
+FK_IMPL_CLASS_TYPE(FkCanvasMatProgram, FkGraphicMatProgram)
+
 FkCanvasMatProgram::FkCanvasMatProgram(const FkProgramDescription &desc) : FkGraphicMatProgram(desc) {
-    FK_MARK_SUPER
+
 }
 
 FkCanvasMatProgram::~FkCanvasMatProgram() {

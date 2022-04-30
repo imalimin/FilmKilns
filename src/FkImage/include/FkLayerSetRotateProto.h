@@ -13,7 +13,9 @@
 
 #include "FkRationalProto.h"
 
-FK_CLASS FkLayerSetRotateProto FK_EXTEND FkRationalProto {
+FK_SUPER_CLASS(FkLayerSetRotateProto, FkRationalProto) {
+FK_DEF_CLASS_TYPE_FUNC(FkLayerSetRotateProto)
+
 public:
     FkLayerSetRotateProto();
 

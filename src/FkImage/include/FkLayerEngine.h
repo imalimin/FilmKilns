@@ -17,7 +17,9 @@
 #include "FkGraphicLayer.h"
 #include "FkRect.h"
 
-FK_CLASS FkLayerEngine FK_EXTEND FkEngine {
+FK_SUPER_CLASS(FkLayerEngine, FkEngine) {
+FK_DEF_CLASS_TYPE_FUNC(FkLayerEngine)
+
 public:
     FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name);
 

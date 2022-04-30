@@ -12,7 +12,9 @@
 #include "FkAtom.h"
 #include "FkLocalClient.h"
 
-FK_CLASS FkGraphicMolecule FK_EXTEND FkSimpleMolecule {
+FK_SUPER_CLASS(FkGraphicMolecule, FkSimpleMolecule) {
+FK_DEF_CLASS_TYPE_FUNC(FkGraphicMolecule)
+
 public:
     FkGraphicMolecule();
 
