@@ -10,6 +10,8 @@
 
 \#include "${className}.h"
 
+FK_IMPL_CLASS_TYPE(${className}, FkObject)
+
 ${className}::${className}() : FkObject() {
 
 }
