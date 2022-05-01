@@ -62,6 +62,29 @@ public:
         EXPECT_EQ(engine->notifyRender(), FK_OK);
     }
 
+    FkID addImagePosLayer() {
+        auto layerId = engine->newLayerWithFile(FK_ANDROID_TEST_IMAGE_POS);
+        EXPECT_GT(layerId, 0);
+        return layerId;
+    }
+
+    void setTestCanvasSize() {
+        EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
+    }
+
+    void setTestPosition(FkID layerId) {
+        EXPECT_EQ(engine->postTranslate(layerId, -120, 300), FK_OK);
+    }
+
+    void setTestScale(FkID layerId) {
+        EXPECT_EQ(engine->postScale(layerId, 1.8f, 1.8f), FK_OK);
+    }
+
+    void setTestRotate(FkID layerId) {
+        FkRational rational(1, 1);
+        EXPECT_EQ(engine->postRotation(layerId, rational), FK_OK);
+    }
+
 protected:
     std::string workspace;
     std::string fkpFile;
@@ -80,11 +103,9 @@ TEST_F(FkImageEngineTest, newLayerWithFile) {
 }
 
 TEST_F(FkImageEngineTest, Position) {
-    std::string path = FK_ANDROID_TEST_IMAGE_POS;
-    auto layerId = engine->newLayerWithFile(path);
-    EXPECT_GT(layerId, 0);
-    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
-    EXPECT_EQ(engine->postTranslate(layerId, -120, 300), FK_OK);
+    auto layerId = addImagePosLayer();
+    setTestCanvasSize();
+    setTestPosition(layerId);
     render();
     EXPECT_TRUE(testColor(engine, 225, 432, FkColor::white()));
     EXPECT_TRUE(testColor(engine, 140, 259, FkColor::red()));
@@ -92,11 +113,9 @@ TEST_F(FkImageEngineTest, Position) {
 }
 
 TEST_F(FkImageEngineTest, Scale) {
-    std::string path = FK_ANDROID_TEST_IMAGE_POS;
-    auto layerId = engine->newLayerWithFile(path);
-    EXPECT_GT(layerId, 0);
-    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
-    EXPECT_EQ(engine->postScale(layerId, 1.8f, 1.8f), FK_OK);
+    auto layerId = addImagePosLayer();
+    setTestCanvasSize();
+    setTestScale(layerId);
     render();
     EXPECT_TRUE(testColor(engine, 270, 320, FkColor::white()));
     EXPECT_TRUE(testColor(engine, 117, 8, FkColor::red()));
@@ -104,12 +123,9 @@ TEST_F(FkImageEngineTest, Scale) {
 }
 
 TEST_F(FkImageEngineTest, Rotate) {
-    std::string path = FK_ANDROID_TEST_IMAGE_POS;
-    auto layerId = engine->newLayerWithFile(path);
-    EXPECT_GT(layerId, 0);
-    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
-    FkRational rational(1, 1);
-    EXPECT_EQ(engine->postRotation(layerId, rational), FK_OK);
+    auto layerId = addImagePosLayer();
+    setTestCanvasSize();
+    setTestRotate(layerId);
     render();
     EXPECT_TRUE(testColor(engine, 270, 320, FkColor::white()));
     EXPECT_TRUE(testColor(engine, 79, 298, FkColor::red()));
@@ -117,18 +133,20 @@ TEST_F(FkImageEngineTest, Rotate) {
 //    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
-TEST_F(FkImageEngineTest, Mvp) {
-    std::string path = FK_ANDROID_TEST_IMAGE_POS;
-    auto layerId = engine->newLayerWithFile(path);
-    EXPECT_GT(layerId, 0);
-    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
-    EXPECT_EQ(engine->postTranslate(layerId, -120, 300), FK_OK);
-    EXPECT_EQ(engine->postScale(layerId, 1.8f, 1.8f), FK_OK);
-    FkRational rational(1, 1);
-    EXPECT_EQ(engine->postRotation(layerId, rational), FK_OK);
+TEST_F(FkImageEngineTest, MvpAndCrop) {
+    auto layerId = addImagePosLayer();
+    setTestCanvasSize();
+    setTestPosition(layerId);
+    setTestScale(layerId);
+    setTestRotate(layerId);
     render();
     EXPECT_TRUE(testColor(engine, 396, 497, FkColor::white()));
     EXPECT_TRUE(testColor(engine, 51, 458, FkColor::red()));
+
+    FkIntRect rect(133, 1100, 856, 1703);
+    EXPECT_EQ(engine->crop(rect), FK_OK);
+    render();
+    EXPECT_TRUE(testColor(engine, 0, 224, FkColor::red()));
 //    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
