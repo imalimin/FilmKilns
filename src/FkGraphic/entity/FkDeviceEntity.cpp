@@ -13,7 +13,7 @@
 #include "FkFuncCompo.h"
 #include "FkSizeCompo.h"
 #include "FkFormatCompo.h"
-#include "FkLocationCompo.h"
+#include "FkPositionCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkDeviceEntity, FkMaterialEntity)
 FK_IMPL_CLASS_TYPE(FkBufDeviceEntity, FkDeviceEntity)
@@ -63,14 +63,14 @@ void FkBufDeviceEntity::finish() {
 }
 
 void FkBufDeviceEntity::setPosition(int32_t x, int32_t y) {
-    auto compo = std::make_shared<FkLocationCompo>();
+    auto compo = std::make_shared<FkPositionCompo>();
     compo->loc.x = x;
     compo->loc.y = y;
     addComponent(compo);
 }
 
 FkIntVec2 FkBufDeviceEntity::getPosition() {
-    auto compo = FK_FIND_COMPO(this, FkLocationCompo);
+    auto compo = FK_FIND_COMPO(this, FkPositionCompo);
     if (compo) {
         return compo->loc;
     }

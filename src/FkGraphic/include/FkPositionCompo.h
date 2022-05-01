@@ -14,15 +14,15 @@
 #include "FkComponent.h"
 #include "FkIntVec2.h"
 
-FK_SUPER_CLASS(FkLocationCompo, FkComponent) {
-FK_DEF_CLASS_TYPE_FUNC(FkLocationCompo)
+FK_SUPER_CLASS(FkPositionCompo, FkComponent) {
+FK_DEF_CLASS_TYPE_FUNC(FkPositionCompo)
 
 public:
-    FkLocationCompo();
+    FkPositionCompo();
 
-    FkLocationCompo(const FkLocationCompo &o);
+    FkPositionCompo(const FkPositionCompo &o);
 
-    virtual ~FkLocationCompo();
+    virtual ~FkPositionCompo();
 
 public:
     FkIntVec2 loc;
