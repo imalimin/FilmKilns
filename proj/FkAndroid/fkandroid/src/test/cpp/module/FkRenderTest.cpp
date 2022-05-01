@@ -19,6 +19,9 @@
 class FkRenderEngineTest : public testing::Test {
     void SetUp() override {
         engine = std::make_shared<FkRenderEngine>("RenderEngine");
+        auto renderSettings = std::make_shared<FkEngineSettings>();
+        renderSettings->enableEngineThread = false;
+        engine->setSettings(renderSettings);
         EXPECT_EQ(engine->create(), FK_OK);
         EXPECT_NE(engine->create(), FK_OK);
         EXPECT_EQ(engine->start(), FK_OK);

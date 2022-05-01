@@ -11,9 +11,11 @@
 #include "FkString.h"
 #include "FkFileUtils.h"
 #include "FkImageModelEngine.h"
+#include "FkImgEngineSettings.h"
 
 #define FK_ANDROID_TEST_CACHE_DIR "/storage/emulated/0/Android/data/com.alimin.fk.test/cache"
 #define FK_ANDROID_TEST_CACHE_IMAGE_0 "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/images/image_0.jpg"
+#define FK_ANDROID_TEST_IMAGE_POS "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/images/image_pos.png"
 
 class FkImageEngineTest : public testing::Test {
 protected:
@@ -30,7 +32,15 @@ protected:
         auto str = workspace.c_str();
         EXPECT_EQ(FkFileUtils::mkdirs(workspace), FK_OK);
         std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>("RenderEngine");
+        auto renderSettings = std::make_shared<FkEngineSettings>();
+        renderSettings->enableEngineThread = false;
+        renderEngine->setSettings(renderSettings);
+
         engine = std::make_shared<FkImageEngine>(renderEngine, workspace, "ImageEngine");
+        auto imgEngineSettings = std::make_shared<FkImgEngineSettings>();
+        imgEngineSettings->enableEngineThread = false;
+        engine->setSettings(imgEngineSettings);
+
         EXPECT_EQ(engine->create(), FK_OK);
         EXPECT_EQ(engine->start(), FK_OK);
     }
@@ -58,12 +68,20 @@ TEST_F(FkImageEngineTest, newLayerWithFile) {
     EXPECT_GT(engine->newLayerWithFile(path), 0);
 }
 
+TEST_F(FkImageEngineTest, mvp) {
+    std::string path = FK_ANDROID_TEST_IMAGE_POS;
+    EXPECT_GT(engine->newLayerWithFile(path), 0);
+}
+
 class FkImageFileEngineTest : public FkImageEngineTest {
 protected:
     virtual void SetUp() override {
         FkImageEngineTest::SetUp();
         std::shared_ptr<FkEngine> imageEngine = engine;
         fileEngine = std::make_shared<FkImageModelEngine>(imageEngine, "FileEngine");
+        auto modelSettings = std::make_shared<FkImgEngineSettings>();
+        modelSettings->enableEngineThread = false;
+        fileEngine->setSettings(modelSettings);
         EXPECT_EQ(fileEngine->create(), FK_OK);
         EXPECT_EQ(fileEngine->start(), FK_OK);
     }

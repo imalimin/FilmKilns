@@ -12,6 +12,7 @@
 #include "FkSimpleMolecule.h"
 #include "FkHandlerThread.h"
 #include "FkHandler.h"
+#include "FkEngineSettings.h"
 #include <future>
 #include <map>
 #include <mutex>
@@ -53,6 +54,8 @@ public:
 
     virtual ~FkEngine();
 
+    virtual void setSettings(std::shared_ptr<FkEngineSettings> _settings);
+
     virtual FkResult create();
 
     virtual FkResult destroy();
@@ -61,14 +64,6 @@ public:
 
     virtual FkResult stop();
 
-//    template<class T>
-//    std::future<T> sendFuture(std::shared_ptr<T> protocol) {
-//        auto prom = std::make_shared<std::promise<T>>();
-//        auto *msg = AlMessage::obtain(MSG_FUTURE);
-//        msg->sp = prom;
-//        mHandler->sendMessage(msg);
-//        return prom->get_future();
-//    }
 protected:
     virtual FkResult onCreate();
 
@@ -79,6 +74,8 @@ protected:
     virtual FkResult onStop();
 
     FkResult sendMessage(std::shared_ptr<FkMessage> &msg, bool ignoreState = false);
+
+    std::shared_ptr<FkEngineSettings> getSettings();
 
 private:
     virtual FkResult _onCreate(std::shared_ptr<FkMessage> msg);
@@ -91,7 +88,9 @@ private:
 
     FkResult _changeState(kState &_state, uint32_t src, kState dst);
 
-    void _dispatch(std::shared_ptr<FkMessage> &msg);
+    FkResult _dispatch(std::shared_ptr<FkMessage> &msg);
+
+    bool _isEnableEngineThread();
 
 private:
     std::string name;
@@ -101,6 +100,7 @@ private:
     std::mutex msgMtx;
     kState outsideState = kState::IDL;
     kState internalState = kState::IDL;
+    std::shared_ptr<FkEngineSettings> settings = nullptr;
 };
 
 
