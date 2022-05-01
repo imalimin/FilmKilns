@@ -12,12 +12,12 @@
 
 FK_IMPL_CLASS_TYPE(FkReadPixelsProto, FkLayerProto)
 
-FkReadPixelsProto::FkReadPixelsProto() : FkLayerProto(), size(0) {
+FkReadPixelsProto::FkReadPixelsProto() : FkLayerProto(), size(0), pos(0, 0) {
 
 }
 
 FkReadPixelsProto::FkReadPixelsProto(const FkReadPixelsProto &o)
-        : FkLayerProto(o), buf(o.buf), size(o.size) {
+        : FkLayerProto(o), buf(o.buf), size(o.size), pos(o.pos) {
 
 }
 

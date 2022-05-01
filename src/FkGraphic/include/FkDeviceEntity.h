@@ -15,6 +15,7 @@
 #include "FkBuffer.h"
 #include "FkTexCompo.h"
 #include "FkSize.h"
+#include "FkIntVec2.h"
 
 FK_SUPER_CLASS(FkDeviceEntity, FkMaterialEntity) {
 FK_DEF_CLASS_TYPE_FUNC(FkDeviceEntity)
@@ -40,6 +41,14 @@ public:
     std::shared_ptr<FkBuffer> buffer();
 
     void finish();
+
+    void setPosition(int32_t x, int32_t y);
+
+    FkIntVec2 getPosition();
+
+    void setSize(FkSize size);
+
+    FkSize getSize();
 };
 
 FK_SUPER_CLASS(FkTexDeviceEntity, FkDeviceEntity) {

@@ -133,22 +133,30 @@ FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer
 FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkReadPixelsProto, p);
     FkAssert(proto->layer != nullptr, FK_NPE);
-    FkAssert(proto->layer != nullptr, FK_NPE);
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     auto materials = std::make_shared<FkMaterialEntity>(proto->layer->material);
-    auto sizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);
-    proto->size = sizeCompo->size;
-    proto->buf = FkBuffer::alloc(sizeCompo->size.getWidth() * sizeCompo->size.getHeight() * 4);
+    if (proto->size.isZero()) {
+        auto sizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);
+        proto->size = sizeCompo->size;
+    }
+    proto->buf = FkBuffer::alloc(proto->size.getWidth() * proto->size.getHeight() * 4);
 
     auto promise = std::make_shared<std::promise<int>>();
-    std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkBufDeviceEntity>(proto->buf);
+    auto bufDevice = std::make_shared<FkBufDeviceEntity>(proto->buf);
+    bufDevice->setPosition(proto->pos.x, proto->pos.y);
+    bufDevice->setSize(proto->size);
+    std::shared_ptr<FkDeviceEntity> device = bufDevice;
     device->addComponent(std::make_shared<FkFuncCompo>([promise]() {
         promise->set_value(FK_OK);
     }));
     auto ret = renderEngine->renderDevice(materials, device);
     if (FK_OK != ret || FK_OK != promise->get_future().get()) {
         proto->buf = nullptr;
+    }
+    if (proto->finishCallback) {
+        proto->finishCallback(proto->buf, proto->size);
+        proto->finishCallback = nullptr;
     }
     return ret;
 }

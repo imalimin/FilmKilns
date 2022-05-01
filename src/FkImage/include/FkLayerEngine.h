@@ -16,6 +16,7 @@
 #include "FkRational.h"
 #include "FkGraphicLayer.h"
 #include "FkRect.h"
+#include "FkBuffer.h"
 
 FK_SUPER_CLASS(FkLayerEngine, FkEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkLayerEngine)
@@ -65,7 +66,17 @@ public:
 
     FkResult crop(FkIntRect &rect);
 
-    FkResult cropLayer(FkID layer, FkIntRect &rect);
+    FkResult cropLayer(FkID layerId, FkIntRect &rect);
+
+    /**
+     * Read layer pixels
+     * @param layerId
+     * @param pos
+     * @param size Zero for full layer
+     * @return
+     */
+    FkResult readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
+                        std::function<void(std::shared_ptr<FkBuffer>, FkSize)> finishCallback);
 
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
@@ -108,6 +119,8 @@ private:
     FkResult _crop(std::shared_ptr<FkMessage> &msg);
 
     FkResult _cropLayer(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _readPixels(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

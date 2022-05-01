@@ -13,6 +13,7 @@
 #include "FkFuncCompo.h"
 #include "FkSizeCompo.h"
 #include "FkFormatCompo.h"
+#include "FkLocationCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkDeviceEntity, FkMaterialEntity)
 FK_IMPL_CLASS_TYPE(FkBufDeviceEntity, FkDeviceEntity)
@@ -59,6 +60,33 @@ void FkBufDeviceEntity::finish() {
     if (compo) {
         return compo->func();
     }
+}
+
+void FkBufDeviceEntity::setPosition(int32_t x, int32_t y) {
+    auto compo = std::make_shared<FkLocationCompo>();
+    compo->loc.x = x;
+    compo->loc.y = y;
+    addComponent(compo);
+}
+
+FkIntVec2 FkBufDeviceEntity::getPosition() {
+    auto compo = FK_FIND_COMPO(this, FkLocationCompo);
+    if (compo) {
+        return compo->loc;
+    }
+    return FkIntVec2(0, 0);
+}
+
+void FkBufDeviceEntity::setSize(FkSize size) {
+    addComponent(std::make_shared<FkSizeCompo>(size));
+}
+
+FkSize FkBufDeviceEntity::getSize() {
+    auto compo = FK_FIND_COMPO(this, FkSizeCompo);
+    if (compo) {
+        return compo->size;
+    }
+    return FkSize(0, 0);
 }
 
 FkTexDeviceEntity::FkTexDeviceEntity(std::shared_ptr<FkMaterialCompo> material)

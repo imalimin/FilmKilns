@@ -65,12 +65,22 @@ FkResult FkBufDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     if (fboCompo == nullptr) {
         return FK_NPE;
     }
-    auto size = material->size();
+    auto texSize = material->size();
+    auto tex = material->tex()->tex;
     glFinish();
     fboCompo->fbo->bind();
-    fboCompo->fbo->attach(material->tex()->tex);
-    glViewport(0, 0, size.getWidth(), size.getHeight());
-    glReadPixels(0, 0, size.getWidth(), size.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, device->buffer()->data());
+    fboCompo->fbo->attach(tex);
+    glViewport(0, 0, texSize.getWidth(), texSize.getHeight());
+
+    auto dstSize = device->getSize();
+    if (dstSize.isZero()) {
+        dstSize = texSize;
+    }
+    auto pos = device->getPosition();
+    glReadPixels(pos.x, pos.y,
+                 dstSize.getWidth(), dstSize.getHeight(),
+                 GL_RGBA, GL_UNSIGNED_BYTE,
+                 device->buffer()->data());
     fboCompo->fbo->detach(material->tex()->tex->desc.target);
     fboCompo->fbo->unbind();
     return FK_OK;

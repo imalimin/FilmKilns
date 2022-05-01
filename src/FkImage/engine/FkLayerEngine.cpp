@@ -31,6 +31,7 @@
 #include "FkQueryWinSizeProto.h"
 #include "FkRemoveLayerProto.h"
 #include "FkScaleTypeProto.h"
+#include "FkReadPixelsProto.h"
 
 FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
 
@@ -393,13 +394,32 @@ FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
     return setCanvasSizeInternal(size, false);
 }
 
-FkResult FkLayerEngine::cropLayer(FkID layer, FkIntRect &rect) {
+FkResult FkLayerEngine::cropLayer(FkID layerId, FkIntRect &rect) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_cropLayer));
-    msg->arg1 = layer;
+    msg->arg1 = layerId;
     msg->sp = std::make_shared<FkIntRect>(rect);
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_cropLayer(std::shared_ptr<FkMessage> &msg) {
     return 0;
+}
+
+FkResult FkLayerEngine::readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
+                                   std::function<void(std::shared_ptr<FkBuffer>, FkSize)> finishCallback) {
+    auto proto = std::make_shared<FkReadPixelsProto>();
+    proto->layerId = layerId;
+    proto->pos = pos;
+    proto->size = size;
+    proto->finishCallback = std::move(finishCallback);
+
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_readPixels));
+    msg->arg1 = layerId;
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_readPixels(std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkReadPixelsProto, msg->sp);
+    return client->with(molecule)->send(proto);;
 }

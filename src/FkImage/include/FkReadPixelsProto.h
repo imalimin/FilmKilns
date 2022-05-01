@@ -13,6 +13,7 @@
 
 #include "FkLayerProto.h"
 #include "FkBuffer.h"
+#include "FkIntVec2.h"
 
 FK_SUPER_CLASS(FkReadPixelsProto, FkLayerProto) {
 FK_DEF_CLASS_TYPE_FUNC(FkReadPixelsProto)
@@ -26,7 +27,9 @@ public:
 
 public:
     FkSize size;
+    FkIntVec2 pos;
     std::shared_ptr<FkBuffer> buf = nullptr;
+    std::function<void(std::shared_ptr<FkBuffer>, FkSize)> finishCallback = nullptr;
 };
 
 #endif //FK_IMAGE_FKREADPIXELSPROTO_H
