@@ -12,6 +12,7 @@
 #include "FkFileUtils.h"
 #include "FkImageModelEngine.h"
 #include "FkImgEngineSettings.h"
+#include "FkOffWindow.h"
 
 #define FK_ANDROID_TEST_CACHE_DIR "/storage/emulated/0/Android/data/com.alimin.fk.test/cache"
 #define FK_ANDROID_TEST_TEMP_FILE "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/000000.png"
@@ -46,6 +47,8 @@ protected:
 
         EXPECT_EQ(engine->create(), FK_OK);
         EXPECT_EQ(engine->start(), FK_OK);
+        auto win = std::make_shared<FkOffWindow>(1440, 2676);
+        EXPECT_EQ(engine->setSurface(win, static_cast<int32_t>(kScaleType::CENTER_INSIDE)), FK_OK);
     }
 
     virtual void TearDown() override {
@@ -80,11 +83,53 @@ TEST_F(FkImageEngineTest, Position) {
     std::string path = FK_ANDROID_TEST_IMAGE_POS;
     auto layerId = engine->newLayerWithFile(path);
     EXPECT_GT(layerId, 0);
-    EXPECT_EQ(engine->postTranslate(layerId, 50, 200), FK_OK);
-    EXPECT_TRUE(testColor(engine, 290, 560, FkColor::white()));
-    EXPECT_TRUE(testColor(engine, 205, 387, FkColor::red()));
-    EXPECT_TRUE(testColor(engine, 433, 614, FkColor::green()));
-    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
+    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
+    EXPECT_EQ(engine->postTranslate(layerId, -120, 300), FK_OK);
+    render();
+    EXPECT_TRUE(testColor(engine, 225, 432, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 140, 259, FkColor::red()));
+    EXPECT_TRUE(testColor(engine, 368, 486, FkColor::green()));
+}
+
+TEST_F(FkImageEngineTest, Scale) {
+    std::string path = FK_ANDROID_TEST_IMAGE_POS;
+    auto layerId = engine->newLayerWithFile(path);
+    EXPECT_GT(layerId, 0);
+    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
+    EXPECT_EQ(engine->postScale(layerId, 1.8f, 1.8f), FK_OK);
+    render();
+    EXPECT_TRUE(testColor(engine, 270, 320, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 117, 8, FkColor::red()));
+    EXPECT_TRUE(testColor(engine, 527, 417, FkColor::green()));
+}
+
+TEST_F(FkImageEngineTest, Rotate) {
+    std::string path = FK_ANDROID_TEST_IMAGE_POS;
+    auto layerId = engine->newLayerWithFile(path);
+    EXPECT_GT(layerId, 0);
+    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
+    FkRational rational(1, 1);
+    EXPECT_EQ(engine->postRotation(layerId, rational), FK_OK);
+    render();
+    EXPECT_TRUE(testColor(engine, 270, 320, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 79, 298, FkColor::red()));
+    EXPECT_TRUE(testColor(engine, 392, 229, FkColor::green()));
+//    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
+}
+
+TEST_F(FkImageEngineTest, Mvp) {
+    std::string path = FK_ANDROID_TEST_IMAGE_POS;
+    auto layerId = engine->newLayerWithFile(path);
+    EXPECT_GT(layerId, 0);
+    EXPECT_EQ(engine->setCanvasSize(FkSize(540, 640)), FK_OK);
+    EXPECT_EQ(engine->postTranslate(layerId, -120, 300), FK_OK);
+    EXPECT_EQ(engine->postScale(layerId, 1.8f, 1.8f), FK_OK);
+    FkRational rational(1, 1);
+    EXPECT_EQ(engine->postRotation(layerId, rational), FK_OK);
+    render();
+    EXPECT_TRUE(testColor(engine, 396, 497, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 51, 458, FkColor::red()));
+//    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
 class FkImageFileEngineTest : public FkImageEngineTest {
@@ -130,7 +175,6 @@ TEST_F(FkImageFileEngineTest, getLayers) {
 }
 
 static bool testColor(std::shared_ptr<FkImageEngine> engine, int32_t x, int32_t y, FkColor expect) {
-    EXPECT_EQ(engine->notifyRender(), FK_OK);
     FkIntVec2 pos(x, y);
     FkSize size(1,1);
     FkColor color;
