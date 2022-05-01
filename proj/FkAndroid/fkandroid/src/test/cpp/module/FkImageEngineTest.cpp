@@ -14,8 +14,11 @@
 #include "FkImgEngineSettings.h"
 
 #define FK_ANDROID_TEST_CACHE_DIR "/storage/emulated/0/Android/data/com.alimin.fk.test/cache"
+#define FK_ANDROID_TEST_TEMP_FILE "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/000000.png"
 #define FK_ANDROID_TEST_CACHE_IMAGE_0 "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/images/image_0.jpg"
 #define FK_ANDROID_TEST_IMAGE_POS "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/images/image_pos.png"
+
+static bool testColor(std::shared_ptr<FkImageEngine> engine, int32_t x, int32_t y, FkColor expect);
 
 class FkImageEngineTest : public testing::Test {
 protected:
@@ -51,6 +54,11 @@ protected:
         engine = nullptr;
     }
 
+public:
+    void render() {
+        EXPECT_EQ(engine->notifyRender(), FK_OK);
+    }
+
 protected:
     std::string workspace;
     std::string fkpFile;
@@ -68,9 +76,15 @@ TEST_F(FkImageEngineTest, newLayerWithFile) {
     EXPECT_GT(engine->newLayerWithFile(path), 0);
 }
 
-TEST_F(FkImageEngineTest, mvp) {
+TEST_F(FkImageEngineTest, Position) {
     std::string path = FK_ANDROID_TEST_IMAGE_POS;
-    EXPECT_GT(engine->newLayerWithFile(path), 0);
+    auto layerId = engine->newLayerWithFile(path);
+    EXPECT_GT(layerId, 0);
+    EXPECT_EQ(engine->postTranslate(layerId, 50, 200), FK_OK);
+    EXPECT_TRUE(testColor(engine, 290, 560, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 205, 387, FkColor::red()));
+    EXPECT_TRUE(testColor(engine, 433, 614, FkColor::green()));
+    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
 class FkImageFileEngineTest : public FkImageEngineTest {
@@ -113,4 +127,19 @@ TEST_F(FkImageFileEngineTest, getLayers) {
 
     };
     EXPECT_EQ(fileEngine->getLayers(callback), FK_OK);
+}
+
+static bool testColor(std::shared_ptr<FkImageEngine> engine, int32_t x, int32_t y, FkColor expect) {
+    EXPECT_EQ(engine->notifyRender(), FK_OK);
+    FkIntVec2 pos(x, y);
+    FkSize size(1,1);
+    FkColor color;
+    auto ret = engine->readPixels(Fk_CANVAS_ID, pos, size,
+                                  [&color](std::shared_ptr<FkBuffer> buf, FkSize size) {
+        EXPECT_TRUE(buf != nullptr);
+        color = FkColor::makeFromRGBA8(buf->data()[0], buf->data()[1],
+                                       buf->data()[2], buf->data()[3]);
+    });
+    EXPECT_EQ(ret, FK_OK);
+    return color.equals(expect);
 }

@@ -9,110 +9,90 @@
 
 FK_IMPL_CLASS_TYPE(FkColor, FkObject)
 
-FkColor &FkColor::makeFrom(int32_t color) {
-    static FkColor *c;
-    if (c == nullptr) {
-        c = new FkColor();
-    }
-    c->alpha = (color >> 24) & 0x000000FF;
-    c->red = (color >> 16) & 0x000000FF;
-    c->green = (color >> 8) & 0x000000FF;
-    c->blue = (color >> 0) & 0x000000FF;
-    return *c;
+FkColor FkColor::makeFrom(int32_t color) {
+    return makeFromRGBA8((color >> 16) & 0x000000FF, (color >> 8) & 0x000000FF,
+                         (color >> 0) & 0x000000FF, (color >> 24) & 0x000000FF);
 }
 
-FkColor &FkColor::makeFromRGBA8(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
-    static FkColor *c;
-    if (c == nullptr) {
-        c = new FkColor();
-    }
-    c->alpha = alpha;
-    c->red = red;
-    c->green = green;
-    c->blue = blue;
-    return *c;
+FkColor FkColor::makeFromRGBA8(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+    FkColor color;
+    color.vec[0] = red;
+    color.vec[1] = green;
+    color.vec[2] = blue;
+    color.vec[3] = alpha;
+    return color;
 }
 
-FkColor &FkColor::white() {
-    static FkColor *color;
-    if (color == nullptr) {
-        color = new FkColor();
-    }
-    color->red = 255;
-    color->green = 255;
-    color->blue = 255;
-    color->alpha = 255;
-    return *color;
+FkColor FkColor::white() {
+    return makeFromRGBA8(255, 255, 255, 255);
 }
 
-FkColor &FkColor::black() {
-    static FkColor *color;
-    if (color == nullptr) {
-        color = new FkColor();
-    }
-    color->red = 0;
-    color->green = 0;
-    color->blue = 0;
-    color->alpha = 255;
-    return *color;
+FkColor FkColor::black() {
+    return makeFromRGBA8(0, 0, 0, 255);
 }
 
-FkColor &FkColor::transparent() {
-    static FkColor *color;
-    if (color == nullptr) {
-        color = new FkColor();
-    }
-    color->red = 0;
-    color->green = 0;
-    color->blue = 0;
-    color->alpha = 0;
-    return *color;
+FkColor FkColor::red() {
+    return makeFromRGBA8(255, 0, 0, 255);
+}
+
+FkColor FkColor::green() {
+    return makeFromRGBA8(0, 255, 0, 255);
+}
+
+FkColor FkColor::blue() {
+    return makeFromRGBA8(0, 0, 255, 255);
+}
+
+FkColor FkColor::transparent() {
+    return makeFromRGBA8(0, 0, 0, 0);
 }
 
 FkColor::FkColor() : FkObject(), alphaType(AlphaType::kUnPreMultiple) {
-
+    vec.resize(4);
 }
 
 FkColor::FkColor(const FkColor &o)
-        : FkObject(), format(o.format), alphaType(o.alphaType),
-          red(o.red), green(o.green), blue(o.blue), alpha(o.alpha) {
-
+        : FkObject(), format(o.format), alphaType(o.alphaType) {
+    vec.resize(4);
+    memcpy(vec.data(), o.vec.data(), sizeof(uint16_t) * vec.size());
 }
 
 FkColor::~FkColor() {
-    delete[] _fArray;
+    if (_fArray) {
+        delete[] _fArray;
+    }
 }
 
 float FkColor::fRed() {
-    return red * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
+    return uRed() * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
 float FkColor::fGreen() {
-    return green * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
+    return uGreen() * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
 float FkColor::fBlue() {
-    return blue * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
+    return uBlue() * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
 float FkColor::fAlpha() {
-    return alpha / 255.0f;
+    return uAlpha() / 255.0f;
 }
 
 uint16_t FkColor::uRed() {
-    return red;
+    return vec[0];
 }
 
 uint16_t FkColor::uGreen() {
-    return green;
+    return vec[1];
 }
 
 uint16_t FkColor::uBlue() {
-    return blue;
+    return vec[2];
 }
 
 uint16_t FkColor::uAlpha() {
-    return alpha;
+    return vec[3];
 }
 
 float *FkColor::fArray() {
@@ -129,13 +109,13 @@ float *FkColor::fArray() {
 
 int32_t FkColor::toInt() {
     int32_t color = 0;
-    color |= ((uint8_t) alpha);
+    color |= ((uint8_t) uAlpha());
     color = color << 8;
-    color |= ((uint8_t) (red * fAlpha()));
+    color |= ((uint8_t) (uRed() * fAlpha()));
     color = color << 8;
-    color |= ((uint8_t) (green * fAlpha()));
+    color |= ((uint8_t) (uGreen() * fAlpha()));
     color = color << 8;
-    color |= ((uint8_t) (blue * fAlpha()));
+    color |= ((uint8_t) (uBlue() * fAlpha()));
     return color;
 }
 
@@ -145,4 +125,8 @@ void FkColor::setAlphaType(AlphaType type) {
 
 FkColor::kFormat FkColor::getFormat() {
     return format;
+}
+
+bool FkColor::equals(FkColor &color) {
+    return uRed() == color.uRed() && uGreen() == color.uGreen() && uBlue() == color.uBlue() && uAlpha() == color.uAlpha();
 }

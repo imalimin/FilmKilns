@@ -112,8 +112,6 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
     auto promise = std::make_shared<std::promise<int>>();
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkBufDeviceEntity>(buf);
     device->addComponent(std::make_shared<FkFuncCompo>([promise, buf, &size]() {
-        std::string path = "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/000000.bmp";
-        FkBitmap::write(path, FkImage::Format::kJPEG, buf, size.getWidth(), size.getHeight());
         promise->set_value(FK_OK);
     }));
     auto materials = makeMaterials(src, size, FkIntVec2(0, 0));
