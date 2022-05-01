@@ -51,6 +51,8 @@ private:
 
     FkResult _destroyContext();
 
+    bool _isOffWin(std::shared_ptr<FkGraphicWindow> &win);
+
 private:
     std::shared_ptr<FkContextCompo> context = nullptr;
 };

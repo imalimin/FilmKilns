@@ -22,7 +22,7 @@ FkAndroidWindow::FkAndroidWindow(jobject surface)
     auto win = ANativeWindow_fromSurface(env, surface);
     _size.set(ANativeWindow_getWidth(win), ANativeWindow_getHeight(win));
     winHandle = win;
-    FkLogI(FK_DEF_TAG, "FkAndroidWindow");
+    FkLogI(FK_DEF_TAG, "FkAndroidWindow %dx%d", _size.getWidth(), _size.getHeight());
 }
 
 FkAndroidWindow::~FkAndroidWindow() {

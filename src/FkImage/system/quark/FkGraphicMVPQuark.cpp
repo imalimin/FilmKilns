@@ -81,6 +81,8 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
                                     1.0f / canvasScale->value.x / layerScale->value.y, 1.0f));
     glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
     vec = vec * mat;
+    auto x = proto->value.x;
+    auto y = proto->value.y;
     proto->value.x = vec.x;
     proto->value.y = vec.y;
     return FK_OK;

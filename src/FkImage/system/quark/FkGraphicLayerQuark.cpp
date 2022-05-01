@@ -408,7 +408,7 @@ FkResult FkGraphicLayerQuark::_onUpdateScaleType(std::shared_ptr<FkProtocol> &p)
     auto layer = itr->second;
     auto scaleComp = FK_FIND_COMPO(layer, FkScaleComponent);
     auto sizeCompo = FK_FIND_COMPO(layer, FkSizeCompo);
-    if (!proto->winSize.isZero() &&  nullptr != scaleComp) {
+    if (!proto->winSize.isZero() &&  scaleComp != nullptr &&  sizeCompo != nullptr) {
         scaleComp->value = _calcScaleType(sizeCompo->size, proto->winSize, proto->scaleType);
         return FK_OK;
     }

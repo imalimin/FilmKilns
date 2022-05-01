@@ -13,6 +13,7 @@
 #include "FkWindowProto.h"
 #include "FkEmptyQuark.h"
 #include "FkSizeCompo.h"
+#include "FkOffWindow.h"
 
 FK_IMPL_CLASS_TYPE(FkGLEnvAtom, FkSimpleAtom)
 
@@ -84,11 +85,11 @@ FkResult FkGLEnvAtom::_onRender(std::shared_ptr<FkProtocol> p) {
 FkResult FkGLEnvAtom::_onUpdateWindow(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkWindowProto, p);
     FkResult ret = FK_OK;
-    if (context && proto->win) {
+    if (context && !_isOffWin(proto->win)) {
         ret = _changeWithWindow(proto->win);
-    } else if (context && proto->win == nullptr) {
+    } else if (context && _isOffWin(proto->win)) {
         ret = _changeWithoutWindow();
-    } else if (context == nullptr && proto->win) {
+    } else if (context == nullptr && !_isOffWin(proto->win)) {
         _initializeWithWindow(proto->win);
     } else {
         _initializeWithoutWindow();
@@ -120,7 +121,7 @@ FkResult FkGLEnvAtom::_changeWithoutWindow() {
         context = newContext;
         return ret;
     }
-    return FK_INVALID_STATE;
+    return FK_OK;
 }
 
 FkResult FkGLEnvAtom::_initializeWithWindow(std::shared_ptr<FkGraphicWindow> &win) {
@@ -146,4 +147,8 @@ FkResult FkGLEnvAtom::_destroyContext() {
         return FK_OK;
     }
     return FK_NPE;
+}
+
+bool FkGLEnvAtom::_isOffWin(std::shared_ptr<FkGraphicWindow> &win) {
+    return win == nullptr || FK_INSTANCE_OF(win, FkOffWindow);
 }
