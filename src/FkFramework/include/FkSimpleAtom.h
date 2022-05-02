@@ -35,6 +35,8 @@ public:
 
     std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> &p, bool reverse = false);
 
+    bool findAllProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols);
+
     bool empty();
 
     void clear();
@@ -69,6 +71,8 @@ protected:
     virtual FkResult dispatchNext(std::shared_ptr<FkProtocol> p);
 
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) = 0;
+
+    virtual void _prepareDeliveryProtocols();
 
 private:
     void _connectBaseSession();

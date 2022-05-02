@@ -10,26 +10,6 @@
 #include "FkGraphicCanvasQuark.h"
 #include "FkGraphicLayerQuark.h"
 #include "FkGraphicMVPQuark.h"
-#include "FkGraphicNewLayerPrt.h"
-#include "FkGraphicUpdateLayerPrt.h"
-#include "FkRenderRequestPrt.h"
-#include "FkQuerySizeProto.h"
-#include "FkLayerPostTransProto.h"
-#include "FkLayerPostScaleProto.h"
-#include "FkLayerPostRotateProto.h"
-#include "FkDrawPointProto.h"
-#include "FkSetSurfacePrt.h"
-#include "FkMeasureTransProto.h"
-#include "FkMeasurePointProto.h"
-#include "FkQueryLayersProto.h"
-#include "FkLayerSetTransProto.h"
-#include "FkLayerSetRotateProto.h"
-#include "FkLayerSetScaleProto.h"
-#include "FkCropProto.h"
-#include "FkQueryWinSizeProto.h"
-#include "FkRemoveLayerProto.h"
-#include "FkReadPixelsProto.h"
-#include "FkScaleTypeProto.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicModelAtom, FkSimpleAtom)
 
@@ -42,26 +22,6 @@ FkGraphicModelAtom::~FkGraphicModelAtom() {
 }
 
 void FkGraphicModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DELIVERY(desc, FkGraphicNewLayerPrt, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkGraphicUpdateLayerPrt, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkRenderRequestPrt, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkQuerySizeProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkLayerPostTransProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkLayerPostScaleProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkLayerPostRotateProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkMeasureTransProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkMeasurePointProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkDrawPointProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkSetSurfacePrt, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkQueryLayersProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkLayerSetTransProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkLayerSetRotateProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkLayerSetScaleProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkCropProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkQueryWinSizeProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkRemoveLayerProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkReadPixelsProto, FkGraphicModelAtom);
-    FK_PORT_DELIVERY(desc, FkScaleTypeProto, FkGraphicModelAtom);
 }
 
 void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

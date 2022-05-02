@@ -54,14 +54,15 @@ FkResult FkQuark::dispatch(std::shared_ptr<FkProtocol> p) {
         && !FK_INSTANCE_OF(p, FkOnDestroyPrt)
         && !FK_INSTANCE_OF(p, FkOnStartPrt)
         && !FK_INSTANCE_OF(p, FkOnStopPrt)) {
-        FkLogE(FK_DEF_TAG, "Quark(%s) dispatch protocol(%s) on invalid state(%d)", typeid(*this).name(), typeid(*p).name(), this->state);
+        FkLogE(FK_DEF_TAG, "Quark(%s) dispatch protocol(%s) on invalid state(%d)",
+               getClassType().getName(), p->getClassType().getName(), this->state);
         return FK_INVALID_STATE;
     }
     auto port = desc->find(p->getType());
     if (nullptr != port) {
         return port->chat(this, p);
     }
-    FkLogE(FK_DEF_TAG, "Quark(%s) protocol(%s) not found", typeid(*this).name(), typeid(*p).name());
+    FkLogE(FK_DEF_TAG, "Quark(%s) protocol(%s) not found", getClassType().getName(), p->getClassType().getName());
     return FK_PORT_NOT_FOUND;
 }
 
@@ -111,7 +112,7 @@ FkResult FkQuark::accept(const std::shared_ptr<FkProtocol> p) {
     return FK_FAIL;
 }
 
-FkResult FkQuark::accept(const size_t protoType) {
+FkResult FkQuark::accept(const FkProtocol::Type protoType) {
     if (nullptr != desc->find(protoType)) {
         return FK_OK;
     }
@@ -130,4 +131,8 @@ FkResult FkQuark::_changeState(uint32_t src, kState dst) {
 
 FkResult FkQuark::queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols) {
     return desc->query(protocols);
+}
+
+FkResult FkQuark::addPort(uint32_t port, std::shared_ptr<FkProtocol> &p, FkPort::PortFunc func) {
+    return desc->add(port, p, func);
 }

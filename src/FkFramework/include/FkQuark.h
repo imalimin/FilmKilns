@@ -15,14 +15,14 @@
 #include <mutex>
 
 class FkSession;
+class FkConnectChain;
 
 FK_SUPER_CLASS(FkQuark, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkQuark)
 
 public:
     friend FkSession;
-
-    typedef int (FkQuark::*ProtHandler)(std::shared_ptr<FkProtocol>);
+    friend FkConnectChain;
 
 public:
     FkQuark();
@@ -46,7 +46,11 @@ protected:
 
     virtual FkResult dispatch(std::shared_ptr<FkProtocol> p);
 
-    FkResult queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols);
+    virtual FkResult queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols);
+
+    FkResult accept(const FkProtocol::Type protoType);
+
+    FkResult addPort(uint32_t port, std::shared_ptr<FkProtocol> &p, FkPort::PortFunc func);
 
 private:
     FkResult _onCreate(std::shared_ptr<FkProtocol> p);
@@ -58,8 +62,6 @@ private:
     FkResult _onStop(std::shared_ptr<FkProtocol> p);
 
     FkResult accept(const std::shared_ptr<FkProtocol> p);
-
-    FkResult accept(const size_t protoType);
 
     FkResult _changeState(uint32_t src, kState dst);
 

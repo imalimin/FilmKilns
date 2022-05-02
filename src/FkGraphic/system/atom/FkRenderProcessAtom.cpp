@@ -20,7 +20,6 @@ FkRenderProcessAtom::~FkRenderProcessAtom() {
 }
 
 void FkRenderProcessAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
-    FK_PORT_DELIVERY(desc, FkRenderProto, FkRenderProcessAtom);
 }
 
 void FkRenderProcessAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

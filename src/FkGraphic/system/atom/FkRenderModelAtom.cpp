@@ -9,7 +9,6 @@
 #include "FkIDQuark.h"
 #include "FkRenderDefine.h"
 #include "FkSizeCompo.h"
-#include "FkNewBmpTexProto.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderModelAtom, FkSimpleAtom)
 
@@ -23,7 +22,6 @@ FkRenderModelAtom::~FkRenderModelAtom() {
 
 void FkRenderModelAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderModelAtom::_onRender);
-    FK_PORT_DELIVERY(desc, FkGenIDProto, FkRenderModelAtom);
 }
 
 void FkRenderModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {

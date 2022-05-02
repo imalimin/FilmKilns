@@ -36,6 +36,13 @@ std::shared_ptr<FkSession> FkConnectChain::connectSession(std::shared_ptr<FkProt
     return count > 0 ? session : nullptr;
 }
 
+bool FkConnectChain::findAllProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols) {
+    for (auto &quark : chain) {
+        quark->queryProtocols(protocols);
+    }
+    return true;
+}
+
 bool FkConnectChain::empty() {
     return chain.empty();
 }
@@ -70,6 +77,7 @@ FkResult FkSimpleAtom::onCreate() {
     auto proto = std::make_shared<FkOnCreatePrt>();
     proto->context = getContext();
     ret = dispatchNext(proto);
+    _prepareDeliveryProtocols();
     /// Connect left protocols.
     _connectSession();
     return ret;
@@ -167,4 +175,15 @@ FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     }
     FkLogW(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty.", typeid(*this).name());
     return FK_SKIP;
+}
+
+void FkSimpleAtom::_prepareDeliveryProtocols() {
+    std::list<std::shared_ptr<FkProtocol>> protocols;
+    if (chain->findAllProtocols(protocols)) {
+        for (auto &proto : protocols) {
+            if (FK_OK != accept(proto->getType())) {
+                addPort(0, proto, reinterpret_cast<FkPort::PortFunc>(&FkSimpleAtom::dispatchNext));
+            }
+        }
+    }
 }
