@@ -50,9 +50,7 @@ class ImagePresenter(
     override fun start() {
         engine.start()
         modelEngine.start()
-        if (cacheFile.exists()) {
-            modelEngine.load(cacheFile.absolutePath)
-        }
+        modelEngine.load(cacheFile.absolutePath)
     }
 
     override fun stop() {

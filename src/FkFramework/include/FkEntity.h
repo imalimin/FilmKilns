@@ -46,7 +46,7 @@ public:
 
     FkResult copyComponentFrom(std::shared_ptr<FkEntity> src, const FkClassType &classType) {
         std::vector<std::shared_ptr<FkComponent>> vec;
-        if (FK_OK == findComponents(vec, classType)) {
+        if (FK_OK == src->findComponents(vec, classType)) {
             return addComponent(vec[0]);
         }
         return FK_SOURCE_NOT_FOUND;
