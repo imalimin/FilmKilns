@@ -81,3 +81,13 @@ std::string FkFileUtils::parent(std::string &file) {
     }
     return file.substr(0, pos);
 }
+
+bool FkFileUtils::remove(std::string &file) {
+    return std::remove(file.c_str()) == 0;
+}
+
+long FkFileUtils::size(std::string &file) {
+    struct stat info{};
+    auto ret = stat(file.c_str(), &info);
+    return info.st_size;
+}

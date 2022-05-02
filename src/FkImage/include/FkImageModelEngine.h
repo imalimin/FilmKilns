@@ -64,7 +64,7 @@ private:
 
     std::string _createTempDir(std::string &file);
 
-    FkResult _writeModel2File(std::string &dir, std::any model);
+    FkResult _writeModel2File(std::string &dir, std::shared_ptr<pb::FkPictureModel> &model);
 
     FkResult _copyLayerFile(std::string &dir, std::string &src);
 

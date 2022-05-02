@@ -33,6 +33,10 @@ public:
     static std::string suffix(std::string &file);
 
     static std::string parent(std::string &file);
+
+    static bool remove(std::string &file);
+
+    static long size(std::string &file);
 };
 
 #endif //FK_BASE_FKFILEUTILS_H

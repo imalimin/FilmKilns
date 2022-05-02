@@ -55,15 +55,22 @@ FkResult FkImageModelEngine::onStop() {
 }
 
 FkResult FkImageModelEngine::save(std::string &file) {
+    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
+    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
+    if (FK_OK != ret) {
+        FkLogI(FK_DEF_TAG, "Query layers fail with %d", ret);
+        return FK_INVALID_DATA;
+    }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_save));
     msg->arg3 = file;
+    msg->sp = std::make_shared<FkAnyCompo>(layers);
     return sendMessage(msg);
 }
 
 FkResult FkImageModelEngine::_save(std::shared_ptr<FkMessage> &msg) {
-    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
-    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
-
+    FK_CAST_NULLABLE_PTR_RETURN_INT(anyCompo, FkAnyCompo, msg->sp);
+    FkAssert(anyCompo->any.has_value(), FK_FAIL);
+    auto layers = std::any_cast<std::vector<std::shared_ptr<FkGraphicLayer>>>(anyCompo->any);
     auto file = msg->arg3;
     auto dir = _createTempDir(file);
     auto model = convert2PictureModel(dir, layers);
@@ -101,6 +108,7 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
         }
     }
     auto canvasSize = model->canvas().size();
+    FkAssert(canvasSize.width() != 0 && canvasSize.height() != 0, FK_FAIL);
     engine->setCanvasSize(FkSize(canvasSize.width(), canvasSize.height()));
     return FK_OK;
 }
@@ -144,6 +152,7 @@ std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std
             auto canvas = new pb::FkImageLayer();
             model->set_allocated_canvas(canvas);
             _fillLayer(canvas, layer);
+            FkAssert(canvas->size().width() != 0, nullptr);
         } else {
             auto fileCompo = FK_FIND_COMPO(layer, FkFilePathCompo);
             if (fileCompo && !dir.empty()) {
@@ -202,13 +211,23 @@ std::string FkImageModelEngine::_createTempDir(std::string &file) {
     return dir;
 }
 
-FkResult FkImageModelEngine::_writeModel2File(std::string &dir, std::any model) {
+FkResult FkImageModelEngine::_writeModel2File(std::string &dir,
+                                              std::shared_ptr<pb::FkPictureModel> &model) {
     auto modelFile = dir;
     modelFile.append("/model.pb");
+    if (FkFileUtils::exist(modelFile)) {
+        FkFileUtils::remove(modelFile);
+    }
     std::fstream stream;
     stream.open(modelFile.c_str(), std::ios::out | std::ios::binary);
-    return std::any_cast<std::shared_ptr<pb::FkPictureModel>>(model)
-                   ->SerializeToOstream(&stream) ? FK_OK : FK_IO_FAIL;
+    auto ret = model->SerializeToOstream(&stream);
+    stream.flush();
+    stream.close();
+    if (!ret) {
+        FkLogI(FK_DEF_TAG, "Write pb model fail with code.");
+    }
+    FkAssert(ret, FK_IO_FAIL);
+    return ret ? FK_OK : FK_IO_FAIL;
 }
 
 FkResult FkImageModelEngine::_copyLayerFile(std::string &dir, std::string &src) {
