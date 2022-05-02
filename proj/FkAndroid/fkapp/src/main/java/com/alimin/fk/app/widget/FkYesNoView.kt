@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import com.alimin.fk.app.R
+import com.microsoft.fluentui.contextualcommandbar.CommandItem
 import com.microsoft.fluentui.theming.FluentUIContextThemeWrapper
 
 class FkYesNoView : FrameLayout {
-    private lateinit var cancelBtn: FrameLayout
-    private lateinit var enterBtn: FrameLayout
+    private lateinit var baseCommandBar: FkContextualCommandBar
 
     constructor(context: Context) : super(
         FluentUIContextThemeWrapper(
@@ -36,21 +36,23 @@ class FkYesNoView : FrameLayout {
             .from(context)
             .inflate(R.layout.item_yes_no_action, this, false)
         addView(rootView)
-        cancelBtn = rootView.findViewById(R.id.cancelBtn)
-        enterBtn = rootView.findViewById(R.id.enterBtn)
-        cancelBtn.getChildAt(0).isEnabled = true
-        enterBtn.getChildAt(0).isEnabled = true
+        baseCommandBar = rootView.findViewById(R.id.baseCommandBar)
+        with(baseCommandBar) {
+            setMenu(R.menu.menu_yes_no)
+        }
     }
 
     fun setActionListener(listener: (yes: Boolean) -> Unit) {
-        cancelBtn.setOnClickListener(object : OnClickListener {
-            override fun onClick(v: View?) {
-                listener(false)
-            }
-        })
-        enterBtn.setOnClickListener(object : OnClickListener {
-            override fun onClick(v: View?) {
-                listener(true)
+        baseCommandBar.setItemOnClickListener(object : CommandItem.OnItemClickListener {
+            override fun onItemClick(item: CommandItem, view: View) {
+                when (item.getId()) {
+                    R.id.action_cancel -> {
+                        listener(false)
+                    }
+                    R.id.action_enter -> {
+                        listener(true)
+                    }
+                }
             }
         })
     }
