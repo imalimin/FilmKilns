@@ -192,6 +192,34 @@ TEST_F(FkImageFileEngineTest, getLayers) {
     EXPECT_EQ(fileEngine->getLayers(callback), FK_OK);
 }
 
+TEST_F(FkImageFileEngineTest, Restore) {
+    auto layerId = addImagePosLayer();
+    setTestCanvasSize();
+    setTestPosition(layerId);
+    setTestScale(layerId);
+    setTestRotate(layerId);
+    render();
+    EXPECT_TRUE(testColor(engine, 396, 497, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 51, 458, FkColor::red()));
+
+    FkIntRect rect(133, 1100, 856, 1703);
+    EXPECT_EQ(engine->crop(rect), FK_OK);
+    render();
+    EXPECT_TRUE(testColor(engine, 0, 224, FkColor::red()));
+
+    EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
+    EXPECT_EQ(fileEngine->save(fkpFile), FK_OK);
+    EXPECT_EQ(fileEngine->stop(), FK_OK);
+    EXPECT_EQ(engine->stop(), FK_OK);
+
+    EXPECT_EQ(engine->start(), FK_OK);
+    EXPECT_EQ(fileEngine->start(), FK_OK);
+    EXPECT_EQ(fileEngine->load(fkpFile), FK_OK);
+    render();
+    EXPECT_TRUE(testColor(engine, 0, 224, FkColor::red()));
+
+}
+
 static bool testColor(std::shared_ptr<FkImageEngine> engine, int32_t x, int32_t y, FkColor expect) {
     FkIntVec2 pos(x, y);
     FkSize size(1,1);
