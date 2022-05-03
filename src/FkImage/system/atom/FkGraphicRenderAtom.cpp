@@ -69,30 +69,45 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         }
         _drawPoints(layer);
         auto materials = _makeRenderMaterials(layer);
-        std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(canvas->material);
-        auto ret = renderEngine->renderDevice(materials, device);
-        FkAssert(FK_OK == ret, ret);
+        if (materials) {
+            std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(canvas->material);
+            auto ret = renderEngine->renderDevice(materials, device);
+            FkAssert(FK_OK == ret, ret);
+        } else {
+            FkLogW(FK_DEF_TAG, "Skip render layer %d", layer->id);
+        }
     }
     return _drawCanvas2Screen(canvas);
 }
 
 std::shared_ptr<FkMaterialEntity>
 FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer) {
-    auto materials = std::make_shared<FkMaterialEntity>(layer->material);
-    materials->addComponent(FK_FIND_COMPO(layer, FkVertexCompo));
-    materials->addComponent(FK_FIND_COMPO(layer, FkCoordinateCompo));
-    materials->addComponent(FK_FIND_COMPO(layer, FkMatCompo));
-    return materials;
+    auto vtxCompo = FK_FIND_COMPO(layer, FkVertexCompo);
+    auto coordCompo = FK_FIND_COMPO(layer, FkCoordinateCompo);
+    auto matCompo = FK_FIND_COMPO(layer, FkMatCompo);
+    if(vtxCompo && coordCompo && matCompo) {
+        auto materials = std::make_shared<FkMaterialEntity>(layer->material);
+        materials->addComponent(vtxCompo);
+        materials->addComponent(coordCompo);
+        materials->addComponent(matCompo);
+        return materials;
+    }
+    return nullptr;
 }
 
 FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas) {
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
     auto materials = _makeRenderMaterials(canvas);
-    std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
-    auto ret = renderEngine->renderDevice(materials, device);
-    FkAssert(FK_OK == ret, ret);
-    return ret;
+    if (materials) {
+        std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
+        auto ret = renderEngine->renderDevice(materials, device);
+        FkAssert(FK_OK == ret, ret);
+        return ret;
+    } else {
+        FkLogW(FK_DEF_TAG, "Skip render canvas %d");
+    }
+    return FK_FAIL;
 }
 
 FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer) {

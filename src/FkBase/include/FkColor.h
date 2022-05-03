@@ -73,6 +73,8 @@ public:
 
     void setAlphaType(AlphaType type);
 
+    bool isPreMultiple();
+
     kFormat getFormat();
 
     bool equals(FkColor &color);

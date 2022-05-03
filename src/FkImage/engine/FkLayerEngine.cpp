@@ -135,8 +135,8 @@ FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     return ret;
 }
 
-FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color) {
-    auto id = newLayer();
+FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color, FkID expectId) {
+    auto id = newLayer(expectId);
     if (FK_ID_NONE != id) {
         auto colorCom = std::make_shared<FkColorCompo>(color);
         auto sizeCom = std::make_shared<FkSizeCompo>(size);

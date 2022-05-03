@@ -111,16 +111,20 @@ int32_t FkColor::toInt() {
     int32_t color = 0;
     color |= ((uint8_t) uAlpha());
     color = color << 8;
-    color |= ((uint8_t) (uRed() * fAlpha()));
+    color |= ((uint8_t) (uRed() * (isPreMultiple() ? fAlpha() : 1)));
     color = color << 8;
-    color |= ((uint8_t) (uGreen() * fAlpha()));
+    color |= ((uint8_t) (uGreen() * (isPreMultiple() ? fAlpha() : 1)));
     color = color << 8;
-    color |= ((uint8_t) (uBlue() * fAlpha()));
+    color |= ((uint8_t) (uBlue() * (isPreMultiple() ? fAlpha() : 1)));
     return color;
 }
 
 void FkColor::setAlphaType(AlphaType type) {
     this->alphaType = type;
+}
+
+bool FkColor::isPreMultiple() {
+    return alphaType == AlphaType::kPreMultiple;
 }
 
 FkColor::kFormat FkColor::getFormat() {

@@ -92,7 +92,7 @@ FkResult FkGraphicLayerQuark::onStop() {
     return FkQuark::onStop();
 }
 
-void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> layer) {
+void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> &layer) {
     auto sizeComp = FK_FIND_COMPO(layer, FkSizeCompo);
     FkAssert(nullptr != sizeComp, );
     auto vertex = FK_FIND_COMPO(layer, FkVertexCompo);
@@ -126,12 +126,24 @@ bool FkGraphicLayerQuark::_isExistLayer(FkID id) {
     return layers.find(id) != layers.end();
 }
 
-FkID FkGraphicLayerQuark::_generateId(FkID expectId) {
-    if (FK_ID_NONE != expectId && !_isExistLayer(expectId)) {
-        lastId = std::max(lastId, expectId);
-    } else {
-        ++lastId;
+FkID FkGraphicLayerQuark::_maxLayerId() {
+    FkID maxId = FK_ID_NONE;
+    for (auto &itr : layers) {
+        maxId = std::max(maxId, itr.first);
     }
+    return maxId;
+}
+
+FkID FkGraphicLayerQuark::_generateId(FkID expectId) {
+    if (FK_ID_NONE != expectId) {
+        if (!_isExistLayer(expectId)) {
+            lastId = _maxLayerId();
+            return expectId;
+        } else {
+            FkLogW(FK_DEF_TAG, "Invalid expect ID(%d).", expectId);
+        }
+    }
+    ++lastId;
     return lastId;
 }
 

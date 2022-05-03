@@ -17,6 +17,7 @@
 #include "FkSizeCompo.h"
 #include "FkFileUtils.h"
 #include "FkAnyCompo.h"
+#include "FkColorCompo.h"
 #include <fstream>
 
 FK_IMPL_CLASS_TYPE(FkImageModelEngine, FkEngine)
@@ -101,15 +102,20 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
             auto layerFile = dir;
             layerFile.append(layer.file());
             engine->newLayerWithFile(layerFile, layer.id());
-            engine->setTranslate(layer.id(), layer.trans().x(), layer.trans().y());
-            engine->setScale(layer.id(), layer.scale().x(), layer.scale().y());
-            FkRational rational(layer.rotation().num(), layer.rotation().den());
-            engine->setRotation(layer.id(), rational);
+        } else {
+            engine->newLayerWithColor(FkSize(layer.size().width(), layer.size().height()),
+                                      FkColor::makeFrom(layer.color()),
+                                      layer.id());
         }
+        engine->setTranslate(layer.id(), layer.trans().x(), layer.trans().y());
+        engine->setScale(layer.id(), layer.scale().x(), layer.scale().y());
+        FkRational rational(layer.rotation().num(), layer.rotation().den());
+        engine->setRotation(layer.id(), rational);
     }
     auto canvasSize = model->canvas().size();
     FkAssert(canvasSize.width() != 0 && canvasSize.height() != 0, FK_FAIL);
     engine->setCanvasSize(FkSize(canvasSize.width(), canvasSize.height()));
+    engine->notifyRender();
     return FK_OK;
 }
 
@@ -173,6 +179,7 @@ FkResult FkImageModelEngine::_fillLayer(void* dst,
     auto rotateCompo = FK_FIND_COMPO(src, FkRotateComponent);
     auto transCompo = FK_FIND_COMPO(src, FkTransComponent);
     auto sizeCompo = FK_FIND_COMPO(src, FkSizeCompo);
+    auto colorCompo = FK_FIND_COMPO(src, FkColorCompo);
     pbLayer->set_id(src->id);
     pbLayer->set_file(fileCompo ? FkFileUtils::name(fileCompo->str) : "");
     if (scaleCompo) {
@@ -200,6 +207,9 @@ FkResult FkImageModelEngine::_fillLayer(void* dst,
         value->set_width(sizeCompo->size.getWidth());
         value->set_height(sizeCompo->size.getHeight());
         pbLayer->set_allocated_size(value);
+    }
+    if (colorCompo) {
+        pbLayer->set_color(colorCompo->color.toInt());
     }
     return FK_OK;
 }

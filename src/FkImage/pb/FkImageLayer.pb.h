@@ -206,6 +206,7 @@ class FkImageLayer final :
     kScaleFieldNumber = 3,
     kTransFieldNumber = 4,
     kIdFieldNumber = 6,
+    kColorFieldNumber = 7,
   };
   // string file = 5;
   void clear_file();
@@ -302,6 +303,15 @@ class FkImageLayer final :
   void _internal_set_id(int32_t value);
   public:
 
+  // int32 color = 7;
+  void clear_color();
+  int32_t color() const;
+  void set_color(int32_t value);
+  private:
+  int32_t _internal_color() const;
+  void _internal_set_color(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkImageLayer)
  private:
   class _Internal;
@@ -315,6 +325,7 @@ class FkImageLayer final :
   ::com::alimin::fk::pb::FkFloatVec3* scale_;
   ::com::alimin::fk::pb::FkIntVec3* trans_;
   int32_t id_;
+  int32_t color_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_FkImageLayer_2eproto;
 };
@@ -742,6 +753,26 @@ inline void FkImageLayer::_internal_set_id(int32_t value) {
 inline void FkImageLayer::set_id(int32_t value) {
   _internal_set_id(value);
   // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkImageLayer.id)
+}
+
+// int32 color = 7;
+inline void FkImageLayer::clear_color() {
+  color_ = 0;
+}
+inline int32_t FkImageLayer::_internal_color() const {
+  return color_;
+}
+inline int32_t FkImageLayer::color() const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.color)
+  return _internal_color();
+}
+inline void FkImageLayer::_internal_set_color(int32_t value) {
+  
+  color_ = value;
+}
+inline void FkImageLayer::set_color(int32_t value) {
+  _internal_set_color(value);
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkImageLayer.color)
 }
 
 #ifdef __GNUC__

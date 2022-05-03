@@ -110,6 +110,12 @@ public final class FkImageLayerOuterClass {
      * @return The id.
      */
     int getId();
+
+    /**
+     * <code>int32 color = 7;</code>
+     * @return The color.
+     */
+    int getColor();
   }
   /**
    * Protobuf type {@code com.alimin.fk.pb.FkImageLayer}
@@ -218,6 +224,11 @@ public final class FkImageLayerOuterClass {
             case 48: {
 
               id_ = input.readInt32();
+              break;
+            }
+            case 56: {
+
+              color_ = input.readInt32();
               break;
             }
             default: {
@@ -420,6 +431,17 @@ public final class FkImageLayerOuterClass {
       return id_;
     }
 
+    public static final int COLOR_FIELD_NUMBER = 7;
+    private int color_;
+    /**
+     * <code>int32 color = 7;</code>
+     * @return The color.
+     */
+    @java.lang.Override
+    public int getColor() {
+      return color_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -452,6 +474,9 @@ public final class FkImageLayerOuterClass {
       if (id_ != 0) {
         output.writeInt32(6, id_);
       }
+      if (color_ != 0) {
+        output.writeInt32(7, color_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -483,6 +508,10 @@ public final class FkImageLayerOuterClass {
       if (id_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(6, id_);
+      }
+      if (color_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(7, color_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -523,6 +552,8 @@ public final class FkImageLayerOuterClass {
           .equals(other.getFile())) return false;
       if (getId()
           != other.getId()) return false;
+      if (getColor()
+          != other.getColor()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -554,6 +585,8 @@ public final class FkImageLayerOuterClass {
       hash = (53 * hash) + getFile().hashCode();
       hash = (37 * hash) + ID_FIELD_NUMBER;
       hash = (53 * hash) + getId();
+      hash = (37 * hash) + COLOR_FIELD_NUMBER;
+      hash = (53 * hash) + getColor();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -715,6 +748,8 @@ public final class FkImageLayerOuterClass {
 
         id_ = 0;
 
+        color_ = 0;
+
         return this;
       }
 
@@ -763,6 +798,7 @@ public final class FkImageLayerOuterClass {
         }
         result.file_ = file_;
         result.id_ = id_;
+        result.color_ = color_;
         onBuilt();
         return result;
       }
@@ -829,6 +865,9 @@ public final class FkImageLayerOuterClass {
         }
         if (other.getId() != 0) {
           setId(other.getId());
+        }
+        if (other.getColor() != 0) {
+          setColor(other.getColor());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1486,6 +1525,37 @@ public final class FkImageLayerOuterClass {
         onChanged();
         return this;
       }
+
+      private int color_ ;
+      /**
+       * <code>int32 color = 7;</code>
+       * @return The color.
+       */
+      @java.lang.Override
+      public int getColor() {
+        return color_;
+      }
+      /**
+       * <code>int32 color = 7;</code>
+       * @param value The color to set.
+       * @return This builder for chaining.
+       */
+      public Builder setColor(int value) {
+        
+        color_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 color = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearColor() {
+        
+        color_ = 0;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1555,13 +1625,13 @@ public final class FkImageLayerOuterClass {
     java.lang.String[] descriptorData = {
       "\n\022FkImageLayer.proto\022\020com.alimin.fk.pb\032\014" +
       "FkSize.proto\032\020FkRational.proto\032\017FkIntVec" +
-      "3.proto\032\021FkFloatVec3.proto\"\332\001\n\014FkImageLa" +
+      "3.proto\032\021FkFloatVec3.proto\"\351\001\n\014FkImageLa" +
       "yer\022&\n\004size\030\001 \001(\0132\030.com.alimin.fk.pb.FkS" +
       "ize\022.\n\010rotation\030\002 \001(\0132\034.com.alimin.fk.pb" +
       ".FkRational\022,\n\005scale\030\003 \001(\0132\035.com.alimin." +
       "fk.pb.FkFloatVec3\022*\n\005trans\030\004 \001(\0132\033.com.a" +
       "limin.fk.pb.FkIntVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002i" +
-      "d\030\006 \001(\005b\006proto3"
+      "d\030\006 \001(\005\022\r\n\005color\030\007 \001(\005b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1576,7 +1646,7 @@ public final class FkImageLayerOuterClass {
     internal_static_com_alimin_fk_pb_FkImageLayer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_alimin_fk_pb_FkImageLayer_descriptor,
-        new java.lang.String[] { "Size", "Rotation", "Scale", "Trans", "File", "Id", });
+        new java.lang.String[] { "Size", "Rotation", "Scale", "Trans", "File", "Id", "Color", });
     com.alimin.fk.pb.FkSizeOuterClass.getDescriptor();
     com.alimin.fk.pb.FkRationalOuterClass.getDescriptor();
     com.alimin.fk.pb.FkIntVec3OuterClass.getDescriptor();

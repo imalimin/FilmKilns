@@ -72,9 +72,11 @@ protected:
     virtual FkResult _onCrop(std::shared_ptr<FkProtocol> &p);
 
 private:
-    void _setupVertex(std::shared_ptr<FkGraphicLayer> layer);
+    void _setupVertex(std::shared_ptr<FkGraphicLayer> &layer);
 
     bool _isExistLayer(FkID id);
+
+    FkID _maxLayerId();
 
     FkID _generateId(FkID expectId);
 

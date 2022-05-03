@@ -42,7 +42,7 @@ public:
 
     FkID newLayer(FkID expectId = FK_ID_NONE);
 
-    FkID newLayerWithColor(FkSize size, FkColor color);
+    FkID newLayerWithColor(FkSize size, FkColor color, FkID expectId = FK_ID_NONE);
 
     FkResult removeLayer(FkID layer);
 

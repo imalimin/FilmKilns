@@ -29,6 +29,7 @@ FkEntity::~FkEntity() {
 }
 
 FkResult FkEntity::addComponent(std::shared_ptr<FkComponent> comp) {
+    FkAssert(comp != nullptr, FK_NPE);
     components.emplace_back(comp);
     return FK_OK;
 }
