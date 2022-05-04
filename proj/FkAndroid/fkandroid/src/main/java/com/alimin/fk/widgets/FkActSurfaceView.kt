@@ -68,7 +68,7 @@ class FkActSurfaceView : SurfaceView {
     private fun renderDetect() {
         val time = System.currentTimeMillis()
         val cost = time - lastRenderTime
-        if (cost > 16) {
+        if (cost > 15) {
             renderDetectForce()
             lastRenderTime = time
         }
