@@ -63,7 +63,7 @@ FkID FkImageEngine::newLayerWithFile(std::string path, FkID expectId) {
     return id;
 }
 
-FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> msg) {
+FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> &msg) {
     auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
     auto src = msg->arg3;
     std::string dst = FkString(workspace)
@@ -100,30 +100,29 @@ FkID FkImageEngine::save(std::string file) {
     return sendMessage(msg);
 }
 
-FkResult FkImageEngine::_save(std::shared_ptr<FkMessage> msg) {
+FkResult FkImageEngine::_save(std::shared_ptr<FkMessage> &msg) {
     auto proto = std::make_shared<FkReadPixelsProto>();
     proto->layerId = Fk_CANVAS_ID;
     auto ret = getClient()->with(getMolecule())->send(proto);
-    if (FK_OK != ret) {
-        return ret;
-    }
-    if (proto->buf == nullptr) {
-        return FK_EMPTY_DATA;
-    } else {
-        FkImage::Format fmt;
-        std::string suffix = FkFileUtils::suffix(msg->arg3);
-        if (suffix == ".jpeg" || suffix == ".jpg") {
-            fmt = FkImage::Format::kJPEG;
-        } else if (suffix == ".png") {
-            fmt = FkImage::Format::kPNG;
-        } else if (suffix == ".bmp") {
-            fmt = FkImage::Format::kBMP;
-        } else if (suffix == ".webp") {
-            fmt = FkImage::Format::kWEBP;
+    if (FK_OK == ret) {
+        if (proto->buf == nullptr) {
+            ret = FK_EMPTY_DATA;
         } else {
-            fmt = FkImage::Format::kJPEG;
+            FkImage::Format fmt;
+            std::string suffix = FkFileUtils::suffix(msg->arg3);
+            if (suffix == ".jpeg" || suffix == ".jpg") {
+                fmt = FkImage::Format::kJPEG;
+            } else if (suffix == ".png") {
+                fmt = FkImage::Format::kPNG;
+            } else if (suffix == ".bmp") {
+                fmt = FkImage::Format::kBMP;
+            } else if (suffix == ".webp") {
+                fmt = FkImage::Format::kWEBP;
+            } else {
+                fmt = FkImage::Format::kJPEG;
+            }
+            ret = FkBitmap::write(msg->arg3, fmt, proto->buf, proto->size, 80);
         }
-        ret = FkBitmap::write(msg->arg3, fmt, proto->buf, proto->size, 80);
     }
     return ret;
 }

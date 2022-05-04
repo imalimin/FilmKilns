@@ -170,6 +170,19 @@ protected:
         fileEngine = nullptr;
     }
 
+    void pause() {
+        EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
+        EXPECT_EQ(fileEngine->save(fkpFile), FK_OK);
+        EXPECT_EQ(fileEngine->stop(), FK_OK);
+        EXPECT_EQ(engine->stop(), FK_OK);
+    }
+
+    void resume() {
+        EXPECT_EQ(engine->start(), FK_OK);
+        EXPECT_EQ(fileEngine->start(), FK_OK);
+        EXPECT_EQ(fileEngine->load(fkpFile), FK_OK);
+    }
+
 protected:
     std::shared_ptr<FkImageModelEngine> fileEngine = nullptr;
 };
@@ -207,17 +220,36 @@ TEST_F(FkImageFileEngineTest, Restore) {
     render();
     EXPECT_TRUE(testColor(engine, 0, 224, FkColor::red()));
 
-    EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
-    EXPECT_EQ(fileEngine->save(fkpFile), FK_OK);
-    EXPECT_EQ(fileEngine->stop(), FK_OK);
-    EXPECT_EQ(engine->stop(), FK_OK);
+    pause();
+    resume();
 
-    EXPECT_EQ(engine->start(), FK_OK);
-    EXPECT_EQ(fileEngine->start(), FK_OK);
-    EXPECT_EQ(fileEngine->load(fkpFile), FK_OK);
     render();
     EXPECT_TRUE(testColor(engine, 0, 224, FkColor::red()));
+}
 
+TEST_F(FkImageFileEngineTest, RestoreAndAddLayer) {
+    auto layerId = addImagePosLayer();
+    std::vector<std::shared_ptr<FkGraphicLayer>> layers;
+    EXPECT_EQ(engine->queryLayers(layers), FK_OK);
+    EXPECT_TRUE(!layers.empty());
+    render();
+    EXPECT_TRUE(testColor(engine, 240, 360, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 155, 187, FkColor::red()));
+    EXPECT_TRUE(testColor(engine, 383, 414, FkColor::green()));
+
+    pause();
+    resume();
+
+    auto color = FkColor::makeFromRGBA8(255, 255, 255, 125);
+    color.setAlphaType(FkColor::AlphaType::kPreMultiple);
+    engine->newLayerWithColor(FkSize(512, 512), color);
+    render();
+    FkIntVec2 pos(0, 0);
+    FkSize size(0,0);
+    engine->readPixels(Fk_CANVAS_ID, pos, size,
+                       [&layers](std::shared_ptr<FkBuffer> buf, FkSize size) {
+                           EXPECT_TRUE(size == layers[0]->getSize());
+                       });
 }
 
 static bool testColor(std::shared_ptr<FkImageEngine> engine, int32_t x, int32_t y, FkColor expect) {

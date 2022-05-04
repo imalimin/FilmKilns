@@ -34,9 +34,9 @@ public:
     FkID save(std::string file);
 
 private:
-    FkResult _updateLayerWithFile(std::shared_ptr<FkMessage> msg);
+    FkResult _updateLayerWithFile(std::shared_ptr<FkMessage> &msg);
 
-    FkResult _save(std::shared_ptr<FkMessage> msg);
+    FkResult _save(std::shared_ptr<FkMessage> &msg);
 
 private:
     std::string workspace;
