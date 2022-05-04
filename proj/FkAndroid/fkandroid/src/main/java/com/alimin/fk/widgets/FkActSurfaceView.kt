@@ -33,7 +33,9 @@ class FkActSurfaceView : SurfaceView {
     private var isDoublePointer = false
     private var previousRotate = Double.MAX_VALUE
     private var action: ACTION = ACTION.IDL
-    val lastFlingPoint = Point(0, 0)
+    private val lastFlingPoint = Point(0, 0)
+    private val mChoreographer = Choreographer.getInstance()
+    private lateinit var vSyncCallback: Choreographer.FrameCallback
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -55,6 +57,11 @@ class FkActSurfaceView : SurfaceView {
     }
 
     private fun initialize() {
+        vSyncCallback = object : Choreographer.FrameCallback {
+            override fun doFrame(frameTimeNanos: Long) {
+                forceRender()
+            }
+        }
         scroller = OverScroller(context).apply {
             setFriction(1f)
         }
@@ -64,17 +71,12 @@ class FkActSurfaceView : SurfaceView {
         minFlingVelocity = ViewConfiguration.get(context).scaledMinimumFlingVelocity
     }
 
-    private var lastRenderTime = 0L
-    private fun renderDetect() {
-        val time = System.currentTimeMillis()
-        val cost = time - lastRenderTime
-        if (cost > 15) {
-            renderDetectForce()
-            lastRenderTime = time
-        }
+    private fun notifyRender() {
+        mChoreographer.removeFrameCallback(vSyncCallback)
+        mChoreographer.postFrameCallback(vSyncCallback)
     }
 
-    private fun renderDetectForce() {
+    private fun forceRender() {
         onActionListener?.onRender(this)
     }
 
@@ -92,7 +94,7 @@ class FkActSurfaceView : SurfaceView {
                 isDoublePointer = false
                 action = ACTION.IDL
                 previousRotate = Double.MAX_VALUE
-                renderDetectForce()
+                forceRender()
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 isDoublePointer = false
@@ -106,7 +108,7 @@ class FkActSurfaceView : SurfaceView {
                     this@FkActSurfaceView, xy.x, xy.y,
                     0f, 0f, 0
                 )
-                renderDetectForce()
+                forceRender()
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isDoublePointer) {
@@ -126,7 +128,7 @@ class FkActSurfaceView : SurfaceView {
                             FkRational((delta * PRECISIONS).toInt(), PRECISIONS),
                             getAnchor(event)
                         )
-                        renderDetect()
+                        notifyRender()
                     }
                     previousRotate = rotate
                 }
@@ -240,7 +242,7 @@ class FkActSurfaceView : SurfaceView {
                 (scroller.currX - lastFlingPoint.x).toFloat(),
                 (scroller.currY - lastFlingPoint.y).toFloat(), 1
             )
-            renderDetect()
+            notifyRender()
             lastFlingPoint.set(scroller.currX, scroller.currY)
             postInvalidate()
         }
@@ -305,7 +307,7 @@ class FkActSurfaceView : SurfaceView {
                 this@FkActSurfaceView, mCurrentPosition.x, mCurrentPosition.y,
                 -distanceX, -distanceY, 1
             )
-            renderDetect()
+            notifyRender()
             return true
         }
     }
@@ -337,7 +339,7 @@ class FkActSurfaceView : SurfaceView {
             )
             onScaleListener?.onScale(this@FkActSurfaceView, FkRational(num, den), anchor)
             previousScaleFactor = detector.scaleFactor
-            renderDetect()
+            notifyRender()
             return super.onScale(detector)
         }
     }
