@@ -10,6 +10,7 @@
 #include "FkGraphicCanvasQuark.h"
 #include "FkGraphicLayerQuark.h"
 #include "FkGraphicMVPQuark.h"
+#include "FkLayerPathQuark.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicModelAtom, FkSimpleAtom)
 
@@ -28,7 +29,8 @@ void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkWinModelQuark>()
             ->next<FkGraphicCanvasQuark>()
             ->next<FkGraphicLayerQuark>()
-            ->next<FkGraphicMVPQuark>();
+            ->next<FkGraphicMVPQuark>()
+            ->next<FkLayerPathQuark>();
 }
 
 FkResult FkGraphicModelAtom::onCreate() {

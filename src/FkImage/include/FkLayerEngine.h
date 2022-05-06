@@ -78,6 +78,8 @@ public:
     FkResult readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
                         std::function<void(std::shared_ptr<FkBuffer>, FkSize)> finishCallback);
 
+    FkResult drawPath(FkID layerId, FkIntVec2 &point);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -121,6 +123,8 @@ private:
     FkResult _cropLayer(std::shared_ptr<FkMessage> &msg);
 
     FkResult _readPixels(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _drawPath(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

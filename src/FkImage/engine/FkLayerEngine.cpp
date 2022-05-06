@@ -32,6 +32,7 @@
 #include "FkRemoveLayerProto.h"
 #include "FkScaleTypeProto.h"
 #include "FkReadPixelsProto.h"
+#include "FkDrawPathProto.h"
 
 FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
 
@@ -421,5 +422,18 @@ FkResult FkLayerEngine::readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
 
 FkResult FkLayerEngine::_readPixels(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkReadPixelsProto, msg->sp);
-    return client->with(molecule)->send(proto);;
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::drawPath(FkID layerId, FkIntVec2 &point) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
+    msg->arg1 = layerId;
+    msg->sp = std::make_shared<FkIntVec2>(point);
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_drawPath(std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(point, FkIntVec2, msg->sp);
+    auto proto = std::make_shared<FkDrawPathProto>(msg->arg1, *point);
+    return client->with(molecule)->send(proto);
 }

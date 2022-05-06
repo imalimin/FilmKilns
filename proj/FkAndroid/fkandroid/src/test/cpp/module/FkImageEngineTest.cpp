@@ -150,6 +150,12 @@ TEST_F(FkImageEngineTest, MvpAndCrop) {
 //    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
+TEST_F(FkImageEngineTest, DrawPath) {
+    auto layerId = addImagePosLayer();
+    FkIntVec2 point(1, 1);
+    EXPECT_EQ(engine->drawPath(layerId, point), FK_OK);
+}
+
 class FkImageFileEngineTest : public FkImageEngineTest {
 protected:
     virtual void SetUp() override {
