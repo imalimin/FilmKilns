@@ -15,6 +15,11 @@ FK_DEF_CLASS_TYPE_FUNC(FkProtocol)
 
 public:
     typedef size_t Type;
+
+    struct Desc {
+        FkProtocol::Type type;
+        const char *name;
+    };
 public:
     FkProtocol();
 

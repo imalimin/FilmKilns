@@ -129,10 +129,10 @@ FkResult FkQuark::_changeState(uint32_t src, kState dst) {
     return FK_INVALID_STATE;
 }
 
-FkResult FkQuark::queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols) {
+FkResult FkQuark::queryProtocols(std::list<FkProtocol::Desc> &protocols) {
     return desc->query(protocols);
 }
 
-FkResult FkQuark::addPort(uint32_t port, std::shared_ptr<FkProtocol> &p, FkPort::PortFunc func) {
-    return desc->add(port, p, func);
+FkResult FkQuark::addPort(uint32_t port, FkProtocol::Desc protoDesc, FkPort::PortFunc func) {
+    return desc->add(port, protoDesc, func);
 }

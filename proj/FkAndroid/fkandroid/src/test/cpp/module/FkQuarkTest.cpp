@@ -38,7 +38,7 @@ protected:
 };
 
 static void testCreate(std::shared_ptr<FkQuark> &quark) {
-    auto session = FkSession::with(std::make_shared<FkOnCreatePrt>());
+    auto session = FkSession::with({FkOnCreatePrt_Class::type.getId(), FkOnCreatePrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -48,7 +48,7 @@ static void testCreate(std::shared_ptr<FkQuark> &quark) {
 }
 
 static void testStart(std::shared_ptr<FkQuark> &quark) {
-    auto session = FkSession::with(std::make_shared<FkOnStartPrt>());
+    auto session = FkSession::with({FkOnStartPrt_Class::type.getId(), FkOnStartPrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -58,7 +58,7 @@ static void testStart(std::shared_ptr<FkQuark> &quark) {
 }
 
 static void testStop(std::shared_ptr<FkQuark> &quark) {
-    auto session = FkSession::with(std::make_shared<FkOnStopPrt>());
+    auto session = FkSession::with({FkOnStopPrt_Class::type.getId(), FkOnStopPrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -68,7 +68,7 @@ static void testStop(std::shared_ptr<FkQuark> &quark) {
 }
 
 static void testDestroy(std::shared_ptr<FkQuark> &quark) {
-    auto session = FkSession::with(std::make_shared<FkOnDestroyPrt>());
+    auto session = FkSession::with({FkOnDestroyPrt_Class::type.getId(), FkOnDestroyPrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -79,12 +79,12 @@ static void testDestroy(std::shared_ptr<FkQuark> &quark) {
 
 TEST_F(FkQuarkTest, Run) {
     FkLocalClient client;
-    auto calSes = FkSession::with(std::make_shared<FkCalculatePrt>());
-    EXPECT_EQ(calSes->connectTo(quark), FK_OK);
-    EXPECT_EQ(calSes->open(), FK_OK);
+    auto session = FkSession::with({FkCalculatePrt_Class::type.getId(), FkCalculatePrt_Class::type.getName()});
+    EXPECT_EQ(session->connectTo(quark), FK_OK);
+    EXPECT_EQ(session->open(), FK_OK);
     auto prot = std::make_shared<FkCalculatePrt>();
     prot->number = 1.0f;
-    EXPECT_EQ(client.send(calSes, prot), FK_OK);
-    EXPECT_EQ(calSes->close(), FK_OK);
+    EXPECT_EQ(client.send(session, prot), FK_OK);
+    EXPECT_EQ(session->close(), FK_OK);
     EXPECT_EQ(prot->number, 4.0f);
 }

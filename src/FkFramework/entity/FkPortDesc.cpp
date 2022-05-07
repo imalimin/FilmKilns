@@ -21,8 +21,8 @@ FkPortDesc::~FkPortDesc() {
     ports.clear();
 }
 
-FkResult FkPortDesc::add(uint32_t port, std::shared_ptr<FkProtocol> p, FkPort::PortFunc func) {
-    if (p && func) {
+FkResult FkPortDesc::add(uint32_t port, FkProtocol::Desc desc, FkPort::PortFunc func) {
+    if (desc.type != 0 && func) {
         if (FkPort::NONE == port) {
             std::lock_guard<std::mutex> guard(mtx);
             if (ports.empty()) {
@@ -33,13 +33,12 @@ FkResult FkPortDesc::add(uint32_t port, std::shared_ptr<FkProtocol> p, FkPort::P
                 }
             }
         }
-        auto type = p->getType();
-        auto itr = ports.find(type);
+        auto itr = ports.find(desc.type);
         if (ports.end() != itr) {
             ports.erase(itr);
         }
 //        FkAssert(ports.end() == itr0, FK_FAIL);
-        ports.insert(std::make_pair(type, std::make_shared<FkPort>(port, p, func)));
+        ports.insert(std::make_pair(desc.type, std::make_shared<FkPort>(port, desc, func)));
         return FK_OK;
     }
     return FK_FAIL;
@@ -53,12 +52,12 @@ std::shared_ptr<FkPort> FkPortDesc::find(FkProtocol::Type type) {
     return itr->second;
 }
 
-FkResult FkPortDesc::query(std::list<std::shared_ptr<FkProtocol>> &protocols) {
+FkResult FkPortDesc::query(std::list<FkProtocol::Desc> &protocols) {
     if (ports.empty()) {
         return FK_EMPTY_DATA;
     }
     for (auto &itr : ports) {
-        protocols.push_back(itr.second->protocol);
+        protocols.push_back(itr.second->desc);
     }
     return FK_OK;
 }

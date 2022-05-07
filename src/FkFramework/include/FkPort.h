@@ -23,7 +23,7 @@ public:
     static const uint32_t NONE;
 
 public:
-    FkPort(uint32_t port, std::shared_ptr<FkProtocol> protocol, FkPort::PortFunc func);
+    FkPort(uint32_t port, FkProtocol::Desc desc, FkPort::PortFunc func);
 
     FkPort(const FkPort &o) = delete;
 
@@ -33,7 +33,7 @@ public:
 
 public:
     uint32_t port = 0;
-    std::shared_ptr<FkProtocol> protocol = nullptr;
+    FkProtocol::Desc desc = {0, 0};
     FkPort::PortFunc func = nullptr;
 };
 

@@ -13,7 +13,7 @@
 
 TEST(FkSessionExecutorTest, Execute) {
     auto quark = std::make_shared<FkIncreaseQuark>();
-    auto session = FkSession::with(std::make_shared<FkOnCreatePrt>());
+    auto session = FkSession::with({FkOnCreatePrt_Class::type.getId(), FkOnCreatePrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;

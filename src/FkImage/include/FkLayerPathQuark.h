@@ -21,6 +21,8 @@ public:
 
     FkLayerPathQuark(const FkLayerPathQuark &o) = delete;
 
+    virtual ~FkLayerPathQuark();
+
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
 
@@ -31,8 +33,6 @@ protected:
     virtual FkResult onStart() override;
 
     virtual FkResult onStop() override;
-
-    virtual ~FkLayerPathQuark();
 
 private:
     FkResult _onDrawPath(std::shared_ptr<FkProtocol> &p);

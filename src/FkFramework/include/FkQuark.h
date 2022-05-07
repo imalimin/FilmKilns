@@ -46,11 +46,11 @@ protected:
 
     virtual FkResult dispatch(std::shared_ptr<FkProtocol> p);
 
-    virtual FkResult queryProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols);
+    virtual FkResult queryProtocols(std::list<FkProtocol::Desc> &protocols);
 
     FkResult accept(const FkProtocol::Type protoType);
 
-    FkResult addPort(uint32_t port, std::shared_ptr<FkProtocol> &p, FkPort::PortFunc func);
+    FkResult addPort(uint32_t port, FkProtocol::Desc protoDesc, FkPort::PortFunc func);
 
 private:
     FkResult _onCreate(std::shared_ptr<FkProtocol> p);

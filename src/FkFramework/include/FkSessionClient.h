@@ -77,7 +77,7 @@ public:
         for (auto &it : ll) {
             chain.emplace_back(it);
         }
-        auto session = FkSession::with(proto);
+        auto session = FkSession::with({proto->getType(), proto->getClassType().getName()});
         return send(session, proto, chain);
     }
 
@@ -88,7 +88,7 @@ public:
         for (auto &it : ll) {
             chain.emplace_back(it);
         }
-        auto session = FkSession::with(std::make_shared<T>());
+        auto session = FkSession::with({proto->getType(), proto->getClassType().getName()});
         return send(session, proto, chain);
     }
 
@@ -100,7 +100,7 @@ public:
             chain.emplace_back(it);
         }
         auto proto = std::make_shared<T>();
-        auto session = FkSession::with(proto);
+        auto session = FkSession::with({proto->getType(), proto->getClassType().getName()});
         return send(session, proto, chain);
     }
 

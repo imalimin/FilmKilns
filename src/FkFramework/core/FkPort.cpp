@@ -12,14 +12,14 @@ FK_IMPL_CLASS_TYPE(FkPort, FkObject)
 
 const uint32_t FkPort::NONE = 0;
 
-FkPort::FkPort(uint32_t port, std::shared_ptr<FkProtocol> protocol, FkPort::PortFunc func)
-        : FkObject(), port(port), protocol(protocol), func(func) {
+FkPort::FkPort(uint32_t port, FkProtocol::Desc desc, FkPort::PortFunc func)
+        : FkObject(), port(port), desc(desc), func(func) {
 
 }
 
 FkPort::~FkPort() {
     port = 0;
-    protocol = nullptr;
+    desc = {0, 0};
     func = nullptr;
 }
 

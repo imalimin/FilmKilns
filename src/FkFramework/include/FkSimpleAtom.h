@@ -33,9 +33,9 @@ public:
         return shared_from_this();
     }
 
-    std::shared_ptr<FkSession> connectSession(std::shared_ptr<FkProtocol> &p, bool reverse = false);
+    std::shared_ptr<FkSession> connectSession(FkProtocol::Desc protoDesc, bool reverse = false);
 
-    bool findAllProtocols(std::list<std::shared_ptr<FkProtocol>> &protocols);
+    bool findAllProtocols(std::list<FkProtocol::Desc> &protocols);
 
     bool empty();
 

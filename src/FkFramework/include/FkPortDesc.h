@@ -18,7 +18,7 @@
         reinterpret_cast<FkPort::PortFunc>(&method)) \
 
 #define FK_PORT_DESC_QUICK_ADD(desc, PRT, method) \
-    desc->add(0, std::static_pointer_cast<FkProtocol>(std::make_shared<PRT>()), \
+    desc->add(0, {PRT ## _Class::type.getId(), PRT ## _Class::type.getName()}, \
         reinterpret_cast<FkPort::PortFunc>(&method)) \
 
 #define FK_PORT_DELIVERY(desc, PRT, CLASS) \
@@ -35,11 +35,11 @@ public:
 
     virtual ~FkPortDesc();
 
-    FkResult add(uint32_t port, std::shared_ptr<FkProtocol> p, FkPort::PortFunc func);
+    FkResult add(uint32_t port, FkProtocol::Desc desc, FkPort::PortFunc func);
 
     std::shared_ptr<FkPort> find(FkProtocol::Type type);
 
-    FkResult query(std::list<std::shared_ptr<FkProtocol>> &protocols);
+    FkResult query(std::list<FkProtocol::Desc> &protocols);
 
     void clear();
 

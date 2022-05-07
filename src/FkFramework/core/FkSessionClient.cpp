@@ -11,7 +11,7 @@ FK_IMPL_CLASS_TYPE(FkSessionBuilder, FkObject)
 FK_IMPL_CLASS_TYPE(FkSessionClient, FkObject)
 
 FkResult FkSessionBuilder::send(std::shared_ptr<FkProtocol> proto) {
-    auto session = FkSession::with(proto);
+    auto session = FkSession::with({proto->getType(), proto->getClassType().getName()});
     return client->send(session, proto, chain);
 }
 

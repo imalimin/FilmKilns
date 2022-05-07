@@ -52,7 +52,7 @@ protected:
 };
 
 static void testCreate(std::shared_ptr<FkAtom> &atom) {
-    auto session = FkSession::with(std::make_shared<FkOnCreatePrt>());
+    auto session = FkSession::with({FkOnCreatePrt_Class::type.getId(), FkOnCreatePrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(atom), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -62,7 +62,7 @@ static void testCreate(std::shared_ptr<FkAtom> &atom) {
 }
 
 static void testStart(std::shared_ptr<FkAtom> &atom) {
-    auto session = FkSession::with(std::make_shared<FkOnStartPrt>());
+    auto session = FkSession::with({FkOnStartPrt_Class::type.getId(), FkOnStartPrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(atom), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -72,7 +72,7 @@ static void testStart(std::shared_ptr<FkAtom> &atom) {
 }
 
 static void testStop(std::shared_ptr<FkAtom> &atom) {
-    auto session = FkSession::with(std::make_shared<FkOnStopPrt>());
+    auto session = FkSession::with({FkOnStopPrt_Class::type.getId(), FkOnStopPrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(atom), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -82,7 +82,7 @@ static void testStop(std::shared_ptr<FkAtom> &atom) {
 }
 
 static void testDestroy(std::shared_ptr<FkAtom> &atom) {
-    auto session = FkSession::with(std::make_shared<FkOnDestroyPrt>());
+    auto session = FkSession::with({FkOnDestroyPrt_Class::type.getId(), FkOnDestroyPrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(atom), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
@@ -93,7 +93,7 @@ static void testDestroy(std::shared_ptr<FkAtom> &atom) {
 
 TEST_F(FkAtomTest, Run) {
     FkLocalClient client;
-    auto session = FkSession::with(std::make_shared<FkCalculatePrt>());
+    auto session = FkSession::with({FkCalculatePrt_Class::type.getId(), FkCalculatePrt_Class::type.getName()});
     EXPECT_EQ(session->connectTo(atom), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     auto runPrt = std::make_shared<FkCalculatePrt>();
@@ -104,12 +104,12 @@ TEST_F(FkAtomTest, Run) {
 
 TEST_F(FkSimpleAtomTest, Run) {
     FkLocalClient client;
-    auto runSes = FkSession::with(std::make_shared<FkCalculatePrt>());
-    EXPECT_EQ(runSes->connectTo(atom), FK_OK);
-    EXPECT_EQ(runSes->open(), FK_OK);
+    auto session = FkSession::with({FkCalculatePrt_Class::type.getId(), FkCalculatePrt_Class::type.getName()});
+    EXPECT_EQ(session->connectTo(atom), FK_OK);
+    EXPECT_EQ(session->open(), FK_OK);
     auto runPrt = std::make_shared<FkCalculatePrt>();
     runPrt->number = 1.0f;
-    EXPECT_EQ(client.send(runSes, runPrt), FK_OK);
+    EXPECT_EQ(client.send(session, runPrt), FK_OK);
     EXPECT_EQ(runPrt->number, 2.0f);
 }
 

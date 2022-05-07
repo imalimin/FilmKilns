@@ -34,7 +34,7 @@ FkResult FkIncrease2Atom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    session = FkSession::with(std::make_shared<FkCalculatePrt>());
+    session = FkSession::with({FkCalculatePrt_Class::type.getId(), FkCalculatePrt_Class::type.getName()});
     ret = session->connectTo(mIncreaseQuark);
     if (FK_OK != ret) {
         return ret;

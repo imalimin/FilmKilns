@@ -31,7 +31,7 @@ public:
         OPENED,
     };
 
-    static std::shared_ptr<FkSession> with(std::shared_ptr<FkProtocol> p);
+    static std::shared_ptr<FkSession> with(FkProtocol::Desc protoDesc);
 
 public:
     FkSession();
@@ -54,8 +54,7 @@ private:
     FkResult send(std::shared_ptr<FkProtocol> protocol);
 
 private:
-    const FkClassType *classType = nullptr;
-    size_t protoType = 0;
+    FkProtocol::Desc protoDesc = {0, 0};
     std::vector<std::shared_ptr<FkQuark>> link;
     std::mutex mtx;
     kState state = kState::IDL;
