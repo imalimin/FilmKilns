@@ -18,6 +18,7 @@
 #include "FkPointVertexCompo.h"
 #include "FkReadPixelsProto.h"
 #include "FkFuncCompo.h"
+#include "FkPathCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicRenderAtom, FkSimpleAtom)
 
@@ -68,6 +69,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             continue;
         }
         _drawPoints(layer);
+        _drawPaths(layer);
         auto materials = _makeRenderMaterials(layer);
         if (materials) {
             std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(canvas->material);
@@ -174,4 +176,17 @@ FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
         proto->finishCallback = nullptr;
     }
     return ret;
+}
+
+FkResult FkGraphicRenderAtom::_drawPaths(std::shared_ptr<FkGraphicLayer> &layer) {
+    std::vector<std::shared_ptr<FkComponent>> paths;
+    if (layer->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
+        auto materials = std::make_shared<FkMaterialEntity>(layer->material);
+        materials->addComponents(paths);
+
+        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(layer->material);
+        return renderEngine->renderDevice(materials, device);
+    }
+    return FK_FAIL;
 }

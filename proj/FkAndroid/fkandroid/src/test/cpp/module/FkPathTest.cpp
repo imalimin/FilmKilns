@@ -11,6 +11,8 @@
 #include "FkSize.h"
 #include "FkBuffer.h"
 #include "FkBitmap.h"
+#include "FkCatmullRomPath.h"
+#include "FkPathCompo.h"
 
 #define FK_ANDROID_TEST_TEMP_FILE "/storage/emulated/0/Android/data/com.alimin.fk.test/cache/000000.png"
 
@@ -49,14 +51,15 @@ static std::vector<SkPoint> calcPath(std::vector<SkPoint> points, float avgPoint
 }
 
 TEST(FkPathTest, CatmullRom) {
-    std::vector<SkPoint> points;
-    points.emplace_back(SkPoint::Make(20, 20));
-    points.emplace_back(SkPoint::Make(120, 170));
-    points.emplace_back(SkPoint::Make(200, 180));
-    points.emplace_back(SkPoint::Make(340, 340));
-    points.emplace_back(SkPoint::Make(50, 420));
-
-    std::vector<SkPoint> path = calcPath(points, 10);
+    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkCatmullRomPath>(10));
+    path->addPoint(20, 20);
+    path->addPoint(120, 170);
+    path->addPoint(200, 180);
+    path->addPoint(340, 340);
+    path->addPoint(50, 420);
+    path->finish();
+    std::vector<FkDoubleVec2> points;
+    EXPECT_TRUE(path->readPoints(points) > 0);
 
     SkPaint paint;
     paint.setAntiAlias(true);
@@ -71,14 +74,14 @@ TEST(FkPathTest, CatmullRom) {
     memset(buf->data(), 0, buf->capacity());
     auto canvas = SkCanvas::MakeRasterDirect(info, buf->data(), info.minRowBytes());
     paint.setColor(0xffffffff);
-    for (int i = 0; i < path.size() - 1; ++i) {
-        canvas->drawPoint(path[i], paint);
+    for (int i = 0; i < points.size() - 1; ++i) {
+        canvas->drawPoint(SkPoint::Make(points[i].x, points[i].y), paint);
     }
 
-    paint.setColor(0xff349a45);
-    for (int i = 0; i < points.size() - 1; ++i) {
-        canvas->drawPoint(points[i], paint);
-    }
+//    paint.setColor(0xff349a45);
+//    for (int i = 0; i < points.size() - 1; ++i) {
+//        canvas->drawPoint(points[i], paint);
+//    }
     canvas->flush();
-    FkBitmap::write(FK_ANDROID_TEST_TEMP_FILE, FkImage::Format::kPNG, buf, size, 80);
+//    FkBitmap::write(FK_ANDROID_TEST_TEMP_FILE, FkImage::Format::kPNG, buf, size, 80);
 }

@@ -78,7 +78,9 @@ public:
     FkResult readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
                         std::function<void(std::shared_ptr<FkBuffer>, FkSize)> finishCallback);
 
-    FkResult drawPath(FkID layerId, FkIntVec2 &point);
+    FkResult drawPath(FkID layerId, int32_t x, int32_t y, bool isFinish = false);
+
+    FkResult drawPathFinish(FkID layerId);
 
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };

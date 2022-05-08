@@ -34,6 +34,13 @@ FkResult FkEntity::addComponent(std::shared_ptr<FkComponent> comp) {
     return FK_OK;
 }
 
+FkResult FkEntity::addComponents(std::vector<std::shared_ptr<FkComponent>> &vec) {
+    for (auto &compo : vec) {
+        addComponent(compo);
+    }
+    return FK_OK;
+}
+
 FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                                         const FkClassType &classType) {
     for (auto & component : components) {

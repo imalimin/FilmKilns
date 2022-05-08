@@ -12,6 +12,7 @@
 #include "FkRenderProto.h"
 #include "FkRenderProgramCompo.h"
 #include "FkPointVertexCompo.h"
+#include "FkPathCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderProgramQuark, FkQuark)
 
@@ -57,7 +58,16 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     }
 
     auto pointCompo = FK_FIND_COMPO(proto->materials, FkPointVertexCompo);
-    if (pointCompo != nullptr) {
+    std::vector<std::shared_ptr<FkComponent>> paths;
+    auto ret = proto->materials->findComponents(paths, FkPathCompo_Class::type);
+    if (ret == FK_OK) {
+        auto compo = std::make_shared<FkRenderProgramCompo>();
+        FkProgramDescription desc(FkProgramDescription::kType::PATH);
+        compo->program = allocator->alloc(desc);
+        if (compo->program != nullptr) {
+            proto->materials->addComponent(compo);
+        }
+    } else if (pointCompo != nullptr) {
         auto compo = std::make_shared<FkRenderProgramCompo>();
         FkProgramDescription desc(FkProgramDescription::kType::POINT);
         compo->program = allocator->alloc(desc);

@@ -152,8 +152,14 @@ TEST_F(FkImageEngineTest, MvpAndCrop) {
 
 TEST_F(FkImageEngineTest, DrawPath) {
     auto layerId = addImagePosLayer();
-    FkIntVec2 point(1, 1);
-    EXPECT_EQ(engine->drawPath(layerId, point), FK_OK);
+    EXPECT_EQ(engine->drawPath(layerId, 100, 600), FK_OK);
+    EXPECT_EQ(engine->drawPath(layerId, 360, 1000), FK_OK);
+    EXPECT_EQ(engine->drawPath(layerId, 720, 1300), FK_OK);
+    EXPECT_EQ(engine->drawPath(layerId, 1200, 1500), FK_OK);
+    EXPECT_EQ(engine->drawPath(layerId, 200, 2000), FK_OK);
+    EXPECT_EQ(engine->drawPathFinish(layerId), FK_OK);
+    render();
+    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
 class FkImageFileEngineTest : public FkImageEngineTest {

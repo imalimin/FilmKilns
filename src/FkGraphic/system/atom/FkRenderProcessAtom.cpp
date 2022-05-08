@@ -8,6 +8,7 @@
 #include "FkRenderProcessAtom.h"
 #include "FkRenderDefine.h"
 #include "FkPointProcessQuark.h"
+#include "FkRenderPathQuark.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderProcessAtom, FkSimpleAtom)
 
@@ -23,7 +24,8 @@ void FkRenderProcessAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkRenderProcessAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkPointProcessQuark>();
+    chain->next<FkPointProcessQuark>()
+            ->next<FkRenderPathQuark>();
 }
 
 FkResult FkRenderProcessAtom::onCreate() {

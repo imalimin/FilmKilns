@@ -13,12 +13,12 @@
 FK_IMPL_CLASS_TYPE(FkDrawPathProto, FkProtocol)
 
 FkDrawPathProto::FkDrawPathProto(FkID layerId, FkIntVec2 &point)
-        : FkProtocol(), layerId(layerId), point(point) {
+        : FkProtocol(), layerId(layerId), point(point), isFinish(false) {
 
 }
 
 FkDrawPathProto::FkDrawPathProto(const FkDrawPathProto &o)
-        : FkProtocol(o), layerId(o.layerId), point(o.point) {
+        : FkProtocol(o), layerId(o.layerId), point(o.point), isFinish(o.isFinish) {
 
 }
 

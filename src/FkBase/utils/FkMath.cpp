@@ -17,3 +17,7 @@ FkMath::~FkMath() {
 float FkMath::distance(FkIntVec2 &p0, FkIntVec2 &p1) {
     return sqrt((p1.x - p0.x) * (p1.x - p0.x) + (p1.y - p0.y) * (p1.y - p0.y));
 }
+
+double FkMath::distance(FkDoubleVec2 &p0, FkDoubleVec2 &p1) {
+    return sqrt((p1.x - p0.x) * (p1.x - p0.x) + (p1.y - p0.y) * (p1.y - p0.y));
+}

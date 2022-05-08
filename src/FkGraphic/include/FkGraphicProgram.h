@@ -24,7 +24,7 @@ public:
         MATRIX_WITH_CANVAS_BACKGROUND,
         CANVAS_MOSAIC,
         POINT,
-        LINE,
+        PATH,
     };
 public:
     FkProgramDescription();

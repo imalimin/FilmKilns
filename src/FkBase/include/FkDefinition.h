@@ -81,11 +81,10 @@ typedef int32_t FkResult;
 #define FK_PROTOCOL_NOT_ACCEPT -3
 #define FK_INVALID_DATA -4
 #define FK_EMPTY_DATA -5
-#define FK_SKIP -6
-#define FK_NPE -7
-#define FK_PORT_NOT_FOUND -9
-#define FK_SOURCE_NOT_FOUND -10
-#define FK_NOT_SUPPORT -11
+#define FK_NPE -6
+#define FK_PORT_NOT_FOUND -7
+#define FK_SOURCE_NOT_FOUND -8
+#define FK_NOT_SUPPORT -9
 //Image
 #define FK_EMPTY_CANVAS -100
 //File
@@ -93,6 +92,10 @@ typedef int32_t FkResult;
 #define FK_FILE_OPEN_FAIL -201
 //IO
 #define FK_IO_FAIL -301
+
+#define FK_SKIP -400
+#define FK_DONE -401
+#define FK_DO_NOTHING -402
 
 // +------ ID ------+
 typedef int32_t FkID;

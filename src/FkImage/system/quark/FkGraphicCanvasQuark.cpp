@@ -20,6 +20,7 @@
 #include "FkLayerSetScaleProto.h"
 #include "FkCropProto.h"
 #include "FkRemoveLayerProto.h"
+#include "FkDrawPathProto.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicCanvasQuark, FkGraphicLayerQuark)
 
@@ -45,6 +46,7 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkGraphicCanvasQuark::_onWithCanvas);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
+    FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicCanvasQuark::_onDelivery);
 
 }
 

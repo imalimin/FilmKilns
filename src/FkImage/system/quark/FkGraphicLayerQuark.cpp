@@ -36,7 +36,9 @@
 #include "FkReadPixelsProto.h"
 #include "FkScaleTypeProto.h"
 #include "FkBitmapDefinition.h"
-#include "math.h"
+#include "FkDrawPathProto.h"
+#include "FkCatmullRomPath.h"
+#include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
 
@@ -73,6 +75,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkCropProto, FkGraphicLayerQuark::_onCrop);
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
+    FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicLayerQuark::_onDrawPath);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -466,4 +469,28 @@ void FkGraphicLayerQuark::_updateLayerByEncodeOrigin(std::shared_ptr<FkGraphicLa
         }
 
     }
+}
+
+FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawPathProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (itr == layers.end()) {
+        return FK_SOURCE_NOT_FOUND;
+    }
+    auto layer = itr->second;
+    if (curPathCompo == nullptr && proto->isFinish) {
+        return FK_INVALID_STATE;
+    }
+    auto sizeCompo = FK_FIND_COMPO(itr->second, FkSizeCompo);
+    if (curPathCompo == nullptr) {
+        curPathCompo = std::make_shared<FkPathCompo>(std::make_shared<FkCatmullRomPath>(10));
+        layer->addComponent(curPathCompo);
+    }
+    if (proto->isFinish) {
+        curPathCompo->finish();
+        curPathCompo = nullptr;
+    } else {
+        curPathCompo->addPoint(proto->point.x, proto->point.y);
+    }
+    return FK_OK;
 }

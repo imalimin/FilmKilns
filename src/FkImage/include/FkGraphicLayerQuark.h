@@ -13,6 +13,7 @@
 #include "FkGraphicUpdateLayerPrt.h"
 #include "FkSize.h"
 #include "FkColor.h"
+#include "FkPathCompo.h"
 #include <list>
 #include <map>
 
@@ -42,7 +43,9 @@ private:
 
     FkResult _onWithLayer(std::shared_ptr<FkProtocol> p);
 
-    virtual FkResult _onUpdateScaleType(std::shared_ptr<FkProtocol> &p);
+    FkResult _onUpdateScaleType(std::shared_ptr<FkProtocol> &p);
+
+    FkResult _onDrawPath(std::shared_ptr<FkProtocol> &p);
 
 protected:
     std::shared_ptr<FkGraphicLayer> newLayerEntity();
@@ -95,6 +98,7 @@ private:
 protected:
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
     FkID lastId = FK_ID_NONE;
+    std::shared_ptr<FkPathCompo> curPathCompo = nullptr;
 };
 
 

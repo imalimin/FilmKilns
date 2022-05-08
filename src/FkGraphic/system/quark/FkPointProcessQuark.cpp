@@ -90,5 +90,5 @@ FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &v
     vboCompo->unbind();
     glDisable(GL_BLEND);
     glFlush();
-    return FK_OK;
+    return FK_DONE;
 }

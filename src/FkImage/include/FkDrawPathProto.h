@@ -27,6 +27,7 @@ public:
 public:
     FkID layerId;
     FkIntVec2 point;
+    bool isFinish = false;
 };
 
 #endif //FK_IMAGE_FKDRAWPATHPROTO_H

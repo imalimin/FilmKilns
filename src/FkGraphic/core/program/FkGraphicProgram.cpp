@@ -14,6 +14,7 @@
 #include "FkVboCompo.h"
 #include "FkGLDefinition.h"
 #include "FkDefinition.h"
+#include "FkGraphicPathProgram.h"
 
 #define TAG "FkGraphicProgram"
 
@@ -212,6 +213,9 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
         }
         case FkProgramDescription::kType::POINT:
             o = new FkGraphicPointProgram(desc);
+            break;
+        case FkProgramDescription::kType::PATH:
+            o = new FkGraphicPathProgram(desc);
             break;
     }
     if (o) {

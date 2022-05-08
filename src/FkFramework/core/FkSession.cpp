@@ -109,9 +109,13 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
     FkResult ret = FK_FAIL;
     for (auto &quark : link) {
         ret = quark->dispatch(protocol);
-        if (FK_SKIP == ret) {
+        if (FK_SKIP == ret || FK_DO_NOTHING== ret) {
             FkLogD(FK_DEF_TAG, "%s`s session on %s is skipped.", protocol->getClassType().getName(), quark->getClassType().getName());
             continue;
+        }
+        if (FK_DONE == ret) {
+            FkLogD(FK_DEF_TAG, "%s`s session on %s is done.", protocol->getClassType().getName(), quark->getClassType().getName());
+            return FK_DONE;
         }
         if (FK_OK != ret) {
             FkLogE(FK_DEF_TAG, "%s`s session on %s process failed.", protocol->getClassType().getName(), quark->getClassType().getName());

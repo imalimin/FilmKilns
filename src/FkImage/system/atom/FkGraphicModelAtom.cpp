@@ -29,8 +29,7 @@ void FkGraphicModelAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
     chain->next<FkWinModelQuark>()
             ->next<FkGraphicCanvasQuark>()
             ->next<FkGraphicLayerQuark>()
-            ->next<FkGraphicMVPQuark>()
-            ->next<FkLayerPathQuark>();
+            ->next<FkGraphicMVPQuark>();
 }
 
 FkResult FkGraphicModelAtom::onCreate() {

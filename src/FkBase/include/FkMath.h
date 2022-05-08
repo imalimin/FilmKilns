@@ -13,12 +13,15 @@
 
 #include "FkObject.h"
 #include "FkIntVec2.h"
+#include "FkDoubleVec2.h"
 
 class FkMath {
 public:
     virtual ~FkMath();
 
     static float distance(FkIntVec2 &p0, FkIntVec2 &p1);
+
+    static double distance(FkDoubleVec2 &p0, FkDoubleVec2 &p1);
 
 private:
     FkMath() = delete;
