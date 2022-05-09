@@ -23,6 +23,14 @@ public:
     FkDoubleVec2(const FkDoubleVec2 &o);
 
     virtual ~FkDoubleVec2();
+
+    FkDoubleVec2 operator/(double len) const;
+
+    FkDoubleVec2 operator*(double len) const;
+
+    FkDoubleVec2 operator-(const FkDoubleVec2 &other) const;
+
+    FkDoubleVec2 operator+(const FkDoubleVec2 &other) const;
 };
 
 #endif //FK_BASE_FKDOUBLEVEC2_H

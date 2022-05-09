@@ -159,7 +159,7 @@ TEST_F(FkImageEngineTest, DrawPath) {
     EXPECT_EQ(engine->drawPath(layerId, 200, 2000), FK_OK);
     EXPECT_EQ(engine->drawPathFinish(layerId), FK_OK);
     render();
-    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
+//    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
 class FkImageFileEngineTest : public FkImageEngineTest {

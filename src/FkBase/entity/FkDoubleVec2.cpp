@@ -24,3 +24,19 @@ FkDoubleVec2::FkDoubleVec2(const FkDoubleVec2 &o) : FkVec2<double>(o) {
 FkDoubleVec2::~FkDoubleVec2() {
 
 }
+
+FkDoubleVec2 FkDoubleVec2::operator/(double len) const {
+    return FkDoubleVec2(x / len, y / len);
+}
+
+FkDoubleVec2 FkDoubleVec2::operator*(double len) const {
+    return FkDoubleVec2(x * len, y * len);
+}
+
+FkDoubleVec2 FkDoubleVec2::operator-(const FkDoubleVec2 &other) const {
+    return FkDoubleVec2(x - other.x, y - other.y);
+}
+
+FkDoubleVec2 FkDoubleVec2::operator+(const FkDoubleVec2 &other) const {
+    return FkDoubleVec2(x + other.x, y + other.y);
+}

@@ -85,3 +85,172 @@ TEST(FkPathTest, CatmullRom) {
     canvas->flush();
 //    FkBitmap::write(FK_ANDROID_TEST_TEMP_FILE, FkImage::Format::kPNG, buf, size, 80);
 }
+
+FkDoubleVec2 normalize(FkDoubleVec2 Vin) {
+    FkDoubleVec2 result(0, 0);
+    result = Vin;
+    double len = std::sqrt(result.x * result.x  + result.y * result.y);
+    result = result / len;
+
+    return result;
+}
+
+struct FkMesh {
+    FkMesh()
+    {
+        vecPoint.clear();
+        vecTriangles.clear();
+    }
+
+    void clear()
+    {
+        vecPoint.clear();
+        vecTriangles.clear();
+    }
+
+    std::vector<FkDoubleVec2> vecPoint;
+    std::vector<int> vecTriangles;
+};
+
+void curveTriangulation(float width, std::vector<FkDoubleVec2> &points, std::vector<FkMesh> &vecMesh) {
+    FkDoubleVec2 front(0, 0);
+    FkDoubleVec2 current(0, 0);
+    FkDoubleVec2 next(0, 0);
+
+    FkDoubleVec2 outP1(0, 0);
+    FkDoubleVec2 outP2(0, 0);
+    FkDoubleVec2 outP3(0, 0);
+    FkDoubleVec2 outP4(0, 0);
+
+    FkDoubleVec2 dir(0, 0);
+    FkDoubleVec2 dir1(0, 0);
+    FkDoubleVec2 dir2(0, 0);
+
+    int count = points.size();
+
+    FkMesh mesh;
+    FkMesh mesh1;
+    FkMesh mesh2;
+    for(int i = 0; i < count; i++) {
+        //第一个
+        if(i == 0)
+        {
+            current = FkDoubleVec2(points[i].x ,points[i].y);
+            front = FkDoubleVec2(points[i].x ,points[i].y);
+            next = FkDoubleVec2(points[i + 1].x ,points[i + 1].y);
+        }
+        else if(i == (count - 1))
+        {//最后一个
+            current = FkDoubleVec2(points[i].x ,points[i].y);
+            front = FkDoubleVec2(points[i - 1].x ,points[i - 1].y);
+            next = FkDoubleVec2(points[i].x ,points[i].y);
+        }
+        else
+        {
+            current = FkDoubleVec2(points[i].x ,points[i].y);
+            front = FkDoubleVec2(points[i - 1].x ,points[i - 1].y);
+            next = FkDoubleVec2(points[i + 1].x ,points[i + 1].y);
+        }
+
+        if( abs(next.x - current.x)<=0.000001 && abs(next.y - current.y)<=0.000001)
+        {
+            dir = normalize(current - front);
+        }
+        else if( abs(front.x - current.x)<=0.000001 && abs(front.y - current.y) <=0.000001)
+        {
+            dir = normalize(next - current);
+        }
+        else
+        {
+            dir1 = normalize(current - front);
+            dir2 = normalize(next - current);
+            dir = normalize( dir1 + dir2 );
+        }
+
+        FkDoubleVec2 normal = FkDoubleVec2(-dir.y, dir.x);
+        if(i == 0)
+        {
+            FkDoubleVec2 tmp = current + normal * width * 1 * 1/2;
+            outP1 = FkDoubleVec2(tmp.x, tmp.y);
+            tmp = current + normal * width * -1 * 1/2;
+            outP2 = FkDoubleVec2(tmp.x, tmp.y);
+            continue;
+        }
+        else
+        {
+            float len = 0;
+            FkDoubleVec2 vp = current - front;
+            len = std::sqrt(vp.x * vp.x  + vp.y * vp.y);
+
+            //计算拐角点
+            FkDoubleVec2 tmp = current + normal * width * 1 * 1/2;
+            outP3 = FkDoubleVec2(tmp.x, tmp.y);
+            tmp = current + normal * width * -1 * 1/2;
+            outP4 = FkDoubleVec2(tmp.x, tmp.y);
+            mesh.clear();
+
+            //顶点坐标
+            mesh.vecPoint.push_back(outP1);
+            mesh.vecPoint.push_back(outP2);
+            mesh.vecPoint.push_back(outP3);
+            mesh.vecPoint.push_back(outP4);
+
+            //面索引数据
+            mesh.vecTriangles.push_back(0);
+            mesh.vecTriangles.push_back(1);
+            mesh.vecTriangles.push_back(2);
+            mesh.vecTriangles.push_back(1);
+            mesh.vecTriangles.push_back(3);
+            mesh.vecTriangles.push_back(2);
+
+
+            vecMesh.emplace_back(mesh);
+
+            outP1 = outP3;
+            outP2 = outP4;
+        }
+    }
+}
+
+TEST(FkPathTest, CatmullRomAndMesh) {
+    float strokeWidth = 2;
+    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkCatmullRomPath>(strokeWidth));
+    path->addPoint(20, 20);
+    path->addPoint(120, 170);
+    path->addPoint(200, 180);
+    path->addPoint(340, 340);
+    path->addPoint(50, 420);
+    path->finish();
+    std::vector<FkDoubleVec2> points;
+    EXPECT_TRUE(path->readPoints(points) > 0);
+
+    std::vector<FkMesh> vecMesh;
+    curveTriangulation(strokeWidth, points, vecMesh);
+    FkLogI("aliminabc", "Mesh count %d", vecMesh.size());
+
+    SkPaint paint;
+    paint.setAntiAlias(true);
+    paint.setStyle(SkPaint::kStroke_Style);
+    paint.setStrokeWidth(2);
+    paint.setStrokeCap(SkPaint::kRound_Cap);
+    paint.setStrokeJoin(SkPaint::kRound_Join);
+
+    FkSize size(480, 720);
+    SkImageInfo info = SkImageInfo::Make({size.getWidth(), size.getHeight()}, kRGBA_8888_SkColorType, kUnpremul_SkAlphaType, nullptr);
+    auto buf = FkBuffer::alloc(info.computeMinByteSize());
+    memset(buf->data(), 0, buf->capacity());
+    auto canvas = SkCanvas::MakeRasterDirect(info, buf->data(), info.minRowBytes());
+    paint.setColor(0xffffffff);
+    for (auto &mesh : vecMesh) {
+        for (int i = 0; i < mesh.vecTriangles.size() / 3; ++i) {
+            auto p0 = mesh.vecPoint[mesh.vecTriangles[i * 3]];
+            auto p1 = mesh.vecPoint[mesh.vecTriangles[i * 3 + 1]];
+            auto p2 = mesh.vecPoint[mesh.vecTriangles[i * 3 + 2]];
+            canvas->drawLine(SkPoint::Make(p0.x, p0.y), SkPoint::Make(p1.x, p1.y), paint);
+            canvas->drawLine(SkPoint::Make(p1.x, p1.y), SkPoint::Make(p2.x, p2.y), paint);
+            canvas->drawLine(SkPoint::Make(p2.x, p2.y), SkPoint::Make(p0.x, p0.y), paint);
+        }
+    }
+    canvas->flush();
+    FkBitmap::write(FK_ANDROID_TEST_TEMP_FILE, FkImage::Format::kPNG, buf, size, 80);
+}
