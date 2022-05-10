@@ -37,7 +37,7 @@
 #include "FkScaleTypeProto.h"
 #include "FkBitmapDefinition.h"
 #include "FkDrawPathProto.h"
-#include "FkCatmullRomPath.h"
+#include "FkMeshPath.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -483,7 +483,7 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
     }
     auto sizeCompo = FK_FIND_COMPO(itr->second, FkSizeCompo);
     if (curPathCompo == nullptr) {
-        curPathCompo = std::make_shared<FkPathCompo>(std::make_shared<FkCatmullRomPath>(10));
+        curPathCompo = std::make_shared<FkPathCompo>(std::make_shared<FkMeshPath>(10, 10));
         layer->addComponent(curPathCompo);
     }
     if (proto->isFinish) {

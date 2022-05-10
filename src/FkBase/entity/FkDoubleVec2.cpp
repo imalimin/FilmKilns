@@ -10,6 +10,7 @@
 */
 
 #include "FkDoubleVec2.h"
+#include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkDoubleVec2, FkVec2)
 
@@ -39,4 +40,9 @@ FkDoubleVec2 FkDoubleVec2::operator-(const FkDoubleVec2 &other) const {
 
 FkDoubleVec2 FkDoubleVec2::operator+(const FkDoubleVec2 &other) const {
     return FkDoubleVec2(x + other.x, y + other.y);
+}
+
+FkDoubleVec2 FkDoubleVec2::normalize() {
+    double len = std::sqrt(x * x + y * y);
+    return *this / len;
 }

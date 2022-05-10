@@ -58,10 +58,10 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     for (auto &path : paths) {
         auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
         if (compo) {
-            auto count = compo->size();
+            auto count = 320;
             programCompo->program->addValue(std::make_shared<FkSizeCompo>(size));
             programCompo->program->addValue(compo);
-            FK_GL_CHECK(glDrawArrays(GL_LINE_STRIP, 0, count));
+            FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, count));
         }
     }
     fboCompo->fbo->detach(dstTexCompo->tex->desc.target);
