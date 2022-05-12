@@ -14,6 +14,7 @@
 
 #include "FkComponent.h"
 #include "FkPath.h"
+#include <mutex>
 
 FK_SUPER_CLASS(FkPathCompo, FkComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkPathCompo)
@@ -35,6 +36,9 @@ public:
 
 public:
     std::shared_ptr<FkPath> path = nullptr;
+
+private:
+    std::mutex mtx;
 };
 
 #endif //FK_GRAPHIC_FKPATHCOMPO_H

@@ -13,6 +13,7 @@
 
 #include "FkObject.h"
 #include "FkDoubleVec2.h"
+#include <vector>
 
 FK_SUPER_CLASS(FkPath, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkPath)
@@ -25,8 +26,6 @@ public:
     virtual ~FkPath();
 
     virtual void addPoint(FkDoubleVec2 &point) = 0;
-
-    virtual size_t getPoints(std::vector<FkDoubleVec2> &_points) = 0;
 
     virtual size_t readPoints(std::vector<FkDoubleVec2> &_points) = 0;
 

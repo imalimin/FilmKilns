@@ -57,8 +57,8 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_GL_CHECK(programCompo->program->bind());
     for (auto &path : paths) {
         auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
-        if (compo) {
-            auto count = 320;
+        size_t count = 0;
+        if (compo && (count = compo->path->size()) > 0) {
             programCompo->program->addValue(std::make_shared<FkSizeCompo>(size));
             programCompo->program->addValue(compo);
             FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, count));

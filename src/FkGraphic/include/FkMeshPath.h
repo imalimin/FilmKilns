@@ -24,15 +24,16 @@ public:
 
     virtual ~FkMeshPath();
 
-    virtual size_t getPoints(std::vector<FkDoubleVec2> &_points) override;
+    virtual void addPoint(FkDoubleVec2 &point) override;
 
     virtual size_t readPoints(std::vector<FkDoubleVec2> &_points) override;
 
-private:
-    size_t calcMeshes(std::vector<FkDoubleVec2> &points, std::vector<FkDoubleVec2> &meshPoints);
+    virtual size_t size() override;
 
 private:
     float strokeWidth = 0.0f;
+    std::vector<FkDoubleVec2> meshPoints;
+    int readPos = 0;
 };
 
 #endif //FK_GRAPHIC_FKMESHPATH_H

@@ -56,9 +56,6 @@ TEST(FkPathTest, CatmullRom) {
     path->addPoint(20, 20);
     path->addPoint(120, 170);
     path->addPoint(200, 180);
-    path->addPoint(340, 340);
-    path->addPoint(50, 420);
-    path->finish();
     std::vector<FkDoubleVec2> points;
     EXPECT_TRUE(path->readPoints(points) > 0);
 
@@ -79,10 +76,16 @@ TEST(FkPathTest, CatmullRom) {
         canvas->drawPoint(SkPoint::Make(points[i].x, points[i].y), paint);
     }
 
-//    paint.setColor(0xff349a45);
-//    for (int i = 0; i < points.size() - 1; ++i) {
-//        canvas->drawPoint(points[i], paint);
-//    }
+    path->addPoint(340, 340);
+    path->addPoint(50, 420);
+    path->finish();
+    points.clear();
+    EXPECT_TRUE(path->readPoints(points) > 0);
+
+    paint.setColor(0xff00ff00);
+    for (int i = 0; i < points.size() - 1; ++i) {
+        canvas->drawPoint(SkPoint::Make(points[i].x, points[i].y), paint);
+    }
     canvas->flush();
 //    FkBitmap::write(FK_ANDROID_TEST_TEMP_FILE, FkImage::Format::kPNG, buf, size, 80);
 }
@@ -93,9 +96,6 @@ TEST(FkPathTest, CatmullRomAndMesh) {
     path->addPoint(20, 20);
     path->addPoint(120, 170);
     path->addPoint(200, 180);
-    path->addPoint(340, 340);
-    path->addPoint(50, 420);
-    path->finish();
     std::vector<FkDoubleVec2> meshPoints;
     EXPECT_TRUE(path->readPoints(meshPoints) > 0);
 
@@ -112,6 +112,20 @@ TEST(FkPathTest, CatmullRomAndMesh) {
     memset(buf->data(), 0, buf->capacity());
     auto canvas = SkCanvas::MakeRasterDirect(info, buf->data(), info.minRowBytes());
     paint.setColor(0xffffffff);
+    for (int i = 2; i < meshPoints.size(); ++i) {
+        auto &p0 = meshPoints[i - 2];
+        auto &p1 = meshPoints[i - 1];
+        auto &p2 = meshPoints[i];
+        canvas->drawLine(SkPoint::Make(p0.x, p0.y), SkPoint::Make(p1.x, p1.y), paint);
+        canvas->drawLine(SkPoint::Make(p1.x, p1.y), SkPoint::Make(p2.x, p2.y), paint);
+        canvas->drawLine(SkPoint::Make(p2.x, p2.y), SkPoint::Make(p0.x, p0.y), paint);
+    }
+    path->addPoint(340, 340);
+    path->addPoint(50, 420);
+    path->finish();
+    meshPoints.clear();
+    EXPECT_TRUE(path->readPoints(meshPoints) > 0);
+    paint.setColor(0xff00ff00);
     for (int i = 2; i < meshPoints.size(); ++i) {
         auto &p0 = meshPoints[i - 2];
         auto &p1 = meshPoints[i - 1];

@@ -25,18 +25,22 @@ FkPathCompo::~FkPathCompo() {
 }
 
 void FkPathCompo::addPoint(int32_t x, int32_t y) {
+    std::lock_guard<std::mutex> guard(mtx);
     FkDoubleVec2 point(x, y);
     path->addPoint(point);
 }
 
 void FkPathCompo::finish() {
+    std::lock_guard<std::mutex> guard(mtx);
     path->finish();
 }
 
 size_t FkPathCompo::readPoints(std::vector<FkDoubleVec2> &_points) {
+    std::lock_guard<std::mutex> guard(mtx);
     return path->readPoints(_points);
 }
 
 size_t FkPathCompo::size() {
+    std::lock_guard<std::mutex> guard(mtx);
     return path->size();
 }

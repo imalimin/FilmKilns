@@ -41,6 +41,7 @@ public:
 private:
     int32_t aPosLoc = -1;
     FkSize size;
+    std::vector<float> vertexes;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICPATHPROGRAM_H

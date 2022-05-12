@@ -26,8 +26,6 @@ public:
 
     virtual void addPoint(FkDoubleVec2 &point) override;
 
-    virtual size_t getPoints(std::vector<FkDoubleVec2> &_points) override;
-
     virtual size_t readPoints(std::vector<FkDoubleVec2> &_points) override;
 
     virtual size_t size() override;
@@ -38,6 +36,7 @@ private:
     std::vector<FkDoubleVec2> src;
     std::vector<FkDoubleVec2> points;
     double avgDistance;
+    int readPos = 0;
 };
 
 #endif //FK_GRAPHIC_FKCATMULLROMPATH_H

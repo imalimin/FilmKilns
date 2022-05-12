@@ -57,17 +57,18 @@ FkResult FkGraphicPathProgram::addValue(std::shared_ptr<FkComponent> value) {
     } else if (FK_INSTANCE_OF(value, FkPathCompo)) {
         auto pValue = Fk_POINTER_CAST(FkPathCompo, value);
         std::vector<FkDoubleVec2> points;
-        pValue->readPoints(points);
-        float *data = new float[points.size() * 2];
-        for (int i = 0; i < points.size(); ++i) {
-            data[i * 2] = points[i].x / (size.getWidth() / 2.0);
-            data[i * 2 + 1] = points[i].y / (size.getHeight() / 2.0);
+        auto count = pValue->readPoints(points);
+        if (count * 2 > vertexes.size()) {
+            vertexes.resize(count * 2);
+        }
+        for (int i = 0; i < count; ++i) {
+            vertexes[i * 2] = (points[i].x / (size.getWidth() / 2.0));
+            vertexes[i * 2 + 1] = (points[i].y / (size.getHeight() / 2.0));
         }
 
         FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
         //xy
-        FK_GL_CHECK(glVertexAttribPointer(aPosLoc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, data));
-        delete[] data;
+        FK_GL_CHECK(glVertexAttribPointer(aPosLoc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, vertexes.data()));
     }
     return FkGraphicProgram::addValue(value);
 }

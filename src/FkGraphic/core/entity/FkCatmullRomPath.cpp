@@ -63,17 +63,13 @@ void FkCatmullRomPath::addPoint(FkDoubleVec2 &point) {
     }
 }
 
-size_t FkCatmullRomPath::getPoints(std::vector<FkDoubleVec2> &_points) {
-    for (auto &point : points) {
-        _points.emplace_back(point);
-    }
-    return _points.size();
-}
-
 size_t FkCatmullRomPath::readPoints(std::vector<FkDoubleVec2> &_points) {
-    auto size = getPoints(_points);
-    points.clear();
-    return size;
+    int i = std::max(0, readPos);
+    for (; i < points.size(); ++i) {
+        _points.emplace_back(points[i]);
+    }
+    readPos = i;
+    return _points.size();
 }
 
 void FkCatmullRomPath::finish() {
@@ -85,5 +81,5 @@ void FkCatmullRomPath::finish() {
 }
 
 size_t FkCatmullRomPath::size() {
-    return points.size();
+    return points.size() - readPos;
 }
