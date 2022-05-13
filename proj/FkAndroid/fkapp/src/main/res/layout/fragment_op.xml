@@ -15,4 +15,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fluentui_content_inset" />
 
+    <com.alimin.fk.app.widget.FkYesNoView
+        android:id="@+id/yesNoView"
+        android:layout_gravity="center|bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
 </LinearLayout>

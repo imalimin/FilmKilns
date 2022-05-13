@@ -153,6 +153,18 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSave
     return ret;
 }
 
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPath
+        (JNIEnv *env, jobject that, jlong handle, jint layerId, jint x, jint y) {
+    auto engine = castHandle(handle);
+    return engine->drawPath(layerId, x, y);
+}
+
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPathFinish
+        (JNIEnv *env, jobject that, jlong handle, jint layerId) {
+    auto engine = castHandle(handle);
+    return engine->drawPathFinish(layerId);
+}
+
 #ifdef __cplusplus
 }
 #endif

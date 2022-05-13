@@ -1,5 +1,6 @@
 package com.alimin.fk.app.module.image
 
+import android.os.Bundle
 import android.view.View
 import com.alimin.fk.app.R
 import com.alimin.fk.app.widget.FkContextualCommandBar
@@ -23,5 +24,13 @@ abstract class OpFragment(val presenter: ImageContract.Presenter) : BaseFragment
     }
 
     fun getCommandBar(): FkContextualCommandBar? = baseCommandBar
+
+    fun hideBottomNav() {
+        onButtonPressed(R.id.action_hide_bottom_nav, Bundle.EMPTY)
+    }
+
+    fun showBottomNav() {
+        onButtonPressed(R.id.action_show_bottom_nav, Bundle.EMPTY)
+    }
 
 }

@@ -38,13 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:menu="@menu/menu_img_bottom_nav" />
-
-        <com.alimin.fk.app.widget.FkYesNoView
-            android:id="@+id/yesNoView"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
     </FrameLayout>
 
 </LinearLayout>

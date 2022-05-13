@@ -16,6 +16,10 @@ class FkActSurfaceView : SurfaceView {
         IDL, SCALE, ROTATE, MOVE
     }
 
+    enum class Mode {
+        kMVP, kPaint
+    }
+
     private lateinit var mGestureDetector: GestureDetectorCompat
     private lateinit var mScaleDetector: ScaleGestureDetector
     private lateinit var scroller: OverScroller
@@ -24,6 +28,7 @@ class FkActSurfaceView : SurfaceView {
     private var onScaleListener: OnScaleListener? = null
     private var onRotateListener: OnRotateListener? = null
     private var onActionListener: OnActionListener? = null
+    private var onTouchPosListener: OnTouchPosListener? = null
 
     private val mCurrentPosition = PointF(0f, 0f)
     private var minFlingVelocity = 0
@@ -36,6 +41,7 @@ class FkActSurfaceView : SurfaceView {
     private val lastFlingPoint = Point(0, 0)
     private val mChoreographer = Choreographer.getInstance()
     private lateinit var vSyncCallback: Choreographer.FrameCallback
+    private var mode = Mode.kMVP
 
     constructor(context: Context) : super(context) {
         initialize()
@@ -71,6 +77,10 @@ class FkActSurfaceView : SurfaceView {
         minFlingVelocity = ViewConfiguration.get(context).scaledMinimumFlingVelocity
     }
 
+    fun setMode(mode: Mode) {
+        this.mode = mode
+    }
+
     private fun notifyRender() {
         mChoreographer.removeFrameCallback(vSyncCallback)
         mChoreographer.postFrameCallback(vSyncCallback)
@@ -82,6 +92,19 @@ class FkActSurfaceView : SurfaceView {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         super.onTouchEvent(event)
+        if (mode == Mode.kPaint) {
+            when (event.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    onTouchPosListener?.onChange(this, event.x, event.y)
+                    notifyRender()
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    onTouchPosListener?.onTouchUp(this, event.x, event.y)
+                    notifyRender()
+                }
+            }
+            return true
+        }
         mScaleDetector.onTouchEvent(event)
         mGestureDetector.onTouchEvent(event)
 
@@ -207,6 +230,10 @@ class FkActSurfaceView : SurfaceView {
         onActionListener = listener
     }
 
+    fun setOnTouchPosListener(listener: OnTouchPosListener) {
+        onTouchPosListener = listener
+    }
+
     interface OnScrollListener {
         /**
          * @param status 0:IDL,1:SCROLL
@@ -232,6 +259,11 @@ class FkActSurfaceView : SurfaceView {
 
     interface OnActionListener {
         fun onRender(v: SurfaceView)
+    }
+
+    interface OnTouchPosListener {
+        fun onChange(v: SurfaceView, x: Float, y: Float)
+        fun onTouchUp(v: SurfaceView, x: Float, y: Float)
     }
 
     override fun computeScroll() {

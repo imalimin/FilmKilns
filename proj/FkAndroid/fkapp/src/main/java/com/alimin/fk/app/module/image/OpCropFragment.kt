@@ -22,19 +22,21 @@ class OpCropFragment(presenter: ImageContract.Presenter) : OpFragment(presenter)
     private fun reset() {
         getCommandBar()?.visibility = View.VISIBLE
         cropView.visibility = View.GONE
+        yesNoView.visibility = View.GONE
+        showBottomNav()
     }
 
     private fun actionCrop() {
         cropView.reset()
         getCommandBar()?.visibility = View.GONE
         cropView.visibility = View.VISIBLE
-        (requireActivity() as ImageActivity).apply {
-            showYesNoAction {
-                reset()
-                if (it) {
-                    presenter.crop(cropView.getCropRect())
-                    presenter.notifyRender()
-                }
+        yesNoView.visibility = View.VISIBLE
+        hideBottomNav()
+        yesNoView.setActionListener {
+            reset()
+            if (it) {
+                presenter.crop(cropView.getCropRect())
+                presenter.notifyRender()
             }
         }
     }

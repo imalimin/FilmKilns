@@ -31,7 +31,7 @@ class OpPagerAdapter(private val presenter: ImageContract.Presenter, val menu:Me
             ?: return when (menu.getItem(position).itemId) {
                 R.id.action_layer -> OpLayerFragment(presenter)
                 R.id.action_crop -> OpCropFragment(presenter)
-                R.id.action_paint -> OpLayerFragment(presenter)
+                R.id.action_paint -> OpPaintFragment(presenter)
                 R.id.action_filter -> OpCropFragment(presenter)
                 R.id.action_save -> OpExportFragment(presenter)
                 else -> OpCropFragment(presenter)
@@ -48,7 +48,8 @@ class ImageActivity : BaseActivity(),
     FkActSurfaceView.OnScrollListener,
     FkActSurfaceView.OnRotateListener,
     FkActSurfaceView.OnScaleListener,
-    FkActSurfaceView.OnActionListener {
+    FkActSurfaceView.OnActionListener,
+    FkActSurfaceView.OnTouchPosListener {
     override val layoutResID: Int = R.layout.activity_image
     override val isActive: Boolean
         get() = true
@@ -79,6 +80,7 @@ class ImageActivity : BaseActivity(),
             surfaceView?.setOnScaleListener(this)
             surfaceView?.setOnRotateListener(this)
             surfaceView?.setOnActionListener(this)
+            surfaceView?.setOnTouchPosListener(this)
             val lp = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             surfaceHolder.addView(surfaceView, lp)
         } else {
@@ -90,16 +92,6 @@ class ImageActivity : BaseActivity(),
         navBar.setOnNavigationItemSelectedListener(this)
         mPagerAdapter = OpPagerAdapter(presenter, navBar.menu, supportFragmentManager)
         mPagerAdapter?.attach(viewPager)
-    }
-
-    fun showYesNoAction(listener: (yes: Boolean) -> Unit) {
-        navBar.visibility = View.INVISIBLE
-        yesNoView.visibility = View.VISIBLE
-        yesNoView.setActionListener {
-            listener(it)
-            navBar.visibility = View.VISIBLE
-            yesNoView.visibility = View.GONE
-        }
     }
 
     override fun onStart() {
@@ -175,8 +167,27 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onFragmentInteraction(what: Int, data: Bundle) {
+        when (what) {
+            R.id.action_hide_bottom_nav ->  navBar.visibility = View.INVISIBLE
+            R.id.action_show_bottom_nav ->  navBar.visibility = View.VISIBLE
+            R.id.action_paint -> {
+                surfaceView?.setMode(FkActSurfaceView.Mode.kPaint)
+            }
+            R.id.action_paint_cancel -> {
+                surfaceView?.setMode(FkActSurfaceView.Mode.kMVP)
+            }
+        }
     }
 
     override fun showError(error: Int, msg: String) {
+
+    }
+
+    override fun onChange(v: SurfaceView, x: Float, y: Float) {
+        presenter.drawPath(x.toInt(), y.toInt())
+    }
+
+    override fun onTouchUp(v: SurfaceView, x: Float, y: Float) {
+        presenter.drawPathFinish()
     }
 }

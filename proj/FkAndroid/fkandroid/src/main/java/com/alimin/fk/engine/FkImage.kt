@@ -109,41 +109,41 @@ class FkImage(val workspace: String) : FkEngine() {
     }
 
     /**
-     * @param layer Layer ID, ID 0 is Canvas.
+     * @param layerId Layer ID, ID 0 is Canvas.
      * @param dx Delta x position of view
      * @param dy Delta y position of view
      * @return Result code.
      */
-    fun postTranslate(layer: Int, dx: Int, dy: Int): FkResult {
+    fun postTranslate(layerId: Int, dx: Int, dy: Int): FkResult {
         if (!isNull()) {
-            return FkResult(nativePostTranslate(getHandle(), layer, dx, dy))
+            return FkResult(nativePostTranslate(getHandle(), layerId, dx, dy))
         }
         return FkResult.FK_FAIL
     }
 
-    fun postScale(layer: Int, dx: Float, dy: Float): FkResult {
+    fun postScale(layerId: Int, dx: Float, dy: Float): FkResult {
         if (!isNull()) {
-            return FkResult(nativePostScale(getHandle(), layer, dx, dy))
+            return FkResult(nativePostScale(getHandle(), layerId, dx, dy))
         }
         return FkResult.FK_FAIL
     }
 
-    fun postRotation(layer: Int, num: Int, den: Int): FkResult {
+    fun postRotation(layerId: Int, num: Int, den: Int): FkResult {
         if (!isNull()) {
-            return FkResult(nativePostRotation(getHandle(), layer, num, den))
+            return FkResult(nativePostRotation(getHandle(), layerId, num, den))
         }
         return FkResult.FK_FAIL
     }
 
     /**
-     * @param layer Layer ID, ID 0 is Canvas.
+     * @param layerId Layer ID, ID 0 is Canvas.
      * @param size  Size of point
      * @param point Point of view
      * @return Result code.
      */
-    fun drawPoint(layer: Int, color: Long, size: Int, point: Point): FkResult {
+    fun drawPoint(layerId: Int, color: Long, size: Int, point: Point): FkResult {
         if (!isNull()) {
-            return FkResult(nativeDrawPoint(getHandle(), layer, color, size, point.x, point.y))
+            return FkResult(nativeDrawPoint(getHandle(), layerId, color, size, point.x, point.y))
         }
         return FkResult.FK_FAIL
     }
@@ -155,9 +155,9 @@ class FkImage(val workspace: String) : FkEngine() {
         return FkResult.FK_FAIL
     }
 
-    fun cropLayer(layer: Int, leftTop: Point, rightBottom: Point): FkResult {
+    fun cropLayer(layerId: Int, leftTop: Point, rightBottom: Point): FkResult {
         if (!isNull()) {
-            return FkResult(nativeCropLayer(getHandle(), layer, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y))
+            return FkResult(nativeCropLayer(getHandle(), layerId, leftTop.x, leftTop.y, rightBottom.x, rightBottom.y))
         }
         return FkResult.FK_FAIL
     }
@@ -165,6 +165,20 @@ class FkImage(val workspace: String) : FkEngine() {
     fun save(file: String): FkResult {
         if (!isNull()) {
             return FkResult(nativeSave(getHandle(), file))
+        }
+        return FkResult.FK_FAIL
+    }
+
+    fun drawPath(layerId: Int, x: Int, y: Int): FkResult {
+        if (!isNull()) {
+            return FkResult(nativeDrawPath(getHandle(), layerId, x, y))
+        }
+        return FkResult.FK_FAIL
+    }
+
+    fun drawPathFinish(layerId: Int): FkResult {
+        if (!isNull()) {
+            return FkResult(nativeDrawPathFinish(getHandle(), layerId))
         }
         return FkResult.FK_FAIL
     }
@@ -189,11 +203,13 @@ class FkImage(val workspace: String) : FkEngine() {
     private external fun nativeSetCanvasSize(handle: Long, width: Int, height: Int): Int
 
     private external fun nativeNotifyRender(handle: Long): Int
-    private external fun nativePostTranslate(handle: Long, layer: Int, dx: Int, dy: Int): Int
-    private external fun nativePostScale(handle: Long, layer: Int, dx: Float, dy: Float): Int
-    private external fun nativePostRotation(handle: Long, layer: Int, num: Int, den: Int): Int
-    private external fun nativeDrawPoint(handle: Long, layer: Int, color: Long, size: Int, x: Int, y: Int): Int
+    private external fun nativePostTranslate(handle: Long, layerId: Int, dx: Int, dy: Int): Int
+    private external fun nativePostScale(handle: Long, layerId: Int, dx: Float, dy: Float): Int
+    private external fun nativePostRotation(handle: Long, layerId: Int, num: Int, den: Int): Int
+    private external fun nativeDrawPoint(handle: Long, layerId: Int, color: Long, size: Int, x: Int, y: Int): Int
     private external fun nativeCrop(handle: Long, left: Int, top: Int, right: Int, bottom: Int): Int
-    private external fun nativeCropLayer(handle: Long, layer: Int, left: Int, top: Int, right: Int, bottom: Int): Int
+    private external fun nativeCropLayer(handle: Long, layerId: Int, left: Int, top: Int, right: Int, bottom: Int): Int
     private external fun nativeSave(handle: Long, file: String): Int
+    private external fun nativeDrawPath(handle: Long, layerId: Int, x: Int, y: Int): Int
+    private external fun nativeDrawPathFinish(handle: Long, layerId: Int): Int
 }

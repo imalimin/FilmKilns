@@ -37,5 +37,7 @@ class ImageContract {
         abstract fun save(file: String)
         abstract fun addLayerUpdateListener(l: OnLayerUpdateListener)
         abstract fun removeLayerUpdateListener(l: OnLayerUpdateListener)
+        abstract fun drawPath(x: Int, y: Int)
+        abstract fun drawPathFinish()
     }
 }

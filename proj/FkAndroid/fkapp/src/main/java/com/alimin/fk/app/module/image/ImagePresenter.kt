@@ -167,4 +167,12 @@ class ImagePresenter(
     override fun removeLayerUpdateListener(l: OnLayerUpdateListener) {
         layerUpdateListeners.remove(l)
     }
+
+    override fun drawPath(x: Int, y: Int) {
+        engine.drawPath(curLayer, x, y)
+    }
+
+    override fun drawPathFinish() {
+        engine.drawPathFinish(curLayer)
+    }
 }

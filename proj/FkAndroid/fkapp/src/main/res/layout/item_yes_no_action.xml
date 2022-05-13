@@ -2,7 +2,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/fluentui_content_inset"
     android:paddingBottom="@dimen/fluentui_content_inset">
 
     <com.alimin.fk.app.widget.FkContextualCommandBar

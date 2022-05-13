@@ -43,6 +43,9 @@ static FkDoubleVec2 calcCatmullRomPoint(FkDoubleVec2 &p0, FkDoubleVec2 &p1, FkDo
 }
 
 void FkCatmullRomPath::addPoint(FkDoubleVec2 &point) {
+    if (!src.empty() && FkMath::distance(src[src.size() - 1], point) < 10) {
+        return;
+    }
     src.emplace_back(point);
     if (src.size() == 3) {
         src[0].x = src[1].x * 2 - src[2].x;
