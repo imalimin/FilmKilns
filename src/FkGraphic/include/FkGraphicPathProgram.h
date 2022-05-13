@@ -40,6 +40,7 @@ public:
 
 private:
     int32_t aPosLoc = -1;
+    int32_t uPaintColorLoc = -1;
     FkSize size;
     std::vector<float> vertexes;
 };

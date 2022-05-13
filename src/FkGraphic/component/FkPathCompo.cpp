@@ -13,10 +13,11 @@
 
 FK_IMPL_CLASS_TYPE(FkPathCompo, FkComponent)
 
-FkPathCompo::FkPathCompo(std::shared_ptr<FkPath> _path) : FkComponent(), path(_path) {
+FkPathCompo::FkPathCompo(std::shared_ptr<FkPath> _path, FkColor color)
+        : FkComponent(), path(_path), color(color) {
 }
 
-FkPathCompo::FkPathCompo(const FkPathCompo &o) : FkComponent(o) {
+FkPathCompo::FkPathCompo(const FkPathCompo &o) : FkComponent(o), path(o.path), color(o.color) {
 
 }
 

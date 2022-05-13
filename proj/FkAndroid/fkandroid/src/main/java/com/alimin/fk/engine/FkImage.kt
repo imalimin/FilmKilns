@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.Size
 import android.view.Choreographer
 import android.view.Surface
+import com.alimin.fk.core.FkPaint
 import com.alimin.fk.define.kScaleType
 import com.alimin.fk.entity.FkResult
 
@@ -169,9 +170,9 @@ class FkImage(val workspace: String) : FkEngine() {
         return FkResult.FK_FAIL
     }
 
-    fun drawPath(layerId: Int, x: Int, y: Int): FkResult {
+    fun drawPath(layerId: Int, x: Int, y: Int, paint: FkPaint): FkResult {
         if (!isNull()) {
-            return FkResult(nativeDrawPath(getHandle(), layerId, x, y))
+            return FkResult(nativeDrawPath(getHandle(), layerId, x, y, paint.toByteArray()))
         }
         return FkResult.FK_FAIL
     }
@@ -210,6 +211,6 @@ class FkImage(val workspace: String) : FkEngine() {
     private external fun nativeCrop(handle: Long, left: Int, top: Int, right: Int, bottom: Int): Int
     private external fun nativeCropLayer(handle: Long, layerId: Int, left: Int, top: Int, right: Int, bottom: Int): Int
     private external fun nativeSave(handle: Long, file: String): Int
-    private external fun nativeDrawPath(handle: Long, layerId: Int, x: Int, y: Int): Int
+    private external fun nativeDrawPath(handle: Long, layerId: Int, x: Int, y: Int, paintData: ByteArray): Int
     private external fun nativeDrawPathFinish(handle: Long, layerId: Int): Int
 }

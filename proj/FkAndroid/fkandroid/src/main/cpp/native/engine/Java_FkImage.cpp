@@ -11,9 +11,12 @@
 #include "FkRenderEngine.h"
 #include "FkInstanceHolder.h"
 #include "FkAndroidWindow.h"
+#include "FkPaintInfo.pb.h"
 
 #define RENDER_ALIAS "RenderEngine"
 #define IMAGE_ENGINE_ALIAS "ImageEngine"
+
+using namespace com::alimin::fk;
 
 #ifdef __cplusplus
 extern "C" {
@@ -154,9 +157,25 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSave
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPath
-        (JNIEnv *env, jobject that, jlong handle, jint layerId, jint x, jint y) {
+        (JNIEnv *env, jobject that, jlong handle, jint layerId, jint x, jint y, jbyteArray paintData) {
+    if (paintData == nullptr) {
+        return FK_NPE;
+    }
     auto engine = castHandle(handle);
-    return engine->drawPath(layerId, x, y);
+    auto size = env->GetArrayLength(paintData);
+    auto ptr = env->GetByteArrayElements(paintData, nullptr);
+    if (size == 0 || ptr == nullptr) {
+        return FK_NPE;
+    }
+    auto paintInfo = std::make_shared<pb::FkPaintInfo>();
+    if (!paintInfo->ParseFromArray(ptr, size)) {
+        FkLogE(FK_DEF_TAG, "Parse paint info fail.");
+        return FK_IO_FAIL;
+    }
+    auto paint = std::make_shared<FkPaint>();
+    paint->strokeWidth = paintInfo->strokewidth();
+    paint->color = paintInfo->color();
+    return engine->drawPath(layerId, x, y, paint);
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPathFinish

@@ -483,7 +483,10 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
     }
     auto sizeCompo = FK_FIND_COMPO(itr->second, FkSizeCompo);
     if (curPathCompo == nullptr) {
-        curPathCompo = std::make_shared<FkPathCompo>(std::make_shared<FkMeshPath>(10, 10));
+        FkAssert(proto->paint != nullptr, FK_INVALID_STATE);
+        auto width = proto->paint->strokeWidth;
+        auto path = std::make_shared<FkMeshPath>(width, width);
+        curPathCompo = std::make_shared<FkPathCompo>(path, FkColor::makeFrom(proto->paint->color));
         layer->addComponent(curPathCompo);
     }
     if (proto->isFinish) {

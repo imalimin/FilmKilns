@@ -1,5 +1,6 @@
 package com.alimin.fk.app.module.image
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import com.alimin.fk.app.R
@@ -10,6 +11,8 @@ class OpPaintFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
     override val menuResID: Int = R.menu.menu_image_op_paint
     override fun initView() {
         super.initView()
+        presenter.getPaint().strokeWidth = 12
+        presenter.getPaint().color = Color.YELLOW
         yesNoView.setActionListener {
             reset()
         }

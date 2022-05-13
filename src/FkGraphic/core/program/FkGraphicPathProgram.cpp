@@ -13,6 +13,7 @@
 #include "FkGLDefinition.h"
 #include "FkPathCompo.h"
 #include "FkSizeCompo.h"
+#include "FkColorCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicPathProgram, FkGraphicProgram)
 
@@ -33,6 +34,8 @@ FkResult FkGraphicPathProgram::create() {
     if (FK_OK == ret) {
         aPosLoc = getAttribLocation("aPosition");
         FkAssert(aPosLoc >= 0, FK_FAIL);
+        uPaintColorLoc = getUniformLocation("paintColor");
+        FkAssert(uPaintColorLoc >= 0, FK_FAIL);
     }
     return ret;
 }
@@ -54,6 +57,9 @@ FkResult FkGraphicPathProgram::addValue(std::shared_ptr<FkComponent> value) {
     if (FK_INSTANCE_OF(value, FkSizeCompo)) {
         auto pValue = Fk_POINTER_CAST(FkSizeCompo, value);
         size = pValue->size;
+    } else if (FK_INSTANCE_OF(value, FkColorCompo)) {
+        auto pValue = Fk_POINTER_CAST(FkColorCompo, value);
+        setUniform4fv(uPaintColorLoc, 1, pValue->color.fArray());
     } else if (FK_INSTANCE_OF(value, FkPathCompo)) {
         auto pValue = Fk_POINTER_CAST(FkPathCompo, value);
         std::vector<FkDoubleVec2> points;
@@ -85,8 +91,9 @@ std::string FkGraphicPathProgram::getVertex() {
 std::string FkGraphicPathProgram::getFragment() {
     std::string shader(R"(
         precision mediump float;
+        uniform vec4 paintColor;
         void main() {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            gl_FragColor = paintColor;
         })");
     return shader;
 }

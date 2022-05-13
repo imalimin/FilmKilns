@@ -13,6 +13,7 @@
 
 #include "FkProtocol.h"
 #include "FkIntVec2.h"
+#include "FkPaint.h"
 
 FK_SUPER_CLASS(FkDrawPathProto, FkProtocol) {
 FK_DEF_CLASS_TYPE_FUNC(FkDrawPathProto)
@@ -27,6 +28,7 @@ public:
 public:
     FkID layerId;
     FkIntVec2 point;
+    std::shared_ptr<FkPaint> paint = nullptr;
     bool isFinish = false;
 };
 

@@ -17,6 +17,7 @@
 #include "FkGraphicLayer.h"
 #include "FkRect.h"
 #include "FkBuffer.h"
+#include "FkPaint.h"
 
 FK_SUPER_CLASS(FkLayerEngine, FkEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkLayerEngine)
@@ -78,7 +79,7 @@ public:
     FkResult readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
                         std::function<void(std::shared_ptr<FkBuffer>, FkSize)> finishCallback);
 
-    FkResult drawPath(FkID layerId, int32_t x, int32_t y, bool isFinish = false);
+    FkResult drawPath(FkID layerId, int32_t x, int32_t y, std::shared_ptr<FkPaint> &paint);
 
     FkResult drawPathFinish(FkID layerId);
 

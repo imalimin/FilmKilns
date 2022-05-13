@@ -52,7 +52,7 @@ static std::vector<SkPoint> calcPath(std::vector<SkPoint> points, float avgPoint
 }
 
 TEST(FkPathTest, CatmullRom) {
-    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkCatmullRomPath>(10));
+    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkCatmullRomPath>(10), FkColor::white());
     path->addPoint(20, 20);
     path->addPoint(120, 170);
     path->addPoint(200, 180);
@@ -92,7 +92,7 @@ TEST(FkPathTest, CatmullRom) {
 
 TEST(FkPathTest, CatmullRomAndMesh) {
     float strokeWidth = 10;
-    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkMeshPath>(strokeWidth, strokeWidth));
+    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkMeshPath>(strokeWidth, strokeWidth), FkColor::white());
     path->addPoint(20, 20);
     path->addPoint(120, 170);
     path->addPoint(200, 180);

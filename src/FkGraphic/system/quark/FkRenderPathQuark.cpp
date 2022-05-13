@@ -16,6 +16,7 @@
 #include "FkRenderProgramCompo.h"
 #include "FkPathCompo.h"
 #include "FkSizeCompo.h"
+#include "FkColorCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderPathQuark, FkQuark)
 
@@ -60,6 +61,7 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
         size_t count = 0;
         if (compo && (count = compo->path->size()) > 0) {
             programCompo->program->addValue(std::make_shared<FkSizeCompo>(size));
+            programCompo->program->addValue(std::make_shared<FkColorCompo>(compo->color));
             programCompo->program->addValue(compo);
             FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, count));
         }

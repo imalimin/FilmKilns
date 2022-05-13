@@ -3,6 +3,7 @@ package com.alimin.fk.app.module.image
 import android.graphics.Rect
 import android.util.Size
 import android.view.Surface
+import com.alimin.fk.core.FkPaint
 import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.pb.FkImageLayerOuterClass
@@ -39,5 +40,6 @@ class ImageContract {
         abstract fun removeLayerUpdateListener(l: OnLayerUpdateListener)
         abstract fun drawPath(x: Int, y: Int)
         abstract fun drawPathFinish()
+        abstract fun getPaint(): FkPaint
     }
 }

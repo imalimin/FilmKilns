@@ -1,10 +1,12 @@
 package com.alimin.fk.app.module.image
 
+import android.graphics.Color
 import android.graphics.Rect
 import android.util.Size
 import android.view.Surface
 import com.alimin.fk.app.model.ImageEngineModel
 import com.alimin.fk.app.model.impl.ImageEngineModelImpl
+import com.alimin.fk.core.FkPaint
 import com.alimin.fk.define.kScaleType
 import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.engine.FkImage
@@ -23,6 +25,7 @@ class ImagePresenter(
     private val engine: FkImage
     private val modelEngine: FkImageModel
     private var curLayer = -1
+    private var paint = FkPaint(10, Color.WHITE)
     private var layerUpdateListeners = ArrayList<OnLayerUpdateListener>()
 
     init {
@@ -169,10 +172,12 @@ class ImagePresenter(
     }
 
     override fun drawPath(x: Int, y: Int) {
-        engine.drawPath(curLayer, x, y)
+        engine.drawPath(curLayer, x, y, paint)
     }
 
     override fun drawPathFinish() {
         engine.drawPathFinish(curLayer)
     }
+
+    override fun getPaint(): FkPaint = paint
 }

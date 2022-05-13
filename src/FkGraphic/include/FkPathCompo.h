@@ -14,13 +14,14 @@
 
 #include "FkComponent.h"
 #include "FkPath.h"
+#include "FkColor.h"
 #include <mutex>
 
 FK_SUPER_CLASS(FkPathCompo, FkComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkPathCompo)
 
 public:
-    FkPathCompo(std::shared_ptr<FkPath> _path);
+    FkPathCompo(std::shared_ptr<FkPath> _path, FkColor color);
 
     FkPathCompo(const FkPathCompo &o);
 
@@ -36,6 +37,7 @@ public:
 
 public:
     std::shared_ptr<FkPath> path = nullptr;
+    FkColor color;
 
 private:
     std::mutex mtx;
