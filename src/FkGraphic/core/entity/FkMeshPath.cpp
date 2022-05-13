@@ -92,7 +92,7 @@ size_t FkMeshPath::readPoints(std::vector<FkDoubleVec2> &_points) {
     for (; i < meshPoints.size(); ++i) {
         _points.emplace_back(meshPoints[i]);
     }
-    readPos = i;
+    readPos = std::max(0, i - 2);;
     return _points.size();
 }
 
