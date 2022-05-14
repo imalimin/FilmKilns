@@ -154,7 +154,7 @@ TEST_F(FkImageEngineTest, DrawPath) {
     auto layerId = addImagePosLayer();
 
     auto paint = std::make_shared<FkPaint>();
-    paint->strokeWidth = 10;
+    paint->strokeWidth = 2;
     paint->color = FkColor::white().toInt();
     EXPECT_EQ(engine->drawPath(layerId, 100, 600, paint), FK_OK);
     EXPECT_EQ(engine->drawPath(layerId, 360, 1000, paint), FK_OK);
@@ -165,7 +165,11 @@ TEST_F(FkImageEngineTest, DrawPath) {
     EXPECT_EQ(engine->drawPath(layerId, 200, 2000, paint), FK_OK);
     EXPECT_EQ(engine->drawPathFinish(layerId), FK_OK);
     render();
-    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
+    EXPECT_TRUE(testColor(engine, 36, 116, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 253, 355, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 403, 403, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 71, 578, FkColor::white()));
+//    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
 class FkImageFileEngineTest : public FkImageEngineTest {
