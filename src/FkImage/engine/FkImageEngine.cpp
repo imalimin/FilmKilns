@@ -27,7 +27,6 @@ FkImageEngine::FkImageEngine(std::shared_ptr<FkEngine> &renderEngine,
 }
 
 FkImageEngine::~FkImageEngine() {
-    workspace = "";
 }
 
 FkResult FkImageEngine::onCreate() {
@@ -35,7 +34,9 @@ FkResult FkImageEngine::onCreate() {
 }
 
 FkResult FkImageEngine::onDestroy() {
-    return FkLayerEngine::onDestroy();
+    auto ret = FkLayerEngine::onDestroy();
+    workspace.clear();
+    return ret;
 }
 
 FkResult FkImageEngine::onStart() {
@@ -66,17 +67,17 @@ FkID FkImageEngine::newLayerWithFile(std::string path, FkID expectId) {
 FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> &msg) {
     auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
     auto src = msg->arg3;
-    std::string dst = FkString(workspace)
-            .append("/layer_")
+    std::string name = FkString("layer_")
             .append(layer->id)
             .append(FkFileUtils::suffix(src))
             .toString();
-    auto ret = FkFileUtils::copy(src, dst);
+    auto ret = workspace.includeAsSource(src, name);
     if (FK_OK != ret) {
         FkLogI(FK_DEF_TAG, "Copy source file failed with ret=%d", ret);
         return FK_IO_FAIL;
     }
-    auto bmp = FkBitmap::from(dst);
+    auto filePath = workspace.getSourcePath(name);
+    auto bmp = FkBitmap::from(filePath);
     FkAssert(nullptr != bmp, FK_EMPTY_DATA);
     FkSize layerSize(bmp->getWidth(), bmp->getHeight());
     FkSize canvasSize(layerSize);
@@ -90,7 +91,7 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> &msg) {
     auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
     proto->layer = layer;
     proto->layer->addComponent(std::make_shared<FkSizeCompo>(layerSize));
-    proto->layer->addComponent(std::make_shared<FkFilePathCompo>(dst));
+    proto->layer->addComponent(std::make_shared<FkFilePathCompo>(name));
     return getClient()->with(getMolecule())->send(proto);
 }
 

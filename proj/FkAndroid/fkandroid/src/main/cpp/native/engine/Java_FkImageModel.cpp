@@ -30,8 +30,7 @@ JNIEXPORT jlong FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeC
         (JNIEnv *env, jobject that, jlong imageEngineHandle) {
     auto imageEngine = FkInstanceHolder::getInstance().find<std::shared_ptr<FkImageEngine>>(
             imageEngineHandle);
-    auto engine = std::dynamic_pointer_cast<FkEngine>(imageEngine);
-    auto fileEngine = std::make_shared<FkImageModelEngine>(engine, FILE_ENGINE_ALIAS);
+    auto fileEngine = std::make_shared<FkImageModelEngine>(imageEngine, FILE_ENGINE_ALIAS);
     return FkInstanceHolder::getInstance().put(fileEngine);
 }
 

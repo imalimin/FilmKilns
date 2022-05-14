@@ -16,7 +16,11 @@
 FK_IMPL_CLASS_TYPE(FkBitmap, FkObject)
 
 std::shared_ptr<FkBitmap> FkBitmap::from(std::string &file) {
-    return std::shared_ptr<FkBitmap>(new FkBitmap(file));
+    auto bmp =  std::shared_ptr<FkBitmap>(new FkBitmap(file));
+    if (bmp->bmp == nullptr) {
+        return nullptr;
+    }
+    return bmp;
 }
 
 FkResult FkBitmap::write(std::string file, FkImage::Format fmt, std::shared_ptr<FkBuffer> buf,

@@ -10,6 +10,7 @@
 
 #include "FkObject.h"
 #include "FkLayerEngine.h"
+#include "FkWorkspace.h"
 
 FK_SUPER_CLASS(FkImageEngine, FkLayerEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkImageEngine)
@@ -39,7 +40,7 @@ private:
     FkResult _save(std::shared_ptr<FkMessage> &msg);
 
 private:
-    std::string workspace;
+    FkWorkspace workspace;
 };
 
 #endif //FK_IMAGE_FKIMAGEENGINE_H

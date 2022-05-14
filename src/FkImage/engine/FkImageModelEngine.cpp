@@ -22,11 +22,7 @@
 
 FK_IMPL_CLASS_TYPE(FkImageModelEngine, FkEngine)
 
-static std::shared_ptr<FkImageEngine> _cast2ImageEngine(std::shared_ptr<FkEngine> &imageEngine) {
-    return std::dynamic_pointer_cast<FkImageEngine>(imageEngine);
-}
-
-FkImageModelEngine::FkImageModelEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name)
+FkImageModelEngine::FkImageModelEngine(std::shared_ptr<FkImageEngine> &imageEngine, std::string name)
         : FkEngine(name), imageEngine(imageEngine) {
 
 }
@@ -57,7 +53,7 @@ FkResult FkImageModelEngine::onStop() {
 
 FkResult FkImageModelEngine::save(std::string &file) {
     std::vector<std::shared_ptr<FkGraphicLayer>> layers;
-    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
+    auto ret = imageEngine->queryLayers(layers);
     if (FK_OK != ret) {
         FkLogI(FK_DEF_TAG, "Query layers fail with %d", ret);
         return FK_INVALID_DATA;
@@ -72,8 +68,8 @@ FkResult FkImageModelEngine::_save(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(anyCompo, FkAnyCompo, msg->sp);
     FkAssert(anyCompo->any.has_value(), FK_FAIL);
     auto layers = std::any_cast<std::vector<std::shared_ptr<FkGraphicLayer>>>(anyCompo->any);
-    auto file = msg->arg3;
-    auto dir = _createTempDir(file);
+    auto dir = msg->arg3;
+    FkAssert(FkFileUtils::exist(dir), FK_FILE_NOT_FOUND);
     auto model = convert2PictureModel(dir, layers);
     return _writeModel2File(dir, model);
 }
@@ -85,9 +81,9 @@ FkResult FkImageModelEngine::load(std::string &file) {
 }
 
 FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
-    auto engine = _cast2ImageEngine(imageEngine);
+    auto engine = imageEngine;
     auto dir = msg->arg3;
-    dir.append(".dir");
+    FkAssert(FkFileUtils::exist(dir), FK_FILE_NOT_FOUND);
     auto file = dir;
     file.append("/model.pb");
     std::fstream stream;
@@ -100,7 +96,8 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
     for (auto &layer : model->layers()) {
         if (!layer.file().empty()) {
             auto layerFile = dir;
-            layerFile.append(layer.file());
+            FkFileUtils::trim(layerFile);
+            layerFile.append("/").append(layer.file());
             engine->newLayerWithFile(layerFile, layer.id());
         } else {
             engine->newLayerWithColor(FkSize(layer.size().width(), layer.size().height()),
@@ -128,7 +125,7 @@ FkResult FkImageModelEngine::getLayers(FkImageModelEngine::FkModelCallback callb
 FkResult FkImageModelEngine::_getLayers(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(compo, FkAnyCompo, msg->sp);
     std::vector<std::shared_ptr<FkGraphicLayer>> layers;
-    auto ret = _cast2ImageEngine(imageEngine)->queryLayers(layers);
+    auto ret = imageEngine->queryLayers(layers);
 
     std::string dir("");
     auto model = convert2PictureModel(dir, layers);
@@ -161,9 +158,6 @@ std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std
             FkAssert(canvas->size().width() != 0, nullptr);
         } else {
             auto fileCompo = FK_FIND_COMPO(layer, FkFilePathCompo);
-            if (fileCompo && !dir.empty()) {
-                _copyLayerFile(dir, fileCompo->str);
-            }
             auto pbLayer = model->add_layers();
             _fillLayer(pbLayer, layer);
         }
@@ -181,7 +175,7 @@ FkResult FkImageModelEngine::_fillLayer(void* dst,
     auto sizeCompo = FK_FIND_COMPO(src, FkSizeCompo);
     auto colorCompo = FK_FIND_COMPO(src, FkColorCompo);
     pbLayer->set_id(src->id);
-    pbLayer->set_file(fileCompo ? FkFileUtils::name(fileCompo->str) : "");
+    pbLayer->set_file(fileCompo ? fileCompo->str : "");
     if (scaleCompo) {
         auto value = new pb::FkFloatVec3();
         value->set_x(scaleCompo->value.x);
@@ -214,13 +208,6 @@ FkResult FkImageModelEngine::_fillLayer(void* dst,
     return FK_OK;
 }
 
-std::string FkImageModelEngine::_createTempDir(std::string &file) {
-    auto dir = file;
-    dir.append(".dir");
-    FkFileUtils::mkdirs(dir);
-    return dir;
-}
-
 FkResult FkImageModelEngine::_writeModel2File(std::string &dir,
                                               std::shared_ptr<pb::FkPictureModel> &model) {
     auto modelFile = dir;
@@ -238,11 +225,4 @@ FkResult FkImageModelEngine::_writeModel2File(std::string &dir,
     }
     FkAssert(ret, FK_IO_FAIL);
     return ret ? FK_OK : FK_IO_FAIL;
-}
-
-FkResult FkImageModelEngine::_copyLayerFile(std::string &dir, std::string &src) {
-    std::string dst = dir;
-    dst.append("/");
-    dst.append(FkFileUtils::name(src));
-    return FkFileUtils::copy(src, dst);
 }

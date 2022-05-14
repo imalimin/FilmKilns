@@ -24,17 +24,12 @@ static bool testColor(std::shared_ptr<FkImageEngine> engine, int32_t x, int32_t 
 class FkImageEngineTest : public testing::Test {
 protected:
     virtual void SetUp() override {
-        fkpFile = FkString(FK_ANDROID_TEST_CACHE_DIR)
-                .append("/draft/")
-                .append(FkTimeUtils::getCurrentTimeUS())
-                .append(".fkp")
-                .toString();
         workspace = FkString(FK_ANDROID_TEST_CACHE_DIR)
                 .append("/draft/")
                 .append(FkTimeUtils::getCurrentTimeUS())
+                .append(".fkp.dir")
                 .toString();
-        auto str = workspace.c_str();
-        EXPECT_EQ(FkFileUtils::mkdirs(workspace), FK_OK);
+        fkpFile = workspace;
         std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>("RenderEngine");
         auto renderSettings = std::make_shared<FkEngineSettings>();
         renderSettings->enableEngineThread = false;
@@ -176,8 +171,7 @@ class FkImageFileEngineTest : public FkImageEngineTest {
 protected:
     virtual void SetUp() override {
         FkImageEngineTest::SetUp();
-        std::shared_ptr<FkEngine> imageEngine = engine;
-        fileEngine = std::make_shared<FkImageModelEngine>(imageEngine, "FileEngine");
+        fileEngine = std::make_shared<FkImageModelEngine>(engine, "FileEngine");
         auto modelSettings = std::make_shared<FkImgEngineSettings>();
         modelSettings->enableEngineThread = false;
         fileEngine->setSettings(modelSettings);

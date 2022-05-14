@@ -37,6 +37,8 @@ public:
     static bool remove(std::string &file);
 
     static long size(std::string &file);
+
+    static void trim(std::string &path);
 };
 
 #endif //FK_BASE_FKFILEUTILS_H

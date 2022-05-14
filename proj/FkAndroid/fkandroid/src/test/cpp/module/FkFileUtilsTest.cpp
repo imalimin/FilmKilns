@@ -75,3 +75,10 @@ TEST_F(FkFileUtilsTest, parent) {
             .toString();
     EXPECT_EQ(FkFileUtils::parent(dir), FK_ANDROID_TEST_CACHE_DIR);
 }
+
+TEST_F(FkFileUtilsTest, Trim) {
+    std::string dir = "/sdcard/dir/";
+    std::string expect = "/sdcard/dir";
+    FkFileUtils::trim(dir);
+    EXPECT_EQ(dir, expect);
+}

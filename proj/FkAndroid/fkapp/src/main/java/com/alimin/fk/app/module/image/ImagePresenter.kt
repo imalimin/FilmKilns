@@ -30,8 +30,8 @@ class ImagePresenter(
 
     init {
         view.presenter = this
-        cacheFile = File(File(workspace), "/${System.currentTimeMillis()}.fkp")
-        engine = FkImage(workspace)
+        cacheFile = File(File(workspace), "/${System.currentTimeMillis()}.fkp.dir")
+        engine = FkImage(cacheFile.absolutePath)
         modelEngine = FkImageModel(engine)
     }
 
@@ -68,6 +68,7 @@ class ImagePresenter(
         synchronized(this) {
             layerUpdateListeners.clear()
         }
+        cacheFile.deleteRecursively()
     }
 
     override fun notifyRender() {

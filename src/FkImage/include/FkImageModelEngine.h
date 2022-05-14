@@ -11,7 +11,7 @@
 #ifndef FK_IMAGE_FKIMAGEFILEENGINE_H
 #define FK_IMAGE_FKIMAGEFILEENGINE_H
 
-#include "FkEngine.h"
+#include "FkImageEngine.h"
 #include "FkGraphicLayer.h"
 #include "FkPictureModel.pb.h"
 #include <functional>
@@ -26,7 +26,7 @@ public:
     typedef std::function<void(std::shared_ptr<pb::FkPictureModel> &)> FkModelCallback;
 
 public:
-    FkImageModelEngine(std::shared_ptr<FkEngine> &imageEngine, std::string name);
+    FkImageModelEngine(std::shared_ptr<FkImageEngine> &imageEngine, std::string name);
 
     FkImageModelEngine(const FkImageModelEngine &o) = delete;
 
@@ -62,14 +62,10 @@ private:
 
     FkResult _fillLayer(void* dst, std::shared_ptr<FkGraphicLayer> &src);
 
-    std::string _createTempDir(std::string &file);
-
     FkResult _writeModel2File(std::string &dir, std::shared_ptr<pb::FkPictureModel> &model);
 
-    FkResult _copyLayerFile(std::string &dir, std::string &src);
-
 private:
-    std::shared_ptr<FkEngine> imageEngine = nullptr;
+    std::shared_ptr<FkImageEngine> imageEngine = nullptr;
 };
 
 #endif //FK_IMAGE_FKIMAGEFILEENGINE_H

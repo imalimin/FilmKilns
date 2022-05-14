@@ -91,3 +91,10 @@ long FkFileUtils::size(std::string &file) {
     auto ret = stat(file.c_str(), &info);
     return info.st_size;
 }
+
+void FkFileUtils::trim(std::string &path) {
+    std::string::size_type pos = path.find_last_of('/');
+    if (pos != std::string::npos && pos == (path.size() - 1)) {
+        path.replace(pos, 1, "");
+    }
+}
