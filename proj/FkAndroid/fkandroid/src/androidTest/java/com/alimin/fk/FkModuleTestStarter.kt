@@ -2,14 +2,12 @@ package com.alimin.fk
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.test.runner.AndroidJUnit4
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 
 @RunWith(AndroidJUnit4::class)
@@ -21,6 +19,7 @@ class FkModuleTestStarter {
     @Test
     fun runAllTest() {
         checkUnitTestEnable()
+        System.loadLibrary("FkAndroidTest")
         val appContext = ApplicationProvider.getApplicationContext<Application>()
         FilmKilns.init(appContext)
         initializeAssets(appContext)

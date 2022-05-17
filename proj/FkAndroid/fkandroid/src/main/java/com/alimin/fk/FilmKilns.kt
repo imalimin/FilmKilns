@@ -6,9 +6,6 @@ class FilmKilns {
     companion object {
         @Synchronized
         fun init(context: Context?) {
-            if (BuildConfig.ENABLE_UNIT_TEST) {
-                System.loadLibrary("FkAndroidTest")
-            }
             System.loadLibrary("skia")
             System.loadLibrary("protobuf")
             System.loadLibrary("FkBase")

@@ -22,8 +22,7 @@ android {
                 arguments "-DANDROID_ARM_NEON=TRUE",
                         "-DANDROID_CPP_FEATURES=rtti exceptions",
                         "-DENABLE_FK=TRUE",
-                        "-DOPTIMIZE_CLASS_TYPE=TRUE",
-                        "-DENABLE_G_TEST=TRUE"
+                        "-DOPTIMIZE_CLASS_TYPE=TRUE"
             }
         }
         ndk {
@@ -35,15 +34,29 @@ android {
             jni.srcDirs = []
             jniLibs.srcDir "../../../src/third_party/protobuf/shared"
         }
-        buildConfigField("boolean", "ENABLE_UNIT_TEST", "true")
+        buildConfigField("boolean", "ENABLE_UNIT_TEST", "false")
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("boolean", "ENABLE_UNIT_TEST", "false")
+            externalNativeBuild {
+                cmake {
+//                    cppFlags "-fprofile-arcs -ftest-coverage --coverage -fprofile-instr-generate"
+                    arguments.add "-DENABLE_G_TEST=FALSE"
+                }
+            }
         }
         debug {
+            buildConfigField("boolean", "ENABLE_UNIT_TEST", "true")
+            externalNativeBuild {
+                cmake {
+//                    cppFlags "-fprofile-arcs -ftest-coverage --coverage -fprofile-instr-generate"
+                    arguments.add "-DENABLE_G_TEST=TRUE"
+                }
+            }
         }
     }
 
