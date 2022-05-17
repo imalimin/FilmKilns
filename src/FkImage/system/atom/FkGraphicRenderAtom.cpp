@@ -58,7 +58,7 @@ FkResult FkGraphicRenderAtom::onStop() {
 FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
-    FkAssert(renderEngine != nullptr, nullptr);
+    FkAssert(renderEngine != nullptr, FK_NPE);
     auto canvas = proto->req->getCanvas();
     auto canvasSizeCompo = FK_FIND_COMPO(canvas, FkSizeCompo);
     if (canvasSizeCompo) {
@@ -99,7 +99,7 @@ FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer
 
 FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas) {
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
-    FkAssert(renderEngine != nullptr, nullptr);
+    FkAssert(renderEngine != nullptr, FK_NPE);
     auto materials = _makeRenderMaterials(canvas);
     if (materials) {
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();

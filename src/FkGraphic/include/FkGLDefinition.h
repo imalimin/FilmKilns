@@ -14,7 +14,7 @@
 #include "assert.h"
 
 #define FK_DEF_GL_TAG "FilmKilnsGL"
-#ifdef __FK_DEBUG__
+#if defined(__FK_DEBUG__)
 #define FK_GL_CHECK(statement)                                        \
     do {                                                              \
         statement;                                                    \

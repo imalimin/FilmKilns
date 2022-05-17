@@ -146,7 +146,7 @@ uint32_t FkGraphicProgram::_createShader(uint32_t type, std::string &shader) {
     GLint status;
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
     if (GL_TRUE != status) {
-#ifdef __FK_DEBUG__
+#if defined(__FK_DEBUG__)
         GLint len;
         glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &len);
         std::vector<char> vec(static_cast<unsigned int>(len));

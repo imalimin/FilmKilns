@@ -106,7 +106,7 @@ FkResult FkGraphicTexture::create() {
 void FkGraphicTexture::destroy() {
     desc.target = GL_NONE;
     desc.size.set(0, 0);
-#ifdef __FK_DEBUG__
+#if defined(__FK_DEBUG__)
     FkAssert(EGL_NO_CONTEXT != eglGetCurrentContext(), );
 #endif
     FkAssert(GL_NONE != tex, );

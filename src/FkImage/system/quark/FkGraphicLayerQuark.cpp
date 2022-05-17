@@ -192,7 +192,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
 
     if (!layerSize.isZero()) {
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
-        FkAssert(renderEngine != nullptr, nullptr);
+        FkAssert(renderEngine != nullptr, FK_NPE);
         if (bmpCompo) {
             auto buf = FkBuffer::alloc(bmpCompo->bmp->getByteSize());
             memcpy(buf->data(), bmpCompo->bmp->getPixels(), buf->capacity());
@@ -218,7 +218,7 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     auto itr = layers.find(proto->layerId);
     if (itr != layers.end()) {
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
-        FkAssert(renderEngine != nullptr, nullptr);
+        FkAssert(renderEngine != nullptr, FK_NPE);
         renderEngine->removeMaterial(itr->second->material);
         layers.erase(itr);
         return FK_OK;

@@ -28,7 +28,7 @@ FkResult FkGraphicFrameObject::create() {
 }
 
 void FkGraphicFrameObject::destroy() {
-#ifdef __FK_DEBUG__
+#if defined(__FK_DEBUG__)
     FkAssert(EGL_NO_CONTEXT != eglGetCurrentContext(), );
 #endif
     glDeleteFramebuffers(1, &fbo);

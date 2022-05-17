@@ -62,15 +62,19 @@ virtual const FkClassType &getClassType() override { \
 #define FkLogW(tag, fmt, args...) FkLogcat::w(tag, fmt, ##args)
 
 // +-------- Assert --------+
-#ifdef __FK_DEBUG__
+#if defined(__FK_DEBUG__)
 #include <assert.h>
+#define FkAssertMsg(condition, value, msg) \
+FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
+assert(condition)
 #define FkAssert(condition, value) assert(condition)
 #else
-#define FkAssert(condition, value)            \
+#define FkAssertMsg(condition, value, msg)            \
     if(!(condition)) {                        \
-        FkLogE("FkAssert", "assert(%s) failed.", #condition); \
+        FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
         return value;                         \
     }
+#define FkAssert(condition, value) FkAssertMsg(condition, value, "")
 #endif
 
 // +------ State Code ------+

@@ -65,12 +65,12 @@ FkResult FkLooper::sendMessage(std::shared_ptr<FkMessage> &msg) {
 
 void FkLooper::_enqueueMessage(std::shared_ptr<FkMessage> &msg) {
     if (msg->flags & FkMessage::FLAG_UNIQUE) {
-        FkAssert(msg->what != 0, "Argument what is invalid for unique message.");
+        FkAssertMsg(msg->what != 0, ,"Argument what is invalid for unique message.");
         queue.removeAllMessage(msg->what);
         queueLevel0.removeAllMessage(msg->what);
     }
     if (msg->flags & FkMessage::FLAG_CLEAR) {
-        FkAssert(msg->what != 0, "Argument what is invalid for clear message.");
+        FkAssertMsg(msg->what != 0, ,"Argument what is invalid for clear message.");
         queue.removeAllMessage(msg->what);
         queueLevel0.removeAllMessage(msg->what);
     } else {
