@@ -13,7 +13,8 @@
 
 FK_IMPL_CLASS_TYPE(FkCatmullRomPath, FkPath)
 
-FkCatmullRomPath::FkCatmullRomPath(double _avgDistance) : FkPath(), avgDistance(_avgDistance) {
+FkCatmullRomPath::FkCatmullRomPath(double _avgDistance, int32_t _pixelsOfSensitivity)
+        : FkPath(), avgDistance(_avgDistance), pixelsOfSensitivity(_pixelsOfSensitivity) {
     src.emplace_back(FkDoubleVec2(0, 0));
 }
 
@@ -43,7 +44,7 @@ static FkDoubleVec2 calcCatmullRomPoint(FkDoubleVec2 &p0, FkDoubleVec2 &p1, FkDo
 }
 
 void FkCatmullRomPath::addPoint(FkDoubleVec2 &point) {
-    if (!src.empty() && FkMath::distance(src[src.size() - 1], point) < 10) {
+    if (!src.empty() && FkMath::distance(src[src.size() - 1], point) < pixelsOfSensitivity) {
         return;
     }
     src.emplace_back(point);

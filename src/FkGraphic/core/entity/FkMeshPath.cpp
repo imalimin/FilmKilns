@@ -15,8 +15,12 @@
 
 FK_IMPL_CLASS_TYPE(FkMeshPath, FkPath)
 
-FkMeshPath::FkMeshPath(float _strokeWidth, double _avgDistance)
-        : FkCatmullRomPath(_avgDistance), strokeWidth(_strokeWidth) {
+FkMeshPath::FkMeshPath(float _strokeWidth, int32_t _pixelsOfSensitivity)
+        : FkCatmullRomPath(_strokeWidth, _pixelsOfSensitivity), strokeWidth(_strokeWidth) {
+}
+
+FkMeshPath::FkMeshPath(float _strokeWidth, double _avgDistance, int32_t _pixelsOfSensitivity)
+        : FkCatmullRomPath(_avgDistance, _pixelsOfSensitivity), strokeWidth(_strokeWidth) {
 }
 
 FkMeshPath::FkMeshPath(const FkMeshPath &o) : FkCatmullRomPath(o), strokeWidth(o.strokeWidth) {
