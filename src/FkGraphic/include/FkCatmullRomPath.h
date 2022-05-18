@@ -28,6 +28,8 @@ public:
 
     virtual size_t readPoints(std::vector<FkDoubleVec2> &_points) override;
 
+    virtual size_t getPoints(std::vector<FkDoubleVec2> &_points) override;
+
     virtual size_t size() override;
 
     virtual void finish() override;

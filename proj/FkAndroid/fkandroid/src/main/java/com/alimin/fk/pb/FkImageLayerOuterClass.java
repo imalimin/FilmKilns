@@ -116,6 +116,30 @@ public final class FkImageLayerOuterClass {
      * @return The color.
      */
     int getColor();
+
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    java.util.List<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath> 
+        getPathsList();
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath getPaths(int index);
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    int getPathsCount();
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    java.util.List<? extends com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder> 
+        getPathsOrBuilderList();
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder getPathsOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code com.alimin.fk.pb.FkImageLayer}
@@ -131,6 +155,7 @@ public final class FkImageLayerOuterClass {
     }
     private FkImageLayer() {
       file_ = "";
+      paths_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -153,6 +178,7 @@ public final class FkImageLayerOuterClass {
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -231,6 +257,15 @@ public final class FkImageLayerOuterClass {
               color_ = input.readInt32();
               break;
             }
+            case 66: {
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                paths_ = new java.util.ArrayList<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              paths_.add(
+                  input.readMessage(com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.parser(), extensionRegistry));
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -246,6 +281,9 @@ public final class FkImageLayerOuterClass {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          paths_ = java.util.Collections.unmodifiableList(paths_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -442,6 +480,46 @@ public final class FkImageLayerOuterClass {
       return color_;
     }
 
+    public static final int PATHS_FIELD_NUMBER = 8;
+    private java.util.List<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath> paths_;
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    @java.lang.Override
+    public java.util.List<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath> getPathsList() {
+      return paths_;
+    }
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder> 
+        getPathsOrBuilderList() {
+      return paths_;
+    }
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    @java.lang.Override
+    public int getPathsCount() {
+      return paths_.size();
+    }
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    @java.lang.Override
+    public com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath getPaths(int index) {
+      return paths_.get(index);
+    }
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+     */
+    @java.lang.Override
+    public com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder getPathsOrBuilder(
+        int index) {
+      return paths_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -476,6 +554,9 @@ public final class FkImageLayerOuterClass {
       }
       if (color_ != 0) {
         output.writeInt32(7, color_);
+      }
+      for (int i = 0; i < paths_.size(); i++) {
+        output.writeMessage(8, paths_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -512,6 +593,10 @@ public final class FkImageLayerOuterClass {
       if (color_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(7, color_);
+      }
+      for (int i = 0; i < paths_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(8, paths_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -554,6 +639,8 @@ public final class FkImageLayerOuterClass {
           != other.getId()) return false;
       if (getColor()
           != other.getColor()) return false;
+      if (!getPathsList()
+          .equals(other.getPathsList())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -587,6 +674,10 @@ public final class FkImageLayerOuterClass {
       hash = (53 * hash) + getId();
       hash = (37 * hash) + COLOR_FIELD_NUMBER;
       hash = (53 * hash) + getColor();
+      if (getPathsCount() > 0) {
+        hash = (37 * hash) + PATHS_FIELD_NUMBER;
+        hash = (53 * hash) + getPathsList().hashCode();
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -715,6 +806,7 @@ public final class FkImageLayerOuterClass {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getPathsFieldBuilder();
         }
       }
       @java.lang.Override
@@ -750,6 +842,12 @@ public final class FkImageLayerOuterClass {
 
         color_ = 0;
 
+        if (pathsBuilder_ == null) {
+          paths_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          pathsBuilder_.clear();
+        }
         return this;
       }
 
@@ -776,6 +874,7 @@ public final class FkImageLayerOuterClass {
       @java.lang.Override
       public com.alimin.fk.pb.FkImageLayerOuterClass.FkImageLayer buildPartial() {
         com.alimin.fk.pb.FkImageLayerOuterClass.FkImageLayer result = new com.alimin.fk.pb.FkImageLayerOuterClass.FkImageLayer(this);
+        int from_bitField0_ = bitField0_;
         if (sizeBuilder_ == null) {
           result.size_ = size_;
         } else {
@@ -799,6 +898,15 @@ public final class FkImageLayerOuterClass {
         result.file_ = file_;
         result.id_ = id_;
         result.color_ = color_;
+        if (pathsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            paths_ = java.util.Collections.unmodifiableList(paths_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.paths_ = paths_;
+        } else {
+          result.paths_ = pathsBuilder_.build();
+        }
         onBuilt();
         return result;
       }
@@ -869,6 +977,32 @@ public final class FkImageLayerOuterClass {
         if (other.getColor() != 0) {
           setColor(other.getColor());
         }
+        if (pathsBuilder_ == null) {
+          if (!other.paths_.isEmpty()) {
+            if (paths_.isEmpty()) {
+              paths_ = other.paths_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensurePathsIsMutable();
+              paths_.addAll(other.paths_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.paths_.isEmpty()) {
+            if (pathsBuilder_.isEmpty()) {
+              pathsBuilder_.dispose();
+              pathsBuilder_ = null;
+              paths_ = other.paths_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              pathsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getPathsFieldBuilder() : null;
+            } else {
+              pathsBuilder_.addAllMessages(other.paths_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -897,6 +1031,7 @@ public final class FkImageLayerOuterClass {
         }
         return this;
       }
+      private int bitField0_;
 
       private com.alimin.fk.pb.FkSizeOuterClass.FkSize size_;
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -1556,6 +1691,246 @@ public final class FkImageLayerOuterClass {
         onChanged();
         return this;
       }
+
+      private java.util.List<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath> paths_ =
+        java.util.Collections.emptyList();
+      private void ensurePathsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          paths_ = new java.util.ArrayList<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath>(paths_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder> pathsBuilder_;
+
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public java.util.List<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath> getPathsList() {
+        if (pathsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(paths_);
+        } else {
+          return pathsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public int getPathsCount() {
+        if (pathsBuilder_ == null) {
+          return paths_.size();
+        } else {
+          return pathsBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath getPaths(int index) {
+        if (pathsBuilder_ == null) {
+          return paths_.get(index);
+        } else {
+          return pathsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder setPaths(
+          int index, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath value) {
+        if (pathsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePathsIsMutable();
+          paths_.set(index, value);
+          onChanged();
+        } else {
+          pathsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder setPaths(
+          int index, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder builderForValue) {
+        if (pathsBuilder_ == null) {
+          ensurePathsIsMutable();
+          paths_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          pathsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder addPaths(com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath value) {
+        if (pathsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePathsIsMutable();
+          paths_.add(value);
+          onChanged();
+        } else {
+          pathsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder addPaths(
+          int index, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath value) {
+        if (pathsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePathsIsMutable();
+          paths_.add(index, value);
+          onChanged();
+        } else {
+          pathsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder addPaths(
+          com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder builderForValue) {
+        if (pathsBuilder_ == null) {
+          ensurePathsIsMutable();
+          paths_.add(builderForValue.build());
+          onChanged();
+        } else {
+          pathsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder addPaths(
+          int index, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder builderForValue) {
+        if (pathsBuilder_ == null) {
+          ensurePathsIsMutable();
+          paths_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          pathsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder addAllPaths(
+          java.lang.Iterable<? extends com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath> values) {
+        if (pathsBuilder_ == null) {
+          ensurePathsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, paths_);
+          onChanged();
+        } else {
+          pathsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder clearPaths() {
+        if (pathsBuilder_ == null) {
+          paths_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          pathsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public Builder removePaths(int index) {
+        if (pathsBuilder_ == null) {
+          ensurePathsIsMutable();
+          paths_.remove(index);
+          onChanged();
+        } else {
+          pathsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder getPathsBuilder(
+          int index) {
+        return getPathsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder getPathsOrBuilder(
+          int index) {
+        if (pathsBuilder_ == null) {
+          return paths_.get(index);  } else {
+          return pathsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public java.util.List<? extends com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder> 
+           getPathsOrBuilderList() {
+        if (pathsBuilder_ != null) {
+          return pathsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(paths_);
+        }
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder addPathsBuilder() {
+        return getPathsFieldBuilder().addBuilder(
+            com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder addPathsBuilder(
+          int index) {
+        return getPathsFieldBuilder().addBuilder(
+            index, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkPaintPath paths = 8;</code>
+       */
+      public java.util.List<com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder> 
+           getPathsBuilderList() {
+        return getPathsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder> 
+          getPathsFieldBuilder() {
+        if (pathsBuilder_ == null) {
+          pathsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPath.Builder, com.alimin.fk.pb.FkPaintPathOuterClass.FkPaintPathOrBuilder>(
+                  paths_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          paths_ = null;
+        }
+        return pathsBuilder_;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -1625,13 +2000,15 @@ public final class FkImageLayerOuterClass {
     java.lang.String[] descriptorData = {
       "\n\022FkImageLayer.proto\022\020com.alimin.fk.pb\032\014" +
       "FkSize.proto\032\020FkRational.proto\032\017FkIntVec" +
-      "3.proto\032\021FkFloatVec3.proto\"\351\001\n\014FkImageLa" +
-      "yer\022&\n\004size\030\001 \001(\0132\030.com.alimin.fk.pb.FkS" +
-      "ize\022.\n\010rotation\030\002 \001(\0132\034.com.alimin.fk.pb" +
-      ".FkRational\022,\n\005scale\030\003 \001(\0132\035.com.alimin." +
-      "fk.pb.FkFloatVec3\022*\n\005trans\030\004 \001(\0132\033.com.a" +
-      "limin.fk.pb.FkIntVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002i" +
-      "d\030\006 \001(\005\022\r\n\005color\030\007 \001(\005b\006proto3"
+      "3.proto\032\021FkFloatVec3.proto\032\021FkPaintPath." +
+      "proto\"\227\002\n\014FkImageLayer\022&\n\004size\030\001 \001(\0132\030.c" +
+      "om.alimin.fk.pb.FkSize\022.\n\010rotation\030\002 \001(\013" +
+      "2\034.com.alimin.fk.pb.FkRational\022,\n\005scale\030" +
+      "\003 \001(\0132\035.com.alimin.fk.pb.FkFloatVec3\022*\n\005" +
+      "trans\030\004 \001(\0132\033.com.alimin.fk.pb.FkIntVec3" +
+      "\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005\022\r\n\005color\030\007 \001(" +
+      "\005\022,\n\005paths\030\010 \003(\0132\035.com.alimin.fk.pb.FkPa" +
+      "intPathb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1640,17 +2017,19 @@ public final class FkImageLayerOuterClass {
           com.alimin.fk.pb.FkRationalOuterClass.getDescriptor(),
           com.alimin.fk.pb.FkIntVec3OuterClass.getDescriptor(),
           com.alimin.fk.pb.FkFloatVec3OuterClass.getDescriptor(),
+          com.alimin.fk.pb.FkPaintPathOuterClass.getDescriptor(),
         });
     internal_static_com_alimin_fk_pb_FkImageLayer_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_com_alimin_fk_pb_FkImageLayer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_alimin_fk_pb_FkImageLayer_descriptor,
-        new java.lang.String[] { "Size", "Rotation", "Scale", "Trans", "File", "Id", "Color", });
+        new java.lang.String[] { "Size", "Rotation", "Scale", "Trans", "File", "Id", "Color", "Paths", });
     com.alimin.fk.pb.FkSizeOuterClass.getDescriptor();
     com.alimin.fk.pb.FkRationalOuterClass.getDescriptor();
     com.alimin.fk.pb.FkIntVec3OuterClass.getDescriptor();
     com.alimin.fk.pb.FkFloatVec3OuterClass.getDescriptor();
+    com.alimin.fk.pb.FkPaintPathOuterClass.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

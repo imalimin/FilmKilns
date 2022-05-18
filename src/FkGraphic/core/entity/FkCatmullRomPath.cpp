@@ -87,3 +87,10 @@ void FkCatmullRomPath::finish() {
 size_t FkCatmullRomPath::size() {
     return points.size() - readPos;
 }
+
+size_t FkCatmullRomPath::getPoints(std::vector<FkDoubleVec2> &_points) {
+    for (auto &point : points) {
+        _points.emplace_back(point);
+    }
+    return _points.size();
+}

@@ -35,6 +35,7 @@
 #include "FkRational.pb.h"
 #include "FkIntVec3.pb.h"
 #include "FkFloatVec3.pb.h"
+#include "FkPaintPath.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_FkImageLayer_2eproto
@@ -200,6 +201,7 @@ class FkImageLayer final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kPathsFieldNumber = 8,
     kFileFieldNumber = 5,
     kSizeFieldNumber = 1,
     kRotationFieldNumber = 2,
@@ -208,6 +210,24 @@ class FkImageLayer final :
     kIdFieldNumber = 6,
     kColorFieldNumber = 7,
   };
+  // repeated .com.alimin.fk.pb.FkPaintPath paths = 8;
+  int paths_size() const;
+  private:
+  int _internal_paths_size() const;
+  public:
+  void clear_paths();
+  ::com::alimin::fk::pb::FkPaintPath* mutable_paths(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkPaintPath >*
+      mutable_paths();
+  private:
+  const ::com::alimin::fk::pb::FkPaintPath& _internal_paths(int index) const;
+  ::com::alimin::fk::pb::FkPaintPath* _internal_add_paths();
+  public:
+  const ::com::alimin::fk::pb::FkPaintPath& paths(int index) const;
+  ::com::alimin::fk::pb::FkPaintPath* add_paths();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkPaintPath >&
+      paths() const;
+
   // string file = 5;
   void clear_file();
   const std::string& file() const;
@@ -319,6 +339,7 @@ class FkImageLayer final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkPaintPath > paths_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_;
   ::com::alimin::fk::pb::FkSize* size_;
   ::com::alimin::fk::pb::FkRational* rotation_;
@@ -773,6 +794,43 @@ inline void FkImageLayer::_internal_set_color(int32_t value) {
 inline void FkImageLayer::set_color(int32_t value) {
   _internal_set_color(value);
   // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkImageLayer.color)
+}
+
+// repeated .com.alimin.fk.pb.FkPaintPath paths = 8;
+inline int FkImageLayer::_internal_paths_size() const {
+  return paths_.size();
+}
+inline int FkImageLayer::paths_size() const {
+  return _internal_paths_size();
+}
+inline ::com::alimin::fk::pb::FkPaintPath* FkImageLayer::mutable_paths(int index) {
+  // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkImageLayer.paths)
+  return paths_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkPaintPath >*
+FkImageLayer::mutable_paths() {
+  // @@protoc_insertion_point(field_mutable_list:com.alimin.fk.pb.FkImageLayer.paths)
+  return &paths_;
+}
+inline const ::com::alimin::fk::pb::FkPaintPath& FkImageLayer::_internal_paths(int index) const {
+  return paths_.Get(index);
+}
+inline const ::com::alimin::fk::pb::FkPaintPath& FkImageLayer::paths(int index) const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.paths)
+  return _internal_paths(index);
+}
+inline ::com::alimin::fk::pb::FkPaintPath* FkImageLayer::_internal_add_paths() {
+  return paths_.Add();
+}
+inline ::com::alimin::fk::pb::FkPaintPath* FkImageLayer::add_paths() {
+  ::com::alimin::fk::pb::FkPaintPath* _add = _internal_add_paths();
+  // @@protoc_insertion_point(field_add:com.alimin.fk.pb.FkImageLayer.paths)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::com::alimin::fk::pb::FkPaintPath >&
+FkImageLayer::paths() const {
+  // @@protoc_insertion_point(field_list:com.alimin.fk.pb.FkImageLayer.paths)
+  return paths_;
 }
 
 #ifdef __GNUC__

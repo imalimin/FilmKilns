@@ -29,6 +29,8 @@ public:
 
     virtual size_t readPoints(std::vector<FkDoubleVec2> &_points) = 0;
 
+    virtual size_t getPoints(std::vector<FkDoubleVec2> &_points) = 0;
+
     virtual size_t size() = 0;
 
     virtual void finish() = 0;

@@ -1,0 +1,8 @@
+syntax = "proto3";
+package com.alimin.fk.pb;
+
+message FkPaintPath {
+    int32 type = 1;
+    int32 color = 2;
+    repeated double points = 3;
+}

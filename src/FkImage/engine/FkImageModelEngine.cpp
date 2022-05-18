@@ -18,6 +18,7 @@
 #include "FkFileUtils.h"
 #include "FkAnyCompo.h"
 #include "FkColorCompo.h"
+#include "FkPathCompo.h"
 #include <fstream>
 
 FK_IMPL_CLASS_TYPE(FkImageModelEngine, FkEngine)
@@ -204,6 +205,22 @@ FkResult FkImageModelEngine::_fillLayer(void* dst,
     }
     if (colorCompo) {
         pbLayer->set_color(colorCompo->color.toInt());
+    }
+    std::vector<std::shared_ptr<FkComponent>> paths;
+    if (src->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
+        for (auto &path : paths) {
+            auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
+            std::vector<FkDoubleVec2> points;
+            if (compo->getPoints(points) > 0) {
+                auto pbPath = pbLayer->add_paths();
+                pbPath->set_type(compo->getType());
+                pbPath->set_color(compo->getColor().toInt());
+                for (int i = 0; i < points.size(); ++i) {
+                    pbPath->set_points(i * 2, points[i].x);
+                    pbPath->set_points(i * 2 + 1, points[i].y);
+                }
+            }
+        }
     }
     return FK_OK;
 }

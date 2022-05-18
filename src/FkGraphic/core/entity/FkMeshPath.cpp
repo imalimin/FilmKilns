@@ -103,3 +103,10 @@ size_t FkMeshPath::readPoints(std::vector<FkDoubleVec2> &_points) {
 size_t FkMeshPath::size() {
     return meshPoints.size() - readPos;
 }
+
+size_t FkMeshPath::getPoints(std::vector<FkDoubleVec2> &_points) {
+    for (auto &point : meshPoints) {
+        _points.emplace_back(point);
+    }
+    return _points.size();
+}

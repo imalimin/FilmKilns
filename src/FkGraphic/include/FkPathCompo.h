@@ -31,7 +31,13 @@ public:
 
     void finish();
 
-    virtual size_t readPoints(std::vector<FkDoubleVec2> &_points);
+    size_t readPoints(std::vector<FkDoubleVec2> &_points);
+
+    size_t getPoints(std::vector<FkDoubleVec2> &_points);
+
+    int32_t getType();
+
+    FkColor getColor();
 
     size_t size();
 

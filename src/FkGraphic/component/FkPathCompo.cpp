@@ -45,3 +45,15 @@ size_t FkPathCompo::size() {
     std::lock_guard<std::mutex> guard(mtx);
     return path->size();
 }
+
+size_t FkPathCompo::getPoints(std::vector<FkDoubleVec2> &_points) {
+    return path->getPoints(_points);
+}
+
+int32_t FkPathCompo::getType() {
+    return path->getClassType().getId();
+}
+
+FkColor FkPathCompo::getColor() {
+    return color;
+}

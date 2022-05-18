@@ -5,6 +5,7 @@ import "FkSize.proto";
 import "FkRational.proto";
 import "FkIntVec3.proto";
 import "FkFloatVec3.proto";
+import "FkPaintPath.proto";
 
 message FkImageLayer {
 //    reserved 2, 15, 9 to 11;
@@ -16,4 +17,5 @@ message FkImageLayer {
     string file = 5;
     int32 id = 6;
     int32 color = 7;
+    repeated FkPaintPath paths = 8;
 }

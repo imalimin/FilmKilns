@@ -22,7 +22,8 @@ namespace fk {
 namespace pb {
 constexpr FkImageLayer::FkImageLayer(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : file_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
+  : paths_()
+  , file_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string)
   , size_(nullptr)
   , rotation_(nullptr)
   , scale_(nullptr)
@@ -60,6 +61,7 @@ const uint32_t TableStruct_FkImageLayer_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, file_),
   PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, id_),
   PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, color_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkImageLayer, paths_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::com::alimin::fk::pb::FkImageLayer)},
@@ -72,24 +74,27 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 const char descriptor_table_protodef_FkImageLayer_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\022FkImageLayer.proto\022\020com.alimin.fk.pb\032\014"
   "FkSize.proto\032\020FkRational.proto\032\017FkIntVec"
-  "3.proto\032\021FkFloatVec3.proto\"\351\001\n\014FkImageLa"
-  "yer\022&\n\004size\030\001 \001(\0132\030.com.alimin.fk.pb.FkS"
-  "ize\022.\n\010rotation\030\002 \001(\0132\034.com.alimin.fk.pb"
-  ".FkRational\022,\n\005scale\030\003 \001(\0132\035.com.alimin."
-  "fk.pb.FkFloatVec3\022*\n\005trans\030\004 \001(\0132\033.com.a"
-  "limin.fk.pb.FkIntVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002i"
-  "d\030\006 \001(\005\022\r\n\005color\030\007 \001(\005b\006proto3"
+  "3.proto\032\021FkFloatVec3.proto\032\021FkPaintPath."
+  "proto\"\227\002\n\014FkImageLayer\022&\n\004size\030\001 \001(\0132\030.c"
+  "om.alimin.fk.pb.FkSize\022.\n\010rotation\030\002 \001(\013"
+  "2\034.com.alimin.fk.pb.FkRational\022,\n\005scale\030"
+  "\003 \001(\0132\035.com.alimin.fk.pb.FkFloatVec3\022*\n\005"
+  "trans\030\004 \001(\0132\033.com.alimin.fk.pb.FkIntVec3"
+  "\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005\022\r\n\005color\030\007 \001("
+  "\005\022,\n\005paths\030\010 \003(\0132\035.com.alimin.fk.pb.FkPa"
+  "intPathb\006proto3"
   ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_FkImageLayer_2eproto_deps[4] = {
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_FkImageLayer_2eproto_deps[5] = {
   &::descriptor_table_FkFloatVec3_2eproto,
   &::descriptor_table_FkIntVec3_2eproto,
+  &::descriptor_table_FkPaintPath_2eproto,
   &::descriptor_table_FkRational_2eproto,
   &::descriptor_table_FkSize_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkImageLayer_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkImageLayer_2eproto = {
-  false, false, 350, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
-  &descriptor_table_FkImageLayer_2eproto_once, descriptor_table_FkImageLayer_2eproto_deps, 4, 1,
+  false, false, 415, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
+  &descriptor_table_FkImageLayer_2eproto_once, descriptor_table_FkImageLayer_2eproto_deps, 5, 1,
   schemas, file_default_instances, TableStruct_FkImageLayer_2eproto::offsets,
   file_level_metadata_FkImageLayer_2eproto, file_level_enum_descriptors_FkImageLayer_2eproto, file_level_service_descriptors_FkImageLayer_2eproto,
 };
@@ -154,9 +159,13 @@ void FkImageLayer::clear_trans() {
   }
   trans_ = nullptr;
 }
+void FkImageLayer::clear_paths() {
+  paths_.Clear();
+}
 FkImageLayer::FkImageLayer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  paths_(arena) {
   SharedCtor();
   if (!is_message_owned) {
     RegisterArenaDtor(arena);
@@ -164,7 +173,8 @@ FkImageLayer::FkImageLayer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
   // @@protoc_insertion_point(arena_constructor:com.alimin.fk.pb.FkImageLayer)
 }
 FkImageLayer::FkImageLayer(const FkImageLayer& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      paths_(from.paths_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   file_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -243,6 +253,7 @@ void FkImageLayer::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  paths_.Clear();
   file_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && size_ != nullptr) {
     delete size_;
@@ -330,6 +341,19 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
         } else
           goto handle_unusual;
         continue;
+      // repeated .com.alimin.fk.pb.FkPaintPath paths = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 66)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_paths(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<66>(ptr));
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -413,6 +437,14 @@ uint8_t* FkImageLayer::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(7, this->_internal_color(), target);
   }
 
+  // repeated .com.alimin.fk.pb.FkPaintPath paths = 8;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_paths_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(8, this->_internal_paths(i), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -428,6 +460,13 @@ size_t FkImageLayer::ByteSizeLong() const {
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // repeated .com.alimin.fk.pb.FkPaintPath paths = 8;
+  total_size += 1UL * this->_internal_paths_size();
+  for (const auto& msg : this->paths_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
 
   // string file = 5;
   if (!this->_internal_file().empty()) {
@@ -496,6 +535,7 @@ void FkImageLayer::MergeFrom(const FkImageLayer& from) {
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  paths_.MergeFrom(from.paths_);
   if (!from._internal_file().empty()) {
     _internal_set_file(from._internal_file());
   }
@@ -536,6 +576,7 @@ void FkImageLayer::InternalSwap(FkImageLayer* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  paths_.InternalSwap(&other->paths_);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       &file_, lhs_arena,
