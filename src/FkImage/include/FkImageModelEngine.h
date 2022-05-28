@@ -60,8 +60,6 @@ private:
     std::shared_ptr<pb::FkPictureModel> convert2PictureModel(std::string &dir,
                                                              std::vector<std::shared_ptr<FkGraphicLayer>> &layers);
 
-    FkResult _fillLayer(void* dst, std::shared_ptr<FkGraphicLayer> &src);
-
     FkResult _writeModel2File(std::string &dir, std::shared_ptr<pb::FkPictureModel> &model);
 
 private:

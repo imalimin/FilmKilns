@@ -19,6 +19,7 @@
 #include "FkAnyCompo.h"
 #include "FkColorCompo.h"
 #include "FkPathCompo.h"
+#include "FkPicModelBuilder.h"
 #include <fstream>
 
 FK_IMPL_CLASS_TYPE(FkImageModelEngine, FkEngine)
@@ -150,79 +151,15 @@ FkResult FkImageModelEngine::_getLayer(std::shared_ptr<FkMessage> &msg) {
 
 std::shared_ptr<pb::FkPictureModel> FkImageModelEngine::convert2PictureModel(std::string &dir,
                                                                              std::vector<std::shared_ptr<FkGraphicLayer>> &layers) {
-    auto model = std::make_shared<pb::FkPictureModel>();
+    auto builder = FkPicModelBuilder::newBuilder();
     for (auto &layer : layers) {
         if (layer->id == Fk_CANVAS_ID) {
-            auto canvas = new pb::FkImageLayer();
-            model->set_allocated_canvas(canvas);
-            _fillLayer(canvas, layer);
-            FkAssert(canvas->size().width() != 0, nullptr);
+            builder->setCanvas(layer);
         } else {
-            auto fileCompo = FK_FIND_COMPO(layer, FkFilePathCompo);
-            auto pbLayer = model->add_layers();
-            _fillLayer(pbLayer, layer);
+            builder->setLayer(layer);
         }
     }
-    return model;
-}
-
-FkResult FkImageModelEngine::_fillLayer(void* dst,
-                                        std::shared_ptr<FkGraphicLayer> &src) {
-    auto *pbLayer = static_cast<pb::FkImageLayer *>(dst);
-    auto fileCompo = FK_FIND_COMPO(src, FkFilePathCompo);
-    auto scaleCompo = FK_FIND_COMPO(src, FkScaleComponent);
-    auto rotateCompo = FK_FIND_COMPO(src, FkRotateComponent);
-    auto transCompo = FK_FIND_COMPO(src, FkTransComponent);
-    auto sizeCompo = FK_FIND_COMPO(src, FkSizeCompo);
-    auto colorCompo = FK_FIND_COMPO(src, FkColorCompo);
-    pbLayer->set_id(src->id);
-    pbLayer->set_file(fileCompo ? fileCompo->str : "");
-    if (scaleCompo) {
-        auto value = new pb::FkFloatVec3();
-        value->set_x(scaleCompo->value.x);
-        value->set_y(scaleCompo->value.y);
-        value->set_z(scaleCompo->value.z);
-        pbLayer->set_allocated_scale(value);
-    }
-    if (rotateCompo) {
-        auto value = new pb::FkRational();
-        value->set_num(rotateCompo->value.num);
-        value->set_den(rotateCompo->value.den);
-        pbLayer->set_allocated_rotation(value);
-    }
-    if (transCompo) {
-        auto value = new pb::FkIntVec3();
-        value->set_x(transCompo->value.x);
-        value->set_y(transCompo->value.y);
-        value->set_z(0);
-        pbLayer->set_allocated_trans(value);
-    }
-    if (sizeCompo) {
-        auto value = new pb::FkSize();
-        value->set_width(sizeCompo->size.getWidth());
-        value->set_height(sizeCompo->size.getHeight());
-        pbLayer->set_allocated_size(value);
-    }
-    if (colorCompo) {
-        pbLayer->set_color(colorCompo->color.toInt());
-    }
-    std::vector<std::shared_ptr<FkComponent>> paths;
-    if (src->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
-        for (auto &path : paths) {
-            auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
-            std::vector<FkDoubleVec2> points;
-            if (compo->getPoints(points) > 0) {
-                auto pbPath = pbLayer->add_paths();
-                pbPath->set_type(compo->getType());
-                pbPath->set_color(compo->getColor().toInt());
-                for (int i = 0; i < points.size(); ++i) {
-                    pbPath->set_points(i * 2, points[i].x);
-                    pbPath->set_points(i * 2 + 1, points[i].y);
-                }
-            }
-        }
-    }
-    return FK_OK;
+    return builder->build();
 }
 
 FkResult FkImageModelEngine::_writeModel2File(std::string &dir,
