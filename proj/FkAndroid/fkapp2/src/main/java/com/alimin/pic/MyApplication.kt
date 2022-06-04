@@ -18,7 +18,7 @@ class MyApplication : BaseApplication() {
         super.onCreate()
         val strategy = CrashReport.UserStrategy(applicationContext)
         strategy.isEnableUserInfo = true
-//        CrashReport.initCrashReport(applicationContext, "5ed60e68ab", BuildConfig.DEBUG, strategy)
+        CrashReport.initCrashReport(applicationContext, "d77740b753", BuildConfig.DEBUG, strategy)
         FilmKilns.init(applicationContext)
     }
 }

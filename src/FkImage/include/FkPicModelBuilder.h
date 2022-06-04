@@ -22,7 +22,7 @@ FK_SUPER_CLASS(FkPicModelBuilder, FkObject),
         public std::enable_shared_from_this<FkPicModelBuilder> {
 FK_DEF_CLASS_TYPE_FUNC(FkPicModelBuilder)
 
-private:
+public:
     FkPicModelBuilder();
 
     FkPicModelBuilder(const FkPicModelBuilder &o) = delete;
@@ -43,8 +43,10 @@ private:
 
     void _setMvpInfo(pb::FkImageLayer *pbLayer, std::shared_ptr<FkGraphicLayer> &layer);
 
+    void _setPathsInfo(pb::FkImageLayer *pbLayer, std::shared_ptr<FkGraphicLayer> &layer);
+
 private:
-    std::shared_ptr<pb::FkPictureModel> model;
+    std::shared_ptr<pb::FkPictureModel> model = nullptr;
 };
 
 #endif //FK_IMAGE_FKPICMODELBUILDER_H

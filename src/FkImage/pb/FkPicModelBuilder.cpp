@@ -21,7 +21,7 @@
 FK_IMPL_CLASS_TYPE(FkPicModelBuilder, FkObject)
 
 FkPicModelBuilder::FkPicModelBuilder() : FkObject() {
-    model = std::shared_ptr<pb::FkPictureModel>();
+    model = std::make_shared<pb::FkPictureModel>();
 }
 
 FkPicModelBuilder::~FkPicModelBuilder() {
@@ -29,7 +29,7 @@ FkPicModelBuilder::~FkPicModelBuilder() {
 }
 
 std::shared_ptr<FkPicModelBuilder> FkPicModelBuilder::newBuilder() {
-    return std::shared_ptr<FkPicModelBuilder>();
+    return std::make_shared<FkPicModelBuilder>();
 }
 
 std::shared_ptr<FkPicModelBuilder> FkPicModelBuilder::setCanvas(std::shared_ptr<FkGraphicLayer> &canvas) {
@@ -54,6 +54,7 @@ void FkPicModelBuilder::_newImageLayer(pb::FkImageLayer *pbLayer, std::shared_pt
     pbLayer->set_id(layer->id);
     pbLayer->set_file(fileCompo ? fileCompo->str : "");
     _setMvpInfo(pbLayer, layer);
+    _setPathsInfo(pbLayer, layer);
     if (sizeCompo) {
         auto value = new pb::FkSize();
         value->set_width(sizeCompo->size.getWidth());
@@ -62,22 +63,6 @@ void FkPicModelBuilder::_newImageLayer(pb::FkImageLayer *pbLayer, std::shared_pt
     }
     if (colorCompo) {
         pbLayer->set_color(colorCompo->color.toInt());
-    }
-    std::vector<std::shared_ptr<FkComponent>> paths;
-    if (layer->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
-        for (auto &path : paths) {
-            auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
-            std::vector<FkDoubleVec2> points;
-            if (compo->getPoints(points) > 0) {
-                auto pbPath = pbLayer->add_paths();
-                pbPath->set_type(compo->getType());
-                pbPath->set_color(compo->getColor().toInt());
-                for (int i = 0; i < points.size(); ++i) {
-                    pbPath->set_points(i * 2, points[i].x);
-                    pbPath->set_points(i * 2 + 1, points[i].y);
-                }
-            }
-        }
     }
 }
 
@@ -104,6 +89,24 @@ void FkPicModelBuilder::_setMvpInfo(pb::FkImageLayer *pbLayer, std::shared_ptr<F
         value->set_y(transCompo->value.y);
         value->set_z(0);
         pbLayer->set_allocated_trans(value);
+    }
+}
+void FkPicModelBuilder::_setPathsInfo(pb::FkImageLayer *pbLayer, std::shared_ptr<FkGraphicLayer> &layer) {
+    std::vector<std::shared_ptr<FkComponent>> paths;
+    if (layer->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
+        for (auto &path : paths) {
+            auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
+            std::vector<FkDoubleVec2> points;
+            if (compo->getPoints(points) > 0) {
+                auto pbPath = pbLayer->add_paths();
+                pbPath->set_type(compo->getType());
+                pbPath->set_color(compo->getColor().toInt());
+                for (int i = 0; i < points.size(); ++i) {
+                    pbPath->set_points(i * 2, points[i].x);
+                    pbPath->set_points(i * 2 + 1, points[i].y);
+                }
+            }
+        }
     }
 }
 
