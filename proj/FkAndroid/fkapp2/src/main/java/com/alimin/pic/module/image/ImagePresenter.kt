@@ -158,6 +158,14 @@ class ImagePresenter(
         engine.save(file)
     }
 
+    override fun save() {
+        modelEngine.save(cacheFile.absolutePath)
+    }
+
+    override fun load() {
+        modelEngine.load(cacheFile.absolutePath)
+    }
+
     private fun checkCurLayer(): Boolean {
         return curLayer > 0
     }

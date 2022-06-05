@@ -36,6 +36,8 @@ class ImageContract {
         abstract fun getLayers(listener: FkGetLayersListener): Int
         abstract fun crop(rect: Rect)
         abstract fun save(file: String)
+        abstract fun save()
+        abstract fun load()
         abstract fun addLayerUpdateListener(l: OnLayerUpdateListener)
         abstract fun removeLayerUpdateListener(l: OnLayerUpdateListener)
         abstract fun drawPath(x: Int, y: Int)
