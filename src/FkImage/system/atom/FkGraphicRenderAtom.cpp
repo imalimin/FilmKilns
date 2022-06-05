@@ -89,11 +89,15 @@ FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer
     auto vtxCompo = FK_FIND_COMPO(layer, FkVertexCompo);
     auto coordCompo = FK_FIND_COMPO(layer, FkCoordinateCompo);
     auto matCompo = FK_FIND_COMPO(layer, FkMatCompo);
+    auto scaleCompo = FK_FIND_COMPO(layer, FkScaleComponent);
     if(vtxCompo && coordCompo && matCompo) {
         auto materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponent(vtxCompo);
         materials->addComponent(coordCompo);
         materials->addComponent(matCompo);
+        if (scaleCompo) {
+            materials->scale = scaleCompo->value;
+        }
         return materials;
     }
     return nullptr;

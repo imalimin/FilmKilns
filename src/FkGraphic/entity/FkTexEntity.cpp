@@ -14,22 +14,22 @@
 
 FK_IMPL_CLASS_TYPE(FkTexEntity, FkMaterialEntity)
 
-FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material) : FkMaterialEntity(material) {
+FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material)
+        : FkMaterialEntity(material), scale(1.0f, 1.0f, 1.0f) {
 
 }
 
 FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material,
-                         std::shared_ptr<FkTexCompo> &tex) : FkMaterialEntity(material) {
-
+                         std::shared_ptr<FkTexCompo> &tex)
+        : FkMaterialEntity(material), scale(1.0f, 1.0f, 1.0f) {
     addComponent(tex);
 }
 
-FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o) {
+FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o), scale(o.scale) {
 
 }
 
-FkTexEntity::FkTexEntity(const FkMaterialEntity &o) : FkMaterialEntity(o) {
-
+FkTexEntity::FkTexEntity(const FkMaterialEntity &o) : FkMaterialEntity(o), scale(1.0f, 1.0f, 1.0f) {
 }
 
 FkTexEntity::~FkTexEntity() {

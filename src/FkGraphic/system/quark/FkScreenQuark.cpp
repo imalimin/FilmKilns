@@ -53,11 +53,11 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     auto size = device->size();
     auto texSize = srcTexCompo->tex->desc.size;
 
-    auto programCompo = FK_FIND_COMPO(proto->materials, FkRenderProgramCompo);
-    auto vboCompo = FK_FIND_COMPO(proto->materials, FkVboCompo);
-    auto matCompo = FK_FIND_COMPO(proto->materials, FkMatCompo);
-    auto gridCompo = std::make_shared<FkGridSizeCompo>(48.0f / texSize.getWidth(),
-                                                       48.0f / texSize.getHeight());
+    auto programCompo = FK_FIND_COMPO(material, FkRenderProgramCompo);
+    auto vboCompo = FK_FIND_COMPO(material, FkVboCompo);
+    auto matCompo = FK_FIND_COMPO(material, FkMatCompo);
+    auto gridCompo = std::make_shared<FkGridSizeCompo>(48.0f / texSize.getWidth() / material->scale.x,
+                                                       48.0f / texSize.getHeight() / material->scale.y);
 
     int32_t offset = 0;
     FkVertexDesc desc;

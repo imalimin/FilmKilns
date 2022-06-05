@@ -16,6 +16,7 @@
 #include "FkFboCompo.h"
 #include "FkSize.h"
 #include "FkColor.h"
+#include "FkFloatVec3.h"
 
 FK_SUPER_CLASS(FkTexEntity, FkMaterialEntity) {
 FK_DEF_CLASS_TYPE_FUNC(FkTexEntity)
@@ -47,6 +48,8 @@ public:
 
     FkColor::kFormat format();
 
+public:
+    FkFloatVec3 scale;
 };
 
 #endif //FK_GRAPHIC_FKTEXENTITY_H
