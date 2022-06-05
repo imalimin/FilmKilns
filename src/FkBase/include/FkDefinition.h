@@ -44,6 +44,9 @@ virtual const FkClassType &getClassType() override { \
     return NAME ## _Class::type;            \
 }                                           \
 
+#define FK_CLASS_OF(NAME) \
+NAME ## _Class            \
+
 #define FK_INTERFACE class
 #define FK_ENUM enum class
 #define FK_EXTEND : public

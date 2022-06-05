@@ -20,6 +20,7 @@
 #include "FkColorCompo.h"
 #include "FkPathCompo.h"
 #include "FkPicModelBuilder.h"
+#include "FkPbModel.h"
 #include <fstream>
 
 FK_IMPL_CLASS_TYPE(FkImageModelEngine, FkEngine)
@@ -95,21 +96,21 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
         FkLogE(FK_DEF_TAG, "Parse proto buffer fail.");
         return FK_IO_FAIL;
     }
+
     for (auto &layer : model->layers()) {
+        FkID layerID = FK_ID_NONE;
         if (!layer.file().empty()) {
             auto layerFile = dir;
             FkFileUtils::trim(layerFile);
             layerFile.append("/").append(layer.file());
-            engine->newLayerWithFile(layerFile, layer.id());
+            layerID = engine->newLayerWithFile(layerFile, layer.id());
         } else {
-            engine->newLayerWithColor(FkSize(layer.size().width(), layer.size().height()),
+            layerID = engine->newLayerWithColor(FkSize(layer.size().width(), layer.size().height()),
                                       FkColor::makeFrom(layer.color()),
                                       layer.id());
         }
-        engine->setTranslate(layer.id(), layer.trans().x(), layer.trans().y());
-        engine->setScale(layer.id(), layer.scale().x(), layer.scale().y());
-        FkRational rational(layer.rotation().num(), layer.rotation().den());
-        engine->setRotation(layer.id(), rational);
+        std::shared_ptr<FkModelInterface> modelInterface = std::make_shared<FkPbModel>(model, layer);
+        engine->updateLayerWithModel(layerID, modelInterface);
     }
     auto canvasSize = model->canvas().size();
     FkAssert(canvasSize.width() != 0 && canvasSize.height() != 0, FK_FAIL);

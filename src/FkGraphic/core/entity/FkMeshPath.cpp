@@ -15,6 +15,13 @@
 
 FK_IMPL_CLASS_TYPE(FkMeshPath, FkPath)
 
+FkMeshPath::FkMeshPath(std::vector<FkDoubleVec2> &meshPoints)
+        : FkCatmullRomPath(1, 3), strokeWidth(1) {
+    for (auto &p: meshPoints) {
+        this->meshPoints.emplace_back(p);
+    }
+}
+
 FkMeshPath::FkMeshPath(float _strokeWidth, int32_t _pixelsOfSensitivity)
         : FkCatmullRomPath(_strokeWidth, _pixelsOfSensitivity), strokeWidth(_strokeWidth) {
 }

@@ -74,6 +74,8 @@ protected:
 
     virtual FkResult _onCrop(std::shared_ptr<FkProtocol> &p);
 
+    FkResult _onUpdateLayerWithModel(std::shared_ptr<FkProtocol> &p);
+
 private:
     void _setupVertex(std::shared_ptr<FkGraphicLayer> &layer);
 

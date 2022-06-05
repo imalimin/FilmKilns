@@ -37,6 +37,7 @@
 #include "FkScaleTypeProto.h"
 #include "FkBitmapDefinition.h"
 #include "FkDrawPathProto.h"
+#include "FkUpdateLayerModelProto.h"
 #include "FkMeshPath.h"
 #include <cmath>
 
@@ -76,6 +77,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicLayerQuark::_onDrawPath);
+    FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicLayerQuark::_onUpdateLayerWithModel);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -493,6 +495,36 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
         curPathCompo = nullptr;
     } else {
         curPathCompo->addPoint(proto->point.x, proto->point.y);
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onUpdateLayerWithModel(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkUpdateLayerModelProto, p);
+    auto itr = layers.find(proto->modelInterface->getLayerID());
+    FkAssert(layers.end() != itr, FK_FAIL);
+    auto layer = itr->second;
+
+    auto transCompo = FK_FIND_COMPO(layer, FkTransComponent);
+    if (nullptr != transCompo) {
+        transCompo->value = proto->modelInterface->getTranslate();
+    }
+    auto scaleCompo = FK_FIND_COMPO(layer, FkScaleComponent);
+    if (nullptr != scaleCompo) {
+        scaleCompo->value = proto->modelInterface->getScale();
+    }
+    auto rotateCompo = FK_FIND_COMPO(layer, FkRotateComponent);
+    if (nullptr != rotateCompo) {
+        rotateCompo->value = proto->modelInterface->getRotation();
+    }
+    std::vector<std::shared_ptr<FkPath>> paths;
+    std::vector<std::shared_ptr<FkPaint>> paints;
+    auto size = proto->modelInterface->getPaintPaths(paths, paints);
+    if (size == paths.size() && size == paints.size()) {
+        for (int i = 0; i < size; ++i) {
+            auto compo = std::make_shared<FkPathCompo>(paths[i], FkColor::makeFrom(paints[i]->color));
+            layer->addComponent(compo);
+        }
     }
     return FK_OK;
 }

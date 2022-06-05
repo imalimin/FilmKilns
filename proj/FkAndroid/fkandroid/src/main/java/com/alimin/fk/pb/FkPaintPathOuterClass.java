@@ -31,21 +31,28 @@ public final class FkPaintPathOuterClass {
     int getColor();
 
     /**
-     * <code>repeated double points = 3;</code>
-     * @return A list containing the points.
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
      */
-    java.util.List<java.lang.Double> getPointsList();
+    java.util.List<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3> 
+        getPointsList();
     /**
-     * <code>repeated double points = 3;</code>
-     * @return The count of points.
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+     */
+    com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 getPoints(int index);
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
      */
     int getPointsCount();
     /**
-     * <code>repeated double points = 3;</code>
-     * @param index The index of the element to return.
-     * @return The points at the given index.
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
      */
-    double getPoints(int index);
+    java.util.List<? extends com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder> 
+        getPointsOrBuilderList();
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+     */
+    com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder getPointsOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code com.alimin.fk.pb.FkPaintPath}
@@ -60,7 +67,7 @@ public final class FkPaintPathOuterClass {
       super(builder);
     }
     private FkPaintPath() {
-      points_ = emptyDoubleList();
+      points_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -104,25 +111,13 @@ public final class FkPaintPathOuterClass {
               color_ = input.readInt32();
               break;
             }
-            case 25: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                points_ = newDoubleList();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              points_.addDouble(input.readDouble());
-              break;
-            }
             case 26: {
-              int length = input.readRawVarint32();
-              int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000001) != 0) && input.getBytesUntilLimit() > 0) {
-                points_ = newDoubleList();
+              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                points_ = new java.util.ArrayList<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              while (input.getBytesUntilLimit() > 0) {
-                points_.addDouble(input.readDouble());
-              }
-              input.popLimit(limit);
+              points_.add(
+                  input.readMessage(com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.parser(), extensionRegistry));
               break;
             }
             default: {
@@ -141,7 +136,7 @@ public final class FkPaintPathOuterClass {
             e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          points_.makeImmutable(); // C
+          points_ = java.util.Collections.unmodifiableList(points_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -183,32 +178,44 @@ public final class FkPaintPathOuterClass {
     }
 
     public static final int POINTS_FIELD_NUMBER = 3;
-    private com.google.protobuf.Internal.DoubleList points_;
+    private java.util.List<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3> points_;
     /**
-     * <code>repeated double points = 3;</code>
-     * @return A list containing the points.
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
      */
     @java.lang.Override
-    public java.util.List<java.lang.Double>
-        getPointsList() {
+    public java.util.List<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3> getPointsList() {
       return points_;
     }
     /**
-     * <code>repeated double points = 3;</code>
-     * @return The count of points.
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
      */
+    @java.lang.Override
+    public java.util.List<? extends com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder> 
+        getPointsOrBuilderList() {
+      return points_;
+    }
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+     */
+    @java.lang.Override
     public int getPointsCount() {
       return points_.size();
     }
     /**
-     * <code>repeated double points = 3;</code>
-     * @param index The index of the element to return.
-     * @return The points at the given index.
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
      */
-    public double getPoints(int index) {
-      return points_.getDouble(index);
+    @java.lang.Override
+    public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 getPoints(int index) {
+      return points_.get(index);
     }
-    private int pointsMemoizedSerializedSize = -1;
+    /**
+     * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+     */
+    @java.lang.Override
+    public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder getPointsOrBuilder(
+        int index) {
+      return points_.get(index);
+    }
 
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
@@ -224,19 +231,14 @@ public final class FkPaintPathOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (type_ != 0) {
         output.writeInt32(1, type_);
       }
       if (color_ != 0) {
         output.writeInt32(2, color_);
       }
-      if (getPointsList().size() > 0) {
-        output.writeUInt32NoTag(26);
-        output.writeUInt32NoTag(pointsMemoizedSerializedSize);
-      }
       for (int i = 0; i < points_.size(); i++) {
-        output.writeDoubleNoTag(points_.getDouble(i));
+        output.writeMessage(3, points_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -255,16 +257,9 @@ public final class FkPaintPathOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, color_);
       }
-      {
-        int dataSize = 0;
-        dataSize = 8 * getPointsList().size();
-        size += dataSize;
-        if (!getPointsList().isEmpty()) {
-          size += 1;
-          size += com.google.protobuf.CodedOutputStream
-              .computeInt32SizeNoTag(dataSize);
-        }
-        pointsMemoizedSerializedSize = dataSize;
+      for (int i = 0; i < points_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, points_.get(i));
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -434,6 +429,7 @@ public final class FkPaintPathOuterClass {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getPointsFieldBuilder();
         }
       }
       @java.lang.Override
@@ -443,8 +439,12 @@ public final class FkPaintPathOuterClass {
 
         color_ = 0;
 
-        points_ = emptyDoubleList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        if (pointsBuilder_ == null) {
+          points_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          pointsBuilder_.clear();
+        }
         return this;
       }
 
@@ -474,11 +474,15 @@ public final class FkPaintPathOuterClass {
         int from_bitField0_ = bitField0_;
         result.type_ = type_;
         result.color_ = color_;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          points_.makeImmutable();
-          bitField0_ = (bitField0_ & ~0x00000001);
+        if (pointsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)) {
+            points_ = java.util.Collections.unmodifiableList(points_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.points_ = points_;
+        } else {
+          result.points_ = pointsBuilder_.build();
         }
-        result.points_ = points_;
         onBuilt();
         return result;
       }
@@ -533,15 +537,31 @@ public final class FkPaintPathOuterClass {
         if (other.getColor() != 0) {
           setColor(other.getColor());
         }
-        if (!other.points_.isEmpty()) {
-          if (points_.isEmpty()) {
-            points_ = other.points_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensurePointsIsMutable();
-            points_.addAll(other.points_);
+        if (pointsBuilder_ == null) {
+          if (!other.points_.isEmpty()) {
+            if (points_.isEmpty()) {
+              points_ = other.points_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensurePointsIsMutable();
+              points_.addAll(other.points_);
+            }
+            onChanged();
           }
-          onChanged();
+        } else {
+          if (!other.points_.isEmpty()) {
+            if (pointsBuilder_.isEmpty()) {
+              pointsBuilder_.dispose();
+              pointsBuilder_ = null;
+              points_ = other.points_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              pointsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getPointsFieldBuilder() : null;
+            } else {
+              pointsBuilder_.addAllMessages(other.points_);
+            }
+          }
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -635,83 +655,244 @@ public final class FkPaintPathOuterClass {
         return this;
       }
 
-      private com.google.protobuf.Internal.DoubleList points_ = emptyDoubleList();
+      private java.util.List<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3> points_ =
+        java.util.Collections.emptyList();
       private void ensurePointsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          points_ = mutableCopy(points_);
+          points_ = new java.util.ArrayList<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3>(points_);
           bitField0_ |= 0x00000001;
          }
       }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder> pointsBuilder_;
+
       /**
-       * <code>repeated double points = 3;</code>
-       * @return A list containing the points.
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
        */
-      public java.util.List<java.lang.Double>
-          getPointsList() {
-        return ((bitField0_ & 0x00000001) != 0) ?
-                 java.util.Collections.unmodifiableList(points_) : points_;
+      public java.util.List<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3> getPointsList() {
+        if (pointsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(points_);
+        } else {
+          return pointsBuilder_.getMessageList();
+        }
       }
       /**
-       * <code>repeated double points = 3;</code>
-       * @return The count of points.
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
        */
       public int getPointsCount() {
-        return points_.size();
+        if (pointsBuilder_ == null) {
+          return points_.size();
+        } else {
+          return pointsBuilder_.getCount();
+        }
       }
       /**
-       * <code>repeated double points = 3;</code>
-       * @param index The index of the element to return.
-       * @return The points at the given index.
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
        */
-      public double getPoints(int index) {
-        return points_.getDouble(index);
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 getPoints(int index) {
+        if (pointsBuilder_ == null) {
+          return points_.get(index);
+        } else {
+          return pointsBuilder_.getMessage(index);
+        }
       }
       /**
-       * <code>repeated double points = 3;</code>
-       * @param index The index to set the value at.
-       * @param value The points to set.
-       * @return This builder for chaining.
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
        */
       public Builder setPoints(
-          int index, double value) {
-        ensurePointsIsMutable();
-        points_.setDouble(index, value);
-        onChanged();
+          int index, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 value) {
+        if (pointsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePointsIsMutable();
+          points_.set(index, value);
+          onChanged();
+        } else {
+          pointsBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
-       * <code>repeated double points = 3;</code>
-       * @param value The points to add.
-       * @return This builder for chaining.
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
        */
-      public Builder addPoints(double value) {
-        ensurePointsIsMutable();
-        points_.addDouble(value);
-        onChanged();
+      public Builder setPoints(
+          int index, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder builderForValue) {
+        if (pointsBuilder_ == null) {
+          ensurePointsIsMutable();
+          points_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          pointsBuilder_.setMessage(index, builderForValue.build());
+        }
         return this;
       }
       /**
-       * <code>repeated double points = 3;</code>
-       * @param values The points to add.
-       * @return This builder for chaining.
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public Builder addPoints(com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 value) {
+        if (pointsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePointsIsMutable();
+          points_.add(value);
+          onChanged();
+        } else {
+          pointsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public Builder addPoints(
+          int index, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 value) {
+        if (pointsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensurePointsIsMutable();
+          points_.add(index, value);
+          onChanged();
+        } else {
+          pointsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public Builder addPoints(
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder builderForValue) {
+        if (pointsBuilder_ == null) {
+          ensurePointsIsMutable();
+          points_.add(builderForValue.build());
+          onChanged();
+        } else {
+          pointsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public Builder addPoints(
+          int index, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder builderForValue) {
+        if (pointsBuilder_ == null) {
+          ensurePointsIsMutable();
+          points_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          pointsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
        */
       public Builder addAllPoints(
-          java.lang.Iterable<? extends java.lang.Double> values) {
-        ensurePointsIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, points_);
-        onChanged();
+          java.lang.Iterable<? extends com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3> values) {
+        if (pointsBuilder_ == null) {
+          ensurePointsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, points_);
+          onChanged();
+        } else {
+          pointsBuilder_.addAllMessages(values);
+        }
         return this;
       }
       /**
-       * <code>repeated double points = 3;</code>
-       * @return This builder for chaining.
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
        */
       public Builder clearPoints() {
-        points_ = emptyDoubleList();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
+        if (pointsBuilder_ == null) {
+          points_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          pointsBuilder_.clear();
+        }
         return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public Builder removePoints(int index) {
+        if (pointsBuilder_ == null) {
+          ensurePointsIsMutable();
+          points_.remove(index);
+          onChanged();
+        } else {
+          pointsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder getPointsBuilder(
+          int index) {
+        return getPointsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder getPointsOrBuilder(
+          int index) {
+        if (pointsBuilder_ == null) {
+          return points_.get(index);  } else {
+          return pointsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public java.util.List<? extends com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder> 
+           getPointsOrBuilderList() {
+        if (pointsBuilder_ != null) {
+          return pointsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(points_);
+        }
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder addPointsBuilder() {
+        return getPointsFieldBuilder().addBuilder(
+            com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder addPointsBuilder(
+          int index) {
+        return getPointsFieldBuilder().addBuilder(
+            index, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;</code>
+       */
+      public java.util.List<com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder> 
+           getPointsBuilderList() {
+        return getPointsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder> 
+          getPointsFieldBuilder() {
+        if (pointsBuilder_ == null) {
+          pointsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder>(
+                  points_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          points_ = null;
+        }
+        return pointsBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -780,13 +961,15 @@ public final class FkPaintPathOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021FkPaintPath.proto\022\020com.alimin.fk.pb\":\n" +
-      "\013FkPaintPath\022\014\n\004type\030\001 \001(\005\022\r\n\005color\030\002 \001(" +
-      "\005\022\016\n\006points\030\003 \003(\001b\006proto3"
+      "\n\021FkPaintPath.proto\022\020com.alimin.fk.pb\032\022F" +
+      "kDoubleVec3.proto\"Z\n\013FkPaintPath\022\014\n\004type" +
+      "\030\001 \001(\005\022\r\n\005color\030\002 \001(\005\022.\n\006points\030\003 \003(\0132\036." +
+      "com.alimin.fk.pb.FkDoubleVec3b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.getDescriptor(),
         });
     internal_static_com_alimin_fk_pb_FkPaintPath_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -794,6 +977,7 @@ public final class FkPaintPathOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_alimin_fk_pb_FkPaintPath_descriptor,
         new java.lang.String[] { "Type", "Color", "Points", });
+    com.alimin.fk.pb.FkDoubleVec3OuterClass.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

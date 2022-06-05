@@ -33,6 +33,7 @@
 #include "FkScaleTypeProto.h"
 #include "FkReadPixelsProto.h"
 #include "FkDrawPathProto.h"
+#include "FkUpdateLayerModelProto.h"
 
 FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
 
@@ -459,4 +460,18 @@ FkResult FkLayerEngine::drawPathFinish(FkID layerId) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
     msg->sp = proto;
     return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::updateLayerWithModel(FkID layerId,
+                                             std::shared_ptr<FkModelInterface> &modelInterface) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayerWithModel));
+    msg->arg1 = layerId;
+    msg->sp = modelInterface;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_updateLayerWithModel(std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(modelInterface, FkModelInterface, msg->sp);
+    auto proto = std::make_shared<FkUpdateLayerModelProto>(modelInterface);
+    return client->with(molecule)->send(proto);
 }

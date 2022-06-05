@@ -62,14 +62,18 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_FkPaintPath_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\021FkPaintPath.proto\022\020com.alimin.fk.pb\":\n"
-  "\013FkPaintPath\022\014\n\004type\030\001 \001(\005\022\r\n\005color\030\002 \001("
-  "\005\022\016\n\006points\030\003 \003(\001b\006proto3"
+  "\n\021FkPaintPath.proto\022\020com.alimin.fk.pb\032\022F"
+  "kDoubleVec3.proto\"Z\n\013FkPaintPath\022\014\n\004type"
+  "\030\001 \001(\005\022\r\n\005color\030\002 \001(\005\022.\n\006points\030\003 \003(\0132\036."
+  "com.alimin.fk.pb.FkDoubleVec3b\006proto3"
   ;
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_FkPaintPath_2eproto_deps[1] = {
+  &::descriptor_table_FkDoubleVec3_2eproto,
+};
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkPaintPath_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkPaintPath_2eproto = {
-  false, false, 105, descriptor_table_protodef_FkPaintPath_2eproto, "FkPaintPath.proto", 
-  &descriptor_table_FkPaintPath_2eproto_once, nullptr, 0, 1,
+  false, false, 157, descriptor_table_protodef_FkPaintPath_2eproto, "FkPaintPath.proto", 
+  &descriptor_table_FkPaintPath_2eproto_once, descriptor_table_FkPaintPath_2eproto_deps, 1, 1,
   schemas, file_default_instances, TableStruct_FkPaintPath_2eproto::offsets,
   file_level_metadata_FkPaintPath_2eproto, file_level_enum_descriptors_FkPaintPath_2eproto, file_level_service_descriptors_FkPaintPath_2eproto,
 };
@@ -90,6 +94,9 @@ class FkPaintPath::_Internal {
  public:
 };
 
+void FkPaintPath::clear_points() {
+  points_.Clear();
+}
 FkPaintPath::FkPaintPath(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
@@ -173,14 +180,16 @@ const char* FkPaintPath::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
         } else
           goto handle_unusual;
         continue;
-      // repeated double points = 3;
+      // repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
-          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedDoubleParser(_internal_mutable_points(), ptr, ctx);
-          CHK_(ptr);
-        } else if (static_cast<uint8_t>(tag) == 25) {
-          _internal_add_points(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<double>(ptr));
-          ptr += sizeof(double);
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_points(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -225,9 +234,12 @@ uint8_t* FkPaintPath::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_color(), target);
   }
 
-  // repeated double points = 3;
-  if (this->_internal_points_size() > 0) {
-    target = stream->WriteFixedPacked(3, _internal_points(), target);
+  // repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_points_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, this->_internal_points(i), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -246,16 +258,11 @@ size_t FkPaintPath::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated double points = 3;
-  {
-    unsigned int count = static_cast<unsigned int>(this->_internal_points_size());
-    size_t data_size = 8UL * count;
-    if (data_size > 0) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<int32_t>(data_size));
-    }
-    total_size += data_size;
+  // repeated .com.alimin.fk.pb.FkDoubleVec3 points = 3;
+  total_size += 1UL * this->_internal_points_size();
+  for (const auto& msg : this->points_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // int32 type = 1;

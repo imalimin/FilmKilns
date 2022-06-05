@@ -18,6 +18,7 @@
 #include "FkRect.h"
 #include "FkBuffer.h"
 #include "FkPaint.h"
+#include "FkModelInterface.h"
 
 FK_SUPER_CLASS(FkLayerEngine, FkEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkLayerEngine)
@@ -83,6 +84,8 @@ public:
 
     FkResult drawPathFinish(FkID layerId);
 
+    FkResult updateLayerWithModel(FkID layerId, std::shared_ptr<FkModelInterface> &modelInterface);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -128,6 +131,8 @@ private:
     FkResult _readPixels(std::shared_ptr<FkMessage> &msg);
 
     FkResult _drawPath(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _updateLayerWithModel(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

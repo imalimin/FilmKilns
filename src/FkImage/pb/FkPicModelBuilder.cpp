@@ -101,9 +101,11 @@ void FkPicModelBuilder::_setPathsInfo(pb::FkImageLayer *pbLayer, std::shared_ptr
                 auto pbPath = pbLayer->add_paths();
                 pbPath->set_type(compo->getType());
                 pbPath->set_color(compo->getColor().toInt());
-                for (int i = 0; i < points.size(); ++i) {
-                    pbPath->set_points(i * 2, points[i].x);
-                    pbPath->set_points(i * 2 + 1, points[i].y);
+                for (auto &p : points) {
+                    auto vec = pbPath->add_points();
+                    vec->set_x(p.x);
+                    vec->set_y(p.y);
+                    vec->set_z(0.0);
                 }
             }
         }
