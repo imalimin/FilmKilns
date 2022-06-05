@@ -20,9 +20,10 @@ FK_DEF_CLASS_TYPE_FUNC(FkMaterialEntity)
 public:
     static std::shared_ptr<FkMaterialEntity> genEmpty();
 
-public:
+protected:
     FkMaterialEntity(std::shared_ptr<FkMaterialCompo> material);
 
+public:
     FkMaterialEntity(const FkMaterialEntity &o);
 
     virtual ~FkMaterialEntity();

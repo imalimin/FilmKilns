@@ -19,6 +19,8 @@
 #include "FkReadPixelsProto.h"
 #include "FkFuncCompo.h"
 #include "FkPathCompo.h"
+#include "FkScaleComponent.h"
+#include "FkTexEntity.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicRenderAtom, FkSimpleAtom)
 
@@ -88,7 +90,7 @@ FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer
     auto coordCompo = FK_FIND_COMPO(layer, FkCoordinateCompo);
     auto matCompo = FK_FIND_COMPO(layer, FkMatCompo);
     if(vtxCompo && coordCompo && matCompo) {
-        auto materials = std::make_shared<FkMaterialEntity>(layer->material);
+        auto materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponent(vtxCompo);
         materials->addComponent(coordCompo);
         materials->addComponent(matCompo);
@@ -136,7 +138,7 @@ FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer
         auto vertex = std::make_shared<FkPointVertexCompo>();
         vertex->setup(itr.second.size() / 2, 2,
                       sizeof(float), itr.second.data());
-        auto materials = std::make_shared<FkMaterialEntity>(layer->material);
+        std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponent(vertex);
         materials->addComponent(pointCompo);
 
@@ -152,7 +154,7 @@ FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
     FkAssert(proto->layer != nullptr, FK_NPE);
     auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
-    auto materials = std::make_shared<FkMaterialEntity>(proto->layer->material);
+    std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(proto->layer->material);
     if (proto->size.isZero()) {
         auto sizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);
         proto->size = sizeCompo->size;
@@ -181,7 +183,7 @@ FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
 FkResult FkGraphicRenderAtom::_drawPaths(std::shared_ptr<FkGraphicLayer> &layer) {
     std::vector<std::shared_ptr<FkComponent>> paths;
     if (layer->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
-        auto materials = std::make_shared<FkMaterialEntity>(layer->material);
+        std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponents(paths);
 
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();

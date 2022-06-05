@@ -15,6 +15,7 @@
 #include "FkMatCompo.h"
 #include "FkMVPMatrix.h"
 #include "FkIntVec2.h"
+#include "FkTexEntity.h"
 
 class FkRenderEngineTest : public testing::Test {
     void SetUp() override {
@@ -42,17 +43,20 @@ protected:
 
 TEST(FkRenderEngineTest_, Render) {
     auto engine = std::make_shared<FkRenderEngine>("RenderEngine");
-    auto material = std::make_shared<FkMaterialEntity>(std::make_shared<FkMaterialCompo>(FK_ID_NONE));
     auto dst = std::make_shared<FkMaterialCompo>(FK_ID_NONE);
+    std::shared_ptr<FkMaterialEntity> material = std::make_shared<FkTexEntity>(dst);
     auto device = std::make_shared<FkDeviceEntity>(dst);
     EXPECT_NE(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->create(), FK_OK);
+    material = std::make_shared<FkTexEntity>(dst);
     device = std::make_shared<FkDeviceEntity>(dst);
     EXPECT_NE(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->start(), FK_OK);
+    material = std::make_shared<FkTexEntity>(dst);
     device = std::make_shared<FkDeviceEntity>(dst);
     EXPECT_EQ(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->stop(), FK_OK);
+    material = std::make_shared<FkTexEntity>(dst);
     device = std::make_shared<FkDeviceEntity>(dst);
     EXPECT_NE(engine->renderDevice(material, device), FK_OK);
     EXPECT_EQ(engine->destroy(), FK_OK);
@@ -67,7 +71,7 @@ TEST_F(FkRenderEngineTest, NewAndRemoveMaterial) {
 static std::shared_ptr<FkMaterialEntity> makeMaterials(std::shared_ptr<FkMaterialCompo> &material,
                                                        FkSize &size,
                                                        FkIntVec2 trans) {
-    auto materials = std::make_shared<FkMaterialEntity>(material);
+    auto materials = std::make_shared<FkTexEntity>(material);
     float pos[]{
             -size.getWidth() / 2.0f, -size.getHeight() / 2.0f,//LEFT,BOTTOM
             size.getWidth() / 2.0f, -size.getHeight() / 2.0f,//RIGHT,BOTTOM

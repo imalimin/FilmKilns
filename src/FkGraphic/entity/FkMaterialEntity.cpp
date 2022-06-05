@@ -13,7 +13,7 @@
 FK_IMPL_CLASS_TYPE(FkMaterialEntity, FkEntity)
 
 std::shared_ptr<FkMaterialEntity> FkMaterialEntity::genEmpty() {
-    return std::make_shared<FkMaterialEntity>(std::make_shared<FkMaterialCompo>(FK_ID_NONE));
+    return std::shared_ptr<FkMaterialEntity>(new FkMaterialEntity(std::make_shared<FkMaterialCompo>(FK_ID_NONE)));
 }
 
 FkMaterialEntity::FkMaterialEntity(std::shared_ptr<FkMaterialCompo> material) : FkEntity() {

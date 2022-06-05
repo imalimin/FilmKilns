@@ -61,7 +61,7 @@ FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialEntity> &materia
     }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onRender));
     auto proto = std::make_shared<FkRenderProto>();
-    proto->materials = std::make_shared<FkTexEntity>(*materials);
+    proto->materials = std::move(materials);
     proto->device = std::move(device);
     msg->sp = std::move(proto);
     return sendMessage(msg);
