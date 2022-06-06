@@ -18,7 +18,7 @@
         reinterpret_cast<FkPort::PortFunc>(&method)) \
 
 #define FK_PORT_DESC_QUICK_ADD(desc, PRT, method) \
-    desc->add(0, {PRT ## _Class::type.getId(), PRT ## _Class::type.getName()}, \
+    desc->add(0, {FK_CLASS_TYPE(PRT).getId(), FK_CLASS_TYPE(PRT).getName()}, \
         reinterpret_cast<FkPort::PortFunc>(&method)) \
 
 #define FK_PORT_DELIVERY(desc, PRT, CLASS) \

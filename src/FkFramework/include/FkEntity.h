@@ -17,7 +17,7 @@
 #include <list>
 
 #define FK_FIND_COMPO(ENTITY, NAME) \
-ENTITY->findComponent<NAME>(NAME ## _Class::type)                            \
+ENTITY->findComponent<NAME>(FK_CLASS_TYPE(NAME))                            \
 
 FK_SUPER_CLASS(FkEntity, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkEntity)

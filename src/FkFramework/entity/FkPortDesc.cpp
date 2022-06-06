@@ -66,10 +66,10 @@ void FkPortDesc::clear() {
     std::lock_guard<std::mutex> guard(mtx);
     auto itr = ports.begin();
     while (itr != ports.end()) {
-        if (itr->first != FK_GET_CLASS_TYPE(FkOnCreatePrt).getId()
-            && itr->first != FK_GET_CLASS_TYPE(FkOnDestroyPrt).getId()
-            && itr->first != FK_GET_CLASS_TYPE(FkOnStartPrt).getId()
-            && itr->first != FK_GET_CLASS_TYPE(FkOnStopPrt).getId()) {
+        if (itr->first != FK_CLASS_TYPE(FkOnCreatePrt).getId()
+            && itr->first != FK_CLASS_TYPE(FkOnDestroyPrt).getId()
+            && itr->first != FK_CLASS_TYPE(FkOnStartPrt).getId()
+            && itr->first != FK_CLASS_TYPE(FkOnStopPrt).getId()) {
             itr = ports.erase(itr);
         } else {
             ++itr;
