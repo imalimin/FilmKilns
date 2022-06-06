@@ -4,11 +4,11 @@
     <group android:id="@+id/yes_no_op">
         <item
             android:id="@+id/action_cancel"
-            android:icon="@drawable/ic_fluent_arrow_reply_24_regular"
+            android:icon="@drawable/ic_fluent_dismiss_24_regular"
             android:title="Cancel" />
         <item
             android:id="@+id/action_enter"
-            android:icon="@drawable/ic_fluent_approvals_app_24_regular"
+            android:icon="@drawable/ic_fluent_checkmark_24_regular"
             android:title="OK" />
     </group>
 

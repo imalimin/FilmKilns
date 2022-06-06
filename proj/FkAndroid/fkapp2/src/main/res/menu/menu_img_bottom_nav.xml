@@ -16,7 +16,7 @@
             android:title="@string/menu_img_paint" />
         <item
             android:id="@+id/action_filter"
-            android:icon="@drawable/ic_fluent_filter_24_regular"
+            android:icon="@drawable/ic_fluent_photo_filter_24_regular"
             android:title="@string/menu_img_filter" />
         <item
             android:id="@+id/action_save"

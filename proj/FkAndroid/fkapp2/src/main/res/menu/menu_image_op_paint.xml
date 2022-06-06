@@ -4,6 +4,31 @@
     <group android:id="@+id/image_op_crop">
         <item
             android:id="@+id/action_paint"
+            android:icon="@drawable/ic_fluent_pen_24_regular"
+            android:title="@string/paint" />
+        <item
+            android:id="@+id/action_eraser"
+            android:icon="@drawable/ic_fluent_eraser_24_regular"
+            android:title="@string/paint" />
+        <item
+            android:id="@+id/action_eyedropper"
+            android:icon="@drawable/ic_fluent_eyedropper_24_regular"
+            android:title="@string/paint" />
+        <item
+            android:id="@+id/action_ink"
+            android:icon="@drawable/ic_fluent_inking_tool_24_regular"
+            android:title="@string/paint" />
+        <item
+            android:id="@+id/action_lasso"
+            android:icon="@drawable/ic_fluent_lasso_24_regular"
+            android:title="@string/paint" />
+        <item
+            android:id="@+id/action_line"
+            android:icon="@drawable/ic_fluent_line_24_regular"
+            android:title="@string/paint" />
+        <item
+            android:id="@+id/action_line_dashs"
+            android:icon="@drawable/ic_fluent_line_dashes_24_regular"
             android:title="@string/paint" />
     </group>
 
