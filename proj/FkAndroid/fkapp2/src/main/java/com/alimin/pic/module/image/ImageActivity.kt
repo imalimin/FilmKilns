@@ -1,24 +1,30 @@
 package com.alimin.pic.module.image
 
 import android.Manifest
+import android.content.Intent
 import android.graphics.Point
 import android.graphics.PointF
+import android.graphics.PorterDuff
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.view.*
 import android.widget.FrameLayout
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.alimin.pic.R
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.widgets.FkActSurfaceView
+import com.alimin.pic.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lmy.common.adapter.BaseViewPagerAdapter
 import com.lmy.common.ext.disableStatusBarPadding
 import com.lmy.common.ext.setLightMode
 import com.lmy.common.ui.BaseActivity
 import com.lmy.common.ui.fragment.BaseLazyFragment
+import com.microsoft.fluentui.progress.ProgressBar
+import com.microsoft.fluentui.snackbar.Snackbar
+import com.microsoft.fluentui.util.createImageView
 import kotlinx.android.synthetic.main.activity_image.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -181,15 +187,36 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun showError(error: Int, msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        Snackbar.make(window.decorView, msg, Snackbar.LENGTH_SHORT).show()
     }
 
-    override fun onImageSaved() {
-        Toast.makeText(this, "Save success", Toast.LENGTH_LONG).show()
+    override fun onImageSaved(file: String) {
+        val checkmarkIconImageView = createImageView(
+            R.drawable.ms_ic_checkmark_24_filled,
+            ContextCompat.getColor(this, R.color.colorAccent)
+        )
+        Snackbar.make(window.decorView, getString(R.string.saved), Snackbar.LENGTH_SHORT)
+            .setCustomView(checkmarkIconImageView)
+            .show()
+        MediaScannerConnection.scanFile(this, arrayOf(file), null) { path, uri ->
+            val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+            intent.data = uri
+            this.sendBroadcast(intent)
+        }
     }
 
     override fun onImageSaving() {
-        Toast.makeText(this, "Saving", Toast.LENGTH_LONG).show()
+        val circularProgress = ProgressBar(
+            this, null, 0,
+            R.style.Widget_FluentUI_CircularProgress_Small
+        )
+        circularProgress.indeterminateDrawable.setColorFilter(
+            ContextCompat.getColor(this, R.color.colorAccent),
+            PorterDuff.Mode.SRC_IN
+        )
+        Snackbar.make(window.decorView, getString(R.string.saving), 600000)
+            .setCustomView(circularProgress)
+            .show()
     }
 
     override fun onChange(v: SurfaceView, x: Float, y: Float) {

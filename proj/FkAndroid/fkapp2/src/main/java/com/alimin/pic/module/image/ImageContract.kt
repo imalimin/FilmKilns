@@ -17,7 +17,7 @@ interface OnLayerUpdateListener {
 
 class ImageContract {
     interface View : BaseView<Presenter> {
-        fun onImageSaved()
+        fun onImageSaved(file: String)
         fun onImageSaving()
     }
 

@@ -170,7 +170,7 @@ class ImagePresenter(
             ): Boolean {
                 GlobalScope.launch(Dispatchers.Main) {
                     if (arg == 0) {
-                        view.onImageSaved()
+                        view.onImageSaved(file)
                     } else {
                         view.showError(arg, "Save picture error: $arg")
                     }
