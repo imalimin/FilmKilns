@@ -97,6 +97,8 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
         return FK_IO_FAIL;
     }
 
+    /// Remove all layers and canvas.
+    engine->removeLayer(Fk_CANVAS_ID);
     for (auto &layer : model->layers()) {
         FkID layerID = FK_ID_NONE;
         if (!layer.file().empty()) {

@@ -36,7 +36,6 @@ FkGraphicCanvasQuark::~FkGraphicCanvasQuark() {
 void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FkGraphicLayerQuark::describeProtocols(desc);
     FK_PORT_DESC_QUICK_ADD(desc, FkGraphicNewLayerPrt, FkGraphicCanvasQuark::_onDelivery);
-    FK_PORT_DESC_QUICK_ADD(desc, FkRemoveLayerProto, FkGraphicCanvasQuark::_onDelivery);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostTransProto, FkGraphicCanvasQuark::_onPostTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetTransProto, FkGraphicCanvasQuark::_onSetTranslate);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerPostScaleProto, FkGraphicCanvasQuark::_onPostScale);
@@ -166,4 +165,14 @@ FkResult FkGraphicCanvasQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
 
 FkResult FkGraphicCanvasQuark::_onDelivery(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
+}
+
+FkResult FkGraphicCanvasQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRemoveLayerProto, p);
+    if (proto->layerId == Fk_CANVAS_ID) {
+        auto ret = FkGraphicLayerQuark::_onRemoveLayer(p);
+        _initializeCanvas();
+        return ret;
+    }
+    return _onDelivery(p);
 }

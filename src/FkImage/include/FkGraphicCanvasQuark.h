@@ -49,6 +49,8 @@ protected:
 
     FkResult _onCrop(std::shared_ptr<FkProtocol> &p) override;
 
+    FkResult _onRemoveLayer(std::shared_ptr<FkProtocol> &p) override;
+
 private:
     FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
 

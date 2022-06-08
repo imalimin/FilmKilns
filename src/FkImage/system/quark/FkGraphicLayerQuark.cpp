@@ -217,6 +217,15 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRemoveLayerProto, p);
+    if (proto->layerId == Fk_CANVAS_ID) {
+        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        FkAssert(renderEngine != nullptr, FK_NPE);
+        for (auto &itr : layers) {
+            renderEngine->removeMaterial(itr.second->material);
+        }
+        layers.clear();
+        return FK_OK;
+    }
     auto itr = layers.find(proto->layerId);
     if (itr != layers.end()) {
         auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();

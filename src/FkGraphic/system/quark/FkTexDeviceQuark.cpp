@@ -88,7 +88,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
      * sfactor: texture
      * dfactor: frame buffer
      * blendColor = srcColor * sfactor + dstColor * dfactor
-     * exsample:
+     * example:
      * glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
      * > blendColor.r = srcColor.a * srcColor.r + (1-srcColor.a) * dstColor.r
      * > blendColor.g = srcColor.a * srcColor.g + (1-srcColor.a) * dstColor.g
