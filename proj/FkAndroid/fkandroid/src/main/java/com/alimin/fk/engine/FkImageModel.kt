@@ -5,7 +5,7 @@ import com.alimin.fk.pb.FkPictureModelOuterClass
 import java.nio.ByteBuffer
 
 interface FkNativeMsgListener {
-    fun onNativeMsgReceived(what: Int, pbObject: ByteBuffer?): Boolean
+    fun onNativeMsgReceived(what: Int, arg: Int, msg: String?, pbObject: ByteBuffer?): Boolean
 }
 
 interface FkGetLayersListener {
@@ -67,7 +67,7 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
     fun getLayers(listener: FkGetLayersListener): Int {
         if (!isNull()) {
             return nativeGetLayers(getHandle(), object : FkNativeMsgListener {
-                override fun onNativeMsgReceived(what: Int, pbObject: ByteBuffer?): Boolean {
+                override fun onNativeMsgReceived(what: Int, arg: Int, msg: String?, pbObject: ByteBuffer?): Boolean {
                     if (null != pbObject) {
                         val model =
                             FkPictureModelOuterClass.FkPictureModel.parseFrom(pbObject)

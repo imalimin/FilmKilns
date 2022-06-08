@@ -25,3 +25,8 @@ bool FkJavaFunc::call(JNIEnv *env, jobject obj, ...) {
     va_end(args);
     return ret;
 }
+
+std::shared_ptr<FkJavaFunc> FkJavaFunc::makeNativeMsgListener(JNIEnv *env, jobject obj) {
+    return std::make_shared<FkJavaFunc>(env, obj, "onNativeMsgReceived",
+                                        "(IILjava/lang/String;Ljava/nio/ByteBuffer;)Z");
+}

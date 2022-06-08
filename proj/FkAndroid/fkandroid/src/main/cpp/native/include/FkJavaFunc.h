@@ -10,6 +10,9 @@
 
 class FkJavaFunc {
 public:
+    static std::shared_ptr<FkJavaFunc> makeNativeMsgListener(JNIEnv *env, jobject obj);
+
+public:
     FkJavaFunc(JNIEnv *env, jobject obj, std::string name, std::string sig);
 
     FkJavaFunc(const FkJavaFunc &o) = delete;

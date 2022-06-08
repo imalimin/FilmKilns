@@ -6,12 +6,16 @@
 */
 
 #include "jni.h"
+#include "FkJniDefinition.h"
 #include "FkImageEngine.h"
 #include "FkGraphicWindow.h"
 #include "FkRenderEngine.h"
 #include "FkInstanceHolder.h"
 #include "FkAndroidWindow.h"
 #include "FkPaintInfo.pb.h"
+#include "FkJavaFunc.h"
+#include "FkJavaRuntime.h"
+#include "FkJniGlobalRef.h"
 
 #define RENDER_ALIAS "RenderEngine"
 #define IMAGE_ENGINE_ALIAS "ImageEngine"
@@ -148,10 +152,19 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeCropLayer
 }
 
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSave
-        (JNIEnv *env, jobject that, jlong handle, jstring file) {
+        (JNIEnv *env, jobject that, jlong handle, jstring file, jobject listener) {
     auto engine = castHandle(handle);
     auto *p = env->GetStringUTFChars(file, nullptr);
-    auto ret = engine->save(std::string(p));
+    auto lRef = std::make_shared<FkJniGlobalRef>(listener);
+    auto callback = [lRef](int ret) {
+        FkJavaRuntime::getInstance().attachThread();
+        JNIEnv *env = nullptr;
+        if (FkJavaRuntime::getInstance().findEnv(&env)) {
+            FkJavaFunc::makeNativeMsgListener(env, lRef->obj())->call(env, lRef->obj(), 0, ret, NULL, NULL);
+        }
+        FkJavaRuntime::getInstance().detachThread();
+    };
+    auto ret = engine->save(std::string(p), callback);
     env->ReleaseStringUTFChars(file, p);
     return ret;
 }

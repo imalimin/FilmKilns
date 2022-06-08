@@ -11,10 +11,15 @@ import com.alimin.fk.define.kScaleType
 import com.alimin.fk.engine.FkGetLayersListener
 import com.alimin.fk.engine.FkImage
 import com.alimin.fk.engine.FkImageModel
+import com.alimin.fk.engine.FkNativeMsgListener
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.entity.FkResult
 import com.alimin.fk.pb.FkImageLayerOuterClass
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
+import java.nio.ByteBuffer
 
 class ImagePresenter(
     private val view: ImageContract.View,
@@ -155,7 +160,24 @@ class ImagePresenter(
     }
 
     override fun save(file: String) {
-        engine.save(file)
+        view.onImageSaving()
+        engine.save(file, object : FkNativeMsgListener{
+            override fun onNativeMsgReceived(
+                what: Int,
+                arg: Int,
+                msg: String?,
+                pbObject: ByteBuffer?
+            ): Boolean {
+                GlobalScope.launch(Dispatchers.Main) {
+                    if (arg == 0) {
+                        view.onImageSaved()
+                    } else {
+                        view.showError(arg, "Save picture error: $arg")
+                    }
+                }
+                return true
+            }
+        })
     }
 
     override fun save() {

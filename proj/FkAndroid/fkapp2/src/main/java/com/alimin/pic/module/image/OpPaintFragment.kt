@@ -15,12 +15,16 @@ class OpPaintFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
         presenter.getPaint().color = Color.YELLOW
         yesNoView.setActionListener {
             reset()
+            if (!it) {
+                presenter.load()
+            }
         }
     }
 
     override fun onItemClick(item: CommandItem, view: View) {
         when (item.getId()) {
             R.id.action_paint -> {
+                presenter.save()
                 getCommandBar()?.visibility = View.GONE
                 yesNoView.visibility = View.VISIBLE
                 onButtonPressed(R.id.action_paint, Bundle.EMPTY)

@@ -16,6 +16,7 @@
 #include "FkFileUtils.h"
 #include "FkString.h"
 #include "FkReadPixelsProto.h"
+#include "FkAnyCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkImageEngine, FkLayerEngine)
 
@@ -95,9 +96,10 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> &msg) {
     return getClient()->with(getMolecule())->send(proto);
 }
 
-FkID FkImageEngine::save(std::string file) {
+FkID FkImageEngine::save(std::string file, FkResultCallback callback) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageEngine::_save));
     msg->arg3 = file;
+    msg->sp = std::make_shared<FkAnyCompo>(callback);
     return sendMessage(msg);
 }
 
@@ -124,6 +126,11 @@ FkResult FkImageEngine::_save(std::shared_ptr<FkMessage> &msg) {
             }
             ret = FkBitmap::write(msg->arg3, fmt, proto->buf, proto->size, 80);
         }
+    }
+    auto compo = std::dynamic_pointer_cast<FkAnyCompo>(msg->sp);
+    if (compo && compo->any.has_value()) {
+        std::any_cast<FkResultCallback>(compo->any)(ret);
+        return FK_OK;
     }
     return ret;
 }

@@ -17,6 +17,8 @@ interface OnLayerUpdateListener {
 
 class ImageContract {
     interface View : BaseView<Presenter> {
+        fun onImageSaved()
+        fun onImageSaving()
     }
 
     abstract class Presenter : ClosablePresenter() {

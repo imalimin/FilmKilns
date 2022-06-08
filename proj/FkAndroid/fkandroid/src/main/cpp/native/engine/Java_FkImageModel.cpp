@@ -92,8 +92,7 @@ JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeGe
             memset(vec.data(), 0, size);
             auto buf = env->NewDirectByteBuffer(vec.data(), size);
             auto ret = model->SerializeToArray(vec.data(), vec.size());
-            FkJavaFunc func(env, lRef->obj(), "onNativeMsgReceived", "(ILjava/nio/ByteBuffer;)Z");
-            func.call(env, lRef->obj(), 0, buf);
+            FkJavaFunc::makeNativeMsgListener(env, lRef->obj())->call(env, lRef->obj(), 0, ret, NULL, buf);
             env->DeleteLocalRef(buf);
         }
         FkJavaRuntime::getInstance().detachThread();

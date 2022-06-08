@@ -20,6 +20,8 @@
 #define FK_NULLABLE
 #define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 
+typedef std::function<void(int)> FkResultCallback;
+
 // +-------- Log --------+
 #define FK_DEF_TAG "FilmKilns"
 #define FkLogV(tag, fmt, args...) FkLogcat::v(tag, fmt, ##args)

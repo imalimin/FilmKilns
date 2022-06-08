@@ -6,6 +6,7 @@ import android.graphics.PointF
 import android.os.Bundle
 import android.view.*
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -180,7 +181,15 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun showError(error: Int, msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+    }
 
+    override fun onImageSaved() {
+        Toast.makeText(this, "Save success", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onImageSaving() {
+        Toast.makeText(this, "Saving", Toast.LENGTH_LONG).show()
     }
 
     override fun onChange(v: SurfaceView, x: Float, y: Float) {
