@@ -18,6 +18,9 @@
 FK_SUPER_CLASS(FkRenderTexQuark, FkQuark) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderTexQuark)
 
+private:
+    typedef std::vector<std::shared_ptr<FkGraphicTexture>> FkTexVec;
+
 public:
     FkRenderTexQuark();
 
@@ -37,23 +40,23 @@ protected:
     virtual FkResult onStop() override;
 
 private:
-    FkResult _onAllocTex(std::shared_ptr<FkProtocol> p);
+    FkResult _onAllocTex(std::shared_ptr<FkProtocol> &p);
 
-    FkResult _onAllocTexWithBmp(std::shared_ptr<FkProtocol> p);
+    FkResult _onAllocTexWithBmp(std::shared_ptr<FkProtocol> &p);
 
-    FkResult _onRender(std::shared_ptr<FkProtocol> p);
+    FkResult _onRender(std::shared_ptr<FkProtocol> &p);
 
     FkResult _onRemoveTex(std::shared_ptr<FkProtocol> &p);
 
 private:
-    std::shared_ptr<FkGraphicTexture> _findTex(FkID id);
+    FkTexVec _findTex(FkID id);
 
     FkResult _drawColor(std::shared_ptr<FkGraphicTexture> &tex,
                         std::shared_ptr<FkTexEntity> &texEntity);
 
 private:
     std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
-    std::unordered_map<FkID, std::shared_ptr<FkGraphicTexture>> sMap;
+    std::unordered_map<FkID, FkTexVec> sMap;
 };
 
 #endif //FK_GRAPHIC_FKRENDERTEXQUARK_H

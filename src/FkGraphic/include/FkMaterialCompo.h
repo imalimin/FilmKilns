@@ -23,7 +23,7 @@ public:
 
     virtual ~FkMaterialCompo();
 
-    bool isUseless();
+    bool isInvalid();
 
     FkID id() const;
 

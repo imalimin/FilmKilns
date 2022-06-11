@@ -32,9 +32,6 @@ protected:
     virtual FkResult onStop() override;
 
     virtual void onConnect(std::shared_ptr<FkConnectChain> chain) override;
-
-private:
-    std::shared_ptr<FkQuarkContext> context = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKRENDERMOLECULE_H

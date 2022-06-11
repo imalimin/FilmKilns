@@ -58,79 +58,80 @@ FkResult FkRenderTexQuark::onStop() {
     return FkQuark::onStop();
 }
 
-FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> p) {
+FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkNewTexProto, p);
     if (allocator == nullptr) {
         FkLogE(FK_DEF_TAG, "Texture allocator is null.");
         return FK_FAIL;
     }
-    auto tex = _findTex(proto->texEntity->getMaterial()->id());
-    if (tex == nullptr) {
+    auto texVec = _findTex(proto->texEntity->getMaterial()->id());
+    if (texVec.empty()) {
         FkTexDescription desc(GL_TEXTURE_2D);
         desc.fmt = proto->texEntity->format();
         desc.size = proto->texEntity->size();
-        tex = allocator->alloc(desc);
+        auto tex = allocator->alloc(desc);
         if (nullptr == tex) {
             FkLogE(FK_DEF_TAG, "Texture allocator return null.");
             return FK_FAIL;
         }
-        sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), tex));
+        texVec.emplace_back(tex);
+        sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texVec));
     }
     auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
     if (bufCompo) {
-        tex->update(tex->desc.fmt,
+        texVec[0]->update(texVec[0]->desc.fmt,
                     proto->texEntity->size().getWidth(),
                     proto->texEntity->size().getHeight(),
                     bufCompo->buf->data());
-    } else if (tex->desc.size != proto->texEntity->size()) {
-        tex->update(tex->desc.fmt,
+    } else if (texVec[0]->desc.size != proto->texEntity->size()) {
+        texVec[0]->update(texVec[0]->desc.fmt,
                     proto->texEntity->size().getWidth(),
                     proto->texEntity->size().getHeight());
     }
-    auto ret = _drawColor(tex, proto->texEntity);
+    auto ret = _drawColor(texVec[0], proto->texEntity);
     if (FK_OK != ret) {
         FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
     }
     return FK_OK;
 }
 
-FkResult FkRenderTexQuark::_onAllocTexWithBmp(std::shared_ptr<FkProtocol> p) {
+FkResult FkRenderTexQuark::_onAllocTexWithBmp(std::shared_ptr<FkProtocol> &p) {
     return _onAllocTex(p);
 }
 
-FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> p) {
+FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
     auto material = proto->materials->getMaterial();
-    auto tex = _findTex(material->id());
-    if (nullptr == tex) {
+    auto texVec = _findTex(material->id());
+    if (texVec.empty()) {
         return FK_SOURCE_NOT_FOUND;
     }
-    proto->materials->addComponent(std::make_shared<FkTexCompo>(tex));
+    proto->materials->addComponent(std::make_shared<FkTexCompo>(texVec[0]));
     auto sizeCompo = FK_FIND_COMPO(proto->materials, FkSizeCompo);
     if (sizeCompo == nullptr) {
-        sizeCompo = std::make_shared<FkSizeCompo>(tex->desc.size);
+        sizeCompo = std::make_shared<FkSizeCompo>(texVec[0]->desc.size);
         proto->materials->addComponent(sizeCompo);
     }
-    sizeCompo->size = tex->desc.size;
-    if (!proto->device->getMaterial()->isUseless()) {
-        tex = _findTex(proto->device->getMaterial()->id());
-        proto->device->addComponent(std::make_shared<FkTexCompo>(tex));
+    sizeCompo->size = texVec[0]->desc.size;
+    if (!proto->device->getMaterial()->isInvalid()) {
+        texVec = _findTex(proto->device->getMaterial()->id());
+        proto->device->addComponent(std::make_shared<FkTexCompo>(texVec[0]));
         sizeCompo = FK_FIND_COMPO(proto->device, FkSizeCompo);
         if (sizeCompo == nullptr) {
-            sizeCompo = std::make_shared<FkSizeCompo>(tex->desc.size);
+            sizeCompo = std::make_shared<FkSizeCompo>(texVec[0]->desc.size);
             proto->device->addComponent(sizeCompo);
         }
-        sizeCompo->size = tex->desc.size;
+        sizeCompo->size = texVec[0]->desc.size;
     }
     return FK_OK;
 }
 
-std::shared_ptr<FkGraphicTexture> FkRenderTexQuark::_findTex(FkID id) {
+FkRenderTexQuark::FkTexVec FkRenderTexQuark::_findTex(FkID id) {
     auto itr = sMap.find(id);
     if (itr != sMap.end()) {
         return itr->second;
     }
-    return nullptr;
+    return {};
 }
 
 FkResult FkRenderTexQuark::_drawColor(std::shared_ptr<FkGraphicTexture> &tex,

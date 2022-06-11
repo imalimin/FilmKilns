@@ -16,6 +16,7 @@
 #include "FkNewBmpTexProto.h"
 #include "FkBufCompo.h"
 #include "FkRmMaterialProto.h"
+#include "FkRenderContext.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 
@@ -32,7 +33,7 @@ FkResult FkRenderEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     FkAssert(ret == FK_OK, ret);
     auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = std::make_shared<FkQuarkContext>();
+    proto->context = std::make_shared<FkRenderContext>();
     return client->with(molecule)->send(proto);
 }
 

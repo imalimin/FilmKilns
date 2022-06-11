@@ -24,7 +24,7 @@ FkMaterialCompo::~FkMaterialCompo() {
 
 }
 
-bool FkMaterialCompo::isUseless() {
+bool FkMaterialCompo::isInvalid() {
     return _id == FK_ID_NONE;
 }
 

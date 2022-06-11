@@ -64,7 +64,7 @@ TEST(FkRenderEngineTest_, Render) {
 
 TEST_F(FkRenderEngineTest, NewAndRemoveMaterial) {
     auto src = engine->addMaterial();
-    EXPECT_EQ(src->isUseless(), false);
+    EXPECT_EQ(src->isInvalid(), false);
     EXPECT_EQ(engine->removeMaterial(src), FK_OK);
 }
 
@@ -135,7 +135,7 @@ static void testColor(std::shared_ptr<FkRenderEngine> &engine,
 
 TEST_F(FkRenderEngineTest, Render2Buffer) {
     auto src = engine->addMaterial();
-    EXPECT_EQ(src->isUseless(), false);
+    EXPECT_EQ(src->isInvalid(), false);
     FkSize size(32, 32);
     FkIntVec2 pos(size.getWidth() / 2, size.getHeight() / 2);
     // Test white
@@ -152,13 +152,13 @@ TEST_F(FkRenderEngineTest, Render2Buffer) {
 
 TEST_F(FkRenderEngineTest, RenderLayer) {
     auto whiteMaterial = engine->addMaterial();
-    EXPECT_EQ(whiteMaterial->isUseless(), false);
+    EXPECT_EQ(whiteMaterial->isInvalid(), false);
     FkSize size(32, 32);
     auto white = FkColor::white();
     EXPECT_EQ(engine->updateMaterial(whiteMaterial, size, white), FK_OK);
 
     auto blackMaterial = engine->addMaterial();
-    EXPECT_EQ(blackMaterial->isUseless(), false);
+    EXPECT_EQ(blackMaterial->isInvalid(), false);
     auto black = FkColor::black();
     EXPECT_EQ(engine->updateMaterial(blackMaterial, size, black), FK_OK);
 
