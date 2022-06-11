@@ -34,6 +34,7 @@
 #include "FkReadPixelsProto.h"
 #include "FkDrawPathProto.h"
 #include "FkUpdateLayerModelProto.h"
+#include "FkImageContext.h"
 
 FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
 
@@ -56,7 +57,7 @@ FkResult FkLayerEngine::onCreate() {
     ret = renderEngine->create();
     FkAssert(ret == FK_OK, ret);
     auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = std::make_shared<FkQuarkContext>();
+    proto->context = std::make_shared<FkImageContext>();
     proto->context->addComponent(std::make_shared<FkRenderEngineCompo>(renderEngine));
     return client->with(molecule)->send(proto);
 }

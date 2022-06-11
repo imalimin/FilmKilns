@@ -7,7 +7,7 @@
 
 #include "FkGraphicSourceAtom.h"
 #include "FkSetSurfacePrt.h"
-#include "FkRenderContext.h"
+#include "FkImageContext.h"
 #include "FkEmptyQuark.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicSourceAtom, FkSimpleAtom)
@@ -62,7 +62,8 @@ FkResult FkGraphicSourceAtom::onStop() {
 
 FkResult FkGraphicSourceAtom::_onSetSurface(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkSetSurfacePrt, p);
-    auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     return renderEngine->updateWindow(proto->win);
 }

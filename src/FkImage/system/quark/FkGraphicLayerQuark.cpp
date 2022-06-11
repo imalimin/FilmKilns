@@ -24,7 +24,7 @@
 #include "FkPointFCompo.h"
 #include "FkVertexCompo.h"
 #include "FkCoordinateCompo.h"
-#include "FkRenderContext.h"
+#include "FkImageContext.h"
 #include "FkBitmapCompo.h"
 #include "FkFilePathCompo.h"
 #include "FkQueryLayersProto.h"
@@ -171,7 +171,9 @@ std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::newLayerEntity() {
     layer->addComponent(std::make_shared<FkScaleComponent>());
     layer->addComponent(std::make_shared<FkRotateComponent>());
 
-    auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+    auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+    FkAssert(context != nullptr, nullptr);
+    auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
     layer->material = renderEngine->addMaterial();
     layer->id = layer->material->id();
@@ -193,7 +195,9 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     auto layerSize = _updateLayerSize(proto, layer, isSwappedWH);
 
     if (!layerSize.isZero()) {
-        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        FkAssert(context != nullptr, nullptr);
+        auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
         if (bmpCompo) {
             auto buf = FkBuffer::alloc(bmpCompo->bmp->getByteSize());
@@ -218,7 +222,9 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
 FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRemoveLayerProto, p);
     if (proto->layerId == Fk_CANVAS_ID) {
-        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        FkAssert(context != nullptr, nullptr);
+        auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
         for (auto &itr : layers) {
             renderEngine->removeMaterial(itr.second->material);
@@ -228,7 +234,9 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     }
     auto itr = layers.find(proto->layerId);
     if (itr != layers.end()) {
-        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        FkAssert(context != nullptr, nullptr);
+        auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
         renderEngine->removeMaterial(itr->second->material);
         layers.erase(itr);

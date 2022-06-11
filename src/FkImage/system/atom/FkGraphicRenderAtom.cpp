@@ -9,7 +9,7 @@
 #include "FkRenderRequestPrt.h"
 #include "FkEmptyQuark.h"
 #include "FkDeviceEntity.h"
-#include "FkRenderContext.h"
+#include "FkImageContext.h"
 #include "FkVertexCompo.h"
 #include "FkCoordinateCompo.h"
 #include "FkMatCompo.h"
@@ -59,7 +59,8 @@ FkResult FkGraphicRenderAtom::onStop() {
 
 FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
-    auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     auto canvas = proto->req->getCanvas();
     auto canvasSizeCompo = FK_FIND_COMPO(canvas, FkSizeCompo);
@@ -104,7 +105,8 @@ FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer
 }
 
 FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas) {
-    auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     auto materials = _makeRenderMaterials(canvas);
     if (materials) {
@@ -146,7 +148,8 @@ FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer
         materials->addComponent(vertex);
         materials->addComponent(pointCompo);
 
-        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+        auto renderEngine = context->getRenderEngine();
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(layer->material);
         return renderEngine->renderDevice(materials, device);
     }
@@ -156,7 +159,8 @@ FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer
 FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkReadPixelsProto, p);
     FkAssert(proto->layer != nullptr, FK_NPE);
-    auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(proto->layer->material);
     if (proto->size.isZero()) {
@@ -190,7 +194,8 @@ FkResult FkGraphicRenderAtom::_drawPaths(std::shared_ptr<FkGraphicLayer> &layer)
         std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponents(paths);
 
-        auto renderEngine = FkRenderContext::wrap(getContext())->getRenderEngine();
+        FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+        auto renderEngine = context->getRenderEngine();
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(layer->material);
         return renderEngine->renderDevice(materials, device);
     }
