@@ -17,6 +17,7 @@
 #include "FkGLDefinition.h"
 #include "FkMatCompo.h"
 #include "FkGridSizeCompo.h"
+#include "FkTexCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkScreenQuark, FkQuark)
 
@@ -47,11 +48,15 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     }
     FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkScreenEntity, proto->device);
     FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->materials);
-    auto srcTexCompo = material->tex();
+    auto srcTexArray = material->texArray();
+    if (srcTexArray->empty()) {
+        FkLogW(FK_DEF_TAG, "Not support for multi-texture frame buffer object.");
+        return FK_SKIP;
+    }
     auto fboCompo = material->fbo();
     auto context = proto->env->getContext();
     auto size = device->size();
-    auto texSize = srcTexCompo->tex->desc.size;
+    auto texSize = (*srcTexArray)[0]->desc.size;
 
     auto programCompo = FK_FIND_COMPO(material, FkRenderProgramCompo);
     auto vboCompo = FK_FIND_COMPO(material, FkVboCompo);
@@ -71,7 +76,7 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
 
-    programCompo->program->addValue(srcTexCompo);
+    programCompo->program->addValue(std::make_shared<FkTexCompo>((*srcTexArray)[0]));
     programCompo->program->addValue(matCompo);
     programCompo->program->addValue(vboCompo);
     programCompo->program->addValue(gridCompo);

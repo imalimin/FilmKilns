@@ -20,9 +20,9 @@ FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material)
 }
 
 FkTexEntity::FkTexEntity(std::shared_ptr<FkMaterialCompo> &material,
-                         std::shared_ptr<FkTexCompo> &tex)
+                         std::shared_ptr<FkTexArrayCompo> &texArray)
         : FkMaterialEntity(material), scale(1.0f, 1.0f, 1.0f) {
-    addComponent(tex);
+    addComponent(texArray);
 }
 
 FkTexEntity::FkTexEntity(const FkTexEntity &o) : FkMaterialEntity(o), scale(o.scale) {
@@ -36,8 +36,8 @@ FkTexEntity::~FkTexEntity() {
 
 }
 
-std::shared_ptr<FkTexCompo> FkTexEntity::tex() {
-    return FK_FIND_COMPO(this, FkTexCompo);
+std::shared_ptr<FkTexArrayCompo> FkTexEntity::texArray() {
+    return FK_FIND_COMPO(this, FkTexArrayCompo);
 }
 
 std::shared_ptr<FkFboCompo> FkTexEntity::fbo() {

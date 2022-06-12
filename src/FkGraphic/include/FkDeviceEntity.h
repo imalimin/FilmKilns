@@ -13,7 +13,7 @@
 
 #include "FkMaterialEntity.h"
 #include "FkBuffer.h"
-#include "FkTexCompo.h"
+#include "FkTexArrayCompo.h"
 #include "FkSize.h"
 #include "FkIntVec2.h"
 
@@ -67,7 +67,7 @@ public:
      * @NotNull
      * @return
      */
-    std::shared_ptr<FkTexCompo> tex();
+    std::shared_ptr<FkTexArrayCompo> texArray();
 
     FkSize size();
 

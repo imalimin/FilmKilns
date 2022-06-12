@@ -41,7 +41,11 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(materials, FkTexEntity, proto->materials);
 
     auto fboCompo = materials->fbo();
-    auto dstTexCompo = device->tex();
+    auto dstTexArray = device->texArray();
+    if (dstTexArray->empty()) {
+        FkLogW(FK_DEF_TAG, "Not support for multi-texture frame buffer object.");
+        return FK_DONE;
+    }
     auto size = device->size();
     auto programCompo = FK_FIND_COMPO(materials, FkRenderProgramCompo);
     std::vector<std::shared_ptr<FkComponent>> paths;
@@ -54,7 +58,7 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     glBlendEquation(GL_FUNC_ADD);
     glViewport(0, 0, size.getWidth(), size.getHeight());
     fboCompo->fbo->bind();
-    fboCompo->fbo->attach(dstTexCompo->tex);
+    fboCompo->fbo->attach((*dstTexArray)[0]);
     FK_GL_CHECK(programCompo->program->bind());
     for (auto &path : paths) {
         auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
@@ -66,7 +70,7 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
             FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, count));
         }
     }
-    fboCompo->fbo->detach(dstTexCompo->tex->desc.target);
+    fboCompo->fbo->detach((*dstTexArray)[0]->desc.target);
     fboCompo->fbo->unbind();
     FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();

@@ -12,6 +12,7 @@
 #include "FkRenderProto.h"
 #include "FkNewTexProto.h"
 #include "FkFboCompo.h"
+#include "FkNewBmpTexProto.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderFboQuark, FkQuark)
 
@@ -25,6 +26,7 @@ FkRenderFboQuark::~FkRenderFboQuark() {
 void FkRenderFboQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderProto, FkRenderFboQuark::_onRender);
     FK_PORT_DESC_QUICK_ADD(desc, FkNewTexProto, FkRenderFboQuark::_onWithFbo);
+    FK_PORT_DESC_QUICK_ADD(desc, FkNewBmpTexProto, FkRenderFboQuark::_onWithFbo);
 }
 
 FkResult FkRenderFboQuark::onCreate() {

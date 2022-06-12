@@ -12,7 +12,7 @@
 #define FK_GRAPHIC_FKTEXENTITY_H
 
 #include "FkMaterialEntity.h"
-#include "FkTexCompo.h"
+#include "FkTexArrayCompo.h"
 #include "FkFboCompo.h"
 #include "FkSize.h"
 #include "FkColor.h"
@@ -24,7 +24,7 @@ FK_DEF_CLASS_TYPE_FUNC(FkTexEntity)
 public:
     FkTexEntity(std::shared_ptr<FkMaterialCompo> &material);
 
-    FkTexEntity(std::shared_ptr<FkMaterialCompo> &material, std::shared_ptr<FkTexCompo> &tex);
+    FkTexEntity(std::shared_ptr<FkMaterialCompo> &material, std::shared_ptr<FkTexArrayCompo> &texArray);
 
     FkTexEntity(const FkTexEntity &o);
 
@@ -36,7 +36,7 @@ public:
      * @NotNull
      * @return
      */
-    std::shared_ptr<FkTexCompo> tex();
+    std::shared_ptr<FkTexArrayCompo> texArray();
 
     /**
      * @Nullbale

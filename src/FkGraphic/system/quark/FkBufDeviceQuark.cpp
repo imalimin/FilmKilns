@@ -65,8 +65,13 @@ FkResult FkBufDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     if (fboCompo == nullptr) {
         return FK_NPE;
     }
+    auto texArray = material->texArray();
+    if (texArray->empty()) {
+        FkLogW(FK_DEF_TAG, "Not support for multi-texture frame buffer object.");
+        return FK_SKIP;
+    }
     auto texSize = material->size();
-    auto tex = material->tex()->tex;
+    auto tex = (*texArray)[0];
     glFinish();
     fboCompo->fbo->bind();
     fboCompo->fbo->attach(tex);
@@ -77,11 +82,11 @@ FkResult FkBufDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         dstSize = texSize;
     }
     auto pos = device->getPosition();
+    auto buf = device->buffer()->data();
     glReadPixels(pos.x, pos.y,
                  dstSize.getWidth(), dstSize.getHeight(),
-                 GL_RGBA, GL_UNSIGNED_BYTE,
-                 device->buffer()->data());
-    fboCompo->fbo->detach(material->tex()->tex->desc.target);
+                 GL_RGBA, GL_UNSIGNED_BYTE, buf);
+    fboCompo->fbo->detach(tex->desc.target);
     fboCompo->fbo->unbind();
     return FK_OK;
 }

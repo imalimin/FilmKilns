@@ -17,6 +17,7 @@
 #include "FkNewBmpTexProto.h"
 #include "FkBufCompo.h"
 #include "FkRmMaterialProto.h"
+#include "FkMemUtils.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderTexQuark, FkQuark)
 
@@ -47,7 +48,7 @@ FkResult FkRenderTexQuark::onStart() {
     if (FK_OK != ret) {
         return ret;
     }
-    allocator = std::make_shared<FkGraphicAllocator>(1080 * 1920 * 4 * 10);
+    allocator = std::make_shared<FkGraphicAllocator>(256 * 1024 * 1024);
     return ret;
 }
 
@@ -64,31 +65,22 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
         FkLogE(FK_DEF_TAG, "Texture allocator is null.");
         return FK_FAIL;
     }
-    auto texVec = _findTex(proto->texEntity->getMaterial()->id());
-    if (texVec.empty()) {
-        FkTexDescription desc(GL_TEXTURE_2D);
-        desc.fmt = proto->texEntity->format();
-        desc.size = proto->texEntity->size();
-        auto tex = allocator->alloc(desc);
-        if (nullptr == tex) {
-            FkLogE(FK_DEF_TAG, "Texture allocator return null.");
-            return FK_FAIL;
-        }
-        texVec.emplace_back(tex);
-        sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texVec));
+    auto materialId = proto->texEntity->getMaterial()->id();
+    auto texArray = _findTex(materialId);
+    if (texArray == nullptr || texArray->empty()) {
+        texArray = _allocTex(proto->texEntity);
+        sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texArray));
     }
     auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
     if (bufCompo) {
-        texVec[0]->update(texVec[0]->desc.fmt,
-                    proto->texEntity->size().getWidth(),
-                    proto->texEntity->size().getHeight(),
-                    bufCompo->buf->data());
-    } else if (texVec[0]->desc.size != proto->texEntity->size()) {
-        texVec[0]->update(texVec[0]->desc.fmt,
+        _updateTexWithBuf(texArray, bufCompo->buf, proto->texEntity);
+    } else if ((*texArray)[0]->desc.size != proto->texEntity->size()) {
+        texArray->size = proto->texEntity->size();
+        (*texArray)[0]->update((*texArray)[0]->desc.fmt,
                     proto->texEntity->size().getWidth(),
                     proto->texEntity->size().getHeight());
     }
-    auto ret = _drawColor(texVec[0], proto->texEntity);
+    auto ret = _drawColor(texArray, proto->texEntity);
     if (FK_OK != ret) {
         FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
     }
@@ -102,36 +94,104 @@ FkResult FkRenderTexQuark::_onAllocTexWithBmp(std::shared_ptr<FkProtocol> &p) {
 FkResult FkRenderTexQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
     auto material = proto->materials->getMaterial();
-    auto texVec = _findTex(material->id());
-    if (texVec.empty()) {
+    auto texArray = _findTex(material->id());
+    if (texArray == nullptr || texArray->empty()) {
         return FK_SOURCE_NOT_FOUND;
     }
-    proto->materials->addComponent(std::make_shared<FkTexCompo>(texVec[0]));
+    proto->materials->addComponent(std::make_shared<FkTexArrayCompo>(*texArray));
     auto sizeCompo = FK_FIND_COMPO(proto->materials, FkSizeCompo);
     if (sizeCompo == nullptr) {
-        sizeCompo = std::make_shared<FkSizeCompo>(texVec[0]->desc.size);
+        sizeCompo = std::make_shared<FkSizeCompo>(texArray->size);
         proto->materials->addComponent(sizeCompo);
     }
-    sizeCompo->size = texVec[0]->desc.size;
+    sizeCompo->size = texArray->size;
     if (!proto->device->getMaterial()->isInvalid()) {
-        texVec = _findTex(proto->device->getMaterial()->id());
-        proto->device->addComponent(std::make_shared<FkTexCompo>(texVec[0]));
+        texArray = _findTex(proto->device->getMaterial()->id());
+        proto->device->addComponent(std::make_shared<FkTexArrayCompo>(*texArray));
         sizeCompo = FK_FIND_COMPO(proto->device, FkSizeCompo);
         if (sizeCompo == nullptr) {
-            sizeCompo = std::make_shared<FkSizeCompo>(texVec[0]->desc.size);
+            sizeCompo = std::make_shared<FkSizeCompo>(texArray->size);
             proto->device->addComponent(sizeCompo);
         }
-        sizeCompo->size = texVec[0]->desc.size;
+        sizeCompo->size = texArray->size;
     }
     return FK_OK;
 }
 
-FkRenderTexQuark::FkTexVec FkRenderTexQuark::_findTex(FkID id) {
+std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_findTex(FkID id) {
     auto itr = sMap.find(id);
     if (itr != sMap.end()) {
         return itr->second;
     }
     return {};
+}
+
+std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkTexEntity> &texEntity) {
+    int32_t blockSize = 25600;
+    auto blocks = _calcTexBlock(texEntity->size(), blockSize);
+    auto blockSizeX = blocks.x == 1 ? texEntity->size().getWidth() : blockSize;
+    auto blockSizeY = blocks.y == 1 ? texEntity->size().getHeight() : blockSize;
+    auto texArray = std::make_shared<FkTexArrayCompo>(texEntity->size(), blocks.x, blocks.y);
+    FkTexDescription desc(GL_TEXTURE_2D);
+    desc.fmt = texEntity->format();
+    for (int y = 0; y < blocks.y; ++y) {
+        for (int x = 0; x < blocks.x; ++x) {
+            desc.size = {blockSizeX, blockSizeY};
+            if (blocks.x == x + 1 && blocks.y == y + 1) {
+                desc.size = {texEntity->size().getWidth() - blockSizeX * x,
+                             texEntity->size().getHeight() - blockSizeY * y};
+            } else if (blocks.x == x + 1) {
+                desc.size = {texEntity->size().getWidth() - blockSizeX * x, blockSizeY};
+            } else if (blocks.y == y + 1) {
+                desc.size = {blockSizeX, texEntity->size().getHeight() - blockSizeY * y};
+            }
+            auto tex = allocator->alloc(desc);
+            if (nullptr == tex) {
+                FkLogE(FK_DEF_TAG, "Texture allocator return null.");
+                return {};
+            }
+            texArray->textures.emplace_back(tex);
+        }
+    }
+    return texArray;
+}
+
+FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &texArray,
+                                             std::shared_ptr<FkBuffer> &buf,
+                                             std::shared_ptr<FkTexEntity> &texEntity) {
+    FkIntVec2 pos(0, 0);
+    std::shared_ptr<FkBuffer> dstBuf = nullptr;
+    for (int y = 0; y < texArray->blocks.y; ++y) {
+        pos.x = 0;
+        for (int x = 0; x < texArray->blocks.x; ++x) {
+            auto index = y * texArray->blocks.x + x;
+            auto tex = (*texArray)[index];
+            auto size = tex->desc.size.getWidth() * tex->desc.size.getHeight() * 4;
+            if (dstBuf == nullptr || dstBuf->capacity() != size) {
+                dstBuf = FkBuffer::alloc(size);
+            }
+            auto ret = _copySubImage(buf, texArray->size.getWidth(), dstBuf, tex->desc.size, pos);
+            FkAssert(ret == FK_OK, ret);
+            tex->update(tex->desc.fmt,
+                        tex->desc.size.getWidth(),
+                        tex->desc.size.getHeight(),
+                        dstBuf->data());
+            if (texArray->blocks.x == x + 1) {
+                pos.y += tex->desc.size.getHeight();
+            }
+            pos.x = tex->desc.size.getWidth();
+        }
+    }
+    return FK_OK;
+}
+
+FkResult FkRenderTexQuark::_drawColor(std::shared_ptr<FkTexArrayCompo> &texArray,
+                                      std::shared_ptr<FkTexEntity> &texEntity) {
+    for (auto &tex: texArray->textures) {
+        auto ret = _drawColor(tex, texEntity);
+        FkAssert(FK_OK == FK_OK, ret);
+    }
+    return FK_OK;
 }
 
 FkResult FkRenderTexQuark::_drawColor(std::shared_ptr<FkGraphicTexture> &tex,
@@ -163,4 +223,15 @@ FkResult FkRenderTexQuark::_onRemoveTex(std::shared_ptr<FkProtocol> &p) {
         sMap.erase(itr);
     }
     return FK_OK;
+}
+
+FkIntVec2 FkRenderTexQuark::_calcTexBlock(FkSize size, int32_t blockSize) {
+    return {(int32_t) std::ceil(size.getWidth() / (float) blockSize),
+            (int32_t) std::ceil(size.getHeight() / (float) blockSize)};
+}
+
+FkResult FkRenderTexQuark::_copySubImage(std::shared_ptr<FkBuffer> &src, int32_t width,
+                                         std::shared_ptr<FkBuffer> &dst, FkSize size,
+                                         FkIntVec2 pos) {
+    return FkMemUtils::copySubImage(src, width, dst, size, pos);
 }

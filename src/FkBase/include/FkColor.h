@@ -79,6 +79,8 @@ public:
 
     bool equals(FkColor &color);
 
+    bool operator==(FkColor &color);
+
 private:
     kFormat format;
     AlphaType alphaType;

@@ -109,8 +109,8 @@ void FkTexDeviceEntity::finish() {
     }
 }
 
-std::shared_ptr<FkTexCompo> FkTexDeviceEntity::tex() {
-    return FK_FIND_COMPO(this, FkTexCompo);
+std::shared_ptr<FkTexArrayCompo> FkTexDeviceEntity::texArray() {
+    return FK_FIND_COMPO(this, FkTexArrayCompo);
 }
 
 FkSize FkTexDeviceEntity::size() {

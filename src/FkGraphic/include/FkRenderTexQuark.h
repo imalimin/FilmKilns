@@ -14,12 +14,12 @@
 #include "FkQuark.h"
 #include "FkGraphicTexture.h"
 #include "FkTexEntity.h"
+#include "FkIntVec2.h"
+#include "FkBuffer.h"
+#include "FkTexArrayCompo.h"
 
 FK_SUPER_CLASS(FkRenderTexQuark, FkQuark) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderTexQuark)
-
-private:
-    typedef std::vector<std::shared_ptr<FkGraphicTexture>> FkTexVec;
 
 public:
     FkRenderTexQuark();
@@ -49,14 +49,29 @@ private:
     FkResult _onRemoveTex(std::shared_ptr<FkProtocol> &p);
 
 private:
-    FkTexVec _findTex(FkID id);
+    std::shared_ptr<FkTexArrayCompo> _findTex(FkID id);
+
+    std::shared_ptr<FkTexArrayCompo> _allocTex(std::shared_ptr<FkTexEntity> &texEntity);
+
+    FkResult _updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &texArray,
+                               std::shared_ptr<FkBuffer> &buf,
+                               std::shared_ptr<FkTexEntity> &texEntity);
+
+    FkResult _drawColor(std::shared_ptr<FkTexArrayCompo> &texArray,
+                        std::shared_ptr<FkTexEntity> &texEntity);
 
     FkResult _drawColor(std::shared_ptr<FkGraphicTexture> &tex,
                         std::shared_ptr<FkTexEntity> &texEntity);
 
+    FkIntVec2 _calcTexBlock(FkSize size, int32_t blockSize);
+
+    FkResult _copySubImage(std::shared_ptr<FkBuffer> &src, int32_t width,
+                           std::shared_ptr<FkBuffer> &dst, FkSize size,
+                           FkIntVec2 pos);
+
 private:
     std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
-    std::unordered_map<FkID, FkTexVec> sMap;
+    std::unordered_map<FkID, std::shared_ptr<FkTexArrayCompo>> sMap;
 };
 
 #endif //FK_GRAPHIC_FKRENDERTEXQUARK_H

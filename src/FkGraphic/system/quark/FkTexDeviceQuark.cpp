@@ -16,6 +16,7 @@
 #include "FkRenderProgramCompo.h"
 #include "FkGLDefinition.h"
 #include "FkMatCompo.h"
+#include "FkTexCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkTexDeviceQuark, FkQuark)
 
@@ -66,9 +67,13 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     }
     FK_CAST_NULLABLE_PTR_RETURN_INT(device, FkTexDeviceEntity, proto->device);
     FK_CAST_NULLABLE_PTR_RETURN_INT(material, FkTexEntity, proto->materials);
-    auto srcTexCompo = material->tex();
+    auto srcTexArray = material->texArray();
     auto fboCompo = material->fbo();
-    auto dstTexCompo = device->tex();
+    auto dstTexArray = device->texArray();
+    if (dstTexArray->empty()) {
+        FkLogW(FK_DEF_TAG, "Not support for multi-texture frame buffer object.");
+        return FK_SKIP;
+    }
     auto size = device->size();
 
     auto programCompo = FK_FIND_COMPO(proto->materials, FkRenderProgramCompo);
@@ -99,7 +104,8 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     glBlendEquation(GL_FUNC_ADD);
     glViewport(0, 0, size.getWidth(), size.getHeight());
     fboCompo->fbo->bind();
-    fboCompo->fbo->attach(dstTexCompo->tex);
+    fboCompo->fbo->attach((*dstTexArray)[0]);
+
 #if defined(__FK_DEBUG__)
     auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     FkAssert(GL_FRAMEBUFFER_COMPLETE == status,);
@@ -107,12 +113,12 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
 
-    programCompo->program->addValue(srcTexCompo);
+    programCompo->program->addValue(std::make_shared<FkTexCompo>((*srcTexArray)[0]));
     programCompo->program->addValue(matCompo);
     programCompo->program->addValue(vboCompo);
     FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
 
-    fboCompo->fbo->detach(dstTexCompo->tex->desc.target);
+    fboCompo->fbo->detach((*dstTexArray)[0]->desc.target);
     fboCompo->fbo->unbind();
     FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();

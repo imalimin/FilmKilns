@@ -134,3 +134,7 @@ FkColor::kFormat FkColor::getFormat() {
 bool FkColor::equals(FkColor &color) {
     return uRed() == color.uRed() && uGreen() == color.uGreen() && uBlue() == color.uBlue() && uAlpha() == color.uAlpha();
 }
+
+bool FkColor::operator==(FkColor &color) {
+    return equals(color);
+}

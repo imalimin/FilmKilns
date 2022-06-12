@@ -54,7 +54,11 @@ FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &v
                                           std::shared_ptr<FkTexEntity> &materials,
                                           std::shared_ptr<FkTexDeviceEntity> &device) {
     auto fboCompo = materials->fbo();
-    auto dstTexCompo = device->tex();
+    auto dstTexArray = device->texArray();
+    if (dstTexArray->empty()) {
+        FkLogW(FK_DEF_TAG, "Not support for multi-texture frame buffer object.");
+        return FK_DONE;
+    }
     auto size = device->size();
     auto programCompo = FK_FIND_COMPO(materials, FkRenderProgramCompo);
     auto vboCompo = FK_FIND_COMPO(materials, FkVboCompo);
@@ -72,7 +76,7 @@ FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &v
     glBlendEquation(GL_FUNC_ADD);
     glViewport(0, 0, size.getWidth(), size.getHeight());
     fboCompo->fbo->bind();
-    fboCompo->fbo->attach(dstTexCompo->tex);
+    fboCompo->fbo->attach((*dstTexArray)[0]);
     vboCompo->bind();
     FK_GL_CHECK(programCompo->program->bind());
 
@@ -83,7 +87,7 @@ FkResult FkPointProcessQuark::_drawPoints(std::shared_ptr<FkPointVertexCompo> &v
     programCompo->program->addValue(vboCompo);
     FK_GL_CHECK(glDrawArrays(GL_POINTS, 0, desc.countVertex));
 
-    fboCompo->fbo->detach(dstTexCompo->tex->desc.target);
+    fboCompo->fbo->detach((*dstTexArray)[0]->desc.target);
     fboCompo->fbo->unbind();
     FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();
