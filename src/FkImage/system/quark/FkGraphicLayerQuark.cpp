@@ -196,7 +196,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
 
     if (!layerSize.isZero()) {
         auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
-        FkAssert(context != nullptr, nullptr);
+        FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
         if (bmpCompo) {
@@ -223,7 +223,7 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRemoveLayerProto, p);
     if (proto->layerId == Fk_CANVAS_ID) {
         auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
-        FkAssert(context != nullptr, nullptr);
+        FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
         for (auto &itr : layers) {
@@ -235,7 +235,7 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     auto itr = layers.find(proto->layerId);
     if (itr != layers.end()) {
         auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
-        FkAssert(context != nullptr, nullptr);
+        FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
         renderEngine->removeMaterial(itr->second->material);

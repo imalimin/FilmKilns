@@ -56,9 +56,8 @@ void FkThread::createThread() {
     int ret = pthread_create(&thread, &attr, run, (void *) this);
     if (0 != ret) {
         pthread_attr_destroy(&attr);
-        FkLogI(FK_DEF_TAG, "FkThread create failed: %d", ret);
-        assert(false);
     }
+    FkAssertMsg(0 == ret, , "FkThread create failed: %d");
 }
 
 void FkThread::stop() {
