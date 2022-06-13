@@ -31,6 +31,15 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
+#------------------SHARED START----------------------
+if (NOT ENABLE_SKIA_SRC)
+    add_library(skia SHARED IMPORTED)
+    set_target_properties(skia PROPERTIES IMPORTED_LOCATION
+            "${THIRD_PARTY_DIR}/skia/shared/${ANDROID_ABI}/libskia.so")
+endif (ENABLE_SKIA_SRC)
+
+#------------------SHARED END----------------------
+
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 
 list(APPEND SOURCES_ROOT ${SOURCES_CORE})

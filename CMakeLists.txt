@@ -6,6 +6,7 @@ option(ENABLE_GLM "Enable glm." OFF)
 option(ENABLE_ASAN "Enable ASAN." OFF)
 option(ENABLE_MEDIA_CODEC "Enable MediaCodec." ON)
 option(ENABLE_FK "Compile film kilns." OFF)
+option(ENABLE_SKIA_SRC "Compile with skia sources." OFF)
 
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
 
@@ -64,7 +65,9 @@ endif (ENABLE_MEDIA_CODEC)
 
 if (ENABLE_FK)
     message(STATUS "Compile film kilns.")
-    add_subdirectory(${SRC_PATH_ROOT}/skia)
+    if (ENABLE_SKIA_SRC)
+        add_subdirectory(${SRC_PATH_ROOT}/skia)
+    endif (ENABLE_SKIA_SRC)
     add_subdirectory(${SRC_PATH_ROOT}/FkBase)
     add_subdirectory(${SRC_PATH_ROOT}/FkFramework)
     add_subdirectory(${SRC_PATH_ROOT}/FkBitmap)

@@ -32,7 +32,8 @@ android {
         }
         sourceSets.main {
             jni.srcDirs = []
-            jniLibs.srcDir "../../../src/third_party/protobuf/shared"
+            jniLibs.srcDirs = ["../../../src/third_party/protobuf/shared",
+                               "../../../src/third_party/skia/shared"]
         }
         buildConfigField("boolean", "ENABLE_UNIT_TEST", "false")
     }
