@@ -1,14 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkFramework")
+set(MODULE_NAME "FilmKilns")
 project(${MODULE_NAME} LANGUAGES C CXX)
-
-set(INCLUDES
-        ${ANDROID_NDK}/sources/android/cpufeatures
-        ${PROJECT_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/../FkBase/include
-        )
-include_directories(${INCLUDES})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_FLAGS_CONFIGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_FLAGS_CONFIGS}")
@@ -30,24 +22,6 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
-aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
-aux_source_directory(${PROJECT_SOURCE_DIR}/protocol SOURCES_PRT)
-aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
-aux_source_directory(${PROJECT_SOURCE_DIR}/quark SOURCES_QUARK)
-aux_source_directory(${PROJECT_SOURCE_DIR}/atom SOURCES_ATOM)
-aux_source_directory(${PROJECT_SOURCE_DIR}/client SOURCES_CLIENT)
-aux_source_directory(${PROJECT_SOURCE_DIR}/ecs/component SOURCES_ECS_COMPONENT)
-aux_source_directory(${PROJECT_SOURCE_DIR}/ecs/entity SOURCES_ECS_ENTITY)
-
-list(APPEND SOURCES_ROOT ${SOURCES_CORE})
-list(APPEND SOURCES_ROOT ${SOURCES_PRT})
-list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
-list(APPEND SOURCES_ROOT ${SOURCES_QUARK})
-list(APPEND SOURCES_ROOT ${SOURCES_ATOM})
-list(APPEND SOURCES_ROOT ${SOURCES_CLIENT})
-list(APPEND SOURCES_ROOT ${SOURCES_ECS_COMPONENT})
-list(APPEND SOURCES_ROOT ${SOURCES_ECS_ENTITY})
-
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
     add_definitions("-DHAVE_NEON=1")
@@ -59,11 +33,13 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
                    -Wno-static-in-inline")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
-add_library(${MODULE_NAME} STATIC ${SOURCES_ROOT})
 
-find_library(
-        log-lib
-        log)
+add_library(${MODULE_NAME} SHARED empty.cpp)
 
-set(MODULES ${MODULE_NAME} FkBase ${log-lib})
+set(MODULES ${MODULE_NAME}
+        FkBase
+        FkFramework
+        FkBitmap
+        FkGraphic
+        FkImage)
 target_link_libraries(${MODULES})

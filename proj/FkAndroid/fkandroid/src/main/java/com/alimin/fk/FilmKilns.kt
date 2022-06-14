@@ -8,10 +8,7 @@ class FilmKilns {
         fun init(context: Context?) {
             System.loadLibrary("skia")
             System.loadLibrary("protobuf")
-            System.loadLibrary("FkBase")
-            System.loadLibrary("FkFramework")
-            System.loadLibrary("FkGraphic")
-            System.loadLibrary("FkImage")
+            System.loadLibrary("FilmKilns")
             System.loadLibrary("FkAndroid")
         }
     }

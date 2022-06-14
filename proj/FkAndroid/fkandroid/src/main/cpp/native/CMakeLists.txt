@@ -54,5 +54,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} FkBase FkFramework FkGraphic FkImage ${log-lib})
+set(MODULES ${MODULE_NAME} FilmKilns ${log-lib})
 target_link_libraries(${MODULES})

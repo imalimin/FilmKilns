@@ -71,5 +71,5 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} gtest_main gtest FkBase FkFramework FkGraphic FkBitmap FkImage ${log-lib})
+set(MODULES ${MODULE_NAME} gtest_main gtest FilmKilns ${log-lib})
 target_link_libraries(${MODULES})
