@@ -1,15 +1,11 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkGraphic")
-project(${MODULE_NAME} LANGUAGES C CXX)
+project(FkGraphic LANGUAGES C CXX)
 
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/../glm
-        ${PROJECT_SOURCE_DIR}/../FkBase/include
-        ${PROJECT_SOURCE_DIR}/../FkBitmap/include
-        ${PROJECT_SOURCE_DIR}/../FkFramework/include
         )
 include_directories(${INCLUDES})
 
@@ -31,7 +27,7 @@ if (${ENABLE_BAN_WARNING})
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${var}")
     endforeach (var)
 endif ()
-message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/core/program SOURCES_CORE_PROGRAM)
@@ -70,13 +66,13 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
                    -Wno-static-in-inline")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
-add_library(${MODULE_NAME} STATIC ${SOURCES_ROOT})
+add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
 
 find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME}
+set(MODULES ${PROJECT_NAME}
         GLESv2
         EGL
         android
@@ -85,3 +81,4 @@ set(MODULES ${MODULE_NAME}
         FkFramework
         ${log-lib})
 target_link_libraries(${MODULES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

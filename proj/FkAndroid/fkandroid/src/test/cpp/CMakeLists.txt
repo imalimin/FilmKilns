@@ -1,20 +1,12 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkAndroidTest")
-project(${MODULE_NAME} LANGUAGES C CXX)
+set(MODULE_NAME "")
+project(FkAndroidTest LANGUAGES C CXX)
 
 set(PROJECT_SOURCE_FK_DIR ${CMAKE_SOURCE_DIR}/../../../src)
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/prebuild/shared/gtest/include
-        ${PROJECT_SOURCE_FK_DIR}/third_party/protobuf/include
-        ${PROJECT_SOURCE_FK_DIR}/skia
         ${PROJECT_SOURCE_FK_DIR}/glm
-        ${PROJECT_SOURCE_FK_DIR}/FkBase/include
-        ${PROJECT_SOURCE_FK_DIR}/FkFramework/include
-        ${PROJECT_SOURCE_FK_DIR}/FkGraphic/include
-        ${PROJECT_SOURCE_FK_DIR}/FkBitmap/include
-        ${PROJECT_SOURCE_FK_DIR}/FkImage/include
-        ${PROJECT_SOURCE_FK_DIR}/FkImage/pb
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
@@ -65,11 +57,12 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/module SOURCES_MODULE)
 list(APPEND SOURCES_ROOT ${SOURCES_STARTER})
 list(APPEND SOURCES_ROOT ${SOURCES_MODULE})
 
-add_library(${MODULE_NAME} SHARED ${SOURCES_ROOT})
+add_library(${PROJECT_NAME} SHARED ${SOURCES_ROOT})
 
 find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} gtest_main gtest FilmKilns ${log-lib})
+set(MODULES ${PROJECT_NAME} gtest_main gtest FilmKilns ${log-lib})
 target_link_libraries(${MODULES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)

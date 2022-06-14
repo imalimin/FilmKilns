@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkBase")
-project(${MODULE_NAME} LANGUAGES C CXX)
+project(FkBase LANGUAGES C CXX)
 
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
@@ -29,7 +28,7 @@ if (${ENABLE_BAN_WARNING})
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${var}")
     endforeach (var)
 endif ()
-message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #------------------STATIC START----------------------
 #add_library(cJSON STATIC IMPORTED)
@@ -59,11 +58,12 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
                    -Wno-static-in-inline")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
-add_library(${MODULE_NAME} STATIC ${SOURCES_ROOT})
+add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
 
 find_library(
         log-lib
         log)
 
-set(MODULES ${MODULE_NAME} ${log-lib})
+set(MODULES ${PROJECT_NAME} ${log-lib})
 target_link_libraries(${MODULES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
