@@ -41,12 +41,9 @@ list(APPEND SOURCES_ROOT ${SOURCES_CORE})
 list(APPEND SOURCES_ROOT ${SOURCES_ENGINE})
 list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
 
-add_library(${PROJECT_NAME} SHARED ${SOURCES_ROOT})
-
 find_library(
         log-lib
         log)
-
-set(MODULES ${PROJECT_NAME} FilmKilns ${log-lib})
-target_link_libraries(${MODULES})
+add_library(${PROJECT_NAME} SHARED ${SOURCES_ROOT})
+target_link_libraries(${PROJECT_NAME} FilmKilns ${log-lib})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

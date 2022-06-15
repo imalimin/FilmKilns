@@ -58,12 +58,10 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
                    -Wno-static-in-inline")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
-add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
 
 find_library(
         log-lib
         log)
-
-set(MODULES ${PROJECT_NAME} ${log-lib})
-target_link_libraries(${MODULES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${log-lib})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

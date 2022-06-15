@@ -63,6 +63,6 @@ find_library(
         log-lib
         log)
 
-set(MODULES ${PROJECT_NAME} gtest_main gtest FilmKilns ${log-lib})
+set(MODULES ${PROJECT_NAME} gtest_main gtest FkAndroid ${log-lib})
 target_link_libraries(${MODULES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
