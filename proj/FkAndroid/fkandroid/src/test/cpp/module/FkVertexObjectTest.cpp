@@ -5,10 +5,11 @@
 #include "gtest/gtest.h"
 #include "FkContextCompo.h"
 #include "FkVertexObject.h"
+#include "FkGLDefinition.h"
 
 class FkWithGLContext : public testing::Test {
     void SetUp() override {
-        context = std::make_shared<FkContextCompo>("Test");
+        context = std::make_shared<FkContextCompo>(FK_GL_VER_2, "Test");
         EXPECT_EQ(context->create(), FK_OK);
         EXPECT_EQ(context->makeCurrent(), FK_OK);
         EXPECT_NE(eglGetCurrentContext(), EGL_NO_CONTEXT);

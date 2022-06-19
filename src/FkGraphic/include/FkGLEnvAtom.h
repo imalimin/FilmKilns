@@ -54,6 +54,7 @@ private:
     bool _isOffWin(std::shared_ptr<FkGraphicWindow> &win);
 
 private:
+    int32_t glVersion;
     std::shared_ptr<FkContextCompo> context = nullptr;
 };
 

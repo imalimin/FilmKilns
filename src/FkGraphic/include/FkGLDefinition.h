@@ -10,6 +10,8 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 #include <EGL/egl.h>
 #include "assert.h"
 
@@ -27,5 +29,8 @@
 #else
 #define FK_GL_CHECK(statement) statement
 #endif
+
+#define FK_GL_VER_2 0x0004
+#define FK_GL_VER_3 0x00000040
 
 #endif //FK_GRAPHIC_FKGLDEFINITION_H

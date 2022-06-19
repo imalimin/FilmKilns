@@ -13,10 +13,11 @@
 #include "FkScaleComponent.h"
 #include "FkGraphicFrameObject.h"
 #include "FkGraphicProgram.h"
+#include "FkGLDefinition.h"
 
 class FkGraphicContextTest : public testing::Test {
     void SetUp() override {
-        context = std::make_shared<FkContextCompo>("Test");
+        context = std::make_shared<FkContextCompo>(FK_GL_VER_2, "Test");
         EXPECT_EQ(context->create(), FK_OK);
         EXPECT_EQ(context->makeCurrent(), FK_OK);
         EXPECT_NE(eglGetCurrentContext(), nullptr);

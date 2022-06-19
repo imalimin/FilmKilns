@@ -14,12 +14,13 @@
 #include "FkComponent.h"
 #include "FkGraphicWindow.h"
 #include <EGL/egl.h>
+#include <vector>
 
 FK_SUPER_CLASS(FkContextCompo, FkComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkContextCompo)
 
 public:
-    FkContextCompo(const std::string alias);
+    FkContextCompo(int32_t glVersion, const std::string alias);
 
     FkContextCompo(const FkContextCompo &o) = delete;
 
@@ -55,6 +56,8 @@ private:
 
     bool _checkError();
 
+    bool _getDefaultConfigures(std::vector<int> &out);
+
 private:
     static const int FK_CONFIG_WIN[];
     static const int FK_CONFIG_BUFFER[];
@@ -62,6 +65,7 @@ private:
     static const int EGL_RECORDABLE_ANDROID;
     static const int FK_CONFIG_ANDROID[];
 #endif
+    int32_t glVersion;
     std::string alias;
     FkSize size;
     std::shared_ptr<FkGraphicWindow> _win = nullptr;

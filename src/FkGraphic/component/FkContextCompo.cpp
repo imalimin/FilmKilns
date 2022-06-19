@@ -12,29 +12,9 @@
 
 FK_IMPL_CLASS_TYPE(FkContextCompo, FkComponent)
 
-const int FkContextCompo::FK_CONFIG_WIN[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                             EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-                             EGL_RED_SIZE, 8,
-                             EGL_GREEN_SIZE, 8,
-                             EGL_BLUE_SIZE, 8,
-                             EGL_ALPHA_SIZE, 8,
-                             EGL_DEPTH_SIZE, 0,
-                             EGL_STENCIL_SIZE, 0,
-                             EGL_NONE};
-const int FkContextCompo::FK_CONFIG_BUFFER[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                                EGL_SURFACE_TYPE, EGL_PBUFFER_BIT,
-                                EGL_RED_SIZE, 8,
-                                EGL_GREEN_SIZE, 8,
-                                EGL_BLUE_SIZE, 8,
-                                EGL_ALPHA_SIZE, 8,
-                                EGL_DEPTH_SIZE, 0,
-                                EGL_STENCIL_SIZE, 0,
-                                EGL_NONE};
-
 #ifdef __ANDROID__
 const int FkContextCompo::EGL_RECORDABLE_ANDROID = 0x3142;
-const int FkContextCompo::FK_CONFIG_ANDROID[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-                                 EGL_RED_SIZE, 8,
+const int FkContextCompo::FK_CONFIG_ANDROID[] = {EGL_RED_SIZE, 8,
                                  EGL_GREEN_SIZE, 8,
                                  EGL_BLUE_SIZE, 8,
                                  EGL_ALPHA_SIZE, 8,
@@ -45,8 +25,8 @@ const int FkContextCompo::FK_CONFIG_ANDROID[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL
 };
 #endif
 
-FkContextCompo::FkContextCompo(const std::string alias) : FkComponent(), alias(alias) {
-
+FkContextCompo::FkContextCompo(int32_t glVersion, const std::string alias)
+        : FkComponent(), glVersion(glVersion), alias(alias) {
 }
 
 FkContextCompo::~FkContextCompo() {
@@ -61,10 +41,12 @@ FkResult FkContextCompo::create(std::shared_ptr<FkContextCompo> context,
         FkLogE(FK_DEF_TAG, "[%s] Create display failed", alias.c_str());
         return FK_FAIL;
     }
+    std::vector<int> configSpec;
+    FkAssert(_getDefaultConfigures(configSpec), FK_INVALID_PARAMETERS);
     if (nullptr != win) {
-        eglConfig = _createConfig(eglDisplay, FK_CONFIG_WIN);
+        eglConfig = _createConfig(eglDisplay, configSpec.data());
     } else {
-        eglConfig = _createConfig(eglDisplay, FK_CONFIG_BUFFER);
+        eglConfig = _createConfig(eglDisplay, configSpec.data());
     }
     if (!eglConfig) {
         FkLogE(FK_DEF_TAG, "[%s] Bad config", alias.c_str());
@@ -261,4 +243,25 @@ int32_t FkContextCompo::getHeight() {
 
 bool FkContextCompo::isPBuffer() {
     return size.getWidth() == 0 && size.getHeight() == 0;
+}
+
+bool FkContextCompo::_getDefaultConfigures(std::vector<int> &out) {
+    out.emplace_back(EGL_RENDERABLE_TYPE);
+    out.emplace_back(glVersion);
+    out.emplace_back(EGL_SURFACE_TYPE);
+    out.emplace_back(_win != nullptr ? EGL_WINDOW_BIT : EGL_PBUFFER_BIT);
+    out.emplace_back(EGL_RED_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_GREEN_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_BLUE_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_ALPHA_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_DEPTH_SIZE);
+    out.emplace_back(0);
+    out.emplace_back(EGL_STENCIL_SIZE);
+    out.emplace_back(0);
+    out.emplace_back(EGL_NONE);
+    return true;
 }

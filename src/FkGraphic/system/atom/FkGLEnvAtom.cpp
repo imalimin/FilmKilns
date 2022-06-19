@@ -14,10 +14,12 @@
 #include "FkEmptyQuark.h"
 #include "FkSizeCompo.h"
 #include "FkOffWindow.h"
+#include "FkGLDefinition.h"
+#include "FkRenderContext.h"
 
 FK_IMPL_CLASS_TYPE(FkGLEnvAtom, FkSimpleAtom)
 
-FkGLEnvAtom::FkGLEnvAtom() : FkSimpleAtom() {
+FkGLEnvAtom::FkGLEnvAtom() : FkSimpleAtom(), glVersion(FK_GL_VER_2) {
 
 }
 
@@ -39,6 +41,11 @@ FkResult FkGLEnvAtom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
+    auto renderContext = std::dynamic_pointer_cast<FkRenderContext>(getContext());
+    if (renderContext) {
+        glVersion = renderContext->getGlVersion();
+    }
+    FkLogI(FK_DEF_TAG, "glVersion: %d", glVersion);
     _initializeWithoutWindow();
     context->makeCurrent();
     return ret;
@@ -103,7 +110,7 @@ FkResult FkGLEnvAtom::_onUpdateWindow(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGLEnvAtom::_changeWithWindow(std::shared_ptr<FkGraphicWindow> &win) {
     if (context->isPBuffer()) {
-        auto newContext = std::make_shared<FkContextCompo>("EGLAttach");
+        auto newContext = std::make_shared<FkContextCompo>(glVersion, "EGLAttach");
         auto ret = newContext->create(context, win);
         context->destroy();
         context = newContext;
@@ -115,7 +122,7 @@ FkResult FkGLEnvAtom::_changeWithWindow(std::shared_ptr<FkGraphicWindow> &win) {
 
 FkResult FkGLEnvAtom::_changeWithoutWindow() {
     if (!context->isPBuffer()) {
-        auto newContext = std::make_shared<FkContextCompo>("EGLDetach");
+        auto newContext = std::make_shared<FkContextCompo>(glVersion, "EGLDetach");
         auto ret = newContext->create(context, nullptr);
         context->destroy();
         context = newContext;
@@ -126,7 +133,7 @@ FkResult FkGLEnvAtom::_changeWithoutWindow() {
 
 FkResult FkGLEnvAtom::_initializeWithWindow(std::shared_ptr<FkGraphicWindow> &win) {
     if (context == nullptr) {
-        context = std::make_shared<FkContextCompo>("EGLAttach");
+        context = std::make_shared<FkContextCompo>(glVersion, "EGLAttach");
         return context->create(nullptr, win);
     }
     return FK_FAIL;
@@ -134,7 +141,7 @@ FkResult FkGLEnvAtom::_initializeWithWindow(std::shared_ptr<FkGraphicWindow> &wi
 
 FkResult FkGLEnvAtom::_initializeWithoutWindow() {
     if (context == nullptr) {
-        context = std::make_shared<FkContextCompo>("EGLDetach");
+        context = std::make_shared<FkContextCompo>(glVersion, "EGLDetach");
         return context->create();
     }
     return FK_FAIL;

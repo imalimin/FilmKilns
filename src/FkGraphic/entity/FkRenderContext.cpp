@@ -10,11 +10,12 @@
 */
 
 #include "FkRenderContext.h"
+#include "FkGLDefinition.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderContext, FkQuarkContext)
 
 FkRenderContext::FkRenderContext() : FkQuarkContext(),
-                                     glVersion(4),
+                                     glVersion(FK_GL_VER_2),
                                      maxTextureSize(0),
                                      maxCountOfFragmentTexture(0),
                                      maxCountOfVertexTexture(0) {

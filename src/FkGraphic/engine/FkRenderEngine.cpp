@@ -17,6 +17,7 @@
 #include "FkBufCompo.h"
 #include "FkRmMaterialProto.h"
 #include "FkRenderContext.h"
+#include "FkGLDefinition.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 
@@ -32,8 +33,10 @@ FkRenderEngine::~FkRenderEngine() {
 FkResult FkRenderEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     FkAssert(ret == FK_OK, ret);
+    auto context = std::make_shared<FkRenderContext>();
+    context->setGlVersion(FK_GL_VER_3);
     auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = std::make_shared<FkRenderContext>();
+    proto->context = context;
     return client->with(molecule)->send(proto);
 }
 
