@@ -31,7 +31,7 @@ if (${ENABLE_BAN_WARNING})
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${var}")
     endforeach (var)
 endif ()
-message(STATUS "al_native CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/engine SOURCES_ENGINE)

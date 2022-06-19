@@ -25,6 +25,10 @@ std::string FkString::valueOf(double value) {
     return valueOf<double>(value);
 }
 
+std::string FkString::valueOf(char value) {
+    return valueOf<char>(value);
+}
+
 FkString::FkString() : FkString("") {
 
 }
@@ -79,6 +83,10 @@ FkString &FkString::append(float val) {
 }
 
 FkString &FkString::append(double val) {
+    return append(valueOf(val));
+}
+
+FkString &FkString::append(char val) {
     return append(valueOf(val));
 }
 

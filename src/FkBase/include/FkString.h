@@ -23,6 +23,8 @@ public:
 
     static std::string valueOf(double value);
 
+    static std::string valueOf(char value);
+
     template<typename T>
     static std::string valueOf(T value) {
         std::ostringstream oss;
@@ -56,6 +58,8 @@ public:
     FkString &append(float val);
 
     FkString &append(double val);
+
+    FkString &append(char val);
 
     size_t length();
 
