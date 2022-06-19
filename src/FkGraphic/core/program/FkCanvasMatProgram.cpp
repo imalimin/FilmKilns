@@ -52,7 +52,7 @@ std::string FkCanvasMatProgram::getFragment() {
     std::string shader(R"(
         precision mediump float;
         varying mediump vec2 vTextureCoord;
-        uniform sampler2D uTexture;
+        uniform sampler2D uTexture[16];
         uniform float gridSizeX;
         uniform float gridSizeY;
         void main(){
@@ -68,7 +68,7 @@ std::string FkCanvasMatProgram::getFragment() {
                     back = vec4(0.796, 0.796, 0.796, 1.0);
                 }
             }
-            vec4 front = texture2D(uTexture, vTextureCoord);
+            vec4 front = texture2D(uTexture[0], vTextureCoord);
             gl_FragColor = mix(front, back, 1.0 - front.a);
         })");
     return shader;

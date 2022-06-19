@@ -18,6 +18,8 @@
 #include "FkBufCompo.h"
 #include "FkRmMaterialProto.h"
 #include "FkMemUtils.h"
+#include "FkBitmap.h"
+#include "FkString.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderTexQuark, FkQuark)
 
@@ -127,11 +129,13 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_findTex(FkID id) {
 }
 
 std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkTexEntity> &texEntity) {
-    int32_t blockSize = 25600;
+    int32_t blockSize = 256;
     auto blocks = _calcTexBlock(texEntity->size(), blockSize);
     auto blockSizeX = blocks.x == 1 ? texEntity->size().getWidth() : blockSize;
     auto blockSizeY = blocks.y == 1 ? texEntity->size().getHeight() : blockSize;
-    auto texArray = std::make_shared<FkTexArrayCompo>(texEntity->size(), blocks.x, blocks.y);
+    auto texArray = std::make_shared<FkTexArrayCompo>(texEntity->size(),
+                                                      blocks.x, blocks.y,
+                                                      blockSize, blockSize);
     FkTexDescription desc(GL_TEXTURE_2D);
     desc.fmt = texEntity->format();
     for (int y = 0; y < blocks.y; ++y) {
@@ -179,7 +183,7 @@ FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &t
             if (texArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }
-            pos.x = tex->desc.size.getWidth();
+            pos.x += tex->desc.size.getWidth();
         }
     }
     return FK_OK;

@@ -20,7 +20,7 @@ FK_SUPER_CLASS(FkTexArrayCompo, FkComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkTexArrayCompo)
 
 public:
-    FkTexArrayCompo(FkSize size, int32_t x, int32_t y);
+    FkTexArrayCompo(FkSize size, int32_t x, int32_t y, int32_t blockWidth, int32_t blockHeight);
 
     FkTexArrayCompo(const FkTexArrayCompo &o);
 
@@ -36,6 +36,7 @@ public:
 
 public:
     FkIntVec2 blocks;
+    FkSize blockSize;
     FkSize size;
     std::vector<std::shared_ptr<FkGraphicTexture>> textures;
 };

@@ -13,13 +13,14 @@
 
 FK_IMPL_CLASS_TYPE(FkTexArrayCompo, FkComponent)
 
-FkTexArrayCompo::FkTexArrayCompo(FkSize size, int32_t x, int32_t y)
-        : FkComponent(), blocks(x, y), size(size) {
+FkTexArrayCompo::FkTexArrayCompo(FkSize size, int32_t x, int32_t y,
+                                 int32_t blockWidth, int32_t blockHeight)
+        : FkComponent(), blocks(x, y), size(size), blockSize(blockWidth, blockHeight) {
 
 }
 
 FkTexArrayCompo::FkTexArrayCompo(const FkTexArrayCompo &o)
-        : FkComponent(o), blocks(o.blocks),size(o.size) {
+        : FkComponent(o), blocks(o.blocks), size(o.size), blockSize(o.blockSize) {
     for (auto &it: o.textures) {
         textures.emplace_back(it);
     }

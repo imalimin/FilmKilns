@@ -10,6 +10,7 @@
 
 #include "FkGraphicProgram.h"
 #include "FkGLDefinition.h"
+#include <vector>
 
 FK_SUPER_CLASS(FkGraphicMatProgram, FkGraphicProgram) {
 FK_DEF_CLASS_TYPE_FUNC(FkGraphicMatProgram)
@@ -34,10 +35,14 @@ public:
     virtual FkResult addValue(std::shared_ptr<FkComponent> value) override;
 
 private:
-    int32_t uTextureLoc = -1;
+    std::vector<int32_t> uTexLocArray;
     int32_t uMVPMatLoc = -1;
     int32_t aPosLoc = -1;
     int32_t aCoordinateLoc = -1;
+    int32_t uColsLoc = -1;
+    int32_t uRowsLoc = -1;
+    int32_t uOffsetWidthLoc = -1;
+    int32_t uOffsetHeightLoc = -1;
 
 };
 

@@ -113,7 +113,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
 
-    programCompo->program->addValue(std::make_shared<FkTexCompo>((*srcTexArray)[0]));
+    programCompo->program->addValue(srcTexArray);
     programCompo->program->addValue(matCompo);
     programCompo->program->addValue(vboCompo);
     FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
