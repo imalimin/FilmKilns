@@ -32,12 +32,15 @@ public:
 
     virtual void unbind();
 
-    virtual FkResult attach(std::shared_ptr<FkGraphicTexture> o);
+    virtual FkResult attach(std::shared_ptr<FkGraphicTexture> &tex);
+
+    virtual FkResult attach(std::vector<std::shared_ptr<FkGraphicTexture>> &texArray);
 
     virtual FkResult detach(uint32_t target);
 
 private:
     uint32_t fbo = 0;
+    std::vector<int32_t> attachments;
 };
 
 FK_SUPER_TEMPLATE_CLASS_IMPL(FkGraphicFBOAllocator, FkSourceAllocator)<FkGraphicFrameObject, int32_t> {

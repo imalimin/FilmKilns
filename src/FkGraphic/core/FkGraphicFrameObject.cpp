@@ -46,13 +46,30 @@ void FkGraphicFrameObject::unbind() {
     glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
-FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> o) {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, o->desc.target, o->tex, 0);
+FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> &tex) {
+    std::vector<std::shared_ptr<FkGraphicTexture>> texArray = {tex};
+    return attach(texArray);
+}
+
+FkResult FkGraphicFrameObject::attach(std::vector<std::shared_ptr<FkGraphicTexture>> &texArray) {
+    if (!attachments.empty()) {
+        FkLogI(FK_DEF_TAG, "You must detach this fbo before attach.");
+        return FK_INVALID_STATE;
+    }
+    for (int i = 0; i < texArray.size(); ++i) {
+        auto attachment = GL_COLOR_ATTACHMENT0 + i;
+        attachments.emplace_back(attachment);
+        auto tex = texArray[i];
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, tex->desc.target, tex->tex, 0);
+    }
     return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
 FkResult FkGraphicFrameObject::detach(uint32_t target) {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, target, GL_NONE, 0);
+    for (int i = 0; i < attachments.size(); ++i) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[i], target, GL_NONE, 0);
+    }
+    attachments.clear();
     return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 
