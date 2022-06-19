@@ -72,8 +72,8 @@ FkResult FkGraphicTexture::create() {
     FkAssert(desc.fmt != FkColor::kFormat::NONE, FK_FAIL);
     glGenTextures(1, &tex);
     bind();
-    glTexParameterf(desc.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(desc.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(desc.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(desc.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     switch (desc.wrapMode) {
         case FkTexDescription::kWrapMode::EDGE: {
             glTexParameterf(desc.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
