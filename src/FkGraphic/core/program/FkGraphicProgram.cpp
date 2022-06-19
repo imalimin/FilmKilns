@@ -36,7 +36,7 @@ FkProgramDescription::FkProgramDescription(FkProgramDescription::kType type)
 }
 
 FkProgramDescription::FkProgramDescription(const FkProgramDescription &o)
-        : FkObject(), type(o.type) {
+        : FkObject(), type(o.type), maxCountOfFragmentTexture(o.maxCountOfFragmentTexture) {
 
 }
 
@@ -225,5 +225,6 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
 }
 
 bool FkGraphicProgramAllocator::delegateEquals(FkProgramDescription &desc, FkGraphicProgram *program) {
-    return desc.type == program->desc.type;
+    return desc.maxCountOfFragmentTexture == program->desc.maxCountOfFragmentTexture
+           && desc.type == program->desc.type;
 }

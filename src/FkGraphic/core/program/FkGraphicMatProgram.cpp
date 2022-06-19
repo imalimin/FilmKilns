@@ -32,7 +32,7 @@ FkResult FkGraphicMatProgram::create() {
     if (FK_OK == ret) {
         aPosLoc = getAttribLocation("aPosition");
         FkAssert(aPosLoc >= 0, FK_FAIL);
-        for (int i = 0; i < 16; ++i) {
+        for (int i = 0; i < desc.maxCountOfFragmentTexture; ++i) {
             FkString key("uTexture[");
             key.append(i);
             key.append(']');
@@ -144,7 +144,7 @@ std::string FkGraphicMatProgram::getFragment() {
     std::string shader(R"(
         precision highp float;
         varying highp vec2 vTextureCoord;
-        uniform sampler2D uTexture[16];
+        uniform sampler2D uTexture[%d];
         uniform int colsX;
         uniform int rowsY;
         uniform highp float offsetWidth;
@@ -168,5 +168,10 @@ std::string FkGraphicMatProgram::getFragment() {
             vec4 color = texture2D(uTexture[index], coord);
             gl_FragColor = color;
         })");
+    size_t size = shader.size() + 10;
+    char buf[size];
+    memset(buf, 0, size);
+    sprintf(buf, shader.c_str(), desc.maxCountOfFragmentTexture);
+    shader = std::string(buf);
     return shader;
 }

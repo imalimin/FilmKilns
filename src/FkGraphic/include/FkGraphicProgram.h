@@ -37,6 +37,7 @@ public:
 
 public:
     kType type = kType::NONE;
+    int32_t maxCountOfFragmentTexture = 1;
 };
 
 FK_SUPER_CLASS(FkGraphicProgram, FkSource) {

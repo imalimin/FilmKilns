@@ -13,6 +13,7 @@
 #include "FkRenderProgramCompo.h"
 #include "FkPointVertexCompo.h"
 #include "FkPathCompo.h"
+#include "FkRenderContext.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderProgramQuark, FkQuark)
 
@@ -77,8 +78,13 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     } else {
         auto compo = std::make_shared<FkRenderProgramCompo>();
         FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
+        auto context = std::dynamic_pointer_cast<FkRenderContext>(getContext());
+        if (context) {
+            desc.maxCountOfFragmentTexture = context->getMaxCountOfFragmentTexture();
+        }
         if (FK_INSTANCE_OF(proto->device, FkScreenEntity)) {
             desc.type = FkProgramDescription::kType::MATRIX_WITH_CANVAS_BACKGROUND;
+            desc.maxCountOfFragmentTexture = 1;
         }
         compo->program = allocator->alloc(desc);
         if (compo->program == nullptr) {
