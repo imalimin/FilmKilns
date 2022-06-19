@@ -21,6 +21,7 @@ public:
     FK_ENUM kType : int32_t {
         NONE = 0,
         MATRIX,
+        MATRIX_V3,
         MATRIX_WITH_CANVAS_BACKGROUND,
         CANVAS_MOSAIC,
         POINT,

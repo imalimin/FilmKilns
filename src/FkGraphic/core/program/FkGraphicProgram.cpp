@@ -15,6 +15,7 @@
 #include "FkGLDefinition.h"
 #include "FkDefinition.h"
 #include "FkGraphicPathProgram.h"
+#include "FkGraphicMatProgramV3.h"
 
 #define TAG "FkGraphicProgram"
 
@@ -201,6 +202,10 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
     switch (desc.type) {
         case FkProgramDescription::kType::MATRIX: {
             o = new FkGraphicMatProgram(desc);
+            break;
+        }
+        case FkProgramDescription::kType::MATRIX_V3: {
+            o = new FkGraphicMatProgramV3(desc);
             break;
         }
         case FkProgramDescription::kType::MATRIX_WITH_CANVAS_BACKGROUND: {

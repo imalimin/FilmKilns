@@ -77,7 +77,7 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         }
     } else {
         auto compo = std::make_shared<FkRenderProgramCompo>();
-        FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
+        FkProgramDescription desc(FkProgramDescription::kType::MATRIX_V3);
         auto context = std::dynamic_pointer_cast<FkRenderContext>(getContext());
         if (context) {
             desc.maxCountOfFragmentTexture = context->getMaxCountOfFragmentTexture();
