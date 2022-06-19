@@ -20,6 +20,7 @@
 #include "FkMemUtils.h"
 #include "FkBitmap.h"
 #include "FkString.h"
+#include "FkRenderContext.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderTexQuark, FkQuark)
 
@@ -129,7 +130,9 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_findTex(FkID id) {
 }
 
 std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkTexEntity> &texEntity) {
-    int32_t blockSize = 256;
+    int32_t blockSize = _calcBestBlockSize(texEntity->size());
+    FkLogI(FK_DEF_TAG, "blockSize: %d", blockSize);
+    FkAssert(blockSize > 0, nullptr);
     auto blocks = _calcTexBlock(texEntity->size(), blockSize);
     auto blockSizeX = blocks.x == 1 ? texEntity->size().getWidth() : blockSize;
     auto blockSizeY = blocks.y == 1 ? texEntity->size().getHeight() : blockSize;
@@ -238,4 +241,21 @@ FkResult FkRenderTexQuark::_copySubImage(std::shared_ptr<FkBuffer> &src, int32_t
                                          std::shared_ptr<FkBuffer> &dst, FkSize size,
                                          FkIntVec2 pos) {
     return FkMemUtils::copySubImage(src, width, dst, size, pos);
+}
+
+int32_t FkRenderTexQuark::_calcBestBlockSize(FkSize size) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkRenderContext, getContext());
+    std::vector<int> supportBlockArray = {4096, 1024, 512};
+    supportBlockArray.emplace_back(context->getMaxTextureSize());
+    std::sort(supportBlockArray.begin(), supportBlockArray.end(),
+              [](int a, int b) { return a > b; });
+    int32_t blockSize = supportBlockArray[0];
+    for (auto it: supportBlockArray) {
+        auto x = (int32_t) std::ceil(size.getWidth() * 1.0f / it);
+        auto y = (int32_t) std::ceil(size.getHeight() * 1.0f / it);
+        if (x * y <= context->getMaxCountOfFragmentTexture()) {
+            blockSize = it;
+        }
+    }
+    return blockSize;
 }

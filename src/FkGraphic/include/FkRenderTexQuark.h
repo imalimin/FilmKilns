@@ -69,6 +69,8 @@ private:
                            std::shared_ptr<FkBuffer> &dst, FkSize size,
                            FkIntVec2 pos);
 
+    int32_t _calcBestBlockSize(FkSize size);
+
 private:
     std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
     std::unordered_map<FkID, std::shared_ptr<FkTexArrayCompo>> sMap;
