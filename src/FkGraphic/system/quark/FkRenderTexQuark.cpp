@@ -80,6 +80,8 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
     if (FK_OK != ret) {
         FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
     }
+    FkLogI(FK_DEF_TAG, "Tex allocator usage: %d + %d / %d",
+           allocator->usingSize(), allocator->cacheSize(), allocator->capacity());
     return FK_OK;
 }
 

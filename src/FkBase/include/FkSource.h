@@ -115,10 +115,20 @@ public:
         return _calcUsingCapacity();
     }
 
-    /// Return used and cache bytes.
-    virtual size_t capacity() {
+    /// Same with size().
+    virtual size_t usingSize() {
+        return size();
+    }
+
+    /// Return cache bytes.
+    virtual size_t cacheSize() {
         std::lock_guard<std::recursive_mutex> guard(mtx);
-        return _calcUsingCapacity() + _calcCacheCapacity();
+        return _calcCacheCapacity();
+    }
+
+    /// Return capacity bytes.
+    virtual size_t capacity() {
+        return _capacity;
     }
 
     virtual void clean() {
