@@ -60,7 +60,6 @@ FkResult FkGraphicFrameObject::attach(std::vector<std::shared_ptr<FkGraphicTextu
         auto tex = texArray[i];
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, tex->desc.target, tex->tex, 0);
     }
-    glDrawBuffers(attachments.size(), attachments.data());
     return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 

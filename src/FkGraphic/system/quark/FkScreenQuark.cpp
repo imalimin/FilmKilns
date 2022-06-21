@@ -56,7 +56,7 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     auto fboCompo = material->fbo();
     auto context = proto->env->getContext();
     auto size = device->size();
-    auto texSize = (*srcTexArray)[0]->desc.size;
+    auto texSize = srcTexArray->size;
 
     auto programCompo = FK_FIND_COMPO(material, FkRenderProgramCompo);
     auto vboCompo = FK_FIND_COMPO(material, FkVboCompo);
@@ -76,7 +76,7 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
 
-    programCompo->program->addValue(std::make_shared<FkTexCompo>((*srcTexArray)[0]));
+    programCompo->program->addValue(srcTexArray);
     programCompo->program->addValue(matCompo);
     programCompo->program->addValue(vboCompo);
     programCompo->program->addValue(gridCompo);

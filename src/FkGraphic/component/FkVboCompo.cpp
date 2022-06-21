@@ -49,10 +49,15 @@ FkResult FkVboCompo::setup(std::shared_ptr<FkVertexObject> _vbo,
 }
 
 FkResult FkVboCompo::setup(std::shared_ptr<FkVertexObject> _vbo,
-                                        float *position, FkVertexDesc &posDesc,
-                                        float *coord, FkVertexDesc &coordDesc) {
+                           float *position, FkVertexDesc &posDesc,
+                           float *coord, FkVertexDesc &coordDesc) {
     FkAssert(nullptr != _vbo, FK_FAIL);
     this->vbo = _vbo;
+    return update(position, posDesc, coord, coordDesc);
+}
+
+FkResult FkVboCompo::update(float *position, FkVertexDesc &posDesc,
+                           float *coord, FkVertexDesc &coordDesc) {
     int32_t offset = 0;
     bind();
     auto size = posDesc.countVertex * posDesc.countPerVertex * posDesc.format;

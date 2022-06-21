@@ -40,6 +40,9 @@ public:
                    float *position, FkVertexDesc &posDesc,
                    float *coord, FkVertexDesc &coordDesc);
 
+    FkResult update(float *position, FkVertexDesc &posDesc,
+                   float *coord, FkVertexDesc &coordDesc);
+
     FkResult getValueLoc(kValueLoc _loc, int32_t &start, FkVertexDesc &desc);
 
 private:
