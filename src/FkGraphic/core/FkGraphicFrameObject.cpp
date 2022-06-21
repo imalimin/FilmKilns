@@ -7,8 +7,6 @@
 
 #include "FkGraphicFrameObject.h"
 #include "FkGLDefinition.h"
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
 #include <EGL/egl.h>
 
 FK_IMPL_CLASS_TYPE(FkGraphicFrameObject, FkSource)
@@ -62,6 +60,7 @@ FkResult FkGraphicFrameObject::attach(std::vector<std::shared_ptr<FkGraphicTextu
         auto tex = texArray[i];
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, tex->desc.target, tex->tex, 0);
     }
+    glDrawBuffers(attachments.size(), attachments.data());
     return GL_NO_ERROR == glGetError() ? FK_OK : FK_FAIL;
 }
 

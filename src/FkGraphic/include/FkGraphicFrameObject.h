@@ -40,7 +40,7 @@ public:
 
 private:
     uint32_t fbo = 0;
-    std::vector<int32_t> attachments;
+    std::vector<uint32_t> attachments;
 };
 
 FK_SUPER_TEMPLATE_CLASS_IMPL(FkGraphicFBOAllocator, FkSourceAllocator)<FkGraphicFrameObject, int32_t> {

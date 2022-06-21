@@ -75,6 +75,7 @@ target_link_libraries(
         ${PROJECT_NAME}
         PUBLIC
         GLESv2
+        GLESv3
         EGL
         android
         FkBase

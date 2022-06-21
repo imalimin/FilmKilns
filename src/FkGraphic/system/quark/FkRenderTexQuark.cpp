@@ -75,14 +75,7 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texArray));
     }
     auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
-    if (bufCompo) {
-        _updateTexWithBuf(texArray, bufCompo->buf, proto->texEntity);
-    } else if ((*texArray)[0]->desc.size != proto->texEntity->size()) {
-        texArray->size = proto->texEntity->size();
-        (*texArray)[0]->update((*texArray)[0]->desc.fmt,
-                    proto->texEntity->size().getWidth(),
-                    proto->texEntity->size().getHeight());
-    }
+    _updateTexWithBuf(texArray, proto->texEntity, bufCompo ? bufCompo->buf : nullptr);
     auto ret = _drawColor(texArray, proto->texEntity);
     if (FK_OK != ret) {
         FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
@@ -164,8 +157,8 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkT
 }
 
 FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &texArray,
-                                             std::shared_ptr<FkBuffer> &buf,
-                                             std::shared_ptr<FkTexEntity> &texEntity) {
+                                             std::shared_ptr<FkTexEntity> &texEntity,
+                                             std::shared_ptr<FkBuffer> buf) {
     FkIntVec2 pos(0, 0);
     std::shared_ptr<FkBuffer> dstBuf = nullptr;
     for (int y = 0; y < texArray->blocks.y; ++y) {
@@ -174,15 +167,16 @@ FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &t
             auto index = y * texArray->blocks.x + x;
             auto tex = (*texArray)[index];
             auto size = tex->desc.size.getWidth() * tex->desc.size.getHeight() * 4;
-            if (dstBuf == nullptr || dstBuf->capacity() != size) {
-                dstBuf = FkBuffer::alloc(size);
+            if (buf) {
+                if (dstBuf == nullptr || dstBuf->capacity() != size) {
+                    dstBuf = FkBuffer::alloc(size);
+                }
+                auto ret = _copySubImage(buf, texArray->size.getWidth(), dstBuf, tex->desc.size,
+                                         pos);
+                FkAssert(ret == FK_OK, ret);
             }
-            auto ret = _copySubImage(buf, texArray->size.getWidth(), dstBuf, tex->desc.size, pos);
-            FkAssert(ret == FK_OK, ret);
-            tex->update(tex->desc.fmt,
-                        tex->desc.size.getWidth(),
-                        tex->desc.size.getHeight(),
-                        dstBuf->data());
+            tex->update(tex->desc.fmt, tex->desc.size.getWidth(), tex->desc.size.getHeight(),
+                        dstBuf ? dstBuf->data() : nullptr);
             if (texArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }

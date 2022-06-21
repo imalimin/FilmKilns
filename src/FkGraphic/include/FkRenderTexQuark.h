@@ -54,8 +54,8 @@ private:
     std::shared_ptr<FkTexArrayCompo> _allocTex(std::shared_ptr<FkTexEntity> &texEntity);
 
     FkResult _updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &texArray,
-                               std::shared_ptr<FkBuffer> &buf,
-                               std::shared_ptr<FkTexEntity> &texEntity);
+                               std::shared_ptr<FkTexEntity> &texEntity,
+                               std::shared_ptr<FkBuffer> buf);
 
     FkResult _drawColor(std::shared_ptr<FkTexArrayCompo> &texArray,
                         std::shared_ptr<FkTexEntity> &texEntity);
