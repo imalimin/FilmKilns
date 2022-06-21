@@ -102,25 +102,36 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
      */
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
-    glViewport(0, 0, size.getWidth(), size.getHeight());
-    fboCompo->fbo->bind();
-    fboCompo->fbo->attach((*dstTexArray)[0]);
 
 #if defined(__FK_DEBUG__)
     auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     FkAssert(GL_FRAMEBUFFER_COMPLETE == status,);
 #endif
-    FK_GL_CHECK(programCompo->program->bind());
     vboCompo->bind();
+    FK_GL_CHECK(programCompo->program->bind());
+    FkIntVec2 pos(0, 0);
+    for (int y = 0; y < dstTexArray->blocks.y; ++y) {
+        pos.x = 0;
+        for (int x = 0; x < dstTexArray->blocks.x; ++x) {
+            int index = y * dstTexArray->blocks.x + x;
+            auto tex = (*dstTexArray)[index];
+            glViewport(-pos.x, -pos.y, size.getWidth(), size.getHeight());
+            fboCompo->fbo->bind();
+            fboCompo->fbo->attach(tex);
+            programCompo->program->addValue(srcTexArray);
+            programCompo->program->addValue(matCompo);
+            programCompo->program->addValue(vboCompo);
+            FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
 
-    programCompo->program->addValue(srcTexArray);
-    programCompo->program->addValue(matCompo);
-    programCompo->program->addValue(vboCompo);
-    FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
-
-    fboCompo->fbo->detach((*dstTexArray)[0]->desc.target);
-    fboCompo->fbo->unbind();
-    FK_GL_CHECK(programCompo->program->clear());
+            fboCompo->fbo->detach(tex->desc.target);
+            fboCompo->fbo->unbind();
+            FK_GL_CHECK(programCompo->program->clear());
+            if (dstTexArray->blocks.x == x + 1) {
+                pos.y += tex->desc.size.getHeight();
+            }
+            pos.x += tex->desc.size.getWidth();
+        }
+    }
     programCompo->program->unbind();
     vboCompo->unbind();
     glDisable(GL_BLEND);
