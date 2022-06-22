@@ -179,6 +179,25 @@ FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &t
             }
             tex->update(tex->desc.fmt, tex->desc.size.getWidth(), tex->desc.size.getHeight(),
                         dstBuf ? dstBuf->data() : nullptr);
+#if 0
+            glViewport(0, 0, tex->desc.size.getWidth(), tex->desc.size.getHeight());
+            auto fboCompo = FK_FIND_COMPO(texEntity, FkFboCompo);
+            if (fboCompo && buf) {
+                fboCompo->fbo->bind();
+                fboCompo->fbo->attach(tex);
+                auto buf1 = FkBuffer::alloc(tex->desc.size.getWidth() * tex->desc.size.getHeight() * 4);
+                glReadPixels(0, 0,
+                             tex->desc.size.getWidth(), tex->desc.size.getHeight(),
+                             GL_RGBA, GL_UNSIGNED_BYTE, buf1->data());
+                FkString path("/storage/emulated/0/Android/data/com.alimin.pic/cache/image_sub_");
+                path.append(index);
+                path.append(".jpg");
+                auto ret = FkBitmap::write(path.c_str(), FkImage::Format::kJPEG, buf1, tex->desc.size, 80);
+                FkLogI("aliminabc", "%d, %d", index, ret);
+                fboCompo->fbo->detach(tex->desc.target);
+                fboCompo->fbo->unbind();
+            }
+#endif
             if (texArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }

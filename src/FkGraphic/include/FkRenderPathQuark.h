@@ -13,6 +13,9 @@
 #define FK_GRAPHIC_FKRENDERPATHQUARK_H
 
 #include "FkQuark.h"
+#include "FkTexArrayCompo.h"
+#include "FkGraphicFrameObject.h"
+#include "FkGraphicTexture.h"
 
 FK_SUPER_CLASS(FkRenderPathQuark, FkQuark) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderPathQuark)
@@ -29,6 +32,14 @@ protected:
 
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> &p);
+
+    FkResult _drawSlices(std::shared_ptr<FkTexArrayCompo> &dst,
+                         std::shared_ptr<FkGraphicFrameObject> &fbo,
+                         FkSize viewPort, int32_t count);
+
+    FkResult _drawSlice(std::shared_ptr<FkGraphicTexture> &tex,
+                         std::shared_ptr<FkGraphicFrameObject> &fbo,
+                         int32_t count);
 };
 
 #endif //FK_GRAPHIC_FKRENDERPATHQUARK_H

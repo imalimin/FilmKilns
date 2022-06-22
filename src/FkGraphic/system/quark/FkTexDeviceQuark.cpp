@@ -17,6 +17,8 @@
 #include "FkGLDefinition.h"
 #include "FkMatCompo.h"
 #include "FkTexCompo.h"
+#include "FkBitmap.h"
+#include "FkString.h"
 
 FK_IMPL_CLASS_TYPE(FkTexDeviceQuark, FkQuark)
 
@@ -109,6 +111,9 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
 #endif
     vboCompo->bind();
     FK_GL_CHECK(programCompo->program->bind());
+    programCompo->program->addValue(srcTexArray);
+    programCompo->program->addValue(matCompo);
+    programCompo->program->addValue(vboCompo);
     FkIntVec2 pos(0, 0);
     for (int y = 0; y < dstTexArray->blocks.y; ++y) {
         pos.x = 0;
@@ -118,20 +123,28 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
             glViewport(-pos.x, -pos.y, size.getWidth(), size.getHeight());
             fboCompo->fbo->bind();
             fboCompo->fbo->attach(tex);
-            programCompo->program->addValue(srcTexArray);
-            programCompo->program->addValue(matCompo);
-            programCompo->program->addValue(vboCompo);
             FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
+#if 0
+            auto buf = FkBuffer::alloc(tex->desc.size.getWidth() * tex->desc.size.getHeight() * 4);
+            glReadPixels(0, 0,
+                         tex->desc.size.getWidth(), tex->desc.size.getHeight(),
+                         GL_RGBA, GL_UNSIGNED_BYTE, buf->data());
+            FkString path("/storage/emulated/0/Android/data/com.alimin.pic/cache/image_sub_");
+            path.append(index);
+            path.append(".jpg");
+            auto ret = FkBitmap::write(path.c_str(), FkImage::Format::kJPEG, buf, tex->desc.size, 80);
+            FkLogI("aliminabc", "%d, %d, %dx%d", index, ret, tex->desc.size.getWidth(), tex->desc.size.getHeight());
+#endif
 
             fboCompo->fbo->detach(tex->desc.target);
             fboCompo->fbo->unbind();
-            FK_GL_CHECK(programCompo->program->clear());
             if (dstTexArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }
             pos.x += tex->desc.size.getWidth();
         }
     }
+    FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();
     vboCompo->unbind();
     glDisable(GL_BLEND);

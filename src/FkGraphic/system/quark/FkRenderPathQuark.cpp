@@ -56,25 +56,52 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
-    glViewport(0, 0, size.getWidth(), size.getHeight());
-    fboCompo->fbo->bind();
-    fboCompo->fbo->attach((*dstTexArray)[0]);
     FK_GL_CHECK(programCompo->program->bind());
     for (auto &path : paths) {
         auto compo = std::dynamic_pointer_cast<FkPathCompo>(path);
         size_t count = 0;
         if (compo && (count = compo->path->size()) > 0) {
+            FK_GL_CHECK(programCompo->program->clear());
             programCompo->program->addValue(std::make_shared<FkSizeCompo>(size));
             programCompo->program->addValue(std::make_shared<FkColorCompo>(compo->color));
             programCompo->program->addValue(compo);
-            FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, count));
+            _drawSlices(dstTexArray, fboCompo->fbo, size, count);
         }
     }
-    fboCompo->fbo->detach((*dstTexArray)[0]->desc.target);
-    fboCompo->fbo->unbind();
-    FK_GL_CHECK(programCompo->program->clear());
     programCompo->program->unbind();
     glDisable(GL_BLEND);
     glFlush();
     return FK_DONE;
+}
+
+FkResult FkRenderPathQuark::_drawSlices(std::shared_ptr<FkTexArrayCompo> &dst,
+                                        std::shared_ptr<FkGraphicFrameObject> &fbo,
+                                        FkSize viewPort, int32_t count) {
+    FkIntVec2 pos(0, 0);
+    for (int y = 0; y < dst->blocks.y; ++y) {
+        pos.x = 0;
+        for (int x = 0; x < dst->blocks.x; ++x) {
+            int index = y * dst->blocks.x + x;
+            auto tex = (*dst)[index];
+            glViewport(-pos.x, -pos.y, viewPort.getWidth(), viewPort.getHeight());
+            _drawSlice(tex, fbo, count);
+
+            if (dst->blocks.x == x + 1) {
+                pos.y += tex->desc.size.getHeight();
+            }
+            pos.x += tex->desc.size.getWidth();
+        }
+    }
+    return FK_OK;
+}
+
+FkResult FkRenderPathQuark::_drawSlice(std::shared_ptr<FkGraphicTexture> &tex,
+                     std::shared_ptr<FkGraphicFrameObject> &fbo,
+                     int32_t count) {
+    fbo->bind();
+    fbo->attach(tex);
+    FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, count));
+    fbo->detach(tex->desc.target);
+    fbo->unbind();
+    return FK_OK;
 }
