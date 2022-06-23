@@ -70,6 +70,11 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
     }
     auto materialId = proto->texEntity->getMaterial()->id();
     auto texArray = _findTex(materialId);
+    if (texArray != nullptr && !texArray->empty() && proto->texEntity->size() != texArray->size) {
+        sMap.erase(proto->texEntity->getMaterial()->id());
+        texArray = nullptr;
+        FkLogI(FK_DEF_TAG, "Texture size has change. Request new one.");
+    }
     if (texArray == nullptr || texArray->empty()) {
         texArray = _allocTex(proto->texEntity);
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texArray));
