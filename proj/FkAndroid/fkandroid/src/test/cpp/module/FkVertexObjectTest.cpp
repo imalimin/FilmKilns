@@ -30,7 +30,7 @@ TEST_F(FkWithGLContext, FkVertexObjectAllocOne) {
     FkVBODescription desc(sizeof(float) * 2 * 2);
     auto vbo0 = allocator->alloc(desc);
     EXPECT_NE(vbo0, nullptr);
-    EXPECT_EQ(allocator->capacity(), desc.size);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), desc.size);
 }
 
 TEST_F(FkWithGLContext, FkVertexObjectAllocTwo) {
@@ -43,7 +43,7 @@ TEST_F(FkWithGLContext, FkVertexObjectAllocTwo) {
     auto vbo1 = allocator->alloc(desc1);
     EXPECT_NE(vbo1, nullptr);
 
-    EXPECT_EQ(allocator->capacity(), desc0.size + desc1.size);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), desc0.size + desc1.size);
 }
 
 TEST_F(FkWithGLContext, FkVertexObjectAllocTwoAndRecyle) {
@@ -58,7 +58,7 @@ TEST_F(FkWithGLContext, FkVertexObjectAllocTwoAndRecyle) {
     auto vbo1 = allocator->alloc(desc1);
     EXPECT_NE(vbo1, nullptr);
 
-    EXPECT_EQ(allocator->capacity(), desc0.size + desc1.size);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), desc0.size + desc1.size);
     EXPECT_EQ(allocator->size(), desc1.size);
 }
 
@@ -74,12 +74,12 @@ TEST_F(FkWithGLContext, FkVertexObjectAllocTwoAndRecyle1) {
     auto vbo1 = allocator->alloc(desc1);
     EXPECT_NE(vbo1, nullptr);
 
-    EXPECT_EQ(allocator->capacity(), desc0.size + desc1.size);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), desc0.size + desc1.size);
     EXPECT_EQ(allocator->size(), desc1.size);
 
     auto vbo0 = allocator->alloc(desc0);
     EXPECT_NE(vbo0, nullptr);
 
-    EXPECT_EQ(allocator->capacity(), desc0.size + desc1.size);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), desc0.size + desc1.size);
     EXPECT_EQ(allocator->size(), desc0.size + desc1.size);
 }

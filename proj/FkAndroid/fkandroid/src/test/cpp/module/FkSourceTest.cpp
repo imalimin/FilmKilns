@@ -16,15 +16,18 @@ TEST(FkSourceTest, CapacityLimitMin) {
         vec.push_back(msg);
     }
     EXPECT_EQ(FkMessageAllocator::getInstance()->size(), 49);
-    EXPECT_EQ(FkMessageAllocator::getInstance()->capacity(), 49);
+    EXPECT_EQ(FkMessageAllocator::getInstance()->usingSize()
+              + FkMessageAllocator::getInstance()->cacheSize(), 49);
 
     vec.erase(vec.begin());
     EXPECT_EQ(FkMessageAllocator::getInstance()->size(), 48);
-    EXPECT_EQ(FkMessageAllocator::getInstance()->capacity(), 49);
+    EXPECT_EQ(FkMessageAllocator::getInstance()->usingSize()
+              + FkMessageAllocator::getInstance()->cacheSize(), 49);
 
     vec.clear();
     EXPECT_EQ(FkMessageAllocator::getInstance()->size(), 0);
-    EXPECT_EQ(FkMessageAllocator::getInstance()->capacity(), 49);
+    EXPECT_EQ(FkMessageAllocator::getInstance()->usingSize()
+              + FkMessageAllocator::getInstance()->cacheSize(), 49);
 }
 
 TEST(FkSourceTest, CapacityLimitMax) {
@@ -38,5 +41,6 @@ TEST(FkSourceTest, CapacityLimitMax) {
 
     vec.clear();
     EXPECT_EQ(FkMessageAllocator::getInstance()->size(), 0);
-    EXPECT_EQ(FkMessageAllocator::getInstance()->capacity(), 50);
+    EXPECT_EQ(FkMessageAllocator::getInstance()->usingSize()
+              + FkMessageAllocator::getInstance()->cacheSize(), 50);
 }

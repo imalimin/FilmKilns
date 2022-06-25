@@ -44,10 +44,10 @@ TEST_F(FkGraphicContextTest, AllocTex) {
         EXPECT_NE(allocator->size(), 0);
     }
     EXPECT_EQ(allocator->size(), 0);
-    EXPECT_NE(allocator->capacity(), 0);
+    EXPECT_NE(allocator->usingSize() + allocator->cacheSize(), 0);
     allocator->release();
     EXPECT_EQ(allocator->size(), 0);
-    EXPECT_EQ(allocator->capacity(), 0);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), 0);
 }
 
 TEST_F(FkGraphicContextTest, AllocFbo) {
@@ -59,10 +59,10 @@ TEST_F(FkGraphicContextTest, AllocFbo) {
         EXPECT_NE(allocator->size(), 0);
     }
     EXPECT_EQ(allocator->size(), 0);
-    EXPECT_NE(allocator->capacity(), 0);
+    EXPECT_NE(allocator->usingSize() + allocator->cacheSize(), 0);
     allocator->release();
     EXPECT_EQ(allocator->size(), 0);
-    EXPECT_EQ(allocator->capacity(), 0);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), 0);
 }
 
 TEST_F(FkGraphicContextTest, AllocProgram) {
@@ -74,8 +74,8 @@ TEST_F(FkGraphicContextTest, AllocProgram) {
         EXPECT_NE(allocator->size(), 0);
     }
     EXPECT_EQ(allocator->size(), 0);
-    EXPECT_NE(allocator->capacity(), 0);
+    EXPECT_NE(allocator->usingSize() + allocator->cacheSize(), 0);
     allocator->release();
     EXPECT_EQ(allocator->size(), 0);
-    EXPECT_EQ(allocator->capacity(), 0);
+    EXPECT_EQ(allocator->usingSize() + allocator->cacheSize(), 0);
 }
