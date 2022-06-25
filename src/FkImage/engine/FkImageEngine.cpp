@@ -68,6 +68,7 @@ FkID FkImageEngine::newLayerWithFile(std::string path, FkID expectId) {
 FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> &msg) {
     auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
     auto src = msg->arg3;
+    FkLogI(FK_DEF_TAG, "add layer: %s", src.c_str());
     std::string name = FkString("layer_")
             .append(layer->id)
             .append(FkFileUtils::suffix(src))
@@ -99,7 +100,7 @@ FkResult FkImageEngine::_updateLayerWithFile(std::shared_ptr<FkMessage> &msg) {
 FkID FkImageEngine::save(std::string file, FkResultCallback callback) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageEngine::_save));
     msg->arg3 = file;
-    msg->sp = std::make_shared<FkAnyCompo>(callback);
+    msg->sp = callback ? std::make_shared<FkAnyCompo>(callback) : nullptr;
     return sendMessage(msg);
 }
 

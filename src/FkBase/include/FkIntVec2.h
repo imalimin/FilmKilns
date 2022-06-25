@@ -20,6 +20,10 @@ public:
 
     virtual ~FkIntVec2();
 
+    virtual FkIntVec2 operator+(const FkIntVec2 &vec);
+
+    virtual FkIntVec2 operator-(const FkIntVec2 &vec);
+
 };
 
 

@@ -20,3 +20,11 @@ FkIntVec2::FkIntVec2(const FkIntVec2 &o) : FkVec2<int32_t>(o) {
 FkIntVec2::~FkIntVec2() {
 
 }
+
+FkIntVec2 FkIntVec2::operator+(const FkIntVec2 &vec) {
+    return {x + vec.x, y + vec.y};
+}
+
+FkIntVec2 FkIntVec2::operator-(const FkIntVec2 &vec) {
+    return {x - vec.x, y - vec.y};
+}

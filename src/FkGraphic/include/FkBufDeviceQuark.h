@@ -12,6 +12,9 @@
 #define FK_GRAPHIC_FKBUFDEVICEQUARK_H
 
 #include "FkQuark.h"
+#include "FkIntVec2.h"
+#include "FkBuffer.h"
+#include "FkSize.h"
 
 FK_SUPER_CLASS(FkBufDeviceQuark, FkQuark) {
 FK_DEF_CLASS_TYPE_FUNC(FkBufDeviceQuark)
@@ -34,6 +37,9 @@ protected:
 
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> p);
+
+    bool _copySubBuffer(std::shared_ptr<FkBuffer> &src, FkSize srcSize,
+                        std::shared_ptr<FkBuffer> &dst, FkSize dstSize, FkIntVec2 pos);
 };
 
 #endif //FK_GRAPHIC_FKBUFDEVICEQUARK_H

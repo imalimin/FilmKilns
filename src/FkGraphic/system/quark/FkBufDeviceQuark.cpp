@@ -70,23 +70,54 @@ FkResult FkBufDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         FkLogW(FK_DEF_TAG, "Not support for multi-texture frame buffer object.");
         return FK_SKIP;
     }
-    auto texSize = material->size();
-    auto tex = (*texArray)[0];
     glFinish();
     fboCompo->fbo->bind();
-    fboCompo->fbo->attach(tex);
-    glViewport(0, 0, texSize.getWidth(), texSize.getHeight());
-
+    auto texSize = material->size();
     auto dstSize = device->getSize();
     if (dstSize.isZero()) {
         dstSize = texSize;
     }
     auto pos = device->getPosition();
-    auto buf = device->buffer()->data();
-    glReadPixels(pos.x, pos.y,
-                 dstSize.getWidth(), dstSize.getHeight(),
-                 GL_RGBA, GL_UNSIGNED_BYTE, buf);
-    fboCompo->fbo->detach(tex->desc.target);
+
+    auto bytesOfSlice = texArray->blockSize.getWidth() * texArray->blockSize.getHeight() * 4;
+    auto tmpBuf = FkBuffer::alloc(bytesOfSlice);
+    FkIntVec2 tmpPos(0, 0);
+    for (int y = 0; y < texArray->blocks.y; ++y) {
+        tmpPos.x = 0;
+        for (int x = 0; x < texArray->blocks.x; ++x) {
+            int index = y * texArray->blocks.x + x;
+            auto tex = (*texArray)[index];
+            FkIntVec2 readPos(std::max(pos.x - tmpPos.x, 0), std::max(pos.y - tmpPos.y, 0));
+            FkSize readSize(std::min(dstSize.getWidth() + pos.x - tmpPos.x - readPos.x, tex->desc.size.getWidth() - readPos.x),
+                            std::min(dstSize.getHeight()+ pos.y - tmpPos.y - readPos.y, tex->desc.size.getHeight() - readPos.y));
+            if (readSize.getWidth() > 0 && readSize.getHeight() > 0) {
+                memset(tmpBuf->data(), 0, bytesOfSlice);
+                fboCompo->fbo->attach(tex);
+                glReadPixels(readPos.x, readPos.y,
+                             readSize.getWidth(), readSize.getHeight(),
+                             GL_RGBA, GL_UNSIGNED_BYTE, tmpBuf->data());
+                fboCompo->fbo->detach(tex->desc.target);
+                auto dst = device->buffer();
+                _copySubBuffer(tmpBuf, readSize, dst, dstSize, readPos + tmpPos - pos);
+            }
+            if (texArray->blocks.x == x + 1) {
+                tmpPos.y += tex->desc.size.getHeight();
+            }
+            tmpPos.x += tex->desc.size.getWidth();
+        }
+    }
     fboCompo->fbo->unbind();
     return FK_OK;
+}
+
+bool FkBufDeviceQuark::_copySubBuffer(std::shared_ptr<FkBuffer> &src, FkSize srcSize,
+                                      std::shared_ptr<FkBuffer> &dst, FkSize dstSize, FkIntVec2 pos) {
+    for (int i = 0; i < srcSize.getHeight(); ++i) {
+        auto dstOffset = ((pos.y + i) * dstSize.getWidth() + pos.x) * 4;
+        auto srcOffset = i * srcSize.getWidth() * 4;
+        memcpy(dst->data() + dstOffset,
+               src->data() + srcOffset,
+               srcSize.getWidth() * 4);
+    }
+    return true;
 }
