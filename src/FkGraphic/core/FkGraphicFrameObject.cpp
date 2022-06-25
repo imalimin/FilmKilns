@@ -51,8 +51,12 @@ FkResult FkGraphicFrameObject::attach(std::shared_ptr<FkGraphicTexture> &tex) {
 
 FkResult FkGraphicFrameObject::attach(std::vector<std::shared_ptr<FkGraphicTexture>> &texArray) {
     if (!attachments.empty()) {
-        FkLogI(FK_DEF_TAG, "You must detach this fbo before attach.");
+        FkLogE(FK_DEF_TAG, "You must detach this fbo before attach.");
         return FK_INVALID_STATE;
+    }
+    if (texArray.empty()) {
+        FkLogE(FK_DEF_TAG, "texArray is empty.");
+        return FK_INVALID_PARAMETERS;
     }
     for (int i = 0; i < texArray.size(); ++i) {
         auto attachment = GL_COLOR_ATTACHMENT0 + i;

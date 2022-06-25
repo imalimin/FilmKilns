@@ -43,13 +43,6 @@
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
 
-//每个点占多少字节
-#define SIZE_OF_VERTEX  sizeof(float)
-//多少个坐标
-#define COUNT_VERTEX  4
-//每个坐标的维度
-#define COUNT_PER_VERTEX  2
-
 FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), lastId(FK_ID_NONE + 1) {
 
 }
@@ -95,36 +88,6 @@ FkResult FkGraphicLayerQuark::onStart() {
 FkResult FkGraphicLayerQuark::onStop() {
     layers.clear();
     return FkQuark::onStop();
-}
-
-void FkGraphicLayerQuark::_setupVertex(std::shared_ptr<FkGraphicLayer> &layer) {
-    auto sizeComp = FK_FIND_COMPO(layer, FkSizeCompo);
-    FkAssert(nullptr != sizeComp, );
-    auto vertex = FK_FIND_COMPO(layer, FkVertexCompo);
-    if (nullptr == vertex) {
-        vertex = std::make_shared<FkVertexCompo>();
-        layer->addComponent(vertex);
-    }
-    auto coord = FK_FIND_COMPO(layer, FkCoordinateCompo);
-    if (nullptr == coord) {
-        coord = std::make_shared<FkCoordinateCompo>();
-        layer->addComponent(coord);
-    }
-
-    float pos[]{
-            -sizeComp->size.getWidth() / 2.0f, -sizeComp->size.getHeight() / 2.0f,//LEFT,BOTTOM
-            sizeComp->size.getWidth() / 2.0f, -sizeComp->size.getHeight() / 2.0f,//RIGHT,BOTTOM
-            -sizeComp->size.getWidth() / 2.0f, sizeComp->size.getHeight() / 2.0f,//LEFT,TOP
-            sizeComp->size.getWidth() / 2.0f, sizeComp->size.getHeight() / 2.0f//RIGHT,TOP
-    };
-    float coordinate[]{
-            0.0f, 0.0f,//LEFT,BOTTOM
-            1.0f, 0.0f,//RIGHT,BOTTOM
-            0.0f, 1.0f,//LEFT,TOP
-            1.0f, 1.0f//RIGHT,TOP
-    };
-    vertex->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, pos);
-    coord->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, coordinate);
 }
 
 bool FkGraphicLayerQuark::_isExistLayer(FkID id) {
@@ -215,7 +178,6 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             FkAssert(FK_OK == ret, ret);
         }
     }
-    _setupVertex(layer);
     return ret;
 }
 

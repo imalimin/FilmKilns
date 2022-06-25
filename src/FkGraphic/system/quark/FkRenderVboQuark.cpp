@@ -16,6 +16,13 @@
 #include "FkVboCompo.h"
 #include "FkPointFCompo.h"
 
+//每个点占多少字节
+#define SIZE_OF_VERTEX  sizeof(float)
+//多少个坐标
+#define COUNT_VERTEX  4
+//每个坐标的维度
+#define COUNT_PER_VERTEX  2
+
 FK_IMPL_CLASS_TYPE(FkRenderVboQuark, FkQuark)
 
 FkRenderVboQuark::FkRenderVboQuark() : FkQuark() {
@@ -55,21 +62,34 @@ FkResult FkRenderVboQuark::onStop() {
 
 FkResult FkRenderVboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
-    auto vertexCompo =  FK_FIND_COMPO(proto->materials, FkVertexCompo);
-    auto coordCompo =  FK_FIND_COMPO(proto->materials, FkCoordinateCompo);
-    if (vertexCompo && coordCompo) {
-        FkVBODescription desc(vertexCompo->size() + coordCompo->size());
-        auto comp = std::make_shared<FkVboCompo>();
-        comp->setup(allocator->alloc(desc),
-                    static_cast<float *>(vertexCompo->data()), vertexCompo->desc,
-                    static_cast<float *>(coordCompo->data()), coordCompo->desc);
-        proto->materials->addComponent(comp);
-    } else if (vertexCompo) {
-        FkVBODescription desc(vertexCompo->size());
-        auto comp = std::make_shared<FkVboCompo>();
-        comp->setup(allocator->alloc(desc),
-                    static_cast<float *>(vertexCompo->data()), vertexCompo->desc);
-        proto->materials->addComponent(comp);
+    auto material = std::dynamic_pointer_cast<FkTexEntity>(proto->materials);
+    std::shared_ptr<FkVertexCompo> vertexCompo = nullptr;
+    if (material) {
+        auto size = material->texArray()->size;
+        float pos[]{
+                -size.getWidth() / 2.0f, -size.getHeight() / 2.0f,//LEFT,BOTTOM
+                size.getWidth() / 2.0f, -size.getHeight() / 2.0f,//RIGHT,BOTTOM
+                -size.getWidth() / 2.0f, size.getHeight() / 2.0f,//LEFT,TOP
+                size.getWidth() / 2.0f, size.getHeight() / 2.0f//RIGHT,TOP
+        };
+        vertexCompo = std::make_shared<FkVertexCompo>();
+        vertexCompo->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, pos);
     }
+    float coordinate[]{
+            0.0f, 0.0f,//LEFT,BOTTOM
+            1.0f, 0.0f,//RIGHT,BOTTOM
+            0.0f, 1.0f,//LEFT,TOP
+            1.0f, 1.0f//RIGHT,TOP
+    };
+    auto coordCompo = std::make_shared<FkCoordinateCompo>();
+    coordCompo->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, coordinate);
+
+    FkVBODescription desc(vertexCompo->size() + coordCompo->size());
+    auto comp = std::make_shared<FkVboCompo>();
+    comp->setup(allocator->alloc(desc),
+                static_cast<float *>(vertexCompo->data()), vertexCompo->desc,
+                static_cast<float *>(coordCompo->data()), coordCompo->desc);
+    proto->materials->addComponent(comp);
+
     return FK_OK;
 }

@@ -77,8 +77,6 @@ protected:
     FkResult _onUpdateLayerWithModel(std::shared_ptr<FkProtocol> &p);
 
 private:
-    void _setupVertex(std::shared_ptr<FkGraphicLayer> &layer);
-
     bool _isExistLayer(FkID id);
 
     FkID _maxLayerId();
