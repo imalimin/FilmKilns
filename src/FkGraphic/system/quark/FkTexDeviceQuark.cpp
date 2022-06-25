@@ -111,6 +111,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
 #endif
     vboCompo->bind();
     FK_GL_CHECK(programCompo->program->bind());
+    fboCompo->fbo->bind();
     programCompo->program->addValue(srcTexArray);
     programCompo->program->addValue(matCompo);
     programCompo->program->addValue(vboCompo);
@@ -121,7 +122,6 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
             int index = y * dstTexArray->blocks.x + x;
             auto tex = (*dstTexArray)[index];
             glViewport(-pos.x, -pos.y, size.getWidth(), size.getHeight());
-            fboCompo->fbo->bind();
             fboCompo->fbo->attach(tex);
             FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
 #if 0
@@ -137,7 +137,6 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
 #endif
 
             fboCompo->fbo->detach(tex->desc.target);
-            fboCompo->fbo->unbind();
             if (dstTexArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }
@@ -145,6 +144,7 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         }
     }
     FK_GL_CHECK(programCompo->program->clear());
+    fboCompo->fbo->unbind();
     programCompo->program->unbind();
     vboCompo->unbind();
     glDisable(GL_BLEND);
