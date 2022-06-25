@@ -75,12 +75,17 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
         texArray = nullptr;
         FkLogI(FK_DEF_TAG, "Texture size has change. Request new one.");
     }
-    if (texArray == nullptr || texArray->empty()) {
+    bool isMakeNewTex = (texArray == nullptr || texArray->empty());
+    if (isMakeNewTex) {
         texArray = _allocTex(proto->texEntity);
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texArray));
     }
     auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
-    _updateTexWithBuf(texArray, proto->texEntity, bufCompo ? bufCompo->buf : nullptr);
+    if (bufCompo) {
+        _updateTexWithBuf(texArray, proto->texEntity, bufCompo->buf);
+    } else if (isMakeNewTex || proto->texEntity->size() != texArray->size) {
+        _updateTexWithBuf(texArray, proto->texEntity, nullptr);
+    }
     auto ret = _drawColor(texArray, proto->texEntity);
     if (FK_OK != ret) {
         FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
@@ -203,6 +208,7 @@ FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &t
                 fboCompo->fbo->unbind();
             }
 #endif
+            FkLogI("aliminabc", "%d, %d, (%d,%d), %dx%d", index, tex->tex, -pos.x, -pos.y, tex->desc.size.getWidth(), tex->desc.size.getHeight());
             if (texArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }
