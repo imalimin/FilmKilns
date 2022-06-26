@@ -41,8 +41,10 @@ private:
     int32_t aCoordinateLoc = -1;
     int32_t uColsLoc = -1;
     int32_t uRowsLoc = -1;
-    int32_t uOffsetWidthLoc = -1;
-    int32_t uOffsetHeightLoc = -1;
+    int32_t uWidthLoc = -1;
+    int32_t uHeightLoc = -1;
+    int32_t uSliceWidthLoc = -1;
+    int32_t uSliceHeightLoc = -1;
 
 };
 

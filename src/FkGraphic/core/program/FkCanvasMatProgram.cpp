@@ -50,16 +50,19 @@ FkResult FkCanvasMatProgram::addValue(std::shared_ptr<FkComponent> value) {
 
 std::string FkCanvasMatProgram::getFragment() {
     std::string shader(R"(
-        precision mediump float;
-        varying mediump vec2 vTextureCoord;
+        varying vec2 vTextureCoord;
         uniform sampler2D uTexture[%d];
         uniform int colsX;
         uniform int rowsY;
-        uniform highp float offsetWidth;
-        uniform highp float offsetHeight;
+        uniform int width;
+        uniform int height;
+        uniform int sliceWidth;
+        uniform int sliceHeight;
         uniform float gridSizeX;
         uniform float gridSizeY;
         void main(){
+            float offsetWidth = float(sliceWidth) / float(width);
+            float offsetHeight = float(sliceHeight) / float(height);
             vec4 back = vec4(1.0, 1.0, 1.0, 1.0);
             float ix = vTextureCoord.x / gridSizeX;
             float iy = vTextureCoord.y / gridSizeY;

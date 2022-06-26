@@ -44,8 +44,10 @@ FkResult FkGraphicMatProgram::create() {
         FkAssert(uMVPMatLoc >= 0, FK_FAIL);
         uColsLoc = getUniformLocation("colsX");
         uRowsLoc = getUniformLocation("rowsY");
-        uOffsetWidthLoc = getUniformLocation("offsetWidth");
-        uOffsetHeightLoc = getUniformLocation("offsetHeight");
+        uWidthLoc = getUniformLocation("width");
+        uHeightLoc = getUniformLocation("height");
+        uSliceWidthLoc = getUniformLocation("sliceWidth");
+        uSliceHeightLoc = getUniformLocation("sliceHeight");
         aCoordinateLoc = getAttribLocation("aTextureCoord");
         FkAssert(aCoordinateLoc >= 0, FK_FAIL);
     }
@@ -85,13 +87,17 @@ FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkComponent> value) {
         if (uRowsLoc >= 0) {
             setUniform1i(uRowsLoc, texArrCompo->blocks.y);
         }
-        if (uOffsetWidthLoc >= 0) {
-            auto offset = texArrCompo->blockSize.getWidth() * 1.0f / texArrCompo->size.getWidth();
-            setUniform1f(uOffsetWidthLoc, offset);
+        if (uWidthLoc >= 0) {
+            setUniform1i(uWidthLoc, texArrCompo->size.getWidth());
         }
-        if (uOffsetHeightLoc >= 0) {
-            auto offset = texArrCompo->blockSize.getHeight() * 1.0f / texArrCompo->size.getHeight();
-            setUniform1f(uOffsetHeightLoc, offset);
+        if (uHeightLoc >= 0) {
+            setUniform1i(uHeightLoc, texArrCompo->size.getHeight());
+        }
+        if (uSliceWidthLoc >= 0) {
+            setUniform1i(uSliceWidthLoc, texArrCompo->blockSize.getWidth());
+        }
+        if (uSliceHeightLoc >= 0) {
+            setUniform1i(uSliceHeightLoc, texArrCompo->blockSize.getHeight());
         }
         for (int i = 0; i < texArrCompo->countOfTexture(); ++i) {
             auto compo = std::make_shared<FkTexCompo>((*texArrCompo)[i]);
@@ -129,6 +135,7 @@ FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkComponent> value) {
 
 std::string FkGraphicMatProgram::getVertex() {
     std::string shader(R"(
+        precision highp float;
         attribute vec4 aPosition;
         attribute vec2 aTextureCoord;
         varying vec2 vTextureCoord;
@@ -143,13 +150,17 @@ std::string FkGraphicMatProgram::getVertex() {
 std::string FkGraphicMatProgram::getFragment() {
     std::string shader(R"(
         precision highp float;
-        varying highp vec2 vTextureCoord;
+        varying vec2 vTextureCoord;
         uniform sampler2D uTexture[%d];
         uniform int colsX;
         uniform int rowsY;
-        uniform highp float offsetWidth;
-        uniform highp float offsetHeight;
+        uniform int width;
+        uniform int height;
+        uniform int sliceWidth;
+        uniform int sliceHeight;
         void main() {
+            float offsetWidth = float(sliceWidth) / float(width);
+            float offsetHeight = float(sliceHeight) / float(height);
             int posX = int(vTextureCoord.x / offsetWidth);
             int posY = int(vTextureCoord.y / offsetHeight);
             vec2 coord = vec2(vTextureCoord.x - offsetWidth * float(posX),
@@ -166,6 +177,8 @@ std::string FkGraphicMatProgram::getFragment() {
             }
             int index = posY * colsX + posX;
             vec4 color = texture2D(uTexture[index], coord);
+//            float count = float(colsX * rowsY);
+//            color = vec4(float(index) / count, float(index) / count, float(index) / count, 1.0);
             gl_FragColor = color;
         })");
     size_t size = shader.size() + 10;

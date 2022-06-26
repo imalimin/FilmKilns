@@ -81,6 +81,7 @@ FkResult FkGraphicPathProgram::addValue(std::shared_ptr<FkComponent> value) {
 
 std::string FkGraphicPathProgram::getVertex() {
     std::string shader(R"(
+        precision highp float;
         attribute vec4 aPosition;
         void main() {
             gl_Position = aPosition;
@@ -90,7 +91,7 @@ std::string FkGraphicPathProgram::getVertex() {
 
 std::string FkGraphicPathProgram::getFragment() {
     std::string shader(R"(
-        precision mediump float;
+        precision highp float;
         uniform vec4 paintColor;
         void main() {
             gl_FragColor = paintColor;
