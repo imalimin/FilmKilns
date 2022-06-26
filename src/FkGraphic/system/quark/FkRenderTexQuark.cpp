@@ -208,7 +208,6 @@ FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &t
                 fboCompo->fbo->unbind();
             }
 #endif
-            FkLogI("aliminabc", "%d, %d, (%d,%d), %dx%d", index, tex->tex, -pos.x, -pos.y, tex->desc.size.getWidth(), tex->desc.size.getHeight());
             if (texArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }

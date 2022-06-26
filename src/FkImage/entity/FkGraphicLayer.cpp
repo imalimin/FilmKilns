@@ -73,7 +73,8 @@ FkIntVec2 FkGraphicLayer::getTrans() {
     FkIntVec2 value(0, 0);
     auto compo = FK_FIND_COMPO(this, FkTransComponent);
     if (compo) {
-        value = compo->value;
+        value.x = compo->value.x;
+        value.y = compo->value.y;
     }
     return value;
 }

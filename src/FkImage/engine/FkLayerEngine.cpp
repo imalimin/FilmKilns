@@ -220,9 +220,10 @@ FkResult FkLayerEngine::postTranslate(FkID layer, int32_t dx, int32_t dy) {
 }
 
 FkResult FkLayerEngine::_postTranslate(std::shared_ptr<FkMessage> msg) {
+    auto point = std::dynamic_pointer_cast<FkIntVec2>(msg->sp);
     auto measure = std::make_shared<FkMeasureTransProto>();
     measure->layerId = msg->arg1;
-    measure->value = *std::dynamic_pointer_cast<FkIntVec2>(msg->sp);
+    measure->value = FkDoubleVec2(point->x, point->y);
     auto ret = client->quickSend(measure, molecule);
     FkAssert(FK_OK == ret, FK_FAIL);
     auto proto = std::make_shared<FkLayerPostTransProto>();
@@ -239,10 +240,10 @@ FkResult FkLayerEngine::setTranslate(FkID layer, int32_t x, int32_t y) {
 }
 
 FkResult FkLayerEngine::_setTranslate(std::shared_ptr<FkMessage> msg) {
-    auto vec = std::dynamic_pointer_cast<FkIntVec2>(msg->sp);
+    auto point = std::dynamic_pointer_cast<FkIntVec2>(msg->sp);
     auto proto = std::make_shared<FkLayerSetTransProto>();
     proto->layer = msg->arg1;
-    proto->value = *vec;
+    proto->value = FkDoubleVec2(point->x, point->y);;
     return client->quickSend(proto, molecule);
 }
 
@@ -320,7 +321,7 @@ FkResult FkLayerEngine::_drawPoint(std::shared_ptr<FkMessage> msg) {
     auto proto = Fk_POINTER_CAST(FkDrawPointProto, msg->sp);
     auto measureProto = std::make_shared<FkMeasurePointProto>();
     measureProto->layerId = proto->layer;
-    measureProto->value = proto->value;
+    measureProto->value = FkDoubleVec2(proto->value.x, proto->value.y);
     auto ret = client->with(molecule)->send(measureProto);
     FkAssert(FK_OK == ret, FK_FAIL);
     //  -,- |
@@ -375,11 +376,11 @@ FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
         }
     }
 
-    std::vector<FkIntVec2> vec;
-    vec.emplace_back(FkIntVec2(rect->left(), rect->top()));
-    vec.emplace_back(FkIntVec2(rect->right(), rect->top()));
-    vec.emplace_back(FkIntVec2(rect->right(), rect->bottom()));
-    vec.emplace_back(FkIntVec2(rect->left(), rect->bottom()));
+    std::vector<FkDoubleVec2> vec;
+    vec.emplace_back(FkDoubleVec2(rect->left(), rect->top()));
+    vec.emplace_back(FkDoubleVec2(rect->right(), rect->top()));
+    vec.emplace_back(FkDoubleVec2(rect->right(), rect->bottom()));
+    vec.emplace_back(FkDoubleVec2(rect->left(), rect->bottom()));
     for (auto &it : vec) {
         auto measureProto = std::make_shared<FkMeasurePointProto>();
         measureProto->layerId = Fk_CANVAS_ID;
@@ -431,7 +432,7 @@ FkResult FkLayerEngine::drawPath(FkID layerId,
                                  int32_t x, int32_t y,
                                  std::shared_ptr<FkPaint> &paint) {
     FkAssert(paint != nullptr && paint->strokeWidth > 0, FK_INVALID_DATA);
-    FkIntVec2 point(x, y);
+    FkDoubleVec2 point(x, y);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
     proto->isFinish = false;
     proto->paint = paint;
@@ -445,7 +446,7 @@ FkResult FkLayerEngine::_drawPath(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawPathProto, msg->sp);
     auto measureProto = std::make_shared<FkMeasurePointProto>();
     measureProto->layerId = proto->layerId;
-    measureProto->value = proto->point;
+    measureProto->value = FkDoubleVec2(proto->point.x, proto->point.y);
     auto ret = client->with(molecule)->send(measureProto);
     FkAssert(FK_OK == ret, FK_FAIL);
 
@@ -454,7 +455,7 @@ FkResult FkLayerEngine::_drawPath(std::shared_ptr<FkMessage> &msg) {
 }
 
 FkResult FkLayerEngine::drawPathFinish(FkID layerId) {
-    FkIntVec2 point(0, 0);
+    FkDoubleVec2 point(0, 0);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
     proto->isFinish = true;
 

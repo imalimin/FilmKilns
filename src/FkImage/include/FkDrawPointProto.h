@@ -9,7 +9,7 @@
 #define FK_GRAPHIC_FKDRAWPOINTPROTO_H
 
 #include "FkProtocol.h"
-#include "FkIntVec2.h"
+#include "FkDoubleVec2.h"
 #include "FkColor.h"
 
 FK_SUPER_CLASS(FkDrawPointProto, FkProtocol) {
@@ -24,7 +24,7 @@ public:
 
 public:
     FkID layer;
-    FkIntVec2 value;
+    FkDoubleVec2 value;
     FkColor color;
     int32_t size = 0;
 };

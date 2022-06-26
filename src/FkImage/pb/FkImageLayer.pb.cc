@@ -73,27 +73,27 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_FkImageLayer_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\022FkImageLayer.proto\022\020com.alimin.fk.pb\032\014"
-  "FkSize.proto\032\020FkRational.proto\032\017FkIntVec"
-  "3.proto\032\021FkFloatVec3.proto\032\021FkPaintPath."
-  "proto\"\227\002\n\014FkImageLayer\022&\n\004size\030\001 \001(\0132\030.c"
-  "om.alimin.fk.pb.FkSize\022.\n\010rotation\030\002 \001(\013"
-  "2\034.com.alimin.fk.pb.FkRational\022,\n\005scale\030"
-  "\003 \001(\0132\035.com.alimin.fk.pb.FkFloatVec3\022*\n\005"
-  "trans\030\004 \001(\0132\033.com.alimin.fk.pb.FkIntVec3"
-  "\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005\022\r\n\005color\030\007 \001("
-  "\005\022,\n\005paths\030\010 \003(\0132\035.com.alimin.fk.pb.FkPa"
-  "intPathb\006proto3"
+  "FkSize.proto\032\020FkRational.proto\032\022FkDouble"
+  "Vec3.proto\032\021FkFloatVec3.proto\032\021FkPaintPa"
+  "th.proto\"\232\002\n\014FkImageLayer\022&\n\004size\030\001 \001(\0132"
+  "\030.com.alimin.fk.pb.FkSize\022.\n\010rotation\030\002 "
+  "\001(\0132\034.com.alimin.fk.pb.FkRational\022,\n\005sca"
+  "le\030\003 \001(\0132\035.com.alimin.fk.pb.FkFloatVec3\022"
+  "-\n\005trans\030\004 \001(\0132\036.com.alimin.fk.pb.FkDoub"
+  "leVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005\022\r\n\005colo"
+  "r\030\007 \001(\005\022,\n\005paths\030\010 \003(\0132\035.com.alimin.fk.p"
+  "b.FkPaintPathb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_FkImageLayer_2eproto_deps[5] = {
+  &::descriptor_table_FkDoubleVec3_2eproto,
   &::descriptor_table_FkFloatVec3_2eproto,
-  &::descriptor_table_FkIntVec3_2eproto,
   &::descriptor_table_FkPaintPath_2eproto,
   &::descriptor_table_FkRational_2eproto,
   &::descriptor_table_FkSize_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkImageLayer_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkImageLayer_2eproto = {
-  false, false, 415, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
+  false, false, 421, descriptor_table_protodef_FkImageLayer_2eproto, "FkImageLayer.proto", 
   &descriptor_table_FkImageLayer_2eproto_once, descriptor_table_FkImageLayer_2eproto_deps, 5, 1,
   schemas, file_default_instances, TableStruct_FkImageLayer_2eproto::offsets,
   file_level_metadata_FkImageLayer_2eproto, file_level_enum_descriptors_FkImageLayer_2eproto, file_level_service_descriptors_FkImageLayer_2eproto,
@@ -116,7 +116,7 @@ class FkImageLayer::_Internal {
   static const ::com::alimin::fk::pb::FkSize& size(const FkImageLayer* msg);
   static const ::com::alimin::fk::pb::FkRational& rotation(const FkImageLayer* msg);
   static const ::com::alimin::fk::pb::FkFloatVec3& scale(const FkImageLayer* msg);
-  static const ::com::alimin::fk::pb::FkIntVec3& trans(const FkImageLayer* msg);
+  static const ::com::alimin::fk::pb::FkDoubleVec3& trans(const FkImageLayer* msg);
 };
 
 const ::com::alimin::fk::pb::FkSize&
@@ -131,7 +131,7 @@ const ::com::alimin::fk::pb::FkFloatVec3&
 FkImageLayer::_Internal::scale(const FkImageLayer* msg) {
   return *msg->scale_;
 }
-const ::com::alimin::fk::pb::FkIntVec3&
+const ::com::alimin::fk::pb::FkDoubleVec3&
 FkImageLayer::_Internal::trans(const FkImageLayer* msg) {
   return *msg->trans_;
 }
@@ -200,7 +200,7 @@ FkImageLayer::FkImageLayer(const FkImageLayer& from)
     scale_ = nullptr;
   }
   if (from._internal_has_trans()) {
-    trans_ = new ::com::alimin::fk::pb::FkIntVec3(*from.trans_);
+    trans_ = new ::com::alimin::fk::pb::FkDoubleVec3(*from.trans_);
   } else {
     trans_ = nullptr;
   }
@@ -307,7 +307,7 @@ const char* FkImageLayer::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
         } else
           goto handle_unusual;
         continue;
-      // .com.alimin.fk.pb.FkIntVec3 trans = 4;
+      // .com.alimin.fk.pb.FkDoubleVec3 trans = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_trans(), ptr);
@@ -407,7 +407,7 @@ uint8_t* FkImageLayer::_InternalSerialize(
         3, _Internal::scale(this), target, stream);
   }
 
-  // .com.alimin.fk.pb.FkIntVec3 trans = 4;
+  // .com.alimin.fk.pb.FkDoubleVec3 trans = 4;
   if (this->_internal_has_trans()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
@@ -496,7 +496,7 @@ size_t FkImageLayer::ByteSizeLong() const {
         *scale_);
   }
 
-  // .com.alimin.fk.pb.FkIntVec3 trans = 4;
+  // .com.alimin.fk.pb.FkDoubleVec3 trans = 4;
   if (this->_internal_has_trans()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -549,7 +549,7 @@ void FkImageLayer::MergeFrom(const FkImageLayer& from) {
     _internal_mutable_scale()->::com::alimin::fk::pb::FkFloatVec3::MergeFrom(from._internal_scale());
   }
   if (from._internal_has_trans()) {
-    _internal_mutable_trans()->::com::alimin::fk::pb::FkIntVec3::MergeFrom(from._internal_trans());
+    _internal_mutable_trans()->::com::alimin::fk::pb::FkDoubleVec3::MergeFrom(from._internal_trans());
   }
   if (from._internal_id() != 0) {
     _internal_set_id(from._internal_id());

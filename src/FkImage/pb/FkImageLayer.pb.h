@@ -33,7 +33,7 @@
 #include <google/protobuf/unknown_field_set.h>
 #include "FkSize.pb.h"
 #include "FkRational.pb.h"
-#include "FkIntVec3.pb.h"
+#include "FkDoubleVec3.pb.h"
 #include "FkFloatVec3.pb.h"
 #include "FkPaintPath.pb.h"
 // @@protoc_insertion_point(includes)
@@ -296,23 +296,23 @@ class FkImageLayer final :
       ::com::alimin::fk::pb::FkFloatVec3* scale);
   ::com::alimin::fk::pb::FkFloatVec3* unsafe_arena_release_scale();
 
-  // .com.alimin.fk.pb.FkIntVec3 trans = 4;
+  // .com.alimin.fk.pb.FkDoubleVec3 trans = 4;
   bool has_trans() const;
   private:
   bool _internal_has_trans() const;
   public:
   void clear_trans();
-  const ::com::alimin::fk::pb::FkIntVec3& trans() const;
-  PROTOBUF_NODISCARD ::com::alimin::fk::pb::FkIntVec3* release_trans();
-  ::com::alimin::fk::pb::FkIntVec3* mutable_trans();
-  void set_allocated_trans(::com::alimin::fk::pb::FkIntVec3* trans);
+  const ::com::alimin::fk::pb::FkDoubleVec3& trans() const;
+  PROTOBUF_NODISCARD ::com::alimin::fk::pb::FkDoubleVec3* release_trans();
+  ::com::alimin::fk::pb::FkDoubleVec3* mutable_trans();
+  void set_allocated_trans(::com::alimin::fk::pb::FkDoubleVec3* trans);
   private:
-  const ::com::alimin::fk::pb::FkIntVec3& _internal_trans() const;
-  ::com::alimin::fk::pb::FkIntVec3* _internal_mutable_trans();
+  const ::com::alimin::fk::pb::FkDoubleVec3& _internal_trans() const;
+  ::com::alimin::fk::pb::FkDoubleVec3* _internal_mutable_trans();
   public:
   void unsafe_arena_set_allocated_trans(
-      ::com::alimin::fk::pb::FkIntVec3* trans);
-  ::com::alimin::fk::pb::FkIntVec3* unsafe_arena_release_trans();
+      ::com::alimin::fk::pb::FkDoubleVec3* trans);
+  ::com::alimin::fk::pb::FkDoubleVec3* unsafe_arena_release_trans();
 
   // int32 id = 6;
   void clear_id();
@@ -344,7 +344,7 @@ class FkImageLayer final :
   ::com::alimin::fk::pb::FkSize* size_;
   ::com::alimin::fk::pb::FkRational* rotation_;
   ::com::alimin::fk::pb::FkFloatVec3* scale_;
-  ::com::alimin::fk::pb::FkIntVec3* trans_;
+  ::com::alimin::fk::pb::FkDoubleVec3* trans_;
   int32_t id_;
   int32_t color_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -619,24 +619,24 @@ inline void FkImageLayer::set_allocated_scale(::com::alimin::fk::pb::FkFloatVec3
   // @@protoc_insertion_point(field_set_allocated:com.alimin.fk.pb.FkImageLayer.scale)
 }
 
-// .com.alimin.fk.pb.FkIntVec3 trans = 4;
+// .com.alimin.fk.pb.FkDoubleVec3 trans = 4;
 inline bool FkImageLayer::_internal_has_trans() const {
   return this != internal_default_instance() && trans_ != nullptr;
 }
 inline bool FkImageLayer::has_trans() const {
   return _internal_has_trans();
 }
-inline const ::com::alimin::fk::pb::FkIntVec3& FkImageLayer::_internal_trans() const {
-  const ::com::alimin::fk::pb::FkIntVec3* p = trans_;
-  return p != nullptr ? *p : reinterpret_cast<const ::com::alimin::fk::pb::FkIntVec3&>(
-      ::com::alimin::fk::pb::_FkIntVec3_default_instance_);
+inline const ::com::alimin::fk::pb::FkDoubleVec3& FkImageLayer::_internal_trans() const {
+  const ::com::alimin::fk::pb::FkDoubleVec3* p = trans_;
+  return p != nullptr ? *p : reinterpret_cast<const ::com::alimin::fk::pb::FkDoubleVec3&>(
+      ::com::alimin::fk::pb::_FkDoubleVec3_default_instance_);
 }
-inline const ::com::alimin::fk::pb::FkIntVec3& FkImageLayer::trans() const {
+inline const ::com::alimin::fk::pb::FkDoubleVec3& FkImageLayer::trans() const {
   // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkImageLayer.trans)
   return _internal_trans();
 }
 inline void FkImageLayer::unsafe_arena_set_allocated_trans(
-    ::com::alimin::fk::pb::FkIntVec3* trans) {
+    ::com::alimin::fk::pb::FkDoubleVec3* trans) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans_);
   }
@@ -648,9 +648,9 @@ inline void FkImageLayer::unsafe_arena_set_allocated_trans(
   }
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:com.alimin.fk.pb.FkImageLayer.trans)
 }
-inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::release_trans() {
+inline ::com::alimin::fk::pb::FkDoubleVec3* FkImageLayer::release_trans() {
   
-  ::com::alimin::fk::pb::FkIntVec3* temp = trans_;
+  ::com::alimin::fk::pb::FkDoubleVec3* temp = trans_;
   trans_ = nullptr;
 #ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
   auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
@@ -663,27 +663,27 @@ inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::release_trans() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::unsafe_arena_release_trans() {
+inline ::com::alimin::fk::pb::FkDoubleVec3* FkImageLayer::unsafe_arena_release_trans() {
   // @@protoc_insertion_point(field_release:com.alimin.fk.pb.FkImageLayer.trans)
   
-  ::com::alimin::fk::pb::FkIntVec3* temp = trans_;
+  ::com::alimin::fk::pb::FkDoubleVec3* temp = trans_;
   trans_ = nullptr;
   return temp;
 }
-inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::_internal_mutable_trans() {
+inline ::com::alimin::fk::pb::FkDoubleVec3* FkImageLayer::_internal_mutable_trans() {
   
   if (trans_ == nullptr) {
-    auto* p = CreateMaybeMessage<::com::alimin::fk::pb::FkIntVec3>(GetArenaForAllocation());
+    auto* p = CreateMaybeMessage<::com::alimin::fk::pb::FkDoubleVec3>(GetArenaForAllocation());
     trans_ = p;
   }
   return trans_;
 }
-inline ::com::alimin::fk::pb::FkIntVec3* FkImageLayer::mutable_trans() {
-  ::com::alimin::fk::pb::FkIntVec3* _msg = _internal_mutable_trans();
+inline ::com::alimin::fk::pb::FkDoubleVec3* FkImageLayer::mutable_trans() {
+  ::com::alimin::fk::pb::FkDoubleVec3* _msg = _internal_mutable_trans();
   // @@protoc_insertion_point(field_mutable:com.alimin.fk.pb.FkImageLayer.trans)
   return _msg;
 }
-inline void FkImageLayer::set_allocated_trans(::com::alimin::fk::pb::FkIntVec3* trans) {
+inline void FkImageLayer::set_allocated_trans(::com::alimin::fk::pb::FkDoubleVec3* trans) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(trans_);

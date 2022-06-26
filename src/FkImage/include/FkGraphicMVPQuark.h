@@ -13,6 +13,7 @@
 #include "FkMVPMatrix.h"
 #include "FkGraphicLayer.h"
 #include "FkSize.h"
+#include "FkDoubleVec2.h"
 
 FK_SUPER_CLASS(FkGraphicMVPQuark, FkQuark) {
 FK_DEF_CLASS_TYPE_FUNC(FkGraphicMVPQuark)
@@ -58,7 +59,7 @@ private:
 
     std::shared_ptr<FkMVPMatrix> _calcMat(std::shared_ptr<FkGraphicLayer> layer, FkSize &targetSize, bool reverseY);
 
-    FkIntVec2 _calcPoint2OtherCoordination(FkIntVec2 &point, std::shared_ptr<FkGraphicLayer> &layer);
+    FkDoubleVec2 _calcPoint2OtherCoordination(FkDoubleVec2 &point, std::shared_ptr<FkGraphicLayer> &layer);
 
 };
 

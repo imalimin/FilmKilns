@@ -9,7 +9,7 @@
 #define FK_GRAPHIC_FKCALCTRANSPROTO_H
 
 #include "FkWinSizeProto.h"
-#include "FkIntVec2.h"
+#include "FkDoubleVec2.h"
 #include "FkGraphicLayer.h"
 
 FK_SUPER_CLASS(FkMeasureTransProto, FkWinSizeProto) {
@@ -24,7 +24,7 @@ public:
 
 public:
     FkID layerId = FK_ID_NONE;
-    FkIntVec2 value;
+    FkDoubleVec2 value;
     std::shared_ptr<FkGraphicLayer> layer = nullptr;
     std::shared_ptr<FkGraphicLayer> canvas = nullptr;
 };

@@ -91,7 +91,7 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
 FkResult FkGraphicMVPQuark::_onMeasurePoint(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasurePointProto, p);
     auto winSize = proto->winSize;
-    proto->value = FkIntVec2(proto->value.x - winSize.getWidth() / 2.0f,
+    proto->value = FkDoubleVec2(proto->value.x - winSize.getWidth() / 2.0f,
                              proto->value.y - winSize.getHeight() / 2.0f);
     proto->value = _calcPoint2OtherCoordination(proto->value, proto->canvas);
     if (proto->layer) {
@@ -100,7 +100,7 @@ FkResult FkGraphicMVPQuark::_onMeasurePoint(std::shared_ptr<FkProtocol> p) {
     return FK_OK;
 }
 
-FkIntVec2 FkGraphicMVPQuark::_calcPoint2OtherCoordination(FkIntVec2 &point,
+FkDoubleVec2 FkGraphicMVPQuark::_calcPoint2OtherCoordination(FkDoubleVec2 &point,
                                                           std::shared_ptr<FkGraphicLayer> &layer) {
     auto trans = layer->getTrans();
     auto rotate = layer->getRotate();
@@ -121,7 +121,7 @@ FkIntVec2 FkGraphicMVPQuark::_calcPoint2OtherCoordination(FkIntVec2 &point,
     glm::vec4 vec(point.x, point.y, 0, 1.0f);
     vec = vec * fixMat;
     vec = vec * mat->mat4;
-    return FkIntVec2(vec.x * size.getWidth() / 2.0f - trans.x,
+    return FkDoubleVec2(vec.x * size.getWidth() / 2.0f - trans.x,
                      vec.y * size.getHeight() / 2.0f - trans.y);
 }
 

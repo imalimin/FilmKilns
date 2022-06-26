@@ -3,7 +3,7 @@ package com.alimin.fk.pb;
 
 import "FkSize.proto";
 import "FkRational.proto";
-import "FkIntVec3.proto";
+import "FkDoubleVec3.proto";
 import "FkFloatVec3.proto";
 import "FkPaintPath.proto";
 
@@ -13,7 +13,7 @@ message FkImageLayer {
     FkSize size = 1;
     FkRational rotation = 2;
     FkFloatVec3 scale = 3;
-    FkIntVec3 trans = 4;
+    FkDoubleVec3 trans = 4;
     string file = 5;
     int32 id = 6;
     int32 color = 7;

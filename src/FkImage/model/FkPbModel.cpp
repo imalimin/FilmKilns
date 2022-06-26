@@ -27,7 +27,7 @@ FkID FkPbModel::getLayerID() {
     return pbLayer.id();
 }
 
-FkIntVec2 FkPbModel::getTranslate() {
+FkDoubleVec2 FkPbModel::getTranslate() {
     return {pbLayer.trans().x(), pbLayer.trans().y()};
 }
 

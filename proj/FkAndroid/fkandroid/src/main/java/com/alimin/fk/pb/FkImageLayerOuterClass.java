@@ -79,19 +79,19 @@ public final class FkImageLayerOuterClass {
     com.alimin.fk.pb.FkFloatVec3OuterClass.FkFloatVec3OrBuilder getScaleOrBuilder();
 
     /**
-     * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+     * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
      * @return Whether the trans field is set.
      */
     boolean hasTrans();
     /**
-     * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+     * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
      * @return The trans.
      */
-    com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3 getTrans();
+    com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 getTrans();
     /**
-     * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+     * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
      */
-    com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3OrBuilder getTransOrBuilder();
+    com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder getTransOrBuilder();
 
     /**
      * <code>string file = 5;</code>
@@ -229,11 +229,11 @@ public final class FkImageLayerOuterClass {
               break;
             }
             case 34: {
-              com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.Builder subBuilder = null;
+              com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder subBuilder = null;
               if (trans_ != null) {
                 subBuilder = trans_.toBuilder();
               }
-              trans_ = input.readMessage(com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.parser(), extensionRegistry);
+              trans_ = input.readMessage(com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(trans_);
                 trans_ = subBuilder.buildPartial();
@@ -395,9 +395,9 @@ public final class FkImageLayerOuterClass {
     }
 
     public static final int TRANS_FIELD_NUMBER = 4;
-    private com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3 trans_;
+    private com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 trans_;
     /**
-     * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+     * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
      * @return Whether the trans field is set.
      */
     @java.lang.Override
@@ -405,18 +405,18 @@ public final class FkImageLayerOuterClass {
       return trans_ != null;
     }
     /**
-     * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+     * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
      * @return The trans.
      */
     @java.lang.Override
-    public com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3 getTrans() {
-      return trans_ == null ? com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.getDefaultInstance() : trans_;
+    public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 getTrans() {
+      return trans_ == null ? com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.getDefaultInstance() : trans_;
     }
     /**
-     * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+     * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
      */
     @java.lang.Override
-    public com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3OrBuilder getTransOrBuilder() {
+    public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder getTransOrBuilder() {
       return getTrans();
     }
 
@@ -1435,31 +1435,31 @@ public final class FkImageLayerOuterClass {
         return scaleBuilder_;
       }
 
-      private com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3 trans_;
+      private com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 trans_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3, com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.Builder, com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3OrBuilder> transBuilder_;
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder> transBuilder_;
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        * @return Whether the trans field is set.
        */
       public boolean hasTrans() {
         return transBuilder_ != null || trans_ != null;
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        * @return The trans.
        */
-      public com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3 getTrans() {
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 getTrans() {
         if (transBuilder_ == null) {
-          return trans_ == null ? com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.getDefaultInstance() : trans_;
+          return trans_ == null ? com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.getDefaultInstance() : trans_;
         } else {
           return transBuilder_.getMessage();
         }
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        */
-      public Builder setTrans(com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3 value) {
+      public Builder setTrans(com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 value) {
         if (transBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1473,10 +1473,10 @@ public final class FkImageLayerOuterClass {
         return this;
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        */
       public Builder setTrans(
-          com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.Builder builderForValue) {
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder builderForValue) {
         if (transBuilder_ == null) {
           trans_ = builderForValue.build();
           onChanged();
@@ -1487,13 +1487,13 @@ public final class FkImageLayerOuterClass {
         return this;
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        */
-      public Builder mergeTrans(com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3 value) {
+      public Builder mergeTrans(com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3 value) {
         if (transBuilder_ == null) {
           if (trans_ != null) {
             trans_ =
-              com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.newBuilder(trans_).mergeFrom(value).buildPartial();
+              com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.newBuilder(trans_).mergeFrom(value).buildPartial();
           } else {
             trans_ = value;
           }
@@ -1505,7 +1505,7 @@ public final class FkImageLayerOuterClass {
         return this;
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        */
       public Builder clearTrans() {
         if (transBuilder_ == null) {
@@ -1519,33 +1519,33 @@ public final class FkImageLayerOuterClass {
         return this;
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        */
-      public com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.Builder getTransBuilder() {
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder getTransBuilder() {
         
         onChanged();
         return getTransFieldBuilder().getBuilder();
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        */
-      public com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3OrBuilder getTransOrBuilder() {
+      public com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder getTransOrBuilder() {
         if (transBuilder_ != null) {
           return transBuilder_.getMessageOrBuilder();
         } else {
           return trans_ == null ?
-              com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.getDefaultInstance() : trans_;
+              com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.getDefaultInstance() : trans_;
         }
       }
       /**
-       * <code>.com.alimin.fk.pb.FkIntVec3 trans = 4;</code>
+       * <code>.com.alimin.fk.pb.FkDoubleVec3 trans = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3, com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.Builder, com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3OrBuilder> 
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder> 
           getTransFieldBuilder() {
         if (transBuilder_ == null) {
           transBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3, com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3.Builder, com.alimin.fk.pb.FkIntVec3OuterClass.FkIntVec3OrBuilder>(
+              com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3.Builder, com.alimin.fk.pb.FkDoubleVec3OuterClass.FkDoubleVec3OrBuilder>(
                   getTrans(),
                   getParentForChildren(),
                   isClean());
@@ -1999,23 +1999,23 @@ public final class FkImageLayerOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\022FkImageLayer.proto\022\020com.alimin.fk.pb\032\014" +
-      "FkSize.proto\032\020FkRational.proto\032\017FkIntVec" +
-      "3.proto\032\021FkFloatVec3.proto\032\021FkPaintPath." +
-      "proto\"\227\002\n\014FkImageLayer\022&\n\004size\030\001 \001(\0132\030.c" +
-      "om.alimin.fk.pb.FkSize\022.\n\010rotation\030\002 \001(\013" +
-      "2\034.com.alimin.fk.pb.FkRational\022,\n\005scale\030" +
-      "\003 \001(\0132\035.com.alimin.fk.pb.FkFloatVec3\022*\n\005" +
-      "trans\030\004 \001(\0132\033.com.alimin.fk.pb.FkIntVec3" +
-      "\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005\022\r\n\005color\030\007 \001(" +
-      "\005\022,\n\005paths\030\010 \003(\0132\035.com.alimin.fk.pb.FkPa" +
-      "intPathb\006proto3"
+      "FkSize.proto\032\020FkRational.proto\032\022FkDouble" +
+      "Vec3.proto\032\021FkFloatVec3.proto\032\021FkPaintPa" +
+      "th.proto\"\232\002\n\014FkImageLayer\022&\n\004size\030\001 \001(\0132" +
+      "\030.com.alimin.fk.pb.FkSize\022.\n\010rotation\030\002 " +
+      "\001(\0132\034.com.alimin.fk.pb.FkRational\022,\n\005sca" +
+      "le\030\003 \001(\0132\035.com.alimin.fk.pb.FkFloatVec3\022" +
+      "-\n\005trans\030\004 \001(\0132\036.com.alimin.fk.pb.FkDoub" +
+      "leVec3\022\014\n\004file\030\005 \001(\t\022\n\n\002id\030\006 \001(\005\022\r\n\005colo" +
+      "r\030\007 \001(\005\022,\n\005paths\030\010 \003(\0132\035.com.alimin.fk.p" +
+      "b.FkPaintPathb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.alimin.fk.pb.FkSizeOuterClass.getDescriptor(),
           com.alimin.fk.pb.FkRationalOuterClass.getDescriptor(),
-          com.alimin.fk.pb.FkIntVec3OuterClass.getDescriptor(),
+          com.alimin.fk.pb.FkDoubleVec3OuterClass.getDescriptor(),
           com.alimin.fk.pb.FkFloatVec3OuterClass.getDescriptor(),
           com.alimin.fk.pb.FkPaintPathOuterClass.getDescriptor(),
         });
@@ -2027,7 +2027,7 @@ public final class FkImageLayerOuterClass {
         new java.lang.String[] { "Size", "Rotation", "Scale", "Trans", "File", "Id", "Color", "Paths", });
     com.alimin.fk.pb.FkSizeOuterClass.getDescriptor();
     com.alimin.fk.pb.FkRationalOuterClass.getDescriptor();
-    com.alimin.fk.pb.FkIntVec3OuterClass.getDescriptor();
+    com.alimin.fk.pb.FkDoubleVec3OuterClass.getDescriptor();
     com.alimin.fk.pb.FkFloatVec3OuterClass.getDescriptor();
     com.alimin.fk.pb.FkPaintPathOuterClass.getDescriptor();
   }

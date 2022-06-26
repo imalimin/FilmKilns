@@ -12,7 +12,7 @@
 
 FK_IMPL_CLASS_TYPE(FkDrawPathProto, FkProtocol)
 
-FkDrawPathProto::FkDrawPathProto(FkID layerId, FkIntVec2 &point)
+FkDrawPathProto::FkDrawPathProto(FkID layerId, FkDoubleVec2 &point)
         : FkProtocol(), layerId(layerId), point(point), isFinish(false) {
 
 }

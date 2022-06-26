@@ -12,7 +12,7 @@
 #define FK_IMAGE_FKINTVEC2PROTO_H
 
 #include "FkProtocol.h"
-#include "FkIntVec2.h"
+#include "FkDoubleVec2.h"
 
 FK_SUPER_CLASS(FkIntVec2Proto, FkProtocol) {
 FK_DEF_CLASS_TYPE_FUNC(FkIntVec2Proto)
@@ -25,7 +25,7 @@ public:
     virtual ~FkIntVec2Proto();
 
 public:
-    FkIntVec2 value;
+    FkDoubleVec2 value;
 };
 
 #endif //FK_IMAGE_FKINTVEC2PROTO_H

@@ -29,7 +29,7 @@ public:
 
     virtual FkID getLayerID() override;
 
-    virtual FkIntVec2 getTranslate() override;
+    virtual FkDoubleVec2 getTranslate() override;
 
     virtual FkRational getRotation() override;
 

@@ -486,7 +486,8 @@ FkResult FkGraphicLayerQuark::_onUpdateLayerWithModel(std::shared_ptr<FkProtocol
 
     auto transCompo = FK_FIND_COMPO(layer, FkTransComponent);
     if (nullptr != transCompo) {
-        transCompo->value = proto->modelInterface->getTranslate();
+        auto trans = proto->modelInterface->getTranslate();
+        transCompo->value = FkDoubleVec2(trans.x, trans.y);
     }
     auto scaleCompo = FK_FIND_COMPO(layer, FkScaleComponent);
     if (nullptr != scaleCompo) {

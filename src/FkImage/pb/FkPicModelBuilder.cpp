@@ -84,7 +84,7 @@ void FkPicModelBuilder::_setMvpInfo(pb::FkImageLayer *pbLayer, std::shared_ptr<F
         pbLayer->set_allocated_rotation(value);
     }
     if (transCompo) {
-        auto value = new pb::FkIntVec3();
+        auto value = new pb::FkDoubleVec3();
         value->set_x(transCompo->value.x);
         value->set_y(transCompo->value.y);
         value->set_z(0);

@@ -9,7 +9,7 @@
 #define FK_GRAPHIC_FKTRANSCOMPONENT_H
 
 #include "FkGraphicComponent.h"
-#include "FkIntVec2.h"
+#include "FkDoubleVec2.h"
 
 FK_SUPER_CLASS(FkTransComponent, FkGraphicComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkTransComponent)
@@ -22,7 +22,7 @@ public:
     virtual ~FkTransComponent();
 
 public:
-    FkIntVec2 value;
+    FkDoubleVec2 value;
 };
 
 

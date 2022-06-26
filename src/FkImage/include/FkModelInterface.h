@@ -33,7 +33,7 @@ public:
 
     virtual FkID getLayerID() = 0;
 
-    virtual FkIntVec2 getTranslate() = 0;
+    virtual FkDoubleVec2 getTranslate() = 0;
 
     virtual FkRational getRotation() = 0;
 
