@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/main_slogan_title"
                 android:textAppearance="@style/TextAppearance.FluentUI.Title1"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:textSize="48sp" />
 
             <TextView
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/main_slogan_sub_title"
                 android:textAppearance="@style/TextAppearance.FluentUI.Headline"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/white"
                 android:textSize="38sp" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
