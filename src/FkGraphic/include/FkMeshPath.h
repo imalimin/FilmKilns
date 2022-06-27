@@ -20,9 +20,9 @@ FK_DEF_CLASS_TYPE_FUNC(FkMeshPath)
 public:
     FkMeshPath(std::vector<FkDoubleVec2> &meshPoints);
 
-    FkMeshPath(float _strokeWidth, int32_t _pixelsOfSensitivity);
+    FkMeshPath(float _strokeWidth, float _pixelsOfSensitivity);
 
-    FkMeshPath(float _strokeWidth, double _avgDistance, int32_t _pixelsOfSensitivity);
+    FkMeshPath(float _strokeWidth, double _avgDistance, float _pixelsOfSensitivity);
 
     FkMeshPath(const FkMeshPath &o);
 

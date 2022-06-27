@@ -13,7 +13,7 @@
 
 FK_IMPL_CLASS_TYPE(FkCatmullRomPath, FkPath)
 
-FkCatmullRomPath::FkCatmullRomPath(double _avgDistance, int32_t _pixelsOfSensitivity)
+FkCatmullRomPath::FkCatmullRomPath(double _avgDistance, float _pixelsOfSensitivity)
         : FkPath(), avgDistance(_avgDistance), pixelsOfSensitivity(_pixelsOfSensitivity) {
     src.emplace_back(FkDoubleVec2(0, 0));
 }

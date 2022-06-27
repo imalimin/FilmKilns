@@ -462,10 +462,17 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
     if (curPathCompo == nullptr && proto->isFinish) {
         return FK_INVALID_STATE;
     }
-    auto sizeCompo = FK_FIND_COMPO(itr->second, FkSizeCompo);
+    float sensitivity = proto->scaleOfSensitivity;
+    auto sizeCompo = FK_FIND_COMPO(layer, FkSizeCompo);
+    auto scaleCompo = FK_FIND_COMPO(layer, FkScaleComponent);
+    if (scaleCompo) {
+        sensitivity *= scaleCompo->value.x;
+    }
+    sensitivity = 7.0f / sensitivity;
     if (curPathCompo == nullptr) {
         FkAssert(proto->paint != nullptr, FK_INVALID_STATE);
-        auto path = std::make_shared<FkMeshPath>(proto->paint->strokeWidth, 3);
+        auto path = std::make_shared<FkMeshPath>(proto->paint->strokeWidth,
+                                                 std::min(sensitivity, 1.0f));
         curPathCompo = std::make_shared<FkPathCompo>(path, FkColor::makeFrom(proto->paint->color));
         layer->addComponent(curPathCompo);
     }

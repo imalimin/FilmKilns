@@ -18,7 +18,7 @@ FK_SUPER_CLASS(FkCatmullRomPath, FkPath) {
 FK_DEF_CLASS_TYPE_FUNC(FkCatmullRomPath)
 
 public:
-    FkCatmullRomPath(double _avgDistance, int32_t _pixelsOfSensitivity);
+    FkCatmullRomPath(double _avgDistance, float _pixelsOfSensitivity);
 
     FkCatmullRomPath(const FkCatmullRomPath &o);
 
@@ -37,7 +37,7 @@ public:
 private:
     std::vector<FkDoubleVec2> src;
     std::vector<FkDoubleVec2> points;
-    int32_t pixelsOfSensitivity = 5;
+    float pixelsOfSensitivity = 5.0f;
     double avgDistance;
     int readPos = 0;
 };

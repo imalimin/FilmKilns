@@ -46,7 +46,7 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkGraphicCanvasQuark::_onWithCanvas);
     FK_PORT_DESC_QUICK_ADD(desc, FkQuerySizeProto, FkGraphicCanvasQuark::_onQueryCanvasSize);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
-    FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicCanvasQuark::_onDelivery);
+    FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicCanvasQuark::_onDrawPath);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicCanvasQuark::_onDelivery);
 
 }
@@ -125,7 +125,7 @@ FkResult FkGraphicCanvasQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
     return FkGraphicLayerQuark::_onPostRotate(p);
 }
 
-FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQuerySizeProto, p);
     auto compo = FK_FIND_COMPO(_getCanvas(), FkSizeCompo);
     if (compo) {
@@ -134,9 +134,15 @@ FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> p)
     return FK_OK;
 }
 
-FkResult FkGraphicCanvasQuark::_onWithCanvas(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicCanvasQuark::_onWithCanvas(std::shared_ptr<FkProtocol> &p) {
     auto proto = Fk_POINTER_CAST(FkMeasureTransProto, p);
     proto->canvas = std::make_shared<FkGraphicLayer>(*_getCanvas());
+    return FK_OK;
+}
+
+FkResult FkGraphicCanvasQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
+    auto proto = Fk_POINTER_CAST(FkDrawPathProto, p);
+    proto->scaleOfSensitivity = _getCanvas()->getScale().x;
     return FK_OK;
 }
 

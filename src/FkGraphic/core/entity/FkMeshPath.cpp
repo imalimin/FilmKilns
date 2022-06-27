@@ -22,11 +22,11 @@ FkMeshPath::FkMeshPath(std::vector<FkDoubleVec2> &meshPoints)
     }
 }
 
-FkMeshPath::FkMeshPath(float _strokeWidth, int32_t _pixelsOfSensitivity)
+FkMeshPath::FkMeshPath(float _strokeWidth, float _pixelsOfSensitivity)
         : FkCatmullRomPath(_strokeWidth, _pixelsOfSensitivity), strokeWidth(_strokeWidth) {
 }
 
-FkMeshPath::FkMeshPath(float _strokeWidth, double _avgDistance, int32_t _pixelsOfSensitivity)
+FkMeshPath::FkMeshPath(float _strokeWidth, double _avgDistance, float _pixelsOfSensitivity)
         : FkCatmullRomPath(_avgDistance, _pixelsOfSensitivity), strokeWidth(_strokeWidth) {
 }
 

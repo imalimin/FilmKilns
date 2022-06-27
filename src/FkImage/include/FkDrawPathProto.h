@@ -30,6 +30,7 @@ public:
     FkDoubleVec2 point;
     std::shared_ptr<FkPaint> paint = nullptr;
     bool isFinish = false;
+    float scaleOfSensitivity = 1.0f;
 };
 
 #endif //FK_IMAGE_FKDRAWPATHPROTO_H

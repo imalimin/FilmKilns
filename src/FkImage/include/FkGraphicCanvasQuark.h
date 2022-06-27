@@ -52,9 +52,11 @@ protected:
     FkResult _onRemoveLayer(std::shared_ptr<FkProtocol> &p) override;
 
 private:
-    FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> p);
+    FkResult _onQueryCanvasSize(std::shared_ptr<FkProtocol> &p);
 
-    FkResult _onWithCanvas(std::shared_ptr<FkProtocol> p);
+    FkResult _onWithCanvas(std::shared_ptr<FkProtocol> &p);
+
+    FkResult _onDrawPath(std::shared_ptr<FkProtocol> &p);
 
     FkResult _onDelivery(std::shared_ptr<FkProtocol> p);
 
