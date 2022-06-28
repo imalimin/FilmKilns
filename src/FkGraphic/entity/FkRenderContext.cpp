@@ -42,6 +42,10 @@ void FkRenderContext::setMaxCountOfVertexTexture(int32_t value) {
     maxCountOfVertexTexture = value;
 }
 
+void FkRenderContext::setMaxViewportSize(int32_t width, int32_t height) {
+    maxViewportSize.set(width, height);
+}
+
 int32_t FkRenderContext::getGlVersion() {
     return glVersion;
 }
@@ -56,4 +60,8 @@ int32_t FkRenderContext::getMaxCountOfFragmentTexture() {
 
 int32_t FkRenderContext::getMaxCountOfVertexTexture() {
     return maxCountOfVertexTexture;
+}
+
+FkSize FkRenderContext::getMaxViewportSize() {
+    return maxViewportSize;
 }

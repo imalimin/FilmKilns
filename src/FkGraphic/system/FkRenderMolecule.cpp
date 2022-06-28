@@ -43,13 +43,15 @@ FkResult FkRenderMolecule::onCreate() {
     }
     auto _context = std::dynamic_pointer_cast<FkRenderContext>(getContext());
     FkAssert(_context != nullptr, FK_NPE);
-    GLint values[1];
+    GLint values[2];
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, values);
     _context->setMaxTextureSize(values[0]);
     glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, values);
     _context->setMaxCountOfVertexTexture(values[0]);
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, values);
     _context->setMaxCountOfFragmentTexture(values[0]);
+    glGetIntegerv(GL_MAX_VIEWPORT_DIMS, values);
+    _context->setMaxViewportSize(values[0], values[1]);
     return ret;
 }
 
