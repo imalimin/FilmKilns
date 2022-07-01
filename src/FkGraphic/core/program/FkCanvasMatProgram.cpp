@@ -48,6 +48,20 @@ FkResult FkCanvasMatProgram::addValue(std::shared_ptr<FkComponent> value) {
     return FkGraphicMatProgram::addValue(value);
 }
 
+std::string FkCanvasMatProgram::getVertex() {
+    std::string shader(R"(
+        precision highp float;
+        attribute vec4 aPosition;
+        attribute vec2 aTextureCoord;
+        varying vec2 vTextureCoord;
+        uniform mat4 mvp;
+        void main() {
+            gl_Position = mvp * aPosition;
+            vTextureCoord = aTextureCoord;
+        })");
+    return shader;
+}
+
 std::string FkCanvasMatProgram::getFragment() {
     std::string shader(R"(
         varying vec2 vTextureCoord;

@@ -29,6 +29,8 @@ public:
 
     virtual FkResult addValue(std::shared_ptr<FkComponent> value) override;
 
+    virtual std::string getVertex() override;
+
     virtual std::string getFragment() override;
 
 private:
