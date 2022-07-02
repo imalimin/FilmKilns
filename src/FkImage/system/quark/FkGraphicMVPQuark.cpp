@@ -113,16 +113,14 @@ FkDoubleVec2 FkGraphicMVPQuark::_calcPoint2OtherCoordination(FkDoubleVec2 &point
                 FkFloatVec3(0.0f, 0.0f, 0.0f),
                 FkFloatVec3(0.0f, 1.0f, 0.0f));
     mat->setScale(FkFloatVec3(1.0f / scale.x, 1.0f / scale.y, 1.0f));
-    mat->calc();
 
-    glm::mat4 fixMat = glm::mat4(1.0f);
-    fixMat = glm::rotate(fixMat, -rotate.num * 1.0f / rotate.den,
-                         glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::vec4 vec(point.x, point.y, 0, 1.0f);
-    vec = vec * fixMat;
-    vec = vec * mat->mat4;
-    return FkDoubleVec2(vec.x * size.getWidth() / 2.0f - trans.x,
-                     vec.y * size.getHeight() / 2.0f - trans.y);
+    auto fixMat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
+    fixMat->setRotation(rotate);
+
+    point = fixMat->calcVec2(point);
+    point = mat->calcVec2(point);
+    return FkDoubleVec2(point.x * size.getWidth() / 2.0f - trans.x,
+                        point.y * size.getHeight() / 2.0f - trans.y);
 }
 
 FkResult FkGraphicMVPQuark::_calc(std::shared_ptr<FkGraphicLayer> layer,

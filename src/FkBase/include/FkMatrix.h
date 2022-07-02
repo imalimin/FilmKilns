@@ -9,8 +9,9 @@
 #define FK_BASE_FKMATRIX_H
 
 #include "FkObject.h"
-#include "glm.hpp"
-#include "ext/matrix_clip_space.hpp"
+#include "FkDoubleVec2.h"
+#include "FkFloatVec3.h"
+#include "FkRational.h"
 
 FK_SUPER_CLASS(FkMatrix, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkMatrix)
@@ -22,12 +23,23 @@ public:
 
     virtual ~FkMatrix();
 
-    const void *get();
+    virtual const void *get() = 0;
+
+    virtual void setViewSize(int32_t width, int32_t height) = 0;
+
+    virtual void lookAt(FkFloatVec3 cameraPosition, FkFloatVec3 shootVec, FkFloatVec3 headVec) = 0;
+
+    virtual void setScale(FkFloatVec3 value) = 0;
+
+    virtual void setRotation(FkRational _radian) = 0;
+
+    virtual void setTranslate(FkFloatVec3 value) = 0;
+
+    virtual void calc() = 0;
+
+    virtual FkDoubleVec2 calcVec2(FkDoubleVec2 &vec2) = 0;
 
     virtual std::string toString() override;
-
-public:
-    glm::mat4 mat4;
 };
 
 #endif //FK_BASE_FKMATRIX_H

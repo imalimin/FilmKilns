@@ -9,8 +9,7 @@
 #define FK_GRAPHIC_FKMVPMATRIX_H
 
 #include "FkMatrix.h"
-#include "FkFloatVec3.h"
-#include "FkRational.h"
+#include "glm.hpp"
 
 FK_SUPER_CLASS(FkMVPMatrix, FkMatrix) {
 FK_DEF_CLASS_TYPE_FUNC(FkMVPMatrix)
@@ -27,19 +26,26 @@ public:
 
     virtual ~FkMVPMatrix();
 
-    void setViewSize(int32_t width, int32_t height);
+    virtual void setViewSize(int32_t width, int32_t height) override;
 
-    void lookAt(FkFloatVec3 cameraPosition, FkFloatVec3 shootVec, FkFloatVec3 headVec);
+    virtual void lookAt(FkFloatVec3 cameraPosition,
+                        FkFloatVec3 shootVec,
+                        FkFloatVec3 headVec) override;
 
-    void setScale(FkFloatVec3 value);
+    virtual void setScale(FkFloatVec3 value) override;
 
-    void setRotation(FkRational _radian);
+    virtual void setRotation(FkRational _radian) override;
 
-    void setTranslate(FkFloatVec3 value);
+    virtual void setTranslate(FkFloatVec3 value) override;
 
-    void calc();
+    virtual void calc() override;
+
+    virtual FkDoubleVec2 calcVec2(FkDoubleVec2 &vec2) override;
+
+    virtual const void *get() override;
 
 private:
+    glm::mat4 mat4;
     kProjType type;
     glm::mat4 proj;
     glm::mat4 view;

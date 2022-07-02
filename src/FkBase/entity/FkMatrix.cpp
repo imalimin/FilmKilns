@@ -6,31 +6,19 @@
 */
 
 #include "FkMatrix.h"
-#include "ext.hpp"
 
 FK_IMPL_CLASS_TYPE(FkMatrix, FkObject)
 
-FkMatrix::FkMatrix() : FkObject(), mat4(glm::mat4(1.0f)) {
+FkMatrix::FkMatrix() : FkObject() {
 
 }
 
-FkMatrix::FkMatrix(const FkMatrix &o) : FkObject(o), mat4(o.mat4) {
+FkMatrix::FkMatrix(const FkMatrix &o) : FkObject(o) {
 
 }
 
 FkMatrix::~FkMatrix() {
 
-}
-
-const void *FkMatrix::get() {
-//    glm::mat4 proj = glm::perspective(glm::radians(0.0f), 1440.0f / 2526.0f, 0.1f, 100.0f);
-//    glm::mat4 proj = glm::ortho(0.0f, 1440.0f, 0.0f, 2526.0f, 0.1f, 100.0f);
-//    glm::mat4 view;
-//    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-//    glm::mat4 model = glm::mat4(1.0f);
-//    model  = glm::translate(model, glm::vec3(1.0f, 1.0f, 1.0f));
-//    mat4 = proj * model;
-    return glm::value_ptr(mat4);
 }
 
 std::string FkMatrix::toString() {
