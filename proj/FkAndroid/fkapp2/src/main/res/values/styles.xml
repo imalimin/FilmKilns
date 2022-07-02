@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -9,6 +9,7 @@
         <item name="fluentuiProgressBackgroundColor">@color/colorPrimaryDark</item>
         <item name="fluentuiContextualCommandBarBackgroundColorSelected">@color/white</item>
         <item name="fluentuiContextualCommandBarIconTintSelected">@color/colorAccent</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">true</item>
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme" />

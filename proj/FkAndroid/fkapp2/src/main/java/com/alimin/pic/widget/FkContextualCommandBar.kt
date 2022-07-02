@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
@@ -323,6 +324,9 @@ internal class CommandItemAdapter(
     override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
         val viewType = getItemViewType(position)
         val viewHolder = vh as ViewHolder
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            viewHolder.label.isForceDarkAllowed = false
+        };
         val commandItem = flattenCommandItems[position]
         val isItemSelected = commandItem.isSelected()
         val isItemEnabled = commandItem.isEnabled()

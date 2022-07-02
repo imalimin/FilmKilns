@@ -35,6 +35,7 @@
                 android:text="@string/main_slogan_title"
                 android:textAppearance="@style/TextAppearance.FluentUI.Title1"
                 android:textColor="@color/white"
+                android:forceDarkAllowed="false"
                 android:textSize="48sp" />
 
             <TextView
