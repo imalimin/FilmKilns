@@ -32,6 +32,9 @@ protected:
 
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> &p);
+
+    int64_t totalTime = 0;
+    int64_t drawCount = 0;
 };
 
 #endif //FK_GRAPHIC_FKSCREENQUARK_H

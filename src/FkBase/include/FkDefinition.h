@@ -11,6 +11,7 @@
 #include "FkLogcat.h"
 #include "FkClassType.h"
 #include <functional>
+#include <inttypes.h>
 
 // +-------- Define --------+
 #define FK_INTERFACE class

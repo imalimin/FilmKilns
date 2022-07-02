@@ -55,7 +55,7 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     }
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glBlendEquation(GL_FUNC_ADD);
     FK_GL_CHECK(programCompo->program->bind());
     for (auto &path : paths) {
@@ -66,7 +66,7 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
             programCompo->program->addValue(std::make_shared<FkSizeCompo>(size));
             programCompo->program->addValue(std::make_shared<FkColorCompo>(compo->color));
             programCompo->program->addValue(compo);
-            _drawSlices(dstTexArray, fboCompo->fbo, programCompo->program, size, count);
+            _drawSlices(dstTexArray, fboCompo->fbo, programCompo->program, count);
         }
     }
     programCompo->program->unbind();
@@ -78,7 +78,7 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
 FkResult FkRenderPathQuark::_drawSlices(std::shared_ptr<FkTexArrayCompo> &dstArray,
                                         std::shared_ptr<FkGraphicFrameObject> &fbo,
                                         std::shared_ptr<FkGraphicProgram> &program,
-                                        FkSize viewPort, int32_t count) {
+                                        int32_t count) {
     FkIntVec2 pos(0, 0);
     for (int y = 0; y < dstArray->blocks.y; ++y) {
         pos.x = 0;

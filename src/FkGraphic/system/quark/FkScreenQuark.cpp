@@ -86,7 +86,15 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     vboCompo->unbind();
     programCompo->program->unbind();
     if (context) {
+        auto startTime = FkTimeUtils::getCurrentTimeUS();
         FK_GL_CHECK(context->swapBuffers());
+        totalTime += (FkTimeUtils::getCurrentTimeUS() - startTime);
+        ++drawCount;
+        if (drawCount % 60 == 0) {
+            FkLogD(FK_DEF_TAG, "Draw screen avg cost %" PRId64, totalTime / drawCount);
+            totalTime = 0;
+            drawCount = 0;
+        }
     }
     return FK_OK;
 }

@@ -37,7 +37,7 @@ private:
     FkResult _drawSlices(std::shared_ptr<FkTexArrayCompo> &dstArray,
                          std::shared_ptr<FkGraphicFrameObject> &fbo,
                          std::shared_ptr<FkGraphicProgram> &program,
-                         FkSize viewPort, int32_t count);
+                         int32_t count);
 
     FkResult _drawSlice(std::shared_ptr<FkGraphicTexture> &tex,
                          std::shared_ptr<FkGraphicFrameObject> &fbo,
