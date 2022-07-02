@@ -14,6 +14,7 @@
 #include "FkPathCompo.h"
 #include "FkSizeCompo.h"
 #include "FkColorCompo.h"
+#include "FkViewportMatCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicPathProgram, FkGraphicProgram)
 
@@ -36,6 +37,8 @@ FkResult FkGraphicPathProgram::create() {
         FkAssert(aPosLoc >= 0, FK_FAIL);
         uPaintColorLoc = getUniformLocation("paintColor");
         FkAssert(uPaintColorLoc >= 0, FK_FAIL);
+        uViewportMatLoc = getUniformLocation("viewportMat");
+        FkAssert(uViewportMatLoc >= 0, FK_FAIL);
     }
     return ret;
 }
@@ -75,6 +78,10 @@ FkResult FkGraphicPathProgram::addValue(std::shared_ptr<FkComponent> value) {
         FK_GL_CHECK(glEnableVertexAttribArray(aPosLoc));
         //xy
         FK_GL_CHECK(glVertexAttribPointer(aPosLoc, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, vertexes.data()));
+    } else if (FK_INSTANCE_OF(value, FkViewportMatCompo) && uViewportMatLoc >= 0) {
+        auto pValue = Fk_POINTER_CAST(FkViewportMatCompo, value);
+        glUniformMatrix4fv(uViewportMatLoc, 1, GL_FALSE,
+                           reinterpret_cast<const GLfloat *>(pValue->value->get()));
     }
     return FkGraphicProgram::addValue(value);
 }
@@ -83,8 +90,9 @@ std::string FkGraphicPathProgram::getVertex() {
     std::string shader(R"(
         precision highp float;
         attribute vec4 aPosition;
+        uniform mat4 viewportMat;
         void main() {
-            gl_Position = aPosition;
+            gl_Position = viewportMat * aPosition;
         })");
     return shader;
 }

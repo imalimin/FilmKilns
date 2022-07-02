@@ -123,24 +123,11 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         for (int x = 0; x < dstTexArray->blocks.x; ++x) {
             int index = y * dstTexArray->blocks.x + x;
             auto tex = (*dstTexArray)[index];
-            auto matrix = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
-//            matrix->setViewSize(tex->desc.size.getWidth(), tex->desc.size.getHeight());
-//            matrix->lookAt(FkFloatVec3(0.0f, 0.0f, 1.0f),
-//                           FkFloatVec3(0.0f, 0.0f, 0.0f),
-//                           FkFloatVec3(0.0f, 1.0f, 0.0f));
-            FkFloatVec3 scale(size.getWidth() * 1.0f / tex->desc.size.getWidth(),
-                              size.getHeight() * 1.0f / tex->desc.size.getHeight(), 1.0f);
-            FkFloatVec3 trans(0.0f,
-                              1.0f - (tex->desc.size.getHeight() + pos.y) * 1.0f / size.getHeight(),
-                              1.0f);
-            matrix->setScale(scale);
-            matrix->setTranslate(trans);
-            matrix->calc();
             auto compo = std::make_shared<FkViewportMatCompo>();
-            compo->value = matrix;
+            compo->value = dstTexArray->calcViewportMatrix(index, pos);
+            programCompo->program->addValue(compo);
 
             glViewport(0, 0, tex->desc.size.getWidth(), tex->desc.size.getHeight());
-            programCompo->program->addValue(compo);
             fboCompo->fbo->attach(tex);
             FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
 #if 0

@@ -17,6 +17,7 @@
 #include "FkPathCompo.h"
 #include "FkSizeCompo.h"
 #include "FkColorCompo.h"
+#include "FkViewportMatCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderPathQuark, FkQuark)
 
@@ -65,7 +66,7 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
             programCompo->program->addValue(std::make_shared<FkSizeCompo>(size));
             programCompo->program->addValue(std::make_shared<FkColorCompo>(compo->color));
             programCompo->program->addValue(compo);
-            _drawSlices(dstTexArray, fboCompo->fbo, size, count);
+            _drawSlices(dstTexArray, fboCompo->fbo, programCompo->program, size, count);
         }
     }
     programCompo->program->unbind();
@@ -74,19 +75,24 @@ FkResult FkRenderPathQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     return FK_DONE;
 }
 
-FkResult FkRenderPathQuark::_drawSlices(std::shared_ptr<FkTexArrayCompo> &dst,
+FkResult FkRenderPathQuark::_drawSlices(std::shared_ptr<FkTexArrayCompo> &dstArray,
                                         std::shared_ptr<FkGraphicFrameObject> &fbo,
+                                        std::shared_ptr<FkGraphicProgram> &program,
                                         FkSize viewPort, int32_t count) {
     FkIntVec2 pos(0, 0);
-    for (int y = 0; y < dst->blocks.y; ++y) {
+    for (int y = 0; y < dstArray->blocks.y; ++y) {
         pos.x = 0;
-        for (int x = 0; x < dst->blocks.x; ++x) {
-            int index = y * dst->blocks.x + x;
-            auto tex = (*dst)[index];
-            glViewport(-pos.x, -pos.y, viewPort.getWidth(), viewPort.getHeight());
+        for (int x = 0; x < dstArray->blocks.x; ++x) {
+            int index = y * dstArray->blocks.x + x;
+            auto tex = (*dstArray)[index];
+            auto compo = std::make_shared<FkViewportMatCompo>();
+            compo->value = dstArray->calcViewportMatrix(index, pos);
+            program->addValue(compo);
+
+            glViewport(0, 0, tex->desc.size.getWidth(), tex->desc.size.getHeight());
             _drawSlice(tex, fbo, count);
 
-            if (dst->blocks.x == x + 1) {
+            if (dstArray->blocks.x == x + 1) {
                 pos.y += tex->desc.size.getHeight();
             }
             pos.x += tex->desc.size.getWidth();

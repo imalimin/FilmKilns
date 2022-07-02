@@ -16,6 +16,7 @@
 #include "FkTexArrayCompo.h"
 #include "FkGraphicFrameObject.h"
 #include "FkGraphicTexture.h"
+#include "FkGraphicProgram.h"
 
 FK_SUPER_CLASS(FkRenderPathQuark, FkQuark) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderPathQuark)
@@ -33,8 +34,9 @@ protected:
 private:
     FkResult _onRender(std::shared_ptr<FkProtocol> &p);
 
-    FkResult _drawSlices(std::shared_ptr<FkTexArrayCompo> &dst,
+    FkResult _drawSlices(std::shared_ptr<FkTexArrayCompo> &dstArray,
                          std::shared_ptr<FkGraphicFrameObject> &fbo,
+                         std::shared_ptr<FkGraphicProgram> &program,
                          FkSize viewPort, int32_t count);
 
     FkResult _drawSlice(std::shared_ptr<FkGraphicTexture> &tex,

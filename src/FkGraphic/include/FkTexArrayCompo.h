@@ -15,6 +15,7 @@
 #include "FkComponent.h"
 #include "FkIntVec2.h"
 #include "FkGraphicTexture.h"
+#include "FkMatrix.h"
 
 FK_SUPER_CLASS(FkTexArrayCompo, FkComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkTexArrayCompo)
@@ -33,6 +34,8 @@ public:
     std::shared_ptr<FkGraphicTexture> &operator[](int32_t i);
 
     const std::shared_ptr<FkGraphicTexture> &operator[](int32_t i) const;
+
+    std::shared_ptr<FkMatrix> calcViewportMatrix(int32_t index, FkIntVec2 &pos);
 
 public:
     FkIntVec2 blocks;

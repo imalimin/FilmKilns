@@ -37,7 +37,7 @@ public:
 private:
     std::vector<int32_t> uTexLocArray;
     int32_t uMVPMatLoc = -1;
-    int32_t uViewpostMatLoc = -1;
+    int32_t uViewportMatLoc = -1;
     int32_t aPosLoc = -1;
     int32_t aCoordinateLoc = -1;
     int32_t uColsLoc = -1;

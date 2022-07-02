@@ -43,7 +43,7 @@ FkResult FkGraphicMatProgram::create() {
         }
         uMVPMatLoc = getUniformLocation("mvp");
         FkAssert(uMVPMatLoc >= 0, FK_FAIL);
-        uViewpostMatLoc = getUniformLocation("viewportMat");
+        uViewportMatLoc = getUniformLocation("viewportMat");
         uColsLoc = getUniformLocation("colsX");
         uRowsLoc = getUniformLocation("rowsY");
         uWidthLoc = getUniformLocation("width");
@@ -127,9 +127,9 @@ FkResult FkGraphicMatProgram::addValue(std::shared_ptr<FkComponent> value) {
         FK_GL_CHECK(glVertexAttribPointer(aCoordinateLoc,
                                           desc.countPerVertex, GL_FLOAT, GL_FALSE, 0,
                                           reinterpret_cast<const void *>(offset)));
-    } else if (FK_INSTANCE_OF(value, FkViewportMatCompo) && uViewpostMatLoc >= 0) {
+    } else if (FK_INSTANCE_OF(value, FkViewportMatCompo) && uViewportMatLoc >= 0) {
         auto pValue = Fk_POINTER_CAST(FkViewportMatCompo, value);
-        glUniformMatrix4fv(uViewpostMatLoc, 1, GL_FALSE,
+        glUniformMatrix4fv(uViewportMatLoc, 1, GL_FALSE,
                            reinterpret_cast<const GLfloat *>(pValue->value->get()));
     } else if (FK_INSTANCE_OF(value, FkMatCompo)) {
         auto pValue = Fk_POINTER_CAST(FkMatCompo, value);
@@ -148,9 +148,7 @@ std::string FkGraphicMatProgram::getVertex() {
         uniform mat4 mvp;
         uniform mat4 viewportMat;
         void main() {
-            vec4 pos = mvp * aPosition;
-            vec4 pos1 = viewportMat * pos;
-            gl_Position = pos1;
+            gl_Position = viewportMat * mvp * aPosition;
             vTextureCoord = aTextureCoord;
         })");
     return shader;
