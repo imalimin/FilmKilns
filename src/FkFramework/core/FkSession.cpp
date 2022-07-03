@@ -115,7 +115,7 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
         }
         if (FK_DONE == ret) {
             FkLogD(FK_DEF_TAG, "%s`s session on %s is done.", protocol->getClassType().getName(), quark->getClassType().getName());
-            return FK_DONE;
+            return FK_OK;
         }
         if (FK_OK != ret) {
             FkLogE(FK_DEF_TAG, "%s`s session on %s process failed.", protocol->getClassType().getName(), quark->getClassType().getName());

@@ -49,6 +49,7 @@ assert(condition)
 
 // +------ State Code ------+
 typedef int32_t FkResult;
+#define FK_DONE 1
 #define FK_OK 0
 #define FK_FAIL -1
 #define FK_INVALID_STATE -2
@@ -69,8 +70,7 @@ typedef int32_t FkResult;
 #define FK_IO_FAIL -301
 
 #define FK_SKIP -400
-#define FK_DONE -401
-#define FK_DO_NOTHING -402
+#define FK_DO_NOTHING -401
 
 // +------ ID ------+
 typedef int32_t FkID;
