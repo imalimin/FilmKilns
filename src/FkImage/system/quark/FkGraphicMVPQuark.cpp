@@ -69,18 +69,35 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
     auto canvasScale = FK_FIND_COMPO(proto->canvas, FkScaleComponent);
     FkAssert(nullptr != canvasScale, FK_FAIL);
-    auto layerScale = FK_FIND_COMPO(proto->layer, FkScaleComponent);
-    FkAssert(nullptr != layerScale, FK_FAIL);
-    auto layerRotate = FK_FIND_COMPO(proto->layer, FkRotateComponent);
-    FkAssert(nullptr != layerScale, FK_FAIL);
+    canvasScale = std::make_shared<FkScaleComponent>(canvasScale->value);
+    auto canvasRotate = FK_FIND_COMPO(proto->canvas, FkRotateComponent);
+    FkAssert(nullptr != canvasRotate, FK_FAIL);
+    glm::mat4 canvasMat = glm::mat4(1.0f);
+    canvasMat = glm::rotate(canvasMat, -canvasRotate->value.toFloat(), glm::vec3(0.0f, 0.0f, 1.0f));
+    canvasMat = glm::scale(canvasMat, glm::vec3(1.0f / canvasScale->value.x,
+                                                1.0f / canvasScale->value.x, 1.0f));
 
-    glm::mat4 mat = glm::mat4(1.0f);
-    mat = glm::rotate(mat, -layerRotate->value.num * 1.0f / layerRotate->value.den,
-                      glm::vec3(0.0f, 0.0f, 1.0f));
-    mat = glm::scale(mat, glm::vec3(1.0f / canvasScale->value.x / layerScale->value.x,
-                                    1.0f / canvasScale->value.x / layerScale->value.y, 1.0f));
+    std::shared_ptr<FkScaleComponent> layerScale = nullptr;
+    std::shared_ptr<FkRotateComponent> layerRotate = nullptr;
+    if (proto->layer) {
+        layerScale = FK_FIND_COMPO(proto->layer, FkScaleComponent);
+        layerRotate = FK_FIND_COMPO(proto->layer, FkRotateComponent);
+    }
+    if (layerScale == nullptr) {
+        layerScale = std::make_shared<FkScaleComponent>();
+        layerScale->value = FkFloatVec3(1.0f, 1.0f, 1.0f);
+    }
+    if (layerRotate == nullptr) {
+        layerRotate = std::make_shared<FkRotateComponent>();
+        layerRotate->value = FkRational(0, 1);
+    }
+    glm::mat4 layerMat = glm::mat4(1.0f);
+    layerMat = glm::rotate(layerMat, -layerRotate->value.toFloat(), glm::vec3(0.0f, 0.0f, 1.0f));
+    layerMat = glm::scale(layerMat, glm::vec3(1.0f / layerScale->value.x,
+                                              1.0f / layerScale->value.x, 1.0f));
+
     glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
-    vec = vec * mat;
+    vec = vec * canvasMat * layerMat;
     proto->value.x = vec.x;
     proto->value.y = vec.y;
     return FK_OK;
@@ -104,9 +121,6 @@ FkDoubleVec2 FkGraphicMVPQuark::_calcPoint2OtherCoordination(FkDoubleVec2 &point
     auto rotate = layer->getRotate();
     auto scale = layer->getScale();
     auto size = layer->getSize();
-    if (layer->id == Fk_CANVAS_ID) {
-        rotate.num = -rotate.num;
-    }
 
     auto mat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
     mat->setViewSize(size.getWidth(), size.getHeight());
@@ -142,17 +156,22 @@ std::shared_ptr<FkMVPMatrix> FkGraphicMVPQuark::_calcMat(std::shared_ptr<FkGraph
                    FkFloatVec3(0.0f, 0.0f, 0.0f),
                    FkFloatVec3(0.0f, 1.0f, 0.0f));
     _setTranslate(matrix, layer);
-    _setRotation(matrix, layer);
+    _setRotation(matrix, layer, reverseY);
     _setScale(matrix, layer, targetSize, reverseY);
     matrix->calc();
     return matrix;
 }
 
 FkResult FkGraphicMVPQuark::_setRotation(std::shared_ptr<FkMVPMatrix> matrix,
-                                         std::shared_ptr<FkGraphicLayer> layer) {
+                                         std::shared_ptr<FkGraphicLayer> layer,
+                                         bool reverseY) {
     auto comp = FK_FIND_COMPO(layer, FkRotateComponent);
     FkAssert(nullptr != comp, FK_FAIL);
-    matrix->setRotation(comp->value);
+    auto value = comp->value;
+    if (reverseY) {
+        value.num *= -1;
+    }
+    matrix->setRotation(value);
     return FK_OK;
 }
 

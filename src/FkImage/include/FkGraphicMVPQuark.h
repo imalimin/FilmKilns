@@ -45,7 +45,8 @@ private:
 
 private:
     FkResult _setRotation(std::shared_ptr<FkMVPMatrix> matrix,
-                          std::shared_ptr<FkGraphicLayer> layer);
+                          std::shared_ptr<FkGraphicLayer> layer,
+                          bool reverseY);
 
     FkResult _setScale(std::shared_ptr<FkMVPMatrix> matrix,
                        std::shared_ptr<FkGraphicLayer> layer,
