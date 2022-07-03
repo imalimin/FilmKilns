@@ -42,7 +42,7 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
     private fun selectLayer(layerId: Int) {
         presenter.selectLayer(layerId)
         getCommandBar()?.setItemSelected {
-            return@setItemSelected if (it is LayerCommandItem) {
+            return@setItemSelected if (it is LayerCommandItem && it.layerId >= 0) {
                 presenter.isSelectedLayer(it.layerId)
             } else {
                 false
@@ -57,7 +57,7 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
                     presenter.newLayerWithColor(Size(512, 512), 255, 255, 255, 125)
                 }
                 else -> {
-                    if (item.layerId > 0) {
+                    if (item.layerId >= 0) {
                         selectLayer(item.layerId)
                     }
                 }
@@ -98,17 +98,9 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
                 }
             }
         })
+        addLayerItemView(0, getString(R.string.canvas))
         layers.forEach {
-            val label = "Layer ${it.id}: ${it.size.width}x${it.size.height}"
-            val group = CommandItemGroup().apply {
-                id = "layer"
-                addItem(LayerCommandItem(layerId = it.id, label = label))
-            }
-            requireActivity().runOnUiThread(object : Runnable {
-                override fun run() {
-                    getCommandBar()?.addItemGroup(group)
-                }
-            })
+            addLayerItemView(it.id, "Layer ${it.id}: ${it.size.width}x${it.size.height}")
         }
         requireActivity().runOnUiThread(object : Runnable {
             override fun run() {
@@ -118,5 +110,17 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
     }
 
     override fun onLayer(layer: FkImageLayerOuterClass.FkImageLayer) {
+    }
+
+    private fun addLayerItemView(layerId: Int, label: String) {
+        val group = CommandItemGroup().apply {
+            id = "layer"
+            addItem(LayerCommandItem(layerId = layerId, label = label))
+        }
+        requireActivity().runOnUiThread(object : Runnable {
+            override fun run() {
+                getCommandBar()?.addItemGroup(group)
+            }
+        })
     }
 }

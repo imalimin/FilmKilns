@@ -81,7 +81,7 @@ class ImagePresenter(
     }
 
     override fun selectLayer(layerId: Int) {
-        if (layerId > 0) {
+        if (layerId >= 0) {
             curLayer = layerId
         }
     }
@@ -91,7 +91,7 @@ class ImagePresenter(
     override fun newLayerWithFile(path: String) {
         val layer = engine.newLayerWithFile(path)
         if (curLayer < 0) {
-            curLayer = layer
+            selectLayer(layer)
         }
         engine.notifyRender()
         if (layer > 0) {
@@ -189,7 +189,7 @@ class ImagePresenter(
     }
 
     private fun checkCurLayer(): Boolean {
-        return curLayer > 0
+        return curLayer >= 0
     }
 
     @Synchronized

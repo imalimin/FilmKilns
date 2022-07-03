@@ -666,7 +666,7 @@ internal class FkCommandMenuItem(
 
     fun asCommandItem(): LayerCommandItem {
         return LayerCommandItem(
-            layerId = 0,
+            layerId = -1,
             id = id,
             gId = gId,
             iconRes,

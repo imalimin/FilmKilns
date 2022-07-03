@@ -10,6 +10,7 @@
     <string name="layer_del">删除图层</string>
     <string name="layer_info">图层信息</string>
     <string name="add_layer">新建图层</string>
+    <string name="canvas">画布</string>
     <string name="save">保存</string>
     <string name="saving">保存中</string>
     <string name="saved">已保存</string>
