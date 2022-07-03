@@ -25,6 +25,10 @@ public:
                                  std::shared_ptr<FkBuffer> &dst, FkSize size,
                                  FkIntVec2 pos);
 
+    static int memcpy(uint8_t *dst, uint8_t *src, int size);
+
+    static void neon_memcpy(volatile unsigned char *dst, volatile unsigned char *src, int sz);
+
 private:
     FkMemUtils() {};
 

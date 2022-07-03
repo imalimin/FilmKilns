@@ -171,6 +171,7 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkT
 FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &texArray,
                                              std::shared_ptr<FkTexEntity> &texEntity,
                                              std::shared_ptr<FkBuffer> buf) {
+    auto startTime = FkTimeUtils::getCurrentTimeUS();
     FkIntVec2 pos(0, 0);
     std::shared_ptr<FkBuffer> dstBuf = nullptr;
     for (int y = 0; y < texArray->blocks.y; ++y) {
@@ -214,6 +215,7 @@ FkResult FkRenderTexQuark::_updateTexWithBuf(std::shared_ptr<FkTexArrayCompo> &t
             pos.x += tex->desc.size.getWidth();
         }
     }
+    FkLogD(FK_DEF_TAG, "_updateTexWithBuf cost %" PRId64, FkTimeUtils::getCurrentTimeUS() - startTime);
     return FK_OK;
 }
 
