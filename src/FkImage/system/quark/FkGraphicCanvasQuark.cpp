@@ -82,7 +82,11 @@ FkResult FkGraphicCanvasQuark::_onPostTranslate(std::shared_ptr<FkProtocol> p) {
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
-    return FkGraphicLayerQuark::_onPostTranslate(p);
+    auto ret = FkGraphicLayerQuark::_onPostTranslate(p);
+    if (FK_OK == ret) {
+        ret = FK_DONE;
+    }
+    return ret;
 }
 
 FkResult FkGraphicCanvasQuark::_onSetTranslate(std::shared_ptr<FkProtocol> p) {
@@ -90,7 +94,11 @@ FkResult FkGraphicCanvasQuark::_onSetTranslate(std::shared_ptr<FkProtocol> p) {
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
-    return FkGraphicLayerQuark::_onPostTranslate(p);
+    auto ret = FkGraphicLayerQuark::_onSetTranslate(p);
+    if (FK_OK == ret) {
+        ret = FK_DONE;
+    }
+    return ret;
 }
 
 FkResult FkGraphicCanvasQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
@@ -98,7 +106,11 @@ FkResult FkGraphicCanvasQuark::_onPostScale(std::shared_ptr<FkProtocol> p) {
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
-    return FkGraphicLayerQuark::_onPostScale(p);
+    auto ret = FkGraphicLayerQuark::_onPostScale(p);
+    if (FK_OK == ret) {
+        ret = FK_DONE;
+    }
+    return ret;
 }
 
 FkResult FkGraphicCanvasQuark::_onSetScale(std::shared_ptr<FkProtocol> p) {
@@ -106,7 +118,11 @@ FkResult FkGraphicCanvasQuark::_onSetScale(std::shared_ptr<FkProtocol> p) {
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
-    return FkGraphicLayerQuark::_onPostScale(p);
+    auto ret = FkGraphicLayerQuark::_onSetScale(p);
+    if (FK_OK == ret) {
+        ret = FK_DONE;
+    }
+    return ret;
 }
 
 FkResult FkGraphicCanvasQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
@@ -114,7 +130,11 @@ FkResult FkGraphicCanvasQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
-    return FkGraphicLayerQuark::_onPostRotate(p);
+    auto ret = FkGraphicLayerQuark::_onPostRotate(p);
+    if (FK_OK == ret) {
+        ret = FK_DONE;
+    }
+    return ret;
 }
 
 FkResult FkGraphicCanvasQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
@@ -122,7 +142,11 @@ FkResult FkGraphicCanvasQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
     if (proto->layer != Fk_CANVAS_ID) {
         return FK_OK;
     }
-    return FkGraphicLayerQuark::_onPostRotate(p);
+    auto ret = FkGraphicLayerQuark::_onSetRotate(p);
+    if (FK_OK == ret) {
+        ret = FK_DONE;
+    }
+    return ret;
 }
 
 FkResult FkGraphicCanvasQuark::_onQueryCanvasSize(std::shared_ptr<FkProtocol> &p) {

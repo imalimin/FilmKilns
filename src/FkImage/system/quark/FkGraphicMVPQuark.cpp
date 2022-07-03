@@ -81,8 +81,6 @@ FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
                                     1.0f / canvasScale->value.x / layerScale->value.y, 1.0f));
     glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
     vec = vec * mat;
-    auto x = proto->value.x;
-    auto y = proto->value.y;
     proto->value.x = vec.x;
     proto->value.y = vec.y;
     return FK_OK;
@@ -106,6 +104,9 @@ FkDoubleVec2 FkGraphicMVPQuark::_calcPoint2OtherCoordination(FkDoubleVec2 &point
     auto rotate = layer->getRotate();
     auto scale = layer->getScale();
     auto size = layer->getSize();
+    if (layer->id == Fk_CANVAS_ID) {
+        rotate.num = -rotate.num;
+    }
 
     auto mat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
     mat->setViewSize(size.getWidth(), size.getHeight());

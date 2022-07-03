@@ -10,6 +10,9 @@
 
 #include "FkMath.h"
 
+
+const double FkMath::PI = M_PI;
+
 FkMath::~FkMath() {
 
 }

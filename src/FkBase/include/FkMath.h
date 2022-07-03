@@ -17,6 +17,8 @@
 
 class FkMath {
 public:
+    const static double PI;
+
     virtual ~FkMath();
 
     static float distance(FkIntVec2 &p0, FkIntVec2 &p1);
