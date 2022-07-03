@@ -80,6 +80,11 @@ public:
         EXPECT_EQ(engine->postRotation(layerId, rational), FK_OK);
     }
 
+    void setTestRotate2(FkID layerId) {
+        FkRational rational(1, 2);
+        EXPECT_EQ(engine->postRotation(layerId, rational), FK_OK);
+    }
+
 protected:
     std::string workspace;
     std::string fkpFile;
@@ -143,6 +148,21 @@ TEST_F(FkImageEngineTest, MvpAndCrop) {
     render();
     EXPECT_TRUE(testColor(engine, 0, 224, FkColor::red()));
 //    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
+}
+
+TEST_F(FkImageEngineTest, WithCanvasMvp) {
+    auto layerId = addImagePosLayer();
+    setTestCanvasSize();
+    setTestPosition(layerId);
+    setTestScale(layerId);
+    setTestRotate(layerId);
+    setTestPosition(0);
+    setTestScale(0);
+    setTestRotate2(0);
+    render();
+    EXPECT_TRUE(testColor(engine, 396, 497, FkColor::white()));
+    EXPECT_TRUE(testColor(engine, 51, 458, FkColor::red()));
+    EXPECT_EQ(engine->save(FK_ANDROID_TEST_TEMP_FILE), FK_OK);
 }
 
 TEST_F(FkImageEngineTest, DrawPath) {
