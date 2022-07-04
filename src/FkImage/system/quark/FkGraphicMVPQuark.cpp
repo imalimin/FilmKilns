@@ -15,7 +15,6 @@
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
 #include "FkMeasurePointProto.h"
-#include "ext.hpp"
 
 FK_IMPL_CLASS_TYPE(FkGraphicMVPQuark, FkQuark)
 
@@ -67,39 +66,39 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicMVPQuark::_onMeasureTrans(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkMeasureTransProto, p);
-    auto canvasScale = FK_FIND_COMPO(proto->canvas, FkScaleComponent);
-    FkAssert(nullptr != canvasScale, FK_FAIL);
-    canvasScale = std::make_shared<FkScaleComponent>(canvasScale->value);
-    auto canvasRotate = FK_FIND_COMPO(proto->canvas, FkRotateComponent);
-    FkAssert(nullptr != canvasRotate, FK_FAIL);
-    glm::mat4 canvasMat = glm::mat4(1.0f);
-    canvasMat = glm::rotate(canvasMat, -canvasRotate->value.toFloat(), glm::vec3(0.0f, 0.0f, 1.0f));
-    canvasMat = glm::scale(canvasMat, glm::vec3(1.0f / canvasScale->value.x,
-                                                1.0f / canvasScale->value.x, 1.0f));
+    auto cvScaleCompo = FK_FIND_COMPO(proto->canvas, FkScaleComponent);
+    FkAssert(nullptr != cvScaleCompo, FK_FAIL);
+    auto cvScale = FkFloatVec3(1.0f / cvScaleCompo->value.x, 1.0f / cvScaleCompo->value.y, 1.0f);
+    auto cvRotateCompo = FK_FIND_COMPO(proto->canvas, FkRotateComponent);
+    FkAssert(nullptr != cvRotateCompo, FK_FAIL);
+    auto cvRotate = FkRational(cvRotateCompo->value.num, cvRotateCompo->value.den);
 
-    std::shared_ptr<FkScaleComponent> layerScale = nullptr;
-    std::shared_ptr<FkRotateComponent> layerRotate = nullptr;
+    auto canvasMat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
+    canvasMat->setRotation(cvRotate);
+    canvasMat->setScale(cvScale);
+
+    std::shared_ptr<FkScaleComponent> layerScaleCompo = nullptr;
+    std::shared_ptr<FkRotateComponent> layerRotateCompo = nullptr;
     if (proto->layer) {
-        layerScale = FK_FIND_COMPO(proto->layer, FkScaleComponent);
-        layerRotate = FK_FIND_COMPO(proto->layer, FkRotateComponent);
+        layerScaleCompo = FK_FIND_COMPO(proto->layer, FkScaleComponent);
+        layerRotateCompo = FK_FIND_COMPO(proto->layer, FkRotateComponent);
     }
-    if (layerScale == nullptr) {
-        layerScale = std::make_shared<FkScaleComponent>();
-        layerScale->value = FkFloatVec3(1.0f, 1.0f, 1.0f);
+    if (layerScaleCompo == nullptr) {
+        layerScaleCompo = std::make_shared<FkScaleComponent>();
+        layerScaleCompo->value = FkFloatVec3(1.0f, 1.0f, 1.0f);
     }
-    if (layerRotate == nullptr) {
-        layerRotate = std::make_shared<FkRotateComponent>();
-        layerRotate->value = FkRational(0, 1);
+    if (layerRotateCompo == nullptr) {
+        layerRotateCompo = std::make_shared<FkRotateComponent>();
+        layerRotateCompo->value = FkRational(0, 1);
     }
-    glm::mat4 layerMat = glm::mat4(1.0f);
-    layerMat = glm::rotate(layerMat, -layerRotate->value.toFloat(), glm::vec3(0.0f, 0.0f, 1.0f));
-    layerMat = glm::scale(layerMat, glm::vec3(1.0f / layerScale->value.x,
-                                              1.0f / layerScale->value.x, 1.0f));
+    auto layerScale = FkFloatVec3(1.0f / layerScaleCompo->value.x, 1.0f / layerScaleCompo->value.y, 1.0f);
+    auto layerRotate = FkRational(layerRotateCompo->value.num, layerRotateCompo->value.den);
+    auto layerMat = std::make_shared<FkMVPMatrix>(FkMVPMatrix::kProjType::ORTHO);
+    layerMat->setRotation(layerRotate);
+    layerMat->setScale(layerScale);
 
-    glm::vec4 vec(proto->value.x, proto->value.y, 0, 0);
-    vec = vec * canvasMat * layerMat;
-    proto->value.x = vec.x;
-    proto->value.y = vec.y;
+    proto->value = canvasMat->calcVec2(proto->value);
+    proto->value = layerMat->calcVec2(proto->value);
     return FK_OK;
 }
 

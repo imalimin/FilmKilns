@@ -59,7 +59,11 @@ void FkMVPMatrix::calc() {
     model = glm::rotate(model, -radian.num *1.0f / radian.den, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(scale.x, scale.y, scale.z));
     model = glm::translate(model, glm::vec3(translate.x, translate.y, translate.z));
-    mat4 = proj * view * model;
+    if (proj == glm::mat4(1.0f) && view == glm::mat4(1.0f)) {
+        mat4 = model;
+    } else {
+        mat4 = proj * view * model;
+    }
 }
 
 const void *FkMVPMatrix::get() {
