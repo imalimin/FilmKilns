@@ -19,6 +19,8 @@
 #include "FkRenderContext.h"
 #include "FkGLDefinition.h"
 
+const FkID FkRenderEngine::MSG_RENDER_DEVICE = 0x200;
+
 FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
@@ -58,31 +60,48 @@ FkResult FkRenderEngine::onStop() {
     return client->quickSend<FkOnStopPrt>(molecule);
 }
 
+FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request) {
+    if (request == nullptr) {
+        return FK_NPE;
+    }
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onRender));
+    msg->what = MSG_RENDER_DEVICE;
+    msg->flags = FkMessage::FLAG_UNIQUE;
+    msg->sp = request;
+    return sendMessage(msg);
+}
+
 FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialEntity> &materials,
                                 std::shared_ptr<FkDeviceEntity> &device) {
     if (materials == nullptr || device == nullptr) {
         return FK_NPE;
     }
+    auto request = std::make_shared<FkRenderDeviceRequest>();
+    request->add(materials, device);
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onRender));
-    auto proto = std::make_shared<FkRenderProto>();
-    proto->materials = std::move(materials);
-    proto->device = std::move(device);
-    msg->sp = std::move(proto);
+    msg->what = MSG_RENDER_DEVICE;
+    msg->flags = FkMessage::FLAG_UNIQUE;
+    msg->sp = request;
     return sendMessage(msg);
 }
 
-FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> msg) {
-    auto sp = std::move(msg->sp);
-    auto proto = std::dynamic_pointer_cast<FkRenderProto>(sp);
-    if (proto->env == nullptr) {
+FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> &msg) {
+    auto request = std::dynamic_pointer_cast<FkRenderDeviceRequest>(msg->sp);
+    FkAssert(request != nullptr, FK_FAIL);
+    auto size = request->size();
+    for (int i = 0; i < size; ++i) {
+        auto pair = request->get(i);
+        auto proto = std::make_shared<FkRenderProto>();
+        proto->materials = pair.first;
+        proto->device = pair.second;
         proto->env = std::make_shared<FkEnvEntity>();
+        auto ret = client->with(molecule)->send(proto);
+        auto bufDevice = std::dynamic_pointer_cast<FkBufDeviceEntity>(proto->device);
+        if (bufDevice) {
+            bufDevice->finish();
+        }
     }
-    auto ret = client->with(molecule)->send(proto);
-    auto bufDevice = std::dynamic_pointer_cast<FkBufDeviceEntity>(proto->device);
-    if (bufDevice) {
-        bufDevice->finish();
-    }
-    return ret;
+    return FK_OK;
 }
 
 std::shared_ptr<FkMaterialCompo> FkRenderEngine::addMaterial() {

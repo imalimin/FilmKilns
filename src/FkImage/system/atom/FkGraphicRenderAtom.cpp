@@ -65,22 +65,26 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     if (canvasSizeCompo) {
         renderEngine->updateMaterial(canvas->material, canvasSizeCompo->size, FkColor::transparent());
     }
+    auto request = std::make_shared<FkRenderDeviceRequest>();
     for (auto &layer : proto->req->layers) {
         if (Fk_CANVAS_ID == layer->id) {
             continue;
         }
-        _drawPoints(layer);
-        _drawPaths(layer);
+        _makeDrawPointsRequest(layer, request);
+        _makeDrawPathsRequest(layer, request);
         auto materials = _makeRenderMaterials(layer);
         if (materials) {
             std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(canvas->material);
-            auto ret = renderEngine->renderDevice(materials, device);
+            auto ret = request->add(materials, device);
             FkAssert(FK_OK == ret, ret);
         } else {
             FkLogW(FK_DEF_TAG, "Skip render layer %d", layer->id);
         }
     }
-    return _drawCanvas2Screen(canvas);
+    _makeDrawCanvasRequest(canvas, request);
+    auto ret = renderEngine->renderDevice(request);
+    FkAssert(FK_OK == ret, ret);
+    return ret;
 }
 
 std::shared_ptr<FkMaterialEntity>
@@ -98,23 +102,23 @@ FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer
     return nullptr;
 }
 
-FkResult FkGraphicRenderAtom::_drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas) {
+FkResult FkGraphicRenderAtom::_makeDrawCanvasRequest(std::shared_ptr<FkGraphicLayer> &canvas,
+                                                     std::shared_ptr<FkRenderDeviceRequest> &request) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
     auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     auto materials = _makeRenderMaterials(canvas);
     if (materials) {
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
-        auto ret = renderEngine->renderDevice(materials, device);
-        FkAssert(FK_OK == ret, ret);
-        return ret;
+        return request->add(materials, device);
     } else {
         FkLogW(FK_DEF_TAG, "Skip render canvas %d");
     }
     return FK_FAIL;
 }
 
-FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer) {
+FkResult FkGraphicRenderAtom::_makeDrawPointsRequest(std::shared_ptr<FkGraphicLayer> &layer,
+                                                     std::shared_ptr<FkRenderDeviceRequest> &request) {
     std::vector<std::shared_ptr<FkComponent>> vec;
     if (FK_OK != layer->findComponents(vec, FkPointFCompo_Class::type)) {
         return FK_FAIL;
@@ -142,10 +146,8 @@ FkResult FkGraphicRenderAtom::_drawPoints(std::shared_ptr<FkGraphicLayer> &layer
         materials->addComponent(vertex);
         materials->addComponent(pointCompo);
 
-        FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
-        auto renderEngine = context->getRenderEngine();
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(layer->material);
-        return renderEngine->renderDevice(materials, device);
+        return request->add(materials, device);
     }
     return FK_OK;
 }
@@ -182,16 +184,15 @@ FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
     return ret;
 }
 
-FkResult FkGraphicRenderAtom::_drawPaths(std::shared_ptr<FkGraphicLayer> &layer) {
+FkResult FkGraphicRenderAtom::_makeDrawPathsRequest(std::shared_ptr<FkGraphicLayer> &layer,
+                                                    std::shared_ptr<FkRenderDeviceRequest> &request) {
     std::vector<std::shared_ptr<FkComponent>> paths;
     if (layer->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
         std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponents(paths);
 
-        FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
-        auto renderEngine = context->getRenderEngine();
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(layer->material);
-        return renderEngine->renderDevice(materials, device);
+        return request->add(materials, device);
     }
     return FK_FAIL;
 }

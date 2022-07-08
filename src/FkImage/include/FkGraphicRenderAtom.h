@@ -11,6 +11,7 @@
 #include "FkSimpleAtom.h"
 #include "FkGraphicLayer.h"
 #include "FkMaterialEntity.h"
+#include "FkRenderDeviceRequest.h"
 
 FK_SUPER_CLASS(FkGraphicRenderAtom, FkSimpleAtom) {
 FK_DEF_CLASS_TYPE_FUNC(FkGraphicRenderAtom)
@@ -42,11 +43,14 @@ private:
 
     std::shared_ptr<FkMaterialEntity> _makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer);
 
-    FkResult _drawCanvas2Screen(std::shared_ptr<FkGraphicLayer> &canvas);
+    FkResult _makeDrawCanvasRequest(std::shared_ptr<FkGraphicLayer> &canvas,
+                                std::shared_ptr<FkRenderDeviceRequest> &request);
 
-    FkResult _drawPoints(std::shared_ptr<FkGraphicLayer> &layer);
+    FkResult _makeDrawPointsRequest(std::shared_ptr<FkGraphicLayer> &layer,
+                         std::shared_ptr<FkRenderDeviceRequest> &request);
 
-    FkResult _drawPaths(std::shared_ptr<FkGraphicLayer> &layer);
+    FkResult _makeDrawPathsRequest(std::shared_ptr<FkGraphicLayer> &layer,
+                        std::shared_ptr<FkRenderDeviceRequest> &request);
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDERATOM_H

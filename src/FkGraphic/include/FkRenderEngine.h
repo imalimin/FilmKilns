@@ -15,6 +15,7 @@
 #include "FkDeviceEntity.h"
 #include "FkGraphicWindow.h"
 #include "FkBuffer.h"
+#include "FkRenderDeviceRequest.h"
 
 FK_SUPER_CLASS(FkRenderEngine, FkEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderEngine)
@@ -25,6 +26,8 @@ public:
     FkRenderEngine(const FkRenderEngine &o) = delete;
 
     virtual ~FkRenderEngine();
+
+    FkResult renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request);
 
     FkResult renderDevice(std::shared_ptr<FkMaterialEntity> &materials, std::shared_ptr<FkDeviceEntity> &device);
 
@@ -47,7 +50,7 @@ protected:
 
     virtual FkResult onStop() override;
 
-    FkResult _onRender(std::shared_ptr<FkMessage> msg);
+    FkResult _onRender(std::shared_ptr<FkMessage> &msg);
 
     FkResult _onAddMaterial(std::shared_ptr<FkMessage> msg);
 
@@ -60,6 +63,7 @@ protected:
     FkResult _onUpdateWindow(std::shared_ptr<FkMessage> &msg);
 
 private:
+    static const FkID MSG_RENDER_DEVICE;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
 };

@@ -36,9 +36,9 @@
 #include "FkUpdateLayerModelProto.h"
 #include "FkImageContext.h"
 
-FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
-
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
+
+FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
 
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {

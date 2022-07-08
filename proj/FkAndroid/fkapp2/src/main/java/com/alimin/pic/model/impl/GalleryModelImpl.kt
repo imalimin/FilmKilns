@@ -130,7 +130,6 @@ class GalleryModelImpl : GalleryModel {
             MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.MIME_TYPE,
             MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.RELATIVE_PATH,
             MediaStore.Images.Media._ID
         )
     }
