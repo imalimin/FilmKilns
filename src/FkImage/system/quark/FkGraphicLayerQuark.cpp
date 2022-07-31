@@ -39,6 +39,7 @@
 #include "FkDrawPathProto.h"
 #include "FkUpdateLayerModelProto.h"
 #include "FkMeshPath.h"
+#include "FkQueryLayerProto.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -66,6 +67,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPointProto, FkGraphicLayerQuark::_onDrawPoint);
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
+    FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayerProto, FkGraphicLayerQuark::_onQueryLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkCropProto, FkGraphicLayerQuark::_onCrop);
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
@@ -323,6 +325,16 @@ FkResult FkGraphicLayerQuark::_onQueryLayers(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQueryLayersProto, p);
     for (auto &itr : layers) {
         proto->layers.emplace_back(std::make_shared<FkGraphicLayer>(*(itr.second)));
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onQueryLayer(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQueryLayerProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (layers.end() != itr) {
+        auto layer = itr->second;
+        proto->layer = std::make_shared<FkGraphicLayer>(*layer);
     }
     return FK_OK;
 }

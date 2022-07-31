@@ -72,6 +72,8 @@ protected:
 
     FkResult _onQueryLayers(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onQueryLayer(std::shared_ptr<FkProtocol> &p);
+
     virtual FkResult _onCrop(std::shared_ptr<FkProtocol> &p);
 
     FkResult _onUpdateLayerWithModel(std::shared_ptr<FkProtocol> &p);
