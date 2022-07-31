@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".module.image.ImageActivity" />
+        <activity android:name=".module.gallery.GalleryActivity" />
         <activity android:name=".ui.AudioActivity" />
     </application>
 

@@ -1,13 +1,16 @@
 package com.alimin.pic.module.image
 
-import android.util.Size
+import android.app.Activity
+import android.content.Intent
 import android.view.View
 import android.widget.LinearLayout
 import com.alimin.pic.R
 import com.alimin.pic.widget.FkContextualCommandBar
 import com.alimin.pic.widget.LayerCommandItem
 import com.alimin.fk.engine.FkGetLayersListener
+import com.alimin.fk.engine.OnDoStatusListener
 import com.alimin.fk.pb.FkImageLayerOuterClass
+import com.alimin.pic.module.gallery.GalleryActivity
 import com.microsoft.fluentui.contextualcommandbar.CommandItem
 import com.microsoft.fluentui.contextualcommandbar.CommandItemGroup
 import com.microsoft.fluentui.popupmenu.PopupMenu
@@ -15,8 +18,10 @@ import com.microsoft.fluentui.popupmenu.PopupMenuItem
 
 class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter),
     FkContextualCommandBar.OnItemLongClickListener,
-    OnLayerUpdateListener {
+    OnLayerUpdateListener,
+    OnDoStatusListener {
     override val menuResID: Int = R.menu.menu_image_op_layer
+    private var pickImagePath: String? = null
 
     override fun initView() {
         super.initView()
@@ -26,6 +31,7 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
 
     override fun onStart() {
         super.onStart()
+        presenter.addLoadStatusListener(this)
         presenter.addLayerUpdateListener(this)
         presenter.getLayers(object : FkGetLayersListener {
             override fun onGetLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>) {
@@ -37,6 +43,18 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
     override fun onStop() {
         super.onStop()
         presenter.removeLayerUpdateListener(this)
+        presenter.removeLoadStatusListener(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_IMAGE -> {
+                    pickImagePath = data?.getStringExtra("path")
+                }
+            }
+        }
     }
 
     private fun selectLayer(layerId: Int) {
@@ -54,7 +72,11 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
         if (item is LayerCommandItem) {
             when (item.getId()) {
                 R.id.action_layer_add -> {
-                    presenter.newLayerWithColor(Size(512, 512), 255, 255, 255, 125)
+//                    presenter.newLayerWithColor(Size(512, 512), 255, 255, 255, 125)
+                    startActivityForResult(
+                        Intent(context, GalleryActivity::class.java),
+                        REQUEST_IMAGE
+                    )
                 }
                 else -> {
                     if (item.layerId >= 0) {
@@ -68,8 +90,16 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
     override fun onItemLongClick(item: CommandItem, view: View) {
         if (item is LayerCommandItem && item.layerId > 0) {
             val items = arrayListOf(
-                PopupMenuItem(item.layerId, getString(R.string.layer_del), R.drawable.ic_fluent_delete_24_regular),
-                PopupMenuItem(item.layerId, getString(R.string.layer_info), R.drawable.ic_fluent_info_24_regular),
+                PopupMenuItem(
+                    item.layerId,
+                    getString(R.string.layer_del),
+                    R.drawable.ic_fluent_delete_24_regular
+                ),
+                PopupMenuItem(
+                    item.layerId,
+                    getString(R.string.layer_info),
+                    R.drawable.ic_fluent_info_24_regular
+                ),
             )
             val popupMenu =
                 PopupMenu(requireContext(), view, items, PopupMenu.ItemCheckableBehavior.NONE)
@@ -122,5 +152,16 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
                 getCommandBar()?.addItemGroup(group)
             }
         })
+    }
+
+    companion object {
+        const val REQUEST_IMAGE = 0x01
+    }
+
+    override fun onDone() {
+        if (pickImagePath?.isNotEmpty() == true) {
+            presenter.newLayerWithFile(pickImagePath!!)
+            pickImagePath = null
+        }
     }
 }
