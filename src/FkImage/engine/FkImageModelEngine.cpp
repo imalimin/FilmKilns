@@ -21,6 +21,7 @@
 #include "FkPathCompo.h"
 #include "FkPicModelBuilder.h"
 #include "FkPbModel.h"
+#include "FkFuncCompo.h"
 #include <fstream>
 
 FK_IMPL_CLASS_TYPE(FkImageModelEngine, FkEngine)
@@ -77,9 +78,10 @@ FkResult FkImageModelEngine::_save(std::shared_ptr<FkMessage> &msg) {
     return _writeModel2File(dir, model);
 }
 
-FkResult FkImageModelEngine::load(std::string &file) {
+FkResult FkImageModelEngine::load(std::string &file, std::function<void()> finishCallback) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkImageModelEngine::_load));
     msg->arg3 = file;
+    msg->sp = std::make_shared<FkFuncCompo>(finishCallback);
     return sendMessage(msg);
 }
 
@@ -118,6 +120,10 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
     FkAssert(canvasSize.width() != 0 && canvasSize.height() != 0, FK_FAIL);
     engine->setCanvasSize(FkSize(canvasSize.width(), canvasSize.height()));
     engine->notifyRender();
+    if (msg->sp) {
+        FK_CAST_NULLABLE_PTR_RETURN_INT(finishCompo, FkFuncCompo, msg->sp);
+        finishCompo->func();
+    }
     return FK_OK;
 }
 

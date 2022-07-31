@@ -5,6 +5,7 @@ import android.util.Size
 import android.view.Surface
 import com.alimin.fk.core.FkPaint
 import com.alimin.fk.engine.FkGetLayersListener
+import com.alimin.fk.engine.OnDoStatusListener
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.pb.FkImageLayerOuterClass
 import com.lmy.mvp.BaseView
@@ -39,9 +40,11 @@ class ImageContract {
         abstract fun crop(rect: Rect)
         abstract fun save(file: String)
         abstract fun save()
-        abstract fun load()
+        abstract fun load(listener: OnDoStatusListener)
         abstract fun addLayerUpdateListener(l: OnLayerUpdateListener)
         abstract fun removeLayerUpdateListener(l: OnLayerUpdateListener)
+        abstract fun addLoadStatusListener(l: OnDoStatusListener)
+        abstract fun removeLoadStatusListener(l: OnDoStatusListener)
         abstract fun drawPath(x: Int, y: Int)
         abstract fun drawPathFinish()
         abstract fun getPaint(): FkPaint

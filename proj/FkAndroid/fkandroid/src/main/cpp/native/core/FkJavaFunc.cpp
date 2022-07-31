@@ -16,10 +16,10 @@ FkJavaFunc::~FkJavaFunc() {
 }
 
 bool FkJavaFunc::call(JNIEnv *env, jobject obj, ...) {
+    va_list args;
     if (mid == NULL) {
         return false;
     }
-    va_list args;
     va_start(args, obj);
     auto ret = env->CallBooleanMethod(obj, mid, args);
     va_end(args);

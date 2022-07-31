@@ -8,10 +8,7 @@ import com.alimin.pic.model.ImageEngineModel
 import com.alimin.pic.model.impl.ImageEngineModelImpl
 import com.alimin.fk.core.FkPaint
 import com.alimin.fk.define.kScaleType
-import com.alimin.fk.engine.FkGetLayersListener
-import com.alimin.fk.engine.FkImage
-import com.alimin.fk.engine.FkImageModel
-import com.alimin.fk.engine.FkNativeMsgListener
+import com.alimin.fk.engine.*
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.entity.FkResult
 import com.alimin.fk.pb.FkImageLayerOuterClass
@@ -32,6 +29,7 @@ class ImagePresenter(
     private var curLayer = -1
     private var paint = FkPaint(10, Color.WHITE)
     private var layerUpdateListeners = ArrayList<OnLayerUpdateListener>()
+    private var loadStatusListeners = ArrayList<OnDoStatusListener>()
 
     init {
         view.presenter = this
@@ -44,7 +42,11 @@ class ImagePresenter(
         getLayers(object : FkGetLayersListener {
             override fun onGetLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>) {
                 synchronized(this) {
-                    layerUpdateListeners.forEach { it.onLayers(layers) }
+                    layerUpdateListeners.forEach {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            it.onLayers(layers)
+                        }
+                    }
                 }
             }
         })
@@ -58,7 +60,18 @@ class ImagePresenter(
     override fun start() {
         engine.start()
         modelEngine.start()
-        modelEngine.load(cacheFile.absolutePath)
+        modelEngine.load(cacheFile.absolutePath,
+            object : OnDoStatusListener {
+                override fun onDone() {
+                    synchronized(this) {
+                        loadStatusListeners.forEach {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                it.onDone()
+                            }
+                        }
+                    }
+                }
+            })
     }
 
     override fun stop() {
@@ -188,8 +201,8 @@ class ImagePresenter(
         modelEngine.save(cacheFile.absolutePath)
     }
 
-    override fun load() {
-        modelEngine.load(cacheFile.absolutePath)
+    override fun load(listener: OnDoStatusListener) {
+        modelEngine.load(cacheFile.absolutePath, listener)
     }
 
     private fun checkCurLayer(): Boolean {
@@ -204,6 +217,16 @@ class ImagePresenter(
     @Synchronized
     override fun removeLayerUpdateListener(l: OnLayerUpdateListener) {
         layerUpdateListeners.remove(l)
+    }
+
+    @Synchronized
+    override fun addLoadStatusListener(l: OnDoStatusListener) {
+        loadStatusListeners.add(l)
+    }
+
+    @Synchronized
+    override fun removeLoadStatusListener(l: OnDoStatusListener) {
+        loadStatusListeners.remove(l)
     }
 
     override fun drawPath(x: Int, y: Int) {

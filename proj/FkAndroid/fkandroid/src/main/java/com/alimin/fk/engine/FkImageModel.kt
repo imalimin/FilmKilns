@@ -12,6 +12,10 @@ interface FkGetLayersListener {
     fun onGetLayers(layers: List<FkImageLayerOuterClass.FkImageLayer>)
 }
 
+interface OnDoStatusListener {
+    fun onDone()
+}
+
 class FkImageModel(val engine: FkImage) : FkEngine() {
     private var mSyncLock = Object()
     override fun onCreateInstance(): Long = nativeCreateInstance(engine.getHandle())
@@ -53,9 +57,21 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
         return -1
     }
 
-    fun load(file: String): Int {
+    fun load(file: String, listener: OnDoStatusListener): Int {
         if (!isNull()) {
-            return nativeLoad(getHandle(), file)
+            return nativeLoad(getHandle(), file, object : FkNativeMsgListener {
+                override fun onNativeMsgReceived(
+                    what: Int,
+                    arg: Int,
+                    msg: String?,
+                    pbObject: ByteBuffer?
+                ): Boolean {
+//                    if (FkResult(what) == FkResult.FK_OK) {
+                        listener.onDone()
+//                    }
+                    return true
+                }
+            })
         }
         return -1
     }
@@ -91,6 +107,6 @@ class FkImageModel(val engine: FkImage) : FkEngine() {
     private external fun nativeStop(handle: Long)
 
     private external fun nativeSave(handle: Long, file: String): Int
-    private external fun nativeLoad(handle: Long, file: String): Int
+    private external fun nativeLoad(handle: Long, file: String, listener: FkNativeMsgListener): Int
     private external fun nativeGetLayers(handle: Long, listener: FkNativeMsgListener): Int
 }

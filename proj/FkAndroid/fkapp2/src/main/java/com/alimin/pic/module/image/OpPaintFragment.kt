@@ -3,6 +3,7 @@ package com.alimin.pic.module.image
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import com.alimin.fk.engine.OnDoStatusListener
 import com.alimin.pic.R
 import com.microsoft.fluentui.contextualcommandbar.CommandItem
 import kotlinx.android.synthetic.main.fragment_op.*
@@ -16,7 +17,11 @@ class OpPaintFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
         yesNoView.setActionListener {
             reset()
             if (!it) {
-                presenter.load()
+                presenter.load(object : OnDoStatusListener {
+                    override fun onDone() {
+
+                    }
+                })
             }
         }
     }

@@ -70,13 +70,23 @@ JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeSa
 }
 
 JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeLoad)
-        (JNIEnv *env, jobject that, jlong handle, jstring file) {
+        (JNIEnv *env, jobject that, jlong handle, jstring file, jobject listener) {
     auto pFile = env->GetStringUTFChars(file, nullptr);
     std::string fileStr(pFile);
     env->ReleaseStringUTFChars(file, pFile);
 
     auto engine = castHandle(handle);
-    return engine->load(fileStr);
+    auto lRef = std::make_shared<FkJniGlobalRef>(listener);
+    auto finishCallback = [lRef]() {
+        FkJavaRuntime::getInstance().attachThread();
+        JNIEnv *env = nullptr;
+        if (FkJavaRuntime::getInstance().findEnv(&env)) {
+            FkJavaFunc::makeNativeMsgListener(env, lRef->obj())->call(env, lRef->obj(),
+                                                                      0, 0, NULL, NULL);
+        }
+        FkJavaRuntime::getInstance().detachThread();
+    };
+    return engine->load(fileStr, finishCallback);
 }
 
 JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeGetLayers)

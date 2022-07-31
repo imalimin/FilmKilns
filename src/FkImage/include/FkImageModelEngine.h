@@ -42,7 +42,7 @@ public:
 
     FkResult save(std::string &file);
 
-    FkResult load(std::string &file);
+    FkResult load(std::string &file, std::function<void()> finishCallback);
 
     FkResult getLayers(FkModelCallback callback);
 

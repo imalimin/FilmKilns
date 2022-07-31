@@ -216,7 +216,7 @@ protected:
     void resume() {
         EXPECT_EQ(engine->start(), FK_OK);
         EXPECT_EQ(fileEngine->start(), FK_OK);
-        EXPECT_EQ(fileEngine->load(fkpFile), FK_OK);
+        EXPECT_EQ(fileEngine->load(fkpFile, [](){}), FK_OK);
     }
 
 protected:
@@ -228,7 +228,7 @@ TEST_F(FkImageFileEngineTest, saveFkp) {
     EXPECT_GT(engine->newLayerWithFile(path), 0);
     EXPECT_EQ(FkFileUtils::mkdirs(FkFileUtils::parent(fkpFile)), FK_OK);
     EXPECT_EQ(fileEngine->save(fkpFile), FK_OK);
-    EXPECT_EQ(fileEngine->load(fkpFile), FK_OK);
+    EXPECT_EQ(fileEngine->load(fkpFile, [](){}), FK_OK);
 }
 
 TEST_F(FkImageFileEngineTest, getLayers) {
