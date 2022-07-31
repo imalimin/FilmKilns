@@ -155,6 +155,10 @@ class ImagePresenter(
 
     override fun crop(rect: Rect) {
         if (checkCurLayer()) {
+//            drawPath(rect.left, rect.top)
+//            drawPath(rect.right, rect.bottom)
+//            drawPath(rect.left, rect.top)
+//            drawPathFinish()
             engine.crop(rect)
         }
     }

@@ -35,6 +35,7 @@
 #include "FkDrawPathProto.h"
 #include "FkUpdateLayerModelProto.h"
 #include "FkImageContext.h"
+#include "FkRotateComponent.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -298,6 +299,7 @@ FkResult FkLayerEngine::setRotation(FkID layer, FkRational &rational) {
 }
 
 FkResult FkLayerEngine::_setRotation(std::shared_ptr<FkMessage> msg) {
+    FkAssert(msg->sp != nullptr, FK_FAIL);
     auto value = std::dynamic_pointer_cast<FkRational>(msg->sp);
     auto proto = std::make_shared<FkLayerSetRotateProto>();
     proto->layer = msg->arg1;
@@ -366,14 +368,17 @@ FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
     auto deltaX = (queryProto->winSize.getWidth() / 2 - (rect->right() + rect->left()) / 2);
     auto deltaY = (queryProto->winSize.getHeight() / 2 - (rect->bottom() + rect->top()) / 2);
 
+    std::shared_ptr<FkGraphicLayer> canvas = nullptr;
     auto layers = queryLayers();
     for (auto &it : layers) {
-        if (it->id != Fk_CANVAS_ID) {
-            auto msg0 = FkMessage::obtain(0);
-            msg0->arg1 = it->id;
-            msg0->sp = std::make_shared<FkIntVec2>(deltaX, deltaY);
-            _postTranslate(msg0);
+        if (it->id == Fk_CANVAS_ID) {
+            canvas = it;
+            continue;
         }
+        auto msg0 = FkMessage::obtain(0);
+        msg0->arg1 = it->id;
+        msg0->sp = std::make_shared<FkIntVec2>(deltaX, deltaY);
+        _postTranslate(msg0);
     }
 
     std::vector<FkDoubleVec2> vec;
@@ -395,7 +400,30 @@ FkResult FkLayerEngine::_crop(std::shared_ptr<FkMessage> &msg) {
     auto leftBottom = vec[3];
     FkSize size(FkMath::distance(leftTop, rightTop),
                 FkMath::distance(leftTop, leftBottom));
-    return setCanvasSizeInternal(size, false);
+    ret = setCanvasSizeInternal(size, false);
+    FkRational canvasRotation(0, 1);
+    if (FK_OK == ret && canvas) {
+        auto rotateCompo = FK_FIND_COMPO(canvas, FkRotateComponent);
+        canvasRotation = rotateCompo->value;
+    }
+    if (FK_OK == ret) {
+        auto msg0 = FkMessage::obtain(0);
+        msg0->arg1 = Fk_CANVAS_ID;
+        msg0->sp = std::make_shared<FkRational>(0, 1);
+        ret = _setRotation(msg0);
+    }
+    if (FK_OK == ret && canvasRotation.num != 0) {
+        for (auto &it: layers) {
+            if (it->id == Fk_CANVAS_ID) {
+                continue;
+            }
+            auto msg0 = FkMessage::obtain(0);
+            msg0->arg1 = it->id;
+            msg0->sp = std::make_shared<FkRational>(canvasRotation);
+            _postRotation(msg0);
+        }
+    }
+    return ret;
 }
 
 FkResult FkLayerEngine::cropLayer(FkID layerId, FkIntRect &rect) {
