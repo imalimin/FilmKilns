@@ -42,14 +42,14 @@ android {
     } else {
         signingConfigs {
             debug {
-                storeFile file("../alimin.jks")
+                storeFile file("../alimin_debug.jks")
                 keyAlias "debug"
                 keyPassword "123456"
                 storePassword "123456"
             }
 
             release {
-                storeFile file("../alimin.jks")
+                storeFile file("../alimin_debug.jks")
                 keyAlias "debug"
                 keyPassword "123456"
                 storePassword "123456"
