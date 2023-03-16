@@ -13,6 +13,7 @@
 #define FK_GRAPHIC_FKDEVICEIMAGE_H
 
 #include "FkObject.h"
+#include "FkSize.h"
 
 FK_SUPER_CLASS(FkDeviceImage, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkDeviceImage)
@@ -36,6 +37,12 @@ public:
     virtual FkResult onCreate(void *arg0, int64_t arg1, int32_t arg2) = 0;
 
     virtual FkResult onDestroy() = 0;
+
+    virtual FkResult onNotifyRender() = 0;
+
+    virtual FkSize getSize() = 0;
+
+    virtual float *getTransformMatrix() = 0;
 };
 
 #endif //FK_GRAPHIC_FKDEVICEIMAGE_H

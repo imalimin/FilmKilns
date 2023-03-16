@@ -26,6 +26,7 @@ public:
         CANVAS_MOSAIC,
         POINT,
         PATH,
+        MATRIX_ANDROID_IMAGE
     };
 public:
     FkProgramDescription();

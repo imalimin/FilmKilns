@@ -19,7 +19,6 @@
 #include "FkBuffer.h"
 #include "FkPaint.h"
 #include "FkModelInterface.h"
-#include "FkLayerDescription.h"
 
 FK_SUPER_CLASS(FkLayerEngine, FkEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkLayerEngine)
@@ -45,9 +44,9 @@ public:
 
     FkID newLayer(FkID expectId = FK_ID_NONE);
 
-    FkID newLayer(FkLayerDescription &desc, FkID expectId = FK_ID_NONE);
-
     FkID newLayerWithColor(FkSize size, FkColor color, FkID expectId = FK_ID_NONE);
+
+    FkID newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> deviceImage, FkSize size, FkID expectId = FK_ID_NONE);
 
     FkResult removeLayer(FkID layer);
 
@@ -105,7 +104,7 @@ private:
 
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 
-    FkResult _updateLayerWithColor(std::shared_ptr<FkMessage> msg);
+    FkResult _updateLayer(std::shared_ptr<FkMessage> &msg);
 
     FkResult _removeLayer(std::shared_ptr<FkMessage> msg);
 

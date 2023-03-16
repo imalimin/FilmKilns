@@ -22,6 +22,8 @@ public:
 public:
     FkMVPMatrix(kProjType type);
 
+    FkMVPMatrix(float *data);
+
     FkMVPMatrix(const FkMVPMatrix &o);
 
     virtual ~FkMVPMatrix();

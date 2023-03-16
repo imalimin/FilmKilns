@@ -36,6 +36,7 @@
 #include "FkUpdateLayerModelProto.h"
 #include "FkImageContext.h"
 #include "FkRotateComponent.h"
+#include "FkDeviceImageCompo.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -120,14 +121,8 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
 }
 
 FkID FkLayerEngine::newLayer(FkID expectId) {
-    FkLayerDescription desc;
-    return newLayer(desc, expectId);
-}
-
-FkID FkLayerEngine::newLayer(FkLayerDescription &desc, FkID expectId) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_newLayer));
     msg->arg1 = expectId;
-    msg->sp = std::make_shared<FkLayerDescription>(desc);
     msg->withPromise();
     auto ret = sendMessage(msg);
     FkID id = FK_ID_NONE;
@@ -140,7 +135,6 @@ FkID FkLayerEngine::newLayer(FkLayerDescription &desc, FkID expectId) {
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkGraphicNewLayerPrt>();
     proto->expectId = msg->arg1;
-    proto->layerDescription = std::dynamic_pointer_cast<FkLayerDescription>(msg->sp);
     auto ret = client->with(molecule)->send(proto);
     msg->setPromiseResult(proto->layer ? proto->layer->id : FK_ID_NONE);
     return ret;
@@ -155,14 +149,14 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color, FkID expectId)
         layer->id = id;
         layer->addComponent(colorCom);
         layer->addComponent(sizeCom);
-        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayerWithColor));
+        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
         msg->sp = layer;
         sendMessage(msg);
     }
     return id;
 }
 
-FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
+FkResult FkLayerEngine::_updateLayer(std::shared_ptr<FkMessage> &msg) {
     auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
     auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
     prt->layer = layer;
@@ -172,6 +166,23 @@ FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
         setCanvasSizeInternal(sizeCom->size, true);
     }
     return client->with(molecule)->send(prt);
+}
+
+FkID FkLayerEngine::newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> deviceImage,
+                                            FkSize size, FkID expectId) {
+    auto id = newLayer(expectId);
+    if (FK_ID_NONE != id) {
+        auto deviceImageCompo = std::make_shared<FkDeviceImageCompo>(deviceImage);
+        auto sizeCom = std::make_shared<FkSizeCompo>(size);
+        auto layer = std::make_shared<FkGraphicLayer>();
+        layer->id = id;
+        layer->addComponent(deviceImageCompo);
+        layer->addComponent(sizeCom);
+        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
+        msg->sp = layer;
+        sendMessage(msg);
+    }
+    return id;
 }
 
 FkResult FkLayerEngine::removeLayer(FkID layer) {

@@ -16,6 +16,7 @@
 #include "FkDefinition.h"
 #include "FkGraphicPathProgram.h"
 #include "FkGraphicMatProgramV3.h"
+#include "FkGraphicMatAndroidProgram.h"
 
 #define TAG "FkGraphicProgram"
 
@@ -221,6 +222,9 @@ FkGraphicProgram *FkGraphicProgramAllocator::delegateAlloc(FkProgramDescription 
             break;
         case FkProgramDescription::kType::PATH:
             o = new FkGraphicPathProgram(desc);
+            break;
+        case FkProgramDescription::kType::MATRIX_ANDROID_IMAGE:
+            o = new FkGraphicMatAndroidProgram(desc);
             break;
     }
     if (o) {

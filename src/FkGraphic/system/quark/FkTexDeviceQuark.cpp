@@ -21,6 +21,7 @@
 #include "FkString.h"
 #include "FkMVPMatrix.h"
 #include "FkViewportMatCompo.h"
+#include "FkTransMatCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkTexDeviceQuark, FkQuark)
 
@@ -117,6 +118,15 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     programCompo->program->addValue(srcTexArray);
     programCompo->program->addValue(matCompo);
     programCompo->program->addValue(vboCompo);
+    auto materialCompo = FK_FIND_COMPO(proto->materials, FkMaterialCompo);
+    if (materialCompo) {
+        auto deviceImage = materialCompo->getDeviceImage();
+        if (deviceImage && deviceImage->getTransformMatrix()) {
+            auto transMatCompo = std::make_shared<FkTransMatCompo>();
+            transMatCompo->value = std::make_shared<FkMVPMatrix>(deviceImage->getTransformMatrix());
+            programCompo->program->addValue(transMatCompo);
+        }
+    }
     FkIntVec2 pos(0, 0);
     for (int y = 0; y < dstTexArray->blocks.y; ++y) {
         pos.x = 0;
@@ -130,6 +140,12 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
             glViewport(0, 0, tex->desc.size.getWidth(), tex->desc.size.getHeight());
             fboCompo->fbo->attach(tex);
             FK_GL_CHECK(glDrawArrays(GL_TRIANGLE_STRIP, 0, desc.countVertex));
+            if (materialCompo) {
+                auto deviceImage = materialCompo->getDeviceImage();
+                if (deviceImage) {
+                    deviceImage->onNotifyRender();
+                }
+            }
 #if 0
             auto buf = FkBuffer::alloc(tex->desc.size.getWidth() * tex->desc.size.getHeight() * 4);
             glReadPixels(0, 0,

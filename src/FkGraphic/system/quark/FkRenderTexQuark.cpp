@@ -81,7 +81,10 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texArray));
     }
     auto deviceImage = proto->texEntity->getMaterial()->getDeviceImage();
-    if (deviceImage == nullptr || deviceImage->type() != FkDeviceImage::kType::Android) {
+    if (deviceImage != nullptr && deviceImage->type() == FkDeviceImage::kType::Android) {
+        // Do somethings
+        deviceImage->onCreate(&(texArray->textures[0]->tex), -1, -1);
+    } else {
         auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
         if (bufCompo) {
             _updateTexWithBuf(texArray, proto->texEntity, bufCompo->buf);
@@ -93,11 +96,6 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
             FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
         }
     }
-    if (deviceImage) {
-        deviceImage->onCreate(&(texArray->textures[0]->tex), -1, -1);
-    }
-    FkLogI(FK_DEF_TAG, "Tex allocator usage: %d + %d / %d",
-           allocator->usingSize(), allocator->cacheSize(), allocator->capacity());
     return FK_OK;
 }
 
@@ -142,7 +140,6 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_findTex(FkID id) {
 
 std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkTexEntity> &texEntity) {
     int32_t blockSize = _calcBestBlockSize(texEntity->size());
-    FkLogI(FK_DEF_TAG, "blockSize: %d", blockSize);
     FkAssert(blockSize > 0, nullptr);
     FkTexDescription desc(GL_TEXTURE_2D);
     desc.fmt = texEntity->format();
@@ -152,13 +149,14 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkT
         desc.target = GL_TEXTURE_EXTERNAL_OES;
         blocks.x = 1;
         blocks.y = 1;
-        FkLogI(FK_DEF_TAG, "Use GL_TEXTURE_EXTERNAL_OES for material %d", texEntity->getMaterial()->id());
+        FkLogI(FK_DEF_TAG, "Use GL_TEXTURE_EXTERNAL_OES (%dx%d) for material %d", texEntity->size().getWidth(), texEntity->size().getHeight(), texEntity->getMaterial()->id());
     }
     auto blockSizeX = blocks.x == 1 ? texEntity->size().getWidth() : blockSize;
     auto blockSizeY = blocks.y == 1 ? texEntity->size().getHeight() : blockSize;
+    FkLogI(FK_DEF_TAG, "blockSize: %d, %dx%d", blockSize, blockSizeX, blockSizeY);
     auto texArray = std::make_shared<FkTexArrayCompo>(texEntity->size(),
                                                       blocks.x, blocks.y,
-                                                      blockSize, blockSize);
+                                                      blockSizeX, blockSizeY);
     for (int y = 0; y < blocks.y; ++y) {
         for (int x = 0; x < blocks.x; ++x) {
             desc.size = {blockSizeX, blockSizeY};
@@ -178,6 +176,8 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkT
             texArray->textures.emplace_back(tex);
         }
     }
+    FkLogI(FK_DEF_TAG, "Tex allocator usage: %d + %d / %d",
+           allocator->usingSize(), allocator->cacheSize(), allocator->capacity());
     return texArray;
 }
 

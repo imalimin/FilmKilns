@@ -40,6 +40,7 @@
 #include "FkUpdateLayerModelProto.h"
 #include "FkMeshPath.h"
 #include "FkQueryLayerProto.h"
+#include "FkDeviceImageCompo.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -125,18 +126,6 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
         if (FK_ID_NONE != proto->expectId) {
             lastId = _maxLayerId();
         }
-        auto deviceImage = proto->layerDescription->deviceImage;
-        if (deviceImage && deviceImage->type() == FkDeviceImage::kType::Android) {
-            auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
-            FkAssert(context != nullptr, FK_NPE);
-            auto renderEngine = context->getRenderEngine();
-            FkAssert(renderEngine != nullptr, FK_NPE);
-            FkSize size(512, 512);
-            FkColor color = FkColor::blue();
-            proto->layer->material->setDeviceImage(deviceImage);
-            renderEngine->updateMaterial(proto->layer->material, size, color);
-            FkLogI(getClassType().getName(), "_onNewLayer=%d", proto->layer->id);
-        }
         return FK_OK;
     }
     return FK_FAIL;
@@ -166,6 +155,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     }
     FkResult ret = FK_OK;
     auto bmpCompo = FK_FIND_COMPO(proto->layer, FkBitmapCompo);
+    auto deviceImageCompo = FK_FIND_COMPO(proto->layer, FkDeviceImageCompo);
     auto layer = itr->second;
     auto layerColor = _updateLayerColor(proto, layer);
     bool isSwappedWH = bmpCompo != nullptr && bmpCompo->bmp != nullptr && bmpCompo->bmp->isSwappedWH();
@@ -186,6 +176,9 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             _updateLayerByEncodeOrigin(layer, (int32_t) bmpCompo->bmp->getEncodedOrigin());
             layer->copyComponentFrom(proto->layer, FkFilePathCompo_Class::type);
         } else {
+            if (deviceImageCompo && deviceImageCompo->deviceImage) {
+                layer->material->setDeviceImage(deviceImageCompo->deviceImage);
+            }
             ret = renderEngine->updateMaterial(layer->material,
                                                layerSize,
                                                layerColor);

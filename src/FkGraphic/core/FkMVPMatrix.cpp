@@ -14,8 +14,14 @@ FK_IMPL_CLASS_TYPE(FkMVPMatrix, FkObject)
 FkMVPMatrix::FkMVPMatrix(kProjType type)
         : FkMatrix(), type(type), mat4(glm::mat4(1.0f)), view(glm::mat4(1.0f)), proj(glm::mat4(1.0f)),
           radian(0, 1), scale(1.0f, 1.0f, 1.0f),
-          translate(0.0f, 0.0f, 00.0f) {
+          translate(0.0f, 0.0f, 0.0f) {
 
+}
+
+FkMVPMatrix::FkMVPMatrix(float *data)
+        : FkMatrix(), mat4(glm::make_mat4(data)), view(glm::mat4(1.0f)), proj(glm::mat4(1.0f)),
+          radian(0, 1), scale(1.0f, 1.0f, 1.0f),
+          translate(0.0f, 0.0f, 0.0f) {
 }
 
 FkMVPMatrix::FkMVPMatrix(const FkMVPMatrix &o) : FkMatrix(o), type(o.type), mat4(o.proj),

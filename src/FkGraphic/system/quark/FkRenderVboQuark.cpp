@@ -63,6 +63,7 @@ FkResult FkRenderVboQuark::onStop() {
 FkResult FkRenderVboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
     auto material = std::dynamic_pointer_cast<FkTexEntity>(proto->materials);
+    auto materialCompo = FK_FIND_COMPO(material, FkMaterialCompo);
     std::shared_ptr<FkVertexCompo> vertexCompo = nullptr;
     if (material) {
         auto size = material->texArray()->size;
@@ -72,6 +73,16 @@ FkResult FkRenderVboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
                 -size.getWidth() / 2.0f, size.getHeight() / 2.0f,//LEFT,TOP
                 size.getWidth() / 2.0f, size.getHeight() / 2.0f//RIGHT,TOP
         };
+//        FkLogI("aliminabc", "%dx%d", size.getWidth(), size.getHeight());
+//        if (materialCompo->getDeviceImage()) {
+//            float *position = new float[8]{
+//                    -1.0f, -1.0f,//LEFT,BOTTOM
+//                    1.0f, -1.0f,//RIGHT,BOTTOM
+//                    -1.0f, 1.0f,//LEFT,TOP
+//                    1.0f, 1.0f,//RIGHT,TOP
+//            };
+//            memcpy(&pos, position, 8 * sizeof(float));
+//        }
         vertexCompo = std::make_shared<FkVertexCompo>();
         vertexCompo->setup(COUNT_VERTEX, COUNT_PER_VERTEX, SIZE_OF_VERTEX, pos);
     }
