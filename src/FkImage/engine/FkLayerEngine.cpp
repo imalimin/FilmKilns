@@ -120,8 +120,14 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
 }
 
 FkID FkLayerEngine::newLayer(FkID expectId) {
+    FkLayerDescription desc;
+    return newLayer(desc, expectId);
+}
+
+FkID FkLayerEngine::newLayer(FkLayerDescription &desc, FkID expectId) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_newLayer));
     msg->arg1 = expectId;
+    msg->sp = std::make_shared<FkLayerDescription>(desc);
     msg->withPromise();
     auto ret = sendMessage(msg);
     FkID id = FK_ID_NONE;
@@ -134,6 +140,7 @@ FkID FkLayerEngine::newLayer(FkID expectId) {
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkGraphicNewLayerPrt>();
     proto->expectId = msg->arg1;
+    proto->layerDescription = std::dynamic_pointer_cast<FkLayerDescription>(msg->sp);
     auto ret = client->with(molecule)->send(proto);
     msg->setPromiseResult(proto->layer ? proto->layer->id : FK_ID_NONE);
     return ret;

@@ -9,6 +9,7 @@
 #define FK_GRAPHIC_FKGRAPHICNEWLAYERPRT_H
 
 #include "FkLayerProto.h"
+#include "FkLayerDescription.h"
 
 FK_SUPER_CLASS(FkGraphicNewLayerPrt, FkLayerProto) {
 FK_DEF_CLASS_TYPE_FUNC(FkGraphicNewLayerPrt)
@@ -22,7 +23,7 @@ public:
 
 public:
     FkID expectId = FK_ID_NONE;
-
+    std::shared_ptr<FkLayerDescription> layerDescription = nullptr;
 };
 
 

@@ -16,7 +16,8 @@ FkMaterialCompo::FkMaterialCompo(FkID id) : FkComponent(), _id(id) {
 
 }
 
-FkMaterialCompo::FkMaterialCompo(const FkMaterialCompo &o) : FkComponent(o), _id(o._id) {
+FkMaterialCompo::FkMaterialCompo(const FkMaterialCompo &o)
+        : FkComponent(o), _id(o._id), _deviceImage(o._deviceImage) {
 
 }
 
@@ -30,4 +31,12 @@ bool FkMaterialCompo::isInvalid() {
 
 FkID FkMaterialCompo::id() const {
     return _id;
+}
+
+void FkMaterialCompo::setDeviceImage(std::shared_ptr<FkDeviceImage> &deviceImage) {
+    this->_deviceImage = deviceImage;
+}
+
+std::shared_ptr<FkDeviceImage> FkMaterialCompo::getDeviceImage() const {
+    return _deviceImage;
 }

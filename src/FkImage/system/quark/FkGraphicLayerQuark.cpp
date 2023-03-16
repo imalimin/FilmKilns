@@ -125,6 +125,18 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
         if (FK_ID_NONE != proto->expectId) {
             lastId = _maxLayerId();
         }
+        auto deviceImage = proto->layerDescription->deviceImage;
+        if (deviceImage && deviceImage->type() == FkDeviceImage::kType::Android) {
+            auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+            FkAssert(context != nullptr, FK_NPE);
+            auto renderEngine = context->getRenderEngine();
+            FkAssert(renderEngine != nullptr, FK_NPE);
+            FkSize size(512, 512);
+            FkColor color = FkColor::blue();
+            proto->layer->material->setDeviceImage(deviceImage);
+            renderEngine->updateMaterial(proto->layer->material, size, color);
+            FkLogI(getClassType().getName(), "_onNewLayer=%d", proto->layer->id);
+        }
         return FK_OK;
     }
     return FK_FAIL;

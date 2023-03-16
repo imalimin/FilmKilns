@@ -39,7 +39,7 @@ FkResult FkSession::connectTo(const std::shared_ptr<FkQuark> quark) {
         link.emplace_back(quark);
         return FK_OK;
     }
-    FkLogD(FK_DEF_TAG, "Connect to %s failed. Can not accept this protocol.", quark->getClassType().getName());
+    FkLogD(FK_DEF_TAG, "Connect to %s failed. Can not accept this protocol(%s).", quark->getClassType().getName(), protoDesc.name);
     return FK_PROTOCOL_NOT_ACCEPT;
 }
 

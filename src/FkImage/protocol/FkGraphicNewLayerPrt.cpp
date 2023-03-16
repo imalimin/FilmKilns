@@ -14,7 +14,7 @@ FkGraphicNewLayerPrt::FkGraphicNewLayerPrt() : FkLayerProto() {
 }
 
 FkGraphicNewLayerPrt::FkGraphicNewLayerPrt(const FkGraphicNewLayerPrt &o)
-        : FkLayerProto(o), expectId(o.expectId) {
+        : FkLayerProto(o), expectId(o.expectId), layerDescription(o.layerDescription) {
 
 }
 

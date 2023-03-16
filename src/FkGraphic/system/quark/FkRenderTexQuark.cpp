@@ -80,15 +80,21 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
         texArray = _allocTex(proto->texEntity);
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texArray));
     }
-    auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
-    if (bufCompo) {
-        _updateTexWithBuf(texArray, proto->texEntity, bufCompo->buf);
-    } else if (isMakeNewTex || proto->texEntity->size() != texArray->size) {
-        _updateTexWithBuf(texArray, proto->texEntity, nullptr);
+    auto deviceImage = proto->texEntity->getMaterial()->getDeviceImage();
+    if (deviceImage == nullptr || deviceImage->type() != FkDeviceImage::kType::Android) {
+        auto bufCompo = FK_FIND_COMPO(proto->texEntity, FkBufCompo);
+        if (bufCompo) {
+            _updateTexWithBuf(texArray, proto->texEntity, bufCompo->buf);
+        } else if (isMakeNewTex || proto->texEntity->size() != texArray->size) {
+            _updateTexWithBuf(texArray, proto->texEntity, nullptr);
+        }
+        auto ret = _drawColor(texArray, proto->texEntity);
+        if (FK_OK != ret) {
+            FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
+        }
     }
-    auto ret = _drawColor(texArray, proto->texEntity);
-    if (FK_OK != ret) {
-        FkLogD(FK_DEF_TAG, "Skip draw color. No color component.");
+    if (deviceImage) {
+        deviceImage->onCreate(&(texArray->textures[0]->tex), -1, -1);
     }
     FkLogI(FK_DEF_TAG, "Tex allocator usage: %d + %d / %d",
            allocator->usingSize(), allocator->cacheSize(), allocator->capacity());
@@ -138,14 +144,21 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkT
     int32_t blockSize = _calcBestBlockSize(texEntity->size());
     FkLogI(FK_DEF_TAG, "blockSize: %d", blockSize);
     FkAssert(blockSize > 0, nullptr);
+    FkTexDescription desc(GL_TEXTURE_2D);
+    desc.fmt = texEntity->format();
     auto blocks = _calcTexBlock(texEntity->size(), blockSize);
+    auto deviceImage = texEntity->getMaterial()->getDeviceImage();
+    if (deviceImage && deviceImage->type() == FkDeviceImage::kType::Android) {
+        desc.target = GL_TEXTURE_EXTERNAL_OES;
+        blocks.x = 1;
+        blocks.y = 1;
+        FkLogI(FK_DEF_TAG, "Use GL_TEXTURE_EXTERNAL_OES for material %d", texEntity->getMaterial()->id());
+    }
     auto blockSizeX = blocks.x == 1 ? texEntity->size().getWidth() : blockSize;
     auto blockSizeY = blocks.y == 1 ? texEntity->size().getHeight() : blockSize;
     auto texArray = std::make_shared<FkTexArrayCompo>(texEntity->size(),
                                                       blocks.x, blocks.y,
                                                       blockSize, blockSize);
-    FkTexDescription desc(GL_TEXTURE_2D);
-    desc.fmt = texEntity->format();
     for (int y = 0; y < blocks.y; ++y) {
         for (int x = 0; x < blocks.x; ++x) {
             desc.size = {blockSizeX, blockSizeY};
@@ -255,6 +268,10 @@ FkResult FkRenderTexQuark::_onRemoveTex(std::shared_ptr<FkProtocol> &p) {
     auto itr = sMap.find(proto->material->id());
     if (itr != sMap.end()) {
         sMap.erase(itr);
+        auto deviceImage = proto->material->getDeviceImage();
+        if (deviceImage) {
+            deviceImage->onDestroy();
+        }
     }
     return FK_OK;
 }

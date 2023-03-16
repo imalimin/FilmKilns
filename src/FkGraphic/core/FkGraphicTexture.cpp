@@ -192,7 +192,8 @@ FkGraphicTexture *FkGraphicAllocator::delegateAlloc(FkTexDescription &desc) {
     }
     if (FkColor::kFormat::NONE != o->desc.fmt
         && 0 != o->desc.size.getWidth()
-        && 0 != o->desc.size.getHeight()) {
+        && 0 != o->desc.size.getHeight()
+        && desc.target != GL_TEXTURE_EXTERNAL_OES) {
         o->update(o->desc.fmt, o->desc.size.getWidth(), o->desc.size.getHeight());
     }
     return o;
