@@ -77,7 +77,7 @@ FkResult FkGraphicMatAndroidProgram::addValue(std::shared_ptr<FkComponent> value
         }
     } else if (FK_INSTANCE_OF(value, FkTexArrayCompo)) {
         auto texArrCompo = Fk_POINTER_CAST(FkTexArrayCompo, value);
-        if(texArrCompo && texArrCompo->countOfTexture() > 0) {
+        if (texArrCompo && texArrCompo->countOfTexture() > 0) {
             auto compo = std::make_shared<FkTexCompo>((*texArrCompo)[0]);
             compo->index = 0;
             addValue(compo);
@@ -103,7 +103,9 @@ FkResult FkGraphicMatAndroidProgram::addValue(std::shared_ptr<FkComponent> value
         FK_GL_CHECK(glVertexAttribPointer(aCoordinateLoc,
                                           desc.countPerVertex, GL_FLOAT, GL_FALSE, 0,
                                           reinterpret_cast<const void *>(offset)));
-    } else if (FK_INSTANCE_OF(value, FkTransMatCompo)) {
+    } else if (FK_INSTANCE_OF(value, FkViewportMatCompo)) {
+        return FK_OK;
+    } else if (FK_INSTANCE_OF(value, FkTransMatCompo) && uTransMatrixLoc >= 0) {
         auto pValue = Fk_POINTER_CAST(FkTransMatCompo, value);
         glUniformMatrix4fv(uTransMatrixLoc, 1, GL_FALSE,
                            reinterpret_cast<const GLfloat *>(pValue->value->get()));
@@ -123,8 +125,8 @@ std::string FkGraphicMatAndroidProgram::getVertex() {
         uniform mat4 uTransMatrix;
         uniform mat4 mvp;
         void main(){
-            gl_Position =  mvp * aPosition;
-            vTextureCoord = (uTransMatrix * aTextureCoord).xy;
+            gl_Position = mvp * uTransMatrix * aPosition;
+            vTextureCoord = (aTextureCoord).xy;
         })");
     return shader;
 }

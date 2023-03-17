@@ -12,6 +12,7 @@
 #define FK_FRAMEWORK_FKQUARKCONTEXT_H
 
 #include "FkEntity.h"
+#include "FkEngineSettings.h"
 
 FK_SUPER_CLASS(FkQuarkContext, FkEntity) {
 FK_DEF_CLASS_TYPE_FUNC(FkQuarkContext)
@@ -22,6 +23,13 @@ public:
     FkQuarkContext(const FkQuarkContext &o) = delete;
 
     virtual ~FkQuarkContext();
+
+    virtual void setEngineSettings(std::shared_ptr<FkEngineSettings> &_settings);
+
+    virtual std::shared_ptr<FkEngineSettings> getEngineSettings();
+
+private:
+    std::shared_ptr<FkEngineSettings> settings;
 };
 
 #endif //FK_FRAMEWORK_FKQUARKCONTEXT_H

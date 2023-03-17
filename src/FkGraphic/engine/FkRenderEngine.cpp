@@ -24,9 +24,10 @@ const FkID FkRenderEngine::MSG_RENDER_DEVICE = 0x200;
 FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
-
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
+    context = std::make_shared<FkRenderContext>();
+    context->setGlVersion(FK_GL_VER_3);
 }
 
 FkRenderEngine::~FkRenderEngine() {
@@ -35,9 +36,9 @@ FkRenderEngine::~FkRenderEngine() {
 FkResult FkRenderEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     FkAssert(ret == FK_OK, ret);
-    auto context = std::make_shared<FkRenderContext>();
-    context->setGlVersion(FK_GL_VER_3);
     auto proto = std::make_shared<FkOnCreatePrt>();
+    auto settings = getSettings();
+    context->setEngineSettings(settings);
     proto->context = context;
     return client->with(molecule)->send(proto);
 }

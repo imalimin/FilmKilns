@@ -21,6 +21,7 @@
 #include "FkBitmap.h"
 #include "FkString.h"
 #include "FkRenderContext.h"
+#include "FkRenderEngineSettings.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderTexQuark, FkQuark)
 
@@ -39,7 +40,14 @@ void FkRenderTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 FkResult FkRenderTexQuark::onCreate() {
-    return FkQuark::onCreate();
+    auto ret = FkQuark::onCreate();
+    auto settings = std::dynamic_pointer_cast<FkRenderEngineSettings>(getContext()->getEngineSettings());
+    if (settings) {
+        supportBlockArray = settings->getSupportBlockSizeArray();
+    } else {
+        supportBlockArray = {4096, 1024, 512};
+    }
+    return ret;
 }
 
 FkResult FkRenderTexQuark::onDestroy() {
@@ -289,7 +297,6 @@ FkResult FkRenderTexQuark::_copySubImage(std::shared_ptr<FkBuffer> &src, int32_t
 
 int32_t FkRenderTexQuark::_calcBestBlockSize(FkSize size) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkRenderContext, getContext());
-    std::vector<int> supportBlockArray = {4096, 1024, 512};
     supportBlockArray.emplace_back(context->getMaxTextureSize());
     std::sort(supportBlockArray.begin(), supportBlockArray.end(),
               [](int a, int b) { return a > b; });

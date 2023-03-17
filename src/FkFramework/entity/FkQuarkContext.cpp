@@ -19,3 +19,11 @@ FkQuarkContext::FkQuarkContext() : FkEntity() {
 FkQuarkContext::~FkQuarkContext() {
 
 }
+
+void FkQuarkContext::setEngineSettings(std::shared_ptr<FkEngineSettings> &_settings) {
+    this->settings = _settings;
+}
+
+std::shared_ptr<FkEngineSettings> FkQuarkContext::getEngineSettings() {
+    return this->settings;
+}
