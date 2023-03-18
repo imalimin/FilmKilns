@@ -196,6 +196,22 @@ FkResult FkLayerEngine::_removeLayer(std::shared_ptr<FkMessage> msg) {
     return client->with(molecule)->send(proto);
 }
 
+FkResult FkLayerEngine::clearLayer(FkID layerId) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_clearLayer));
+    msg->arg1 = layerId;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_clearLayer(std::shared_ptr<FkMessage> &msg) {
+    auto layer = std::make_shared<FkGraphicLayer>();
+    layer->id = msg->arg1;
+    layer->addComponent(std::make_shared<FkColorCompo>(FkColor::transparent()));
+    auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
+    proto->layer = layer;
+    proto->scaleType = kScaleType::CENTER_INSIDE;
+    return client->with(molecule)->send(proto);
+}
+
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {
     FkAssert(!size.isZero(), FK_FAIL);
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setCanvasSize));

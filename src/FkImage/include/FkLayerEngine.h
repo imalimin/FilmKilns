@@ -50,6 +50,8 @@ public:
 
     FkResult removeLayer(FkID layer);
 
+    FkResult clearLayer(FkID layerId);
+
     FkResult setCanvasSize(FkSize size);
 
     FkResult postTranslate(FkID layer, int32_t dx, int32_t dy);
@@ -107,6 +109,8 @@ private:
     FkResult _updateLayer(std::shared_ptr<FkMessage> &msg);
 
     FkResult _removeLayer(std::shared_ptr<FkMessage> msg);
+
+    FkResult _clearLayer(std::shared_ptr<FkMessage> &msg);
 
     FkResult _setCanvasSize(std::shared_ptr<FkMessage> msg);
 
