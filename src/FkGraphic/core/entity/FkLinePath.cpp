@@ -36,7 +36,20 @@ void FkLinePath::addPoint(FkDoubleVec2 &point) {
         return;
     }
     src.emplace_back(point);
-    points.emplace_back(point);
+    if (src.size() >= 2) {
+        auto &start = src[src.size() - 2];
+        auto &end = src[src.size() - 1];
+        auto distance = FkMath::distance(start, end);
+        int count = distance / avgDistance;
+        points.emplace_back(start);
+        for (int j = 1; j < count; ++j) {
+            float t = j / (float) count;
+            FkDoubleVec2 p(start.x + t * (end.x - start.x),
+                           start.y + t * (end.y - start.y));
+            points.emplace_back(p);
+        }
+        points.emplace_back(end);
+    }
 }
 
 size_t FkLinePath::readPoints(std::vector<FkDoubleVec2> &_points) {
