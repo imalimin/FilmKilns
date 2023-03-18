@@ -6,25 +6,24 @@
 *
 * AUTHOR: aliminabc@gmail.com
 
-* CREATE TIME: 2022-05-10 12:58:54
+* CREATE TIME: 2023-03-18 13:15:10
 */
 
-#ifndef FK_GRAPHIC_FKMESHPATH_H
-#define FK_GRAPHIC_FKMESHPATH_H
+#ifndef FK_GRAPHIC_FKLINEPATH_H
+#define FK_GRAPHIC_FKLINEPATH_H
 
 #include "FkPath.h"
+#include "FkDoubleVec2.h"
 
-FK_SUPER_CLASS(FkMeshPath, FkPath) {
-FK_DEF_CLASS_TYPE_FUNC(FkMeshPath)
+FK_SUPER_CLASS(FkLinePath, FkPath) {
+FK_DEF_CLASS_TYPE_FUNC(FkLinePath)
 
 public:
-    FkMeshPath(std::vector<FkDoubleVec2> &meshPoints);
+    FkLinePath(double _avgDistance, float _pixelsOfSensitivity);
 
-    FkMeshPath(std::shared_ptr<FkPath> &parent, float _strokeWidth);
+    FkLinePath(const FkLinePath &o);
 
-    FkMeshPath(const FkMeshPath &o);
-
-    virtual ~FkMeshPath();
+    virtual ~FkLinePath();
 
     virtual void addPoint(FkDoubleVec2 &point) override;
 
@@ -37,10 +36,11 @@ public:
     virtual void finish() override;
 
 private:
-    float strokeWidth = 0.0f;
-    std::vector<FkDoubleVec2> meshPoints;
+    std::vector<FkDoubleVec2> src;
+    std::vector<FkDoubleVec2> points;
+    float pixelsOfSensitivity = 5.0f;
+    double avgDistance;
     int readPos = 0;
-    std::shared_ptr<FkPath> parent = nullptr;
 };
 
-#endif //FK_GRAPHIC_FKMESHPATH_H
+#endif //FK_GRAPHIC_FKLINEPATH_H

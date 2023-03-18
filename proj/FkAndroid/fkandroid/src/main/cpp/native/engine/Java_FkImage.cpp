@@ -188,6 +188,7 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPath
     auto paint = std::make_shared<FkPaint>();
     paint->strokeWidth = paintInfo->strokewidth();
     paint->color = paintInfo->color();
+    paint->pathType = (FkPath::Type) paintInfo->pathtype();
     return engine->drawPath(layerId, x, y, paint);
 }
 

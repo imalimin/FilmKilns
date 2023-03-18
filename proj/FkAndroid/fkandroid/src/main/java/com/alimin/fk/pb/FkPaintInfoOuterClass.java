@@ -29,6 +29,12 @@ public final class FkPaintInfoOuterClass {
      * @return The color.
      */
     int getColor();
+
+    /**
+     * <code>int32 pathType = 3;</code>
+     * @return The pathType.
+     */
+    int getPathType();
   }
   /**
    * Protobuf type {@code com.alimin.fk.pb.FkPaintInfo}
@@ -85,6 +91,11 @@ public final class FkPaintInfoOuterClass {
               color_ = input.readInt32();
               break;
             }
+            case 24: {
+
+              pathType_ = input.readInt32();
+              break;
+            }
             default: {
               if (!parseUnknownField(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -139,6 +150,17 @@ public final class FkPaintInfoOuterClass {
       return color_;
     }
 
+    public static final int PATHTYPE_FIELD_NUMBER = 3;
+    private int pathType_;
+    /**
+     * <code>int32 pathType = 3;</code>
+     * @return The pathType.
+     */
+    @java.lang.Override
+    public int getPathType() {
+      return pathType_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -159,6 +181,9 @@ public final class FkPaintInfoOuterClass {
       if (color_ != 0) {
         output.writeInt32(2, color_);
       }
+      if (pathType_ != 0) {
+        output.writeInt32(3, pathType_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -175,6 +200,10 @@ public final class FkPaintInfoOuterClass {
       if (color_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, color_);
+      }
+      if (pathType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, pathType_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -195,6 +224,8 @@ public final class FkPaintInfoOuterClass {
           != other.getStrokeWidth()) return false;
       if (getColor()
           != other.getColor()) return false;
+      if (getPathType()
+          != other.getPathType()) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -210,6 +241,8 @@ public final class FkPaintInfoOuterClass {
       hash = (53 * hash) + getStrokeWidth();
       hash = (37 * hash) + COLOR_FIELD_NUMBER;
       hash = (53 * hash) + getColor();
+      hash = (37 * hash) + PATHTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getPathType();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -347,6 +380,8 @@ public final class FkPaintInfoOuterClass {
 
         color_ = 0;
 
+        pathType_ = 0;
+
         return this;
       }
 
@@ -375,6 +410,7 @@ public final class FkPaintInfoOuterClass {
         com.alimin.fk.pb.FkPaintInfoOuterClass.FkPaintInfo result = new com.alimin.fk.pb.FkPaintInfoOuterClass.FkPaintInfo(this);
         result.strokeWidth_ = strokeWidth_;
         result.color_ = color_;
+        result.pathType_ = pathType_;
         onBuilt();
         return result;
       }
@@ -428,6 +464,9 @@ public final class FkPaintInfoOuterClass {
         }
         if (other.getColor() != 0) {
           setColor(other.getColor());
+        }
+        if (other.getPathType() != 0) {
+          setPathType(other.getPathType());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -519,6 +558,37 @@ public final class FkPaintInfoOuterClass {
         onChanged();
         return this;
       }
+
+      private int pathType_ ;
+      /**
+       * <code>int32 pathType = 3;</code>
+       * @return The pathType.
+       */
+      @java.lang.Override
+      public int getPathType() {
+        return pathType_;
+      }
+      /**
+       * <code>int32 pathType = 3;</code>
+       * @param value The pathType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPathType(int value) {
+        
+        pathType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 pathType = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPathType() {
+        
+        pathType_ = 0;
+        onChanged();
+        return this;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -586,9 +656,9 @@ public final class FkPaintInfoOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\021FkPaintInfo.proto\022\020com.alimin.fk.pb\"1\n" +
+      "\n\021FkPaintInfo.proto\022\020com.alimin.fk.pb\"C\n" +
       "\013FkPaintInfo\022\023\n\013strokeWidth\030\001 \001(\005\022\r\n\005col" +
-      "or\030\002 \001(\005b\006proto3"
+      "or\030\002 \001(\005\022\020\n\010pathType\030\003 \001(\005b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -599,7 +669,7 @@ public final class FkPaintInfoOuterClass {
     internal_static_com_alimin_fk_pb_FkPaintInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_alimin_fk_pb_FkPaintInfo_descriptor,
-        new java.lang.String[] { "StrokeWidth", "Color", });
+        new java.lang.String[] { "StrokeWidth", "Color", "PathType", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

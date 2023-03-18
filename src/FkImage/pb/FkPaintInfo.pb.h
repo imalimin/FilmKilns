@@ -198,6 +198,7 @@ class FkPaintInfo final :
   enum : int {
     kStrokeWidthFieldNumber = 1,
     kColorFieldNumber = 2,
+    kPathTypeFieldNumber = 3,
   };
   // int32 strokeWidth = 1;
   void clear_strokewidth();
@@ -217,6 +218,15 @@ class FkPaintInfo final :
   void _internal_set_color(int32_t value);
   public:
 
+  // int32 pathType = 3;
+  void clear_pathtype();
+  int32_t pathtype() const;
+  void set_pathtype(int32_t value);
+  private:
+  int32_t _internal_pathtype() const;
+  void _internal_set_pathtype(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:com.alimin.fk.pb.FkPaintInfo)
  private:
   class _Internal;
@@ -226,6 +236,7 @@ class FkPaintInfo final :
   typedef void DestructorSkippable_;
   int32_t strokewidth_;
   int32_t color_;
+  int32_t pathtype_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_FkPaintInfo_2eproto;
 };
@@ -278,6 +289,26 @@ inline void FkPaintInfo::_internal_set_color(int32_t value) {
 inline void FkPaintInfo::set_color(int32_t value) {
   _internal_set_color(value);
   // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkPaintInfo.color)
+}
+
+// int32 pathType = 3;
+inline void FkPaintInfo::clear_pathtype() {
+  pathtype_ = 0;
+}
+inline int32_t FkPaintInfo::_internal_pathtype() const {
+  return pathtype_;
+}
+inline int32_t FkPaintInfo::pathtype() const {
+  // @@protoc_insertion_point(field_get:com.alimin.fk.pb.FkPaintInfo.pathType)
+  return _internal_pathtype();
+}
+inline void FkPaintInfo::_internal_set_pathtype(int32_t value) {
+  
+  pathtype_ = value;
+}
+inline void FkPaintInfo::set_pathtype(int32_t value) {
+  _internal_set_pathtype(value);
+  // @@protoc_insertion_point(field_set:com.alimin.fk.pb.FkPaintInfo.pathType)
 }
 
 #ifdef __GNUC__

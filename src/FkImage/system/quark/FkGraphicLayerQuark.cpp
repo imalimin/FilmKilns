@@ -39,6 +39,8 @@
 #include "FkDrawPathProto.h"
 #include "FkUpdateLayerModelProto.h"
 #include "FkMeshPath.h"
+#include "FkLinePath.h"
+#include "FkCatmullRomPath.h"
 #include "FkQueryLayerProto.h"
 #include "FkDeviceImageCompo.h"
 #include <cmath>
@@ -488,8 +490,19 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
     sensitivity = 7.0f / sensitivity;
     if (curPathCompo == nullptr) {
         FkAssert(proto->paint != nullptr, FK_INVALID_STATE);
-        auto path = std::make_shared<FkMeshPath>(proto->paint->strokeWidth,
-                                                 std::min(sensitivity, 1.0f));
+        float strokeWidth = proto->paint->strokeWidth;
+        float s = std::min(sensitivity, 1.0f);
+        std::shared_ptr<FkPath> parent = nullptr;
+        switch (proto->paint->pathType) {
+            case FkPath::Type::kLine:
+                parent = std::make_shared<FkLinePath>(strokeWidth, s);
+                break;
+            case FkPath::Type::kCatmullRom:
+            default:
+                parent = std::make_shared<FkCatmullRomPath>(strokeWidth, s);
+                break;
+        }
+        auto path = std::make_shared<FkMeshPath>(parent, strokeWidth);
         curPathCompo = std::make_shared<FkPathCompo>(path, FkColor::makeFrom(proto->paint->color));
         layer->addComponent(curPathCompo);
     }

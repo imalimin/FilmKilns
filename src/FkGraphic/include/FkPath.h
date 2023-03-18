@@ -18,6 +18,11 @@
 FK_SUPER_CLASS(FkPath, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkPath)
 
+    FK_ENUM Type : int32_t {
+        kLine = 0,
+        kCatmullRom
+    };
+
 public:
     FkPath();
 
