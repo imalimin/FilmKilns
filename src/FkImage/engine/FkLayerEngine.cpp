@@ -37,6 +37,7 @@
 #include "FkImageContext.h"
 #include "FkRotateComponent.h"
 #include "FkDeviceImageCompo.h"
+#include "FkShadowLayerCompo.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -158,14 +159,14 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color, FkID expectId)
 
 FkResult FkLayerEngine::_updateLayer(std::shared_ptr<FkMessage> &msg) {
     auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
-    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
-    prt->layer = layer;
-    prt->scaleType = kScaleType::CENTER_INSIDE;
-    auto sizeCom = FK_FIND_COMPO(prt->layer, FkSizeCompo);
-    if (sizeCom) {
-        setCanvasSizeInternal(sizeCom->size, true);
+    auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
+    proto->layer = layer;
+    proto->scaleType = kScaleType::CENTER_INSIDE;
+    auto sizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);
+    if (sizeCompo) {
+        setCanvasSizeInternal(sizeCompo->size, true);
     }
-    return client->with(molecule)->send(prt);
+    return client->with(molecule)->send(proto);
 }
 
 FkID FkLayerEngine::newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> deviceImage,
@@ -183,6 +184,25 @@ FkID FkLayerEngine::newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> devic
         sendMessage(msg);
     }
     return id;
+}
+
+FkID FkLayerEngine::newShadowLayer(FkID parentLayerId, FkSize size) {
+    auto id = newLayer();
+    if (FK_ID_NONE != id) {
+        auto colorCompo = std::make_shared<FkColorCompo>(FkColor::transparent());
+        auto sizeCompo = std::make_shared<FkSizeCompo>(size);
+        auto shadowLayerCompo = std::make_shared<FkShadowLayerCompo>(parentLayerId);
+        auto layer = std::make_shared<FkGraphicLayer>();
+        layer->id = id;
+        layer->addComponent(colorCompo);
+        layer->addComponent(sizeCompo);
+        layer->addComponent(shadowLayerCompo);
+        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
+        msg->sp = layer;
+        sendMessage(msg);
+    }
+    return id;
+
 }
 
 FkResult FkLayerEngine::removeLayer(FkID layer) {

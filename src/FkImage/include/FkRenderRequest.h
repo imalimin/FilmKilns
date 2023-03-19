@@ -23,6 +23,8 @@ public:
 
     std::shared_ptr<FkGraphicLayer> getCanvas();
 
+    std::shared_ptr<FkGraphicLayer> findLayerById(FkID layerId);
+
 public:
     std::vector<std::shared_ptr<FkGraphicLayer>> layers;
 };

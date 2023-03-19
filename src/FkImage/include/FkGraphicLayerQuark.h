@@ -97,6 +97,9 @@ private:
 
     void _updateLayerByEncodeOrigin(std::shared_ptr<FkGraphicLayer> &layer, int32_t decodedOrigin);
 
+    void _updateShadowLayer(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+                            std::shared_ptr<FkGraphicLayer> &layer);
+
 protected:
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
     FkID lastId = FK_ID_NONE;

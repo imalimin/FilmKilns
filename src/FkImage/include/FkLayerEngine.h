@@ -48,6 +48,8 @@ public:
 
     FkID newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> deviceImage, FkSize size, FkID expectId = FK_ID_NONE);
 
+    FkID newShadowLayer(FkID parentLayerId, FkSize size);
+
     FkResult removeLayer(FkID layer);
 
     FkResult clearLayer(FkID layerId);

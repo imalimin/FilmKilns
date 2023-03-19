@@ -31,3 +31,12 @@ std::shared_ptr<FkGraphicLayer> FkRenderRequest::getCanvas() {
                             });
     return *itr;
 }
+
+std::shared_ptr<FkGraphicLayer> FkRenderRequest::findLayerById(FkID layerId) {
+    for (auto &it: layers) {
+        if (it->id == layerId) {
+            return it;
+        }
+    }
+    return nullptr;
+}
