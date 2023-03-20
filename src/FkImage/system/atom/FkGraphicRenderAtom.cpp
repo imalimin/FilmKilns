@@ -78,7 +78,6 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             auto shadowLayer = proto->req->findLayerById(layer->shadowLayerId);
             if (shadowLayer) {
                 device = std::make_shared<FkTexDeviceEntity>(shadowLayer->material);
-                FkLogI("aliminabc", "shadowLayer %d", shadowLayer->id);
             } else {
                 device = std::make_shared<FkTexDeviceEntity>(canvas->material);
             }

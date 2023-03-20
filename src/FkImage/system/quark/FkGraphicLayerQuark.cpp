@@ -221,7 +221,10 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
 FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     for (auto &it : layers) {
-        proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(*it.second));
+        auto layer = *it.second;
+        FkLogI(getClassType().getName(), layer.toString());
+        proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(layer));
+
     }
     return FK_OK;
 }
@@ -403,6 +406,8 @@ FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLay
             src.swap();
         }
         scaleComp->value = _calcScaleType(src, proto->winSize, proto->scaleType);
+        FkLogI("aliminabc", "%fx%f, %dx%d", scaleComp->value.x, scaleComp->value.y,
+               proto->winSize.getWidth(), proto->winSize.getHeight());
     }
     return layerSizeComp->size;
 }
@@ -473,15 +478,17 @@ void FkGraphicLayerQuark::_updateLayerByEncodeOrigin(std::shared_ptr<FkGraphicLa
     }
 }
 
-void FkGraphicLayerQuark::_updateShadowLayer(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+bool FkGraphicLayerQuark::_updateShadowLayer(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
                                              std::shared_ptr<FkGraphicLayer> &layer) {
     auto shadowLayerCompo = FK_FIND_COMPO(proto->layer, FkShadowLayerCompo);
     if (shadowLayerCompo) {
         auto itr = layers.find(shadowLayerCompo->parentLayerId);
         if (itr != layers.end()) {
-            layer->shadowLayerId = proto->layer->id;
+            itr->second->shadowLayerId = proto->layer->id;
+            return true;
         }
     }
+    return false;
 }
 
 FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
