@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(FilmKilns LANGUAGES C CXX)
+project(FkCodec LANGUAGES C CXX)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -Wall")
+set(INCLUDES
+        ${ANDROID_NDK}/sources/android/cpufeatures
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/../FkBase/include
+        )
+include_directories(${INCLUDES})
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_FLAGS_CONFIGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_FLAGS_CONFIGS}")
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     if (${ENABLE_TINY})
@@ -21,6 +28,12 @@ if (${ENABLE_BAN_WARNING})
 endif ()
 message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
+aux_source_directory(${PROJECT_SOURCE_DIR}/codec SOURCES_CODEC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
+
+list(APPEND SOURCES_ROOT ${SOURCES_CODEC})
+list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
+
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
     add_definitions("-DHAVE_NEON=1")
@@ -33,13 +46,14 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
 
-add_library(${PROJECT_NAME} SHARED empty.cpp)
+find_library(
+        log-lib
+        log)
+add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
 target_link_libraries(
         ${PROJECT_NAME}
         PUBLIC
+        android
         FkBase
-        FkFramework
-        FkBitmap
-        FkGraphic
-        FkImage
-        FkCodec)
+        ${log-lib})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

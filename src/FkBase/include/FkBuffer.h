@@ -25,6 +25,8 @@ public:
 
     size_t capacity();
 
+    size_t size();
+
     uint8_t *data() const;
 
 private:

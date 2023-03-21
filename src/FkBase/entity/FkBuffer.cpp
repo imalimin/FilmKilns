@@ -40,6 +40,10 @@ size_t FkBuffer::capacity() {
     return _capacity;
 }
 
+size_t FkBuffer::size() {
+    return capacity();
+}
+
 uint8_t *FkBuffer::data() const {
     return _data;
 }
