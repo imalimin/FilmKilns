@@ -26,8 +26,8 @@ void FkRenderDeviceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkRenderDeviceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkBufDeviceQuark>()
-            ->next<FkTexDeviceQuark>()
+    chain->next<FkTexDeviceQuark>()
+            ->next<FkBufDeviceQuark>()
             ->next<FkScreenQuark>();
 }
 
