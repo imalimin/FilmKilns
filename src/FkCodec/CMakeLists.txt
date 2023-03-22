@@ -4,6 +4,7 @@ project(FkCodec LANGUAGES C CXX)
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}/include
+        ${THIRD_PARTY_DIR}/ffmpeg/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
         )
 include_directories(${INCLUDES})
@@ -27,6 +28,17 @@ if (${ENABLE_BAN_WARNING})
     endforeach (var)
 endif ()
 message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+
+#------------------SHARED START----------------------
+add_library(ffmpeg SHARED IMPORTED)
+set_target_properties(ffmpeg PROPERTIES IMPORTED_LOCATION
+        "${THIRD_PARTY_DIR}/ffmpeg/shared/${ANDROID_ABI}/libhwffmpeg.so")
+
+add_library(yuv SHARED IMPORTED)
+set_target_properties(yuv PROPERTIES IMPORTED_LOCATION
+        "${THIRD_PARTY_DIR}/yuv/shared/${ANDROID_ABI}/libyuv.so")
+
+#------------------SHARED END----------------------
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/codec SOURCES_CODEC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
@@ -54,6 +66,8 @@ target_link_libraries(
         ${PROJECT_NAME}
         PUBLIC
         android
+        ffmpeg
+        yuv
         FkBase
         ${log-lib})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
