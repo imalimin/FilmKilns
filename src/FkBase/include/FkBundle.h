@@ -9,6 +9,7 @@
 #define FK_BASE_FKBUNDLE_H
 
 #include "FkObject.h"
+#include <any>
 #include <mutex>
 #include <map>
 
@@ -35,6 +36,8 @@ public:
 
     bool put(std::string key, std::string val);
 
+    bool put(std::string key, std::any val);
+
     int32_t get(std::string key, int32_t def);
 
     int64_t get(std::string key, int64_t def);
@@ -49,6 +52,8 @@ public:
 
     std::string get(std::string key, std::string def);
 
+    std::any get(std::string key);
+
     void remove(std::string key);
 
     bool contains(std::string key);
@@ -57,6 +62,7 @@ public:
 
 private:
     std::map<std::string, std::shared_ptr<FkObject>> map;
+    std::map<std::string, std::any> anyMap;
     std::mutex mtx;
 };
 

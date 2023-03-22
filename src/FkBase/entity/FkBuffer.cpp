@@ -47,3 +47,44 @@ size_t FkBuffer::size() {
 uint8_t *FkBuffer::data() const {
     return _data;
 }
+
+size_t FkBuffer::put(uint8_t *data, size_t size) {
+    if (nullptr == data || size <= 0) return 0;
+    if (size > remaining()) {
+        return 0;
+    }
+    memcpy(this->data(), data, size);
+    _movePosition(size);
+    return size;
+}
+
+size_t FkBuffer::remaining() {
+    return _limit - _position;
+}
+void FkBuffer::rewind() {
+    _position = 0;
+}
+
+short FkBuffer::getShort() {
+    short val = 0;
+    uint8_t *p = reinterpret_cast<uint8_t *>(&val);
+    for (int i = 0; i < 2; ++i) {
+        *(p + i) = *data();
+        _movePosition(1);
+    }
+    return val;
+}
+
+float FkBuffer::getFloat() {
+    float val = 0;
+    uint8_t *p = reinterpret_cast<uint8_t *>(&val);
+    for (int i = 0; i < 4; ++i) {
+        *(p + i) = *data();
+        _movePosition(1);
+    }
+    return val;
+}
+
+void FkBuffer::_movePosition(size_t offset) {
+    _position += offset;
+}

@@ -42,9 +42,17 @@ set_target_properties(yuv PROPERTIES IMPORTED_LOCATION
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/codec SOURCES_CODEC)
 aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
+aux_source_directory(${PROJECT_SOURCE_DIR}/transform SOURCES_TRANS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/sources SOURCES_SRC)
+aux_source_directory(${PROJECT_SOURCE_DIR}/utils SOURCES_UTILS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/utils/fftools SOURCES_FF_TOOLS)
 
 list(APPEND SOURCES_ROOT ${SOURCES_CODEC})
 list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
+list(APPEND SOURCES_ROOT ${SOURCES_TRANS})
+list(APPEND SOURCES_ROOT ${SOURCES_SRC})
+list(APPEND SOURCES_ROOT ${SOURCES_UTILS})
+list(APPEND SOURCES_ROOT ${SOURCES_FF_TOOLS})
 
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")

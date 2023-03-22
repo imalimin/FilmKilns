@@ -22,7 +22,7 @@
 FK_SUPER_CLASS(FkCodec, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkCodec)
 public:
-    FK_ENUM kID : int {
+    FK_ENUM kID : int32_t {
             NONE = AV_CODEC_ID_NONE,
             H264 = AV_CODEC_ID_H264,
             AAC = AV_CODEC_ID_AAC,
@@ -30,7 +30,7 @@ public:
     };
 
     /// Same with AVMEDIA_TYPE_AUDIO/AVMEDIA_TYPE_VIDEO
-    FK_ENUM kMediaType : int {
+    FK_ENUM kMediaType : int32_t {
             UNKNOWN = -1,
             VIDEO,
             AUDIO,
@@ -41,13 +41,13 @@ public:
 
     virtual  ~FkCodec();
 
-    virtual FkResult configure(FkBundle &format);
+    virtual FkResult configure(FkBundle &fmt);
 
     virtual FkResult start() = 0;
 
     virtual FkCodec::kID getCodecID();
 
-    virtual FkBundle &getFormat();
+    virtual std::shared_ptr<FkBundle> getFormat();
 
     virtual FkCodec::kMediaType getMediaType();
 

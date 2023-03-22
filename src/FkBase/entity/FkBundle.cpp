@@ -56,10 +56,16 @@ FkBundle::FkBundle(const FkBundle &o) : FkObject() {
         }
         ++itr;
     }
+    auto itr1 = o.anyMap.begin();
+    while (o.anyMap.end() != itr1) {
+        put(itr->first, itr->second);
+        ++itr1;
+    }
 }
 
 FkBundle::~FkBundle() {
     map.clear();
+    anyMap.clear();
 }
 
 bool FkBundle::put(std::string key, int32_t val) {
@@ -97,6 +103,16 @@ bool FkBundle::put(std::string key, std::string val) {
     return true;
 }
 
+bool FkBundle::put(std::string key, std::any val) {
+    std::lock_guard<std::mutex> guard(mtx);
+    auto itr = anyMap.find(key);
+    if (anyMap.end() != itr) {
+        anyMap.erase(itr);
+    }
+    anyMap.insert(make_pair(key, std::move(val)));
+    return true;
+}
+
 int32_t FkBundle::get(std::string key, int32_t def) {
     GET_PRI(FkInteger)
     return def;
@@ -128,14 +144,24 @@ char FkBundle::get(std::string key, char def) {
 }
 
 std::string FkBundle::get(std::string key, std::string def) {
+    std::lock_guard<std::mutex> guard(mtx);
     auto itr = map.find(key);
     if (map.end() != itr && itr->second) {
-        FkString *val = dynamic_cast<FkString *>(itr->second.get());
+        auto val = std::dynamic_pointer_cast<FkString>(itr->second); ;
         if (val) {
             return val->str();
         }
     }
     return def;
+}
+
+std::any FkBundle::get(std::string key) {
+    std::lock_guard<std::mutex> guard(mtx);
+    auto itr = anyMap.find(key);
+    if (anyMap.end() != itr) {
+        return itr->second;
+    }
+    return nullptr;
 }
 
 void FkBundle::remove(std::string key) {

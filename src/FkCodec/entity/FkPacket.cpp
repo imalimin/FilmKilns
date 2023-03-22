@@ -5,11 +5,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#include "../include/HwPacket.h"
+#include "FkPacket.h"
+#include "FkCodecDefinition.h"
 
-HwPacket *HwPacket::wrap(AVPacket *pkt) {
-    HwPacket *p = new HwPacket();
-    p->buf = HwBuffer::wrap(pkt->data, pkt->size);
+FK_IMPL_CLASS_TYPE(FkPacket, FkObject)
+
+FkPacket *FkPacket::wrap(AVPacket *pkt) {
+    FkPacket *p = new FkPacket();
+    p->buf = FkBuffer::wrap(pkt->data, pkt->size);
     p->pts = pkt->pts;
     p->dts = pkt->dts;
     p->duration = pkt->duration;
@@ -17,10 +20,10 @@ HwPacket *HwPacket::wrap(AVPacket *pkt) {
     return p;
 }
 
-HwPacket *HwPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags) {
-    HwPacket *p = new HwPacket();
+FkPacket *FkPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags) {
+    FkPacket *p = new FkPacket();
     if (buf && size > 0) {
-        p->buf = HwBuffer::wrap(buf, size);
+        p->buf = FkBuffer::wrap(buf, size);
     }
     p->pts = pts;
     p->dts = dts;
@@ -29,9 +32,9 @@ HwPacket *HwPacket::wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, in
     return p;
 }
 
-HwPacket *HwPacket::create(size_t size, int64_t pts, int64_t dts) {
-    HwPacket *p = new HwPacket();
-    p->buf = HwBuffer::alloc(size);
+FkPacket *FkPacket::create(size_t size, int64_t pts, int64_t dts) {
+    FkPacket *p = new FkPacket();
+    p->buf = FkBuffer::alloc(size);
     p->pts = pts;
     p->dts = dts;
     p->duration = 1;
@@ -39,22 +42,19 @@ HwPacket *HwPacket::create(size_t size, int64_t pts, int64_t dts) {
     return p;
 }
 
-HwPacket::HwPacket() : Object() {
+FkPacket::FkPacket() : FkObject() {
 
 }
 
-HwPacket::~HwPacket() {
-    if (buf) {
-        delete buf;
-        buf = nullptr;
-    }
+FkPacket::~FkPacket() {
+    buf = nullptr;
     pts = INT64_MIN;
     dts = INT64_MIN;
     duration = INT64_MIN;
     flags = 1;
 }
 
-bool HwPacket::ref(AVPacket **pkt) {
+bool FkPacket::ref(AVPacket **pkt) {
     if (!pkt || !*pkt) {
         return false;
     }
@@ -67,50 +67,50 @@ bool HwPacket::ref(AVPacket **pkt) {
     return true;
 }
 
-uint8_t *HwPacket::data() { return buf->data(); }
+uint8_t *FkPacket::data() { return buf->data(); }
 
-size_t HwPacket::size() { return buf->size(); }
+size_t FkPacket::size() { return buf->size(); }
 
-int64_t HwPacket::getPts() { return pts; }
+int64_t FkPacket::getPts() { return pts; }
 
-int64_t HwPacket::getDts() { return dts; }
+int64_t FkPacket::getDts() { return dts; }
 
-int64_t HwPacket::getDuration() { return duration; }
+int64_t FkPacket::getDuration() { return duration; }
 
-void HwPacket::setDuration(int64_t duration) { this->duration = duration; }
+void FkPacket::setDuration(int64_t _duration) { this->duration = _duration; }
 
-int32_t HwPacket::getFlags() {
+int32_t FkPacket::getFlags() {
     return flags;
 }
 
-std::string HwPacket::getFlagsStr() {
+std::string FkPacket::getFlagsStr() {
     std::string str;
-    if(flags & AlMediaDef::FLAG_CONFIG) {
+    if(flags & FK_CTL_FLAG_CONFIG) {
         str.append("C");
     } else {
         str.append("_");
     }
-    if(flags & AlMediaDef::FLAG_DISPOSABLE) {
+    if(flags & FK_CTL_FLAG_DISPOSABLE) {
         str.append("D");
     } else {
         str.append("_");
     }
-    if(flags & AlMediaDef::FLAG_TRUSTED) {
+    if(flags & FK_CTL_FLAG_TRUSTED) {
         str.append("T");
     } else {
         str.append("_");
     }
-    if(flags & AlMediaDef::FLAG_DISCARD) {
+    if(flags & FK_CTL_FLAG_DISCARD) {
         str.append("D");
     } else {
         str.append("_");
     }
-    if(flags & AlMediaDef::FLAG_CORRUPT) {
+    if(flags & FK_CTL_FLAG_CORRUPT) {
         str.append("T");
     } else {
         str.append("_");
     }
-    if(flags & AlMediaDef::FLAG_KEY) {
+    if(flags & FK_CTL_FLAG_KEY) {
         str.append("K");
     } else {
         str.append("_");

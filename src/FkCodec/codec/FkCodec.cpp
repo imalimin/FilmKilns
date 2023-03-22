@@ -39,8 +39,8 @@ FkCodec::FkCodec(FkCodec::kID id) : FkObject(), id(id) {
 FkCodec::~FkCodec() {
 }
 
-FkResult FkCodec::configure(FkBundle &format) {
-    this->format = std::make_shared<FkBundle>(format);
+FkResult FkCodec::configure(FkBundle &fmt) {
+    this->format = std::make_shared<FkBundle>(fmt);
     this->format->put(KEY_CODEC_ID, (int32_t) getCodecID());
     this->format->put(KEY_MEDIA_TYPE, (int32_t) getMediaType());
     return FK_OK;
@@ -48,7 +48,7 @@ FkResult FkCodec::configure(FkBundle &format) {
 
 FkCodec::kID FkCodec::getCodecID() { return id; }
 
-FkBundle &FkCodec::getFormat() { return *format; }
+std::shared_ptr<FkBundle> FkCodec::getFormat() { return format; }
 
 FkCodec::kMediaType FkCodec::getMediaType() {
     switch (getCodecID()) {

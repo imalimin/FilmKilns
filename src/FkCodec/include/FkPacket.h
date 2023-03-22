@@ -8,9 +8,8 @@
 #ifndef HWVC_ANDROID_HWPACKET_H
 #define HWVC_ANDROID_HWPACKET_H
 
-#include "Object.h"
-#include "HwBuffer.h"
-#include "AlMediaDef.h"
+#include "FkObject.h"
+#include "FkBuffer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,16 +25,18 @@ extern "C" {
  *
  * For frame data after encoded. Like AVPacket
  */
-AL_CLASS HwPacket AL_EXTEND Object {
-public:
-    static HwPacket *wrap(AVPacket *pkt);
-
-    static HwPacket *wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);
-
-    static HwPacket *create(size_t size, int64_t pts, int64_t dts);
+FK_SUPER_CLASS(FkPacket, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkPacket)
 
 public:
-    virtual ~HwPacket();
+    static FkPacket *wrap(AVPacket *pkt);
+
+    static FkPacket *wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);
+
+    static FkPacket *create(size_t size, int64_t pts, int64_t dts);
+
+public:
+    virtual ~FkPacket();
 
     uint8_t *data();
 
@@ -47,7 +48,7 @@ public:
 
     int64_t getDuration();
 
-    void setDuration(int64_t duration);
+    void setDuration(int64_t _duration);
 
     bool ref(AVPacket **pkt);
 
@@ -56,10 +57,10 @@ public:
     std::string getFlagsStr();
 
 private:
-    HwPacket();
+    FkPacket();
 
 private:
-    HwBuffer *buf = nullptr;
+    std::shared_ptr<FkBuffer> buf = nullptr;
     int64_t pts = INT64_MIN, dts = INT64_MIN;
     int64_t duration = 1;
     int32_t flags = 0;

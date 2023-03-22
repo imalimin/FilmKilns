@@ -5,13 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef HARDWAREVIDEOCODEC_HWADBMEDIAFRAME_H
-#define HARDWAREVIDEOCODEC_HWADBMEDIAFRAME_H
+#ifndef FK_CODEC_FKABSMEDIAFRAME_H
+#define FK_CODEC_FKABSMEDIAFRAME_H
 
 #include "FkAbsFrame.h"
-#include "HwSourcesAllocator.h"
-#include "HwFrameFormat.h"
-#include "AlMediaDef.h"
+#include "FkSourcesAllocator.h"
+#include "FkCodecDefinition.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,51 +22,51 @@ extern "C" {
 }
 #endif
 
-FK_SUPER_CLASS(FkAbsMediaFrame, FkAbsFrame) {
+FK_SUPER_CLASS(FkAbsMediaFrame, FkAbsFrame), FkSources {
 FK_DEF_CLASS_TYPE_FUNC(FkAbsMediaFrame)
 
 public:
     /**
      * Convert to AVSampleFormat
      */
-    static AVSampleFormat convertAudioFrameFormat(HwFrameFormat format);
+    static AVSampleFormat convertAudioFrameFormat(kFrameFormat format);
 
     /**
      * Convert to HwFrameFormat
      */
-    static HwFrameFormat convertToAudioFrameFormat(AVSampleFormat format);
+    static kFrameFormat convertToAudioFrameFormat(AVSampleFormat format);
 
     /**
      * For audio
      */
-    static int getBytesPerSample(HwFrameFormat format);
+    static int getBytesPerSample(kFrameFormat format);
 
     /**
      * Convert to AVPixelFormat
      */
-    static AVPixelFormat convertVideoFrameFormat(HwFrameFormat format);
+    static AVPixelFormat convertVideoFrameFormat(kFrameFormat format);
 
     /**
      * Convert to HwFrameFormat
      */
-    static HwFrameFormat convertToVideoFrameFormat(AVPixelFormat format);
+    static kFrameFormat convertToVideoFrameFormat(AVPixelFormat format);
 
     /**
      * For video
      */
-    static int getImageSize(HwFrameFormat format, int width, int height);
+    static int getImageSize(kFrameFormat format, int width, int height);
 
 public:
 
-    FkAbsMediaFrame(HwSourcesAllocator *allocator, HwFrameFormat format, size_t size);
+    FkAbsMediaFrame(FkSourcesAllocator *allocator, kFrameFormat format, size_t size);
 
     virtual ~FkAbsMediaFrame();
 
-    void setFormat(HwFrameFormat format);
+    void setFormat(kFrameFormat _format);
 
-    HwFrameFormat getFormat();
+    kFrameFormat getFormat();
 
-    void setPts(int64_t pts);
+    void setPts(int64_t _pts);
 
     int64_t getPts();
 
@@ -89,11 +88,11 @@ public:
     void setFlags(int32_t flags);
 
 private:
-    HwFrameFormat format = HwFrameFormat::HW_FMT_NONE;
+    kFrameFormat format = kFrameFormat::NONE;
     /// Preview time in US.
     int64_t pts;
     int32_t _flags = 0;
 };
 
 
-#endif //HARDWAREVIDEOCODEC_HWADBMEDIAFRAME_H
+#endif //FK_CODEC_FKABSMEDIAFRAME_H

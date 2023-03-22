@@ -7,99 +7,101 @@
 
 #include "FkAbsMediaFrame.h"
 
-AVSampleFormat HwAbsMediaFrame::convertAudioFrameFormat(HwFrameFormat format) {
-    if (format >= HwFrameFormat::HW_SAMPLE_U8 && format < HwFrameFormat::HW_SAMPLE_END) {
+FK_IMPL_CLASS_TYPE(FkAbsMediaFrame, FkAbsFrame)
+
+AVSampleFormat FkAbsMediaFrame::convertAudioFrameFormat(kFrameFormat format) {
+    if (format >= kFrameFormat::SAMPLE_U8 && format < kFrameFormat::SAMPLE_END) {
         return static_cast<AVSampleFormat>(static_cast<int>(format) -
-                                           static_cast<int>(HwFrameFormat::HW_SAMPLE_U8));
+                                           static_cast<int>(kFrameFormat::SAMPLE_U8));
     }
     return AV_SAMPLE_FMT_NONE;
 }
 
-HwFrameFormat HwAbsMediaFrame::convertToAudioFrameFormat(AVSampleFormat format) {
+kFrameFormat FkAbsMediaFrame::convertToAudioFrameFormat(AVSampleFormat format) {
     if (format >= AV_SAMPLE_FMT_U8 && format < AV_SAMPLE_FMT_NB) {
-        return static_cast<HwFrameFormat>(static_cast<int>(format) +
-                                          static_cast<int>(HwFrameFormat::HW_SAMPLE_U8));
+        return static_cast<kFrameFormat>(static_cast<int>(format) +
+                                          static_cast<int>(kFrameFormat::SAMPLE_U8));
     }
-    return HwFrameFormat::HW_FMT_NONE;
+    return kFrameFormat::NONE;
 }
 
-int HwAbsMediaFrame::getBytesPerSample(HwFrameFormat format) {
+int FkAbsMediaFrame::getBytesPerSample(kFrameFormat format) {
     return av_get_bytes_per_sample(convertAudioFrameFormat(format));
 }
 
-AVPixelFormat HwAbsMediaFrame::convertVideoFrameFormat(HwFrameFormat format) {
+AVPixelFormat FkAbsMediaFrame::convertVideoFrameFormat(kFrameFormat format) {
     switch (format) {
-        case HwFrameFormat::HW_IMAGE_YV12:
+        case kFrameFormat::IMAGE_YV12:
             return AV_PIX_FMT_YUV420P;
-        case HwFrameFormat::HW_IMAGE_NV12:
+        case kFrameFormat::IMAGE_NV12:
             return AV_PIX_FMT_NV12;
-        case HwFrameFormat::HW_IMAGE_RGB:
+        case kFrameFormat::IMAGE_RGB:
             return AV_PIX_FMT_RGB24;
-        case HwFrameFormat::HW_IMAGE_RGBA:
+        case kFrameFormat::IMAGE_RGBA:
             return AV_PIX_FMT_RGBA;
         default:
             return AV_PIX_FMT_NONE;
     }
 }
 
-HwFrameFormat HwAbsMediaFrame::convertToVideoFrameFormat(AVPixelFormat format) {
+kFrameFormat FkAbsMediaFrame::convertToVideoFrameFormat(AVPixelFormat format) {
     switch (format) {
         case AV_PIX_FMT_YUV420P:
-            return HwFrameFormat::HW_IMAGE_YV12;
+            return kFrameFormat::IMAGE_YV12;
         case AV_PIX_FMT_NV12:
-            return HwFrameFormat::HW_IMAGE_NV12;
+            return kFrameFormat::IMAGE_NV12;
         case AV_PIX_FMT_BGRA:
         case AV_PIX_FMT_RGBA:
-            return HwFrameFormat::HW_IMAGE_RGBA;
+            return kFrameFormat::IMAGE_RGBA;
         default:
-            return HwFrameFormat::HW_FMT_NONE;
+            return kFrameFormat::NONE;
     }
 }
 
-int HwAbsMediaFrame::getImageSize(HwFrameFormat format, int width, int height) {
+int FkAbsMediaFrame::getImageSize(kFrameFormat format, int width, int height) {
     switch (format) {
-        case HwFrameFormat::HW_IMAGE_RGB:
+        case kFrameFormat::IMAGE_RGB:
             return width * height * 3;
-        case HwFrameFormat::HW_IMAGE_RGBA:
+        case kFrameFormat::IMAGE_RGBA:
             return width * height * 4;
-        case HwFrameFormat::HW_IMAGE_YV12:
-        case HwFrameFormat::HW_IMAGE_NV12:
+        case kFrameFormat::IMAGE_YV12:
+        case kFrameFormat::IMAGE_NV12:
             return width * height * 3 / 2;
         default:
             return 0;
     }
 }
 
-HwAbsMediaFrame::HwAbsMediaFrame(HwSourcesAllocator *allocator,
-                                 HwFrameFormat format,
-                                 size_t size) : HwSources(allocator),
-                                                HwAbsFrame(size) {
+FkAbsMediaFrame::FkAbsMediaFrame(FkSourcesAllocator *allocator,
+                                 kFrameFormat format,
+                                 size_t size) : FkSources(allocator),
+                                                FkAbsFrame(size) {
     this->format = format;
 }
 
-HwAbsMediaFrame::~HwAbsMediaFrame() {
+FkAbsMediaFrame::~FkAbsMediaFrame() {
 }
 
-void HwAbsMediaFrame::setFormat(HwFrameFormat format) { this->format = format; }
+void FkAbsMediaFrame::setFormat(kFrameFormat _format) { this->format = _format; }
 
-HwFrameFormat HwAbsMediaFrame::getFormat() { return format; }
+kFrameFormat FkAbsMediaFrame::getFormat() { return format; }
 
-void HwAbsMediaFrame::setPts(int64_t pts) { this->pts = pts; }
+void FkAbsMediaFrame::setPts(int64_t _pts) { this->pts = _pts; }
 
-int64_t HwAbsMediaFrame::getPts() { return pts; }
+int64_t FkAbsMediaFrame::getPts() { return pts; }
 
-bool HwAbsMediaFrame::isVideo() {
-    return getFormat() >= HwFrameFormat::HW_IMAGE_RGB && getFormat() < HwFrameFormat::HW_IMAGE_END;
+bool FkAbsMediaFrame::isVideo() {
+    return getFormat() >= kFrameFormat::IMAGE_RGB && getFormat() < kFrameFormat::IMAGE_END;
 }
 
-bool HwAbsMediaFrame::isAudio() {
-    return getFormat() >= HwFrameFormat::HW_SAMPLE_U8 && getFormat() < HwFrameFormat::HW_SAMPLE_END;
+bool FkAbsMediaFrame::isAudio() {
+    return getFormat() >= kFrameFormat::SAMPLE_U8 && getFormat() < kFrameFormat::SAMPLE_END;
 }
 
-int32_t HwAbsMediaFrame::flags() {
+int32_t FkAbsMediaFrame::flags() {
     return _flags;
 }
 
-void HwAbsMediaFrame::setFlags(int32_t flags) {
+void FkAbsMediaFrame::setFlags(int32_t flags) {
     _flags = flags;
 }
