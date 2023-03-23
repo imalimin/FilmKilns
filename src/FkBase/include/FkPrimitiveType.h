@@ -42,6 +42,7 @@ public:
 private:
     T _value;
 };
+FK_IMPL_CLASS_TYPE(FkPrimitiveType, FkObject)
 
 #define FK_DEFINE_PRIMITIVE(NAME, TYPE)  \
 FK_SUPER_TEMPLATE_CLASS_IMPL(NAME, FkPrimitiveType)<TYPE> { \
@@ -51,6 +52,7 @@ public: \
     NAME(const NAME &o) : FkPrimitiveType(o) {} \
     virtual ~NAME() {}\
 };                                       \
+FK_IMPL_CLASS_TYPE(NAME, FkPrimitiveType) \
 
 FK_DEFINE_PRIMITIVE(FkChar, char)
 FK_DEFINE_PRIMITIVE(FkByte, uint8_t)

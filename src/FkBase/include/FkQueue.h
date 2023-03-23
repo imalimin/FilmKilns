@@ -44,4 +44,5 @@ private:
     std::queue <T> mQueue;
 };
 
+
 #endif //FK_BASE_FKQUEUE_H

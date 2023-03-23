@@ -9,6 +9,7 @@
 #define FK_BASE_FKSAFEQUEUE_H
 
 #include "FkQueue.h"
+#include <mutex>
 
 FK_SUPER_TEMPLATE_CLASS(FkSafeQueue, FkQueue<T>, class T) {
 FK_DEF_CLASS_TYPE_FUNC(FkSafeQueue)

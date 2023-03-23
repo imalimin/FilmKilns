@@ -82,4 +82,4 @@ target_link_libraries(
         yuv
         FkBase
         ${log-lib})
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include ${THIRD_PARTY_DIR}/ffmpeg/include ${THIRD_PARTY_DIR}/yuv/include)
