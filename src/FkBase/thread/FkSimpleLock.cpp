@@ -39,5 +39,5 @@ void FkSimpleLock::wait() {
 void FkSimpleLock::wait(int us) {
     if (us <= 0) return;
     std::unique_lock<std::mutex> lck(mtx);
-    cond.wait_for(lck, chrono::nanoseconds(us * 1000));
+    cond.wait_for(lck, std::chrono::nanoseconds(us * 1000));
 }

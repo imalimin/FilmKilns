@@ -22,7 +22,7 @@ extern "C" {
 }
 #endif
 
-FK_SUPER_CLASS(FkAbsMediaFrame, FkAbsFrame), FkSources {
+FK_SUPER_CLASS(FkAbsMediaFrame, FkAbsFrame), public FkSources {
 FK_DEF_CLASS_TYPE_FUNC(FkAbsMediaFrame)
 
 public:

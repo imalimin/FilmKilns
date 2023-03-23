@@ -12,6 +12,7 @@
 #include "FkFrameAllocator.h"
 #include "FkHandlerThread.h"
 #include "FkHandler.h"
+#include "FkSafeQueue.h"
 
 FK_SUPER_CLASS(FkAsyncEncoder, FkAbsVideoEncoder) {
 FK_DEF_CLASS_TYPE_FUNC(FkAsyncEncoder)
@@ -48,9 +49,9 @@ private:
     FkFrameAllocator *hwFrameAllocator = nullptr;
     std::shared_ptr<FkHandlerThread> mThread = nullptr;
     FkHandler *mHandler = nullptr;
-    AlSafeQueue<FkAbsMediaFrame *> vQueue;
-    AlSafeQueue<FkAbsMediaFrame *> aQueue;
-    AlSafeQueue<bool> tQueue;
+    FkSafeQueue<FkAbsMediaFrame *> vQueue;
+    FkSafeQueue<FkAbsMediaFrame *> aQueue;
+    FkSafeQueue<bool> tQueue;
     std::mutex mtx;
     FkSimpleLock writeBlock;
     bool looping = false;

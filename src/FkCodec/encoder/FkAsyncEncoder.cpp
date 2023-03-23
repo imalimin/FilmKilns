@@ -31,7 +31,7 @@ FkAsyncEncoder::~FkAsyncEncoder() {
         delete encoder;
         encoder = nullptr;
     }
-    AlLogI(TAG, "size %d, %d, %d", aQueue.size(), vQueue.size(), tQueue.size());
+    FkLogI(TAG, "size %d, %d, %d", aQueue.size(), vQueue.size(), tQueue.size());
     while (!aQueue.empty()) {
         aQueue.pop();
     }
