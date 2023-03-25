@@ -56,6 +56,7 @@ private:
     FkSimpleLock writeBlock;
     bool looping = false;
     std::atomic_bool released;
+    bool isWithoutAudioTrack = false;
 };
 
 

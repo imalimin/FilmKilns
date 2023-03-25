@@ -57,6 +57,8 @@ void FkAsyncEncoder::setPreset(std::string preset) {
 }
 
 bool FkAsyncEncoder::prepare(std::string path, int width, int height, FkSampleFormat audioFormat) {
+    FkLogI(TAG, "prepare");
+    isWithoutAudioTrack = !audioFormat.valid();
     if (encoder) {
         looping = encoder->prepare(path, width, height, audioFormat);
         loop();
@@ -97,7 +99,8 @@ void FkAsyncEncoder::write() {
             return;
         }
     }
-    if (looping && encoder && !aQueue.empty() && !vQueue.empty() && !tQueue.empty()) {
+    bool shouldEncodeFrame = (isWithoutAudioTrack || !aQueue.empty()) && !vQueue.empty() && !tQueue.empty();
+    if (looping && encoder && shouldEncodeFrame) {
         FkAbsMediaFrame *frame = nullptr;
         if (tQueue.pop()) {
             frame = aQueue.pop();
@@ -131,6 +134,7 @@ void FkAsyncEncoder::loop() {
 }
 
 bool FkAsyncEncoder::stop() {
+    FkLogI(TAG, "stop");
     bool ret = false;
     {
         std::lock_guard<std::mutex> guard(mtx);
@@ -144,8 +148,9 @@ bool FkAsyncEncoder::stop() {
 }
 
 void FkAsyncEncoder::release() {
+    FkLogI(TAG, "release");
     released = true;
     if (encoder) {
-        return encoder->release();
+        encoder->release();
     }
 }

@@ -68,6 +68,7 @@ bool FkFFEncoder::initialize() {
         return false;
     }
     vCodec->start();
+    FkLogI(TAG, vCodec->getFormat()->toString());
     if (audioFormat.valid()) {
         /**
          * Audio codec
@@ -84,11 +85,10 @@ bool FkFFEncoder::initialize() {
             return false;
         }
         aCodec->start();
+        FkLogI(TAG, aCodec->getFormat()->toString());
     } else {
         FkLogW(TAG, "Without audio track.");
     }
-    FkLogI(TAG, vCodec->getFormat()->toString());
-    FkLogI(TAG, aCodec->getFormat()->toString());
     muxer = new FkFFMuxer();
     if (FK_OK != muxer->configure(path, FkAbsMuxer::TYPE_MP4)) {
         FkLogE(TAG, "failed to configure muxer!");
