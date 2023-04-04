@@ -234,5 +234,5 @@ std::shared_ptr<FkEngineSettings> FkEngine::getSettings() {
 }
 
 bool FkEngine::_isEnableEngineThread() {
-    return !settings || settings->enableEngineThread;
+    return settings != nullptr && settings->enableEngineThread;
 }
