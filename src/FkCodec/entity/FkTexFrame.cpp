@@ -6,25 +6,22 @@
  */
 
 #include "FkTexFrame.h"
-#include "FkTexture.h"
 
 FK_IMPL_CLASS_TYPE(FkTexFrame, FkVideoFrame)
 
-FkTexFrame::FkTexFrame(HwAbsTexture *tex)
-        : FkVideoFrame(nullptr, kFrameFormat::IMAGE_RGBA, tex->getWidth(), tex->getHeight()) {
-    this->_tex = HwTexture::wrap(tex);
+FkTexFrame::FkTexFrame(uint32_t tex, int w, int h)
+        : FkVideoFrame(nullptr, kFrameFormat::IMAGE_RGBA, w, h), _tex(tex) {
 }
 
 FkTexFrame::FkTexFrame(const FkTexFrame &o)
-        : FkVideoFrame(nullptr, kFrameFormat::IMAGE_RGBA, 0, 0) {
+        : FkVideoFrame(nullptr, kFrameFormat::IMAGE_RGBA, 0, 0),
+          _tex(o._tex) {
 
 }
 
 FkTexFrame::~FkTexFrame() {
-    delete _tex;
-    _tex = nullptr;
 }
 
-HwAbsTexture *FkTexFrame::tex() {
+uint32_t FkTexFrame::tex() {
     return _tex;
 }

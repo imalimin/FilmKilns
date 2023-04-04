@@ -168,7 +168,7 @@ FkResult FkFFMuxer::write(int32_t track, FkPacket *pkt) {
         return ret;
     }
     if (kState::RUNNING != state) {
-        return FK_FAIL;
+        return FK_INVALID_STATE;
     }
     pkt->ref(&avPacket);
     avPacket->stream_index = tracks[track]->index;

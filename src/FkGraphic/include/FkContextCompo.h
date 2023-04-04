@@ -20,6 +20,9 @@ FK_SUPER_CLASS(FkContextCompo, FkComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkContextCompo)
 
 public:
+    static std::shared_ptr<FkContextCompo> wrap(EGLContext eglContext);
+
+public:
     FkContextCompo(int32_t glVersion, const std::string alias);
 
     FkContextCompo(const FkContextCompo &o) = delete;
@@ -30,6 +33,14 @@ public:
 
     FkResult create(std::shared_ptr<FkContextCompo> context = nullptr,
                     std::shared_ptr<FkGraphicWindow> win = nullptr);
+
+#if defined(__ANDROID__)
+
+    FkResult create4MediaCodec(std::shared_ptr<FkContextCompo> context = nullptr,
+                               std::shared_ptr<FkGraphicWindow> win = nullptr);
+
+    bool setTimestamp(int64_t nsecs);
+#endif
 
     FkResult update(std::shared_ptr<FkGraphicWindow> win);
 
@@ -44,6 +55,10 @@ public:
     bool isPBuffer();
 
 private:
+    FkResult _create(std::vector<int> &configSpec,
+                     std::shared_ptr<FkContextCompo> context = nullptr,
+                    std::shared_ptr<FkGraphicWindow> win = nullptr);
+
     EGLDisplay _createDisplay(EGLNativeDisplayType display_id);
 
     EGLConfig _createConfig(EGLDisplay display, const int *configSpec);
@@ -58,12 +73,17 @@ private:
 
     bool _getDefaultConfigures(std::vector<int> &out);
 
+    bool _getMediaCodecConfigures(std::vector<int> &out);
+
 private:
     static const int FK_CONFIG_WIN[];
     static const int FK_CONFIG_BUFFER[];
-#ifdef __ANDROID__
+#if defined(__ANDROID__)
+    typedef EGLBoolean (EGLAPIENTRYP EGL_PRESENTATION_TIME_ANDROID)(EGLDisplay display,
+                                                                    EGLSurface surface,
+                                                                    khronos_stime_nanoseconds_t time);
+    EGL_PRESENTATION_TIME_ANDROID eglPresentationTimeANDROID = nullptr;
     static const int EGL_RECORDABLE_ANDROID;
-    static const int FK_CONFIG_ANDROID[];
 #endif
     int32_t glVersion;
     std::string alias;

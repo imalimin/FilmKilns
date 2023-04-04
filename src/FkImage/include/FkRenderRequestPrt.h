@@ -23,6 +23,7 @@ public:
 
 public:
     std::shared_ptr<FkRenderRequest> req = nullptr;
+    int64_t timestamp = 0;
 };
 
 

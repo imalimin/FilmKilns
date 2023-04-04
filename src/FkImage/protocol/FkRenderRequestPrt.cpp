@@ -9,11 +9,12 @@
 
 FK_IMPL_CLASS_TYPE(FkRenderRequestPrt, FkWinSizeProto)
 
-FkRenderRequestPrt::FkRenderRequestPrt() : FkWinSizeProto() {
+FkRenderRequestPrt::FkRenderRequestPrt() : FkWinSizeProto(), timestamp(0) {
 
 }
 
-FkRenderRequestPrt::FkRenderRequestPrt(const FkRenderRequestPrt &o) : FkWinSizeProto(o), req(o.req) {
+FkRenderRequestPrt::FkRenderRequestPrt(const FkRenderRequestPrt &o)
+        : FkWinSizeProto(o), req(o.req), timestamp(o.timestamp) {
 
 }
 

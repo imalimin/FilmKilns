@@ -27,6 +27,7 @@ public:
     std::shared_ptr<FkEnvEntity> env = nullptr;
     std::shared_ptr<FkMaterialEntity> materials = nullptr;
     std::shared_ptr<FkDeviceEntity> device = nullptr;
+    int64_t timestamp = 0;
 };
 
 #endif //FK_GRAPHIC_FKRENDERPROTO_H

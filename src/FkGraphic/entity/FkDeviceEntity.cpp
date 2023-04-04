@@ -11,6 +11,7 @@
 #include "FkDeviceEntity.h"
 #include "FkBufCompo.h"
 #include "FkFuncCompo.h"
+#include "FkTexFuncCompo.h"
 #include "FkSizeCompo.h"
 #include "FkFormatCompo.h"
 #include "FkPositionCompo.h"
@@ -140,6 +141,13 @@ FkScreenEntity::FkScreenEntity(const FkTexDeviceEntity &o) : FkDeviceEntity(o) {
 
 FkScreenEntity::~FkScreenEntity() {
 
+}
+
+void FkScreenEntity::finish(uint32_t tex, FkSize size, int64_t timestamp) {
+    auto compo1 = FK_FIND_COMPO(this, FkTexFuncCompo);
+    if (compo1) {
+        return compo1->texFunc(tex, size, timestamp);
+    }
 }
 
 FkSize FkScreenEntity::size() {

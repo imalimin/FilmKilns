@@ -42,6 +42,18 @@ FkPacket *FkPacket::create(size_t size, int64_t pts, int64_t dts) {
     return p;
 }
 
+std::shared_ptr<FkPacket> FkPacket::clone(FkPacket *pkt) {
+    auto p = std::shared_ptr<FkPacket>(
+            FkPacket::create(pkt->buf->size(), pkt->getPts(), pkt->getDts()));
+    p->buf->put(pkt->data(), pkt->size());
+    p->buf->rewind();
+    p->pts = pkt->pts;
+    p->dts = pkt->dts;
+    p->duration = pkt->duration;
+    p->flags = pkt->flags;
+    return p;
+}
+
 FkPacket::FkPacket() : FkObject() {
 
 }

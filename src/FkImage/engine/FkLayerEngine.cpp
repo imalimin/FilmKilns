@@ -38,6 +38,7 @@
 #include "FkRotateComponent.h"
 #include "FkDeviceImageCompo.h"
 #include "FkShadowLayerCompo.h"
+#include "FkRenderCanvasTexCallbackProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -108,16 +109,18 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
     return ret;
 }
 
-FkResult FkLayerEngine::notifyRender() {
+FkResult FkLayerEngine::notifyRender(int64_t timestamp) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_notifyRender));
     msg->what = MSG_NOTIFY_RENDER;
     msg->flags = FkMessage::FLAG_UNIQUE;
+    msg->arg2 = timestamp;
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkRenderRequestPrt>();
     proto->req = std::make_shared<FkRenderRequest>();
+    proto->timestamp = msg->arg2;
     return client->quickSend(proto, molecule);
 }
 
@@ -557,5 +560,16 @@ FkResult FkLayerEngine::updateLayerWithModel(FkID layerId,
 FkResult FkLayerEngine::_updateLayerWithModel(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(modelInterface, FkModelInterface, msg->sp);
     auto proto = std::make_shared<FkUpdateLayerModelProto>(modelInterface);
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::setRenderCanvasTexCallback(std::function<void(uint32_t, FkSize, int64_t)> func) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setRenderCanvasTexCallback));
+    msg->sp = std::make_shared<FkRenderCanvasTexCallbackProto>(func);
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setRenderCanvasTexCallback(std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderCanvasTexCallbackProto, msg->sp);
     return client->with(molecule)->send(proto);
 }

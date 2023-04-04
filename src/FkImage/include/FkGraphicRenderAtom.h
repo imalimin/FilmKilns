@@ -41,6 +41,8 @@ private:
 
     FkResult _onReadPixels(std::shared_ptr<FkProtocol> &p);
 
+    FkResult _onSetRenderCanvasTexFunc(std::shared_ptr<FkProtocol> &p);
+
     std::shared_ptr<FkMaterialEntity> _makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer);
 
     FkResult _makeDrawCanvasRequest(std::shared_ptr<FkGraphicLayer> &canvas,
@@ -51,6 +53,9 @@ private:
 
     FkResult _makeDrawPathsRequest(std::shared_ptr<FkGraphicLayer> &layer,
                         std::shared_ptr<FkRenderDeviceRequest> &request);
+
+private:
+    std::function<void(uint32_t, FkSize, int64_t)> mRenderCanvasTexFunc = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKGRAPHICRENDERATOM_H

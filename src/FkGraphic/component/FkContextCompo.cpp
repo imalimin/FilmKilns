@@ -9,21 +9,17 @@
 */
 
 #include "FkContextCompo.h"
+#include "FkGLDefinition.h"
 
 FK_IMPL_CLASS_TYPE(FkContextCompo, FkComponent)
 
-#ifdef __ANDROID__
 const int FkContextCompo::EGL_RECORDABLE_ANDROID = 0x3142;
-const int FkContextCompo::FK_CONFIG_ANDROID[] = {EGL_RED_SIZE, 8,
-                                 EGL_GREEN_SIZE, 8,
-                                 EGL_BLUE_SIZE, 8,
-                                 EGL_ALPHA_SIZE, 8,
-                                 EGL_RECORDABLE_ANDROID, 1,
-                                 EGL_DEPTH_SIZE, 0,
-                                 EGL_STENCIL_SIZE, 0,
-                                 EGL_NONE
-};
-#endif
+
+std::shared_ptr<FkContextCompo> FkContextCompo::wrap(EGLContext eglContext) {
+    auto c = std::make_shared<FkContextCompo>(FK_EGL_GL2, "FkContextCompoWrap");
+    c->eglContext = eglContext;
+    return c;
+}
 
 FkContextCompo::FkContextCompo(int32_t glVersion, const std::string alias)
         : FkComponent(), glVersion(glVersion), alias(alias) {
@@ -34,15 +30,69 @@ FkContextCompo::~FkContextCompo() {
 }
 
 FkResult FkContextCompo::create(std::shared_ptr<FkContextCompo> context,
-                                  std::shared_ptr<FkGraphicWindow> win) {
+                                std::shared_ptr<FkGraphicWindow> win) {
+    std::vector<int> configSpec;
+    FkAssert(_getDefaultConfigures(configSpec), FK_INVALID_PARAMETERS);
+    return _create(configSpec, context, win);
+}
+
+#if defined(__ANDROID__)
+
+#include <android/native_window_jni.h>
+
+bool FkContextCompo::setTimestamp(int64_t nsecs) {
+#if defined(__ANDROID__)
+    auto p = eglGetProcAddress("eglPresentationTimeANDROID");
+    if (p) {
+        eglPresentationTimeANDROID = reinterpret_cast<EGL_PRESENTATION_TIME_ANDROID>(p);
+    }
+#endif
+    if (nullptr == eglPresentationTimeANDROID || EGL_NO_DISPLAY == eglDisplay) {
+        return false;
+    }
+    return EGL_TRUE == eglPresentationTimeANDROID(eglDisplay, eglSurface, nsecs);
+}
+
+FkResult FkContextCompo::create4MediaCodec(std::shared_ptr<FkContextCompo> context,
+                                std::shared_ptr<FkGraphicWindow> win) {
+    std::vector<int> configSpec;
+    FkAssert(_getMediaCodecConfigures(configSpec), FK_INVALID_PARAMETERS);
+    return _create(configSpec, context, win);
+}
+#endif
+
+void FkContextCompo::destroy() {
+    if (eglDisplay != EGL_NO_DISPLAY) {
+        if (!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
+            _checkError();
+            FkLogE(FK_DEF_TAG, "[%s] makeCurrent failed", alias.c_str());
+        }
+        if (eglSurface == EGL_NO_SURFACE || EGL_TRUE != eglDestroySurface(eglDisplay, eglSurface)) {
+            FkLogE(FK_DEF_TAG, "[%s] eglDestroySurface failed", alias.c_str());
+        }
+        if (eglContext == EGL_NO_CONTEXT || EGL_TRUE != eglDestroyContext(eglDisplay, eglContext)) {
+            FkLogE(FK_DEF_TAG, "[%s] eglDestroyContext failed", alias.c_str());
+        }
+        if (EGL_TRUE != eglTerminate(eglDisplay)) {
+            FkLogE(FK_DEF_TAG, "[%s] eglTerminate failed", alias.c_str());
+        }
+    }
+    eglContext = EGL_NO_CONTEXT;
+    eglSurface = EGL_NO_SURFACE;
+    eglDisplay = EGL_NO_DISPLAY;
+    eglConfig = nullptr;
+}
+
+
+FkResult FkContextCompo::_create(std::vector<int> &configSpec,
+                                 std::shared_ptr<FkContextCompo> context,
+                                 std::shared_ptr<FkGraphicWindow> win) {
     _win = win;
     eglDisplay = _createDisplay(EGL_DEFAULT_DISPLAY);
     if (EGL_NO_DISPLAY == eglDisplay) {
         FkLogE(FK_DEF_TAG, "[%s] Create display failed", alias.c_str());
         return FK_FAIL;
     }
-    std::vector<int> configSpec;
-    FkAssert(_getDefaultConfigures(configSpec), FK_INVALID_PARAMETERS);
     if (nullptr != win) {
         eglConfig = _createConfig(eglDisplay, configSpec.data());
     } else {
@@ -75,29 +125,6 @@ FkResult FkContextCompo::create(std::shared_ptr<FkContextCompo> context,
     }
     return FK_OK;
 }
-
-void FkContextCompo::destroy() {
-    if (eglDisplay != EGL_NO_DISPLAY) {
-        if (!eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT)) {
-            _checkError();
-            FkLogE(FK_DEF_TAG, "[%s] makeCurrent failed", alias.c_str());
-        }
-        if (eglSurface == EGL_NO_SURFACE || EGL_TRUE != eglDestroySurface(eglDisplay, eglSurface)) {
-            FkLogE(FK_DEF_TAG, "[%s] eglDestroySurface failed", alias.c_str());
-        }
-        if (eglContext == EGL_NO_CONTEXT || EGL_TRUE != eglDestroyContext(eglDisplay, eglContext)) {
-            FkLogE(FK_DEF_TAG, "[%s] eglDestroyContext failed", alias.c_str());
-        }
-        if (EGL_TRUE != eglTerminate(eglDisplay)) {
-            FkLogE(FK_DEF_TAG, "[%s] eglTerminate failed", alias.c_str());
-        }
-    }
-    eglContext = EGL_NO_CONTEXT;
-    eglSurface = EGL_NO_SURFACE;
-    eglDisplay = EGL_NO_DISPLAY;
-    eglConfig = nullptr;
-}
-
 
 EGLDisplay FkContextCompo::_createDisplay(EGLNativeDisplayType display_id) {
     EGLDisplay display = eglGetDisplay(display_id);
@@ -262,6 +289,27 @@ bool FkContextCompo::_getDefaultConfigures(std::vector<int> &out) {
     out.emplace_back(0);
     out.emplace_back(EGL_STENCIL_SIZE);
     out.emplace_back(0);
+    out.emplace_back(EGL_NONE);
+    return true;
+}
+
+bool FkContextCompo::_getMediaCodecConfigures(std::vector<int> &out) {
+    out.emplace_back(EGL_RENDERABLE_TYPE);
+    out.emplace_back(glVersion);
+    out.emplace_back(EGL_RED_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_GREEN_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_BLUE_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_ALPHA_SIZE);
+    out.emplace_back(8);
+    out.emplace_back(EGL_DEPTH_SIZE);
+    out.emplace_back(0);
+    out.emplace_back(EGL_STENCIL_SIZE);
+    out.emplace_back(0);
+    out.emplace_back(EGL_RECORDABLE_ANDROID);
+    out.emplace_back(1);
     out.emplace_back(EGL_NONE);
     return true;
 }

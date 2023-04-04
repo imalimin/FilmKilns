@@ -15,7 +15,9 @@
 #include "FkPointFCompo.h"
 #include "FkPointVertexCompo.h"
 #include "FkReadPixelsProto.h"
+#include "FkRenderCanvasTexCallbackProto.h"
 #include "FkFuncCompo.h"
+#include "FkTexFuncCompo.h"
 #include "FkPathCompo.h"
 #include "FkScaleComponent.h"
 #include "FkTexEntity.h"
@@ -33,6 +35,7 @@ FkGraphicRenderAtom::~FkGraphicRenderAtom() {
 void FkGraphicRenderAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicRenderAtom::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicRenderAtom::_onReadPixels);
+    FK_PORT_DESC_QUICK_ADD(desc, FkRenderCanvasTexCallbackProto, FkGraphicRenderAtom::_onSetRenderCanvasTexFunc);
 }
 
 void FkGraphicRenderAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
@@ -88,7 +91,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         }
     }
     _makeDrawCanvasRequest(canvas, request);
-    auto ret = renderEngine->renderDevice(request);
+    auto ret = renderEngine->renderDevice(request, proto->timestamp);
     FkAssert(FK_OK == ret, ret);
     return ret;
 }
@@ -116,6 +119,7 @@ FkResult FkGraphicRenderAtom::_makeDrawCanvasRequest(std::shared_ptr<FkGraphicLa
     auto materials = _makeRenderMaterials(canvas);
     if (materials) {
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
+        device->addComponent(std::make_shared<FkTexFuncCompo>(mRenderCanvasTexFunc));
         return request->add(materials, device);
     } else {
         FkLogW(FK_DEF_TAG, "Skip render canvas %d");
@@ -188,6 +192,12 @@ FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
         proto->finishCallback = nullptr;
     }
     return ret;
+}
+
+FkResult FkGraphicRenderAtom::_onSetRenderCanvasTexFunc(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderCanvasTexCallbackProto, p);
+    mRenderCanvasTexFunc = proto->callback;
+    return FK_OK;
 }
 
 FkResult FkGraphicRenderAtom::_makeDrawPathsRequest(std::shared_ptr<FkGraphicLayer> &layer,

@@ -40,7 +40,7 @@ public:
 
     FkResult setSurface(std::shared_ptr<FkGraphicWindow> win, int32_t scaleType);
 
-    FkResult notifyRender();
+    FkResult notifyRender(int64_t timestamp = 0);
 
     FkID newLayer(FkID expectId = FK_ID_NONE);
 
@@ -92,6 +92,8 @@ public:
 
     FkResult updateLayerWithModel(FkID layerId, std::shared_ptr<FkModelInterface> &modelInterface);
 
+    FkResult setRenderCanvasTexCallback(std::function<void(uint32_t, FkSize, int64_t)> func);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -141,6 +143,8 @@ private:
     FkResult _drawPath(std::shared_ptr<FkMessage> &msg);
 
     FkResult _updateLayerWithModel(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _setRenderCanvasTexCallback(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

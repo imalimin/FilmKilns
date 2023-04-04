@@ -9,23 +9,22 @@
 #define FK_CODEC_FKTEXFRAME_H
 
 #include "FkVideoFrame.h"
-#include "FkAbsTexture.h"
 
 FK_SUPER_CLASS(FkTexFrame, FkVideoFrame) {
 FK_DEF_CLASS_TYPE_FUNC(FkTexFrame)
 
 public:
-    FkTexFrame(HwAbsTexture *tex);
+    FkTexFrame(uint32_t tex, int w, int h);
 
     virtual ~FkTexFrame();
 
-    HwAbsTexture *tex();
+    uint32_t tex();
 
 private:
     FkTexFrame(const FkTexFrame &o);
 
 private:
-    HwAbsTexture *_tex = nullptr;
+    uint32_t _tex = 0;
 };
 
 

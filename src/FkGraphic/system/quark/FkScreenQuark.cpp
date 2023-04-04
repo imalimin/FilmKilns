@@ -96,5 +96,6 @@ FkResult FkScreenQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
             drawCount = 0;
         }
     }
+    device->finish(srcTexArray->textures[0]->tex, srcTexArray->size, proto->timestamp);
     return FK_OK;
 }

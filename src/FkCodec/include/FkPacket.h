@@ -35,6 +35,8 @@ public:
 
     static FkPacket *create(size_t size, int64_t pts, int64_t dts);
 
+    static std::shared_ptr<FkPacket> clone(FkPacket *pkt);
+
 public:
     virtual ~FkPacket();
 

@@ -61,7 +61,8 @@ FkResult FkRenderEngine::onStop() {
     return client->quickSend<FkOnStopPrt>(molecule);
 }
 
-FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request) {
+FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request,
+                                      int64_t timestamp) {
     if (request == nullptr) {
         return FK_NPE;
     }
@@ -69,11 +70,12 @@ FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkRenderDeviceRequest> &re
     msg->what = MSG_RENDER_DEVICE;
     msg->flags = FkMessage::FLAG_UNIQUE;
     msg->sp = request;
+    msg->arg2 = timestamp;
     return sendMessage(msg);
 }
 
 FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialEntity> &materials,
-                                std::shared_ptr<FkDeviceEntity> &device) {
+                                      std::shared_ptr<FkDeviceEntity> &device) {
     if (materials == nullptr || device == nullptr) {
         return FK_NPE;
     }
@@ -96,6 +98,7 @@ FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> &msg) {
         proto->materials = pair.first;
         proto->device = pair.second;
         proto->env = std::make_shared<FkEnvEntity>();
+        proto->timestamp = msg->arg2;
         auto ret = client->with(molecule)->send(proto);
         auto bufDevice = std::dynamic_pointer_cast<FkBufDeviceEntity>(proto->device);
         if (bufDevice) {

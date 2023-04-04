@@ -406,8 +406,6 @@ FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLay
             src.swap();
         }
         scaleComp->value = _calcScaleType(src, proto->winSize, proto->scaleType);
-        FkLogI("aliminabc", "%fx%f, %dx%d", scaleComp->value.x, scaleComp->value.y,
-               proto->winSize.getWidth(), proto->winSize.getHeight());
     }
     return layerSizeComp->size;
 }

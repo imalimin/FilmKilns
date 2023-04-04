@@ -28,7 +28,7 @@ public:
 
     virtual ~FkRenderEngine();
 
-    FkResult renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request);
+    FkResult renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request, int64_t timestamp = 0);
 
     FkResult renderDevice(std::shared_ptr<FkMaterialEntity> &materials, std::shared_ptr<FkDeviceEntity> &device);
 
