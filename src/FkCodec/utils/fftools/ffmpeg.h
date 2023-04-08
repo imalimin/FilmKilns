@@ -58,6 +58,8 @@
 
 #define MAX_STREAMS 1024    /* arbitrary sanity check value */
 
+#define FF_ANDROID_LOGI(...) __android_log_print(ANDROID_LOG_INFO, "FFmpeg", __VA_ARGS__)
+
 enum HWAccelID {
     HWACCEL_NONE = 0,
     HWACCEL_AUTO,

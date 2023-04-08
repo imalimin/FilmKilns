@@ -10,6 +10,7 @@
 FK_IMPL_CLASS_TYPE(FkAbsMuxer, FkObject)
 
 const std::string FkAbsMuxer::TYPE_MP4 = "MP4";
+const std::string FkAbsMuxer::TYPE_FLV = "FLV";
 const int32_t FkAbsMuxer::TRACK_NONE = -1;
 
 FkAbsMuxer::FkAbsMuxer() : FkObject() {

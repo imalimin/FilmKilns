@@ -112,3 +112,15 @@ FkString &FkString::replaceAll(const char *oldStr, const char *newStr) {
 std::string FkString::toString() {
     return str();
 }
+
+bool FkString::startWith(std::string str) {
+    if (_str.size() < str.size()) {
+        return false;
+    }
+    for (int i = 0; i < str.size(); ++i) {
+        if (_str[0] != str[0]) {
+            return false;
+        }
+    }
+    return true;
+}

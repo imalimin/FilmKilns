@@ -42,6 +42,7 @@ protected:
 
 public:
     static const std::string TYPE_MP4;
+    static const std::string TYPE_FLV;
     static const int32_t TRACK_NONE;
 };
 

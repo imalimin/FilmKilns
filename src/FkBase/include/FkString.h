@@ -69,6 +69,8 @@ public:
 
     virtual std::string toString() override;
 
+    bool startWith(std::string str);
+
 private:
     std::string _str;
 };

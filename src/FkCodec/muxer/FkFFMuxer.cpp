@@ -47,8 +47,9 @@ FkResult FkFFMuxer::configure(std::string _filePath, std::string _type) {
         FkLogE(TAG, "failed %s", strerror(AVUNERROR(ret)));
         return FK_FAIL;
     }
-    av_dict_set(&pFormatCtx->metadata, "comment", "hwvc", 0);
+    av_dict_set(&pFormatCtx->metadata, "comment", "FilmKilns", 0);
     avPacket = av_packet_alloc();
+    FkLogI(TAG, "configure: %s, %s", _type.c_str(), _filePath.c_str());
     return FK_OK;
 }
 
