@@ -7,6 +7,7 @@
 
 #include "FkFFMuxer.h"
 #include "FkFFUtils.h"
+#include "libavutil/opt.h"
 
 #define TAG "FkFFMuxer"
 
@@ -46,6 +47,10 @@ FkResult FkFFMuxer::configure(std::string _filePath, std::string _type) {
     if (ret < 0 || !pFormatCtx) {
         FkLogE(TAG, "failed %s", strerror(AVUNERROR(ret)));
         return FK_FAIL;
+    }
+    if (_type == "RTSP") {
+//        av_opt_set(pFormatCtx->priv_data, "rtsp_transport", "tcp", 0);
+        pFormatCtx->max_interleave_delta = 1000000;
     }
     av_dict_set(&pFormatCtx->metadata, "comment", "FilmKilns", 0);
     avPacket = av_packet_alloc();

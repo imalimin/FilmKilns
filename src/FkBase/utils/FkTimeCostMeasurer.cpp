@@ -12,6 +12,8 @@
 #include "FkTimeCostMeasurer.h"
 #include "FkTimeUtils.h"
 
+#define TAG "FkTimeCostMeasurer"
+
 FK_IMPL_CLASS_TYPE(FkTimeCostMeasurer, FkObject)
 
 FkTimeCostMeasurer::FkTimeCostMeasurer(int32_t hz) : FkObject(), _hz(hz) {
@@ -47,5 +49,5 @@ int64_t FkTimeCostMeasurer::getAvgCostInUS() {
 }
 
 void FkTimeCostMeasurer::_print(std::string &tag) {
-    FkLogI(tag, "FkTimeCostMeasurer avg cost: %" PRId64 " US", getAvgCostInUS());
+    FkLogI(TAG, "%s avg cost: %" PRId64 " US", tag.c_str(), getAvgCostInUS());
 }
