@@ -17,15 +17,15 @@ FkAsyncEncoder::FkAsyncEncoder(const FkAbsVideoEncoder::Desc &desc) : FkAbsVideo
     hwFrameAllocator = new FkFrameAllocator();
     encoder = new FkFFEncoder(desc);
     mThread = FkHandlerThread::create(TAG);
-    mHandler = new FkHandler(mThread->getLooper(), [this](std::shared_ptr<FkMessage> msg) {
-        this->_dispatch(msg);
-    });
+    mHandler = std::make_shared<FkHandler>(mThread->getLooper(),
+                                           [this](std::shared_ptr<FkMessage> msg) {
+                                               this->_dispatch(msg);
+                                           });
 }
 
 FkAsyncEncoder::~FkAsyncEncoder() {
     mThread->quitSafely();
     mThread = nullptr;
-    delete mHandler;
     mHandler = nullptr;
     if (encoder) {
         delete encoder;

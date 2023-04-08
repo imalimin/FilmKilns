@@ -19,11 +19,13 @@
 #include "FkRenderContext.h"
 #include "FkGLDefinition.h"
 
+#define TAG "FkRenderEngine"
+
 const FkID FkRenderEngine::MSG_RENDER_DEVICE = 0x200;
 
 FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 
-FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
+FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name), measurer(150) {
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
     context = std::make_shared<FkRenderContext>();
@@ -92,6 +94,8 @@ FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> &msg) {
     auto request = std::dynamic_pointer_cast<FkRenderDeviceRequest>(msg->sp);
     FkAssert(request != nullptr, FK_FAIL);
     auto size = request->size();
+    measurer.begin();
+    auto time = FkTimeUtils::getCurrentTimeUS();
     for (int i = 0; i < size; ++i) {
         auto pair = request->get(i);
         auto proto = std::make_shared<FkRenderProto>();
@@ -105,6 +109,7 @@ FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> &msg) {
             bufDevice->finish();
         }
     }
+    measurer.end(TAG);
     return FK_OK;
 }
 

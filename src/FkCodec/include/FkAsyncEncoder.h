@@ -48,7 +48,7 @@ private:
     FkAbsVideoEncoder *encoder = nullptr;
     FkFrameAllocator *hwFrameAllocator = nullptr;
     std::shared_ptr<FkHandlerThread> mThread = nullptr;
-    FkHandler *mHandler = nullptr;
+    std::shared_ptr<FkHandler> mHandler = nullptr;
     FkSafeQueue<FkAbsMediaFrame *> vQueue;
     FkSafeQueue<FkAbsMediaFrame *> aQueue;
     FkSafeQueue<bool> tQueue;
