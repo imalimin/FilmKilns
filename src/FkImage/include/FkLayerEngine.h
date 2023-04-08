@@ -90,6 +90,8 @@ public:
 
     FkResult drawPathFinish(FkID layerId);
 
+    FkResult clearPaths(FkID layerId);
+
     FkResult updateLayerWithModel(FkID layerId, std::shared_ptr<FkModelInterface> &modelInterface);
 
     FkResult setRenderCanvasTexCallback(std::function<void(uint32_t, FkSize, int64_t)> func);

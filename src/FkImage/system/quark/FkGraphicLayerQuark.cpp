@@ -496,7 +496,11 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
         return FK_SOURCE_NOT_FOUND;
     }
     auto layer = itr->second;
-    if (curPathCompo == nullptr && proto->isFinish) {
+    if (proto->isActionClear) {
+        layer->clearComponents(FkPathCompo_Class::type);
+        return FK_OK;
+    }
+    if (curPathCompo == nullptr && proto->isActionFinish) {
         return FK_INVALID_STATE;
     }
     float sensitivity = proto->scaleOfSensitivity;
@@ -524,7 +528,7 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
         curPathCompo = std::make_shared<FkPathCompo>(path, FkColor::makeFrom(proto->paint->color));
         layer->addComponent(curPathCompo);
     }
-    if (proto->isFinish) {
+    if (proto->isActionFinish) {
         curPathCompo->finish();
         curPathCompo = nullptr;
     } else {

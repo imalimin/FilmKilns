@@ -519,7 +519,7 @@ FkResult FkLayerEngine::drawPath(FkID layerId,
     FkAssert(paint != nullptr && paint->strokeWidth > 0, FK_INVALID_DATA);
     FkDoubleVec2 point(x, y);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
-    proto->isFinish = false;
+    proto->isActionFinish = false;
     proto->paint = paint;
 
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
@@ -542,7 +542,17 @@ FkResult FkLayerEngine::_drawPath(std::shared_ptr<FkMessage> &msg) {
 FkResult FkLayerEngine::drawPathFinish(FkID layerId) {
     FkDoubleVec2 point(0, 0);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
-    proto->isFinish = true;
+    proto->isActionFinish = true;
+
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::clearPaths(FkID layerId) {
+    FkDoubleVec2 point(0, 0);
+    auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
+    proto->isActionClear = true;
 
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
     msg->sp = proto;
