@@ -35,6 +35,7 @@ void FkFFMuxer::release() {
         avformat_free_context(pFormatCtx);
         pFormatCtx = nullptr;
     }
+    avformat_network_deinit();
     tracks.clear();
     state = kState::IDL;
     FkLogI(TAG, "enter state IDL");
@@ -48,9 +49,12 @@ FkResult FkFFMuxer::configure(std::string _filePath, std::string _type) {
         FkLogE(TAG, "failed %s", strerror(AVUNERROR(ret)));
         return FK_FAIL;
     }
-    if (_type == "RTSP") {
+    if (_type == "RTSP" || _type == "rtsp") {
+        ret = avformat_network_init();
+        pFormatCtx->flags |= AVFMT_NOFILE;
+        FkLogI(TAG, "avformat_network_init: %d", ret);
 //        av_opt_set(pFormatCtx->priv_data, "rtsp_transport", "tcp", 0);
-        pFormatCtx->max_interleave_delta = 1000000;
+//        pFormatCtx->max_interleave_delta = 1000000;
     }
     av_dict_set(&pFormatCtx->metadata, "comment", "FilmKilns", 0);
     avPacket = av_packet_alloc();
@@ -118,7 +122,7 @@ int32_t FkFFMuxer::addTrack(std::shared_ptr<FkBundle> format) {
         setInt32Parameter(stream->codecpar->height,
                           format->get(FkCodec::KEY_HEIGHT, INT32_MIN));
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
-//        stream->time_base = {1, format->get(HwAbsCodec::KEY_FPS, INT32_MIN)};
+//        stream->time_base = {1, format->get(FkCodec::KEY_FPS, INT32_MIN)};
     }
     tracks.push_back(stream);
     return tracks.empty() ? TRACK_NONE : tracks.size() - 1;
@@ -142,13 +146,16 @@ bool FkFFMuxer::_configure(int32_t track, FkPacket *pkt) {
             break;
         }
         if (mTrackConfigured[i] && i == mTrackConfigured.size() - 1) {
-            if (avio_open2(&pFormatCtx->pb, filePath.c_str(), AVIO_FLAG_WRITE, nullptr, nullptr) <
-                0) {
-                FkLogE(TAG, "failed to open output file!");
-                release();
-                return false;
+            if (!(pFormatCtx->flags & AVFMT_NOFILE)) {
+                auto ret = avio_open(&pFormatCtx->pb, pFormatCtx->filename, AVIO_FLAG_WRITE);
+                if (ret < 0) {
+                    FkLogE(TAG, "failed to open output file %s: %s", strerror(AVUNERROR(ret)),
+                           pFormatCtx->filename);
+                    release();
+                    return false;
+                }
             }
-            int ret = avformat_write_header(pFormatCtx, nullptr);
+            auto ret = avformat_write_header(pFormatCtx, nullptr);
             if (ret < 0) {
                 FkLogE(TAG, "failed to write header, %s", strerror(AVUNERROR(ret)));
                 release();

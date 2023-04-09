@@ -118,7 +118,7 @@ bool FkString::startWith(std::string str) {
         return false;
     }
     for (int i = 0; i < str.size(); ++i) {
-        if (_str[0] != str[0]) {
+        if (_str[i] != str[i]) {
             return false;
         }
     }
