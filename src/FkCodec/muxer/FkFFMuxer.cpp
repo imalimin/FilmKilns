@@ -53,8 +53,6 @@ FkResult FkFFMuxer::configure(std::string _filePath, std::string _type) {
         ret = avformat_network_init();
         pFormatCtx->flags |= AVFMT_NOFILE;
         FkLogI(TAG, "avformat_network_init: %d", ret);
-//        av_opt_set(pFormatCtx->priv_data, "rtsp_transport", "tcp", 0);
-//        pFormatCtx->max_interleave_delta = 1000000;
     }
     av_dict_set(&pFormatCtx->metadata, "comment", "FilmKilns", 0);
     avPacket = av_packet_alloc();
@@ -155,7 +153,10 @@ bool FkFFMuxer::_configure(int32_t track, FkPacket *pkt) {
                     return false;
                 }
             }
-            auto ret = avformat_write_header(pFormatCtx, nullptr);
+            AVDictionary *dict = NULL;
+            av_dict_set(&dict, "rtsp_transport","tcp",0);
+            av_dict_set(&dict, "muxdelay", "0.1", 0);
+            auto ret = avformat_write_header(pFormatCtx, &dict);
             if (ret < 0) {
                 FkLogE(TAG, "failed to write header, %s", strerror(AVUNERROR(ret)));
                 release();
