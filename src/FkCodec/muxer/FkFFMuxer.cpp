@@ -137,7 +137,12 @@ bool FkFFMuxer::_configure(int32_t track, FkPacket *pkt) {
         stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(pkt->size()));
         memcpy(stream->codecpar->extradata, pkt->data(), stream->codecpar->extradata_size);
     }
-    FkLogI(TAG, "track(%d), extra data size(%d)", stream->index, stream->codecpar->extradata_size);
+    FkLogI(TAG, "track(%d), extra data size(%d), %d,%d,%d,%d",
+           stream->index, stream->codecpar->extradata_size,
+           stream->codecpar->extradata[0],
+           stream->codecpar->extradata[1],
+           stream->codecpar->extradata[2],
+           stream->codecpar->extradata[3]);
     mTrackConfigured[track] = true;
     for (int i = 0; i < mTrackConfigured.size(); ++i) {
         if (!mTrackConfigured[i]) {
@@ -198,7 +203,11 @@ FkResult FkFFMuxer::write(int32_t track, FkPacket *pkt) {
     }
     int ret = av_interleaved_write_frame(pFormatCtx, avPacket);
     if (0 != ret) {
-        FkLogE(TAG, "failed(track %d): %s", track, strerror(AVUNERROR(ret)));
+        FkLogE(TAG, "write failed(track %d, flags %s): %s(%d)",
+               track,
+               pkt->getFlagsStr().c_str(),
+               strerror(AVUNERROR(ret)),
+               ret);
         return FK_FAIL;
     }
     return FK_OK;
