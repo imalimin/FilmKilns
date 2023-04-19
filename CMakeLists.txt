@@ -7,6 +7,7 @@ option(ENABLE_ASAN "Enable ASAN." OFF)
 option(ENABLE_MEDIA_CODEC "Enable MediaCodec." ON)
 option(ENABLE_FK "Compile film kilns." OFF)
 option(ENABLE_SKIA_SRC "Compile with skia sources." OFF)
+option(ENABLE_IJK "Compile with ijk ffmpeg." OFF)
 
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
 

@@ -32,7 +32,7 @@ if (NOT ENABLE_SKIA_SRC)
     add_library(skia SHARED IMPORTED)
     set_target_properties(skia PROPERTIES IMPORTED_LOCATION
             "${THIRD_PARTY_DIR}/skia/shared/${ANDROID_ABI}/libskia.so")
-endif (ENABLE_SKIA_SRC)
+endif ()
 
 #------------------SHARED END----------------------
 

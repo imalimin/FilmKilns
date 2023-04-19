@@ -4,10 +4,16 @@ project(FkCodec LANGUAGES C CXX)
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}/include
-        ${THIRD_PARTY_DIR}/ffmpeg/include
         ${PROJECT_SOURCE_DIR}/../FkBase/include
         )
 include_directories(${INCLUDES})
+
+message(STATUS "${PROJECT_NAME} ENABLE_IJK: ${ENABLE_IJK}")
+if (ENABLE_IJK)
+    include_directories(${THIRD_PARTY_DIR}/ijkffmpeg/include)
+else ()
+    include_directories(${THIRD_PARTY_DIR}/ffmpeg/include)
+endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_FLAGS_CONFIGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_FLAGS_CONFIGS}")
@@ -30,9 +36,15 @@ endif ()
 message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 #------------------SHARED START----------------------
-add_library(ffmpeg SHARED IMPORTED)
-set_target_properties(ffmpeg PROPERTIES IMPORTED_LOCATION
-        "${THIRD_PARTY_DIR}/ffmpeg/shared/${ANDROID_ABI}/libhwffmpeg.so")
+if (ENABLE_IJK)
+    add_library(ffmpeg SHARED IMPORTED)
+    set_target_properties(ffmpeg PROPERTIES IMPORTED_LOCATION
+            "${THIRD_PARTY_DIR}/ijkffmpeg/shared/${ANDROID_ABI}/libijkffmpeg.so")
+else ()
+    add_library(ffmpeg SHARED IMPORTED)
+    set_target_properties(ffmpeg PROPERTIES IMPORTED_LOCATION
+            "${THIRD_PARTY_DIR}/ffmpeg/shared/${ANDROID_ABI}/libhwffmpeg.so")
+endif ()
 
 add_library(yuv SHARED IMPORTED)
 set_target_properties(yuv PROPERTIES IMPORTED_LOCATION
