@@ -551,18 +551,21 @@ int opt_default(void *optctx, const char *opt, const char *arg)
     char opt_stripped[128];
     const char *p;
     const AVClass *cc = avcodec_get_class(), *fc = avformat_get_class();
-#if CONFIG_AVRESAMPLE
-//    const AVClass *rc = avresample_get_class();
-#endif
-#if CONFIG_SWSCALE
-//    const AVClass *sc = sws_get_class();
-#endif
-#if CONFIG_SWRESAMPLE
-//    const AVClass *swr_class = swr_get_class();
-#endif
+#if defined(__ENABLE_IJK__)
     const AVClass *rc;
     const AVClass *sc;
     const AVClass *swr_class;
+#else //__ENABLE_IJK__
+    #if CONFIG_AVRESAMPLE
+    const AVClass *rc = avresample_get_class();
+#endif
+#if CONFIG_SWSCALE
+    const AVClass *sc = sws_get_class();
+#endif
+#if CONFIG_SWRESAMPLE
+    const AVClass *swr_class = swr_get_class();
+#endif
+#endif //__ENABLE_IJK__
     if (!strcmp(opt, "debug") || !strcmp(opt, "fdebug"))
         av_log_set_level(AV_LOG_DEBUG);
 
