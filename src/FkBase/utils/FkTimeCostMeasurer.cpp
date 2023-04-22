@@ -29,8 +29,12 @@ void FkTimeCostMeasurer::begin() {
 }
 
 void FkTimeCostMeasurer::end(std::string tag) {
+    if (_begin == INT64_MIN) {
+        return;
+    }
     ++count;
     time += FkTimeUtils::getCurrentTimeUS() - _begin;
+    _begin = INT64_MIN;
     if (count >= _hz) {
         if (!tag.empty()) {
             _print(tag);

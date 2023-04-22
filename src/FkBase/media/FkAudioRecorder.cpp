@@ -88,7 +88,7 @@ void FkAudioRecorder::initialize(FkSLEngine *_engine) {
 }
 
 FkAudioRecorder::~FkAudioRecorder() {
-    FkLogI(TAG, "FkAudioRecorder");
+    FkLogI(TAG, "~FkAudioRecorder");
     stop();
 }
 

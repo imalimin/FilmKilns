@@ -37,7 +37,7 @@ private:
 
 private:
     int32_t _hz = 1000;
-    int64_t _begin = 0;
+    int64_t _begin = INT64_MIN;
     int64_t count = 0;
     int64_t time = 0;
 };

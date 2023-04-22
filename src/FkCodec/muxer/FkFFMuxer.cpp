@@ -201,6 +201,10 @@ FkResult FkFFMuxer::write(int32_t track, FkPacket *pkt) {
                pkt->getFlagsStr().c_str());
         avPacket->dts += 1;
     }
+    if (track == 0 && pkt->getFlags() & FK_CTL_FLAG_KEY) {
+        FkLogI(TAG, "%s: %d,%d,%d,%d", pkt->getFlagsStr().c_str(),
+               pkt->data()[0], pkt->data()[1], pkt->data()[2], pkt->data()[3]);
+    }
     int ret = av_interleaved_write_frame(pFormatCtx, avPacket);
     if (0 != ret) {
         FkLogE(TAG, "write failed(track %d, flags %s): %s(%d)",
