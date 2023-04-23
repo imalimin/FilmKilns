@@ -22,12 +22,12 @@ FkFFMuxer::~FkFFMuxer() {
 
 void FkFFMuxer::release() {
     if (pFormatCtx) {
-        if (state >= kState::CONFIGURED && 0 == av_write_trailer(pFormatCtx)) {
+        if (state >= kState::RUNNING && 0 == av_write_trailer(pFormatCtx)) {
             FkLogI(TAG, "close file success.");
         } else {
             FkLogE(TAG, "close file failed!");
         }
-        if (!(pFormatCtx->flags & AVFMT_NOFILE)) {
+        if (!(pFormatCtx->flags & AVFMT_NOFILE) && pFormatCtx->pb) {
             if (0 != avio_closep(&pFormatCtx->pb)) {
                 FkLogE(TAG, "close file failed!");
             }
