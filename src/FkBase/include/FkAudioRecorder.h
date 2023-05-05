@@ -23,6 +23,10 @@ FK_DEF_CLASS_TYPE_FUNC(FkAudioRecorder)
 public:
     FkAudioRecorder(uint16_t channels,
                     uint32_t sampleRate,
+                    uint16_t format);
+
+    FkAudioRecorder(uint16_t channels,
+                    uint32_t sampleRate,
                     uint16_t format,
                     uint32_t samplesPerBuffer);
 

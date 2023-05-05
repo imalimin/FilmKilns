@@ -27,13 +27,23 @@ void FkAudioRecorder::bufferDequeue(SLAndroidSimpleBufferQueueItf slBufferQueueI
 
 FkAudioRecorder::FkAudioRecorder(uint16_t channels,
                                  uint32_t sampleRate,
+                                 uint16_t format)
+        : FkSLAudioDevice(FkAudioDevice::kMode::Normal,
+                          channels,
+                          sampleRate,
+                          format,
+                          2) {
+}
+
+FkAudioRecorder::FkAudioRecorder(uint16_t channels,
+                                 uint32_t sampleRate,
                                  uint16_t format,
                                  uint32_t samplesPerBuffer)
         : FkSLAudioDevice(FkAudioDevice::kMode::Normal,
-                        channels,
-                        sampleRate,
-                        format,
-                        samplesPerBuffer) {
+                          channels,
+                          sampleRate,
+                          format,
+                          samplesPerBuffer) {
     initialize(nullptr);
 }
 
