@@ -16,3 +16,11 @@ FkAbsVideoEncoder::FkAbsVideoEncoder(const FkAbsEncoder::Desc &desc) : FkAbsEnco
 FkAbsVideoEncoder::~FkAbsVideoEncoder() {
 
 }
+
+FkResult FkAbsVideoEncoder::addMuxer(std::string path) {
+    return FK_FAIL;
+}
+
+FkResult FkAbsVideoEncoder::removeMuxer(std::string path) {
+    return FK_FAIL;
+}

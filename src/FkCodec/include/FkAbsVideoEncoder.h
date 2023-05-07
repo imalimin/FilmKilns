@@ -26,6 +26,10 @@ public:
     virtual void setProfile(std::string profile) = 0;
 
     virtual void setPreset(std::string preset) = 0;
+
+    virtual FkResult addMuxer(std::string path);
+
+    virtual FkResult removeMuxer(std::string path);
 };
 
 
