@@ -20,11 +20,11 @@ std::shared_ptr<FkBuffer> FkBuffer::alloc(size_t size) {
 }
 
 FkBuffer::FkBuffer(uint8_t *data, size_t size)
-        : FkObject(), _capacity(size), _data(data), isRef(true) {
+        : FkObject(), _capacity(size), _limit(size), _data(data), isRef(true) {
 
 }
 
-FkBuffer::FkBuffer(size_t size) : FkObject(), _capacity(size), isRef(false) {
+FkBuffer::FkBuffer(size_t size) : FkObject(), _capacity(size), _limit(size), isRef(false) {
 
     _data = static_cast<uint8_t *>(malloc(_capacity));
 }
