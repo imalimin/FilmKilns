@@ -137,12 +137,20 @@ bool FkFFMuxer::_configure(int32_t track, FkPacket *pkt) {
         stream->codecpar->extradata = static_cast<uint8_t *>(av_mallocz(pkt->size()));
         memcpy(stream->codecpar->extradata, pkt->data(), stream->codecpar->extradata_size);
     }
-    FkLogI(TAG, "track(%d), extra data size(%d), %d,%d,%d,%d",
+    FkLogI(TAG, "track(%d), extra data size4(%d), %d,%d,%d,%d",
            stream->index, stream->codecpar->extradata_size,
            stream->codecpar->extradata[0],
            stream->codecpar->extradata[1],
            stream->codecpar->extradata[2],
            stream->codecpar->extradata[3]);
+    if (stream->codecpar->extradata_size >= 8) {
+        FkLogI(TAG, "track(%d), extra data size8, %d,%d,%d,%d",
+               stream->index, stream->codecpar->extradata_size,
+               stream->codecpar->extradata[4],
+               stream->codecpar->extradata[5],
+               stream->codecpar->extradata[6],
+               stream->codecpar->extradata[7]);
+    }
     mTrackConfigured[track] = true;
     for (int i = 0; i < mTrackConfigured.size(); ++i) {
         if (!mTrackConfigured[i]) {
