@@ -19,14 +19,14 @@ FK_SUPER_CLASS(FkTexFuncCompo, FkFuncCompo) {
 FK_DEF_CLASS_TYPE_FUNC(FkTexFuncCompo)
 
 public:
-FkTexFuncCompo(std::function<void(uint32_t, FkSize, int64_t)> func);
+    FkTexFuncCompo(std::function<void(uint32_t, FkSize, int64_t)> func);
 
-FkTexFuncCompo(const FkTexFuncCompo &o);
+    FkTexFuncCompo(const FkTexFuncCompo &o);
 
-virtual ~FkTexFuncCompo();
+    virtual ~FkTexFuncCompo();
 
 public:
-std::function<void(uint32_t, FkSize, int64_t)> texFunc;
+    std::function<void(uint32_t, FkSize, int64_t)> texFunc;
 };
 
 #endif //FK_GRAPHIC_FKTEXFUNCCOMPO_H

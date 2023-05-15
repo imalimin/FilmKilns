@@ -119,7 +119,9 @@ FkResult FkGraphicRenderAtom::_makeDrawCanvasRequest(std::shared_ptr<FkGraphicLa
     auto materials = _makeRenderMaterials(canvas);
     if (materials) {
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkScreenEntity>();
-        device->addComponent(std::make_shared<FkTexFuncCompo>(mRenderCanvasTexFunc));
+        if (mRenderCanvasTexFunc) {
+            device->addComponent(std::make_shared<FkTexFuncCompo>(mRenderCanvasTexFunc));
+        }
         return request->add(materials, device);
     } else {
         FkLogW(FK_DEF_TAG, "Skip render canvas %d");
