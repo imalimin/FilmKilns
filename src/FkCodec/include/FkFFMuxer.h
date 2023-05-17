@@ -42,6 +42,8 @@ public:
 
     virtual FkResult start() override;
 
+    virtual FkResult stop() override;
+
     virtual int32_t addTrack(std::shared_ptr<FkBundle> format) override;
 
     /**

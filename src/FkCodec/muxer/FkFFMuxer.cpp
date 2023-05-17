@@ -69,6 +69,10 @@ FkResult FkFFMuxer::start() {
     FkLogI(TAG, "enter state CONFIGURED");
     return FK_OK;
 }
+FkResult FkFFMuxer::stop() {
+    release();
+    return FK_OK;
+}
 
 void FkFFMuxer::setInt32Parameter(int32_t &param, int32_t value) {
     if (INT32_MIN != value) {

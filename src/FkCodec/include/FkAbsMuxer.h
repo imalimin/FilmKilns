@@ -24,6 +24,8 @@ public:
 
     virtual FkResult start()=0;
 
+    virtual FkResult stop() = 0;
+
     /**
      * add an audio or video track.
      * @return audio or video track id
