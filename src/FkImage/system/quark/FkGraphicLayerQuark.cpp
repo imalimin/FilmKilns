@@ -44,6 +44,8 @@
 #include "FkQueryLayerProto.h"
 #include "FkDeviceImageCompo.h"
 #include "FkShadowLayerCompo.h"
+#include "FkLayerSetVisibilityProto.h"
+#include "FkVisibilityComponent.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -77,6 +79,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicLayerQuark::_onDrawPath);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicLayerQuark::_onUpdateLayerWithModel);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetVisibilityProto, FkGraphicLayerQuark::_onSetLayerVisibility);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -139,6 +142,7 @@ std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::newLayerEntity() {
     layer->addComponent(std::make_shared<FkTransComponent>());
     layer->addComponent(std::make_shared<FkScaleComponent>());
     layer->addComponent(std::make_shared<FkRotateComponent>());
+    layer->addComponent(std::make_shared<FkVisibilityComponent>());
 
     auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
     FkAssert(context != nullptr, nullptr);
@@ -221,10 +225,12 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
 FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     for (auto &it : layers) {
+        if (it.second->getVisibility() != FK_VISIBLE) {
+            continue;
+        }
         auto layer = *it.second;
         FkLogI(getClassType().getName(), layer.toString());
         proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(layer));
-
     }
     return FK_OK;
 }
@@ -564,6 +570,17 @@ FkResult FkGraphicLayerQuark::_onUpdateLayerWithModel(std::shared_ptr<FkProtocol
             auto compo = std::make_shared<FkPathCompo>(paths[i], FkColor::makeFrom(paints[i]->color));
             layer->addComponent(compo);
         }
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onSetLayerVisibility(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetVisibilityProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (layers.end() != itr) {
+        auto layer = itr->second;
+        auto compo = FK_FIND_COMPO(layer, FkVisibilityComponent);
+        compo->visibility = proto->visibility;
     }
     return FK_OK;
 }

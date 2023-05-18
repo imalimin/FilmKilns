@@ -96,6 +96,8 @@ public:
 
     FkResult setRenderCanvasTexCallback(std::function<void(uint32_t, FkSize, int64_t)> func);
 
+    FkResult setLayerVisibility(FkID layerId, int visibility);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -147,6 +149,8 @@ private:
     FkResult _updateLayerWithModel(std::shared_ptr<FkMessage> &msg);
 
     FkResult _setRenderCanvasTexCallback(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _setLayerVisibility(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

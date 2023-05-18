@@ -78,6 +78,8 @@ protected:
 
     FkResult _onUpdateLayerWithModel(std::shared_ptr<FkProtocol> &p);
 
+    FkResult _onSetLayerVisibility(std::shared_ptr<FkProtocol> &p);
+
 private:
     bool _isExistLayer(FkID id);
 

@@ -41,6 +41,8 @@ public:
 
     FkRational getRotate();
 
+    int getVisibility();
+
     std::string toString() override;
 
 public:

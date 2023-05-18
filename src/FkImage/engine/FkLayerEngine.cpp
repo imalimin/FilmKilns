@@ -39,6 +39,7 @@
 #include "FkDeviceImageCompo.h"
 #include "FkShadowLayerCompo.h"
 #include "FkRenderCanvasTexCallbackProto.h"
+#include "FkLayerSetVisibilityProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -581,5 +582,19 @@ FkResult FkLayerEngine::setRenderCanvasTexCallback(std::function<void(uint32_t, 
 
 FkResult FkLayerEngine::_setRenderCanvasTexCallback(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderCanvasTexCallbackProto, msg->sp);
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::setLayerVisibility(FkID layerId, int visibility) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setLayerVisibility));
+    msg->arg1 = layerId;
+    msg->arg2 = visibility;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setLayerVisibility(std::shared_ptr<FkMessage> &msg) {
+    auto proto = std::make_shared<FkLayerSetVisibilityProto>();
+    proto->layerId = msg->arg1;
+    proto->visibility = msg->arg2;
     return client->with(molecule)->send(proto);
 }

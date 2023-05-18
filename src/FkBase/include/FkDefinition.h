@@ -77,6 +77,9 @@ typedef int32_t FkID;
 #define FK_ID_NONE -1
 #define Fk_CANVAS_ID 0
 
+#define FK_VISIBLE 0
+#define FK_INVISIBLE 1
+
 // +------ KID ------+
 #define FK_KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))
 
