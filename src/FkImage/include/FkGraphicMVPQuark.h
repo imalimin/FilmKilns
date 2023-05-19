@@ -39,6 +39,8 @@ protected:
 private:
     FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
 
+    FkResult _onCopyLayer(std::shared_ptr<FkProtocol> p);
+
     FkResult _onMeasureTrans(std::shared_ptr<FkProtocol> p);
 
     FkResult _onMeasurePoint(std::shared_ptr<FkProtocol> p);

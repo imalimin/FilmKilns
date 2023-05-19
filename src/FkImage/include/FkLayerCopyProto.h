@@ -27,7 +27,8 @@ public:
 public:
     FkID srcLayerId = FK_ID_NONE;
     FkID dstLayerId = FK_ID_NONE;
-std::shared_ptr<FkRenderRequest> req = nullptr;
+    std::shared_ptr<FkGraphicLayer> srcLayer = nullptr;
+    std::shared_ptr<FkGraphicLayer> dstLayer = nullptr;
 };
 
 

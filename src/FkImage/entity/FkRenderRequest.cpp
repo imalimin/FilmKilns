@@ -6,6 +6,7 @@
 */
 
 #include "FkRenderRequest.h"
+#include "FkString.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderRequest, FkGraphicEntity)
 
@@ -39,4 +40,13 @@ std::shared_ptr<FkGraphicLayer> FkRenderRequest::findLayerById(FkID layerId) {
         }
     }
     return nullptr;
+}
+
+std::string FkRenderRequest::toString() {
+    FkString str;
+    for (auto &it: layers) {
+        str.append(it->id);
+        str.append(',');
+    }
+    return str.c_str();
 }

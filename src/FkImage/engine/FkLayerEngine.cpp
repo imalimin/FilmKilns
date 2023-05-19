@@ -40,6 +40,7 @@
 #include "FkShadowLayerCompo.h"
 #include "FkRenderCanvasTexCallbackProto.h"
 #include "FkLayerSetVisibilityProto.h"
+#include "FkLayerCopyProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -600,15 +601,14 @@ FkResult FkLayerEngine::_setLayerVisibility(std::shared_ptr<FkMessage> &msg) {
 }
 
 FkResult FkLayerEngine::copyLayer(FkID srcLayerId, FkID dstLayerId) {
-    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setLayerVisibility));
+    FkAssert(srcLayerId != dstLayerId, FK_NOT_SUPPORT);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_copyLayer));
     msg->arg1 = srcLayerId;
     msg->arg2 = dstLayerId;
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_copyLayer(std::shared_ptr<FkMessage> &msg) {
-    auto proto = std::make_shared<FkLayerSetVisibilityProto>();
-    proto->layerId = msg->arg1;
-    proto->visibility = msg->arg2;
+    auto proto = std::make_shared<FkLayerCopyProto>(msg->arg1, msg->arg2);
     return client->with(molecule)->send(proto);
 }

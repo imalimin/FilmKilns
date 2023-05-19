@@ -579,15 +579,24 @@ FkResult FkGraphicLayerQuark::_onUpdateLayerWithModel(std::shared_ptr<FkProtocol
 FkResult FkGraphicLayerQuark::_onSetLayerVisibility(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetVisibilityProto, p);
     auto itr = layers.find(proto->layerId);
-    if (layers.end() != itr) {
-        auto layer = itr->second;
-        auto compo = FK_FIND_COMPO(layer, FkVisibilityComponent);
-        compo->visibility = proto->visibility;
+    if (layers.end() == itr) {
+        return FK_OK;
     }
+    auto layer = itr->second;
+    auto compo = FK_FIND_COMPO(layer, FkVisibilityComponent);
+    compo->visibility = proto->visibility;
     return FK_OK;
 }
 
 FkResult FkGraphicLayerQuark::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, p);
+    auto itr = layers.find(proto->srcLayerId);
+    if (layers.end() != itr) {
+        proto->srcLayer = std::make_shared<FkGraphicLayer>(*itr->second);
+    }
+    itr = layers.find(proto->dstLayerId);
+    if (layers.end() != itr) {
+        proto->dstLayer = std::make_shared<FkGraphicLayer>(*itr->second);
+    }
     return FK_OK;
 }

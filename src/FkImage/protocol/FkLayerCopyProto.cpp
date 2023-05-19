@@ -18,9 +18,14 @@ FkLayerCopyProto::FkLayerCopyProto(FkID src, FkID dst)
 }
 
 FkLayerCopyProto::FkLayerCopyProto(const FkLayerCopyProto &o)
-        : FkProtocol(o), srcLayerId(o.srcLayerId), dstLayerId(o.dstLayerId) {
+        : FkProtocol(o), srcLayerId(o.srcLayerId), dstLayerId(o.dstLayerId),
+          srcLayer(o.srcLayer), dstLayer(o.dstLayer) {
 
 }
 
 FkLayerCopyProto::~FkLayerCopyProto() {
+    srcLayerId = FK_ID_NONE;
+    dstLayerId = FK_ID_NONE;
+    srcLayer = nullptr;
+    dstLayer = nullptr;
 }

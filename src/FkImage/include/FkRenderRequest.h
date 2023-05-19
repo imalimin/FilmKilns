@@ -25,6 +25,8 @@ public:
 
     std::shared_ptr<FkGraphicLayer> findLayerById(FkID layerId);
 
+    std::string toString() override;
+
 public:
     std::vector<std::shared_ptr<FkGraphicLayer>> layers;
 };

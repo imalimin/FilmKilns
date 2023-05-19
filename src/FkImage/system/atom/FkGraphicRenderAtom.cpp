@@ -21,6 +21,7 @@
 #include "FkPathCompo.h"
 #include "FkScaleComponent.h"
 #include "FkTexEntity.h"
+#include "FkLayerCopyProto.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicRenderAtom, FkSimpleAtom)
 
@@ -34,6 +35,7 @@ FkGraphicRenderAtom::~FkGraphicRenderAtom() {
 
 void FkGraphicRenderAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicRenderAtom::_onRenderRequest);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerCopyProto, FkGraphicRenderAtom::_onCopyLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicRenderAtom::_onReadPixels);
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderCanvasTexCallbackProto, FkGraphicRenderAtom::_onSetRenderCanvasTexFunc);
 }
@@ -94,6 +96,23 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     auto ret = renderEngine->renderDevice(request, proto->timestamp);
     FkAssert(FK_OK == ret, ret);
     return ret;
+}
+
+FkResult FkGraphicRenderAtom::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, p);
+    if (proto->srcLayer == nullptr || proto->dstLayer == nullptr) {
+        return FK_NPE;
+    }
+    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto renderEngine = context->getRenderEngine();
+    auto materials = _makeRenderMaterials(proto->srcLayer);
+    std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(proto->dstLayer->material);
+    auto request = std::make_shared<FkRenderDeviceRequest>();
+    auto ret = request->add(materials, device);
+    FkAssert(FK_OK == ret, ret);
+    ret = renderEngine->renderDevice(request);
+    FkAssert(FK_OK == ret, ret);
+    return FK_OK;
 }
 
 std::shared_ptr<FkMaterialEntity>
