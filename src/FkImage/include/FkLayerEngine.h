@@ -98,6 +98,8 @@ public:
 
     FkResult setLayerVisibility(FkID layerId, int visibility);
 
+    FkResult copyLayer(FkID srcLayerId, FkID dstLayerId);
+
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };
 
@@ -151,6 +153,8 @@ private:
     FkResult _setRenderCanvasTexCallback(std::shared_ptr<FkMessage> &msg);
 
     FkResult _setLayerVisibility(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _copyLayer(std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

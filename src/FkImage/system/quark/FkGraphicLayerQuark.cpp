@@ -46,6 +46,7 @@
 #include "FkShadowLayerCompo.h"
 #include "FkLayerSetVisibilityProto.h"
 #include "FkVisibilityComponent.h"
+#include "FkLayerCopyProto.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -80,6 +81,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicLayerQuark::_onDrawPath);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicLayerQuark::_onUpdateLayerWithModel);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetVisibilityProto, FkGraphicLayerQuark::_onSetLayerVisibility);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerCopyProto, FkGraphicLayerQuark::_onCopyLayer);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -582,5 +584,10 @@ FkResult FkGraphicLayerQuark::_onSetLayerVisibility(std::shared_ptr<FkProtocol> 
         auto compo = FK_FIND_COMPO(layer, FkVisibilityComponent);
         compo->visibility = proto->visibility;
     }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, p);
     return FK_OK;
 }

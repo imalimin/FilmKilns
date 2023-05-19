@@ -598,3 +598,17 @@ FkResult FkLayerEngine::_setLayerVisibility(std::shared_ptr<FkMessage> &msg) {
     proto->visibility = msg->arg2;
     return client->with(molecule)->send(proto);
 }
+
+FkResult FkLayerEngine::copyLayer(FkID srcLayerId, FkID dstLayerId) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setLayerVisibility));
+    msg->arg1 = srcLayerId;
+    msg->arg2 = dstLayerId;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_copyLayer(std::shared_ptr<FkMessage> &msg) {
+    auto proto = std::make_shared<FkLayerSetVisibilityProto>();
+    proto->layerId = msg->arg1;
+    proto->visibility = msg->arg2;
+    return client->with(molecule)->send(proto);
+}
