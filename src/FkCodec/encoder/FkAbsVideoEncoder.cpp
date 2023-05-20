@@ -17,7 +17,7 @@ FkAbsVideoEncoder::~FkAbsVideoEncoder() {
 
 }
 
-FkResult FkAbsVideoEncoder::addMuxer(std::string path) {
+FkResult FkAbsVideoEncoder::addMuxer(std::string path, std::function<void(int64_t, int byteSize)> callback) {
     return FK_FAIL;
 }
 

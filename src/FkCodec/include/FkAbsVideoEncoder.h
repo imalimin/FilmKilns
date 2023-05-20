@@ -27,7 +27,7 @@ public:
 
     virtual void setPreset(std::string preset) = 0;
 
-    virtual FkResult addMuxer(std::string path);
+    virtual FkResult addMuxer(std::string path, std::function<void(int64_t, int byteSize)> callback);
 
     virtual FkResult removeMuxer(std::string path);
 };
