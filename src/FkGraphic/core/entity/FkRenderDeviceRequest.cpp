@@ -38,3 +38,11 @@ std::pair<std::shared_ptr<FkMaterialEntity>, std::shared_ptr<FkDeviceEntity>> &
 FkRenderDeviceRequest::get(int32_t index) {
     return vec[index];
 }
+
+void FkRenderDeviceRequest::setTag(int tag) {
+    this->_tag = tag;
+}
+
+int FkRenderDeviceRequest::getTag() {
+    return _tag;
+}

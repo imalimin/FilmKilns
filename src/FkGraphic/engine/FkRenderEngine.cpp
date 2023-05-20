@@ -70,7 +70,8 @@ FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkRenderDeviceRequest> &re
     }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onRender));
     msg->what = MSG_RENDER_DEVICE;
-//    msg->flags = FkMessage::FLAG_UNIQUE;
+    msg->what += request->getTag();
+    msg->flags = FkMessage::FLAG_UNIQUE;
     msg->sp = request;
     msg->arg2 = timestamp;
     return sendMessage(msg);

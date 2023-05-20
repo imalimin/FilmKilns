@@ -34,8 +34,17 @@ public:
 
     std::pair<std::shared_ptr<FkMaterialEntity>, std::shared_ptr<FkDeviceEntity>> &get(int32_t index);
 
+    /**
+     * Unique action mark.
+     * @param tag
+     */
+    void setTag(int tag);
+
+    int getTag();
+
 private:
     std::vector<std::pair<std::shared_ptr<FkMaterialEntity>, std::shared_ptr<FkDeviceEntity>>> vec;
+    int _tag = 0;
 };
 
 #endif //FK_GRAPHIC_FKRENDERDEVICEREQUEST_H

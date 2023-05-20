@@ -109,6 +109,7 @@ FkResult FkGraphicRenderAtom::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(proto->dstLayer->material);
     auto request = std::make_shared<FkRenderDeviceRequest>();
     auto ret = request->add(materials, device);
+    request->setTag(proto->srcLayer->id + proto->dstLayer->id);
     FkAssert(FK_OK == ret, ret);
     ret = renderEngine->renderDevice(request);
     FkAssert(FK_OK == ret, ret);
