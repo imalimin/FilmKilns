@@ -177,7 +177,7 @@ FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     if (mSessionMap.end() != itr) {
         return client->send(itr->second, p);
     }
-    FkLogW(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty.", getClassType().getName());
+    FkLogD(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty for %s.", getClassType().getName(), p->getClassType().getName());
     return FK_SKIP;
 }
 

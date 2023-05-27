@@ -231,7 +231,7 @@ FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
             continue;
         }
         auto layer = *it.second;
-        FkLogI(getClassType().getName(), layer.toString());
+//        FkLogI(getClassType().getName(), layer.toString());
         proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(layer));
     }
     return FK_OK;

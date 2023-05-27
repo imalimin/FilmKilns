@@ -35,7 +35,7 @@ typedef std::function<void(int)> FkResultCallback;
 #if defined(__FK_DEBUG__)
 #include <assert.h>
 #define FkAssertMsg(condition, value, msg) \
-FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
+if (!(condition)) FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
 assert(condition)
 #define FkAssert(condition, value) assert(condition)
 #else
