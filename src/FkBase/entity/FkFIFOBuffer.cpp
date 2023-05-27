@@ -183,7 +183,7 @@ std::shared_ptr<FkBuffer> FkFIFOBuffer::take(size_t size, int32_t timeOut) {
                   leftCapacity());
 #endif
         if (timeOut <= 0) {
-            return 0;
+            return nullptr;
         }
         takeLock.wait(timeOut);
         if (requestFlush || !willRead(size)) {//if time out or flush, return this.
