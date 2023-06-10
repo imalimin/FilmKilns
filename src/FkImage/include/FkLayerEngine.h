@@ -98,7 +98,8 @@ public:
 
     FkResult setLayerVisibility(FkID layerId, int visibility);
 
-    FkResult copyLayer(FkID srcLayerId, FkID dstLayerId);
+    FkResult copyLayer(FkID srcLayerId, FkID dstLayerId,
+                       std::function<void(FkID, FkID, uint32_t, FkSize, int64_t)> afterCopyFunc);
 
 protected:
     std::shared_ptr<FkSessionClient> getClient() { return client; };

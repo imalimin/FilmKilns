@@ -600,15 +600,17 @@ FkResult FkLayerEngine::_setLayerVisibility(std::shared_ptr<FkMessage> &msg) {
     return client->with(molecule)->send(proto);
 }
 
-FkResult FkLayerEngine::copyLayer(FkID srcLayerId, FkID dstLayerId) {
+FkResult FkLayerEngine::copyLayer(FkID srcLayerId, FkID dstLayerId,
+                                  std::function<void(FkID, FkID, uint32_t, FkSize, int64_t)> afterCopyFunc) {
     FkAssert(srcLayerId != dstLayerId, FK_NOT_SUPPORT);
+    auto proto = std::make_shared<FkLayerCopyProto>(srcLayerId, dstLayerId);
+    proto->afterCopyFunc = afterCopyFunc;
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_copyLayer));
-    msg->arg1 = srcLayerId;
-    msg->arg2 = dstLayerId;
+    msg->sp = proto;
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_copyLayer(std::shared_ptr<FkMessage> &msg) {
-    auto proto = std::make_shared<FkLayerCopyProto>(msg->arg1, msg->arg2);
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, msg->sp);
     return client->with(molecule)->send(proto);
 }

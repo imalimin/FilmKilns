@@ -22,6 +22,7 @@
 #include "FkMVPMatrix.h"
 #include "FkViewportMatCompo.h"
 #include "FkTransMatCompo.h"
+#include "FkTexFuncCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkTexDeviceQuark, FkQuark)
 
@@ -170,5 +171,11 @@ FkResult FkTexDeviceQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     programCompo->program->unbind();
     vboCompo->unbind();
     glDisable(GL_BLEND);
+    auto compo =  FK_FIND_COMPO(device, FkTexFuncCompo);
+    if (compo) {
+        compo->texFunc(dstTexArray->textures[0]->tex, dstTexArray->size, proto->timestamp);
+        std::shared_ptr<FkComponent> tmp = compo;
+        device->removeComponent(tmp);
+    }
     return FK_OK;
 }

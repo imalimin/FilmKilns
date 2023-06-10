@@ -13,6 +13,7 @@
 
 #include "FkProtocol.h"
 #include "FkRenderRequest.h"
+#include <functional>
 
 FK_SUPER_CLASS(FkLayerCopyProto, FkProtocol) {
 FK_DEF_CLASS_TYPE_FUNC(FkLayerCopyProto)
@@ -29,6 +30,7 @@ public:
     FkID dstLayerId = FK_ID_NONE;
     std::shared_ptr<FkGraphicLayer> srcLayer = nullptr;
     std::shared_ptr<FkGraphicLayer> dstLayer = nullptr;
+    std::function<void(FkID, FkID, uint32_t, FkSize, int64_t)> afterCopyFunc = nullptr;
 };
 
 

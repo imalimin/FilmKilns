@@ -107,6 +107,14 @@ FkResult FkGraphicRenderAtom::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
     auto renderEngine = context->getRenderEngine();
     auto materials = _makeRenderMaterials(proto->srcLayer);
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(proto->dstLayer->material);
+    if (proto->afterCopyFunc) {
+        device->addComponent(std::make_shared<FkTexFuncCompo>(
+                [proto](uint32_t texId, FkSize size, int64_t timestamp) {
+                    if (proto->afterCopyFunc) {
+                        proto->afterCopyFunc(proto->srcLayerId, proto->dstLayerId, texId, size, timestamp);
+                    }
+                }));
+    }
     auto request = std::make_shared<FkRenderDeviceRequest>();
     auto ret = request->add(materials, device);
     request->setTag(proto->srcLayer->id + proto->dstLayer->id);
