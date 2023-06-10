@@ -30,6 +30,7 @@ public:
     FkID dstLayerId = FK_ID_NONE;
     std::shared_ptr<FkGraphicLayer> srcLayer = nullptr;
     std::shared_ptr<FkGraphicLayer> dstLayer = nullptr;
+    int64_t timestamp = 0;
     std::function<void(FkID, FkID, uint32_t, FkSize, int64_t)> afterCopyFunc = nullptr;
 };
 

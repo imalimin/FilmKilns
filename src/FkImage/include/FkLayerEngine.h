@@ -98,7 +98,7 @@ public:
 
     FkResult setLayerVisibility(FkID layerId, int visibility);
 
-    FkResult copyLayer(FkID srcLayerId, FkID dstLayerId,
+    FkResult copyLayer(FkID srcLayerId, FkID dstLayerId, int64_t timestamp,
                        std::function<void(FkID, FkID, uint32_t, FkSize, int64_t)> afterCopyFunc);
 
 protected:

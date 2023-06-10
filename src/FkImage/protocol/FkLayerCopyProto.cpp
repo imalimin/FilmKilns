@@ -19,7 +19,7 @@ FkLayerCopyProto::FkLayerCopyProto(FkID src, FkID dst)
 
 FkLayerCopyProto::FkLayerCopyProto(const FkLayerCopyProto &o)
         : FkProtocol(o), srcLayerId(o.srcLayerId), dstLayerId(o.dstLayerId),
-          srcLayer(o.srcLayer), dstLayer(o.dstLayer) {
+          srcLayer(o.srcLayer), dstLayer(o.dstLayer), timestamp(o.timestamp) {
 
 }
 

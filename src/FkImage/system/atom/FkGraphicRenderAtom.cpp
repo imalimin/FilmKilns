@@ -119,7 +119,7 @@ FkResult FkGraphicRenderAtom::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
     auto ret = request->add(materials, device);
     request->setTag(proto->srcLayer->id + proto->dstLayer->id);
     FkAssert(FK_OK == ret, ret);
-    ret = renderEngine->renderDevice(request);
+    ret = renderEngine->renderDevice(request, proto->timestamp);
     FkAssert(FK_OK == ret, ret);
     return FK_OK;
 }
