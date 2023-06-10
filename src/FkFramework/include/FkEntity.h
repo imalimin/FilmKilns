@@ -33,6 +33,8 @@ public:
 
     FkResult addComponents(std::vector<std::shared_ptr<FkComponent>> &vec);
 
+    FkResult removeComponent(std::shared_ptr<FkComponent> &comp);
+
     FkResult findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                            const FkClassType &classType);
 
