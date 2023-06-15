@@ -61,6 +61,7 @@ typedef int32_t FkResult;
 #define FK_SOURCE_NOT_FOUND -8
 #define FK_NOT_SUPPORT -9
 #define FK_INVALID_PARAMETERS -10
+#define FK_TRY_AGAIN -11
 //Image
 #define FK_EMPTY_CANVAS -100
 //File
