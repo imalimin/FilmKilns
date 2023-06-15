@@ -28,6 +28,8 @@ public:
 
     void wait(int us);
 
+    bool wait(int us, std::function<bool()> func);
+
     void notify();
 
 private:
