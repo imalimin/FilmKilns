@@ -58,6 +58,8 @@ public:
 
     std::string getFlagsStr();
 
+    std::string toString() override;
+
 private:
     FkPacket();
 

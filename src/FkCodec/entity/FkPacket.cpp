@@ -7,6 +7,7 @@
 
 #include "FkPacket.h"
 #include "FkCodecDefinition.h"
+#include "FkString.h"
 
 FK_IMPL_CLASS_TYPE(FkPacket, FkObject)
 
@@ -128,4 +129,18 @@ std::string FkPacket::getFlagsStr() {
         str.append("_");
     }
     return str;
+}
+
+std::string FkPacket::toString() {
+    FkString str("Flags=");
+    str.append(getFlagsStr());
+    str.append(", Data(0,4)=");
+    str.append(data()[0]);
+    str.append(",");
+    str.append(data()[1]);
+    str.append(",");
+    str.append(data()[2]);
+    str.append(",");
+    str.append(data()[3]);
+    return str.str();
 }
