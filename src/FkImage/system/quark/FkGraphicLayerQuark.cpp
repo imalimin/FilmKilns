@@ -43,7 +43,6 @@
 #include "FkCatmullRomPath.h"
 #include "FkQueryLayerProto.h"
 #include "FkDeviceImageCompo.h"
-#include "FkShadowLayerCompo.h"
 #include "FkLayerSetVisibilityProto.h"
 #include "FkVisibilityComponent.h"
 #include "FkLayerCopyProto.h"
@@ -169,7 +168,6 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     auto layerColor = _updateLayerColor(proto, layer);
     bool isSwappedWH = bmpCompo != nullptr && bmpCompo->bmp != nullptr && bmpCompo->bmp->isSwappedWH();
     auto layerSize = _updateLayerSize(proto, layer, isSwappedWH);
-    _updateShadowLayer(proto, layer);
 
     if (!layerSize.isZero()) {
         auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
@@ -482,19 +480,6 @@ void FkGraphicLayerQuark::_updateLayerByEncodeOrigin(std::shared_ptr<FkGraphicLa
         }
 
     }
-}
-
-bool FkGraphicLayerQuark::_updateShadowLayer(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
-                                             std::shared_ptr<FkGraphicLayer> &layer) {
-    auto shadowLayerCompo = FK_FIND_COMPO(proto->layer, FkShadowLayerCompo);
-    if (shadowLayerCompo) {
-        auto itr = layers.find(shadowLayerCompo->parentLayerId);
-        if (itr != layers.end()) {
-            itr->second->shadowLayerId = proto->layer->id;
-            return true;
-        }
-    }
-    return false;
 }
 
 FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {

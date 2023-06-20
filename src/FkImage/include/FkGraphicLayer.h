@@ -48,7 +48,6 @@ public:
 public:
     FkID id = FK_ID_NONE;
     std::shared_ptr<FkMaterialCompo> material = nullptr;
-    FkID shadowLayerId = FK_ID_NONE;
 };
 
 

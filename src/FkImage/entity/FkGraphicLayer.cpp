@@ -40,7 +40,7 @@ FkGraphicLayer::FkGraphicLayer() : FkGraphicEntity() {
 }
 
 FkGraphicLayer::FkGraphicLayer(const FkGraphicLayer &o)
-        : FkGraphicEntity(o), id(o.id), material(o.material), shadowLayerId(o.shadowLayerId) {
+        : FkGraphicEntity(o), id(o.id), material(o.material) {
 
 
 }

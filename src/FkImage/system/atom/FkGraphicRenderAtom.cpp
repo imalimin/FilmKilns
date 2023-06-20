@@ -79,13 +79,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         _makeDrawPathsRequest(layer, request);
         auto materials = _makeRenderMaterials(layer);
         if (materials) {
-            std::shared_ptr<FkDeviceEntity> device = nullptr;
-            auto shadowLayer = proto->req->findLayerById(layer->shadowLayerId);
-            if (shadowLayer) {
-                device = std::make_shared<FkTexDeviceEntity>(shadowLayer->material);
-            } else {
-                device = std::make_shared<FkTexDeviceEntity>(canvas->material);
-            }
+            std::shared_ptr<FkDeviceEntity> device  = std::make_shared<FkTexDeviceEntity>(canvas->material);
             auto ret = request->add(materials, device);
             FkAssert(FK_OK == ret, ret);
         } else {

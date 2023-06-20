@@ -37,7 +37,6 @@
 #include "FkImageContext.h"
 #include "FkRotateComponent.h"
 #include "FkDeviceImageCompo.h"
-#include "FkShadowLayerCompo.h"
 #include "FkRenderCanvasTexCallbackProto.h"
 #include "FkLayerSetVisibilityProto.h"
 #include "FkLayerCopyProto.h"
@@ -189,25 +188,6 @@ FkID FkLayerEngine::newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> devic
         sendMessage(msg);
     }
     return id;
-}
-
-FkID FkLayerEngine::newShadowLayer(FkID parentLayerId, FkSize size) {
-    auto id = newLayer();
-    if (FK_ID_NONE != id) {
-        auto colorCompo = std::make_shared<FkColorCompo>(FkColor::transparent());
-        auto sizeCompo = std::make_shared<FkSizeCompo>(size);
-        auto shadowLayerCompo = std::make_shared<FkShadowLayerCompo>(parentLayerId);
-        auto layer = std::make_shared<FkGraphicLayer>();
-        layer->id = id;
-        layer->addComponent(colorCompo);
-        layer->addComponent(sizeCompo);
-        layer->addComponent(shadowLayerCompo);
-        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
-        msg->sp = layer;
-        sendMessage(msg);
-    }
-    return id;
-
 }
 
 FkResult FkLayerEngine::removeLayer(FkID layer) {
