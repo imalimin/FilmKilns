@@ -162,7 +162,6 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSave
         if (FkJavaRuntime::getInstance().findEnv(&env)) {
             FkJavaFunc::makeNativeMsgListener(env, lRef->obj())->call(env, lRef->obj(), 0, ret, NULL, NULL);
         }
-        FkJavaRuntime::getInstance().detachThread();
     };
     auto ret = engine->save(std::string(p), callback);
     env->ReleaseStringUTFChars(file, p);

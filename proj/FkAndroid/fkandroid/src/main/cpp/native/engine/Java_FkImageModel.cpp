@@ -84,7 +84,6 @@ JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeLo
             FkJavaFunc::makeNativeMsgListener(env, lRef->obj())->call(env, lRef->obj(),
                                                                       0, 0, NULL, NULL);
         }
-        FkJavaRuntime::getInstance().detachThread();
     };
     return engine->load(fileStr, finishCallback);
 }
@@ -105,7 +104,6 @@ JNIEXPORT jint FK_JNI_METHOD_DEFINE(com_alimin_fk_engine, FkImageModel, nativeGe
             FkJavaFunc::makeNativeMsgListener(env, lRef->obj())->call(env, lRef->obj(), 0, ret, NULL, buf);
             env->DeleteLocalRef(buf);
         }
-        FkJavaRuntime::getInstance().detachThread();
     };
     engine->getLayers(callback);
     return FK_OK;

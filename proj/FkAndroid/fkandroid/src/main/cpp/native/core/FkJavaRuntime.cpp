@@ -14,10 +14,19 @@
 FK_IMPL_CLASS_TYPE(FkJavaRuntime, FkObject)
 
 FkJavaRuntime *FkJavaRuntime::instance = new FkJavaRuntime();
+pthread_key_t FkJavaRuntime::threadKey = 0;
 const int FkJavaRuntime::VERSION = JNI_VERSION_1_6;
 
 FkJavaRuntime &FkJavaRuntime::getInstance() {
     return *instance;
+}
+
+void FkJavaRuntime::jniThreadDestroy(void *envPtr) {
+    JNIEnv *env = static_cast<JNIEnv *>(envPtr);
+    if (env != NULL) {
+        FkJavaRuntime::getInstance().detachThread();
+        pthread_setspecific(threadKey, NULL);
+    }
 }
 
 FkJavaRuntime::FkJavaRuntime() : FkObject() {
@@ -28,9 +37,13 @@ FkJavaRuntime::~FkJavaRuntime() {
 
 void FkJavaRuntime::attach(JavaVM *vm) {
     this->jvm = vm;
+    if (pthread_key_create(&threadKey, jniThreadDestroy) != JNI_OK) {
+        FkLogE(TAG, "Create jni thread key fail.");
+    }
 }
 
 void FkJavaRuntime::detach() {
+    pthread_key_delete(threadKey);
     JNIEnv *env = nullptr;
     jvm->GetEnv(reinterpret_cast<void **>(&env), VERSION);
     this->jvm = nullptr;
@@ -50,7 +63,7 @@ bool FkJavaRuntime::attachThread() {
     std::lock_guard<std::mutex> guard(atxMtx);
     JNIEnv *pEnv = nullptr;
     if (findEnv(&pEnv)) {
-        FkLogE(TAG, "attachThread failed. Do not attach repeat. currentThreadId=%d", id);
+        FkLogW(TAG, "attachThread failed. Do not attach repeat. currentThreadId=%d", id);
         return false;
     }
     jvm->GetEnv(reinterpret_cast<void **>(&pEnv), VERSION);
@@ -62,6 +75,7 @@ bool FkJavaRuntime::attachThread() {
         }
     }
     FkLogI(TAG, "attachThread currentThreadId=%p, env=%p", id, pEnv);
+    pthread_setspecific(threadKey, (void *) pEnv);
     mEnvMap.insert(std::pair<int64_t, JNIEnv *>(id, pEnv));
     return true;
 }
@@ -76,7 +90,7 @@ void FkJavaRuntime::detachThread() {
     if (findEnv(&pEnv)) {
         int64_t id = FkThread::currentThreadId();
         FkAssert(0 != id, );
-        FkLogD(TAG, "currentThreadId=%p", id);
+        FkLogI(TAG, "detachThread currentThreadId=%p", id);
         int status = jvm->DetachCurrentThread();
         if (status < 0) {
             FkLogI(TAG, "detachThread failed. currentThreadId=%p. status=%d", id, status);
