@@ -18,7 +18,7 @@ FkAndroidWindow::FkAndroidWindow(jobject surface)
         : FkGraphicWindow(0, 0) {
 
     JNIEnv *env = nullptr;
-    FkAssert(FkJavaRuntime::getInstance().findEnv(&env) == true,)
+    FkAssert(FkJavaRuntime::getInstance().findEnv(&env) == true,);
     auto win = ANativeWindow_fromSurface(env, surface);
     _size.set(ANativeWindow_getWidth(win), ANativeWindow_getHeight(win));
     winHandle = win;

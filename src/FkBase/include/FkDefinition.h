@@ -12,6 +12,7 @@
 #include "FkClassType.h"
 #include <functional>
 #include <inttypes.h>
+#include <cassert>
 
 // +-------- Define --------+
 #define FK_INTERFACE class
@@ -33,19 +34,23 @@ typedef std::function<void(int)> FkResultCallback;
 
 // +-------- Assert --------+
 #if defined(__FK_DEBUG__)
-#include <assert.h>
-#define FkAssertMsg(condition, value, msg) \
-if (!(condition)) FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
-assert(condition)
-#define FkAssert(condition, value) assert(condition)
+#define FkAssertMsg(condition, value, msg)                                \
+    do {                                                                  \
+        if (!(condition)) {                                               \
+            FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
+            assert(condition);                                            \
+        }                                                                 \
+    } while(false)
 #else
-#define FkAssertMsg(condition, value, msg)            \
-    if(!(condition)) {                        \
-        FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
-        return value;                         \
-    }
-#define FkAssert(condition, value) FkAssertMsg(condition, value, "")
+#define FkAssertMsg(condition, value, msg)                                \
+    do {                                                                  \
+        if (!(condition)) {                                               \
+            FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
+            return value;                                                 \
+        }                                                                 \
+    } while(false)
 #endif
+#define FkAssert(condition, value) FkAssertMsg(condition, value, "")
 
 // +------ State Code ------+
 typedef int32_t FkResult;
