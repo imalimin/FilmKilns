@@ -28,7 +28,7 @@ FkQuark::~FkQuark() {
 
 }
 
-std::shared_ptr<FkQuarkContext> FkQuark::getContext() {
+std::shared_ptr<FkEngineContext> FkQuark::getContext() {
     return context;
 }
 

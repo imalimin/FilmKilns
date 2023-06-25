@@ -39,7 +39,7 @@ private:
     FkResult _onDrawLayer(std::shared_ptr<FkProtocol> p);
 
 private:
-    std::shared_ptr<FkQuarkContext> context = nullptr;
+    std::shared_ptr<FkEngineContext> context = nullptr;
 };
 
 

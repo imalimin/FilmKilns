@@ -41,7 +41,8 @@ void FkRenderTexQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 
 FkResult FkRenderTexQuark::onCreate() {
     auto ret = FkQuark::onCreate();
-    auto settings = std::dynamic_pointer_cast<FkRenderEngineSettings>(getContext()->getEngineSettings());
+    auto context = FkRenderContext::wrap(getContext());
+    auto settings = context->getRenderSettings();
     if (settings) {
         supportBlockArray = settings->getSupportBlockSizeArray();
     } else {
@@ -86,6 +87,7 @@ FkResult FkRenderTexQuark::_onAllocTex(std::shared_ptr<FkProtocol> &p) {
     bool isMakeNewTex = (texArray == nullptr || texArray->empty());
     if (isMakeNewTex) {
         texArray = _allocTex(proto->texEntity);
+        FkAssert(texArray != nullptr, FK_NPE);
         sMap.insert(std::make_pair(proto->texEntity->getMaterial()->id(), texArray));
     }
     auto deviceImage = proto->texEntity->getMaterial()->getDeviceImage();
@@ -179,7 +181,7 @@ std::shared_ptr<FkTexArrayCompo> FkRenderTexQuark::_allocTex(std::shared_ptr<FkT
             auto tex = allocator->alloc(desc);
             if (nullptr == tex) {
                 FkLogE(FK_DEF_TAG, "Texture allocator return null.");
-                return {};
+                return nullptr;
             }
             texArray->textures.emplace_back(tex);
         }
@@ -296,15 +298,15 @@ FkResult FkRenderTexQuark::_copySubImage(std::shared_ptr<FkBuffer> &src, int32_t
 }
 
 int32_t FkRenderTexQuark::_calcBestBlockSize(FkSize size) {
-    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkRenderContext, getContext());
-    supportBlockArray.emplace_back(context->getMaxTextureSize());
+    auto context = FkRenderContext::wrap(getContext());
+    supportBlockArray.emplace_back(context->getRenderSettings()->getMaxTextureSize());
     std::sort(supportBlockArray.begin(), supportBlockArray.end(),
               [](int a, int b) { return a > b; });
     int32_t blockSize = supportBlockArray[0];
     for (auto it: supportBlockArray) {
         auto x = (int32_t) std::ceil(size.getWidth() * 1.0f / it);
         auto y = (int32_t) std::ceil(size.getHeight() * 1.0f / it);
-        if (x * y <= context->getMaxCountOfFragmentTexture()) {
+        if (x * y <= context->getRenderSettings()->getMaxCountOfFragmentTexture()) {
             blockSize = it;
         }
     }

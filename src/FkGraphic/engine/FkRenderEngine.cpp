@@ -28,8 +28,7 @@ FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name), measurer(150) {
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
-    context = std::make_shared<FkRenderContext>();
-    context->setGlVersion(FK_GL_VER_3);
+    context = std::make_shared<FkEngineContext>();
 }
 
 FkRenderEngine::~FkRenderEngine() {

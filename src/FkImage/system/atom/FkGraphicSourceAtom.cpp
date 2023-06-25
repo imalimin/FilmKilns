@@ -62,7 +62,7 @@ FkResult FkGraphicSourceAtom::onStop() {
 
 FkResult FkGraphicSourceAtom::_onSetSurface(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkSetSurfacePrt, p);
-    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto context = FkImageContext::wrap(getContext());
     auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     return renderEngine->updateWindow(proto->win);

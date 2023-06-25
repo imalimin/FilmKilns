@@ -14,15 +14,15 @@
 #include "FkEntity.h"
 #include "FkEngineSettings.h"
 
-FK_SUPER_CLASS(FkQuarkContext, FkEntity) {
-FK_DEF_CLASS_TYPE_FUNC(FkQuarkContext)
+FK_SUPER_CLASS(FkEngineContext, FkEntity) {
+FK_DEF_CLASS_TYPE_FUNC(FkEngineContext)
 
 public:
-    FkQuarkContext();
+    FkEngineContext();
 
-    FkQuarkContext(const FkQuarkContext &o) = delete;
+    FkEngineContext(const FkEngineContext &o) = delete;
 
-    virtual ~FkQuarkContext();
+    virtual ~FkEngineContext();
 
     virtual void setEngineSettings(std::shared_ptr<FkEngineSettings> &_settings);
 

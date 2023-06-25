@@ -87,9 +87,9 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     } else {
         auto compo = std::make_shared<FkRenderProgramCompo>();
         FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
-        auto context = std::dynamic_pointer_cast<FkRenderContext>(getContext());
+        auto context = FkRenderContext::wrap(getContext());
         if (context) {
-            desc.maxCountOfFragmentTexture = context->getMaxCountOfFragmentTexture();
+            desc.maxCountOfFragmentTexture = context->getRenderSettings()->getMaxCountOfFragmentTexture();
         }
         if (FK_INSTANCE_OF(proto->device, FkScreenEntity)) {
             desc.type = FkProgramDescription::kType::MATRIX_WITH_CANVAS_BACKGROUND;

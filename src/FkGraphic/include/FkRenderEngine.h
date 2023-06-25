@@ -68,7 +68,7 @@ private:
     static const FkID MSG_RENDER_DEVICE;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
-    std::shared_ptr<FkRenderContext> context;
+    std::shared_ptr<FkEngineContext> context;
     FkTimeCostMeasurer measurer;
 };
 

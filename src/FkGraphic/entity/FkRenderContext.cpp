@@ -12,56 +12,26 @@
 #include "FkRenderContext.h"
 #include "FkGLDefinition.h"
 
-FK_IMPL_CLASS_TYPE(FkRenderContext, FkQuarkContext)
+FK_IMPL_CLASS_TYPE(FkRenderContext, FkEngineContext)
 
-FkRenderContext::FkRenderContext() : FkQuarkContext(),
-                                     glVersion(FK_GL_VER_2),
-                                     maxTextureSize(0),
-                                     maxCountOfFragmentTexture(0),
-                                     maxCountOfVertexTexture(0) {
+std::shared_ptr<FkRenderContext> FkRenderContext::wrap(std::shared_ptr<FkEngineContext> _context) {
+    auto *context = new FkRenderContext(_context);
+    return std::shared_ptr<FkRenderContext>(context);
+}
+
+FkRenderContext::FkRenderContext(std::shared_ptr<FkEngineContext> &_context)
+        : FkEngineContext(), _context(_context) {
 
 }
 
 FkRenderContext::~FkRenderContext() {
-
+    _context = nullptr;
 }
 
-void FkRenderContext::setGlVersion(int32_t value) {
-    glVersion = value;
+std::shared_ptr<FkEngineSettings> FkRenderContext::getEngineSettings() {
+    return _context->getEngineSettings();
 }
 
-void FkRenderContext::setMaxTextureSize(int32_t value) {
-    maxTextureSize = value;
-}
-
-void FkRenderContext::setMaxCountOfFragmentTexture(int32_t value) {
-    maxCountOfFragmentTexture = value;
-}
-
-void FkRenderContext::setMaxCountOfVertexTexture(int32_t value) {
-    maxCountOfVertexTexture = value;
-}
-
-void FkRenderContext::setMaxViewportSize(int32_t width, int32_t height) {
-    maxViewportSize.set(width, height);
-}
-
-int32_t FkRenderContext::getGlVersion() {
-    return glVersion;
-}
-
-int32_t FkRenderContext::getMaxTextureSize() {
-    return maxTextureSize;
-}
-
-int32_t FkRenderContext::getMaxCountOfFragmentTexture() {
-    return maxCountOfFragmentTexture;
-}
-
-int32_t FkRenderContext::getMaxCountOfVertexTexture() {
-    return maxCountOfVertexTexture;
-}
-
-FkSize FkRenderContext::getMaxViewportSize() {
-    return maxViewportSize;
+std::shared_ptr<FkRenderEngineSettings> FkRenderContext::getRenderSettings() {
+    return std::dynamic_pointer_cast<FkRenderEngineSettings>(_context->getEngineSettings());
 }

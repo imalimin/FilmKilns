@@ -62,7 +62,7 @@ FkResult FkGraphicRenderAtom::onStop() {
 
 FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
-    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto context = FkImageContext::wrap(getContext());
     auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     auto canvas = proto->req->getCanvas();
@@ -97,7 +97,7 @@ FkResult FkGraphicRenderAtom::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
     if (proto->srcLayer == nullptr || proto->dstLayer == nullptr) {
         return FK_NPE;
     }
-    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto context = FkImageContext::wrap(getContext());
     auto renderEngine = context->getRenderEngine();
     auto materials = _makeRenderMaterials(proto->srcLayer);
     std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(proto->dstLayer->material);
@@ -135,7 +135,7 @@ FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer
 
 FkResult FkGraphicRenderAtom::_makeDrawCanvasRequest(std::shared_ptr<FkGraphicLayer> &canvas,
                                                      std::shared_ptr<FkRenderDeviceRequest> &request) {
-    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto context = FkImageContext::wrap(getContext());
     auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     auto materials = _makeRenderMaterials(canvas);
@@ -189,7 +189,7 @@ FkResult FkGraphicRenderAtom::_makeDrawPointsRequest(std::shared_ptr<FkGraphicLa
 FkResult FkGraphicRenderAtom::_onReadPixels(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkReadPixelsProto, p);
     FkAssert(proto->layer != nullptr, FK_NPE);
-    FK_CAST_NULLABLE_PTR_RETURN_INT(context, FkImageContext, getContext());
+    auto context = FkImageContext::wrap(getContext());
     auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, FK_NPE);
     std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(proto->layer->material);

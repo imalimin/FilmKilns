@@ -145,7 +145,7 @@ std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::newLayerEntity() {
     layer->addComponent(std::make_shared<FkRotateComponent>());
     layer->addComponent(std::make_shared<FkVisibilityComponent>());
 
-    auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+    auto context = FkImageContext::wrap(getContext());
     FkAssert(context != nullptr, nullptr);
     auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
@@ -170,7 +170,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     auto layerSize = _updateLayerSize(proto, layer, isSwappedWH);
 
     if (!layerSize.isZero()) {
-        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        auto context = FkImageContext::wrap(getContext());
         FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
@@ -199,7 +199,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
 FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRemoveLayerProto, p);
     if (proto->layerId == Fk_CANVAS_ID) {
-        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        auto context = FkImageContext::wrap(getContext());
         FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
@@ -211,7 +211,7 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     }
     auto itr = layers.find(proto->layerId);
     if (itr != layers.end()) {
-        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        auto context = FkImageContext::wrap(getContext());
         FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);

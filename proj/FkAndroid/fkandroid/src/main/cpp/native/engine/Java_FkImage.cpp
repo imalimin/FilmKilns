@@ -36,6 +36,10 @@ JNIEXPORT jlong JNICALL Java_com_alimin_fk_engine_FkImage_nativeCreateInstance
     std::string workspaceStr(pWorkspace);
     env->ReleaseStringUTFChars(workspace, pWorkspace);
     std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>(RENDER_ALIAS);
+    auto renderSettings = std::make_shared<FkRenderEngineSettings>();
+    std::vector<int32_t> supportBlockArray = {4096, 1024, 512};
+    renderSettings->setSupportBlockSizeArray(supportBlockArray);
+    renderEngine->setSettings(renderSettings);
     auto imageEngine = std::make_shared<FkImageEngine>(renderEngine, workspaceStr, IMAGE_ENGINE_ALIAS);
     return FkInstanceHolder::getInstance().put(imageEngine);
 }
