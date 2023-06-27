@@ -11,13 +11,14 @@
 
 #include "FkEngineMonitor.h"
 
-FK_IMPL_CLASS_TYPE(FkEngineMonitor, FkObject)
+FK_IMPL_CLASS_TYPE(IFkEngineMonitor, FkObject)
+FK_IMPL_CLASS_TYPE(FkEngineMonitor, IFkEngineMonitor)
 
-FkEngineMonitor::FkEngineMonitor() : FkObject() {
+FkEngineMonitor::FkEngineMonitor() : IFkEngineMonitor() {
 
 }
 
-FkEngineMonitor::FkEngineMonitor(const FkEngineMonitor &o) : FkObject(o) {
+FkEngineMonitor::FkEngineMonitor(const FkEngineMonitor &o) : IFkEngineMonitor(o) {
 
 }
 

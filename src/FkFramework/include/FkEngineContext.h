@@ -13,6 +13,7 @@
 
 #include "FkEntity.h"
 #include "FkEngineSettings.h"
+#include "FkEngineMonitor.h"
 
 FK_SUPER_CLASS(FkEngineContext, FkEntity) {
 FK_DEF_CLASS_TYPE_FUNC(FkEngineContext)
@@ -28,8 +29,13 @@ public:
 
     virtual std::shared_ptr<FkEngineSettings> getEngineSettings();
 
+    virtual void setMonitor(std::shared_ptr<IFkEngineMonitor> &_monitor);
+
+    virtual std::shared_ptr<IFkEngineMonitor> getMonitor();
+
 private:
     std::shared_ptr<FkEngineSettings> settings;
+    std::shared_ptr<IFkEngineMonitor> monitor = nullptr;
 };
 
 #endif //FK_FRAMEWORK_FKQUARKCONTEXT_H

@@ -27,3 +27,11 @@ void FkEngineContext::setEngineSettings(std::shared_ptr<FkEngineSettings> &_sett
 std::shared_ptr<FkEngineSettings> FkEngineContext::getEngineSettings() {
     return this->settings;
 }
+
+void FkEngineContext::setMonitor(std::shared_ptr<IFkEngineMonitor> &_monitor) {
+    this->monitor = _monitor;
+}
+
+std::shared_ptr<IFkEngineMonitor> FkEngineContext::getMonitor() {
+    return monitor;
+}

@@ -14,7 +14,12 @@
 
 #include "FkObject.h"
 
-FK_SUPER_CLASS(FkEngineMonitor, FkObject) {
+FK_SUPER_CLASS(IFkEngineMonitor, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(IFkEngineMonitor)
+
+};
+
+FK_SUPER_CLASS(FkEngineMonitor, IFkEngineMonitor) {
 FK_DEF_CLASS_TYPE_FUNC(FkEngineMonitor)
 
 public:
