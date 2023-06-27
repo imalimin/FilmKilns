@@ -17,6 +17,6 @@ TEST(FkSessionExecutorTest, Execute) {
     EXPECT_EQ(session->connectTo(quark), FK_OK);
     EXPECT_EQ(session->open(), FK_OK);
     FkLocalClient client;
-    EXPECT_EQ(client.send(session, std::make_shared<FkOnCreatePrt>()), FK_OK);
+    EXPECT_EQ(client.send(session, std::make_shared<FkOnCreatePrt>(nullptr)), FK_OK);
     EXPECT_EQ(session->close(), FK_OK);
 }

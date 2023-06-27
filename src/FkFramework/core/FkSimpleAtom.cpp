@@ -74,8 +74,7 @@ FkResult FkSimpleAtom::onCreate() {
     }
     /// Connect create/destroy/start/stop.
     _connectBaseSession();
-    auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = getContext();
+    auto proto = std::make_shared<FkOnCreatePrt>(getContext());
     ret = dispatchNext(proto);
     _prepareDeliveryProtocols();
     /// Connect left protocols.

@@ -15,7 +15,7 @@ FK_SUPER_CLASS(FkOnCreatePrt, FkProtocol) {
 FK_DEF_CLASS_TYPE_FUNC(FkOnCreatePrt)
 
 public:
-    FkOnCreatePrt();
+    FkOnCreatePrt(std::shared_ptr<FkEngineContext> context);
 
     FkOnCreatePrt(const FkOnCreatePrt &o);
 

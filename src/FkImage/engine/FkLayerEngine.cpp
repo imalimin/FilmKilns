@@ -61,8 +61,7 @@ FkResult FkLayerEngine::onCreate() {
     FkAssert(ret == FK_OK, ret);
     ret = renderEngine->create();
     FkAssert(ret == FK_OK, ret);
-    auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = std::make_shared<FkEngineContext>();
+    auto proto = std::make_shared<FkOnCreatePrt>(getContext());
     proto->context->addComponent(std::make_shared<FkRenderEngineCompo>(renderEngine));
     return client->with(molecule)->send(proto);
 }
