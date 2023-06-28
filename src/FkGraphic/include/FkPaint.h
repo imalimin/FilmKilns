@@ -13,6 +13,7 @@
 #define FK_GRAPHIC_FKPAINT_H
 
 #include "FkObject.h"
+#include "FkPath.h"
 
 FK_SUPER_CLASS(FkPaint, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkPaint)
@@ -27,6 +28,7 @@ public:
 public:
     int32_t strokeWidth = 0;
     int32_t color = 0;
+    FkPath::Type pathType = FkPath::Type::kCatmullRom;
 };
 
 #endif //FK_GRAPHIC_FKPAINT_H

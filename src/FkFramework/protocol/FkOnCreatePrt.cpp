@@ -9,7 +9,8 @@
 
 FK_IMPL_CLASS_TYPE(FkOnCreatePrt, FkProtocol)
 
-FkOnCreatePrt::FkOnCreatePrt() : FkProtocol() {
+FkOnCreatePrt::FkOnCreatePrt(std::shared_ptr<FkEngineContext> context)
+        : FkProtocol(), context(context) {
 
 }
 

@@ -33,9 +33,14 @@ public:
 
     FkResult addComponents(std::vector<std::shared_ptr<FkComponent>> &vec);
 
+    FkResult removeComponent(std::shared_ptr<FkComponent> &comp);
+
     FkResult findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                            const FkClassType &classType);
 
+    FkResult clearComponents(const FkClassType &classType);
+
+    size_t countOfComponents();
 
     template<class T>
     std::shared_ptr<T> findComponent(const FkClassType &classType) {

@@ -16,7 +16,8 @@ FkEngineSettings::FkEngineSettings() : FkObject() {
 
 }
 
-FkEngineSettings::FkEngineSettings(const FkEngineSettings &o) : FkObject(o) {
+FkEngineSettings::FkEngineSettings(const FkEngineSettings &o)
+        : FkObject(o), enableEngineThread(o.enableEngineThread) {
 
 }
 

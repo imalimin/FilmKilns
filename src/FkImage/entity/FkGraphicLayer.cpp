@@ -10,6 +10,8 @@
 #include "FkScaleComponent.h"
 #include "FkTransComponent.h"
 #include "FkRotateComponent.h"
+#include "FkVisibilityComponent.h"
+#include "FkString.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayer, FkGraphicEntity)
 
@@ -86,4 +88,37 @@ FkRational FkGraphicLayer::getRotate() {
         value = compo->value;
     }
     return value;
+}
+
+int FkGraphicLayer::getVisibility() {
+    auto compo = FK_FIND_COMPO(this, FkVisibilityComponent);
+    if (compo) {
+        return compo->visibility;
+    }
+    return FK_INVISIBLE;
+
+}
+
+std::string FkGraphicLayer::toString() {
+    FkSize size = getSize();
+    FkFloatVec3 scale = getScale();
+    FkIntVec2 trans = getTrans();
+    FkRational rotate = getRotate();
+    FkString str("layer");
+    str.append(id).append(": size(")
+            .append(size.getWidth())
+            .append("x")
+            .append(size.getHeight())
+            .append(") scale(")
+            .append(scale.x)
+            .append(", ")
+            .append(scale.y)
+            .append(") trans(")
+            .append(trans.x)
+            .append(", ")
+            .append(trans.y)
+            .append(") rotate(")
+            .append(rotate.num / rotate.den)
+            .append(")");
+    return str.toString();
 }

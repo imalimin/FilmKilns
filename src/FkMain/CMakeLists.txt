@@ -41,4 +41,5 @@ target_link_libraries(
         FkFramework
         FkBitmap
         FkGraphic
-        FkImage)
+        FkImage
+        FkCodec)

@@ -11,21 +11,28 @@
 #ifndef FK_IMAGE_FKRENDERCONTEXT_H
 #define FK_IMAGE_FKRENDERCONTEXT_H
 
-#include "FkQuarkContext.h"
+#include "FkEngineContext.h"
 #include "FkRenderEngine.h"
 
-FK_SUPER_CLASS(FkImageContext, FkQuarkContext) {
+FK_SUPER_CLASS(FkImageContext, FkEngineContext) {
 FK_DEF_CLASS_TYPE_FUNC(FkImageContext)
 
 public:
-    FkImageContext();
+    static std::shared_ptr<FkImageContext> wrap(std::shared_ptr<FkEngineContext> _context);
 
     FkImageContext(const FkImageContext &o) = delete;
 
     virtual ~FkImageContext();
 
+    virtual std::shared_ptr<FkEngineSettings> getEngineSettings() override;
+
     std::shared_ptr<FkRenderEngine> getRenderEngine();
 
+private:
+    FkImageContext(std::shared_ptr<FkEngineContext> &_context);
+
+private:
+    std::shared_ptr<FkEngineContext> _context = nullptr;
 };
 
 #endif //FK_IMAGE_FKRENDERCONTEXT_H

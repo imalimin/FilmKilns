@@ -59,6 +59,7 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
     }
 
     auto pointCompo = FK_FIND_COMPO(proto->materials, FkPointVertexCompo);
+    auto materialCompo = FK_FIND_COMPO(proto->materials, FkMaterialCompo);
     std::vector<std::shared_ptr<FkComponent>> paths;
     auto ret = proto->materials->findComponents(paths, FkPathCompo_Class::type);
     if (ret == FK_OK) {
@@ -75,12 +76,20 @@ FkResult FkRenderProgramQuark::_onRender(std::shared_ptr<FkProtocol> p) {
         if (compo->program != nullptr) {
             proto->materials->addComponent(compo);
         }
+    } else if (materialCompo->getDeviceImage() != nullptr
+               && materialCompo->getDeviceImage()->type() == FkDeviceImage::kType::Android) {
+        auto compo = std::make_shared<FkRenderProgramCompo>();
+        FkProgramDescription desc(FkProgramDescription::kType::MATRIX_ANDROID_IMAGE);
+        compo->program = allocator->alloc(desc);
+        if (compo->program != nullptr) {
+            proto->materials->addComponent(compo);
+        }
     } else {
         auto compo = std::make_shared<FkRenderProgramCompo>();
         FkProgramDescription desc(FkProgramDescription::kType::MATRIX);
-        auto context = std::dynamic_pointer_cast<FkRenderContext>(getContext());
+        auto context = FkRenderContext::wrap(getContext());
         if (context) {
-            desc.maxCountOfFragmentTexture = context->getMaxCountOfFragmentTexture();
+            desc.maxCountOfFragmentTexture = context->getRenderSettings()->getMaxCountOfFragmentTexture();
         }
         if (FK_INSTANCE_OF(proto->device, FkScreenEntity)) {
             desc.type = FkProgramDescription::kType::MATRIX_WITH_CANVAS_BACKGROUND;

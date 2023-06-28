@@ -39,7 +39,7 @@ FkResult FkSession::connectTo(const std::shared_ptr<FkQuark> quark) {
         link.emplace_back(quark);
         return FK_OK;
     }
-    FkLogD(FK_DEF_TAG, "Connect to %s failed. Can not accept this protocol.", quark->getClassType().getName());
+    FkLogD(FK_DEF_TAG, "Can not accept protocol(%s). Skip connect to %s", protoDesc.name, quark->getClassType().getName());
     return FK_PROTOCOL_NOT_ACCEPT;
 }
 
@@ -118,7 +118,7 @@ FkResult FkSession::send(std::shared_ptr<FkProtocol> protocol) {
             return FK_OK;
         }
         if (FK_OK != ret) {
-            FkLogE(FK_DEF_TAG, "%s`s session on %s process failed.", protocol->getClassType().getName(), quark->getClassType().getName());
+            FkLogE(FK_DEF_TAG, "%s`s session on %s process failed ret=%d.", protocol->getClassType().getName(), quark->getClassType().getName(), ret);
             return ret;
         }
     }

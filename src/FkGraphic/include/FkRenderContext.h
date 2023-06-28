@@ -12,45 +12,28 @@
 #ifndef FK_GRAPHIC_FKRENDERCONTEXT_H
 #define FK_GRAPHIC_FKRENDERCONTEXT_H
 
-#include "FkQuarkContext.h"
-#include "FkSize.h"
+#include "FkEngineContext.h"
+#include "FkRenderEngineSettings.h"
 
-FK_SUPER_CLASS(FkRenderContext, FkQuarkContext) {
+FK_SUPER_CLASS(FkRenderContext, FkEngineContext) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderContext)
 
 public:
-    FkRenderContext();
+    static std::shared_ptr<FkRenderContext> wrap(std::shared_ptr<FkEngineContext> _context);
 
     FkRenderContext(const FkRenderContext &o) = delete;
 
     virtual ~FkRenderContext();
 
-    void setGlVersion(int32_t value);
+    virtual std::shared_ptr<FkEngineSettings> getEngineSettings() override;
 
-    void setMaxTextureSize(int32_t value);
-
-    void setMaxCountOfFragmentTexture(int32_t value);
-
-    void setMaxCountOfVertexTexture(int32_t value);
-
-    void setMaxViewportSize(int32_t width, int32_t height);
-
-    int32_t getGlVersion();
-
-    int32_t getMaxTextureSize();
-
-    int32_t getMaxCountOfFragmentTexture();
-
-    int32_t getMaxCountOfVertexTexture();
-
-    FkSize getMaxViewportSize();
+    std::shared_ptr<FkRenderEngineSettings> getRenderSettings();
 
 private:
-    int32_t glVersion;
-    int32_t maxTextureSize;
-    int32_t maxCountOfFragmentTexture;
-    int32_t maxCountOfVertexTexture;
-    FkSize maxViewportSize;
+    FkRenderContext(std::shared_ptr<FkEngineContext> &_context);
+
+private:
+    std::shared_ptr<FkEngineContext> _context = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKRENDERCONTEXT_H

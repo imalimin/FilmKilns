@@ -41,11 +41,15 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
 aux_source_directory(${PROJECT_SOURCE_DIR}/utils SOURCES_UTILS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/thread SOURCES_THREAD)
+aux_source_directory(${PROJECT_SOURCE_DIR}/media SOURCES_MEDIA)
+aux_source_directory(${PROJECT_SOURCE_DIR}/media/sles SOURCES_MEDIA_SLES)
 
 list(APPEND SOURCES_ROOT ${SOURCES_CORE})
 list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
 list(APPEND SOURCES_ROOT ${SOURCES_UTILS})
 list(APPEND SOURCES_ROOT ${SOURCES_THREAD})
+list(APPEND SOURCES_ROOT ${SOURCES_MEDIA})
+list(APPEND SOURCES_ROOT ${SOURCES_MEDIA_SLES})
 
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
@@ -63,5 +67,5 @@ find_library(
         log-lib
         log)
 add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${log-lib})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${log-lib} OpenSLES)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

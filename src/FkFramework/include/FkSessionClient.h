@@ -60,10 +60,10 @@ public:
         }
         ret = this->send(session, proto);
         if (FK_OK != ret && FK_SKIP != ret) {
-            FkLogW(FK_DEF_TAG, "Process protocol failed with ret=%d", ret);
+            FkLogW(FK_DEF_TAG, "Process protocol(%s) failed with ret=%d", proto->getClassType().getName(), ret);
             auto ret1 = session->close();
             if (FK_OK != ret1) {
-                FkLogW(FK_DEF_TAG, "Process protocol failed & close session with ret=%d", ret1);
+                FkLogW(FK_DEF_TAG, "Process protocol(%s) failed & close session with ret=%d", proto->getClassType().getName(), ret1);
             }
             return ret;
         }

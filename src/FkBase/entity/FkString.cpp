@@ -29,6 +29,19 @@ std::string FkString::valueOf(char value) {
     return valueOf<char>(value);
 }
 
+std::vector<std::string> FkString::split(const std::string &str, const std::string &pattern) {
+    char *c_str = new char[strlen(str.c_str()) + 1];
+    strcpy(c_str, str.c_str());
+    std::vector<std::string> result;
+    char *tmpStr = strtok(c_str, pattern.c_str());
+    while (tmpStr != NULL) {
+        result.push_back(std::string(tmpStr));
+        tmpStr = strtok(NULL, pattern.c_str());
+    }
+    delete[] c_str;
+    return result;
+}
+
 FkString::FkString() : FkString("") {
 
 }
@@ -111,4 +124,16 @@ FkString &FkString::replaceAll(const char *oldStr, const char *newStr) {
 
 std::string FkString::toString() {
     return str();
+}
+
+bool FkString::startWith(std::string str) {
+    if (_str.size() < str.size()) {
+        return false;
+    }
+    for (int i = 0; i < str.size(); ++i) {
+        if (_str[i] != str[i]) {
+            return false;
+        }
+    }
+    return true;
 }

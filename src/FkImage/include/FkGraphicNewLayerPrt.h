@@ -22,7 +22,6 @@ public:
 
 public:
     FkID expectId = FK_ID_NONE;
-
 };
 
 

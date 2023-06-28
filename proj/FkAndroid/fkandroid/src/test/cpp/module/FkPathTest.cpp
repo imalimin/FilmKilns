@@ -92,7 +92,8 @@ TEST(FkPathTest, CatmullRom) {
 
 TEST(FkPathTest, CatmullRomAndMesh) {
     float strokeWidth = 10;
-    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkMeshPath>(strokeWidth, strokeWidth), FkColor::white());
+    std::shared_ptr<FkPath> parent = std::make_shared<FkCatmullRomPath>(strokeWidth, strokeWidth);
+    auto path = std::make_shared<FkPathCompo>(std::make_shared<FkMeshPath>(parent, strokeWidth), FkColor::white());
     path->addPoint(20, 20);
     path->addPoint(120, 170);
     path->addPoint(200, 180);

@@ -12,17 +12,15 @@
 #ifndef FK_GRAPHIC_FKMESHPATH_H
 #define FK_GRAPHIC_FKMESHPATH_H
 
-#include "FkCatmullRomPath.h"
+#include "FkPath.h"
 
-FK_SUPER_CLASS(FkMeshPath, FkCatmullRomPath) {
+FK_SUPER_CLASS(FkMeshPath, FkPath) {
 FK_DEF_CLASS_TYPE_FUNC(FkMeshPath)
 
 public:
     FkMeshPath(std::vector<FkDoubleVec2> &meshPoints);
 
-    FkMeshPath(float _strokeWidth, float _pixelsOfSensitivity);
-
-    FkMeshPath(float _strokeWidth, double _avgDistance, float _pixelsOfSensitivity);
+    FkMeshPath(std::shared_ptr<FkPath> &parent, float _strokeWidth);
 
     FkMeshPath(const FkMeshPath &o);
 
@@ -36,10 +34,13 @@ public:
 
     virtual size_t size() override;
 
+    virtual void finish() override;
+
 private:
     float strokeWidth = 0.0f;
     std::vector<FkDoubleVec2> meshPoints;
     int readPos = 0;
+    std::shared_ptr<FkPath> parent = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKMESHPATH_H

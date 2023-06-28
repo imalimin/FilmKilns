@@ -23,7 +23,8 @@ namespace pb {
 constexpr FkPaintInfo::FkPaintInfo(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
   : strokewidth_(0)
-  , color_(0){}
+  , color_(0)
+  , pathtype_(0){}
 struct FkPaintInfoDefaultTypeInternal {
   constexpr FkPaintInfoDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -50,6 +51,7 @@ const uint32_t TableStruct_FkPaintInfo_2eproto::offsets[] PROTOBUF_SECTION_VARIA
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkPaintInfo, strokewidth_),
   PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkPaintInfo, color_),
+  PROTOBUF_FIELD_OFFSET(::com::alimin::fk::pb::FkPaintInfo, pathtype_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::com::alimin::fk::pb::FkPaintInfo)},
@@ -60,13 +62,13 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_FkPaintInfo_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\021FkPaintInfo.proto\022\020com.alimin.fk.pb\"1\n"
+  "\n\021FkPaintInfo.proto\022\020com.alimin.fk.pb\"C\n"
   "\013FkPaintInfo\022\023\n\013strokeWidth\030\001 \001(\005\022\r\n\005col"
-  "or\030\002 \001(\005b\006proto3"
+  "or\030\002 \001(\005\022\020\n\010pathType\030\003 \001(\005b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_FkPaintInfo_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_FkPaintInfo_2eproto = {
-  false, false, 96, descriptor_table_protodef_FkPaintInfo_2eproto, "FkPaintInfo.proto", 
+  false, false, 114, descriptor_table_protodef_FkPaintInfo_2eproto, "FkPaintInfo.proto", 
   &descriptor_table_FkPaintInfo_2eproto_once, nullptr, 0, 1,
   schemas, file_default_instances, TableStruct_FkPaintInfo_2eproto::offsets,
   file_level_metadata_FkPaintInfo_2eproto, file_level_enum_descriptors_FkPaintInfo_2eproto, file_level_service_descriptors_FkPaintInfo_2eproto,
@@ -101,16 +103,16 @@ FkPaintInfo::FkPaintInfo(const FkPaintInfo& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&strokewidth_, &from.strokewidth_,
-    static_cast<size_t>(reinterpret_cast<char*>(&color_) -
-    reinterpret_cast<char*>(&strokewidth_)) + sizeof(color_));
+    static_cast<size_t>(reinterpret_cast<char*>(&pathtype_) -
+    reinterpret_cast<char*>(&strokewidth_)) + sizeof(pathtype_));
   // @@protoc_insertion_point(copy_constructor:com.alimin.fk.pb.FkPaintInfo)
 }
 
 inline void FkPaintInfo::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
     reinterpret_cast<char*>(&strokewidth_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&color_) -
-    reinterpret_cast<char*>(&strokewidth_)) + sizeof(color_));
+    0, static_cast<size_t>(reinterpret_cast<char*>(&pathtype_) -
+    reinterpret_cast<char*>(&strokewidth_)) + sizeof(pathtype_));
 }
 
 FkPaintInfo::~FkPaintInfo() {
@@ -141,8 +143,8 @@ void FkPaintInfo::Clear() {
   (void) cached_has_bits;
 
   ::memset(&strokewidth_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&color_) -
-      reinterpret_cast<char*>(&strokewidth_)) + sizeof(color_));
+      reinterpret_cast<char*>(&pathtype_) -
+      reinterpret_cast<char*>(&strokewidth_)) + sizeof(pathtype_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -164,6 +166,14 @@ const char* FkPaintInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           color_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 pathType = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          pathtype_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -209,6 +219,12 @@ uint8_t* FkPaintInfo::_InternalSerialize(
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(2, this->_internal_color(), target);
   }
 
+  // int32 pathType = 3;
+  if (this->_internal_pathtype() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->_internal_pathtype(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -233,6 +249,11 @@ size_t FkPaintInfo::ByteSizeLong() const {
   // int32 color = 2;
   if (this->_internal_color() != 0) {
     total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_color());
+  }
+
+  // int32 pathType = 3;
+  if (this->_internal_pathtype() != 0) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32SizePlusOne(this->_internal_pathtype());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_cached_size_);
@@ -263,6 +284,9 @@ void FkPaintInfo::MergeFrom(const FkPaintInfo& from) {
   if (from._internal_color() != 0) {
     _internal_set_color(from._internal_color());
   }
+  if (from._internal_pathtype() != 0) {
+    _internal_set_pathtype(from._internal_pathtype());
+  }
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -281,8 +305,8 @@ void FkPaintInfo::InternalSwap(FkPaintInfo* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(FkPaintInfo, color_)
-      + sizeof(FkPaintInfo::color_)
+      PROTOBUF_FIELD_OFFSET(FkPaintInfo, pathtype_)
+      + sizeof(FkPaintInfo::pathtype_)
       - PROTOBUF_FIELD_OFFSET(FkPaintInfo, strokewidth_)>(
           reinterpret_cast<char*>(&strokewidth_),
           reinterpret_cast<char*>(&other->strokewidth_));

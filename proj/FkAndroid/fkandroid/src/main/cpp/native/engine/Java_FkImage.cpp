@@ -36,6 +36,10 @@ JNIEXPORT jlong JNICALL Java_com_alimin_fk_engine_FkImage_nativeCreateInstance
     std::string workspaceStr(pWorkspace);
     env->ReleaseStringUTFChars(workspace, pWorkspace);
     std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>(RENDER_ALIAS);
+    auto renderSettings = std::make_shared<FkRenderEngineSettings>();
+    std::vector<int32_t> supportBlockArray = {4096, 1024, 512};
+    renderSettings->setSupportBlockSizeArray(supportBlockArray);
+    renderEngine->setSettings(renderSettings);
     auto imageEngine = std::make_shared<FkImageEngine>(renderEngine, workspaceStr, IMAGE_ENGINE_ALIAS);
     return FkInstanceHolder::getInstance().put(imageEngine);
 }
@@ -162,7 +166,6 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeSave
         if (FkJavaRuntime::getInstance().findEnv(&env)) {
             FkJavaFunc::makeNativeMsgListener(env, lRef->obj())->call(env, lRef->obj(), 0, ret, NULL, NULL);
         }
-        FkJavaRuntime::getInstance().detachThread();
     };
     auto ret = engine->save(std::string(p), callback);
     env->ReleaseStringUTFChars(file, p);
@@ -188,6 +191,7 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeDrawPath
     auto paint = std::make_shared<FkPaint>();
     paint->strokeWidth = paintInfo->strokewidth();
     paint->color = paintInfo->color();
+    paint->pathType = (FkPath::Type) paintInfo->pathtype();
     return engine->drawPath(layerId, x, y, paint);
 }
 

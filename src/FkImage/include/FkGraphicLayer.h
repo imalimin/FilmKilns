@@ -41,6 +41,10 @@ public:
 
     FkRational getRotate();
 
+    int getVisibility();
+
+    std::string toString() override;
+
 public:
     FkID id = FK_ID_NONE;
     std::shared_ptr<FkMaterialCompo> material = nullptr;

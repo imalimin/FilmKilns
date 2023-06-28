@@ -25,16 +25,32 @@ public:
 
     size_t capacity();
 
+    size_t size();
+
     uint8_t *data() const;
+
+    size_t put(uint8_t *data, size_t size);
+
+    size_t remaining();
+
+    void rewind();
+
+    short getShort();
+
+    float getFloat();
 
 private:
     FkBuffer(uint8_t *data, size_t size);
 
     FkBuffer(size_t size);
 
+    void _movePosition(size_t offset);
+
 private:
     uint8_t *_data = nullptr;
     size_t _capacity = 0;
+    size_t _limit = 0;
+    size_t _position = 0;
     bool isRef = false;
 };
 

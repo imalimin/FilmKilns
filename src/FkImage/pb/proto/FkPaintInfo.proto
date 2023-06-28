@@ -4,4 +4,5 @@ package com.alimin.fk.pb;
 message FkPaintInfo {
     int32 strokeWidth = 1;
     int32 color = 2;
+    int32 pathType = 3;
 }

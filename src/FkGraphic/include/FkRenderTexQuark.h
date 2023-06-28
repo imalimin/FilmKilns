@@ -74,6 +74,7 @@ private:
 private:
     std::shared_ptr<FkGraphicAllocator> allocator = nullptr;
     std::unordered_map<FkID, std::shared_ptr<FkTexArrayCompo>> sMap;
+    std::vector<int> supportBlockArray;
 };
 
 #endif //FK_GRAPHIC_FKRENDERTEXQUARK_H

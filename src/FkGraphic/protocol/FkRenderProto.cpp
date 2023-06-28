@@ -14,7 +14,9 @@ FkRenderProto::FkRenderProto() : FkProtocol() {
 }
 
 FkRenderProto::FkRenderProto(const FkRenderProto &o) : FkProtocol(o), env(o.env),
-                                                       materials(o.materials), device(o.device) {
+                                                       materials(o.materials),
+                                                       device(o.device),
+                                                       timestamp(o.timestamp) {
 
 }
 

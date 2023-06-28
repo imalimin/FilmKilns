@@ -39,7 +39,13 @@
 #include "FkDrawPathProto.h"
 #include "FkUpdateLayerModelProto.h"
 #include "FkMeshPath.h"
+#include "FkLinePath.h"
+#include "FkCatmullRomPath.h"
 #include "FkQueryLayerProto.h"
+#include "FkDeviceImageCompo.h"
+#include "FkLayerSetVisibilityProto.h"
+#include "FkVisibilityComponent.h"
+#include "FkLayerCopyProto.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -73,6 +79,8 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicLayerQuark::_onDrawPath);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicLayerQuark::_onUpdateLayerWithModel);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetVisibilityProto, FkGraphicLayerQuark::_onSetLayerVisibility);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerCopyProto, FkGraphicLayerQuark::_onCopyLayer);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -135,8 +143,9 @@ std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::newLayerEntity() {
     layer->addComponent(std::make_shared<FkTransComponent>());
     layer->addComponent(std::make_shared<FkScaleComponent>());
     layer->addComponent(std::make_shared<FkRotateComponent>());
+    layer->addComponent(std::make_shared<FkVisibilityComponent>());
 
-    auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+    auto context = FkImageContext::wrap(getContext());
     FkAssert(context != nullptr, nullptr);
     auto renderEngine = context->getRenderEngine();
     FkAssert(renderEngine != nullptr, nullptr);
@@ -154,13 +163,14 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
     }
     FkResult ret = FK_OK;
     auto bmpCompo = FK_FIND_COMPO(proto->layer, FkBitmapCompo);
+    auto deviceImageCompo = FK_FIND_COMPO(proto->layer, FkDeviceImageCompo);
     auto layer = itr->second;
     auto layerColor = _updateLayerColor(proto, layer);
     bool isSwappedWH = bmpCompo != nullptr && bmpCompo->bmp != nullptr && bmpCompo->bmp->isSwappedWH();
     auto layerSize = _updateLayerSize(proto, layer, isSwappedWH);
 
     if (!layerSize.isZero()) {
-        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        auto context = FkImageContext::wrap(getContext());
         FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
@@ -174,6 +184,9 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
             _updateLayerByEncodeOrigin(layer, (int32_t) bmpCompo->bmp->getEncodedOrigin());
             layer->copyComponentFrom(proto->layer, FkFilePathCompo_Class::type);
         } else {
+            if (deviceImageCompo && deviceImageCompo->deviceImage) {
+                layer->material->setDeviceImage(deviceImageCompo->deviceImage);
+            }
             ret = renderEngine->updateMaterial(layer->material,
                                                layerSize,
                                                layerColor);
@@ -186,7 +199,7 @@ FkResult FkGraphicLayerQuark::_onUpdateLayer(std::shared_ptr<FkProtocol> p) {
 FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRemoveLayerProto, p);
     if (proto->layerId == Fk_CANVAS_ID) {
-        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        auto context = FkImageContext::wrap(getContext());
         FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
@@ -198,7 +211,7 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     }
     auto itr = layers.find(proto->layerId);
     if (itr != layers.end()) {
-        auto context = std::dynamic_pointer_cast<FkImageContext>(getContext());
+        auto context = FkImageContext::wrap(getContext());
         FkAssert(context != nullptr, FK_NPE);
         auto renderEngine = context->getRenderEngine();
         FkAssert(renderEngine != nullptr, FK_NPE);
@@ -212,7 +225,12 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
 FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
     for (auto &it : layers) {
-        proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(*it.second));
+        if (it.second->getVisibility() != FK_VISIBLE) {
+            continue;
+        }
+        auto layer = *it.second;
+//        FkLogI(getClassType().getName(), layer.toString());
+        proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(layer));
     }
     return FK_OK;
 }
@@ -471,7 +489,11 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
         return FK_SOURCE_NOT_FOUND;
     }
     auto layer = itr->second;
-    if (curPathCompo == nullptr && proto->isFinish) {
+    if (proto->isActionClear) {
+        layer->clearComponents(FkPathCompo_Class::type);
+        return FK_OK;
+    }
+    if (curPathCompo == nullptr && proto->isActionFinish) {
         return FK_INVALID_STATE;
     }
     float sensitivity = proto->scaleOfSensitivity;
@@ -483,12 +505,23 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
     sensitivity = 7.0f / sensitivity;
     if (curPathCompo == nullptr) {
         FkAssert(proto->paint != nullptr, FK_INVALID_STATE);
-        auto path = std::make_shared<FkMeshPath>(proto->paint->strokeWidth,
-                                                 std::min(sensitivity, 1.0f));
+        float strokeWidth = proto->paint->strokeWidth;
+        float s = std::min(sensitivity, 1.0f);
+        std::shared_ptr<FkPath> parent = nullptr;
+        switch (proto->paint->pathType) {
+            case FkPath::Type::kLine:
+                parent = std::make_shared<FkLinePath>(strokeWidth, s);
+                break;
+            case FkPath::Type::kCatmullRom:
+            default:
+                parent = std::make_shared<FkCatmullRomPath>(strokeWidth, s);
+                break;
+        }
+        auto path = std::make_shared<FkMeshPath>(parent, strokeWidth);
         curPathCompo = std::make_shared<FkPathCompo>(path, FkColor::makeFrom(proto->paint->color));
         layer->addComponent(curPathCompo);
     }
-    if (proto->isFinish) {
+    if (proto->isActionFinish) {
         curPathCompo->finish();
         curPathCompo = nullptr;
     } else {
@@ -524,6 +557,31 @@ FkResult FkGraphicLayerQuark::_onUpdateLayerWithModel(std::shared_ptr<FkProtocol
             auto compo = std::make_shared<FkPathCompo>(paths[i], FkColor::makeFrom(paints[i]->color));
             layer->addComponent(compo);
         }
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onSetLayerVisibility(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetVisibilityProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (layers.end() == itr) {
+        return FK_OK;
+    }
+    auto layer = itr->second;
+    auto compo = FK_FIND_COMPO(layer, FkVisibilityComponent);
+    compo->visibility = proto->visibility;
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, p);
+    auto itr = layers.find(proto->srcLayerId);
+    if (layers.end() != itr) {
+        proto->srcLayer = std::make_shared<FkGraphicLayer>(*itr->second);
+    }
+    itr = layers.find(proto->dstLayerId);
+    if (layers.end() != itr) {
+        proto->dstLayer = std::make_shared<FkGraphicLayer>(*itr->second);
     }
     return FK_OK;
 }

@@ -9,6 +9,7 @@
 #define FK_BASE_FKSTRING_H
 
 #include "FkObject.h"
+#include <vector>
 #include <sstream>
 
 FK_SUPER_CLASS(FkString, FkObject) {
@@ -31,6 +32,8 @@ public:
         oss << value;
         return oss.str();
     }
+
+    static std::vector<std::string> split(const std::string &str,const std::string &pattern);
 
 public:
     FkString();
@@ -68,6 +71,8 @@ public:
     FkString &replaceAll(const char *oldStr, const char *newStr);
 
     virtual std::string toString() override;
+
+    bool startWith(std::string str);
 
 private:
     std::string _str;

@@ -9,20 +9,20 @@
 #define FK_FRAMEWORK_FKONCREATEPROT_H
 
 #include "FkProtocol.h"
-#include "FkQuarkContext.h"
+#include "FkEngineContext.h"
 
 FK_SUPER_CLASS(FkOnCreatePrt, FkProtocol) {
 FK_DEF_CLASS_TYPE_FUNC(FkOnCreatePrt)
 
 public:
-    FkOnCreatePrt();
+    FkOnCreatePrt(std::shared_ptr<FkEngineContext> context);
 
     FkOnCreatePrt(const FkOnCreatePrt &o);
 
     virtual ~FkOnCreatePrt();
 
 public:
-    std::shared_ptr<FkQuarkContext> context = nullptr;
+    std::shared_ptr<FkEngineContext> context = nullptr;
 };
 
 #endif //FK_FRAMEWORK_FKONCREATEPROT_H

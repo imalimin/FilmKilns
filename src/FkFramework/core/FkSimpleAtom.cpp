@@ -74,8 +74,7 @@ FkResult FkSimpleAtom::onCreate() {
     }
     /// Connect create/destroy/start/stop.
     _connectBaseSession();
-    auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = getContext();
+    auto proto = std::make_shared<FkOnCreatePrt>(getContext());
     ret = dispatchNext(proto);
     _prepareDeliveryProtocols();
     /// Connect left protocols.
@@ -177,7 +176,7 @@ FkResult FkSimpleAtom::dispatchNext(std::shared_ptr<FkProtocol> p) {
     if (mSessionMap.end() != itr) {
         return client->send(itr->second, p);
     }
-    FkLogW(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty.", getClassType().getName());
+    FkLogD(FK_DEF_TAG, "Atom(%s) can not find session or session map is empty for %s.", getClassType().getName(), p->getClassType().getName());
     return FK_SKIP;
 }
 

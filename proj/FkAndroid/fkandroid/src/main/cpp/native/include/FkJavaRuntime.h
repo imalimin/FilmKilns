@@ -49,6 +49,8 @@ public:
 
     static FkJavaRuntime &getInstance();
 
+    static void jniThreadDestroy(void *envPtr);
+
 public:
     FkJavaRuntime();
 
@@ -66,6 +68,7 @@ public:
 
 private:
     static FkJavaRuntime *instance;
+    static pthread_key_t threadKey;
     JavaVM *jvm = nullptr;
     std::map<int64_t, JNIEnv *> mEnvMap;
 

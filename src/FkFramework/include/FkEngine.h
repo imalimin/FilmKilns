@@ -13,6 +13,7 @@
 #include "FkHandlerThread.h"
 #include "FkHandler.h"
 #include "FkEngineSettings.h"
+#include "FkEngineMonitor.h"
 #include <future>
 #include <map>
 #include <mutex>
@@ -64,6 +65,10 @@ public:
 
     virtual FkResult stop();
 
+    virtual void setMonitor(std::shared_ptr<IFkEngineMonitor> &_monitor);
+
+    std::shared_ptr<FkEngineContext> getContext();
+
 protected:
     virtual FkResult onCreate();
 
@@ -74,8 +79,6 @@ protected:
     virtual FkResult onStop();
 
     FkResult sendMessage(std::shared_ptr<FkMessage> &msg, bool ignoreState = false);
-
-    std::shared_ptr<FkEngineSettings> getSettings();
 
 private:
     virtual FkResult _onCreate(std::shared_ptr<FkMessage> msg);
@@ -100,7 +103,7 @@ private:
     std::mutex msgMtx;
     kState outsideState = kState::IDL;
     kState internalState = kState::IDL;
-    std::shared_ptr<FkEngineSettings> settings = nullptr;
+    std::shared_ptr<FkEngineContext> context = nullptr;
 };
 
 

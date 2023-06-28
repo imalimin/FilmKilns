@@ -22,6 +22,9 @@ public:
         RGB,
         RGBA,
         RGB565,
+        YV12,
+        NV12,
+        END
     };
     FK_ENUM AlphaType : uint32_t {
         kUnPreMultiple = 0,

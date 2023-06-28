@@ -30,7 +30,8 @@ FkResult FkIncrease2Atom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    ret = client->quickSend<FkOnCreatePrt>(mIncreaseQuark, mDivideQuark);
+    auto proto = std::make_shared<FkOnCreatePrt>(nullptr);
+    ret = client->with(mIncreaseQuark, mDivideQuark)->send(proto);
     if (FK_OK != ret) {
         return ret;
     }

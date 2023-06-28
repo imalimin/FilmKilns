@@ -41,6 +41,16 @@ FkResult FkEntity::addComponents(std::vector<std::shared_ptr<FkComponent>> &vec)
     return FK_OK;
 }
 
+FkResult FkEntity::removeComponent(std::shared_ptr<FkComponent> &comp) {
+    FkAssert(comp != nullptr, FK_NPE);
+    auto itr = std::find(components.begin(), components.end(), comp);
+    if (itr != components.end()) {
+        components.erase(itr);
+        return FK_OK;
+    }
+    return FK_SOURCE_NOT_FOUND;
+}
+
 FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                                         const FkClassType &classType) {
     for (auto & component : components) {
@@ -49,4 +59,24 @@ FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec
         }
     }
     return vec.empty() ? FK_FAIL : FK_OK;
+}
+
+FkResult FkEntity::clearComponents(const FkClassType &classType) {
+    auto itr = components.begin();
+    while (itr != components.end()) {
+        if ((*itr)->getClassType().is(classType)) {
+            itr = components.erase(itr);
+        } else {
+            ++itr;
+        }
+    }
+//    components.erase(std::find_if(components.begin(), components.end(),
+//                                  [&](const auto &it) {
+//                                      return (it)->getClassType().is(classType);
+//                                  }));
+    return FK_OK;
+}
+
+size_t FkEntity::countOfComponents() {
+    return components.size();
 }

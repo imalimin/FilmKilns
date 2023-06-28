@@ -36,6 +36,10 @@
 #include "FkUpdateLayerModelProto.h"
 #include "FkImageContext.h"
 #include "FkRotateComponent.h"
+#include "FkDeviceImageCompo.h"
+#include "FkRenderCanvasTexCallbackProto.h"
+#include "FkLayerSetVisibilityProto.h"
+#include "FkLayerCopyProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -57,8 +61,7 @@ FkResult FkLayerEngine::onCreate() {
     FkAssert(ret == FK_OK, ret);
     ret = renderEngine->create();
     FkAssert(ret == FK_OK, ret);
-    auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = std::make_shared<FkImageContext>();
+    auto proto = std::make_shared<FkOnCreatePrt>(getContext());
     proto->context->addComponent(std::make_shared<FkRenderEngineCompo>(renderEngine));
     return client->with(molecule)->send(proto);
 }
@@ -106,16 +109,18 @@ FkResult FkLayerEngine::_setSurface(std::shared_ptr<FkMessage> msg) {
     return ret;
 }
 
-FkResult FkLayerEngine::notifyRender() {
+FkResult FkLayerEngine::notifyRender(int64_t timestamp) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_notifyRender));
     msg->what = MSG_NOTIFY_RENDER;
     msg->flags = FkMessage::FLAG_UNIQUE;
+    msg->arg2 = timestamp;
     return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkRenderRequestPrt>();
     proto->req = std::make_shared<FkRenderRequest>();
+    proto->timestamp = msg->arg2;
     return client->quickSend(proto, molecule);
 }
 
@@ -148,23 +153,40 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color, FkID expectId)
         layer->id = id;
         layer->addComponent(colorCom);
         layer->addComponent(sizeCom);
-        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayerWithColor));
+        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
         msg->sp = layer;
         sendMessage(msg);
     }
     return id;
 }
 
-FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
+FkResult FkLayerEngine::_updateLayer(std::shared_ptr<FkMessage> &msg) {
     auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
-    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
-    prt->layer = layer;
-    prt->scaleType = kScaleType::CENTER_INSIDE;
-    auto sizeCom = FK_FIND_COMPO(prt->layer, FkSizeCompo);
-    if (sizeCom) {
-        setCanvasSizeInternal(sizeCom->size, true);
+    auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
+    proto->layer = layer;
+    proto->scaleType = kScaleType::CENTER_INSIDE;
+    auto sizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);
+    if (sizeCompo) {
+        setCanvasSizeInternal(sizeCompo->size, true);
     }
-    return client->with(molecule)->send(prt);
+    return client->with(molecule)->send(proto);
+}
+
+FkID FkLayerEngine::newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> deviceImage,
+                                            FkSize size, FkID expectId) {
+    auto id = newLayer(expectId);
+    if (FK_ID_NONE != id) {
+        auto deviceImageCompo = std::make_shared<FkDeviceImageCompo>(deviceImage);
+        auto sizeCom = std::make_shared<FkSizeCompo>(size);
+        auto layer = std::make_shared<FkGraphicLayer>();
+        layer->id = id;
+        layer->addComponent(deviceImageCompo);
+        layer->addComponent(sizeCom);
+        auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
+        msg->sp = layer;
+        sendMessage(msg);
+    }
+    return id;
 }
 
 FkResult FkLayerEngine::removeLayer(FkID layer) {
@@ -175,6 +197,22 @@ FkResult FkLayerEngine::removeLayer(FkID layer) {
 
 FkResult FkLayerEngine::_removeLayer(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkRemoveLayerProto>(msg->arg1);
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::clearLayer(FkID layerId) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_clearLayer));
+    msg->arg1 = layerId;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_clearLayer(std::shared_ptr<FkMessage> &msg) {
+    auto layer = std::make_shared<FkGraphicLayer>();
+    layer->id = msg->arg1;
+    layer->addComponent(std::make_shared<FkColorCompo>(FkColor::transparent()));
+    auto proto = std::make_shared<FkGraphicUpdateLayerPrt>();
+    proto->layer = layer;
+    proto->scaleType = kScaleType::CENTER_INSIDE;
     return client->with(molecule)->send(proto);
 }
 
@@ -462,7 +500,7 @@ FkResult FkLayerEngine::drawPath(FkID layerId,
     FkAssert(paint != nullptr && paint->strokeWidth > 0, FK_INVALID_DATA);
     FkDoubleVec2 point(x, y);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
-    proto->isFinish = false;
+    proto->isActionFinish = false;
     proto->paint = paint;
 
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
@@ -485,7 +523,17 @@ FkResult FkLayerEngine::_drawPath(std::shared_ptr<FkMessage> &msg) {
 FkResult FkLayerEngine::drawPathFinish(FkID layerId) {
     FkDoubleVec2 point(0, 0);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
-    proto->isFinish = true;
+    proto->isActionFinish = true;
+
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::clearPaths(FkID layerId) {
+    FkDoubleVec2 point(0, 0);
+    auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
+    proto->isActionClear = true;
 
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
     msg->sp = proto;
@@ -503,5 +551,46 @@ FkResult FkLayerEngine::updateLayerWithModel(FkID layerId,
 FkResult FkLayerEngine::_updateLayerWithModel(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(modelInterface, FkModelInterface, msg->sp);
     auto proto = std::make_shared<FkUpdateLayerModelProto>(modelInterface);
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::setRenderCanvasTexCallback(std::function<void(uint32_t, FkSize, int64_t)> func) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setRenderCanvasTexCallback));
+    msg->sp = std::make_shared<FkRenderCanvasTexCallbackProto>(func);
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setRenderCanvasTexCallback(std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderCanvasTexCallbackProto, msg->sp);
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::setLayerVisibility(FkID layerId, int visibility) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setLayerVisibility));
+    msg->arg1 = layerId;
+    msg->arg2 = visibility;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_setLayerVisibility(std::shared_ptr<FkMessage> &msg) {
+    auto proto = std::make_shared<FkLayerSetVisibilityProto>();
+    proto->layerId = msg->arg1;
+    proto->visibility = msg->arg2;
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::copyLayer(FkID srcLayerId, FkID dstLayerId, int64_t timestamp,
+                                  std::function<void(FkID, FkID, uint32_t, FkSize, int64_t)> afterCopyFunc) {
+    FkAssert(srcLayerId != dstLayerId, FK_NOT_SUPPORT);
+    auto proto = std::make_shared<FkLayerCopyProto>(srcLayerId, dstLayerId);
+    proto->afterCopyFunc = afterCopyFunc;
+    proto->timestamp = timestamp;
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_copyLayer));
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_copyLayer(std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, msg->sp);
     return client->with(molecule)->send(proto);
 }

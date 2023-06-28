@@ -15,6 +15,7 @@
 #include "FkScaleTypeComponent.h"
 #include "FkMeasureTransProto.h"
 #include "FkMeasurePointProto.h"
+#include "FkLayerCopyProto.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicMVPQuark, FkQuark)
 
@@ -28,6 +29,7 @@ FkGraphicMVPQuark::~FkGraphicMVPQuark() {
 
 void FkGraphicMVPQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicMVPQuark::_onRenderRequest);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerCopyProto, FkGraphicMVPQuark::_onCopyLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasureTransProto, FkGraphicMVPQuark::_onMeasureTrans);
     FK_PORT_DESC_QUICK_ADD(desc, FkMeasurePointProto, FkGraphicMVPQuark::_onMeasurePoint);
 }
@@ -61,6 +63,20 @@ FkResult FkGraphicMVPQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         }
         _calc(layer, sizeComp->size, false);
     }
+    return FK_OK;
+}
+
+FkResult FkGraphicMVPQuark::_onCopyLayer(std::shared_ptr<FkProtocol> p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, p);
+    if (proto->srcLayer == nullptr || proto->dstLayer == nullptr) {
+        return FK_NPE;
+    }
+    auto canvas = proto->dstLayer;
+    FkAssert(nullptr != canvas, FK_FAIL);
+    auto sizeComp = FK_FIND_COMPO(canvas, FkSizeCompo);
+    FkAssert(nullptr != sizeComp, FK_FAIL);
+    _calc(canvas, sizeComp->size, true);
+    _calc(proto->srcLayer, sizeComp->size, false);
     return FK_OK;
 }
 

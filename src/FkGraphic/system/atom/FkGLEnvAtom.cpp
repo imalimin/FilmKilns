@@ -41,13 +41,22 @@ FkResult FkGLEnvAtom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    auto renderContext = std::dynamic_pointer_cast<FkRenderContext>(getContext());
-    if (renderContext) {
-        glVersion = renderContext->getGlVersion();
-    }
+    auto _context = FkRenderContext::wrap(getContext());
+    FkAssert(_context != nullptr, FK_NPE);
+    glVersion = _context->getRenderSettings()->getGlVersion();
     FkLogI(FK_DEF_TAG, "glVersion: %d", glVersion);
     _initializeWithoutWindow();
     context->makeCurrent();
+
+    GLint values[2];
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, values);
+    _context->getRenderSettings()->setMaxTextureSize(values[0]);
+    glGetIntegerv(GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS, values);
+    _context->getRenderSettings()->setMaxCountOfVertexTexture(values[0]);
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, values);
+    _context->getRenderSettings()->setMaxCountOfFragmentTexture(values[0]);
+    glGetIntegerv(GL_MAX_VIEWPORT_DIMS, values);
+    _context->getRenderSettings()->setMaxViewportSize(values[0], values[1]);
     return ret;
 }
 

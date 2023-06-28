@@ -16,21 +16,18 @@
 FK_IMPL_CLASS_TYPE(FkMeshPath, FkPath)
 
 FkMeshPath::FkMeshPath(std::vector<FkDoubleVec2> &meshPoints)
-        : FkCatmullRomPath(1, 3), strokeWidth(1) {
+        : FkPath(), strokeWidth(1) {
     for (auto &p: meshPoints) {
         this->meshPoints.emplace_back(p);
     }
 }
 
-FkMeshPath::FkMeshPath(float _strokeWidth, float _pixelsOfSensitivity)
-        : FkCatmullRomPath(_strokeWidth, _pixelsOfSensitivity), strokeWidth(_strokeWidth) {
+FkMeshPath::FkMeshPath(std::shared_ptr<FkPath> &parent, float _strokeWidth)
+        : FkPath(), parent(parent), strokeWidth(_strokeWidth) {
 }
 
-FkMeshPath::FkMeshPath(float _strokeWidth, double _avgDistance, float _pixelsOfSensitivity)
-        : FkCatmullRomPath(_avgDistance, _pixelsOfSensitivity), strokeWidth(_strokeWidth) {
-}
-
-FkMeshPath::FkMeshPath(const FkMeshPath &o) : FkCatmullRomPath(o), strokeWidth(o.strokeWidth) {
+FkMeshPath::FkMeshPath(const FkMeshPath &o)
+        : FkPath(o), parent(o.parent), strokeWidth(o.strokeWidth) {
 
 }
 
@@ -39,7 +36,7 @@ FkMeshPath::~FkMeshPath() {
 }
 
 void FkMeshPath::addPoint(FkDoubleVec2 &point) {
-    FkCatmullRomPath::addPoint(point);
+    parent->addPoint(point);
 
     FkDoubleVec2 front(0, 0);
     FkDoubleVec2 current(0, 0);
@@ -50,7 +47,7 @@ void FkMeshPath::addPoint(FkDoubleVec2 &point) {
     FkDoubleVec2 dir2(0, 0);
 
     std::vector<FkDoubleVec2> points;
-    auto count = FkCatmullRomPath::readPoints(points);
+    auto count = parent->readPoints(points);
     for (int i = 0; i < count; ++i) {
         //第一个
         if (i == 0) {
@@ -85,9 +82,8 @@ void FkMeshPath::addPoint(FkDoubleVec2 &point) {
             meshPoints.emplace_back(FkDoubleVec2(tmp.x, tmp.y));
             continue;
         } else {
-            float len = 0;
             FkDoubleVec2 vp = current - front;
-            len = std::sqrt(vp.x * vp.x + vp.y * vp.y);
+            float len = std::sqrt(vp.x * vp.x + vp.y * vp.y);
 
             //计算拐角点
             FkDoubleVec2 tmp = current + normal * strokeWidth * 1 * 1 / 2;
@@ -112,8 +108,12 @@ size_t FkMeshPath::size() {
 }
 
 size_t FkMeshPath::getPoints(std::vector<FkDoubleVec2> &_points) {
-    for (auto &point : meshPoints) {
+    for (auto &point: meshPoints) {
         _points.emplace_back(point);
     }
     return _points.size();
+}
+
+void FkMeshPath::finish() {
+    parent->finish();
 }

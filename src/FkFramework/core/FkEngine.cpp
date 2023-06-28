@@ -30,7 +30,7 @@ FkResult FkMsgHandle::operator()(FkEngine *ptr, std::shared_ptr<FkMessage> &msg)
 FkEngine::FkEngine(std::string name) : FkObject(), name(name),
                                        internalState(kState::IDL),
                                        outsideState(kState::IDL) {
-
+    context = std::make_shared<FkEngineContext>();
 }
 
 FkEngine::~FkEngine() {
@@ -40,7 +40,7 @@ FkEngine::~FkEngine() {
 
 void FkEngine::setSettings(std::shared_ptr<FkEngineSettings> _settings) {
     FkLogI(FK_DEF_TAG, "Engine(%s) setSettings call.", getClassType().getName());
-    this->settings = std::move(_settings);
+    context->setEngineSettings(_settings);
 }
 
 FkResult FkEngine::create() {
@@ -106,6 +106,14 @@ FkResult FkEngine::stop() {
     sendMessage(msg, true);
     FkLogI(FK_DEF_TAG, "Engine(%s) stop done.", getClassType().getName());
     return FK_OK;
+}
+
+void FkEngine::setMonitor(std::shared_ptr<IFkEngineMonitor> &_monitor) {
+    context->setMonitor(_monitor);
+}
+
+std::shared_ptr<FkEngineContext> FkEngine::getContext() {
+    return context;
 }
 
 FkResult FkEngine::onCreate() {
@@ -229,10 +237,6 @@ FkResult FkEngine::sendMessage(std::shared_ptr<FkMessage> &msg, bool ignoreState
     return mHandler->sendMessage(msg);
 }
 
-std::shared_ptr<FkEngineSettings> FkEngine::getSettings() {
-    return settings;
-}
-
 bool FkEngine::_isEnableEngineThread() {
-    return !settings || settings->enableEngineThread;
+    return context->getEngineSettings() == nullptr || context->getEngineSettings()->enableEngineThread;
 }

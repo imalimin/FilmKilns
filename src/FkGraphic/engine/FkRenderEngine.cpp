@@ -19,12 +19,13 @@
 #include "FkRenderContext.h"
 #include "FkGLDefinition.h"
 
+#define TAG "FkRenderEngine"
+
 const FkID FkRenderEngine::MSG_RENDER_DEVICE = 0x200;
 
 FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 
-FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name) {
-
+FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name), measurer(150) {
     client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
 }
@@ -35,10 +36,7 @@ FkRenderEngine::~FkRenderEngine() {
 FkResult FkRenderEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     FkAssert(ret == FK_OK, ret);
-    auto context = std::make_shared<FkRenderContext>();
-    context->setGlVersion(FK_GL_VER_3);
-    auto proto = std::make_shared<FkOnCreatePrt>();
-    proto->context = context;
+    auto proto = std::make_shared<FkOnCreatePrt>(getContext());
     return client->with(molecule)->send(proto);
 }
 
@@ -60,19 +58,22 @@ FkResult FkRenderEngine::onStop() {
     return client->quickSend<FkOnStopPrt>(molecule);
 }
 
-FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request) {
+FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request,
+                                      int64_t timestamp) {
     if (request == nullptr) {
         return FK_NPE;
     }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkRenderEngine::_onRender));
     msg->what = MSG_RENDER_DEVICE;
+    msg->what += request->getTag();
     msg->flags = FkMessage::FLAG_UNIQUE;
     msg->sp = request;
+    msg->arg2 = timestamp;
     return sendMessage(msg);
 }
 
 FkResult FkRenderEngine::renderDevice(std::shared_ptr<FkMaterialEntity> &materials,
-                                std::shared_ptr<FkDeviceEntity> &device) {
+                                      std::shared_ptr<FkDeviceEntity> &device) {
     if (materials == nullptr || device == nullptr) {
         return FK_NPE;
     }
@@ -89,18 +90,22 @@ FkResult FkRenderEngine::_onRender(std::shared_ptr<FkMessage> &msg) {
     auto request = std::dynamic_pointer_cast<FkRenderDeviceRequest>(msg->sp);
     FkAssert(request != nullptr, FK_FAIL);
     auto size = request->size();
+    measurer.begin();
+    auto time = FkTimeUtils::getCurrentTimeUS();
     for (int i = 0; i < size; ++i) {
         auto pair = request->get(i);
         auto proto = std::make_shared<FkRenderProto>();
         proto->materials = pair.first;
         proto->device = pair.second;
         proto->env = std::make_shared<FkEnvEntity>();
+        proto->timestamp = msg->arg2;
         auto ret = client->with(molecule)->send(proto);
         auto bufDevice = std::dynamic_pointer_cast<FkBufDeviceEntity>(proto->device);
         if (bufDevice) {
             bufDevice->finish();
         }
     }
+    measurer.end(TAG);
     return FK_OK;
 }
 

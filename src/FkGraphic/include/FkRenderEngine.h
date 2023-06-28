@@ -16,6 +16,8 @@
 #include "FkGraphicWindow.h"
 #include "FkBuffer.h"
 #include "FkRenderDeviceRequest.h"
+#include "FkRenderContext.h"
+#include "FkTimeCostMeasurer.h"
 
 FK_SUPER_CLASS(FkRenderEngine, FkEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderEngine)
@@ -27,7 +29,7 @@ public:
 
     virtual ~FkRenderEngine();
 
-    FkResult renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request);
+    FkResult renderDevice(std::shared_ptr<FkRenderDeviceRequest> &request, int64_t timestamp = 0);
 
     FkResult renderDevice(std::shared_ptr<FkMaterialEntity> &materials, std::shared_ptr<FkDeviceEntity> &device);
 
@@ -66,6 +68,7 @@ private:
     static const FkID MSG_RENDER_DEVICE;
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkQuark> molecule;
+    FkTimeCostMeasurer measurer;
 };
 
 #endif //FK_GRAPHIC_FKRENDERENGINE_H

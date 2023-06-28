@@ -84,6 +84,8 @@ public:
 
     virtual ~FkScreenEntity();
 
+    void finish(uint32_t tex, FkSize size, int64_t timestamp);
+
     FkSize size();
 };
 

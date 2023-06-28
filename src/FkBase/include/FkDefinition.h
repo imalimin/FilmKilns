@@ -12,6 +12,7 @@
 #include "FkClassType.h"
 #include <functional>
 #include <inttypes.h>
+#include <cassert>
 
 // +-------- Define --------+
 #define FK_INTERFACE class
@@ -33,19 +34,23 @@ typedef std::function<void(int)> FkResultCallback;
 
 // +-------- Assert --------+
 #if defined(__FK_DEBUG__)
-#include <assert.h>
-#define FkAssertMsg(condition, value, msg) \
-FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
-assert(condition)
-#define FkAssert(condition, value) assert(condition)
+#define FkAssertMsg(condition, value, msg)                                \
+    do {                                                                  \
+        if (!(condition)) {                                               \
+            FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
+            assert(condition);                                            \
+        }                                                                 \
+    } while(false)
 #else
-#define FkAssertMsg(condition, value, msg)            \
-    if(!(condition)) {                        \
-        FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
-        return value;                         \
-    }
-#define FkAssert(condition, value) FkAssertMsg(condition, value, "")
+#define FkAssertMsg(condition, value, msg)                                \
+    do {                                                                  \
+        if (!(condition)) {                                               \
+            FkLogE("FkAssert", "assert(%s) failed: %s", #condition, msg); \
+            return value;                                                 \
+        }                                                                 \
+    } while(false)
 #endif
+#define FkAssert(condition, value) FkAssertMsg(condition, value, "")
 
 // +------ State Code ------+
 typedef int32_t FkResult;
@@ -61,6 +66,7 @@ typedef int32_t FkResult;
 #define FK_SOURCE_NOT_FOUND -8
 #define FK_NOT_SUPPORT -9
 #define FK_INVALID_PARAMETERS -10
+#define FK_TRY_AGAIN -11
 //Image
 #define FK_EMPTY_CANVAS -100
 //File
@@ -76,6 +82,9 @@ typedef int32_t FkResult;
 typedef int32_t FkID;
 #define FK_ID_NONE -1
 #define Fk_CANVAS_ID 0
+
+#define FK_VISIBLE 1
+#define FK_INVISIBLE 0
 
 // +------ KID ------+
 #define FK_KID(a, b, c, d) ((d) | ((c) << 8) | ((b) << 16) | ((unsigned)(a) << 24))

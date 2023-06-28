@@ -12,10 +12,10 @@
 #define FK_GRAPHIC_FKMATERIALCOMPO_H
 
 #include "FkComponent.h"
+#include "FkDeviceImage.h"
 
 FK_SUPER_CLASS(FkMaterialCompo, FkComponent) {
 FK_DEF_CLASS_TYPE_FUNC(FkMaterialCompo)
-
 public:
     FkMaterialCompo(FkID id);
 
@@ -27,8 +27,13 @@ public:
 
     FkID id() const;
 
+    void setDeviceImage(std::shared_ptr<FkDeviceImage> &deviceImage);
+
+    std::shared_ptr<FkDeviceImage> getDeviceImage() const;
+
 private:
     FkID _id = FK_ID_NONE;
+    std::shared_ptr<FkDeviceImage> _deviceImage = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKMATERIALCOMPO_H

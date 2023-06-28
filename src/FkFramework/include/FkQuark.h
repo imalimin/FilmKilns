@@ -11,7 +11,7 @@
 #include "FkObject.h"
 #include "FkPortDesc.h"
 #include "FkFrameworkDefine.h"
-#include "FkQuarkContext.h"
+#include "FkEngineContext.h"
 #include <mutex>
 
 class FkSession;
@@ -31,7 +31,7 @@ public:
 
     virtual ~FkQuark();
 
-    virtual std::shared_ptr<FkQuarkContext> getContext();
+    virtual std::shared_ptr<FkEngineContext> getContext();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) = 0;
@@ -66,7 +66,7 @@ private:
     FkResult _changeState(uint32_t src, kState dst);
 
 private:
-    std::shared_ptr<FkQuarkContext> context = nullptr;
+    std::shared_ptr<FkEngineContext> context = nullptr;
     std::shared_ptr<FkPortDesc> desc = nullptr;
     std::mutex mtx;
     kState state = kState::IDL;

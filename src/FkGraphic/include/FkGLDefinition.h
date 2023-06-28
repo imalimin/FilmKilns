@@ -30,7 +30,10 @@
 #define FK_GL_CHECK(statement) statement
 #endif
 
-#define FK_GL_VER_2 0x0004
-#define FK_GL_VER_3 0x00000040
+#define FK_GL_VER_2 EGL_OPENGL_ES2_BIT
+#define FK_GL_VER_3 EGL_OPENGL_ES3_BIT
+
+#define FK_EGL_GL2 FK_GL_VER_2
+#define FK_EGL_GL3 FK_GL_VER_3
 
 #endif //FK_GRAPHIC_FKGLDEFINITION_H

@@ -63,6 +63,7 @@ FkResult FkRenderVboQuark::onStop() {
 FkResult FkRenderVboQuark::_onRender(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
     auto material = std::dynamic_pointer_cast<FkTexEntity>(proto->materials);
+    auto materialCompo = FK_FIND_COMPO(material, FkMaterialCompo);
     std::shared_ptr<FkVertexCompo> vertexCompo = nullptr;
     if (material) {
         auto size = material->texArray()->size;
