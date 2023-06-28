@@ -7,10 +7,21 @@
 
 #include "FkProtocol.h"
 
-FkProtocol::FkProtocol() : FkObject("FkProtocol") {
+FK_IMPL_CLASS_TYPE(FkProtocol, FkObject)
+
+FkProtocol::FkProtocol() : FkObject() {
+
+}
+
+FkProtocol::FkProtocol(const FkProtocol &o) : FkObject() {
+
 
 }
 
 FkProtocol::~FkProtocol() {
 
+}
+
+FkProtocol::Type FkProtocol::getType() {
+    return getClassType().getId();
 }

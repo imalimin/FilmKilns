@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkBase")
-project(${MODULE_NAME} LANGUAGES C CXX)
+project(FkBase LANGUAGES C CXX)
 
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/../al_common/include
+        ${PROJECT_SOURCE_DIR}/../glm
+        ${THIRD_PARTY_DIR}/cjson/include
         )
 include_directories(${INCLUDES})
 
@@ -28,11 +28,24 @@ if (${ENABLE_BAN_WARNING})
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${var}")
     endforeach (var)
 endif ()
-message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+
+#------------------STATIC START----------------------
+#add_library(cJSON STATIC IMPORTED)
+#set_target_properties(cJSON PROPERTIES IMPORTED_LOCATION
+#        "${THIRD_PARTY_DIR}/cjson/static/${ANDROID_ABI}/libcjson.a")
+
+#------------------STATIC END----------------------
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
+aux_source_directory(${PROJECT_SOURCE_DIR}/utils SOURCES_UTILS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/thread SOURCES_THREAD)
 
 list(APPEND SOURCES_ROOT ${SOURCES_CORE})
+list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
+list(APPEND SOURCES_ROOT ${SOURCES_UTILS})
+list(APPEND SOURCES_ROOT ${SOURCES_THREAD})
 
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
@@ -45,11 +58,10 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
                    -Wno-static-in-inline")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
-add_library(${MODULE_NAME} SHARED ${SOURCES_ROOT})
 
 find_library(
         log-lib
         log)
-
-set(MODULES ${MODULE_NAME} al_common ${log-lib})
-target_link_libraries(${MODULES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${log-lib})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

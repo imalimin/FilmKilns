@@ -1,0 +1,154 @@
+import groovy.json.JsonSlurper
+import org.apache.velocity.Template
+import org.apache.velocity.VelocityContext
+import org.apache.velocity.app.VelocityEngine
+import org.apache.velocity.runtime.RuntimeConstants
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+android {
+    compileSdkVersion Integer.parseInt(target_version)
+
+    defaultConfig {
+        minSdkVersion Integer.parseInt(min_version)
+        targetSdkVersion Integer.parseInt(target_version)
+        versionCode Integer.parseInt(version_code)
+        versionName version_name
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        flavorDimensions "version"
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_ARM_NEON=TRUE",
+                        "-DANDROID_CPP_FEATURES=rtti exceptions",
+                        "-DENABLE_FK=TRUE",
+                        "-DOPTIMIZE_CLASS_TYPE=TRUE",
+                        "-DANDROID_ARM_NEON=ON"
+            }
+        }
+        ndk {
+            stl "libstdc++"
+            abiFilters "arm64-v8a"
+//            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+        sourceSets.main {
+            jni.srcDirs = []
+            jniLibs.srcDirs = ["../../../src/third_party/protobuf/shared",
+                               "../../../src/third_party/skia/shared"]
+        }
+        buildConfigField("boolean", "ENABLE_UNIT_TEST", "false")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("boolean", "ENABLE_UNIT_TEST", "false")
+            externalNativeBuild {
+                cmake {
+//                    cppFlags "-fprofile-arcs -ftest-coverage --coverage -fprofile-instr-generate"
+                    arguments.add "-DENABLE_G_TEST=FALSE"
+                }
+            }
+        }
+        debug {
+            buildConfigField("boolean", "ENABLE_UNIT_TEST", "true")
+            externalNativeBuild {
+                cmake {
+//                    cppFlags "-fprofile-arcs -ftest-coverage --coverage -fprofile-instr-generate"
+                    arguments.add "-DENABLE_G_TEST=TRUE"
+                }
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+//            version "3.10.2.4988404"
+        }
+    }
+    android.libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "film_kilns_${defaultConfig.versionName}_${defaultConfig.versionCode}" + '.aar'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    implementation "androidx.appcompat:appcompat:$androidx_version"
+    implementation "androidx.core:core-ktx:$androidx_version"
+    //Kotlin协程
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.27.0-eap13"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.27.0-eap13"
+//    implementation 'com.google.protobuf:protobuf-kotlin-lite:3.19.4'
+    api 'com.google.protobuf:protobuf-java:3.19.4'
+}
+
+/**
+ * Generate .cpp and .h source by command
+ * ./gradlew genCppClass -Pm=FkGraphic -Ppkt=core -Pc=FkTest
+ */
+task genCppClass(type: Exec) {
+    if (project.hasProperty('m') && project.hasProperty('pkt') && project.hasProperty('c')) {
+        def rootDir = new File(getRootDir().parentFile.parentFile, "src")
+        def templateDir = new File(getProjectDir(), "templates")
+        VelocityEngine engine = new VelocityEngine()
+        engine.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, templateDir.getAbsolutePath())
+        engine.init()
+        generateClassAndHeader(engine, rootDir, m, pkt, c)
+        println("Generate done.")
+    } else {
+        println("Generate nothing.")
+    }
+}
+
+static def generateClassAndHeader(VelocityEngine engine, File rootDir, String module, String pkt, String className) {
+    def headerFile = new File(rootDir, "${module}/include/${className}.h")
+    def srcFile = new File(rootDir, "${module}/${pkt}/${className}.cpp")
+    def tagHeader = "${module.replace("Fk", "Fk_")}_${className}_H".toUpperCase()
+    def timeStr = Calendar.getInstance(Locale.CHINA).time.toLocaleString()
+    // Check dirs.
+    if (!headerFile.parentFile.exists()) {
+        headerFile.parentFile.mkdirs()
+    }
+    if (!srcFile.parentFile.exists()) {
+        srcFile.parentFile.mkdirs()
+    }
+
+    VelocityContext ctx = new VelocityContext()
+    ctx.put("moduleName", module)
+    ctx.put("className", className)
+    ctx.put("tagHeader", tagHeader)
+    ctx.put("author", System.getenv().get("USERNAME"))
+    ctx.put("time", timeStr)
+    if (!headerFile.exists()) {
+        writeSource(engine, ctx, "FkHeader.txt", headerFile)
+        println("New   h: ${headerFile.path}")
+    }
+    if (!srcFile.exists()) {
+        writeSource(engine, ctx, "FkCPP.txt", srcFile)
+        println("New cpp: ${srcFile.path}")
+    }
+}
+
+static def writeSource(VelocityEngine engine, VelocityContext ctx, String templateStr, File out) {
+    Template template = engine.getTemplate(templateStr)
+    ctx.put("email", "aliminabc@gmail.com")
+
+    try {
+        FileWriter writer = new FileWriter(out)
+        template.merge(ctx, writer)
+        writer.flush()
+        writer.close()
+        return true
+    } catch (IOException e) {
+        e.printStackTrace()
+    }
+    return false
+}

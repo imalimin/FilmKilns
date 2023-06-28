@@ -1,13 +1,10 @@
 cmake_minimum_required(VERSION 3.4.1)
-set(MODULE_NAME "FkFramework")
-project(${MODULE_NAME} LANGUAGES C CXX)
+project(FkFramework LANGUAGES C CXX)
 
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/../al_common/include
-        ${PROJECT_SOURCE_DIR}/../FkBase/include
         )
 include_directories(${INCLUDES})
 
@@ -29,13 +26,25 @@ if (${ENABLE_BAN_WARNING})
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${var}")
     endforeach (var)
 endif ()
-message(STATUS "${MODULE_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+message(STATUS "${PROJECT_NAME} CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
-aux_source_directory(${PROJECT_SOURCE_DIR}/prot SOURCES_PROT)
+aux_source_directory(${PROJECT_SOURCE_DIR}/protocol SOURCES_PRT)
+aux_source_directory(${PROJECT_SOURCE_DIR}/entity SOURCES_ENTITY)
+aux_source_directory(${PROJECT_SOURCE_DIR}/quark SOURCES_QUARK)
+aux_source_directory(${PROJECT_SOURCE_DIR}/atom SOURCES_ATOM)
+aux_source_directory(${PROJECT_SOURCE_DIR}/client SOURCES_CLIENT)
+aux_source_directory(${PROJECT_SOURCE_DIR}/ecs/component SOURCES_ECS_COMPONENT)
+aux_source_directory(${PROJECT_SOURCE_DIR}/ecs/entity SOURCES_ECS_ENTITY)
 
 list(APPEND SOURCES_ROOT ${SOURCES_CORE})
-list(APPEND SOURCES_ROOT ${SOURCES_PROT})
+list(APPEND SOURCES_ROOT ${SOURCES_PRT})
+list(APPEND SOURCES_ROOT ${SOURCES_ENTITY})
+list(APPEND SOURCES_ROOT ${SOURCES_QUARK})
+list(APPEND SOURCES_ROOT ${SOURCES_ATOM})
+list(APPEND SOURCES_ROOT ${SOURCES_CLIENT})
+list(APPEND SOURCES_ROOT ${SOURCES_ECS_COMPONENT})
+list(APPEND SOURCES_ROOT ${SOURCES_ECS_ENTITY})
 
 if (${ANDROID_ABI} STREQUAL "armeabi-v7a")
     set_property(SOURCE ${SOURCES_ROOT} APPEND_STRING PROPERTY COMPILE_FLAGS " -mfpu=neon")
@@ -48,11 +57,10 @@ elseif (${ANDROID_ABI} STREQUAL "x86")
                    -Wno-static-in-inline")
     add_definitions(-DHAVE_NEON_X86=1 -DHAVE_NEON=1)
 endif ()
-add_library(${MODULE_NAME} SHARED ${SOURCES_ROOT})
 
 find_library(
         log-lib
         log)
-
-set(MODULES ${MODULE_NAME} al_common FkBase ${log-lib})
-target_link_libraries(${MODULES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
+target_link_libraries(${PROJECT_NAME} PUBLIC FkBase ${log-lib})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)

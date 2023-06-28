@@ -1,0 +1,7 @@
+defines = -DNDEBUG
+include_dirs =
+root_out_dir = .
+target_output_name = sse2
+
+
+build obj/sse2.stamp: stamp

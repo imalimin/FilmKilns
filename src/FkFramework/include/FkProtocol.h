@@ -10,11 +10,24 @@
 
 #include "FkObject.h"
 
-FK_ABS_CLASS FkProtocol FK_EXTEND FkObject {
+FK_SUPER_CLASS(FkProtocol, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkProtocol)
+
+public:
+    typedef size_t Type;
+
+    struct Desc {
+        FkProtocol::Type type;
+        const char *name;
+    };
 public:
     FkProtocol();
 
+    FkProtocol(const FkProtocol &o);
+
     virtual ~FkProtocol();
+
+    virtual Type getType();
 
 };
 

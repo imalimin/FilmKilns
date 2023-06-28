@@ -50,3 +50,5 @@ proguard/
 captures/
 
 .cxx/
+
+!*cpp_sources.json

@@ -1,0 +1,11 @@
+//
+// Created by mingyi.li on 4/8/22.
+//
+
+#ifndef FKANDROID_FKJNIDEFINITION_H
+#define FKANDROID_FKJNIDEFINITION_H
+
+// #define FK_CLASS
+#define FK_JNI_METHOD_DEFINE(PKT, CLASS, METHOD) JNICALL Java_ ## PKT ## _ ## CLASS ## _ ## METHOD
+
+#endif //FKANDROID_FKJNIDEFINITION_H

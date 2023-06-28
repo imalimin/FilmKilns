@@ -8,17 +8,27 @@
 #ifndef FK_BASE_FKOBJECT_H
 #define FK_BASE_FKOBJECT_H
 
-#include "Object.h"
 #include "FkDefinition.h"
+#include "FkClassType.h"
 
-FK_CLASS FkObject FK_EXTEND Object {
+namespace FkObject_Class {
+    class Type {};
+    extern const char *name;
+    extern const FkClassType type;
+}
+
+class FkObject {
 public:
-    FkObject(const char *name);
+    virtual const FkClassType &getClassType() {
+        return FkObject_Class::type;
+    }
+
+public:
+    FkObject();
 
     virtual ~FkObject();
 
-private:
-    std::string name;
+    virtual std::string toString();
 };
 
 

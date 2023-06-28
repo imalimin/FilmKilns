@@ -1,0 +1,12 @@
+[
+  {
+    "module": "FkGraphic",
+    "packages": [
+      {
+        "package": "core",
+        "src": [
+        ]
+      }
+    ]
+  }
+]

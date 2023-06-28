@@ -81,7 +81,11 @@ class GalleryAdapter : RecyclerAdapter<File, GalleryAdapter.ViewHolder>() {
 
         override fun onBind(item: File, position: Int) {
             checkBox.isChecked = adapter.isSelected(position)
-            imageView.post { show(imageView, Uri.fromFile(item), imageView.context, true) }
+            imageView.post(object : Runnable {
+                override fun run() {
+                    show(imageView, Uri.fromFile(item), imageView.context, true)
+                }
+            })
         }
 
         fun select(select: Boolean) {
@@ -91,10 +95,14 @@ class GalleryAdapter : RecyclerAdapter<File, GalleryAdapter.ViewHolder>() {
         private fun show(view: SimpleDraweeView, uri: Uri, context: Any, resize: Boolean) {
             val width = view.width
             val height = view.height
-            view.controller = Fresco.newDraweeControllerBuilder().setUri(uri).setCallerContext(context)
+            val requestBuilder = ImageRequestBuilder.newBuilderWithSource(uri)
+            if (resize && width > 0 && height > 0) {
+                requestBuilder.setResizeOptions(ResizeOptions(width, height))
+            }
+            view.controller =
+                Fresco.newDraweeControllerBuilder().setUri(uri).setCallerContext(context)
                     .setOldController(view.controller)
-                    .setImageRequest(if (resize && width > 0 && height > 0) ImageRequestBuilder.newBuilderWithSource(uri)
-                            .setResizeOptions(ResizeOptions(width, height)).build() else null)
+                    .setImageRequest(requestBuilder.build())
                     .build()
         }
     }

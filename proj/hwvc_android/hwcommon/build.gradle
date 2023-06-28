@@ -3,10 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion target_version
+    compileSdkVersion Integer.parseInt(target_version)
     defaultConfig {
-        minSdkVersion min_version
-        targetSdkVersion target_version
+        minSdkVersion Integer.parseInt(min_version)
+        targetSdkVersion Integer.parseInt(target_version)
         versionCode 1
         versionName "1.0"
 
@@ -36,7 +36,7 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
 //    implementation 'com.facebook.fresco:fresco:latest.release'
     //Fix java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/core/util/Pools$SynchronizedPool;
-    implementation 'com.facebook.fresco:fresco:1.12.1'
+    implementation 'com.facebook.fresco:fresco:2.6.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 }

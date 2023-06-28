@@ -23,20 +23,19 @@ AlBitmap *AlBitmapFactory::decodeFile(std::string file) {
     int32_t format = _guessFormat(file);
     AlBitmapInfo info;
     AlBuffer *buf = nullptr;
-    AlAbsDecoder *decoder = nullptr;
-    AlObjectGuard guard((Object **) &decoder);
+    std::shared_ptr<AlAbsDecoder> decoder = nullptr;
     switch (format) {
         case FORMAT_JPEG:
-            decoder = new AlJpegDecoder(file);
+            decoder = std::make_shared<AlJpegDecoder>(file);
             break;
         case FORMAT_PNG:
-            decoder = new AlPngDecoder(file);
+            decoder = std::make_shared<AlPngDecoder>(file);
             break;
         case FORMAT_WEBP:
-            decoder = new AlWebPDecoder(file);
+            decoder = std::make_shared<AlWebPDecoder>(file);
             break;
         default:
-            decoder = nullptr;
+            decoder = std::make_shared<AlJpegDecoder>(file);
     }
     if (nullptr == decoder) {
         Logcat::i(TAG, "%s(%d): failed(%s)", __FUNCTION__, __LINE__, file.c_str());

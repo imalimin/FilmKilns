@@ -1,0 +1,8 @@
+syntax = "proto3";
+package com.alimin.fk.pb;
+
+message FkFloatVec3 {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}

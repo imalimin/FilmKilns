@@ -62,7 +62,7 @@ fun Activity.getQueryParamsString(key: String): String? {
  */
 fun Activity.getQueryParamsInt(key: String, def: Int): Int {
     val str = getQueryParamsString(key)
-    return if (TextUtils.isEmpty(str) || !TextUtils.isDigitsOnly(str)) def else Integer.parseInt(str)
+    return if (TextUtils.isEmpty(str) || !TextUtils.isDigitsOnly(str)) def else Integer.parseInt(str!!)
 }
 
 fun Activity.addSystemUiVisibilityFlag(flag: Int) {

@@ -8,8 +8,32 @@
 #ifndef FK_FRAMEWORK_FKATOM_H
 #define FK_FRAMEWORK_FKATOM_H
 
+#include "FkQuark.h"
+#include "FkSession.h"
+#include "FkSessionClient.h"
+#include "FkOnCreatePrt.h"
+#include "FkOnDestroyPrt.h"
+#include "FkOnStartPrt.h"
+#include "FkOnStopPrt.h"
 
-class FkAtom {
+FK_SUPER_CLASS(FkAtom, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkAtom)
+
+public:
+    FkAtom();
+
+    FkAtom(const FkAtom &o) = delete;
+
+    virtual ~FkAtom();
+
+protected:
+    virtual FkResult onCreate() override;
+
+    virtual FkResult onDestroy() override;
+
+    virtual FkResult onStart() override;
+
+    virtual FkResult onStop() override;
 
 };
 

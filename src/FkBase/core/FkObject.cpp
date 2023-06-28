@@ -6,11 +6,18 @@
 */
 
 #include "FkObject.h"
+#include <typeinfo>
 
-FkObject::FkObject(const char *name) : Object(), name(name) {
+const char *FkObject_Class::name = "FkObject";
+const FkClassType FkObject_Class::type(name, typeid(FkObject_Class::Type).hash_code());
 
+FkObject::FkObject() {
 }
 
 FkObject::~FkObject() {
 
+}
+
+std::string FkObject::toString() {
+    return std::string(getClassType().getName());
 }

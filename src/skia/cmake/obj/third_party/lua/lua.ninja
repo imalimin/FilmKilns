@@ -1,0 +1,45 @@
+defines = -DLUA_USE_POSIX=1 -DNDEBUG
+include_dirs =
+cflags = -w -Wno-attributes -fstrict-aliasing -fPIC --sysroot=/Users/lmy/Library/Android/android-ndk-r17c/sysroot -O3 -fdata-sections -ffunction-sections -gline-tables-only -funwind-tables -Wno-unused-parameter -I /Users/lmy/.AndroidStudioProjects/FilmKilns/src/skia/third_party/externals/lua
+cflags_c =
+root_out_dir = .
+target_output_name = liblua
+
+build obj/third_party/externals/lua/liblua.lapi.o: cc ../third_party/externals/lua/lapi.c
+build obj/third_party/externals/lua/liblua.lauxlib.o: cc ../third_party/externals/lua/lauxlib.c
+build obj/third_party/externals/lua/liblua.lbaselib.o: cc ../third_party/externals/lua/lbaselib.c
+build obj/third_party/externals/lua/liblua.lbitlib.o: cc ../third_party/externals/lua/lbitlib.c
+build obj/third_party/externals/lua/liblua.lcode.o: cc ../third_party/externals/lua/lcode.c
+build obj/third_party/externals/lua/liblua.lcorolib.o: cc ../third_party/externals/lua/lcorolib.c
+build obj/third_party/externals/lua/liblua.lctype.o: cc ../third_party/externals/lua/lctype.c
+build obj/third_party/externals/lua/liblua.ldblib.o: cc ../third_party/externals/lua/ldblib.c
+build obj/third_party/externals/lua/liblua.ldebug.o: cc ../third_party/externals/lua/ldebug.c
+build obj/third_party/externals/lua/liblua.ldo.o: cc ../third_party/externals/lua/ldo.c
+build obj/third_party/externals/lua/liblua.ldump.o: cc ../third_party/externals/lua/ldump.c
+build obj/third_party/externals/lua/liblua.lfunc.o: cc ../third_party/externals/lua/lfunc.c
+build obj/third_party/externals/lua/liblua.lgc.o: cc ../third_party/externals/lua/lgc.c
+build obj/third_party/externals/lua/liblua.linit.o: cc ../third_party/externals/lua/linit.c
+build obj/third_party/externals/lua/liblua.liolib.o: cc ../third_party/externals/lua/liolib.c
+build obj/third_party/externals/lua/liblua.llex.o: cc ../third_party/externals/lua/llex.c
+build obj/third_party/externals/lua/liblua.lmathlib.o: cc ../third_party/externals/lua/lmathlib.c
+build obj/third_party/externals/lua/liblua.lmem.o: cc ../third_party/externals/lua/lmem.c
+build obj/third_party/externals/lua/liblua.loadlib.o: cc ../third_party/externals/lua/loadlib.c
+build obj/third_party/externals/lua/liblua.lobject.o: cc ../third_party/externals/lua/lobject.c
+build obj/third_party/externals/lua/liblua.lopcodes.o: cc ../third_party/externals/lua/lopcodes.c
+build obj/third_party/externals/lua/liblua.loslib.o: cc ../third_party/externals/lua/loslib.c
+build obj/third_party/externals/lua/liblua.lparser.o: cc ../third_party/externals/lua/lparser.c
+build obj/third_party/externals/lua/liblua.lstate.o: cc ../third_party/externals/lua/lstate.c
+build obj/third_party/externals/lua/liblua.lstring.o: cc ../third_party/externals/lua/lstring.c
+build obj/third_party/externals/lua/liblua.lstrlib.o: cc ../third_party/externals/lua/lstrlib.c
+build obj/third_party/externals/lua/liblua.ltable.o: cc ../third_party/externals/lua/ltable.c
+build obj/third_party/externals/lua/liblua.ltablib.o: cc ../third_party/externals/lua/ltablib.c
+build obj/third_party/externals/lua/liblua.ltm.o: cc ../third_party/externals/lua/ltm.c
+build obj/third_party/externals/lua/liblua.lundump.o: cc ../third_party/externals/lua/lundump.c
+build obj/third_party/externals/lua/liblua.lutf8lib.o: cc ../third_party/externals/lua/lutf8lib.c
+build obj/third_party/externals/lua/liblua.lvm.o: cc ../third_party/externals/lua/lvm.c
+build obj/third_party/externals/lua/liblua.lzio.o: cc ../third_party/externals/lua/lzio.c
+
+build ./liblua.a: alink obj/third_party/externals/lua/liblua.lapi.o obj/third_party/externals/lua/liblua.lauxlib.o obj/third_party/externals/lua/liblua.lbaselib.o obj/third_party/externals/lua/liblua.lbitlib.o obj/third_party/externals/lua/liblua.lcode.o obj/third_party/externals/lua/liblua.lcorolib.o obj/third_party/externals/lua/liblua.lctype.o obj/third_party/externals/lua/liblua.ldblib.o obj/third_party/externals/lua/liblua.ldebug.o obj/third_party/externals/lua/liblua.ldo.o obj/third_party/externals/lua/liblua.ldump.o obj/third_party/externals/lua/liblua.lfunc.o obj/third_party/externals/lua/liblua.lgc.o obj/third_party/externals/lua/liblua.linit.o obj/third_party/externals/lua/liblua.liolib.o obj/third_party/externals/lua/liblua.llex.o obj/third_party/externals/lua/liblua.lmathlib.o obj/third_party/externals/lua/liblua.lmem.o obj/third_party/externals/lua/liblua.loadlib.o obj/third_party/externals/lua/liblua.lobject.o obj/third_party/externals/lua/liblua.lopcodes.o obj/third_party/externals/lua/liblua.loslib.o obj/third_party/externals/lua/liblua.lparser.o obj/third_party/externals/lua/liblua.lstate.o obj/third_party/externals/lua/liblua.lstring.o obj/third_party/externals/lua/liblua.lstrlib.o obj/third_party/externals/lua/liblua.ltable.o obj/third_party/externals/lua/liblua.ltablib.o obj/third_party/externals/lua/liblua.ltm.o obj/third_party/externals/lua/liblua.lundump.o obj/third_party/externals/lua/liblua.lutf8lib.o obj/third_party/externals/lua/liblua.lvm.o obj/third_party/externals/lua/liblua.lzio.o
+  arflags =
+  output_extension = .a
+  output_dir = 

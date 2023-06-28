@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/yes_no_op">
+        <item
+            android:id="@+id/action_cancel"
+            android:icon="@drawable/ic_fluent_dismiss_24_regular"
+            android:title="Cancel" />
+        <item
+            android:id="@+id/action_enter"
+            android:icon="@drawable/ic_fluent_checkmark_24_regular"
+            android:title="OK" />
+    </group>
+
+</menu>

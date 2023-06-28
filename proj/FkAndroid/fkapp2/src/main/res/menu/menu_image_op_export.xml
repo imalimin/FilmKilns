@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/image_op_crop">
+        <item
+            android:id="@+id/action_save_jpeg"
+            android:title="JPG" />
+        <item
+            android:id="@+id/action_save_png"
+            android:title="PNG" />
+        <item
+            android:id="@+id/action_save_webp"
+            android:title="WEBP" />
+        <item
+            android:id="@+id/action_save_gif"
+            android:icon="@drawable/ic_fluent_gif_24_regular"
+            android:title="GIF" />
+    </group>
+
+</menu>
