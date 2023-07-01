@@ -54,6 +54,7 @@ FkResult FkEntity::removeComponent(std::shared_ptr<FkComponent> &comp) {
 FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
                                         const FkClassType &classType) {
     for (auto & component : components) {
+        FkAssert(component != nullptr, FK_FAIL);
         if (component->getClassType().is(classType)) {
             vec.emplace_back(component);
         }
