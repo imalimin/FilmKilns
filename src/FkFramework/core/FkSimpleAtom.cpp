@@ -66,7 +66,10 @@ FkResult FkSimpleAtom::onCreate() {
     if (FK_OK != ret) {
         return ret;
     }
-    client = std::make_shared<FkLocalClient>();
+    auto _client = std::make_shared<FkLocalClient>();
+    std::shared_ptr<FkAbsEngineMonitor> monitor = getContext()->getMonitor();
+    _client->setMonitor(monitor);
+    client = _client;
     onConnect(chain);
     if (chain->empty()) {
         FkLogE(FK_DEF_TAG, "Chain is empty. Connect quark on onConnect first.");

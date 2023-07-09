@@ -11,6 +11,7 @@
 #include "FkObject.h"
 #include "FkSession.h"
 #include "FkProtocol.h"
+#include "FkEngineMonitor.h"
 
 class FkSessionClient;
 

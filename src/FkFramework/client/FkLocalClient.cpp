@@ -17,7 +17,11 @@ FkLocalClient::~FkLocalClient() {
 
 }
 
+void FkLocalClient::setMonitor(std::shared_ptr<FkAbsEngineMonitor> &_monitor) {
+    this->monitor = _monitor;
+}
+
 FkResult FkLocalClient::send(std::shared_ptr<FkSession> session,
                              std::shared_ptr<FkProtocol> protocol) {
-    return session->send(protocol);
+    return session->send(protocol, this->monitor);
 }

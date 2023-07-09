@@ -26,7 +26,6 @@ const FkID FkRenderEngine::MSG_RENDER_DEVICE = 0x200;
 FK_IMPL_CLASS_TYPE(FkRenderEngine, FkEngine)
 
 FkRenderEngine::FkRenderEngine(std::string name) : FkEngine(name), measurer(150) {
-    client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkRenderMolecule>();
 }
 
@@ -36,6 +35,12 @@ FkRenderEngine::~FkRenderEngine() {
 FkResult FkRenderEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     FkAssert(ret == FK_OK, ret);
+
+    auto _client = std::make_shared<FkLocalClient>();
+    std::shared_ptr<FkAbsEngineMonitor> monitor = getContext()->getMonitor();
+    _client->setMonitor(monitor);
+    client = _client;
+
     auto proto = std::make_shared<FkOnCreatePrt>(getContext());
     return client->with(molecule)->send(proto);
 }

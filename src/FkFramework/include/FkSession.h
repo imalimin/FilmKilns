@@ -11,6 +11,7 @@
 #include "FkObject.h"
 #include "FkProtocol.h"
 #include "FkQuark.h"
+#include "FkEngineMonitor.h"
 #include <vector>
 
 //#define FK_CONNECT_TO(session, quark) (session->connectTo(std::static_pointer_cast<FkQuark>(quark)))
@@ -51,7 +52,7 @@ public:
 private:
     FkSession(const FkSession &o) : FkObject() {};
 
-    FkResult send(std::shared_ptr<FkProtocol> protocol);
+    FkResult send(std::shared_ptr<FkProtocol> protocol, std::shared_ptr<FkAbsEngineMonitor> monitor);
 
 private:
     FkProtocol::Desc protoDesc = {0, 0};

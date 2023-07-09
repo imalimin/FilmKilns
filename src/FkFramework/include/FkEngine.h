@@ -65,7 +65,7 @@ public:
 
     virtual FkResult stop();
 
-    virtual void setMonitor(std::shared_ptr<IFkEngineMonitor> &_monitor);
+    virtual void setMonitor(std::shared_ptr<FkAbsEngineMonitor> &_monitor);
 
     std::shared_ptr<FkEngineContext> getContext();
 

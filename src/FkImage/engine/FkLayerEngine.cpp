@@ -47,8 +47,6 @@ FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
 
 FkLayerEngine::FkLayerEngine(std::shared_ptr<FkEngine> &renderEngine, std::string name)
         : FkEngine(name), renderEngine(renderEngine) {
-
-    client = std::make_shared<FkLocalClient>();
     molecule = std::make_shared<FkGraphicMolecule>();
 }
 
@@ -59,7 +57,13 @@ FkLayerEngine::~FkLayerEngine() {
 FkResult FkLayerEngine::onCreate() {
     auto ret = FkEngine::onCreate();
     FkAssert(ret == FK_OK, ret);
+
+    auto _client = std::make_shared<FkLocalClient>();
+    std::shared_ptr<FkAbsEngineMonitor> monitor = getContext()->getMonitor();
+    _client->setMonitor(monitor);
+    client = _client;
     ret = renderEngine->create();
+
     FkAssert(ret == FK_OK, ret);
     auto proto = std::make_shared<FkOnCreatePrt>(getContext());
     proto->context->addComponent(std::make_shared<FkRenderEngineCompo>(renderEngine));

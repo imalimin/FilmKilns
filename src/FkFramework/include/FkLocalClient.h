@@ -14,13 +14,18 @@ FK_SUPER_CLASS(FkLocalClient, FkSessionClient) {
 FK_DEF_CLASS_TYPE_FUNC(FkLocalClient)
 
 public:
-    FkLocalClient(const FkLocalClient &o) = delete;
-
     FkLocalClient();
+
+    FkLocalClient(const FkLocalClient &o) = delete;
 
     virtual ~FkLocalClient();
 
-    virtual FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol) override ;
+    void setMonitor(std::shared_ptr<FkAbsEngineMonitor> &_monitor);
+
+    virtual FkResult send(std::shared_ptr<FkSession> session, std::shared_ptr<FkProtocol> protocol) override;
+
+protected:
+    std::shared_ptr<FkAbsEngineMonitor> monitor = nullptr;
 };
 
 

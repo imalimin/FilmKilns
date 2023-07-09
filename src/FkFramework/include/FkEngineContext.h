@@ -29,13 +29,13 @@ public:
 
     virtual std::shared_ptr<FkEngineSettings> getEngineSettings();
 
-    virtual void setMonitor(std::shared_ptr<IFkEngineMonitor> &_monitor);
+    virtual void setMonitor(std::shared_ptr<FkAbsEngineMonitor> &_monitor);
 
-    virtual std::shared_ptr<IFkEngineMonitor> getMonitor();
+    virtual std::shared_ptr<FkAbsEngineMonitor> getMonitor();
 
 private:
     std::shared_ptr<FkEngineSettings> settings;
-    std::shared_ptr<IFkEngineMonitor> monitor = nullptr;
+    std::shared_ptr<FkAbsEngineMonitor> monitor = nullptr;
 };
 
 #endif //FK_FRAMEWORK_FKQUARKCONTEXT_H

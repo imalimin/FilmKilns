@@ -108,7 +108,7 @@ FkResult FkEngine::stop() {
     return FK_OK;
 }
 
-void FkEngine::setMonitor(std::shared_ptr<IFkEngineMonitor> &_monitor) {
+void FkEngine::setMonitor(std::shared_ptr<FkAbsEngineMonitor> &_monitor) {
     context->setMonitor(_monitor);
 }
 
