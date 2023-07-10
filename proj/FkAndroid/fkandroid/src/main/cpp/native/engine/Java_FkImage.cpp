@@ -35,7 +35,7 @@ JNIEXPORT jlong JNICALL Java_com_alimin_fk_engine_FkImage_nativeCreateInstance
     auto pWorkspace = env->GetStringUTFChars(workspace, nullptr);
     std::string workspaceStr(pWorkspace);
     env->ReleaseStringUTFChars(workspace, pWorkspace);
-    std::shared_ptr<FkAbsEngineMonitor> monitor = std::make_shared<FkEngineMonitor>();
+    std::shared_ptr<FkAbsEngineMonitor> monitor = std::make_shared<FkEngineMonitor>("/sdcard/000000.txt");
     std::shared_ptr<FkEngine> renderEngine = std::make_shared<FkRenderEngine>(RENDER_ALIAS);
     auto renderSettings = std::make_shared<FkRenderEngineSettings>();
     std::vector<int32_t> supportBlockArray = {4096, 1024, 512};

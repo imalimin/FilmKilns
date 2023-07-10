@@ -50,9 +50,9 @@ FK_SUPER_CLASS(FkEngineMonitor, FkAbsEngineMonitor) {
 FK_DEF_CLASS_TYPE_FUNC(FkEngineMonitor)
 
 public:
-    FkEngineMonitor();
+    FkEngineMonitor(std::string outputPath);
 
-    FkEngineMonitor(const FkEngineMonitor &o);
+    FkEngineMonitor(const FkEngineMonitor &o) = delete;
 
     virtual ~FkEngineMonitor();
 
@@ -67,9 +67,12 @@ public:
 private:
     void appendActionStr(FkString &str, std::shared_ptr<Action> &action);
 
+    std::string appendAction(std::ofstream &stream, std::shared_ptr<Action> &action);
+
 private:
     std::mutex actMtx;
     std::unordered_map<long, ThreadData> actMap;
+    std::string outputPath;
 };
 
 #endif //FK_FRAMEWORK_FKENGINEMONITOR_H
