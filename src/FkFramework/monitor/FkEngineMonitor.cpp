@@ -63,47 +63,37 @@ void FkEngineMonitor::actionEnd() {
 }
 
 std::string FkEngineMonitor::toString() {
-    FkString str;
     std::ofstream stream;
     stream.open(outputPath.c_str(), std::ios::in | std::ios::trunc);
     for (auto &itr: actMap) {
+        FkString head;
+        head << "Thread_" << itr.first << "     " << "0/0" << "     " << "[000]" << " " << 1.0f << ": cycles:";
         for (auto &it: itr.second.actions) {
-            stream << "Thread_" << itr.first << "     " << 1.0f << ": cycles: " << std::endl;
-            str.append("thread=");
-            str.append(itr.first);
-            str.append(", ");
-            stream << appendAction(stream, it) << std::endl;
-            stream << "\t" << it->protoId << " " << it->protoName << "(undefine)" << std::endl << std::endl;
+            FkString str;
+            FkString tmp;
+            tmp << "\t" << it->protoId << " " << it->protoName << " (undefine)\n";
+            str.begin() << tmp;
+            tmp.clear();
+            tmp << "\t" << it->nodeId << " " << it->nodeName << " (undefine)\n";
+            str.begin() << tmp;
+            appendAction(head, str, stream, it->child);
         }
     }
     stream.flush();
     stream.close();
-    return str.toString();
+    return "";
 }
 
-std::string FkEngineMonitor::appendAction(std::ofstream &stream, std::shared_ptr<Action> &action) {
-    for (auto &it: action->child) {
-        auto tmp = appendAction(stream, it);
-        stream << tmp << std::endl;
+void FkEngineMonitor::appendAction(const FkString &head, FkString str, std::ofstream &stream, std::vector<std::shared_ptr<Action>> &actions) {
+    if (actions.empty()) {
+        stream << head.c_str() << std::endl;
+        stream << str.c_str() << std::endl;
+        return;
     }
-    std::string str = "";
-    str += "\t";
-    str += FkString::valueOf(action->nodeId);
-    str += " ";
-    str += action->nodeName;
-    str += "(undefine)";
-    return str;
-}
-
-void FkEngineMonitor::appendActionStr(FkString &str, std::shared_ptr<Action> &action) {
-    str.append("{");
-    str.append(action->nodeId);
-    str.append(",");
-    str.append(action->nodeName);
-    str.append(": [");
-    for (auto &it: action->child) {
-        appendActionStr(str, it);
+    for (auto &it: actions) {
+        FkString tmp;
+        tmp << "\t" << it->nodeId << " " << it->nodeName << " (undefine)\n";
+        str.begin() << tmp;
+        appendAction(head, str, stream, it->child);
     }
-    str.append("]");
-    str.append("}, ");
 }

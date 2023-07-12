@@ -7,26 +7,19 @@
 
 #include "FkString.h"
 
+FK_IMPL_CLASS_TYPE(FkStringBuilder, FkObject)
 FK_IMPL_CLASS_TYPE(FkString, FkObject)
 
-std::string FkString::valueOf(int32_t value) {
-    return valueOf<int32_t>(value);
+FkStringBuilder::FkStringBuilder(const FkString &str) : FkObject() {
+
 }
 
-std::string FkString::valueOf(int64_t value) {
-    return valueOf<int64_t>(value);
+std::string FkString::valueOf(const std::string &value) {
+    return value;
 }
 
-std::string FkString::valueOf(float value) {
-    return valueOf<float>(value);
-}
-
-std::string FkString::valueOf(double value) {
-    return valueOf<double>(value);
-}
-
-std::string FkString::valueOf(char value) {
-    return valueOf<char>(value);
+std::string FkString::valueOf(const FkString &value) {
+    return value._str;
 }
 
 std::vector<std::string> FkString::split(const std::string &str, const std::string &pattern) {
@@ -73,34 +66,18 @@ const char *FkString::c_str() {
     return _str.c_str();
 }
 
-FkString &FkString::append(const std::string &str) {
-    _str.append(str);
+const char *FkString::c_str() const {
+    return _str.c_str();
+}
+
+FkString &FkString::begin() {
+    appendBegin = true;
     return *this;
 }
 
-FkString &FkString::append(const char *str) {
-    _str.append(str);
+FkString &FkString::end() {
+    appendBegin = false;
     return *this;
-}
-
-FkString &FkString::append(int32_t val) {
-    return append(valueOf(val));
-}
-
-FkString &FkString::append(int64_t val) {
-    return append(valueOf(val));
-}
-
-FkString &FkString::append(float val) {
-    return append(valueOf(val));
-}
-
-FkString &FkString::append(double val) {
-    return append(valueOf(val));
-}
-
-FkString &FkString::append(char val) {
-    return append(valueOf(val));
 }
 
 size_t FkString::length() {

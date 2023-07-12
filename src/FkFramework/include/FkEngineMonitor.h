@@ -65,9 +65,7 @@ public:
     virtual std::string toString() override;
 
 private:
-    void appendActionStr(FkString &str, std::shared_ptr<Action> &action);
-
-    std::string appendAction(std::ofstream &stream, std::shared_ptr<Action> &action);
+    void appendAction(const FkString &head, FkString str, std::ofstream &stream, std::vector<std::shared_ptr<Action>> &actions);
 
 private:
     std::mutex actMtx;

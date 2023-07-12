@@ -12,22 +12,27 @@
 #include <vector>
 #include <sstream>
 
+class FkString;
+
+FK_SUPER_CLASS(FkStringBuilder, FkObject) {
+FK_DEF_CLASS_TYPE_FUNC(FkStringBuilder)
+
+public:
+    FkStringBuilder(const FkString &str);
+
+    ~FkStringBuilder() = default;
+};
+
 FK_SUPER_CLASS(FkString, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkString)
 
 public:
-    static std::string valueOf(int32_t value);
+    static std::string valueOf(const std::string &value);
 
-    static std::string valueOf(int64_t value);
-
-    static std::string valueOf(float value);
-
-    static std::string valueOf(double value);
-
-    static std::string valueOf(char value);
+    static std::string valueOf(const FkString &value);
 
     template<typename T>
-    static std::string valueOf(T value) {
+    static std::string valueOf(const T &value) {
         std::ostringstream oss;
         oss << value;
         return oss.str();
@@ -50,19 +55,11 @@ public:
 
     const char *c_str();
 
-    FkString &append(const std::string &str);
+    const char *c_str() const;
 
-    FkString &append(const char *str);
+    FkString &begin();
 
-    FkString &append(int32_t val);
-
-    FkString &append(int64_t val);
-
-    FkString &append(float val);
-
-    FkString &append(double val);
-
-    FkString &append(char val);
+    FkString &end();
 
     size_t length();
 
@@ -74,8 +71,25 @@ public:
 
     bool startWith(std::string str);
 
+    template<typename T>
+    FkString &append(const T &val) {
+        if (appendBegin) {
+            _str = valueOf(val) + _str;
+        } else {
+            _str.append(valueOf(val));
+        }
+        return *this;
+    }
+
+    template<typename T>
+    FkString &operator<<(const T &val) {
+        append(val);
+        return *this;
+    }
+
 private:
     std::string _str;
+    bool appendBegin = false;
 };
 
 #endif //FK_BASE_FKSTRING_H
