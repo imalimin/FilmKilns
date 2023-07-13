@@ -67,16 +67,17 @@ std::string FkEngineMonitor::toString() {
     stream.open(outputPath.c_str(), std::ios::in | std::ios::trunc);
     for (auto &itr: actMap) {
         FkString head;
-        head << "Thread_" << itr.first << "     " << "0/0" << "     " << "[000]" << " " << 1.0f << ": cycles:";
+        head << "Thread_" << itr.first;
         for (auto &it: itr.second.actions) {
+//            if (strcmp(it->protoName, "FkRenderProto") != 0) {
+//                continue;
+//            }
             FkString str;
-            FkString tmp;
-            tmp << "\t" << it->protoId << " " << it->protoName << " (undefine)\n";
+            FkString tmp = getActionStr(it->protoId, it->protoName, it);
             str.begin() << tmp;
-            tmp.clear();
-            tmp << "\t" << it->nodeId << " " << it->nodeName << " (undefine)\n";
+            tmp = getActionStr(it->nodeId, it->nodeName, it);
             str.begin() << tmp;
-            appendAction(head, str, stream, it->child);
+            appendAction(head, str, stream, it);
         }
     }
     stream.flush();
@@ -84,16 +85,21 @@ std::string FkEngineMonitor::toString() {
     return "";
 }
 
-void FkEngineMonitor::appendAction(const FkString &head, FkString str, std::ofstream &stream, std::vector<std::shared_ptr<Action>> &actions) {
-    if (actions.empty()) {
-        stream << head.c_str() << std::endl;
+void FkEngineMonitor::appendAction(const FkString &head, FkString str, std::ofstream &stream, std::shared_ptr<Action> &action) {
+    if (action->child.empty()) {
+        stream << head.c_str() << "     " << "0/0" << "     " << "[000]" << " " << 1.0f << ": cycles:" << std::endl;
         stream << str.c_str() << std::endl;
         return;
     }
-    for (auto &it: actions) {
-        FkString tmp;
-        tmp << "\t" << it->nodeId << " " << it->nodeName << " (undefine)\n";
-        str.begin() << tmp;
-        appendAction(head, str, stream, it->child);
+    for (auto &it: action->child) {
+        FkString tmp = getActionStr(it->nodeId, it->nodeName, it);
+        tmp << str;
+        appendAction(head, tmp, stream, it);
     }
+}
+
+FkString FkEngineMonitor::getActionStr(long id, const char *name, std::shared_ptr<Action> &action) {
+    FkString str;
+    str << "\t" << id << " " << name << "/c_" << (action->endTimeInUS - action->startTimeInUS) << " (undefine)\n";
+    return str;
 }
