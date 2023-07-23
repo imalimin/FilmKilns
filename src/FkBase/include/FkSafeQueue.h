@@ -24,6 +24,11 @@ public:
         FkQueue<T>::push(o);
     }
 
+    virtual T top() override {
+        std::lock_guard<std::mutex> guard(mtx);
+        return FkQueue<T>::top();
+    }
+
     virtual T pop() override {
         std::lock_guard<std::mutex> guard(mtx);
         return FkQueue<T>::pop();

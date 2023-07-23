@@ -23,6 +23,11 @@ public:
         mQueue.push(o);
     }
 
+    virtual T top() {
+        T o = mQueue.front();
+        return o;
+    }
+
     virtual T pop() {
         T o = mQueue.front();
         mQueue.pop();
