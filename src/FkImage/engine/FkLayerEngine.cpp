@@ -502,7 +502,7 @@ FkResult FkLayerEngine::drawPath(FkID layerId,
     FkDoubleVec2 point(x, y);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
     proto->isActionFinish = false;
-    proto->paint = paint;
+    proto->paint = std::make_shared<FkPaint>(*paint);
 
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
     msg->sp = proto;

@@ -20,7 +20,8 @@ FkPaint::FkPaint() : FkObject() {
 FkPaint::FkPaint(const FkPaint &o)
         : FkObject(o),
           strokeWidth(o.strokeWidth),
-          color(o.color) {
+          color(o.color),
+          pathType(o.pathType) {
 
 }
 
