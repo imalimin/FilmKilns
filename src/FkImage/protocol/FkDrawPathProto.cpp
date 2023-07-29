@@ -14,13 +14,14 @@ FK_IMPL_CLASS_TYPE(FkDrawPathProto, FkProtocol)
 
 FkDrawPathProto::FkDrawPathProto(FkID layerId, FkDoubleVec2 &point)
         : FkProtocol(), layerId(layerId), point(point),
-          isActionFinish(false), isActionClear(false) {
+          isActionFinish(false), isActionClear(false), coordType(kCoordType::SCREEN) {
 
 }
 
 FkDrawPathProto::FkDrawPathProto(const FkDrawPathProto &o)
         : FkProtocol(o), layerId(o.layerId), point(o.point),
-          isActionFinish(o.isActionFinish), isActionClear(o.isActionClear) {
+          isActionFinish(o.isActionFinish), isActionClear(o.isActionClear),
+          coordType(o.coordType) {
 
 }
 

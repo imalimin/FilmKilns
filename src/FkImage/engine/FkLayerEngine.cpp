@@ -497,12 +497,14 @@ FkResult FkLayerEngine::_readPixels(std::shared_ptr<FkMessage> &msg) {
 
 FkResult FkLayerEngine::drawPath(FkID layerId,
                                  int32_t x, int32_t y,
-                                 std::shared_ptr<FkPaint> &paint) {
+                                 std::shared_ptr<FkPaint> &paint,
+                                 kCoordType coordType) {
     FkAssert(paint != nullptr && paint->strokeWidth > 0, FK_INVALID_DATA);
     FkDoubleVec2 point(x, y);
     auto proto = std::make_shared<FkDrawPathProto>(layerId, point);
     proto->isActionFinish = false;
     proto->paint = std::make_shared<FkPaint>(*paint);
+    proto->coordType = coordType;
 
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
     msg->sp = proto;
@@ -511,13 +513,14 @@ FkResult FkLayerEngine::drawPath(FkID layerId,
 
 FkResult FkLayerEngine::_drawPath(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawPathProto, msg->sp);
-    auto measureProto = std::make_shared<FkMeasurePointProto>();
-    measureProto->layerId = proto->layerId;
-    measureProto->value = FkDoubleVec2(proto->point.x, proto->point.y);
-    auto ret = client->with(molecule)->send(measureProto);
-    FkAssert(FK_OK == ret, FK_FAIL);
-
-    proto->point = measureProto->value;
+    if (proto->coordType == kCoordType::SCREEN) {
+        auto measureProto = std::make_shared<FkMeasurePointProto>();
+        measureProto->layerId = proto->layerId;
+        measureProto->value = FkDoubleVec2(proto->point.x, proto->point.y);
+        auto ret = client->with(molecule)->send(measureProto);
+        FkAssert(FK_OK == ret, FK_FAIL);
+        proto->point = measureProto->value;
+    }
     return client->with(molecule)->send(proto);
 }
 

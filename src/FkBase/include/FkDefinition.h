@@ -107,4 +107,9 @@ FK_ENUM kScaleType : int {
     CENTER_CROP,
 };
 
+FK_ENUM kCoordType : int {
+    SCREEN = 0,
+    LAYER,
+};
+
 #endif //FK_BASE_FKDEFINITION_H

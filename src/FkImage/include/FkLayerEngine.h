@@ -84,7 +84,8 @@ public:
     FkResult readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
                         std::function<void(std::shared_ptr<FkBuffer>, FkSize)> finishCallback);
 
-    FkResult drawPath(FkID layerId, int32_t x, int32_t y, std::shared_ptr<FkPaint> &paint);
+    FkResult drawPath(FkID layerId, int32_t x, int32_t y, std::shared_ptr<FkPaint> &paint,
+                      kCoordType coordType = kCoordType::SCREEN);
 
     FkResult drawPathFinish(FkID layerId);
 

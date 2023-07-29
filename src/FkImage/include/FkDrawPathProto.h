@@ -27,6 +27,7 @@ public:
 
 public:
     FkID layerId;
+    kCoordType coordType;
     FkDoubleVec2 point;
     std::shared_ptr<FkPaint> paint = nullptr;
     float scaleOfSensitivity = 1.0f;
