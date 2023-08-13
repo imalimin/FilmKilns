@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(FkBase LANGUAGES C CXX)
 
+message(STATUS "${PROJECT_NAME} ENABLE_FORCE_OUTPUT_INFO: ${ENABLE_FORCE_OUTPUT_INFO}")
+if (ENABLE_FORCE_OUTPUT_INFO)
+    add_definitions("-D__ENABLE_FORCE_OUTPUT_INFO__")
+endif()
+
 set(INCLUDES
         ${ANDROID_NDK}/sources/android/cpufeatures
         ${PROJECT_SOURCE_DIR}

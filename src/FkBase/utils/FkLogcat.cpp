@@ -18,7 +18,7 @@
 #endif
 
 void FkLogcat::v(const std::string &TAG, const std::string fmt, ...) {
-#ifdef __AL_DEBUG__
+#if defined(__FK_DEBUG__)
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -31,7 +31,7 @@ void FkLogcat::v(const std::string &TAG, const std::string fmt, ...) {
 }
 
 void FkLogcat::d(const std::string &TAG, const std::string fmt, ...) {
-#ifdef __AL_DEBUG__
+#if defined(__FK_DEBUG__)
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -44,7 +44,7 @@ void FkLogcat::d(const std::string &TAG, const std::string fmt, ...) {
 }
 
 void FkLogcat::i(const std::string &TAG, const std::string fmt, ...) {
-#ifdef __AL_DEBUG__
+#if defined(__FK_DEBUG__) || defined(__ENABLE_FORCE_OUTPUT_INFO__)
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -57,7 +57,7 @@ void FkLogcat::i(const std::string &TAG, const std::string fmt, ...) {
 }
 
 void FkLogcat::e(const std::string &TAG, const std::string fmt, ...) {
-#ifdef __AL_DEBUG__
+#if defined(__FK_DEBUG__) || defined(__ENABLE_FORCE_OUTPUT_INFO__)
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
@@ -70,7 +70,7 @@ void FkLogcat::e(const std::string &TAG, const std::string fmt, ...) {
 }
 
 void FkLogcat::w(const std::string &TAG, const std::string fmt, ...) {
-#ifdef __AL_DEBUG__
+#if defined(__FK_DEBUG__) || defined(__ENABLE_FORCE_OUTPUT_INFO__)
     va_list args;
     va_start(args, fmt);
 #ifdef ANDROID
