@@ -43,6 +43,10 @@ FkColor FkColor::blue() {
     return makeFromRGBA8(0, 0, 255, 255);
 }
 
+FkColor FkColor::yellow() {
+    return makeFromRGBA8(255, 255, 0, 255);
+}
+
 FkColor FkColor::transparent() {
     return makeFromRGBA8(0, 0, 0, 0);
 }

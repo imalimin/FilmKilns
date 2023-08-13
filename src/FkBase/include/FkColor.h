@@ -45,6 +45,8 @@ public:
 
     static FkColor blue();
 
+    static FkColor yellow();
+
     static FkColor transparent();
 
 public:
