@@ -1,14 +1,5 @@
 cmake_minimum_required(VERSION 3.4.1)
 set(SRC_PATH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/src/)
-option(ENABLE_BAN_WARNING "Enable warning as error." ON)
-option(ENABLE_TINY "Enable tiny so." OFF)
-option(ENABLE_GLM "Enable glm." OFF)
-option(ENABLE_ASAN "Enable ASAN." OFF)
-option(ENABLE_MEDIA_CODEC "Enable MediaCodec." ON)
-option(ENABLE_FK "Compile film kilns." OFF)
-option(ENABLE_SKIA_SRC "Compile with skia sources." OFF)
-option(ENABLE_IJK "Compile with ijk ffmpeg." OFF)
-
 set(THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
 
 set(WARNING_CONFIGS
