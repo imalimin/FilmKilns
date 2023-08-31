@@ -46,6 +46,8 @@
 #include "FkLayerSetVisibilityProto.h"
 #include "FkVisibilityComponent.h"
 #include "FkLayerCopyProto.h"
+#include "FkDrawTextProto.h"
+#include "FkTextCompo.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -81,6 +83,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicLayerQuark::_onUpdateLayerWithModel);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetVisibilityProto, FkGraphicLayerQuark::_onSetLayerVisibility);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerCopyProto, FkGraphicLayerQuark::_onCopyLayer);
+    FK_PORT_DESC_QUICK_ADD(desc, FkDrawTextProto, FkGraphicLayerQuark::_onDrawText);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -582,6 +585,17 @@ FkResult FkGraphicLayerQuark::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
     itr = layers.find(proto->dstLayerId);
     if (layers.end() != itr) {
         proto->dstLayer = std::make_shared<FkGraphicLayer>(*itr->second);
+    }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onDrawText(std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawTextProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (itr != layers.end()) {
+        auto layer = itr->second;
+        auto compo = std::make_shared<FkTextCompo>(proto->text, 10, FkColor::makeFrom(proto->paint->color), proto->pos);
+        layer->addComponent(compo);
     }
     return FK_OK;
 }

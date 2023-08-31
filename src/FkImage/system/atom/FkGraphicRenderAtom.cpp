@@ -22,6 +22,7 @@
 #include "FkScaleComponent.h"
 #include "FkTexEntity.h"
 #include "FkLayerCopyProto.h"
+#include "FkTextCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicRenderAtom, FkSimpleAtom)
 
@@ -77,6 +78,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         }
         _makeDrawPointsRequest(layer, request);
         _makeDrawPathsRequest(layer, request);
+        _makeDrawTextRequest(layer, request);
         auto materials = _makeRenderMaterials(layer);
         if (materials) {
             std::shared_ptr<FkDeviceEntity> device  = std::make_shared<FkTexDeviceEntity>(canvas->material);
@@ -230,6 +232,19 @@ FkResult FkGraphicRenderAtom::_makeDrawPathsRequest(std::shared_ptr<FkGraphicLay
     if (layer->findComponents(paths, FkPathCompo_Class::type) == FK_OK) {
         std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponents(paths);
+
+        std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(layer->material);
+        return request->add(materials, device);
+    }
+    return FK_FAIL;
+}
+
+FkResult FkGraphicRenderAtom::_makeDrawTextRequest(std::shared_ptr<FkGraphicLayer> &layer,
+                                                    std::shared_ptr<FkRenderDeviceRequest> &request) {
+    std::vector<std::shared_ptr<FkComponent>> textCompoVec;
+    if (layer->findComponents(textCompoVec, FkTextCompo_Class::type) == FK_OK) {
+        std::shared_ptr<FkMaterialEntity> materials = std::make_shared<FkTexEntity>(layer->material);
+        materials->addComponents(textCompoVec);
 
         std::shared_ptr<FkDeviceEntity> device = std::make_shared<FkTexDeviceEntity>(layer->material);
         return request->add(materials, device);

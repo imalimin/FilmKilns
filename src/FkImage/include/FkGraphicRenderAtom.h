@@ -51,10 +51,13 @@ private:
                                 std::shared_ptr<FkRenderDeviceRequest> &request);
 
     FkResult _makeDrawPointsRequest(std::shared_ptr<FkGraphicLayer> &layer,
-                         std::shared_ptr<FkRenderDeviceRequest> &request);
+                                    std::shared_ptr<FkRenderDeviceRequest> &request);
 
     FkResult _makeDrawPathsRequest(std::shared_ptr<FkGraphicLayer> &layer,
-                        std::shared_ptr<FkRenderDeviceRequest> &request);
+                                   std::shared_ptr<FkRenderDeviceRequest> &request);
+
+    FkResult _makeDrawTextRequest(std::shared_ptr<FkGraphicLayer> &layer,
+                                   std::shared_ptr<FkRenderDeviceRequest> &request);
 
 private:
     std::function<void(uint32_t, FkSize, int64_t)> mRenderCanvasTexFunc = nullptr;

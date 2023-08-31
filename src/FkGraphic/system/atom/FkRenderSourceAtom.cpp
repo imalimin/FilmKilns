@@ -11,6 +11,7 @@
 #include "FkRenderFboQuark.h"
 #include "FkRenderVboQuark.h"
 #include "FkRenderProgramQuark.h"
+#include "FkRenderTextQuark.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderSourceAtom, FkProtocol)
 
@@ -26,7 +27,8 @@ void FkRenderSourceAtom::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
 }
 
 void FkRenderSourceAtom::onConnect(std::shared_ptr<FkConnectChain> chain) {
-    chain->next<FkRenderFboQuark>()
+    chain->next<FkRenderTextQuark>()
+            ->next<FkRenderFboQuark>()
             ->next<FkRenderTexQuark>()
             ->next<FkRenderVboQuark>()
             ->next<FkRenderProgramQuark>();

@@ -89,6 +89,8 @@ public:
 
     FkResult drawPathFinish(FkID layerId);
 
+    FkResult drawText(FkID layerId, const std::string &text, const FkIntVec2 &pos, std::shared_ptr<FkPaint> &paint);
+
     FkResult clearPaths(FkID layerId);
 
     FkResult updateLayerWithModel(FkID layerId, std::shared_ptr<FkModelInterface> &modelInterface);
@@ -155,6 +157,8 @@ private:
     FkResult _setLayerVisibility(std::shared_ptr<FkMessage> &msg);
 
     FkResult _copyLayer(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _drawText(const std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

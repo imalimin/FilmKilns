@@ -40,6 +40,7 @@
 #include "FkRenderCanvasTexCallbackProto.h"
 #include "FkLayerSetVisibilityProto.h"
 #include "FkLayerCopyProto.h"
+#include "FkDrawTextProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -542,6 +543,18 @@ FkResult FkLayerEngine::clearPaths(FkID layerId) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawPath));
     msg->sp = proto;
     return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::drawText(FkID layerId, const std::string &text, const FkIntVec2 &pos, std::shared_ptr<FkPaint> &paint) {
+    auto proto = std::make_shared<FkDrawTextProto>(layerId, text, pos, paint);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawText));
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
+FkResult FkLayerEngine::_drawText(const std::shared_ptr<FkMessage> &msg) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawTextProto, msg->sp);
+    return client->with(molecule)->send(proto);
 }
 
 FkResult FkLayerEngine::updateLayerWithModel(FkID layerId,
