@@ -20,6 +20,8 @@ FK_SUPER_CLASS(FkDrawTextProto, FkProtocol) {
 FK_DEF_CLASS_TYPE_FUNC(FkDrawTextProto)
 
 public:
+    FkDrawTextProto(FkID layerId, bool isClear);
+
     FkDrawTextProto(FkID layerId, const std::string &text, const FkIntVec2 &pos, std::shared_ptr<FkPaint> &paint);
 
     FkDrawTextProto(const FkDrawTextProto &o);
@@ -31,6 +33,7 @@ public:
     std::string text;
     FkIntVec2 pos;
     std::shared_ptr<FkPaint> paint;
+    bool isClear = false;
 };
 
 #endif //FK_IMAGE_FKDRAWTEXTPROTO_H

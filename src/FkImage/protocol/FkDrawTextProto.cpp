@@ -13,6 +13,11 @@
 
 FK_IMPL_CLASS_TYPE(FkDrawTextProto, FkProtocol)
 
+FkDrawTextProto::FkDrawTextProto(FkID layerId, bool isClear)
+        : FkProtocol(), layerId(layerId), text(""), pos(0, 0), paint(), isClear(isClear) {
+
+}
+
 FkDrawTextProto::FkDrawTextProto(FkID layerId,
                                  const std::string &text,
                                  const FkIntVec2 &pos,

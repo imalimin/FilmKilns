@@ -552,6 +552,13 @@ FkResult FkLayerEngine::drawText(FkID layerId, const std::string &text, const Fk
     return sendMessage(msg);
 }
 
+FkResult FkLayerEngine::clearTexts(FkID layerId) {
+    auto proto = std::make_shared<FkDrawTextProto>(layerId, true);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_drawText));
+    msg->sp = proto;
+    return sendMessage(msg);
+}
+
 FkResult FkLayerEngine::_drawText(const std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkDrawTextProto, msg->sp);
     return client->with(molecule)->send(proto);

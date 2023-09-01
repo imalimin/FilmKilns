@@ -31,20 +31,28 @@ public:
 
     }
 
-    T left() {
+    T left() const {
         return _left;
     }
 
-    T top() {
+    T top() const {
         return _top;
     }
 
-    T right() {
+    T right() const {
         return _right;
     }
 
-    T bottom() {
+    T bottom() const {
         return _bottom;
+    }
+
+    T width() const {
+        return _right - _left;
+    }
+
+    T height() const {
+        return _bottom - _top;
     }
 
 private:

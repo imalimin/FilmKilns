@@ -91,6 +91,8 @@ public:
 
     FkResult drawText(FkID layerId, const std::string &text, const FkIntVec2 &pos, std::shared_ptr<FkPaint> &paint);
 
+    FkResult clearTexts(FkID layerId);
+
     FkResult clearPaths(FkID layerId);
 
     FkResult updateLayerWithModel(FkID layerId, std::shared_ptr<FkModelInterface> &modelInterface);

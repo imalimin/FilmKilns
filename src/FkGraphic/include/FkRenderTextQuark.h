@@ -13,6 +13,7 @@
 #define FK_GRAPHIC_FKRENDERTEXTQUARK_H
 
 #include "FkQuark.h"
+#include "FkTextureCharMap.h"
 
 FK_SUPER_CLASS(FkRenderTextQuark, FkQuark) {
 FK_DEF_CLASS_TYPE_FUNC(FkRenderTextQuark)
@@ -37,6 +38,9 @@ protected:
 
 private:
     FkResult _onRender(const std::shared_ptr<FkProtocol> &p);
+
+private:
+    std::shared_ptr<FkTextureCharMap> mTexCharMap = nullptr;
 };
 
 #endif //FK_GRAPHIC_FKRENDERTEXTQUARK_H

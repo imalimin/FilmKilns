@@ -594,6 +594,10 @@ FkResult FkGraphicLayerQuark::_onDrawText(std::shared_ptr<FkProtocol> &p) {
     auto itr = layers.find(proto->layerId);
     if (itr != layers.end()) {
         auto layer = itr->second;
+        if (proto->isClear) {
+            layer->clearComponents(FkTextCompo_Class::type);
+            return FK_OK;
+        }
         auto compo = std::make_shared<FkTextCompo>(proto->text, 10, FkColor::makeFrom(proto->paint->color), proto->pos);
         layer->addComponent(compo);
     }

@@ -11,6 +11,7 @@
 
 #include "FkRenderTextQuark.h"
 #include "FkRenderProto.h"
+#include "FkTextCompo.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderTextQuark, FkQuark)
 
@@ -43,9 +44,17 @@ FkResult FkRenderTextQuark::onStart() {
 }
 
 FkResult FkRenderTextQuark::onStop() {
+    mTexCharMap = nullptr;
     return FkQuark::onStop();
 }
 
 FkResult FkRenderTextQuark::_onRender(const std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderProto, p);
+    std::vector<std::shared_ptr<FkComponent>> textCompoVec;
+    if (proto->materials->findComponents(textCompoVec, FkTextCompo_Class::type) == FK_OK) {
+        if (mTexCharMap == nullptr) {
+            mTexCharMap = std::make_shared<FkTextureCharMap>(16, FkColor::white());
+        }
+    }
     return FK_OK;
 }
