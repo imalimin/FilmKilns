@@ -15,7 +15,11 @@
 
 FK_IMPL_CLASS_TYPE(FkBitmap, FkObject)
 
-std::shared_ptr<FkBitmap> FkBitmap::from(std::string &file) {
+std::shared_ptr<FkBitmap> FkBitmap::from(const std::shared_ptr<SkBitmap> &bmp) {
+    return std::shared_ptr<FkBitmap>(new FkBitmap(bmp));
+}
+
+std::shared_ptr<FkBitmap> FkBitmap::from(const std::string &file) {
     auto bmp =  std::shared_ptr<FkBitmap>(new FkBitmap(file));
     if (bmp->bmp == nullptr) {
         return nullptr;
@@ -66,7 +70,7 @@ FkResult FkBitmap::write(std::string file, FkImage::Format fmt, std::shared_ptr<
     return FK_FAIL;
 }
 
-FkBitmap::FkBitmap(std::string &file) : FkObject() {
+FkBitmap::FkBitmap(const std::string &file) : FkObject() {
 
     sk_sp<SkData> data = SkData::MakeFromFileName(file.c_str());
     std::unique_ptr<SkCodec> codec = SkCodec::MakeFromData(data);
@@ -85,6 +89,10 @@ FkBitmap::FkBitmap(std::string &file) : FkObject() {
         FkLogI(FK_DEF_TAG, "Can not read pixels.");
     }
     _setEncodedOrigin(codec->getOrigin());
+}
+
+FkBitmap::FkBitmap(const std::shared_ptr<SkBitmap> &bmp) {
+    this->bmp = bmp;
 }
 
 FkBitmap::FkBitmap(const FkBitmap &o) : FkObject(o) {

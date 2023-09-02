@@ -26,9 +26,9 @@ public:
 
     virtual void set(int32_t _width, int32_t _height);
 
-    virtual int32_t getWidth();
+    virtual int32_t getWidth() const;
 
-    virtual int32_t getHeight();
+    virtual int32_t getHeight() const;
 
     virtual bool operator==(const FkSize &o);
 

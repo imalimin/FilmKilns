@@ -35,11 +35,11 @@ void FkSize::set(int32_t _width, int32_t _height) {
     this->height = _height;
 }
 
-int32_t FkSize::getWidth() {
+int32_t FkSize::getWidth() const {
     return width;
 }
 
-int32_t FkSize::getHeight() {
+int32_t FkSize::getHeight() const {
     return height;
 }
 

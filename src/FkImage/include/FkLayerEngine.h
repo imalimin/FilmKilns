@@ -19,6 +19,7 @@
 #include "FkBuffer.h"
 #include "FkPaint.h"
 #include "FkModelInterface.h"
+#include "FkBitmap.h"
 
 FK_SUPER_CLASS(FkLayerEngine, FkEngine) {
 FK_DEF_CLASS_TYPE_FUNC(FkLayerEngine)
@@ -51,6 +52,8 @@ public:
     FkResult removeLayer(FkID layer);
 
     FkResult clearLayer(FkID layerId);
+
+    FkResult updateLayer(FkID layerId, const std::shared_ptr<FkBitmap> &bmp);
 
     FkResult setCanvasSize(FkSize size);
 

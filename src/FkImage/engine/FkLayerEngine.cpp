@@ -41,6 +41,7 @@
 #include "FkLayerSetVisibilityProto.h"
 #include "FkLayerCopyProto.h"
 #include "FkDrawTextProto.h"
+#include "FkBitmapCompo.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -216,6 +217,17 @@ FkResult FkLayerEngine::_clearLayer(std::shared_ptr<FkMessage> &msg) {
     proto->layer = layer;
     proto->scaleType = kScaleType::CENTER_INSIDE;
     return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::updateLayer(FkID layerId, const std::shared_ptr<FkBitmap> &bmp) {
+    auto layer = std::make_shared<FkGraphicLayer>();
+    layer->id = layerId;
+    layer->addComponent(std::make_shared<FkSizeCompo>(FkSize(bmp->getWidth(), bmp->getHeight())));
+    layer->addComponent(std::make_shared<FkBitmapCompo>(bmp));
+
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
+    msg->sp = layer;
+    return sendMessage(msg);
 }
 
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {

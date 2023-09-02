@@ -20,14 +20,18 @@ FK_SUPER_CLASS(FkBitmap, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkBitmap)
 
 public:
-    static std::shared_ptr<FkBitmap> from(std::string &file);
+    static std::shared_ptr<FkBitmap> from(const std::shared_ptr<SkBitmap> &bmp);
+
+    static std::shared_ptr<FkBitmap> from(const std::string &file);
 
     static FkResult write(std::string file, FkImage::Format fmt, std::shared_ptr<FkBuffer> buf, FkSize size, int quality);
 
 private:
     FkBitmap(const FkBitmap &o);
 
-    FkBitmap(std::string &file);
+    FkBitmap(const std::string &file);
+
+    FkBitmap(const std::shared_ptr<SkBitmap> &bmp);
 
     void _setEncodedOrigin(int32_t skEncodedOrigin);
 
