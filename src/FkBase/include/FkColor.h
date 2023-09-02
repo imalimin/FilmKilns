@@ -56,31 +56,31 @@ public:
 
     virtual ~FkColor();
 
-    float fRed();
+    float fRed() const;
 
-    float fGreen();
+    float fGreen() const;
 
-    float fBlue();
+    float fBlue() const;
 
-    float fAlpha();
+    float fAlpha() const;
 
-    uint16_t uRed();
+    uint16_t uRed() const;
 
-    uint16_t uGreen();
+    uint16_t uGreen() const;
 
-    uint16_t uBlue();
+    uint16_t uBlue() const;
 
-    uint16_t uAlpha();
+    uint16_t uAlpha() const;
 
-    float *fArray();
+    float *fArray() const;
 
-    int32_t toInt();
+    int32_t toInt() const;
 
     void setAlphaType(AlphaType type);
 
-    bool isPreMultiple();
+    bool isPreMultiple() const;
 
-    kFormat getFormat();
+    kFormat getFormat() const;
 
     bool equals(FkColor &color);
 
@@ -90,7 +90,7 @@ private:
     kFormat format;
     AlphaType alphaType;
     std::vector<uint16_t> vec; // RGBA16.Alpha 0 mean transparent, 255 mean no transparent.
-    float *_fArray = nullptr;
+    float *_fArray = new float[4];
 };
 
 

@@ -67,42 +67,39 @@ FkColor::~FkColor() {
     }
 }
 
-float FkColor::fRed() {
+float FkColor::fRed() const {
     return uRed() * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
-float FkColor::fGreen() {
+float FkColor::fGreen() const {
     return uGreen() * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
-float FkColor::fBlue() {
+float FkColor::fBlue() const {
     return uBlue() * (alphaType == AlphaType::kPreMultiple ? fAlpha() : 1.0f) / 255.0f;
 }
 
-float FkColor::fAlpha() {
+float FkColor::fAlpha() const {
     return uAlpha() / 255.0f;
 }
 
-uint16_t FkColor::uRed() {
+uint16_t FkColor::uRed() const {
     return vec[0];
 }
 
-uint16_t FkColor::uGreen() {
+uint16_t FkColor::uGreen() const {
     return vec[1];
 }
 
-uint16_t FkColor::uBlue() {
+uint16_t FkColor::uBlue() const {
     return vec[2];
 }
 
-uint16_t FkColor::uAlpha() {
+uint16_t FkColor::uAlpha() const {
     return vec[3];
 }
 
-float *FkColor::fArray() {
-    if (nullptr == _fArray) {
-        _fArray = new float[4];
-    }
+float *FkColor::fArray() const {
     auto _alpha = fAlpha();
     _fArray[0] = fRed();
     _fArray[1] = fGreen();
@@ -111,7 +108,7 @@ float *FkColor::fArray() {
     return _fArray;
 }
 
-int32_t FkColor::toInt() {
+int32_t FkColor::toInt() const {
     int32_t color = 0;
     color |= ((uint8_t) uAlpha());
     color = color << 8;
@@ -127,11 +124,11 @@ void FkColor::setAlphaType(AlphaType type) {
     this->alphaType = type;
 }
 
-bool FkColor::isPreMultiple() {
+bool FkColor::isPreMultiple() const {
     return alphaType == AlphaType::kPreMultiple;
 }
 
-FkColor::kFormat FkColor::getFormat() {
+FkColor::kFormat FkColor::getFormat() const {
     return format;
 }
 

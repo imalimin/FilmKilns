@@ -6,23 +6,24 @@
 *
 * AUTHOR: aliminabc@gmail.com
 
-* CREATE TIME: 2023-08-31 13:32:27
+* CREATE TIME: 2023-09-02 00:00:04
 */
 
-#ifndef FK_GRAPHIC_FKRENDERTEXTQUARK_H
-#define FK_GRAPHIC_FKRENDERTEXTQUARK_H
+#ifndef FK_GRAPHIC_FKRENDERSOURCETEXTQUARK_H
+#define FK_GRAPHIC_FKRENDERSOURCETEXTQUARK_H
 
 #include "FkQuark.h"
+#include "FkTextureCharMap.h"
 
-FK_SUPER_CLASS(FkRenderTextQuark, FkQuark) {
-FK_DEF_CLASS_TYPE_FUNC(FkRenderTextQuark)
+FK_SUPER_CLASS(FkRenderSourceTextQuark, FkQuark) {
+FK_DEF_CLASS_TYPE_FUNC(FkRenderSourceTextQuark)
 
 public:
-    FkRenderTextQuark();
+    FkRenderSourceTextQuark();
 
-    FkRenderTextQuark(const FkRenderTextQuark &o) = delete;
+    FkRenderSourceTextQuark(const FkRenderSourceTextQuark &o) = delete;
 
-    virtual ~FkRenderTextQuark();
+    virtual ~FkRenderSourceTextQuark();
 
 protected:
     virtual void describeProtocols(std::shared_ptr<FkPortDesc> desc) override;
@@ -38,6 +39,8 @@ protected:
 private:
     FkResult _onRender(const std::shared_ptr<FkProtocol> &p);
 
+private:
+    std::shared_ptr<FkTextureCharMap> mTexCharMap = nullptr;
 };
 
-#endif //FK_GRAPHIC_FKRENDERTEXTQUARK_H
+#endif //FK_GRAPHIC_FKRENDERSOURCETEXTQUARK_H

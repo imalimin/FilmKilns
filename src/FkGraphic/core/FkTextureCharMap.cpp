@@ -20,13 +20,12 @@ FkTextureCharMap::FkTextureCharMap(int32_t fontSize, const FkColor &color)
     allocator = std::make_shared<FkGraphicAllocator>(256 * 1024 * 1024);
     FkTexDescription desc(GL_TEXTURE_2D);
     desc.fmt = FkColor::kFormat::RGBA;
-    desc.size = FkSize(256, 256);
     mCharsTex = allocator->alloc(desc);
 
-    font.setSize(18);
+    font.setSize(fontSize);
     paint.setAntiAlias(true);
     paint.setFilterQuality(kMedium_SkFilterQuality);
-    paint.setColor(SK_ColorWHITE);
+    paint.setColor(color.toInt());
     paint.setStrokeWidth(3);
 
     _createTextTexture();
@@ -40,7 +39,7 @@ FkTextureCharMap::~FkTextureCharMap() {
 
 FkResult FkTextureCharMap::_createTextTexture() {
     SkBitmap bmp;
-    bmp.allocN32Pixels(mCharsTex->desc.size.getWidth(), mCharsTex->desc.size.getHeight());
+    bmp.allocN32Pixels(256, 256);
     SkCanvas canvas(bmp);
     canvas.drawColor(SK_ColorTRANSPARENT);
 
@@ -50,6 +49,7 @@ FkResult FkTextureCharMap::_createTextTexture() {
     _drawCharRange('A', 'Z', pos, maxHeight, canvas);
     _drawCharRange('a', 'z', pos, maxHeight, canvas);
     _drawCharRange('.', '.', pos, maxHeight, canvas);
+    mCharsTex->update(FkColor::kFormat::RGBA, bmp.width(), bmp.height(), (uint8_t *) bmp.getPixels());
 
     auto encodedData = SkEncodeBitmap(bmp, SkEncodedImageFormat::kPNG, 80);
     if (encodedData != nullptr) {

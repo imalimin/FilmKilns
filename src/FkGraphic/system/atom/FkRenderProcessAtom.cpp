@@ -9,6 +9,7 @@
 #include "FkRenderDefine.h"
 #include "FkPointProcessQuark.h"
 #include "FkRenderPathQuark.h"
+#include "FkRenderTextQuark.h"
 
 FK_IMPL_CLASS_TYPE(FkRenderProcessAtom, FkSimpleAtom)
 

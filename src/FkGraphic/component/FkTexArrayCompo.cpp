@@ -20,6 +20,12 @@ FkTexArrayCompo::FkTexArrayCompo(FkSize size, int32_t x, int32_t y,
 
 }
 
+FkTexArrayCompo::FkTexArrayCompo(const std::shared_ptr<FkGraphicTexture> &tex)
+        : FkComponent(), blocks(1, 1), size(tex->desc.size),
+        blockSize(tex->desc.size.getWidth(), tex->desc.size.getHeight()){
+    textures.emplace_back(tex);
+}
+
 FkTexArrayCompo::FkTexArrayCompo(const FkTexArrayCompo &o)
         : FkComponent(o), blocks(o.blocks), size(o.size), blockSize(o.blockSize) {
     for (auto &it: o.textures) {

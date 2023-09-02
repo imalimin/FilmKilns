@@ -23,6 +23,8 @@ FK_DEF_CLASS_TYPE_FUNC(FkTexArrayCompo)
 public:
     FkTexArrayCompo(FkSize size, int32_t x, int32_t y, int32_t blockWidth, int32_t blockHeight);
 
+    FkTexArrayCompo(const std::shared_ptr<FkGraphicTexture> &tex);
+
     FkTexArrayCompo(const FkTexArrayCompo &o);
 
     virtual ~FkTexArrayCompo();
