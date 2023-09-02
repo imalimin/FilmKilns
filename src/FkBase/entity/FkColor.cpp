@@ -62,9 +62,6 @@ FkColor::FkColor(const FkColor &o)
 }
 
 FkColor::~FkColor() {
-    if (_fArray) {
-        delete[] _fArray;
-    }
 }
 
 float FkColor::fRed() const {
@@ -97,15 +94,6 @@ uint16_t FkColor::uBlue() const {
 
 uint16_t FkColor::uAlpha() const {
     return vec[3];
-}
-
-float *FkColor::fArray() const {
-    auto _alpha = fAlpha();
-    _fArray[0] = fRed();
-    _fArray[1] = fGreen();
-    _fArray[2] = fBlue();
-    _fArray[3] = _alpha;
-    return _fArray;
 }
 
 int32_t FkColor::toInt() const {

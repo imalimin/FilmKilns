@@ -70,7 +70,9 @@ FkResult FkGraphicPointProgram::addValue(std::shared_ptr<FkComponent> value) {
                                           reinterpret_cast<const void *>(offset)));
     } else if (FK_INSTANCE_OF(value, FkColorCompo)) {
         auto pValue = Fk_POINTER_CAST(FkColorCompo, value);
-        FK_GL_CHECK(setUniform4fv(uColorLoc, 1, pValue->color.fArray()));
+        std::vector<float> colorVec = {pValue->color.fRed(), pValue->color.fGreen(),
+                                       pValue->color.fBlue(), pValue->color.fAlpha()};
+        FK_GL_CHECK(setUniform4fv(uColorLoc, 1, colorVec.data()));
     } else if (FK_INSTANCE_OF(value, FkSizeCompo)) {
         auto pValue = Fk_POINTER_CAST(FkSizeCompo, value);
         FK_GL_CHECK(setUniform1f(uSizeLoc, pValue->size.getWidth()));

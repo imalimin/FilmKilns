@@ -62,7 +62,9 @@ FkResult FkGraphicPathProgram::addValue(std::shared_ptr<FkComponent> value) {
         size = pValue->size;
     } else if (FK_INSTANCE_OF(value, FkColorCompo)) {
         auto pValue = Fk_POINTER_CAST(FkColorCompo, value);
-        setUniform4fv(uPaintColorLoc, 1, pValue->color.fArray());
+        std::vector<float> colorVec = {pValue->color.fRed(), pValue->color.fGreen(),
+                                       pValue->color.fBlue(), pValue->color.fAlpha()};
+        setUniform4fv(uPaintColorLoc, 1, colorVec.data());
     } else if (FK_INSTANCE_OF(value, FkPathCompo)) {
         auto pValue = Fk_POINTER_CAST(FkPathCompo, value);
         std::vector<FkDoubleVec2> points;

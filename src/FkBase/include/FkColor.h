@@ -72,8 +72,6 @@ public:
 
     uint16_t uAlpha() const;
 
-    float *fArray() const;
-
     int32_t toInt() const;
 
     void setAlphaType(AlphaType type);
@@ -90,7 +88,6 @@ private:
     kFormat format;
     AlphaType alphaType;
     std::vector<uint16_t> vec; // RGBA16.Alpha 0 mean transparent, 255 mean no transparent.
-    float *_fArray = new float[4];
 };
 
 
