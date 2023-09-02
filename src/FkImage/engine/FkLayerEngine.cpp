@@ -42,6 +42,7 @@
 #include "FkLayerCopyProto.h"
 #include "FkDrawTextProto.h"
 #include "FkBitmapCompo.h"
+#include "FkSetZIndexProto.h"
 
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
@@ -228,6 +229,20 @@ FkResult FkLayerEngine::updateLayer(FkID layerId, const std::shared_ptr<FkBitmap
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_updateLayer));
     msg->sp = layer;
     return sendMessage(msg);
+}
+
+
+FkResult FkLayerEngine::setLayerZIndex(FkID layerId, int32_t zIndex) {
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setLayerIndexZ));
+    msg->arg1 = layerId;
+    msg->arg2 = zIndex;
+    return sendMessage(msg);
+
+}
+
+FkResult FkLayerEngine::_setLayerIndexZ(const std::shared_ptr<FkMessage> &msg) {
+    auto proto = std::make_shared<FkSetZIndexProto>(msg->arg1, msg->arg2);
+    return client->with(molecule)->send(proto);
 }
 
 FkResult FkLayerEngine::setCanvasSize(FkSize size) {

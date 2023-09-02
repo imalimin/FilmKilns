@@ -47,6 +47,7 @@ public:
 
 public:
     FkID id = FK_ID_NONE;
+    int32_t zIndex = 0;
     std::shared_ptr<FkMaterialCompo> material = nullptr;
 };
 

@@ -48,6 +48,7 @@
 #include "FkLayerCopyProto.h"
 #include "FkDrawTextProto.h"
 #include "FkTextCompo.h"
+#include "FkSetZIndexProto.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -84,6 +85,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetVisibilityProto, FkGraphicLayerQuark::_onSetLayerVisibility);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerCopyProto, FkGraphicLayerQuark::_onCopyLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawTextProto, FkGraphicLayerQuark::_onDrawText);
+    FK_PORT_DESC_QUICK_ADD(desc, FkSetZIndexProto, FkGraphicLayerQuark::_onSetZIndex);
 }
 
 FkResult FkGraphicLayerQuark::onCreate() {
@@ -234,6 +236,11 @@ FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         auto layer = *it.second;
 //        FkLogI(getClassType().getName(), layer.toString());
         proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(layer));
+        std::sort(proto->req->layers.begin(), proto->req->layers.end(),
+                  [](const std::shared_ptr<FkGraphicLayer> &l,
+                     const std::shared_ptr<FkGraphicLayer> &r) {
+                      return l->zIndex < r->zIndex;
+                  });
     }
     return FK_OK;
 }
@@ -602,4 +609,15 @@ FkResult FkGraphicLayerQuark::_onDrawText(std::shared_ptr<FkProtocol> &p) {
         layer->addComponent(compo);
     }
     return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onSetZIndex(const std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkSetZIndexProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (itr != layers.end()) {
+        auto layer = itr->second;
+        layer->zIndex = proto->zIndex;
+        return FK_OK;
+    }
+    return FK_SKIP;
 }

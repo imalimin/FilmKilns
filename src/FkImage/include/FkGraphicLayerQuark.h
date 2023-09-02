@@ -84,6 +84,8 @@ protected:
 
     FkResult _onDrawText(std::shared_ptr<FkProtocol> &p);
 
+    FkResult _onSetZIndex(const std::shared_ptr<FkProtocol> &p);
+
 private:
     bool _isExistLayer(FkID id);
 

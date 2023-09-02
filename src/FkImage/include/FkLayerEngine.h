@@ -55,6 +55,8 @@ public:
 
     FkResult updateLayer(FkID layerId, const std::shared_ptr<FkBitmap> &bmp);
 
+    FkResult setLayerZIndex(FkID layerId, int32_t zIndex);
+
     FkResult setCanvasSize(FkSize size);
 
     FkResult postTranslate(FkID layer, int32_t dx, int32_t dy);
@@ -164,6 +166,8 @@ private:
     FkResult _copyLayer(std::shared_ptr<FkMessage> &msg);
 
     FkResult _drawText(const std::shared_ptr<FkMessage> &msg);
+
+    FkResult _setLayerIndexZ(const std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;
