@@ -67,7 +67,3 @@ add_library(${PROJECT_NAME} STATIC ${SOURCES_ROOT})
 target_link_libraries(${PROJECT_NAME} PUBLIC FkBase ${log-lib})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-if (ENABLE_ASAN)
-    target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope)
-    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS -fsanitize=address)
-endif ()

@@ -8,6 +8,8 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
+    def bEnableAsan = Boolean.parseBoolean(ENABLE_ASAN)
+
     compileSdkVersion Integer.parseInt(target_version)
 
     defaultConfig {
@@ -20,10 +22,15 @@ android {
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_ARM_NEON=TRUE",
+                        "-DANDROID_ARM_MODE=arm",
                         "-DANDROID_CPP_FEATURES=rtti exceptions",
                         "-DENABLE_FK=TRUE",
                         "-DOPTIMIZE_CLASS_TYPE=TRUE",
-                        "-DANDROID_ARM_NEON=ON"
+                        "-DANDROID_ARM_NEON=ON",
+                        "-DENABLE_ASAN=${bEnableAsan ? 'ON' : 'OFF'}"
+                if (bEnableAsan) {
+                    cppFlags += " -frtti -fexceptions -g"
+                }
             }
         }
         ndk {
@@ -37,6 +44,10 @@ android {
                                "../../../src/third_party/skia/shared",
                                "../../../src/third_party/ffmpeg/shared",
                                "../../../src/third_party/yuv/shared"]
+            if (bEnableAsan) {
+                resources.srcDirs += "src/main/shell"
+                jniLibs.srcDirs += "../../../src/third_party/asan/shared"
+            }
         }
         buildConfigField("boolean", "ENABLE_UNIT_TEST", "false")
     }

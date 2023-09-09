@@ -58,6 +58,6 @@ target_link_libraries(
 )
 
 if (ENABLE_ASAN)
-	target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope)
-	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS -fsanitize=address)
+	target_compile_options(${PROJECT_NAME} PUBLIC ${OPTIONS_ASAN})
+	set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PROPERTIES_ASAN})
 endif ()
