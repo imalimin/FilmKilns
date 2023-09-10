@@ -96,7 +96,7 @@ void FkMessage::reset() {
     arg2 = 0;
     arg3 = "";
     sp = nullptr;
-    any.reset();
+    any = nullptr;
     flags = FkMessage::FLAG_NORMAL;
     promise = nullptr;
     target = nullptr;
