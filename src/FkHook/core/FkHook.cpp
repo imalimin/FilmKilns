@@ -5,13 +5,21 @@
 #include "FkHook.h"
 #include "xhook.h"
 #include <mutex>
-#include <vector>
 #include <unordered_map>
 
-#define TAG "FkHook"
+#ifdef ANDROID
+#include <android/log.h>
+#endif
 
-static std::mutex fk_hook_mutex;
-static std::unordered_map<void *, size_t> fk_hook_map;
+#define TAG "FkHook"
+#define LOGI(TAG, ...) __android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__)
+
+namespace fk_hook {
+    static std::mutex mutex;
+    static NodeMap nodeMap;
+}
+
+using namespace fk_hook;
 
 static void *(*malloc_)(size_t) = nullptr;
 
@@ -41,30 +49,8 @@ static void (*_ZdlPvS__)(void *, void *) = nullptr;
 
 static void (*_ZdaPvS__)(void *, void *) = nullptr;
 
-static void fk_put_mem_map(void *ptr, size_t size) {
-    if (ptr == nullptr) {
-        return;
-    }
-    std::lock_guard<std::mutex> guard(fk_hook_mutex);
-    auto itr = fk_hook_map.find(ptr);
-    if (itr != fk_hook_map.end()) {
-        fk_hook_map.erase(itr);
-        fk_hook_map.insert(std::make_pair(ptr, size));
-    } else {
-        fk_hook_map.insert(std::make_pair(ptr, size));
-    }
-}
-
-static void fk_remove_mem_map(void *ptr) {
-    if (ptr == nullptr) {
-        return;
-    }
-    std::lock_guard<std::mutex> guard(fk_hook_mutex);
-    auto itr = fk_hook_map.find(ptr);
-    if (itr != fk_hook_map.end()) {
-        fk_hook_map.erase(itr);
-    }
-}
+static void fk_put_mem_map(void *ptr, size_t size);
+static void fk_remove_mem_map(void *ptr);
 
 void *fk_proxy_malloc(size_t __byte_count) {
     void *ptr = malloc_(__byte_count);
@@ -133,6 +119,34 @@ void fk_proxy_delete_arr_nothrow(void *__ptr) {
     fk_remove_mem_map(__ptr);
 }
 
+static void fk_put_mem_map(void *ptr, size_t size) {
+    if (ptr == nullptr) {
+        return;
+    }
+    auto stack = boost::stacktrace::stacktrace();
+    Node node{size, 0, stack, std::vector<std::string>(stack.size())};
+    int index = 0;
+    for (auto it : stack) {
+        if (index >= 2 && index <= 4) {
+            node.strStacktrace[index] = to_string(it);
+        }
+        ++index;
+    }
+    std::lock_guard<std::mutex> guard(fk_hook::mutex);
+    nodeMap.insert(std::make_pair(ptr, node));
+}
+
+static void fk_remove_mem_map(void *ptr) {
+    if (ptr == nullptr) {
+        return;
+    }
+    std::lock_guard<std::mutex> guard(fk_hook::mutex);
+    auto itr = nodeMap.find(ptr);
+    if (itr != nodeMap.end()) {
+        nodeMap.erase(itr);
+    }
+}
+
 std::unique_ptr<FkHook> FkHook::instance = std::unique_ptr<FkHook>();
 
 FkHook &FkHook::getInstance() {
@@ -152,7 +166,8 @@ int FkHook::start() {
     std::vector<std::string> arr = {".*/libFkAndroid.so$",
                                     ".*/libFilmKilns.so$",
                                     ".*/libwebrtcmaster.so$",
-                                    ".*/libhwffmpeg.so$"};
+                                    ".*/libhwffmpeg.so$",
+                                    ".*/libadas.so$"};
     for(std::string &it : arr) {
         xhook_register(it.c_str(), "malloc", (void *) fk_proxy_malloc, (void **) &malloc_);
         xhook_register(it.c_str(), "calloc", (void *) fk_proxy_calloc, (void **) &calloc_);
@@ -185,18 +200,23 @@ int FkHook::stop() {
 }
 
 int FkHook::clear() {
-    std::lock_guard<std::mutex> guard(fk_hook_mutex);
-    fk_hook_map.clear();
+    std::lock_guard<std::mutex> guard(fk_hook::mutex);
+    nodeMap.clear();
     return 0;
 }
 
 
 int FkHook::dump(int64_t &leakSize, int &leakCount) {
-    std::lock_guard<std::mutex> guard(fk_hook_mutex);
-    leakSize = 0;
-    leakCount = fk_hook_map.size();
-    for (auto &itr: fk_hook_map) {
-        leakSize += itr.second;
+    std::lock_guard<std::mutex> guard(fk_hook::mutex);
+    leakCount = nodeMap.size();
+    for (auto &itr: nodeMap) {
+        leakSize += itr.second.byteSize;
     }
+    return 0;
+}
+
+int FkHook::dump(fk_hook::NodeMap &map) {
+    std::lock_guard<std::mutex> guard(fk_hook::mutex);
+    map = nodeMap;
     return 0;
 }

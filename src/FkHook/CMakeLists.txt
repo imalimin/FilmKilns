@@ -4,6 +4,7 @@ project(FkHook LANGUAGES C CXX)
 set(INCLUDES
         ${PROJECT_SOURCE_DIR}/include
         ${THIRD_PARTY_DIR}/xhook/include
+        ${THIRD_PARTY_DIR}/boost/include
         )
 include_directories(${INCLUDES})
 
@@ -32,6 +33,18 @@ add_library(xhook SHARED IMPORTED)
 set_target_properties(xhook PROPERTIES IMPORTED_LOCATION
         "${THIRD_PARTY_DIR}/xhook/shared/${ANDROID_ABI}/libxhook.so")
 
+add_library(boost_stacktrace_addr2line STATIC IMPORTED)
+set_target_properties(boost_stacktrace_addr2line PROPERTIES IMPORTED_LOCATION
+        "${THIRD_PARTY_DIR}/boost/static/${ANDROID_ABI}/libboost_stacktrace_addr2line.a")
+
+add_library(boost_stacktrace_basic STATIC IMPORTED)
+set_target_properties(boost_stacktrace_basic PROPERTIES IMPORTED_LOCATION
+        "${THIRD_PARTY_DIR}/boost/static/${ANDROID_ABI}/libboost_stacktrace_basic.a")
+
+add_library(boost_stacktrace_noop STATIC IMPORTED)
+set_target_properties(boost_stacktrace_noop PROPERTIES IMPORTED_LOCATION
+        "${THIRD_PARTY_DIR}/boost/static/${ANDROID_ABI}/libboost_stacktrace_noop.a")
+
 #------------------SHARED END----------------------
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/core SOURCES_CORE)
@@ -57,6 +70,9 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES_ROOT})
 target_link_libraries(
         ${PROJECT_NAME}
         PUBLIC
+        boost_stacktrace_addr2line
+        boost_stacktrace_basic
+        boost_stacktrace_noop
         xhook
         ${log-lib})
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDES})
