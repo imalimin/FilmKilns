@@ -12,6 +12,7 @@ option(ENABLE_FK "Compile film kilns." OFF)
 option(ENABLE_SKIA_SRC "Compile with skia sources." OFF)
 option(ENABLE_IJK "Compile with ijk ffmpeg." OFF)
 option(ENABLE_ASAN "Enable Asan." OFF)
+option(ENABLE_FK_HOOK "Enable hook." OFF)
 
 set(OPTIONS_ASAN -fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope)
 set(PROPERTIES_ASAN -fsanitize=address)

@@ -9,6 +9,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
     def bEnableAsan = Boolean.parseBoolean(ENABLE_ASAN)
+    def bEnableFkHook = Boolean.parseBoolean(ENABLE_FK_HOOK)
 
     compileSdkVersion Integer.parseInt(target_version)
 
@@ -27,7 +28,8 @@ android {
                         "-DENABLE_FK=TRUE",
                         "-DOPTIMIZE_CLASS_TYPE=TRUE",
                         "-DANDROID_ARM_NEON=ON",
-                        "-DENABLE_ASAN=${bEnableAsan ? 'ON' : 'OFF'}"
+                        "-DENABLE_ASAN=${bEnableAsan ? 'ON' : 'OFF'}",
+                        "-DENABLE_FK_HOOK=${bEnableFkHook ? 'ON' : 'OFF'}"
                 if (bEnableAsan) {
                     cppFlags += " -frtti -fexceptions -g"
                 }
