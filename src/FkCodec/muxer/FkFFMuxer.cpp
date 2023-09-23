@@ -124,6 +124,8 @@ int32_t FkFFMuxer::addTrack(std::shared_ptr<FkBundle> format) {
         setInt32Parameter(stream->codecpar->height,
                           format->get(FkCodec::KEY_HEIGHT, INT32_MIN));
         stream->codecpar->format = AV_PIX_FMT_YUV420P;
+        rotation = format->get(FkCodec::KEY_ROTATION, 0);
+        av_dict_set(&stream->metadata, "rotate", std::to_string(rotation).c_str(), 0);
 //        stream->time_base = {1, format->get(FkCodec::KEY_FPS, INT32_MIN)};
     }
     tracks.push_back(stream);
@@ -173,6 +175,7 @@ bool FkFFMuxer::_configure(int32_t track, FkPacket *pkt) {
             AVDictionary *dict = NULL;
             av_dict_set(&dict, "rtsp_transport","tcp",0);
             av_dict_set(&dict, "muxdelay", "0.1", 0);
+            av_dict_set(&dict, "rotate", std::to_string(rotation).c_str(), 0);
             auto ret = avformat_write_header(pFormatCtx, &dict);
             if (ret < 0) {
                 FkLogE(TAG, "failed to write header, %s", strerror(AVUNERROR(ret)));

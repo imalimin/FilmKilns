@@ -78,6 +78,7 @@ public:
     static const std::string KEY_HEIGHT;
     static const std::string KEY_FPS;
     static const std::string KEY_QUALITY;
+    static const std::string KEY_ROTATION;
     //Audio
     static const std::string KEY_SAMPLE_RATE;
     static const std::string KEY_CHANNELS;

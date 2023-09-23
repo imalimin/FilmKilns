@@ -15,6 +15,9 @@ FK_SUPER_CLASS(FkRational, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkRational)
 
 public:
+
+    static FkRational makeZero();
+
     FkRational();
 
     FkRational(int32_t num, int32_t den);

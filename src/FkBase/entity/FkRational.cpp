@@ -9,6 +9,10 @@
 
 FK_IMPL_CLASS_TYPE(FkRational, FkObject)
 
+FkRational FkRational::makeZero() {
+    return FkRational(0, 1);
+}
+
 FkRational::FkRational() : FkObject(), num(0), den(1) {
 
 }

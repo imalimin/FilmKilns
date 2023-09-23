@@ -66,6 +66,7 @@ private:
     std::vector<AVStream *> tracks;
     std::vector<bool> mTrackConfigured;
     AVPacket *avPacket = nullptr;
+    int32_t rotation = 0;
 };
 
 #endif //FK_CODEC_FKFFMUXER_H

@@ -21,6 +21,7 @@ const std::string FkCodec::KEY_WIDTH = "video-width";
 const std::string FkCodec::KEY_HEIGHT = "video-height";
 const std::string FkCodec::KEY_FPS = "video-fps";
 const std::string FkCodec::KEY_QUALITY = "video-quality";
+const std::string FkCodec::KEY_ROTATION = "video-rotation";
 const std::string FkCodec::KEY_SAMPLE_RATE = "audio-sample-rate";
 const std::string FkCodec::KEY_CHANNELS = "audio-channels";
 const std::string FkCodec::KEY_FRAME_SIZE = "audio-frame-size";
