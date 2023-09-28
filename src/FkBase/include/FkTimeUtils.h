@@ -14,6 +14,8 @@ class FkTimeUtils {
 public:
     static int64_t getCurrentTimeUS();
 
+    static std::string getCurrentTimestamp();
+
     ~FkTimeUtils() {};
 
 private:
