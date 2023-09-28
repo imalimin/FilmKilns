@@ -36,14 +36,14 @@ FkRational &FkRational::operator=(const FkRational &o) {
     return *this;
 }
 
-float FkRational::toFloat() {
+float FkRational::toFloat() const {
     if (0 == den) {
         return 0.0f;
     }
     return num / (float) den;
 }
 
-double FkRational::toDouble() {
+double FkRational::toDouble() const {
     if (0 == den) {
         return 0.0;
     }

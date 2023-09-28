@@ -28,9 +28,9 @@ public:
 
     virtual FkRational &operator=(const FkRational &o);
 
-    float toFloat();
+    float toFloat() const;
 
-    double toDouble();
+    double toDouble() const;
 
 public:
     int32_t num; ///< Numerator(分子)

@@ -26,11 +26,12 @@ typedef std::function<void(int)> FkResultCallback;
 
 // +-------- Log --------+
 #define FK_DEF_TAG "FilmKilns"
-#define FkLogV(tag, fmt, args...) FkLogcat::v(tag, fmt, ##args)
-#define FkLogD(tag, fmt, args...) FkLogcat::d(tag, fmt, ##args)
-#define FkLogI(tag, fmt, args...) FkLogcat::i(tag, fmt, ##args)
-#define FkLogE(tag, fmt, args...) FkLogcat::e(tag, fmt, ##args)
-#define FkLogW(tag, fmt, args...) FkLogcat::w(tag, fmt, ##args)
+#define FK_DEF_TAG_ "FilmKilns-"
+#define FkLogV(tag, fmt, args...) FkLogcat::v(std::string(FK_DEF_TAG_) + tag, fmt, ##args)
+#define FkLogD(tag, fmt, args...) FkLogcat::d(std::string(FK_DEF_TAG_) + tag, fmt, ##args)
+#define FkLogI(tag, fmt, args...) FkLogcat::i(std::string(FK_DEF_TAG_) + tag, fmt, ##args)
+#define FkLogE(tag, fmt, args...) FkLogcat::e(std::string(FK_DEF_TAG_) + tag, fmt, ##args)
+#define FkLogW(tag, fmt, args...) FkLogcat::w(std::string(FK_DEF_TAG_) + tag, fmt, ##args)
 
 // +-------- Assert --------+
 #if defined(__FK_DEBUG__)
