@@ -205,3 +205,13 @@ static float _getAudioLevel(AVFrame *frame) {
     }
     return result;
 }
+
+kMediaType FkFFUtils::makeMediaType(AVMediaType type) {
+    switch (type) {
+        case AVMediaType::AVMEDIA_TYPE_VIDEO:
+            return kMediaType::VIDEO;
+        case AVMediaType::AVMEDIA_TYPE_AUDIO:
+            return kMediaType::AUDIO;
+    }
+    return kMediaType::NONE;
+}

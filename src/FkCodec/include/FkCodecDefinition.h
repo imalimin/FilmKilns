@@ -9,6 +9,19 @@
 #define FK_CODEC_FKCODECDEFINITION_H
 
 #include "FkColor.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/avutil.h"
+#include "libswresample/swresample.h"
+#include "libavcodec/jni.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * YUV420P: YV12(YYYYYYYY VV UU)/YU12/I420(YYYYYYYY UU VV)
@@ -36,6 +49,13 @@ FK_ENUM kFrameFormat : int {
     SAMPLE_S64,     /** signed 64 bits */
     SAMPLE_S64P,    /** signed 64 bits, planar */
     SAMPLE_END,    /** End flag of sample formats. DO NOT USE if linking dynamically */
+};
+
+FK_ENUM kMediaType : int {
+    NONE = -1,
+    VIDEO,
+    AUDIO,
+    AV,
 };
 
 /// Same with AV_PKT_FLAG_KEY/AV_PKT_FLAG_CORRUPT...

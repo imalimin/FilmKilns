@@ -10,21 +10,8 @@
 
 #include "FkObject.h"
 #include <pthread.h>
+#include "FkCodecDefinition.h"
 #include <mutex>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "libavcodec/avcodec.h"
-#include "libavformat/avformat.h"
-#include "libavutil/avutil.h"
-#include "libswresample/swresample.h"
-#include "libavcodec/jni.h"
-
-#ifdef __cplusplus
-}
-#endif
 
 static std::once_flag onceFlag;
 
@@ -43,6 +30,8 @@ public:
     static int trackInfo(std::string &file);
 
     static void showInfo();
+
+    static kMediaType makeMediaType(AVMediaType type);
 
 private:
 };
