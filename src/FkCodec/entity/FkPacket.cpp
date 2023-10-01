@@ -11,6 +11,30 @@
 
 FK_IMPL_CLASS_TYPE(FkPacket, FkObject)
 
+std::shared_ptr<FkPacket> FkPacket::wrap2(AVPacket *pkt, const AVRational time_base) {
+    auto p = new FkPacket();
+    p->buf = FkBuffer::wrap(pkt->data, pkt->size);
+    AVRational rational{1, 1000000};
+    p->pts = av_rescale_q_rnd(pkt->pts,
+                              time_base,
+                              rational,
+                              AV_ROUND_NEAR_INF);
+    p->dts = av_rescale_q_rnd(pkt->dts,
+                              time_base,
+                              rational,
+                              AV_ROUND_NEAR_INF);
+    p->duration = av_rescale_q_rnd(pkt->duration,
+                                   time_base,
+                                   rational,
+                                   AV_ROUND_NEAR_INF);
+    p->flags = pkt->flags;
+    return std::shared_ptr<FkPacket>(p);
+}
+
+std::shared_ptr<FkPacket> FkPacket::wrap2(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags) {
+    return std::shared_ptr<FkPacket>(FkPacket::wrap(buf, size, pts, dts, flags));
+}
+
 FkPacket *FkPacket::wrap(AVPacket *pkt) {
     FkPacket *p = new FkPacket();
     p->buf = FkBuffer::wrap(pkt->data, pkt->size);
@@ -55,6 +79,18 @@ std::shared_ptr<FkPacket> FkPacket::clone(FkPacket *pkt) {
     return p;
 }
 
+std::shared_ptr<FkPacket> FkPacket::clone(const std::shared_ptr<FkPacket> &pkt) {
+    auto p = std::shared_ptr<FkPacket>(
+            FkPacket::create(pkt->buf->size(), pkt->getPts(), pkt->getDts()));
+    p->buf->put(pkt->data(), pkt->size());
+    p->buf->rewind();
+    p->pts = pkt->pts;
+    p->dts = pkt->dts;
+    p->duration = pkt->duration;
+    p->flags = pkt->flags;
+    return std::shared_ptr<FkPacket>(p);
+}
+
 FkPacket::FkPacket() : FkObject() {
 
 }
@@ -80,23 +116,23 @@ bool FkPacket::ref(AVPacket **pkt) {
     return true;
 }
 
-uint8_t *FkPacket::data() { return buf->data(); }
+uint8_t *FkPacket::data()  { return buf->data(); }
 
-size_t FkPacket::size() { return buf->size(); }
+size_t FkPacket::size() const { return buf->size(); }
 
-int64_t FkPacket::getPts() { return pts; }
+int64_t FkPacket::getPts() const { return pts; }
 
-int64_t FkPacket::getDts() { return dts; }
+int64_t FkPacket::getDts() const { return dts; }
 
-int64_t FkPacket::getDuration() { return duration; }
+int64_t FkPacket::getDuration() const { return duration; }
 
 void FkPacket::setDuration(int64_t _duration) { this->duration = _duration; }
 
-int32_t FkPacket::getFlags() {
+int32_t FkPacket::getFlags() const {
     return flags;
 }
 
-std::string FkPacket::getFlagsStr() {
+std::string FkPacket::getFlagsStr() const {
     std::string str;
     if(flags & FK_CTL_FLAG_CONFIG) {
         str.append("C");

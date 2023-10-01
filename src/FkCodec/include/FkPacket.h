@@ -29,6 +29,10 @@ FK_SUPER_CLASS(FkPacket, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkPacket)
 
 public:
+    static std::shared_ptr<FkPacket> wrap2(AVPacket *pkt, const AVRational time_base);
+
+    static std::shared_ptr<FkPacket> wrap2(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);
+
     static FkPacket *wrap(AVPacket *pkt);
 
     static FkPacket *wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);
@@ -37,26 +41,28 @@ public:
 
     static std::shared_ptr<FkPacket> clone(FkPacket *pkt);
 
+    static std::shared_ptr<FkPacket> clone(const std::shared_ptr<FkPacket> &pkt);
+
 public:
     virtual ~FkPacket();
 
     uint8_t *data();
 
-    size_t size();
+    size_t size() const;
 
-    int64_t getPts();
+    int64_t getPts() const;
 
-    int64_t getDts();
+    int64_t getDts() const;
 
-    int64_t getDuration();
+    int64_t getDuration() const;
 
     void setDuration(int64_t _duration);
 
     bool ref(AVPacket **pkt);
 
-    int32_t getFlags();
+    int32_t getFlags() const;
 
-    std::string getFlagsStr();
+    std::string getFlagsStr() const;
 
     std::string toString() override;
 
@@ -65,6 +71,7 @@ private:
 
 private:
     std::shared_ptr<FkBuffer> buf = nullptr;
+    //Time in US
     int64_t pts = INT64_MIN, dts = INT64_MIN;
     int64_t duration = 1;
     int32_t flags = 0;
