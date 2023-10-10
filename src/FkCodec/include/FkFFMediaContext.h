@@ -32,7 +32,6 @@ private:
 
 private:
     AVFormatContext *ctx = nullptr;
-    AVBSFContext *bsfCtx = nullptr;
     std::string path;
     AVPacket *avPacket = nullptr;
     std::map<int32_t, bool> cnfGrabStatus;

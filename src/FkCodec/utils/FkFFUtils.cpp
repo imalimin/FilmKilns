@@ -13,6 +13,7 @@
 extern "C" {
 #endif
 #include "fftools/ffmpeg.h"
+#include "libavutil/intreadwrite.h"
 #ifdef __cplusplus
 }
 #endif
@@ -214,4 +215,33 @@ kMediaType FkFFUtils::makeMediaType(AVMediaType type) {
             return kMediaType::AUDIO;
     }
     return kMediaType::NONE;
+}
+
+std::shared_ptr<FkBuffer> FkFFUtils::transAvcExtraData2AnneXB(const std::shared_ptr<FkBuffer> &src) {
+    auto *in = src->data();
+    auto size0 = src->size();
+    auto *size = &size0;
+
+    uint16_t sps_size, pps_size;
+
+    if (*size >= 4 && (AV_RB32(in) == 0x00000001 || AV_RB24(in) == 0x000001))
+        return 0;
+    if (*size < 11 || in[0] != 1)
+        return nullptr;
+
+    sps_size = AV_RB16(&in[6]);
+    if (11 + sps_size > *size)
+        return nullptr;
+    pps_size = AV_RB16(&in[9 + sps_size]);
+    if (11 + sps_size + pps_size > *size)
+        return nullptr;
+    int out_size = 8 + sps_size + pps_size;
+    auto dst = FkBuffer::alloc(out_size);
+    uint8_t *out = dst->data();
+    AV_WB32(&out[0], 0x00000001);
+    memcpy(out + 4, &in[8], sps_size);
+    AV_WB32(&out[4 + sps_size], 0x00000001);
+    memcpy(out + 8 + sps_size, &in[11 + sps_size], pps_size);
+    *size = out_size;
+    return FkBuffer::wrap(out, out_size);
 }

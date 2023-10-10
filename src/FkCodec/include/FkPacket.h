@@ -33,6 +33,8 @@ public:
 
     static std::shared_ptr<FkPacket> wrap2(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);
 
+    static std::shared_ptr<FkPacket> wrap(const std::shared_ptr<FkBuffer> &_buf, int64_t _pts, int64_t _dts, int32_t _flags = 0);
+
     static FkPacket *wrap(AVPacket *pkt);
 
     static FkPacket *wrap(uint8_t *buf, size_t size, int64_t pts, int64_t dts, int32_t flags = 0);

@@ -55,19 +55,13 @@ std::shared_ptr<FkFFMediaTrack> FkFFMediaContext::openTrack(int trackId) {
 }
 
 std::shared_ptr<FkPacket> FkFFMediaContext::grab(int trackId) {
-//    auto itr = cnfGrabStatus.find(trackId);
-//    if (itr == cnfGrabStatus.end()) {
-//        cnfGrabStatus[trackId] = true;
-//        auto data = ctx->streams[trackId]->codecpar->extradata;
-//        auto size = ctx->streams[trackId]->codecpar->extradata_size;
-//        return FkPacket::wrap2(data, size, 0, 0, FK_CTL_FLAG_CONFIG);
-//    }
-    auto isVideo = ctx->streams[trackId]->codecpar->codec_type == AVMediaType::AVMEDIA_TYPE_VIDEO;
-    if (isVideo && bsfCtx == nullptr) {
-        const AVBitStreamFilter *bsfilter = av_bsf_get_by_name("h264_mp4toannexb");
-        av_bsf_alloc(bsfilter, &bsfCtx); //AVBSFContext;
-        avcodec_parameters_copy(bsfCtx->par_in, ctx->streams[trackId]->codecpar);
-        av_bsf_init(bsfCtx);
+    auto itr = cnfGrabStatus.find(trackId);
+    if (itr == cnfGrabStatus.end()) {
+        cnfGrabStatus[trackId] = true;
+        auto src = FkBuffer::wrap(ctx->streams[trackId]->codecpar->extradata, ctx->streams[trackId]->codecpar->extradata_size);
+        auto out = FkFFUtils::transAvcExtraData2AnneXB(src);
+        FkLogI(TAG, "[%d, %d, %d, %d]", out->data()[0], out->data()[1], out->data()[2], out->data()[3]);
+        return FkPacket::wrap(out, 0, 0, FK_CTL_FLAG_CONFIG);
     }
     av_packet_unref(avPacket);
     while (true) {
@@ -75,21 +69,6 @@ std::shared_ptr<FkPacket> FkFFMediaContext::grab(int trackId) {
         if (0 != ret) {
             FkLogW(TAG, "Read fail: %x(%s)", ret, av_err2str(ret));
             return nullptr;
-        }
-
-        if (av_bsf_send_packet(bsfCtx, avPacket) != 0) {
-            av_packet_unref(avPacket);
-            continue;
-        }
-        while (true) {
-            ret = av_bsf_receive_packet(bsfCtx, avPacket);
-            if (ret == 0) {
-                break;
-            }
-            if (AVERROR(EAGAIN) == ret) {
-                FkLogW(TAG, "Receive fail: %x(%s)", ret, av_err2str(ret));
-                return nullptr;
-            }
         }
 
         FkLogI(TAG, "[%d, %d, %d, %d]", avPacket->data[0], avPacket->data[1], avPacket->data[2], avPacket->data[3]);

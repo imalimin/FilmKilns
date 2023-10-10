@@ -35,6 +35,16 @@ std::shared_ptr<FkPacket> FkPacket::wrap2(uint8_t *buf, size_t size, int64_t pts
     return std::shared_ptr<FkPacket>(FkPacket::wrap(buf, size, pts, dts, flags));
 }
 
+std::shared_ptr<FkPacket> FkPacket::wrap(const std::shared_ptr<FkBuffer> &_buf, int64_t _pts, int64_t _dts, int32_t _flags) {
+    FkPacket *p = new FkPacket();
+    p->buf = _buf;
+    p->pts = _pts;
+    p->dts = _dts;
+    p->duration = 1;
+    p->flags = _flags;
+    return std::shared_ptr<FkPacket>(p);
+}
+
 FkPacket *FkPacket::wrap(AVPacket *pkt) {
     FkPacket *p = new FkPacket();
     p->buf = FkBuffer::wrap(pkt->data, pkt->size);

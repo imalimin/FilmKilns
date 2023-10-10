@@ -11,6 +11,7 @@
 #include "FkObject.h"
 #include <pthread.h>
 #include "FkCodecDefinition.h"
+#include "FkBuffer.h"
 #include <mutex>
 
 static std::once_flag onceFlag;
@@ -32,6 +33,9 @@ public:
     static void showInfo();
 
     static kMediaType makeMediaType(AVMediaType type);
+
+    /// ff_avc_write_annexb_extradata
+    static std::shared_ptr<FkBuffer> transAvcExtraData2AnneXB(const std::shared_ptr<FkBuffer> &src);
 
 private:
 };
