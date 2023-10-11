@@ -225,7 +225,7 @@ std::shared_ptr<FkBuffer> FkFFUtils::transAvcExtraData2AnneXB(const std::shared_
     uint16_t sps_size, pps_size;
 
     if (*size >= 4 && (AV_RB32(in) == 0x00000001 || AV_RB24(in) == 0x000001))
-        return 0;
+        return src;
     if (*size < 11 || in[0] != 1)
         return nullptr;
 
@@ -243,5 +243,5 @@ std::shared_ptr<FkBuffer> FkFFUtils::transAvcExtraData2AnneXB(const std::shared_
     AV_WB32(&out[4 + sps_size], 0x00000001);
     memcpy(out + 8 + sps_size, &in[11 + sps_size], pps_size);
     *size = out_size;
-    return FkBuffer::wrap(out, out_size);
+    return dst;
 }
