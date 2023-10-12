@@ -86,19 +86,12 @@ std::shared_ptr<FkPacket> FkPacket::clone(FkPacket *pkt) {
     p->dts = pkt->dts;
     p->duration = pkt->duration;
     p->flags = pkt->flags;
+    p->type = pkt->type;
     return p;
 }
 
 std::shared_ptr<FkPacket> FkPacket::clone(const std::shared_ptr<FkPacket> &pkt) {
-    auto p = std::shared_ptr<FkPacket>(
-            FkPacket::create(pkt->buf->size(), pkt->getPts(), pkt->getDts()));
-    p->buf->put(pkt->data(), pkt->size());
-    p->buf->rewind();
-    p->pts = pkt->pts;
-    p->dts = pkt->dts;
-    p->duration = pkt->duration;
-    p->flags = pkt->flags;
-    return std::shared_ptr<FkPacket>(p);
+    return clone(pkt.get());
 }
 
 FkPacket::FkPacket() : FkObject() {
@@ -111,6 +104,7 @@ FkPacket::~FkPacket() {
     dts = INT64_MIN;
     duration = INT64_MIN;
     flags = 1;
+    type = kMediaType::NONE;
 }
 
 bool FkPacket::ref(AVPacket **pkt) {
@@ -140,6 +134,14 @@ void FkPacket::setDuration(int64_t _duration) { this->duration = _duration; }
 
 int32_t FkPacket::getFlags() const {
     return flags;
+}
+
+void FkPacket::setType(kMediaType _type) {
+    type = _type;
+}
+
+kMediaType FkPacket::getType() const {
+    return type;
 }
 
 std::string FkPacket::getFlagsStr() const {

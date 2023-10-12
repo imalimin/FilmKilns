@@ -10,6 +10,7 @@
 
 #include "FkObject.h"
 #include "FkBuffer.h"
+#include "FkCodecDefinition.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +49,8 @@ public:
 public:
     virtual ~FkPacket();
 
+    FkPacket(const FkPacket &o) = delete;
+
     uint8_t *data();
 
     size_t size() const;
@@ -68,6 +71,10 @@ public:
 
     std::string toString() override;
 
+    void setType(kMediaType _type);
+
+    kMediaType getType() const;
+
 private:
     FkPacket();
 
@@ -77,6 +84,7 @@ private:
     int64_t pts = INT64_MIN, dts = INT64_MIN;
     int64_t duration = 1;
     int32_t flags = 0;
+    kMediaType type = kMediaType::NONE;
 };
 
 

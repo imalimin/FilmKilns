@@ -51,16 +51,16 @@ FkCodec::kID FkCodec::getCodecID() { return id; }
 
 std::shared_ptr<FkBundle> FkCodec::getFormat() { return format; }
 
-FkCodec::kMediaType FkCodec::getMediaType() {
+kMediaType FkCodec::getMediaType() {
     switch (getCodecID()) {
         case FkCodec::kID::H264: {
-            return FkCodec::kMediaType::VIDEO;
+            return kMediaType::VIDEO;
         }
         case FkCodec::kID::AAC: {
-            return FkCodec::kMediaType::AUDIO;
+            return kMediaType::AUDIO;
         }
         default: {
-            return FkCodec::kMediaType::UNKNOWN;
+            return kMediaType::NONE;
         }
     }
 }

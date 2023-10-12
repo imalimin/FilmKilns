@@ -23,6 +23,8 @@ public:
 
     std::shared_ptr<FkFFMediaTrack> openTrack(int trackId);
 
+    std::shared_ptr<FkPacket> grab();
+
     std::shared_ptr<FkPacket> grab(int trackId);
 
     FkResult seek(int64_t timeInUS);
@@ -30,10 +32,15 @@ public:
 private:
     void _destroy();
 
+    void _checkBsf(int trackId);
+
+    FkFFMediaTrack::Desc _getVideoTrack();
+
 private:
     AVFormatContext *ctx = nullptr;
     std::string path;
     AVPacket *avPacket = nullptr;
     std::map<int32_t, bool> cnfGrabStatus;
+    AVBSFContext *bsfContext = nullptr;
 };
 

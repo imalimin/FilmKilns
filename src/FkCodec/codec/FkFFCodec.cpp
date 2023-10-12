@@ -124,15 +124,15 @@ FkResult FkFFCodec::configure(FkBundle &fmt) {
     getFormat()->put(KEY_FRAME_SIZE, ctx->frame_size);
     switch (ctx->codec_type) {
         case AVMEDIA_TYPE_VIDEO: {
-            getFormat()->put(KEY_MEDIA_TYPE, (int32_t) FkCodec::kMediaType::VIDEO);
+            getFormat()->put(KEY_MEDIA_TYPE, (int32_t) kMediaType::VIDEO);
             break;
         }
         case AVMEDIA_TYPE_AUDIO: {
-            getFormat()->put(KEY_MEDIA_TYPE, (int32_t) FkCodec::kMediaType::AUDIO);
+            getFormat()->put(KEY_MEDIA_TYPE, (int32_t) kMediaType::AUDIO);
             break;
         }
         default: {
-            getFormat()->put(KEY_MEDIA_TYPE, (int32_t) FkCodec::kMediaType::UNKNOWN);
+            getFormat()->put(KEY_MEDIA_TYPE, (int32_t) kMediaType::NONE);
             break;
         }
     }

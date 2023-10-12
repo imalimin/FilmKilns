@@ -29,13 +29,6 @@ public:
             GIF = AV_CODEC_ID_GIF
     };
 
-    /// Same with AVMEDIA_TYPE_AUDIO/AVMEDIA_TYPE_VIDEO
-    FK_ENUM kMediaType : int32_t {
-            UNKNOWN = -1,
-            VIDEO,
-            AUDIO,
-    };
-
 public:
     FkCodec(FkCodec::kID id);
 
@@ -49,7 +42,7 @@ public:
 
     virtual std::shared_ptr<FkBundle> getFormat();
 
-    virtual FkCodec::kMediaType getMediaType();
+    virtual kMediaType getMediaType();
 
     /**
      * For encoder. HwAbsMediaFrame in & AVPacket out.

@@ -102,10 +102,10 @@ int32_t FkFFMuxer::addTrack(std::shared_ptr<FkBundle> format) {
                       format->get(FkCodec::KEY_LEVEL, INT32_MIN));
     setInt64Parameter(stream->codecpar->bit_rate,
                       format->get(FkCodec::KEY_BIT_RATE, INT32_MIN));
-    FkCodec::kMediaType type = static_cast<FkCodec::kMediaType>(
+    kMediaType type = static_cast<kMediaType>(
             format->get(FkCodec::KEY_MEDIA_TYPE,
-                       (int32_t) FkCodec::kMediaType::UNKNOWN));
-    if (FkCodec::kMediaType::AUDIO == type) {
+                       (int32_t) kMediaType::NONE));
+    if (kMediaType::AUDIO == type) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
         setInt32Parameter(stream->codecpar->sample_rate,
                           format->get(FkCodec::KEY_SAMPLE_RATE, INT32_MIN));
@@ -117,7 +117,7 @@ int32_t FkFFMuxer::addTrack(std::shared_ptr<FkBundle> format) {
                 av_get_default_channel_layout(stream->codecpar->channels));
         stream->codecpar->format = AV_SAMPLE_FMT_FLTP;
 //        stream->time_base = {1, stream->codecpar->sample_rate};
-    } else if (FkCodec::kMediaType::VIDEO == type) {
+    } else if (kMediaType::VIDEO == type) {
         stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
         setInt32Parameter(stream->codecpar->width,
                           format->get(FkCodec::KEY_WIDTH, INT32_MIN));
