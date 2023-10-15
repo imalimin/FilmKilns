@@ -60,10 +60,10 @@ bool FkFileUtils::exist(std::string &file) {
 
 std::string FkFileUtils::name(std::string &file) {
     std::string::size_type pos = file.find_last_of('/');
-    if (pos == std::string::npos) {
+    if (pos == std::string::npos && pos < file.length() - 1) {
         return file;
     }
-    return file.substr(pos, file.length());
+    return file.substr(pos + 1, file.length());
 }
 
 std::string FkFileUtils::suffix(std::string &file) {
