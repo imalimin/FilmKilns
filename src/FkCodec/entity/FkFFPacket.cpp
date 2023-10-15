@@ -58,3 +58,7 @@ std::shared_ptr<FkAbsPacket> FkFFPacket::clone() {
 void *FkFFPacket::getOrigin() const {
     return pkt;
 }
+
+FkSampleFormat FkFFPacket::getSampleFormat() const {
+    return FkSampleFormat::NONE;
+}

@@ -6,27 +6,20 @@
  */
 
 #include "FkAbsMediaFrame.h"
+#include "FkFFUtils.h"
 
 FK_IMPL_CLASS_TYPE(FkAbsMediaFrame, FkAbsFrame)
 
 AVSampleFormat FkAbsMediaFrame::convertAudioFrameFormat(kFrameFormat format) {
-    if (format >= kFrameFormat::SAMPLE_U8 && format < kFrameFormat::SAMPLE_END) {
-        return static_cast<AVSampleFormat>(static_cast<int>(format) -
-                                           static_cast<int>(kFrameFormat::SAMPLE_U8));
-    }
-    return AV_SAMPLE_FMT_NONE;
+    return FkFFUtils::convertAudioFrameFormat(format);
 }
 
 kFrameFormat FkAbsMediaFrame::convertToAudioFrameFormat(AVSampleFormat format) {
-    if (format >= AV_SAMPLE_FMT_U8 && format < AV_SAMPLE_FMT_NB) {
-        return static_cast<kFrameFormat>(static_cast<int>(format) +
-                                          static_cast<int>(kFrameFormat::SAMPLE_U8));
-    }
-    return kFrameFormat::NONE;
+    return FkFFUtils::convert2AudioFrameFormat(format);
 }
 
 int FkAbsMediaFrame::getBytesPerSample(kFrameFormat format) {
-    return av_get_bytes_per_sample(convertAudioFrameFormat(format));
+    return FkFFUtils::getBytesPerSample(format);
 }
 
 AVPixelFormat FkAbsMediaFrame::convertVideoFrameFormat(kFrameFormat format) {

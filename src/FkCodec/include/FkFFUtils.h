@@ -37,6 +37,21 @@ public:
     /// ff_avc_write_annexb_extradata
     static std::shared_ptr<FkBuffer> transAvcExtraData2AnneXB(const std::shared_ptr<FkBuffer> &src);
 
+    /**
+     * Convert to AVSampleFormat
+     */
+    static AVSampleFormat convertAudioFrameFormat(kFrameFormat format);
+
+    /**
+     * Convert to HwFrameFormat
+     */
+    static kFrameFormat convert2AudioFrameFormat(AVSampleFormat format);
+
+    /**
+     * For audio
+     */
+    static int getBytesPerSample(kFrameFormat format);
+
 private:
 };
 

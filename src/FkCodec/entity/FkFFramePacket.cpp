@@ -3,6 +3,7 @@
 //
 
 #include "FkFFramePacket.h"
+#include "FkFFUtils.h"
 
 FK_IMPL_CLASS_TYPE(FkFFramePacket, FkObject)
 
@@ -15,6 +16,11 @@ std::shared_ptr<FkFFramePacket> FkFFramePacket::make(AVFrame *frame,
     result->frame = av_frame_alloc();
     av_frame_ref(result->frame, frame);
     return result;
+}
+
+std::shared_ptr<FkFFramePacket> FkFFramePacket::makeReplace(AVFrame *frame,
+                                                            const std::shared_ptr<FkFFramePacket> &src) {
+    return make(frame, src->type, src->avTimeBase);
 }
 
 FkFFramePacket::FkFFramePacket() : FkAbsPacket() {
@@ -59,4 +65,11 @@ std::shared_ptr<FkAbsPacket> FkFFramePacket::clone() {
 
 void *FkFFramePacket::getOrigin() const {
     return frame;
+}
+
+FkSampleFormat FkFFramePacket::getSampleFormat() const {
+
+    return {FkFFUtils::convert2AudioFrameFormat(static_cast<AVSampleFormat>(frame->format)),
+            (uint16_t) frame->channels,
+            (uint32_t) frame->sample_rate};
 }

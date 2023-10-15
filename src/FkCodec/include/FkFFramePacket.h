@@ -12,6 +12,8 @@ FK_DEF_CLASS_TYPE_FUNC(FkFFramePacket)
 public:
     static std::shared_ptr<FkFFramePacket> make(AVFrame *frame, kMediaType type, AVRational avTimeBase);
 
+    static std::shared_ptr<FkFFramePacket> makeReplace(AVFrame *frame, const std::shared_ptr<FkFFramePacket> &src);
+
 public:
     FkFFramePacket();
 
@@ -32,6 +34,8 @@ public:
     virtual std::shared_ptr<FkAbsPacket> clone() override;
 
     virtual void *getOrigin() const override;
+
+    virtual FkSampleFormat getSampleFormat() const override;
 
 private:
     AVFrame *frame = nullptr;

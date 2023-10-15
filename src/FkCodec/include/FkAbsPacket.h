@@ -7,6 +7,7 @@
 #include "FkTime.h"
 #include "FkBuffer.h"
 #include "FkCodecDefinition.h"
+#include "FkSampleFormat.h"
 
 FK_SUPER_CLASS(FkAbsPacket, FkObject) {
 FK_DEF_CLASS_TYPE_FUNC(FkAbsPacket)
@@ -36,6 +37,8 @@ public:
     virtual std::shared_ptr<FkAbsPacket> clone() = 0;
 
     virtual void *getOrigin() const = 0;
+
+    virtual FkSampleFormat getSampleFormat() const = 0;
 
     std::string toString() override;
 };

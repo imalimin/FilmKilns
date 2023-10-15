@@ -38,6 +38,8 @@ public:
 
     virtual void *getOrigin() const override;
 
+    virtual FkSampleFormat getSampleFormat() const override;
+
 private:
     FkTime pts;
     FkTime dts;

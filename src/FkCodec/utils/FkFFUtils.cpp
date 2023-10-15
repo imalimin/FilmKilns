@@ -245,3 +245,23 @@ std::shared_ptr<FkBuffer> FkFFUtils::transAvcExtraData2AnneXB(const std::shared_
     *size = out_size;
     return dst;
 }
+
+AVSampleFormat FkFFUtils::convertAudioFrameFormat(kFrameFormat format) {
+    if (format >= kFrameFormat::SAMPLE_U8 && format < kFrameFormat::SAMPLE_END) {
+        return static_cast<AVSampleFormat>(static_cast<int>(format) -
+                                           static_cast<int>(kFrameFormat::SAMPLE_U8));
+    }
+    return AV_SAMPLE_FMT_NONE;
+}
+
+kFrameFormat FkFFUtils::convert2AudioFrameFormat(AVSampleFormat format) {
+    if (format >= AV_SAMPLE_FMT_U8 && format < AV_SAMPLE_FMT_NB) {
+        return static_cast<kFrameFormat>(static_cast<int>(format) +
+                                         static_cast<int>(kFrameFormat::SAMPLE_U8));
+    }
+    return kFrameFormat::NONE;
+}
+
+int FkFFUtils::getBytesPerSample(kFrameFormat format) {
+    return av_get_bytes_per_sample(convertAudioFrameFormat(format));
+}

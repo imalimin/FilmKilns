@@ -42,6 +42,8 @@ public:
 
     virtual void *getOrigin() const override;
 
+    virtual FkSampleFormat getSampleFormat() const override;
+
 private:
     AVPacket *pkt = nullptr;
     AVRational avTimeBase = AV_TIME_BASE_Q;

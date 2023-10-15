@@ -6,7 +6,7 @@
 */
 
 #include "FkSampleFormat.h"
-#include "FkAbsMediaFrame.h"
+#include "FkFFUtils.h"
 
 FK_IMPL_CLASS_TYPE(FkSampleFormat, FkObject)
 
@@ -36,7 +36,7 @@ FkSampleFormat::~FkSampleFormat() {
 kFrameFormat FkSampleFormat::getFormat() { return format; }
 
 int32_t FkSampleFormat::getAVFormat() {
-    return FkAbsMediaFrame::convertAudioFrameFormat(getFormat());
+    return FkFFUtils::convertAudioFrameFormat(getFormat());
 }
 
 uint16_t FkSampleFormat::getChannels() { return channels; }
@@ -63,7 +63,7 @@ bool FkSampleFormat::operator!=(const FkSampleFormat &o) {
 }
 
 size_t FkSampleFormat::getBytesPerSample() {
-    return static_cast<size_t>(FkAbsMediaFrame::getBytesPerSample(format) * channels);
+    return static_cast<size_t>(FkFFUtils::getBytesPerSample(format) * channels);
 }
 
 bool FkSampleFormat::valid() {
