@@ -3,34 +3,32 @@
 //
 #pragma once
 
-#include "FkObject.h"
+#include "FkMediaTrack.h"
 #include "FkCodecDefinition.h"
 #include "FkPacket.h"
 #include "FkAbsFrame.h"
+#include "FkFFMediaContext.h"
 
-class FkFFMediaContext;
-
-FK_SUPER_CLASS(FkFFMediaTrack, FkObject) {
+FK_SUPER_CLASS(FkFFMediaTrack, FkMediaTrack) {
 FK_DEF_CLASS_TYPE_FUNC(FkFFMediaTrack)
-
-    friend FkFFMediaContext;
 public:
-    struct Desc {
-        int trackId = -1;
-        kMediaType type = kMediaType::NONE;
-    };
-
-    FkFFMediaTrack(AVStream *streams);
+    FkFFMediaTrack(const std::shared_ptr<FkFFMediaContext> &context, int trackId);
 
     FkFFMediaTrack(const FkFFMediaTrack &o) = delete;
 
     virtual ~FkFFMediaTrack();
 
-    std::shared_ptr<FkAbsFrame> decode(const std::shared_ptr<FkPacket> &pkt);
+    /// Grab a decoded frame
+    /// \param any std::shared_ptr<FkPacket>
+    /// \return std::shared_ptr<FkAbsFrame>
+    virtual std::any grab(const std::any &any) override;
 
 private:
     void _destroy();
 
 private:
-    AVCodecContext *ctx = nullptr;
+    int trackId = -1;
+    std::weak_ptr<FkFFMediaContext> context;
+    AVCodecContext *codecContext = nullptr;
+    AVFrame *avFrame = nullptr;
 };

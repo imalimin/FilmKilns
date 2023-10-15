@@ -6,11 +6,13 @@
 #include "FkObject.h"
 #include "FkFFUtils.h"
 #include "FkFFMediaTrack.h"
-#include "FkPacket.h"
+#include "FkAbsPacket.h"
 #include <map>
 
-FK_SUPER_CLASS(FkFFMediaContext, FkObject) {
+FK_SUPER_CLASS(FkFFMediaContext, FkObject), public std::enable_shared_from_this<FkFFMediaContext> {
 FK_DEF_CLASS_TYPE_FUNC(FkFFMediaContext)
+
+    friend class FkFFMediaTrack;
 
 public:
     FkFFMediaContext(const std::string &path);
@@ -19,13 +21,13 @@ public:
 
     virtual ~FkFFMediaContext();
 
-    std::vector<FkFFMediaTrack::Desc> getTracks();
+    std::vector<FkMediaTrack::Desc> getTracks();
 
-    std::shared_ptr<FkFFMediaTrack> openTrack(int trackId);
+    std::shared_ptr<FkMediaTrack> openTrack(int trackId);
 
-    std::shared_ptr<FkPacket> grab();
+    std::shared_ptr<FkAbsPacket> grab();
 
-    std::shared_ptr<FkPacket> grab(int trackId);
+    std::shared_ptr<FkAbsPacket> grab(int trackId);
 
     FkResult seek(int64_t timeInUS);
 
@@ -34,7 +36,10 @@ private:
 
     void _checkBsf(int trackId);
 
-    FkFFMediaTrack::Desc _getVideoTrack();
+    FkMediaTrack::Desc _getVideoTrack();
+
+private:
+    AVCodecParameters *_getCodecParameters(int trackId);
 
 private:
     AVFormatContext *ctx = nullptr;

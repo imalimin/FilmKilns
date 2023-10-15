@@ -3,13 +3,19 @@
 //
 
 #include "FkFFMediaTrack.h"
+#include "FkFFramePacket.h"
+#include "FkFFPacket.h"
 
 #define TAG "FkFFMediaTrack"
 
 FK_IMPL_CLASS_TYPE(FkFFMediaTrack, FkObject)
 
-FkFFMediaTrack::FkFFMediaTrack(AVStream *streams) : FkObject() {
-    AVCodecParameters *avCodecParameters = streams->codecpar;
+FkFFMediaTrack::FkFFMediaTrack(const std::shared_ptr<FkFFMediaContext> &context, int trackId)
+        : FkMediaTrack(context, trackId) {
+    this->context = context;
+    this->trackId = trackId;
+
+    AVCodecParameters *avCodecParameters = context->_getCodecParameters(trackId);
     AVCodec *codec = NULL;
     if (AV_CODEC_ID_H264 == avCodecParameters->codec_id) {
         codec = avcodec_find_decoder(avCodecParameters->codec_id);
@@ -26,9 +32,9 @@ FkFFMediaTrack::FkFFMediaTrack(AVStream *streams) : FkObject() {
         return;
     }
     //打开编码器
-    ctx = avcodec_alloc_context3(codec);
-    avcodec_parameters_to_context(ctx, avCodecParameters);
-    if (avcodec_open2(ctx, codec, NULL) < 0) {
+    codecContext = avcodec_alloc_context3(codec);
+    avcodec_parameters_to_context(codecContext, avCodecParameters);
+    if (avcodec_open2(codecContext, codec, NULL) < 0) {
         FkLogE(TAG, "Couldn't open codec.");
         _destroy();
         return;
@@ -39,6 +45,7 @@ FkFFMediaTrack::FkFFMediaTrack(AVStream *streams) : FkObject() {
     } else if (AVMEDIA_TYPE_AUDIO == codec->type) {
         typeName = "audio";
     }
+    avFrame = av_frame_alloc();
     FkLogI(TAG, "Open %s track with %s, fmt=%d, frameSize=%d", typeName.c_str(), codec->name,
               avCodecParameters->format, avCodecParameters->frame_size);
 }
@@ -48,12 +55,31 @@ FkFFMediaTrack::~FkFFMediaTrack() {
 }
 
 void FkFFMediaTrack::_destroy() {
-    if (ctx) {
-        avcodec_close(ctx);
-        ctx = nullptr;
+    if (codecContext) {
+        avcodec_close(codecContext);
+        codecContext = nullptr;
     }
 }
 
-std::shared_ptr<FkAbsFrame> FkFFMediaTrack::decode(const std::shared_ptr<FkPacket> &pkt) {
-    return nullptr;
+std::any FkFFMediaTrack::grab(const std::any &any) {
+    auto mediaContext = context.lock();
+    if (mediaContext == nullptr || !any.has_value()) {
+        return nullptr;
+    }
+    auto tmp = std::any_cast<std::shared_ptr<FkAbsPacket>>(any);
+    if (!FK_INSTANCE_OF(tmp, FkFFPacket)) {
+        return nullptr;
+    }
+    auto pkt = std::dynamic_pointer_cast<FkFFPacket>(tmp);
+    AVPacket *avPacket = static_cast<AVPacket *>(pkt->getOrigin());
+    avcodec_send_packet(codecContext, avPacket);
+    auto ret = avcodec_receive_frame(codecContext, avFrame);
+    if (0 == ret) {
+        auto timebase = mediaContext->ctx->streams[trackId]->time_base;
+        std::shared_ptr<FkAbsPacket> result = FkFFramePacket::make(avFrame,
+                                                                   pkt->getType(),
+                                                                   timebase);
+        return result;
+    }
+    return std::any();
 }
