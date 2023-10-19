@@ -5,6 +5,7 @@
 
 #include "FkObject.h"
 #include "FkCodecDefinition.h"
+#include "FkTime.h"
 #include <any>
 
 class FkFFMediaContext;
@@ -15,6 +16,7 @@ public:
     struct Desc {
         int trackId = -1;
         kMediaType type = kMediaType::NONE;
+        FkTime duration = FkTime::zero();
     };
 
 public:

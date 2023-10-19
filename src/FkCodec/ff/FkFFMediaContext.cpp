@@ -50,7 +50,11 @@ std::vector<FkMediaTrack::Desc> FkFFMediaContext::getTracks() {
         return vec;
     }
     for (int i = 0; i < ctx->nb_streams; i++) {
-        FkMediaTrack::Desc desc{i, FkFFUtils::makeMediaType(ctx->streams[i]->codecpar->codec_type)};
+        auto type = ctx->streams[i]->codecpar->codec_type;
+        auto duration = ctx->streams[i]->duration;
+        auto avTimeBase = ctx->streams[i]->time_base;
+        FkMediaTrack::Desc desc{i, FkFFUtils::makeMediaType(type),
+                                {duration, {avTimeBase.num * AV_TIME_BASE_Q.den, avTimeBase.den  * AV_TIME_BASE_Q.num}}};
         vec.emplace_back(desc);
     }
     return vec;
@@ -167,6 +171,21 @@ std::shared_ptr<FkAbsPacket> FkFFMediaContext::grab(int trackId) {
 }
 
 FkResult FkFFMediaContext::seek(int64_t timeInUS) {
+    auto desc = _getVideoTrack();
+    if (desc.trackId >= 0) {
+        timeInUS = av_rescale_q_rnd(timeInUS,
+                                    AV_TIME_BASE_Q,
+                                    ctx->streams[desc.trackId]->time_base,
+                                    AV_ROUND_NEAR_INF);
+    } else {
+        auto tracks = getTracks();
+        if (!tracks.empty()) {
+            timeInUS = av_rescale_q_rnd(timeInUS,
+                                        AV_TIME_BASE_Q,
+                                        ctx->streams[tracks[0].trackId]->time_base,
+                                        AV_ROUND_NEAR_INF);
+        }
+    }
     int ret = avformat_seek_file(ctx, -1, INT64_MIN,
                                  timeInUS, INT64_MAX,
                                  timeInUS == 0 ? AVSEEK_FLAG_ANY : AVSEEK_FLAG_BACKWARD);

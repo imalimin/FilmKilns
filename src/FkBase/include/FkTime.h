@@ -1,6 +1,8 @@
 //
 // Created by lmy on 2023/10/14.
 //
+#pragma once
+
 #include "FkObject.h"
 #include "FkRational.h"
 
