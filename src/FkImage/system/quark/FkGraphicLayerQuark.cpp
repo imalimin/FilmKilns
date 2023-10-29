@@ -392,18 +392,20 @@ FkFloatVec3 FkGraphicLayerQuark::_calcScaleType(FkSize &src,
     return FkFloatVec3(scale, scale, 1.0f);
 }
 
-FkColor &FkGraphicLayerQuark::_updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+FkColor FkGraphicLayerQuark::_updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
                                                 std::shared_ptr<FkGraphicLayer> &layer) {
     auto colorComp = FK_FIND_COMPO(proto->layer, FkColorCompo);
     if (nullptr != colorComp) {
-        layer->addComponent(colorComp);
+        auto color = colorComp->color;
+        auto tmp = std::make_shared<FkColorCompo>(color);
+        layer->addComponent(tmp);
+        return color;
     } else {
-        colorComp = std::make_shared<FkColorCompo>(FkColor::black());
+        return FkColor::black();
     }
-    return colorComp->color;
 }
 
-FkSize &FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+FkSize FkGraphicLayerQuark::_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
                                               std::shared_ptr<FkGraphicLayer> &layer,
                                               bool isSwappedWH) {
     auto reqSizeCompo = FK_FIND_COMPO(proto->layer, FkSizeCompo);

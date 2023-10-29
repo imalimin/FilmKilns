@@ -95,9 +95,9 @@ private:
 
     FkFloatVec3 _calcScaleType(FkSize &src, FkSize &dst, kScaleType scaleType);
 
-    FkColor &_updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto, std::shared_ptr<FkGraphicLayer> &layer);
+    FkColor _updateLayerColor(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto, std::shared_ptr<FkGraphicLayer> &layer);
 
-    FkSize &_updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
+    FkSize _updateLayerSize(std::shared_ptr<FkGraphicUpdateLayerPrt> &proto,
                              std::shared_ptr<FkGraphicLayer> &layer,
                              bool isSwappedWH);
 
