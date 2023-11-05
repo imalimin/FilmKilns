@@ -39,6 +39,8 @@ public:
     static long size(std::string &file);
 
     static void trim(std::string &path);
+
+    static bool startWith(const std::string &path, const std::string &temp);
 };
 
 #endif //FK_BASE_FKFILEUTILS_H

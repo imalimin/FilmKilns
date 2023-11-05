@@ -98,3 +98,11 @@ void FkFileUtils::trim(std::string &path) {
         path.replace(pos, 1, "");
     }
 }
+
+bool FkFileUtils::startWith(const std::string &path, const std::string &temp) {
+    if (path.length() < temp.length()) {
+        return false;
+    }
+    auto str = path.substr(0, temp.length());
+    return str == temp;
+}
