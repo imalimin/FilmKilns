@@ -23,6 +23,7 @@
 #define Fk_POINTER_CAST(CLASS, ptr) std::static_pointer_cast<CLASS>(ptr)
 
 typedef std::function<void(int)> FkResultCallback;
+typedef std::function<void(const std::string &)> FkStrResultCallback;
 
 // +-------- Log --------+
 #define FK_DEF_TAG "FilmKilns"
