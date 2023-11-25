@@ -589,14 +589,15 @@ FkResult FkGraphicLayerQuark::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerCopyProto, p);
     auto itr = layers.find(proto->srcLayerId);
     if (layers.end() != itr) {
+        proto->srcLayer = std::make_shared<FkGraphicLayer>(*itr->second);
         auto deviceImage = itr->second->material->getDeviceImage();
         if (deviceImage) {
-            auto sizeCompo = FK_FIND_COMPO(itr->second, FkSizeCompo);
-            auto scaleCompo = FK_FIND_COMPO(itr->second, FkScaleComponent);
+            auto sizeCompo = FK_FIND_COMPO(proto->srcLayer, FkSizeCompo);
+            auto scaleCompo = FK_FIND_COMPO(proto->srcLayer, FkScaleComponent);
             float scale = deviceImage->getSize().getWidth() * 1.0f / sizeCompo->size.getWidth();
-            scaleCompo->value = FkFloatVec3(scale, scale * -1, 1.0f);
+            scaleCompo->value = FkFloatVec3(scaleCompo->value.x * scale,
+                                            scaleCompo->value.y * scale, 1.0f);
         }
-        proto->srcLayer = std::make_shared<FkGraphicLayer>(*itr->second);
     }
     itr = layers.find(proto->dstLayerId);
     if (layers.end() != itr) {
