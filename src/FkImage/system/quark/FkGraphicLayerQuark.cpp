@@ -594,6 +594,11 @@ FkResult FkGraphicLayerQuark::_onCopyLayer(std::shared_ptr<FkProtocol> &p) {
         if (deviceImage) {
             auto sizeCompo = FK_FIND_COMPO(proto->srcLayer, FkSizeCompo);
             auto scaleCompo = FK_FIND_COMPO(proto->srcLayer, FkScaleComponent);
+            if (scaleCompo) {
+                proto->srcLayer->removeComponent(scaleCompo);
+                scaleCompo = std::make_shared<FkScaleComponent>(*scaleCompo);
+                proto->srcLayer->addComponent(scaleCompo);
+            }
             float scale = deviceImage->getSize().getWidth() * 1.0f / sizeCompo->size.getWidth();
             scaleCompo->value = FkFloatVec3(scaleCompo->value.x * scale,
                                             scaleCompo->value.y * scale, 1.0f);
