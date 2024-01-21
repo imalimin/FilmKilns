@@ -277,11 +277,14 @@ FkResult FkRenderTexQuark::_onRemoveTex(std::shared_ptr<FkProtocol> &p) {
     }
     auto itr = sMap.find(proto->material->id());
     if (itr != sMap.end()) {
+        FkLogI("FkRenderTexQuark", "_onRemoveTex %d, %d", itr->first, itr->second->textures[0]->tex);
         sMap.erase(itr);
         auto deviceImage = proto->material->getDeviceImage();
         if (deviceImage) {
             deviceImage->onDestroy();
         }
+        FkLogI(FK_DEF_TAG, "Tex allocator usage: %d + %d / %d",
+               allocator->usingSize(), allocator->cacheSize(), allocator->capacity());
     }
     return FK_OK;
 }
