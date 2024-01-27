@@ -44,6 +44,8 @@
 #include "FkBitmapCompo.h"
 #include "FkSetZIndexProto.h"
 
+#define TAG "FkLayerEngine"
+
 const FkID FkLayerEngine::MSG_NOTIFY_RENDER = 0x100;
 
 FK_IMPL_CLASS_TYPE(FkLayerEngine, FkEngine)
@@ -91,7 +93,13 @@ FkResult FkLayerEngine::onStop() {
     FkAssert(ret == FK_OK, ret);
     ret = client->quickSend<FkOnStopPrt>(molecule);
     FkAssert(ret == FK_OK, ret);
-    return renderEngine->stop();
+    ret = renderEngine->stop();
+    if (ret == FK_OK) {
+        std::lock_guard<std::mutex> guard(mtx);
+        lastMaxLayerId = 0;
+        layerIds.clear();
+    }
+    return ret;
 }
 
 FkResult FkLayerEngine::setSurface(std::shared_ptr<FkGraphicWindow> win, int32_t scaleType) {
@@ -129,23 +137,35 @@ FkResult FkLayerEngine::_notifyRender(std::shared_ptr<FkMessage> msg) {
 }
 
 FkID FkLayerEngine::newLayer(FkID expectId) {
+    if (expectId == FK_ID_NONE) {
+        std::lock_guard<std::mutex> guard(mtx);
+        ++lastMaxLayerId;
+        expectId = lastMaxLayerId;
+    } else {
+        lastMaxLayerId = std::max(lastMaxLayerId, expectId);
+    }
+    {
+        std::lock_guard<std::mutex> guard(mtx);
+        auto itr = layerIds.find(expectId);
+        if (itr != layerIds.end()) { // Repeat
+            FkLogW(TAG, "Repeat layerId=%d. Skip generate", expectId);
+            return FK_INVALID_PARAMETERS;
+        }
+        layerIds.emplace(std::make_pair(expectId, expectId));
+    }
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_newLayer));
     msg->arg1 = expectId;
-    msg->withPromise();
     auto ret = sendMessage(msg);
-    FkID id = FK_ID_NONE;
-    if (FK_OK == ret) {
-        msg->getPromiseResult(id);
+    if (ret == FK_OK) {
+        return expectId;
     }
-    return id;
+    return ret;
 }
 
 FkResult FkLayerEngine::_newLayer(std::shared_ptr<FkMessage> msg) {
     auto proto = std::make_shared<FkGraphicNewLayerPrt>();
     proto->expectId = msg->arg1;
-    auto ret = client->with(molecule)->send(proto);
-    msg->setPromiseResult(proto->layer ? proto->layer->id : FK_ID_NONE);
-    return ret;
+    return client->with(molecule)->send(proto);
 }
 
 FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color, FkID expectId) {
@@ -196,7 +216,20 @@ FkID FkLayerEngine::newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> devic
 FkResult FkLayerEngine::removeLayer(FkID layer) {
     auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_removeLayer));
     msg->arg1 = layer;
-    return sendMessage(msg);
+    auto ret = sendMessage(msg);
+    if (ret == FK_OK) {
+        std::lock_guard<std::mutex> guard(mtx);
+        if (layer == Fk_CANVAS_ID) {
+            lastMaxLayerId = 0;
+            layerIds.clear();
+            return ret;
+        }
+        auto itr = layerIds.find(layer);
+        if (itr != layerIds.end()) {
+            layerIds.erase(itr);
+        }
+    }
+    return ret;
 }
 
 FkResult FkLayerEngine::_removeLayer(std::shared_ptr<FkMessage> msg) {

@@ -113,6 +113,7 @@ FkResult FkImageModelEngine::_load(std::shared_ptr<FkMessage> &msg) {
                                       FkColor::makeFrom(layer.color()),
                                       layer.id());
         }
+        FkAssert(layerID > 0, FK_FAIL);
         std::shared_ptr<FkModelInterface> modelInterface = std::make_shared<FkPbModel>(model, layer);
         engine->updateLayerWithModel(layerID, modelInterface);
     }

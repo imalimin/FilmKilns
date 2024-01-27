@@ -89,8 +89,6 @@ protected:
 private:
     bool _isExistLayer(FkID id);
 
-    FkID _maxLayerId();
-
     FkID _generateId(FkID expectId);
 
     FkFloatVec3 _calcScaleType(FkSize &src, FkSize &dst, kScaleType scaleType);
@@ -107,7 +105,6 @@ private:
 
 protected:
     std::map<FkID, std::shared_ptr<FkGraphicLayer>> layers;
-    FkID lastId = FK_ID_NONE;
     std::shared_ptr<FkPathCompo> curPathCompo = nullptr;
 };
 
