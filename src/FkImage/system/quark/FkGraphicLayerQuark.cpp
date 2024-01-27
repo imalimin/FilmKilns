@@ -44,7 +44,7 @@
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
 
-FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark(), lastId(FK_ID_NONE + 1) {
+FkGraphicLayerQuark::FkGraphicLayerQuark() : FkQuark() {
 
 }
 
@@ -96,24 +96,10 @@ bool FkGraphicLayerQuark::_isExistLayer(FkID id) {
     return layers.find(id) != layers.end();
 }
 
-FkID FkGraphicLayerQuark::_maxLayerId() {
-    FkID maxId = FK_ID_NONE;
-    for (auto &itr : layers) {
-        maxId = std::max(maxId, itr.first);
-    }
-    return maxId;
-}
-
 FkID FkGraphicLayerQuark::_generateId(FkID expectId) {
-    if (FK_ID_NONE != expectId) {
-        if (!_isExistLayer(expectId)) {
-            return expectId;
-        } else {
-            FkLogW(FK_DEF_TAG, "Invalid expect ID(%d).", expectId);
-        }
-    }
-    ++lastId;
-    return lastId;
+    FkAssert(FK_ID_NONE != expectId, FK_ID_NONE);
+    FkAssert(!_isExistLayer(expectId), FK_ID_NONE);
+    return expectId;
 }
 
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
@@ -122,9 +108,6 @@ FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
     if (proto->layer) {
         proto->layer->id = _generateId(proto->expectId);
         layers.emplace(std::make_pair(proto->layer->id, proto->layer));
-        if (FK_ID_NONE != proto->expectId) {
-            lastId = _maxLayerId();
-        }
         return FK_OK;
     }
     return FK_FAIL;
