@@ -42,7 +42,7 @@ public:
 
     FkResult notifyRender();
 
-    FkID newLayer(FkID expectId = FK_ID_NONE);
+    FkID newLayer(FkID expectId);
 
     FkID newLayerWithColor(FkSize size, FkColor color, FkID expectId = FK_ID_NONE);
 
@@ -139,6 +139,9 @@ private:
     std::shared_ptr<FkSessionClient> client;
     std::shared_ptr<FkGraphicMolecule> molecule;
     std::shared_ptr<FkEngine> renderEngine = nullptr;
+    std::map<FkID, FkID> layerIds;
+    FkID lastMaxLayerId = 0;
+    std::mutex mtx;
 };
 
 
