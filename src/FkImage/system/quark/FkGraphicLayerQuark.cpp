@@ -204,14 +204,15 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
 
 FkResult FkGraphicLayerQuark::_onRenderRequest(const std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
-    for (auto &it: layers) {
-        auto layer = it.second;
+    for (auto &itr: layers) {
+        auto layer = itr.second;
         std::shared_ptr<FkGraphicLayer> copyLayer = nullptr;
         if (layer->projLayerId != FK_ID_NONE) {
             auto srcLayer = _findLayer(layer->projLayerId);
             if (srcLayer) {
                 copyLayer = std::make_shared<FkGraphicLayer>(*srcLayer);
                 copyLayer->id = layer->id;
+                copyLayer->projLayerId = layer->projLayerId;
                 copyLayer->copyComponentFrom(layer, FkTransComponent_Class::type);
                 copyLayer->copyComponentFrom(layer, FkRotateComponent_Class::type);
                 copyLayer->copyComponentFrom(layer, FkScaleComponent_Class::type);
@@ -332,8 +333,23 @@ FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicLayerQuark::_onQueryLayers(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQueryLayersProto, p);
-    for (auto &itr : layers) {
-        proto->layers.emplace_back(std::make_shared<FkGraphicLayer>(*(itr.second)));
+    for (auto &itr: layers) {
+        auto layer = itr.second;
+        std::shared_ptr<FkGraphicLayer> copyLayer = nullptr;
+        if (layer->projLayerId != FK_ID_NONE) {
+            auto srcLayer = _findLayer(layer->projLayerId);
+            if (srcLayer) {
+                copyLayer = std::make_shared<FkGraphicLayer>(*srcLayer);
+                copyLayer->id = layer->id;
+                copyLayer->projLayerId = layer->projLayerId;
+                copyLayer->copyComponentFrom(layer, FkSizeCompo_Class::type);
+            }
+        } else {
+            copyLayer = std::make_shared<FkGraphicLayer>(*layer);
+        }
+        if (copyLayer) {
+            proto->layers.emplace_back(copyLayer);
+        }
     }
     return FK_OK;
 }
