@@ -94,6 +94,12 @@ JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewLayerWithColor
     return engine->newLayerWithColor(FkSize(widht, height), color);
 }
 
+JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeNewProjectionLayer
+        (JNIEnv *env, jobject that, jlong handle, jint srcLayerId) {
+    auto engine = castHandle(handle);
+    return engine->newProjectionLayer(srcLayerId);
+}
+
 JNIEXPORT jint JNICALL Java_com_alimin_fk_engine_FkImage_nativeRemoveLayer
         (JNIEnv *env, jobject that, jlong handle, jint layerId) {
     auto engine = castHandle(handle);

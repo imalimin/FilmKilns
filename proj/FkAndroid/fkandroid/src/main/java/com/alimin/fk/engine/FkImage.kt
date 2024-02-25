@@ -76,6 +76,16 @@ class FkImage(val workspace: String) : FkEngine() {
     }
 
     /**
+     * @return Layer id.
+     */
+    fun newProjectionLayer(srcLayerId : Int): Int {
+        if (!isNull()) {
+            return nativeNewProjectionLayer(getHandle(), srcLayerId)
+        }
+        return -1
+    }
+
+    /**
      * @return Result code.
      */
     fun removeLayer(layerId: Int): FkResult {
@@ -200,6 +210,7 @@ class FkImage(val workspace: String) : FkEngine() {
         blue: Int,
         alpha: Int
     ): Int
+    private external fun nativeNewProjectionLayer(handle: Long, srcLayerId: Int): Int
     private external fun nativeRemoveLayer(handle: Long, layerId: Int): Int
     private external fun nativeSetCanvasSize(handle: Long, width: Int, height: Int): Int
 

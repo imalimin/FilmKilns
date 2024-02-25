@@ -47,6 +47,8 @@ private:
 
     FkResult _onDrawPath(std::shared_ptr<FkProtocol> &p);
 
+    FkResult _onSetProjection(const std::shared_ptr<FkProtocol> &p);
+
 protected:
     std::shared_ptr<FkGraphicLayer> newLayerEntity();
 
@@ -54,7 +56,7 @@ protected:
 
     virtual FkResult _onRemoveLayer(std::shared_ptr<FkProtocol> &p);
 
-    virtual FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p);
+    virtual FkResult _onRenderRequest(const std::shared_ptr<FkProtocol> &p);
 
     virtual FkResult _onPostTranslate(std::shared_ptr<FkProtocol> p);
 
@@ -82,6 +84,8 @@ private:
     bool _isExistLayer(FkID id);
 
     FkID _generateId(FkID expectId);
+
+    std::shared_ptr<FkGraphicLayer> _findLayer(FkID layerId);
 
     FkFloatVec3 _calcScaleType(FkSize &src, FkSize &dst, kScaleType scaleType);
 

@@ -36,6 +36,7 @@
 #include "FkUpdateLayerModelProto.h"
 #include "FkImageContext.h"
 #include "FkRotateComponent.h"
+#include "FkLayerSetProjectionProto.h"
 
 #define TAG "FkLayerEngine"
 
@@ -173,6 +174,15 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color, FkID expectId)
         sendMessage(msg);
     }
     return id;
+}
+
+FkID FkLayerEngine::newProjectionLayer(FkID srcLayerId) {
+    auto layerId = newLayer(FK_ID_NONE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setLayerProjection));
+    msg->arg1 = srcLayerId;
+    msg->arg2 = layerId;
+    sendMessage(msg);
+    return layerId;
 }
 
 FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
@@ -536,5 +546,10 @@ FkResult FkLayerEngine::updateLayerWithModel(FkID layerId,
 FkResult FkLayerEngine::_updateLayerWithModel(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(modelInterface, FkModelInterface, msg->sp);
     auto proto = std::make_shared<FkUpdateLayerModelProto>(modelInterface);
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::_setLayerProjection(const std::shared_ptr<FkMessage> &msg) {
+    auto proto = std::make_shared<FkLayerSetProjectionProto>(msg->arg1, msg->arg2);
     return client->with(molecule)->send(proto);
 }

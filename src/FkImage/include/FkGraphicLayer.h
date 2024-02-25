@@ -43,6 +43,8 @@ public:
 
 public:
     FkID id = FK_ID_NONE;
+    /// Projection layer ID
+    FkID projLayerId = FK_ID_NONE;
     std::shared_ptr<FkMaterialCompo> material = nullptr;
 };
 

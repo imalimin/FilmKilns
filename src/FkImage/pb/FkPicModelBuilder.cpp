@@ -43,7 +43,9 @@ std::shared_ptr<FkPicModelBuilder> FkPicModelBuilder::setCanvas(std::shared_ptr<
 std::shared_ptr<FkPicModelBuilder> FkPicModelBuilder::setLayer(std::shared_ptr<FkGraphicLayer> &layer) {
     auto pb = model->add_layers();
     _newImageLayer(pb, layer);
-    FkAssert(pb->size().width() != 0, nullptr);
+    if (layer->projLayerId == FK_ID_NONE) {
+        FkAssert(pb->size().width() != 0, nullptr);
+    }
     return shared_from_this();
 }
 

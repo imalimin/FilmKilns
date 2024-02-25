@@ -46,6 +46,8 @@ public:
 
     FkID newLayerWithColor(FkSize size, FkColor color, FkID expectId = FK_ID_NONE);
 
+    FkID newProjectionLayer(FkID srcLayerId);
+
     FkResult removeLayer(FkID layer);
 
     FkResult setCanvasSize(FkSize size);
@@ -133,6 +135,8 @@ private:
     FkResult _drawPath(std::shared_ptr<FkMessage> &msg);
 
     FkResult _updateLayerWithModel(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _setLayerProjection(const std::shared_ptr<FkMessage> &msg);
 
 private:
     static const FkID MSG_NOTIFY_RENDER;

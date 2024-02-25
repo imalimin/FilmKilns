@@ -14,7 +14,7 @@
 #include "FkObject.h"
 #include "FkComponent.h"
 #include <vector>
-#include <list>
+#include <map>
 
 #define FK_FIND_COMPO(ENTITY, NAME) \
 ENTITY->findComponent<NAME>(FK_CLASS_TYPE(NAME))                            \
@@ -29,13 +29,12 @@ public:
 
     virtual ~FkEntity();
 
-    FkResult addComponent(std::shared_ptr<FkComponent> comp);
+    FkResult addComponent(const std::shared_ptr<FkComponent> &comp);
 
-    FkResult addComponents(std::vector<std::shared_ptr<FkComponent>> &vec);
+    FkResult addComponents(const std::vector<std::shared_ptr<FkComponent>> &vec);
 
     FkResult findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
-                           const FkClassType &classType);
-
+                            const FkClassType &classType);
 
     template<class T>
     std::shared_ptr<T> findComponent(const FkClassType &classType) {
@@ -46,16 +45,10 @@ public:
         return std::dynamic_pointer_cast<T>(vec[0]);
     }
 
-    FkResult copyComponentFrom(std::shared_ptr<FkEntity> src, const FkClassType &classType) {
-        std::vector<std::shared_ptr<FkComponent>> vec;
-        if (FK_OK == src->findComponents(vec, classType)) {
-            return addComponent(vec[0]);
-        }
-        return FK_SOURCE_NOT_FOUND;
-    }
+    FkResult copyComponentFrom(const std::shared_ptr<FkEntity> &src, const FkClassType &classType);
 
 private:
-    std::list<std::shared_ptr<FkComponent>> components;
+    std::map<size_t, std::shared_ptr<FkComponent>> components;
 };
 
 #endif //FK_FRAMEWORK_FKENTITY_H
