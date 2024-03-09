@@ -47,6 +47,10 @@ public:
         return _bottom;
     }
 
+    T getWidth() { return std::abs(_right - _left); }
+
+    T getHeight() { return std::abs(_bottom - _top); }
+
 private:
     T _left = 0;
     T _top = 0;

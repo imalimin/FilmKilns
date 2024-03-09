@@ -37,6 +37,7 @@
 #include "FkImageContext.h"
 #include "FkRotateComponent.h"
 #include "FkLayerSetProjectionProto.h"
+#include "FkCropLayerProto.h"
 
 #define TAG "FkLayerEngine"
 
@@ -477,7 +478,9 @@ FkResult FkLayerEngine::cropLayer(FkID layerId, FkIntRect &rect) {
 }
 
 FkResult FkLayerEngine::_cropLayer(std::shared_ptr<FkMessage> &msg) {
-    return 0;
+    FK_CAST_NULLABLE_PTR_RETURN_INT(rect, FkIntRect, msg->sp);
+    auto proto = std::make_shared<FkCropLayerProto>(msg->arg1, *rect);
+    return client->with(molecule)->send(proto);
 }
 
 FkResult FkLayerEngine::readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,

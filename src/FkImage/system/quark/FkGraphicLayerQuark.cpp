@@ -41,6 +41,8 @@
 #include "FkMeshPath.h"
 #include "FkQueryLayerProto.h"
 #include "FkLayerSetProjectionProto.h"
+#include "FkCropLayerProto.h"
+#include "FkCropComponent.h"
 #include <cmath>
 
 FK_IMPL_CLASS_TYPE(FkGraphicLayerQuark, FkQuark)
@@ -70,6 +72,7 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayerProto, FkGraphicLayerQuark::_onQueryLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkCropProto, FkGraphicLayerQuark::_onCrop);
+    FK_PORT_DESC_QUICK_ADD(desc, FkCropLayerProto, FkGraphicLayerQuark::_onCropLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicLayerQuark::_onDrawPath);
@@ -216,6 +219,7 @@ FkResult FkGraphicLayerQuark::_onRenderRequest(const std::shared_ptr<FkProtocol>
                 copyLayer->copyComponentFrom(layer, FkTransComponent_Class::type);
                 copyLayer->copyComponentFrom(layer, FkRotateComponent_Class::type);
                 copyLayer->copyComponentFrom(layer, FkScaleComponent_Class::type);
+                copyLayer->copyComponentFrom(layer, FkCropComponent_Class::type);
             }
         } else {
             copyLayer = std::make_shared<FkGraphicLayer>(*layer);
@@ -376,6 +380,23 @@ FkResult FkGraphicLayerQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
             dst->value.y *= src->value.y;
             dst->value.z *= src->value.z;
             src->value.set(1.0f);
+        }
+        return FK_OK;
+    }
+    return FK_FAIL;
+}
+
+FkResult FkGraphicLayerQuark::_onCropLayer(const std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkCropLayerProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (layers.end() != itr) {
+        auto layer = itr->second;
+        auto compo = FK_FIND_COMPO(layer, FkCropComponent);
+        if (compo) {
+            compo->rect = proto->rect;
+        } else {
+            compo = std::make_shared<FkCropComponent>(proto->rect);
+            layer->addComponent(compo);
         }
         return FK_OK;
     }

@@ -19,6 +19,7 @@
 #include "FkPathCompo.h"
 #include "FkScaleComponent.h"
 #include "FkTexEntity.h"
+#include "FkCropComponent.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicRenderAtom, FkSimpleAtom)
 
@@ -91,11 +92,15 @@ std::shared_ptr<FkMaterialEntity>
 FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer) {
     auto matCompo = FK_FIND_COMPO(layer, FkMatCompo);
     auto scaleCompo = FK_FIND_COMPO(layer, FkScaleComponent);
-    if(matCompo) {
+    if (matCompo) {
         auto materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponent(matCompo);
         if (scaleCompo) {
             materials->scale = scaleCompo->value;
+        }
+        auto cropCompo = FK_FIND_COMPO(layer, FkCropComponent);
+        if (cropCompo) {
+            materials->addComponent(cropCompo);
         }
         return materials;
     }

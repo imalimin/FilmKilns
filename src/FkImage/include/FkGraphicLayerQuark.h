@@ -78,6 +78,8 @@ protected:
 
     virtual FkResult _onCrop(std::shared_ptr<FkProtocol> &p);
 
+    virtual FkResult _onCropLayer(const std::shared_ptr<FkProtocol> &p);
+
     FkResult _onUpdateLayerWithModel(std::shared_ptr<FkProtocol> &p);
 
 private:
