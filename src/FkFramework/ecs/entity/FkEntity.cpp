@@ -18,9 +18,8 @@ FkEntity::FkEntity() : FkObject() {
 }
 
 FkEntity::FkEntity(const FkEntity &o) : FkObject() {
-
-    for (auto &it : o.components) {
-        components.emplace_back(it);
+    for (auto &itr: o.components) {
+        components.insert(std::make_pair(itr.first, itr.second));
     }
 }
 
@@ -28,14 +27,14 @@ FkEntity::~FkEntity() {
     components.clear();
 }
 
-FkResult FkEntity::addComponent(std::shared_ptr<FkComponent> comp) {
+FkResult FkEntity::addComponent(const std::shared_ptr<FkComponent> &comp) {
     FkAssert(comp != nullptr, FK_NPE);
-    components.emplace_back(comp);
+    components[comp->getClassType().getId()] = comp;
     return FK_OK;
 }
 
-FkResult FkEntity::addComponents(std::vector<std::shared_ptr<FkComponent>> &vec) {
-    for (auto &compo : vec) {
+FkResult FkEntity::addComponents(const std::vector<std::shared_ptr<FkComponent>> &vec) {
+    for (auto &compo: vec) {
         addComponent(compo);
     }
     return FK_OK;
@@ -52,29 +51,27 @@ FkResult FkEntity::removeComponent(std::shared_ptr<FkComponent> comp) {
 }
 
 FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
-                                        const FkClassType &classType) {
-    for (auto & component : components) {
-        FkAssert(component != nullptr, FK_FAIL);
-        if (component->getClassType().is(classType)) {
-            vec.emplace_back(component);
+                                  const FkClassType &classType) {
+    for (auto &itr: components) {
+        if (itr.second->getClassType().is(classType)) {
+            vec.emplace_back(itr.second);
         }
     }
     return vec.empty() ? FK_FAIL : FK_OK;
 }
 
-FkResult FkEntity::clearComponents(const FkClassType &classType) {
-    auto itr = components.begin();
-    while (itr != components.end()) {
-        if ((*itr)->getClassType().is(classType)) {
-            itr = components.erase(itr);
-        } else {
-            ++itr;
-        }
+FkResult FkEntity::copyComponentFrom(const std::shared_ptr<FkEntity> &src, const FkClassType &classType) {
+    FkAssert(src != nullptr, FK_NPE);
+    std::vector<std::shared_ptr<FkComponent>> vec;
+    if (FK_OK == src->findComponents(vec, classType)) {
+        return addComponent(vec[0]);
     }
-//    components.erase(std::find_if(components.begin(), components.end(),
-//                                  [&](const auto &it) {
-//                                      return (it)->getClassType().is(classType);
-//                                  }));
+    return FK_SOURCE_NOT_FOUND;
+}
+
+FkResult FkEntity::clearComponents(const FkClassType &classType) {
+    auto itr = components.find(classType.getId());
+    components.erase(itr);
     return FK_OK;
 }
 

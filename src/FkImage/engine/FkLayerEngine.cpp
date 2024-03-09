@@ -36,6 +36,8 @@
 #include "FkUpdateLayerModelProto.h"
 #include "FkImageContext.h"
 #include "FkRotateComponent.h"
+#include "FkLayerSetProjectionProto.h"
+#include "FkCropLayerProto.h"
 #include "FkDeviceImageCompo.h"
 #include "FkRenderCanvasTexCallbackProto.h"
 #include "FkLayerSetVisibilityProto.h"
@@ -182,6 +184,27 @@ FkID FkLayerEngine::newLayerWithColor(FkSize size, FkColor color, FkID expectId)
         sendMessage(msg);
     }
     return id;
+}
+
+FkID FkLayerEngine::newProjectionLayer(FkID srcLayerId) {
+    auto layerId = newLayer(FK_ID_NONE);
+    auto msg = FkMessage::obtain(FK_WRAP_FUNC(FkLayerEngine::_setLayerProjection));
+    msg->arg1 = srcLayerId;
+    msg->arg2 = layerId;
+    sendMessage(msg);
+    return layerId;
+}
+
+FkResult FkLayerEngine::_updateLayerWithColor(std::shared_ptr<FkMessage> msg) {
+    auto layer = std::dynamic_pointer_cast<FkGraphicLayer>(msg->sp);
+    auto prt = std::make_shared<FkGraphicUpdateLayerPrt>();
+    prt->layer = layer;
+    prt->scaleType = kScaleType::CENTER_INSIDE;
+    auto sizeCom = FK_FIND_COMPO(prt->layer, FkSizeCompo);
+    if (sizeCom) {
+        setCanvasSizeInternal(sizeCom->size, true);
+    }
+    return client->with(molecule)->send(prt);
 }
 
 FkResult FkLayerEngine::_updateLayer(std::shared_ptr<FkMessage> &msg) {
@@ -534,7 +557,9 @@ FkResult FkLayerEngine::cropLayer(FkID layerId, FkIntRect &rect) {
 }
 
 FkResult FkLayerEngine::_cropLayer(std::shared_ptr<FkMessage> &msg) {
-    return 0;
+    FK_CAST_NULLABLE_PTR_RETURN_INT(rect, FkIntRect, msg->sp);
+    auto proto = std::make_shared<FkCropLayerProto>(msg->arg1, *rect);
+    return client->with(molecule)->send(proto);
 }
 
 FkResult FkLayerEngine::readPixels(FkID layerId, FkIntVec2 &pos, FkSize &size,
@@ -635,6 +660,11 @@ FkResult FkLayerEngine::updateLayerWithModel(FkID layerId,
 FkResult FkLayerEngine::_updateLayerWithModel(std::shared_ptr<FkMessage> &msg) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(modelInterface, FkModelInterface, msg->sp);
     auto proto = std::make_shared<FkUpdateLayerModelProto>(modelInterface);
+    return client->with(molecule)->send(proto);
+}
+
+FkResult FkLayerEngine::_setLayerProjection(const std::shared_ptr<FkMessage> &msg) {
+    auto proto = std::make_shared<FkLayerSetProjectionProto>(msg->arg1, msg->arg2);
     return client->with(molecule)->send(proto);
 }
 

@@ -47,13 +47,9 @@ public:
         return _bottom;
     }
 
-    T width() const {
-        return _right - _left;
-    }
+    T getWidth() { return std::abs(_right - _left); }
 
-    T height() const {
-        return _bottom - _top;
-    }
+    T getHeight() { return std::abs(_bottom - _top); }
 
 private:
     T _left = 0;

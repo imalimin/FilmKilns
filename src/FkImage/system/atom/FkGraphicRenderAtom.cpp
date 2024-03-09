@@ -21,6 +21,7 @@
 #include "FkPathCompo.h"
 #include "FkScaleComponent.h"
 #include "FkTexEntity.h"
+#include "FkCropComponent.h"
 #include "FkLayerCopyProto.h"
 #include "FkTextCompo.h"
 
@@ -89,7 +90,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         }
     }
     _makeDrawCanvasRequest(canvas, request);
-    auto ret = renderEngine->renderDevice(request, proto->timestamp);
+    auto ret = renderEngine->renderDevice(request);
     FkAssert(FK_OK == ret, ret);
     return ret;
 }
@@ -124,11 +125,15 @@ std::shared_ptr<FkMaterialEntity>
 FkGraphicRenderAtom::_makeRenderMaterials(std::shared_ptr<FkGraphicLayer> &layer) {
     auto matCompo = FK_FIND_COMPO(layer, FkMatCompo);
     auto scaleCompo = FK_FIND_COMPO(layer, FkScaleComponent);
-    if(matCompo) {
+    if (matCompo) {
         auto materials = std::make_shared<FkTexEntity>(layer->material);
         materials->addComponent(matCompo);
         if (scaleCompo) {
             materials->scale = scaleCompo->value;
+        }
+        auto cropCompo = FK_FIND_COMPO(layer, FkCropComponent);
+        if (cropCompo) {
+            materials->addComponent(cropCompo);
         }
         return materials;
     }

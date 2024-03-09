@@ -42,6 +42,9 @@
 #include "FkLinePath.h"
 #include "FkCatmullRomPath.h"
 #include "FkQueryLayerProto.h"
+#include "FkLayerSetProjectionProto.h"
+#include "FkCropLayerProto.h"
+#include "FkCropComponent.h"
 #include "FkDeviceImageCompo.h"
 #include "FkLayerSetVisibilityProto.h"
 #include "FkVisibilityComponent.h"
@@ -78,10 +81,12 @@ void FkGraphicLayerQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayersProto, FkGraphicLayerQuark::_onQueryLayers);
     FK_PORT_DESC_QUICK_ADD(desc, FkQueryLayerProto, FkGraphicLayerQuark::_onQueryLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkCropProto, FkGraphicLayerQuark::_onCrop);
+    FK_PORT_DESC_QUICK_ADD(desc, FkCropLayerProto, FkGraphicLayerQuark::_onCropLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkReadPixelsProto, FkGraphicLayerQuark::_onWithLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkScaleTypeProto, FkGraphicLayerQuark::_onUpdateScaleType);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicLayerQuark::_onDrawPath);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicLayerQuark::_onUpdateLayerWithModel);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetProjectionProto, FkGraphicLayerQuark::_onSetProjection);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetVisibilityProto, FkGraphicLayerQuark::_onSetLayerVisibility);
     FK_PORT_DESC_QUICK_ADD(desc, FkLayerCopyProto, FkGraphicLayerQuark::_onCopyLayer);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawTextProto, FkGraphicLayerQuark::_onDrawText);
@@ -113,6 +118,14 @@ FkID FkGraphicLayerQuark::_generateId(FkID expectId) {
     FkAssert(FK_ID_NONE != expectId, FK_ID_NONE);
     FkAssert(!_isExistLayer(expectId), FK_ID_NONE);
     return expectId;
+}
+
+std::shared_ptr<FkGraphicLayer> FkGraphicLayerQuark::_findLayer(FkID layerId) {
+    auto itr = layers.find(layerId);
+    if (layers.end() == itr) {
+        return nullptr;
+    }
+    return itr->second;
 }
 
 FkResult FkGraphicLayerQuark::_onNewLayer(std::shared_ptr<FkProtocol> p) {
@@ -210,15 +223,31 @@ FkResult FkGraphicLayerQuark::_onRemoveLayer(std::shared_ptr<FkProtocol> &p) {
     return FK_FAIL;
 }
 
-FkResult FkGraphicLayerQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicLayerQuark::_onRenderRequest(const std::shared_ptr<FkProtocol> &p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkRenderRequestPrt, p);
-    for (auto &it : layers) {
-        if (it.second->getVisibility() != FK_VISIBLE) {
+    for (auto &itr: layers) {
+        if (itr.second->getVisibility() != FK_VISIBLE) {
             continue;
         }
-        auto layer = *it.second;
-//        FkLogI(getClassType().getName(), layer.toString());
-        proto->req->layers.emplace_back(std::make_shared<FkGraphicLayer>(layer));
+        auto layer = itr.second;
+        std::shared_ptr<FkGraphicLayer> copyLayer = nullptr;
+        if (layer->projLayerId != FK_ID_NONE) {
+            auto srcLayer = _findLayer(layer->projLayerId);
+            if (srcLayer) {
+                copyLayer = std::make_shared<FkGraphicLayer>(*srcLayer);
+                copyLayer->id = layer->id;
+                copyLayer->projLayerId = layer->projLayerId;
+                copyLayer->copyComponentFrom(layer, FkTransComponent_Class::type);
+                copyLayer->copyComponentFrom(layer, FkRotateComponent_Class::type);
+                copyLayer->copyComponentFrom(layer, FkScaleComponent_Class::type);
+                copyLayer->copyComponentFrom(layer, FkCropComponent_Class::type);
+            }
+        } else {
+            copyLayer = std::make_shared<FkGraphicLayer>(*layer);
+        }
+        if (copyLayer) {
+            proto->req->layers.emplace_back(copyLayer);
+        }
         std::sort(proto->req->layers.begin(), proto->req->layers.end(),
                   [](const std::shared_ptr<FkGraphicLayer> &l,
                      const std::shared_ptr<FkGraphicLayer> &r) {
@@ -334,8 +363,23 @@ FkResult FkGraphicLayerQuark::_onDrawPoint(std::shared_ptr<FkProtocol> p) {
 
 FkResult FkGraphicLayerQuark::_onQueryLayers(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkQueryLayersProto, p);
-    for (auto &itr : layers) {
-        proto->layers.emplace_back(std::make_shared<FkGraphicLayer>(*(itr.second)));
+    for (auto &itr: layers) {
+        auto layer = itr.second;
+        std::shared_ptr<FkGraphicLayer> copyLayer = nullptr;
+        if (layer->projLayerId != FK_ID_NONE) {
+            auto srcLayer = _findLayer(layer->projLayerId);
+            if (srcLayer) {
+                copyLayer = std::make_shared<FkGraphicLayer>(*srcLayer);
+                copyLayer->id = layer->id;
+                copyLayer->projLayerId = layer->projLayerId;
+                copyLayer->copyComponentFrom(layer, FkSizeCompo_Class::type);
+            }
+        } else {
+            copyLayer = std::make_shared<FkGraphicLayer>(*layer);
+        }
+        if (copyLayer) {
+            proto->layers.emplace_back(copyLayer);
+        }
     }
     return FK_OK;
 }
@@ -362,6 +406,23 @@ FkResult FkGraphicLayerQuark::_onCrop(std::shared_ptr<FkProtocol> &p) {
             dst->value.y *= src->value.y;
             dst->value.z *= src->value.z;
             src->value.set(1.0f);
+        }
+        return FK_OK;
+    }
+    return FK_FAIL;
+}
+
+FkResult FkGraphicLayerQuark::_onCropLayer(const std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkCropLayerProto, p);
+    auto itr = layers.find(proto->layerId);
+    if (layers.end() != itr) {
+        auto layer = itr->second;
+        auto compo = FK_FIND_COMPO(layer, FkCropComponent);
+        if (compo) {
+            compo->rect = proto->rect;
+        } else {
+            compo = std::make_shared<FkCropComponent>(proto->rect);
+            layer->addComponent(compo);
         }
         return FK_OK;
     }
@@ -522,6 +583,16 @@ FkResult FkGraphicLayerQuark::_onDrawPath(std::shared_ptr<FkProtocol> &p) {
     } else {
         curPathCompo->addPoint(proto->point.x, proto->point.y);
     }
+    return FK_OK;
+}
+
+FkResult FkGraphicLayerQuark::_onSetProjection(const std::shared_ptr<FkProtocol> &p) {
+    FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetProjectionProto, p);
+    auto srcLayer = _findLayer(proto->srcLayerId);
+    FkAssert(srcLayer != nullptr, FK_FAIL);
+    auto dstLayer = _findLayer(proto->dstLayerId);
+    FkAssert(dstLayer != nullptr, FK_FAIL);
+    dstLayer->projLayerId = srcLayer->id;
     return FK_OK;
 }
 

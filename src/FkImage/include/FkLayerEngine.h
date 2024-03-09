@@ -47,6 +47,8 @@ public:
 
     FkID newLayerWithColor(FkSize size, FkColor color, FkID expectId = FK_ID_NONE);
 
+    FkID newProjectionLayer(FkID srcLayerId);
+
     FkID newLayerWithDeviceImage(std::shared_ptr<FkDeviceImage> deviceImage, FkSize size, FkID expectId = FK_ID_NONE);
 
     FkResult removeLayer(FkID layer);
@@ -158,6 +160,8 @@ private:
     FkResult _drawPath(std::shared_ptr<FkMessage> &msg);
 
     FkResult _updateLayerWithModel(std::shared_ptr<FkMessage> &msg);
+
+    FkResult _setLayerProjection(const std::shared_ptr<FkMessage> &msg);
 
     FkResult _setRenderCanvasTexCallback(std::shared_ptr<FkMessage> &msg);
 

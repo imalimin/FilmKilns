@@ -22,6 +22,8 @@
 #include "FkRemoveLayerProto.h"
 #include "FkDrawPathProto.h"
 #include "FkUpdateLayerModelProto.h"
+#include "FkLayerSetProjectionProto.h"
+#include "FkCropLayerProto.h"
 
 FK_IMPL_CLASS_TYPE(FkGraphicCanvasQuark, FkGraphicLayerQuark)
 
@@ -48,6 +50,8 @@ void FkGraphicCanvasQuark::describeProtocols(std::shared_ptr<FkPortDesc> desc) {
     FK_PORT_DESC_QUICK_ADD(desc, FkRenderRequestPrt, FkGraphicCanvasQuark::_onRenderRequest);
     FK_PORT_DESC_QUICK_ADD(desc, FkDrawPathProto, FkGraphicCanvasQuark::_onDrawPath);
     FK_PORT_DESC_QUICK_ADD(desc, FkUpdateLayerModelProto, FkGraphicCanvasQuark::_onDelivery);
+    FK_PORT_DESC_QUICK_ADD(desc, FkLayerSetProjectionProto, FkGraphicCanvasQuark::_onDelivery);
+    FK_PORT_DESC_QUICK_ADD(desc, FkCropLayerProto, FkGraphicCanvasQuark::_onDelivery);
 
 }
 
@@ -68,7 +72,7 @@ FkResult FkGraphicCanvasQuark::onStop() {
     return FkGraphicLayerQuark::onStop();
 }
 
-FkResult FkGraphicCanvasQuark::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
+FkResult FkGraphicCanvasQuark::_onRenderRequest(const std::shared_ptr<FkProtocol> &p) {
     auto sizeCompo = FK_FIND_COMPO(_getCanvas(), FkSizeCompo);
     if (sizeCompo == nullptr || sizeCompo->size.isZero()) {
         FkLogE(FK_DEF_TAG, "Empty canvas.");

@@ -33,7 +33,7 @@ protected:
 
     virtual FkResult onStop() override;
 
-    FkResult _onRenderRequest(std::shared_ptr<FkProtocol> p) override;
+    FkResult _onRenderRequest(const std::shared_ptr<FkProtocol> &p) override;
 
     FkResult _onPostTranslate(std::shared_ptr<FkProtocol> p) override;
 
