@@ -127,6 +127,8 @@ private:
 
     FkResult _newLayer(std::shared_ptr<FkMessage> msg);
 
+    FkResult _updateLayerWithColor(std::shared_ptr<FkMessage> msg);
+
     FkResult _updateLayer(std::shared_ptr<FkMessage> &msg);
 
     FkResult _removeLayer(std::shared_ptr<FkMessage> msg);

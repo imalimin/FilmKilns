@@ -319,10 +319,14 @@ FkResult FkGraphicLayerQuark::_onPostRotate(std::shared_ptr<FkProtocol> p) {
 FkResult FkGraphicLayerQuark::_onSetRotate(std::shared_ptr<FkProtocol> p) {
     FK_CAST_NULLABLE_PTR_RETURN_INT(proto, FkLayerSetRotateProto, p);
     auto itr = layers.find(proto->layer);
-    FkAssert(layers.end() != itr, FK_FAIL);
+    if (layers.end() == itr) {
+        return FK_FAIL;
+    }
 
     auto comp = FK_FIND_COMPO(itr->second, FkRotateComponent);
-    FkAssert(nullptr != comp, FK_FAIL);
+    if (nullptr == comp) {
+        return FK_FAIL;
+    }
     comp->value = proto->value;
     return FK_OK;
 }

@@ -42,12 +42,7 @@ FkResult FkEntity::addComponents(const std::vector<std::shared_ptr<FkComponent>>
 
 FkResult FkEntity::removeComponent(std::shared_ptr<FkComponent> comp) {
     FkAssert(comp != nullptr, FK_NPE);
-    auto itr = std::find(components.begin(), components.end(), comp);
-    if (itr != components.end()) {
-        components.erase(itr);
-        return FK_OK;
-    }
-    return FK_SOURCE_NOT_FOUND;
+    return clearComponents(comp->getClassType());
 }
 
 FkResult FkEntity::findComponents(std::vector<std::shared_ptr<FkComponent>> &vec,
