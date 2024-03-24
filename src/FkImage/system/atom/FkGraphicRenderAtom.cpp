@@ -90,7 +90,7 @@ FkResult FkGraphicRenderAtom::_onRenderRequest(std::shared_ptr<FkProtocol> p) {
         }
     }
     _makeDrawCanvasRequest(canvas, request);
-    auto ret = renderEngine->renderDevice(request);
+    auto ret = renderEngine->renderDevice(request, proto->timestamp);
     FkAssert(FK_OK == ret, ret);
     return ret;
 }
