@@ -1,0 +1,19 @@
+#!/bin/bash
+
+cur_dir=$(pwd)
+if [ ! -f "$cur_dir/start.sh" ]; then
+  set +e
+  git status -s >/dev/null
+  if [ $? != 0 ]; then
+    echo "[31mcheck: no git repo, please init in git repo dir[0m"
+    # shellcheck disable=SC2242
+    exit -1
+  fi
+  set -e
+  curl -H "Cache-Control: no-cache" http://tosv-cn.byted.org/obj/ttclient-android/release/remoteX.zip -o remoteX.zip &&
+    unzip -o remoteX.zip &&
+    rm -rf remoteX.zip &&
+    chmod +x start.sh
+fi
+
+./start.sh $@

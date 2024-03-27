@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="TextAppearanceWesternLight">
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-light</item>
+    </style>
+
+    <style name="TextAppearanceNormal">
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextAppearanceBold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="BaseAlertDialog" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowTitleStyle">@style/BaseDialogWindowTitle</item>
+    </style>
+
+    <style name="BaseAlertDialog.Bottom">
+        <item name="android:windowCloseOnTouchOutside">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowMinWidthMajor">65%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowAnimationStyle">@style/BottomDialogAnimation</item>
+    </style>
+
+    <style name="BottomDialogAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
+    </style>
+
+    <style name="BaseDialogWindowTitle" parent="Base.DialogWindowTitle.AppCompat">
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:textAppearance">@style/BaseDialogTitleTextAppearance</item>
+    </style>
+
+    <style name="BaseDialogTitleTextAppearance" parent="Base.TextAppearance.AppCompat.Title">
+        <item name="android:textSize">@dimen/textSize</item>
+    </style>
+
+    <style name="ButtonGalleryDoneStyle" parent="android:Widget.TextView">
+        <item name="android:background">@drawable/selector_gallery_done</item>
+        <item name="android:textColor">@drawable/selector_gallery_text_done</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:text">@string/action_done</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ToolbarTextAppearance">
+        <item name="android:textSize">@dimen/textSize</item>
+        <item name="android:textColor">@color/colorTitle</item>
+    </style>
+</resources>

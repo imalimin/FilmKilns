@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_radius_rectangle_active" android:state_enabled="true" />
+    <item android:drawable="@drawable/bg_radius_rectangle_invaild" android:state_selected="false" />
+    <item android:drawable="@drawable/bg_radius_rectangle_active" />
+</selector>

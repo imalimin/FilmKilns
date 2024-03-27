@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <com.lmy.common.widget.Toolbar
+            android:id="@+id/mToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/actionBarSize"
+            android:background="@color/white"
+            android:elevation="@dimen/toolbarElevation"
+            app:elevation="@dimen/toolbarElevation"
+            app:layout_scrollFlags="scroll|enterAlways" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    <LinearLayout
+        android:id="@+id/mFolderLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:background="@drawable/bg_gallery_folder"
+        android:clipToPadding="false"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        app:layout_behavior="com.lmy.common.widget.behavior.ScrollOutBehavior">
+
+        <TextView
+            android:id="@+id/mFolderView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:maxWidth="160dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:text="全部照片"
+            android:textColor="?attr/colorAccent"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:scaleType="centerInside"
+            android:src="@mipmap/ic_gallery_arrow_up"
+            android:tint="@color/white_ccc" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/mDoneBtn"
+        style="@style/ButtonGalleryDoneStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:elevation="16dp"
+        android:enabled="false"
+        app:layout_behavior="com.lmy.common.widget.behavior.ScrollOutBehavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

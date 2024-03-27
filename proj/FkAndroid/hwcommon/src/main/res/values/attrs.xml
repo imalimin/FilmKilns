@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="app">
+        <attr name="scrollable" format="boolean" />
+        <!--RatioLayout-->
+        <attr name="ratioY" format="float" />
+        <attr name="countTextFormat" format="string" />
+    </declare-styleable>
+</resources>

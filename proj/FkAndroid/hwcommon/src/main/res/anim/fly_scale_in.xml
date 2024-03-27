@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <scale
+        android:duration="@android:integer/config_mediumAnimTime"
+        android:fillAfter="true"
+        android:fromXScale="1.07"
+        android:fromYScale="1.07"
+        android:pivotX="50%p"
+        android:pivotY="70%p"
+        android:toXScale="1"
+        android:toYScale="1" />
+    <alpha
+        android:duration="@android:integer/config_mediumAnimTime"
+        android:fillAfter="true"
+        android:fromAlpha="0"
+        android:toAlpha="1" />
+</set>
