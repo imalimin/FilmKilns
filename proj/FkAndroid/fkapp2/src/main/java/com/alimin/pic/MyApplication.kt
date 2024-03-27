@@ -6,6 +6,7 @@
  */
 package com.alimin.pic
 
+import com.alimin.fk.BuildConfig
 import com.alimin.fk.FilmKilns
 import com.lmy.common.BaseApplication
 import com.tencent.bugly.crashreport.CrashReport

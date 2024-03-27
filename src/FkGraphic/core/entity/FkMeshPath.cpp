@@ -85,9 +85,9 @@ void FkMeshPath::addPoint(FkDoubleVec2 &point) {
             meshPoints.emplace_back(FkDoubleVec2(tmp.x, tmp.y));
             continue;
         } else {
-            float len = 0;
+//            float len = 0;
             FkDoubleVec2 vp = current - front;
-            len = std::sqrt(vp.x * vp.x + vp.y * vp.y);
+//            len = std::sqrt(vp.x * vp.x + vp.y * vp.y);
 
             //计算拐角点
             FkDoubleVec2 tmp = current + normal * strokeWidth * 1 * 1 / 2;

@@ -13,9 +13,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.viewbinding.ViewBinding
 import com.alimin.fk.entity.FkRational
 import com.alimin.fk.widgets.FkActSurfaceView
 import com.alimin.pic.R
+import com.alimin.pic.databinding.ActivityImageBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lmy.common.adapter.BaseViewPagerAdapter
 import com.lmy.common.ext.disableStatusBarPadding
@@ -25,7 +27,6 @@ import com.lmy.common.ui.fragment.BaseLazyFragment
 import com.microsoft.fluentui.progress.ProgressBar
 import com.microsoft.fluentui.snackbar.Snackbar
 import com.microsoft.fluentui.util.createImageView
-import kotlinx.android.synthetic.main.activity_image.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
@@ -58,6 +59,10 @@ class ImageActivity : BaseActivity(),
     FkActSurfaceView.OnActionListener,
     FkActSurfaceView.OnTouchPosListener {
     override val layoutResID: Int = R.layout.activity_image
+    private lateinit var mViewBinding: ActivityImageBinding
+    override fun getViewBinding(): ViewBinding = ActivityImageBinding.inflate(layoutInflater).apply {
+        mViewBinding = this
+    }
     override val isActive: Boolean
         get() = true
     override lateinit var presenter: ImageContract.Presenter
@@ -89,16 +94,16 @@ class ImageActivity : BaseActivity(),
             surfaceView?.setOnActionListener(this)
             surfaceView?.setOnTouchPosListener(this)
             val lp = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            surfaceHolder.addView(surfaceView, lp)
+            mViewBinding.surfaceHolder.addView(surfaceView, lp)
         } else {
             EasyPermissions.requestPermissions(
                 this, "Request write sdcard permission", REQ_PERMISSION, *perms
             )
         }
-        viewPager.isEnabled = false
-        navBar.setOnNavigationItemSelectedListener(this)
-        mPagerAdapter = OpPagerAdapter(presenter, navBar.menu, supportFragmentManager)
-        mPagerAdapter?.attach(viewPager)
+        mViewBinding.viewPager.isEnabled = false
+        mViewBinding.navBar.setOnNavigationItemSelectedListener(this)
+        mPagerAdapter = OpPagerAdapter(presenter, mViewBinding.navBar.menu, supportFragmentManager)
+        mPagerAdapter?.attach(mViewBinding.viewPager)
     }
 
     override fun onStart() {
@@ -165,9 +170,9 @@ class ImageActivity : BaseActivity(),
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        navBar.menu.forEachIndexed { index, it ->
+        mViewBinding.navBar.menu.forEachIndexed { index, it ->
             if (it.itemId == item.itemId) {
-                viewPager.setCurrentItem(index, false)
+                mViewBinding.viewPager.setCurrentItem(index, false)
             }
         }
         return true
@@ -175,8 +180,8 @@ class ImageActivity : BaseActivity(),
 
     override fun onFragmentInteraction(what: Int, data: Bundle) {
         when (what) {
-            R.id.action_hide_bottom_nav ->  navBar.visibility = View.INVISIBLE
-            R.id.action_show_bottom_nav ->  navBar.visibility = View.VISIBLE
+            R.id.action_hide_bottom_nav ->  mViewBinding.navBar.visibility = View.INVISIBLE
+            R.id.action_show_bottom_nav ->  mViewBinding.navBar.visibility = View.VISIBLE
             R.id.action_paint -> {
                 surfaceView?.setMode(FkActSurfaceView.Mode.kPaint)
             }
@@ -192,7 +197,7 @@ class ImageActivity : BaseActivity(),
 
     override fun onImageSaved(file: String) {
         val checkmarkIconImageView = createImageView(
-            R.drawable.ms_ic_checkmark_24_filled,
+            com.microsoft.fluentui.ccb.R.drawable.ms_ic_checkmark_24_filled,
             ContextCompat.getColor(this, R.color.colorAccent)
         )
         Snackbar.make(window.decorView, getString(R.string.saved), Snackbar.LENGTH_SHORT)
@@ -208,7 +213,7 @@ class ImageActivity : BaseActivity(),
     override fun onImageSaving() {
         val circularProgress = ProgressBar(
             this, null, 0,
-            R.style.Widget_FluentUI_CircularProgress_Small
+            com.microsoft.fluentui.ccb.R.style.Widget_Material3_CircularProgressIndicator_Small
         )
         circularProgress.indeterminateDrawable.setColorFilter(
             ContextCompat.getColor(this, R.color.colorAccent),

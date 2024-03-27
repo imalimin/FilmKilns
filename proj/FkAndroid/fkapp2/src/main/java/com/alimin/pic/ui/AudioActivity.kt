@@ -2,13 +2,14 @@ package com.alimin.pic.ui
 
 import android.Manifest
 import android.view.View
+import androidx.viewbinding.ViewBinding
 import com.alimin.pic.R
 import com.alimin.fk.device.FkMicrophone
 import com.alimin.fk.device.FkSpeaker
 import com.alimin.fk.device.FkSyncStrategy
 import com.alimin.fk.entity.FkAudioSettings
+import com.alimin.pic.databinding.ActivityAudioBinding
 import com.lmy.common.ui.BaseActivity
-import kotlinx.android.synthetic.main.activity_audio.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.File
@@ -23,6 +24,10 @@ class AudioActivity : BaseActivity(), View.OnClickListener {
     private val mSpeaker = FkSpeaker()
     private val settings = FkAudioSettings(16, 44100, 2)
     private var strategy = FkSyncStrategy()
+    private lateinit var mViewBinding: ActivityAudioBinding
+    override fun getViewBinding(): ViewBinding = ActivityAudioBinding.inflate(layoutInflater).apply {
+        mViewBinding = this
+    }
 
     @AfterPermissionGranted(REQ_PERMISSION)
     override fun initView() {
@@ -30,7 +35,7 @@ class AudioActivity : BaseActivity(), View.OnClickListener {
             Manifest.permission.RECORD_AUDIO
         )
         if (EasyPermissions.hasPermissions(this, *perms)) {
-            mRecordBtn.setOnClickListener(this)
+            mViewBinding.mRecordBtn.setOnClickListener(this)
             mMicrophone.strategy = strategy
             mSpeaker.strategy = strategy
             mMicrophone.init(settings, File(externalCacheDir, "000001.pcm").absolutePath)
@@ -60,8 +65,8 @@ class AudioActivity : BaseActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.mRecordBtn -> {
-                mRecordBtn.isSelected = !mRecordBtn.isSelected
-                if (mRecordBtn.isSelected) {
+                mViewBinding.mRecordBtn.isSelected = !mViewBinding.mRecordBtn.isSelected
+                if (mViewBinding.mRecordBtn.isSelected) {
                     mMicrophone.start()
                     mSpeaker.start()
                 } else {

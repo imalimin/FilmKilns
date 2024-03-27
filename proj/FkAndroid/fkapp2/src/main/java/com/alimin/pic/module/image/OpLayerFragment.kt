@@ -93,12 +93,12 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
                 PopupMenuItem(
                     item.layerId,
                     getString(R.string.layer_del),
-                    R.drawable.ic_fluent_delete_24_regular
+                    R.drawable.ic_fluent_crop_layer_24_regular
                 ),
                 PopupMenuItem(
                     item.layerId,
                     getString(R.string.layer_info),
-                    R.drawable.ic_fluent_info_24_regular
+                    R.drawable.ic_fluent_crop_layer_24_regular
                 ),
             )
             val popupMenu =
@@ -106,7 +106,7 @@ class OpLayerFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
             popupMenu.onItemClickListener = object : PopupMenuItem.OnClickListener {
                 override fun onPopupMenuItemClicked(popupMenuItem: PopupMenuItem) {
                     when (popupMenuItem.iconResourceId) {
-                        R.drawable.ic_fluent_delete_24_regular -> {
+                        R.drawable.ic_fluent_crop_layer_24_regular -> {
                             presenter.removeLayer(popupMenuItem.id)
                         }
                     }

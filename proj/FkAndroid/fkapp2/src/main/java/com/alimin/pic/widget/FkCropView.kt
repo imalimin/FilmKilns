@@ -149,6 +149,8 @@ class FkCropView : View {
                             lt.offset(dx, dy)
                             rb.offset(dx, dy)
                         }
+
+                        else -> {}
                     }
                     if (loc == Loc.C) {
                         if (lt.x < 0 || rb.x > measuredWidth) {
@@ -180,17 +182,17 @@ class FkCropView : View {
         rb.y = Math.min(measuredHeight.toFloat(), rb.y)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         lb.set(lt.x, rb.y)
         rt.set(rb.x, lt.y)
         for (i in 1 until 3) {
             val y = lt.y + i * abs(lt.y - rb.y) / 3
-            canvas?.drawLine(lt.x, y, rb.x, y, gridPaint)
+            canvas.drawLine(lt.x, y, rb.x, y, gridPaint)
         }
         for (i in 1 until 3) {
             val x = lt.x + i * abs(lt.x - rb.x) / 3
-            canvas?.drawLine(x, lt.y, x, rb.y, gridPaint)
+            canvas.drawLine(x, lt.y, x, rb.y, gridPaint)
         }
         drawLine(canvas, lt, lb, linePaint)
         drawLine(canvas, lb, rb, linePaint)
@@ -198,40 +200,40 @@ class FkCropView : View {
         drawLine(canvas, rt, lt, linePaint)
 
         //水平
-        canvas?.drawRect(
+        canvas.drawRect(
             lt.x + hRectF.left - vRectF.width(), lt.y + hRectF.top - hRectF.height(),
             lt.x + hRectF.right - vRectF.width(), lt.y + hRectF.bottom - hRectF.height(), paint
         )
         //垂直
-        canvas?.drawRect(
+        canvas.drawRect(
             lt.x + vRectF.left - vRectF.width(), lt.y + vRectF.top - hRectF.height(),
             lt.x + vRectF.right - vRectF.width(), lt.y + vRectF.bottom - hRectF.height(), paint
         )
 
         //水平
-        canvas?.drawRect(
+        canvas.drawRect(
             lb.x + hRectF.left - vRectF.width(), lb.y + hRectF.top,
             lb.x + hRectF.right - vRectF.width(), lb.y + hRectF.bottom, paint
         )
         //垂直
-        canvas?.drawRect(
+        canvas.drawRect(
             lb.x + vRectF.left - vRectF.width(), lb.y - vRectF.height() + hRectF.height(),
             lb.x + vRectF.right - vRectF.width(), lb.y + hRectF.height(), paint
         )
 
         //水平
-        canvas?.drawRect(
+        canvas.drawRect(
             rb.x - hRectF.width() + vRectF.width(), rb.y,
             rb.x + vRectF.width(), rb.y + hRectF.height(), paint
         )
         //垂直
-        canvas?.drawRect(
+        canvas.drawRect(
             rb.x, rb.y - vRectF.height() + hRectF.height(),
             rb.x + vRectF.width(), rb.y + hRectF.height(), paint
         )
 
         //水平
-        canvas?.drawRect(
+        canvas.drawRect(
             rt.x + hRectF.left - hRectF.width() + vRectF.width(),
             rt.y + hRectF.top - hRectF.height(),
             rt.x + hRectF.right - hRectF.width() + vRectF.width(),
@@ -239,7 +241,7 @@ class FkCropView : View {
             paint
         )
         //垂直
-        canvas?.drawRect(
+        canvas.drawRect(
             rt.x + vRectF.left, rt.y + vRectF.top - hRectF.height(),
             rt.x + vRectF.right, rt.y + vRectF.bottom - hRectF.height(), paint
         )

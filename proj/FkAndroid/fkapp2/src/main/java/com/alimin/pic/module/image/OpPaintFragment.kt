@@ -6,7 +6,6 @@ import android.view.View
 import com.alimin.fk.engine.OnDoStatusListener
 import com.alimin.pic.R
 import com.microsoft.fluentui.contextualcommandbar.CommandItem
-import kotlinx.android.synthetic.main.fragment_op.*
 
 class OpPaintFragment(presenter: ImageContract.Presenter) : OpFragment(presenter) {
     override val menuResID: Int = R.menu.menu_image_op_paint
@@ -14,7 +13,7 @@ class OpPaintFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
         super.initView()
         presenter.getPaint().strokeWidth = 12
         presenter.getPaint().color = Color.YELLOW
-        yesNoView.setActionListener {
+        mViewBinding.yesNoView.setActionListener {
             reset()
             if (!it) {
                 presenter.load(object : OnDoStatusListener {
@@ -31,7 +30,7 @@ class OpPaintFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
             R.id.action_paint -> {
                 presenter.save()
                 getCommandBar()?.visibility = View.GONE
-                yesNoView.visibility = View.VISIBLE
+                mViewBinding.yesNoView.visibility = View.VISIBLE
                 onButtonPressed(R.id.action_paint, Bundle.EMPTY)
                 hideBottomNav()
             }
@@ -40,7 +39,7 @@ class OpPaintFragment(presenter: ImageContract.Presenter) : OpFragment(presenter
 
     private fun reset() {
         getCommandBar()?.visibility = View.VISIBLE
-        yesNoView.visibility = View.GONE
+        mViewBinding.yesNoView.visibility = View.GONE
         onButtonPressed(R.id.action_paint_cancel, Bundle.EMPTY)
         showBottomNav()
     }

@@ -39,17 +39,17 @@ class PointView : View {
         linePaint.strokeWidth = 1f
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.drawLine(
+        canvas.drawLine(
             0.0f, measuredHeight / 2.0f,
             measuredWidth.toFloat(), measuredHeight / 2.0f, linePaint
         )
-        canvas?.drawLine(
+        canvas.drawLine(
             measuredWidth / 2.0f, 0.0f,
             measuredWidth / 2.0f, measuredHeight.toFloat(), linePaint
         )
-        canvas?.drawPoint(point.x.toFloat(), point.y.toFloat(), paint)
+        canvas.drawPoint(point.x.toFloat(), point.y.toFloat(), paint)
     }
 
     fun showPoint(point: Point) {

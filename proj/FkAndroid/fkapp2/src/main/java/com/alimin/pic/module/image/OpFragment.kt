@@ -2,18 +2,23 @@ package com.alimin.pic.module.image
 
 import android.os.Bundle
 import android.view.View
+import androidx.viewbinding.ViewBinding
 import com.alimin.pic.R
+import com.alimin.pic.databinding.FragmentOpBinding
 import com.alimin.pic.widget.FkContextualCommandBar
 import com.lmy.common.ui.fragment.BaseFragment
 import com.microsoft.fluentui.contextualcommandbar.CommandItem
-import kotlinx.android.synthetic.main.fragment_op.*
 
 abstract class OpFragment(val presenter: ImageContract.Presenter) : BaseFragment(), CommandItem.OnItemClickListener {
     protected abstract val menuResID: Int
     override fun getLayoutView(): Int = R.layout.fragment_op
+    protected lateinit var mViewBinding: FragmentOpBinding
+    override fun getViewBinding(): ViewBinding = FragmentOpBinding.inflate(layoutInflater).apply {
+        mViewBinding = this
+    }
 
     override fun initView() {
-        with(baseCommandBar) {
+        with(mViewBinding.baseCommandBar) {
             setMenu(menuResID)
             setItemOnClickListener(object : CommandItem.OnItemClickListener {
                 override fun onItemClick(item: CommandItem, view: View) {
@@ -23,7 +28,7 @@ abstract class OpFragment(val presenter: ImageContract.Presenter) : BaseFragment
         }
     }
 
-    fun getCommandBar(): FkContextualCommandBar? = baseCommandBar
+    fun getCommandBar(): FkContextualCommandBar? = mViewBinding.baseCommandBar
 
     fun hideBottomNav() {
         onButtonPressed(R.id.action_hide_bottom_nav, Bundle.EMPTY)

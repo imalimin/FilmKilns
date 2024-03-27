@@ -29,7 +29,7 @@ open class FkContextualCommandBar @JvmOverloads constructor(
     appContext: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(FluentUIContextThemeWrapper(appContext,R.style.Theme_FluentUI_ContextualCommandBar), attrs, defStyleAttr) {
+) : FrameLayout(FluentUIContextThemeWrapper(appContext, com.microsoft.fluentui.ccb.R.style.Theme_FluentUI_ContextualCommandBar), attrs, defStyleAttr) {
 
     interface OnItemLongClickListener {
         fun onItemLongClick(item: CommandItem, view: View)
@@ -60,24 +60,24 @@ open class FkContextualCommandBar @JvmOverloads constructor(
         }
 
     init {
-        var groupSpace = resources.getDimensionPixelSize(R.dimen.fluentui_contextual_command_bar_default_group_space)
-        var itemSpace = resources.getDimensionPixelSize(R.dimen.fluentui_contextual_command_bar_default_item_space)
+        var groupSpace = resources.getDimensionPixelSize(com.microsoft.fluentui.ccb.R.dimen.fluentui_contextual_command_bar_default_group_space)
+        var itemSpace = resources.getDimensionPixelSize(com.microsoft.fluentui.ccb.R.dimen.fluentui_contextual_command_bar_default_item_space)
         attrs?.let {
             val styledAttributes = appContext.theme.obtainStyledAttributes(
                 it,
-                R.styleable.ContextualCommandBar,
+                com.microsoft.fluentui.ccb.R.styleable.ContextualCommandBar,
                 0,
                 0
             )
 
             try {
                 groupSpace = styledAttributes.getDimensionPixelSize(
-                    R.styleable.ContextualCommandBar_fluentui_groupSpace,
-                    resources.getDimensionPixelSize(R.dimen.fluentui_contextual_command_bar_default_group_space)
+                    com.microsoft.fluentui.ccb.R.styleable.ContextualCommandBar_fluentui_groupSpace,
+                    resources.getDimensionPixelSize(com.microsoft.fluentui.ccb.R.dimen.fluentui_contextual_command_bar_default_group_space)
                 )
                 itemSpace = styledAttributes.getDimensionPixelSize(
-                    R.styleable.ContextualCommandBar_fluentui_itemSpace,
-                    resources.getDimensionPixelSize(R.dimen.fluentui_contextual_command_bar_default_item_space)
+                    com.microsoft.fluentui.ccb.R.styleable.ContextualCommandBar_fluentui_itemSpace,
+                    resources.getDimensionPixelSize(com.microsoft.fluentui.ccb.R.dimen.fluentui_contextual_command_bar_default_item_space)
                 )
             } finally {
                 styledAttributes.recycle()
@@ -186,11 +186,11 @@ open class FkContextualCommandBar @JvmOverloads constructor(
 
         if (dismissButtonContainer == null) {
             dismissButtonContainer = LayoutInflater.from(context)
-                .inflate(R.layout.view_dismiss_command_item, null) as ViewGroup
+                .inflate(com.microsoft.fluentui.ccb.R.layout.view_dismiss_command_item, null) as ViewGroup
             addView(dismissButtonContainer)
         }
-        val dismissButton: ImageView = dismissButtonContainer!!.findViewById(R.id.dismiss_command_item_button)
-        val dismissButtonDivider: View = dismissButtonContainer!!.findViewById(R.id.dismiss_command_item_divider)
+        val dismissButton: ImageView = dismissButtonContainer!!.findViewById(com.microsoft.fluentui.ccb.R.id.dismiss_command_item_button)
+        val dismissButtonDivider: View = dismissButtonContainer!!.findViewById(com.microsoft.fluentui.ccb.R.id.dismiss_command_item_divider)
         (dismissButtonContainer!!.layoutParams as LayoutParams).apply {
             height = ViewGroup.LayoutParams.MATCH_PARENT
             width = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -204,14 +204,14 @@ open class FkContextualCommandBar @JvmOverloads constructor(
         // Set the position of DismissItemPosition
         if (dismissItemGravity == DismissItemPosition.START) {
             dismissButtonDivider.setBackgroundResource(
-                R.drawable.contextual_command_bar_dismiss_button_divider_start_background
+                com.microsoft.fluentui.ccb.R.drawable.contextual_command_bar_dismiss_button_divider_start_background
             )
             dismissButtonContainer!!.removeAllViews()
             dismissButtonContainer!!.addView(dismissButton)
             dismissButtonContainer!!.addView(dismissButtonDivider)
         } else if (dismissItemGravity == DismissItemPosition.END) {
             dismissButtonDivider.setBackgroundResource(
-                R.drawable.contextual_command_bar_dismiss_button_divider_end_background
+                com.microsoft.fluentui.ccb.R.drawable.contextual_command_bar_dismiss_button_divider_end_background
             )
             dismissButtonContainer!!.removeAllViews()
             dismissButtonContainer!!.addView(dismissButtonDivider)
@@ -228,9 +228,9 @@ open class FkContextualCommandBar @JvmOverloads constructor(
         // Adjust RecyclerView's position to adapt dismiss button
         val dismissButtonPlaceholder = if (dismissItemVisible) {
             resources.getDimensionPixelSize(
-                R.dimen.fluentui_contextual_command_bar_dismiss_button_width
+                com.microsoft.fluentui.ccb.R.dimen.fluentui_contextual_command_bar_dismiss_button_width
             ) + resources.getDimensionPixelSize(
-                R.dimen.fluentui_contextual_command_bar_dismiss_gap_width
+                com.microsoft.fluentui.ccb.R.dimen.fluentui_contextual_command_bar_dismiss_gap_width
             )
         } else 0
         commandItemRecyclerView.setPaddingRelative(
@@ -318,7 +318,7 @@ internal class CommandItemAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ViewHolder(LayoutInflater
             .from(parent.context)
-            .inflate(R.layout.view_command_item, parent, false))
+            .inflate(com.microsoft.fluentui.ccb.R.layout.view_command_item, parent, false))
     }
 
     override fun onBindViewHolder(vh: RecyclerView.ViewHolder, position: Int) {
@@ -380,7 +380,7 @@ internal class CommandItemAdapter(
 
                     background = ContextCompat.getDrawable(
                         context,
-                        R.drawable.contextual_command_bar_center_item_background
+                        com.microsoft.fluentui.ccb.R.drawable.contextual_command_bar_center_item_background
                     )
                 }
 
@@ -390,7 +390,7 @@ internal class CommandItemAdapter(
                     }
                     background = ContextCompat.getDrawable(
                         context,
-                        R.drawable.contextual_command_bar_start_item_background
+                        com.microsoft.fluentui.ccb.R.drawable.contextual_command_bar_start_item_background
                     )
                 }
 
@@ -402,7 +402,7 @@ internal class CommandItemAdapter(
 
                     background = ContextCompat.getDrawable(
                         context,
-                        R.drawable.contextual_command_bar_end_item_background
+                        com.microsoft.fluentui.ccb.R.drawable.contextual_command_bar_end_item_background
                     )
                 }
 
@@ -418,7 +418,7 @@ internal class CommandItemAdapter(
                     }
                     background = ContextCompat.getDrawable(
                         context,
-                        R.drawable.contextual_command_bar_single_item_background
+                        com.microsoft.fluentui.ccb.R.drawable.contextual_command_bar_single_item_background
                     )
                 }
             }
@@ -474,8 +474,8 @@ internal class CommandItemAdapter(
     override fun getItemCount(): Int = flattenCommandItems.size
 
     private class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val icon: ImageView = itemView.findViewById(R.id.contextual_command_item_icon)
-        val label: TextView = itemView.findViewById(R.id.contextual_command_item_label)
+        val icon: ImageView = itemView.findViewById(com.microsoft.fluentui.ccb.R.id.contextual_command_item_icon)
+        val label: TextView = itemView.findViewById(com.microsoft.fluentui.ccb.R.id.contextual_command_item_label)
         init {
             itemView.layoutParams = RecyclerView.LayoutParams(
                 RecyclerView.LayoutParams.WRAP_CONTENT,
@@ -687,7 +687,7 @@ internal class FkCommandMenuItem(
         return 0
     }
 
-    override fun setTitle(title: CharSequence): MenuItem {
+    override fun setTitle(title: CharSequence?): MenuItem {
         this.title = title.toString()
         return this
     }
@@ -708,7 +708,7 @@ internal class FkCommandMenuItem(
         TODO("Not yet implemented")
     }
 
-    override fun setIcon(icon: Drawable): MenuItem {
+    override fun setIcon(icon: Drawable?): MenuItem {
         this.iconDrawable = icon
         return this
     }

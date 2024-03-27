@@ -15,7 +15,7 @@ class FkYesNoView : FrameLayout {
     constructor(context: Context) : super(
         FluentUIContextThemeWrapper(
             context,
-            R.style.Theme_FluentUI_ContextualCommandBar
+            com.microsoft.fluentui.ccb.R.style.Theme_FluentUI_ContextualCommandBar
         )
     ) {
         initialize()
@@ -25,7 +25,7 @@ class FkYesNoView : FrameLayout {
             : super(
         FluentUIContextThemeWrapper(
             context,
-            R.style.Theme_FluentUI_ContextualCommandBar
+            com.microsoft.fluentui.ccb.R.style.Theme_FluentUI_ContextualCommandBar
         ), attrs
     ) {
         initialize()
